@@ -1,4 +1,6 @@
 jest.mock("server-only", () => ({}))
+jest.mock("@/services/reconciliation/reconciliation-close-order.service", () => ({ lockReconciliationCloseCatalogInTx: jest.fn(), lockReconciliationClosePeriodsInTx: jest.fn() }))
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "@/services/reconciliation/reconciliation-close-order.service"
 jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
 
 import {
@@ -35,6 +37,7 @@ jest.mock("@/prisma/db", () => ({
 
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
   providerAccount: { findFirst: jest.Mock }
   statementFile: { findFirst: jest.Mock; create: jest.Mock }
   statementLine: { findMany: jest.Mock; createMany: jest.Mock }
@@ -71,8 +74,11 @@ function statementContent(overrides: Array<Record<string, unknown>> = []) {
 describe("statement import ingestion", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(lockReconciliationCloseCatalogInTx as jest.Mock).mockReset()
+    ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockReset().mockResolvedValue(["prior-period", "period-1"])
     ;(assertModuleNewWorkInTx as jest.Mock).mockReset()
     mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
+    mockedDb.$queryRaw.mockResolvedValue([{ id: "close-run-1" }])
     mockedDb.providerAccount.findFirst.mockResolvedValue({
       id: "provider-account-1",
       status: ProviderAccountStatus.ACTIVE,
@@ -96,6 +102,12 @@ describe("statement import ingestion", () => {
       ...args.data,
       outboxMessages: args.data.outboxMessages.create,
     }))
+  })
+
+  it("refuses vanished retained work without silently bypassing new-work admission", async () => {
+    mockedDb.statementFile.findFirst.mockResolvedValueOnce({ id: "retained-file" }).mockResolvedValue(null)
+    await expect(importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: statementContent() })).rejects.toThrow(/Retained statement evidence changed/)
+    expect(assertModuleNewWorkInTx).not.toHaveBeenCalled(); expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
   })
 
   it("reuses a retained duplicate case without creating another exception or importing", async () => {
@@ -188,7 +200,7 @@ describe("statement import ingestion", () => {
     )
   })
 
-  it("invalidates certified close evidence when a new statement import overlaps the closed period", async () => {
+  it("admits new work before full Close coordination and provider serialization", async () => {
     const rawContent = statementContent()
     mockedDb.closeRun.findMany.mockResolvedValue([
       { id: "close-run-1", packExports: [{ id: "close-pack-export-1" }] },
@@ -210,6 +222,11 @@ describe("statement import ingestion", () => {
       importedById: "user-1",
       correlationId: "corr-1",
     })
+
+    expect((assertModuleNewWorkInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan((lockReconciliationCloseCatalogInTx as jest.Mock).mock.invocationCallOrder[0])
+    expect((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(mockedDb.$queryRaw.mock.invocationCallOrder[0])
+    expect(mockedDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ AND: expect.arrayContaining([{ OR: [{ periodId: { in: ["period-1", "prior-period"] } }] }]) }) }))
+    expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "ReadCommitted" })
 
     expect(mockedDb.closeRun.findMany).toHaveBeenCalledWith(
       expect.objectContaining({

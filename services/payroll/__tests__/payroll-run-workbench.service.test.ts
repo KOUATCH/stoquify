@@ -621,6 +621,18 @@ describe("payroll run workbench service", () => {
         }),
       ]),
     );
+    const rows = await mockDb.payrollRun.findMany.mock.results[0].value;
+    mockDb.payrollRun.count.mockResolvedValue(1);
+    const operatorInput = { organizationId: "org-1", actorPermissions: ["payroll.payments.request", "payroll.payments.release", "payroll.declarations.prepare"] };
+    const missingProof = await getPayrollRunWorkbenchData(operatorInput);
+    expect(missingProof.runs[0].blockers).toEqual(expect.arrayContaining([expect.objectContaining({ id: "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING" })]));
+    expect(missingProof.runs[0].nextActions.find(action => action.id === "request-payments")).toMatchObject({ allowed: false, blockedBy: ["PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING"] });
+    rows[0].paymentBatches = [{ id: "approved-1", paymentDate: new Date("2026-06-30T00:00:00Z"), status: PayrollPaymentBatchStatus.APPROVED, amount: new Prisma.Decimal("95800"), currency: "XAF" }];
+    const releaseBlocked = await getPayrollRunWorkbenchData(operatorInput);
+    expect(releaseBlocked.runs[0].nextActions.find(action => action.id === "release-payments")).toMatchObject({ allowed: false, blockedBy: ["PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING"] });
+    rows[0].metadata = { ...rows[0].metadata, hrisPayrollReadinessHash: "unit-hris-proof", payrollInputReadinessHash: "unit-input-proof", payrollEngineInputHashes: ["unit-engine-proof"], payrollEngineInputSnapshotHash: "unit-snapshot-proof" };
+    const withProof = await getPayrollRunWorkbenchData(operatorInput);
+    expect(withProof.runs[0].nextActions.find(action => action.id === "release-payments")).toMatchObject({ allowed: true, blockedBy: [] });
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

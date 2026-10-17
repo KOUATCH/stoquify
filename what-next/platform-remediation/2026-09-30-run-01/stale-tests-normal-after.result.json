@@ -1,0 +1,23 @@
+{
+  "name": "stale-tests-normal-after",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--runTestsByPath",
+    "services/accounting/__tests__/manual-journal.test.ts",
+    "services/analytics/__tests__/business-pulse-links.test.ts",
+    "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+    "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+    "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+    "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts"
+  ],
+  "startedAt": "2026-09-30T20:26:42.938Z",
+  "endedAt": "2026-09-30T20:27:53.589Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 0,
+  "stderrBytes": 573
+}

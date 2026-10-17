@@ -1,4 +1,5 @@
 import type { ModuleControlCenterData } from "@/services/modules/module-control-contracts"
+import { getInventoryRouteSurfaceByRoute } from "@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access"
 import type { ActionQueueResult } from "@/services/signals/business-signal-contracts"
 import type {
   CloseReadinessMetrics,
@@ -88,6 +89,148 @@ import {
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("owner war room service", () => {
+  function localizedInput(locale: "en" | "fr") {
+    return {
+      locale, organizationId: "org-1", organizationName: "Owner custom name", generatedAt, actorPermissions: ["*"],
+      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
+      actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
+    }
+  }
+
+  it.each([
+    [null, 0, 0, "/dashboard/finance/reconciliation", "cash risk"],
+    [125, 3, 440, "/dashboard/finance/reconciliation", "cash risk"],
+    [0, 3, 440, "/dashboard/accounting/close", "Close evidence"],
+    [0, 0, 440, "/dashboard/payroll", "Payroll and statutory"],
+  ] as const)("aligns the recommendation and primary action for cash=%s, close=%s, payroll=%s", (cash, close, payroll, href, conclusion) => {
+    const input = localizedInput("en")
+    input.actorPermissions = ["payments.reconciliation.read", "accounting.close.read", "payroll.command.read"]
+    input.snapshots.paymentTruth.metrics.openSuspenseAmount = cash
+    input.snapshots.closeReadiness.metrics = closeMetrics({ blockedCloseRunCount: close, unavailableEvidenceCount: 0 })
+    input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount = payroll
+    const original = JSON.stringify(input)
+    const brief = composeOwnerWarRoomData(input).morningBrief.commandBrief
+    expect(brief.conclusion).toContain(conclusion)
+    expect(brief.primaryAction).toMatchObject({ href, disabled: false })
+    expect(brief.primaryAction?.label).not.toBe("Open")
+    expect(JSON.stringify(input)).toBe(original)
+  })
+
+  it("keeps the recommended cash review disabled and explained when its permission is absent", () => {
+    const input = localizedInput("fr")
+    input.actorPermissions = ["dashboard.read", "accounting.close.read"]
+    expect(composeOwnerWarRoomData(input).morningBrief.commandBrief.primaryAction).toMatchObject({
+      href: "/dashboard/finance/reconciliation", label: "Examiner les suspens de trésorerie", disabled: true,
+      moduleSlug: "payment_reconciliation", requiredPermission: "payments.reconciliation.read",
+      disabledReason: expect.stringContaining("droits requis"),
+    })
+  })
+
+  it.each([0, 2])("does not substitute an unrelated queue action when only freshness or no blocker remains (%s)", (stale) => {
+    const input = localizedInput("en")
+    input.snapshots.paymentTruth.metrics.openSuspenseAmount = 0
+    input.snapshots.closeReadiness.metrics = closeMetrics({ unavailableEvidenceCount: 0 })
+    input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount = 0
+    input.actionQueue.summary.stale = stale
+    const brief = composeOwnerWarRoomData(input).morningBrief.commandBrief
+    expect(brief.primaryAction).toBeNull()
+    expect(brief.conclusion).toContain(stale ? "Refresh stale evidence" : "No cash, close, or freshness blocker")
+  })
+
+  it("localizes owned narratives while preserving figures, provenance, source evidence and custom actions", () => {
+    const input = localizedInput("fr")
+    const original = JSON.stringify(input)
+    const fr = composeOwnerWarRoomData(input)
+    const en = composeOwnerWarRoomData({ ...input, locale: "en" })
+    expect(fr.morningBrief.commandBrief.title).toBe("Point du jour du dirigeant")
+    expect(fr.morningBrief.commandBrief.summary).toContain("125\u202f000 XAF")
+    expect(fr.morningBrief.commandBrief.summary).toContain("éléments de clôture bloqués : 1")
+    expect(fr.morningBrief.commandBrief.conclusion).toContain("Commencez par le risque de trésorerie")
+    expect(fr.morningBrief.zones.map(zone => zone.title)).toEqual(["Situation de trésorerie", "Prévisions financières de paie", "Situation du stock et de la trésorerie", "Préparation de la clôture", "Situation des paiements et rapprochements"])
+    expect(fr.morningBrief.zones[2].summary).toContain("450\u202f000 XAF")
+    expect(fr.morningBrief.priorityActions[0].dueLabel).toContain("Échéance :")
+    expect(fr.morningBrief.priorityActions[0].actionLink.label).toBe("Ouvrir")
+    expect(fr.proofSubjects[0].unavailableReason).toBe("Aucune écriture comptabilisée n’est visible pour cette période.")
+    expect(fr.morningBrief.headlineMetrics).toEqual(en.morningBrief.headlineMetrics)
+    expect(fr.morningBrief.commandBrief.provenance).toEqual(en.morningBrief.commandBrief.provenance)
+    expect(fr.actionQueue.actionItems).toEqual(input.actionQueue.actionItems)
+    expect(fr.cards.map(({ value, state, evidenceGrade, href, requiredPermission }) => ({ value, state, evidenceGrade, href, requiredPermission }))).toEqual(en.cards.map(({ value, state, evidenceGrade, href, requiredPermission }) => ({ value, state, evidenceGrade, href, requiredPermission })))
+    expect(fr.cards[0].redactions).toEqual(en.cards[0].redactions)
+    expect(JSON.stringify(input)).toBe(original)
+  })
+
+  it("keeps unavailable cash distinct from zero in French", () => {
+    const input = localizedInput("fr")
+    input.snapshots.paymentTruth = paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 })
+    const data = composeOwnerWarRoomData(input)
+    expect(data.morningBrief.headlineMetrics.cashAtRisk).toBeNull()
+    expect(data.morningBrief.commandBrief.summary).toContain("Trésorerie à risque : total indisponible")
+    expect(data.morningBrief.zones[0].summary).toContain("ventilation par devise")
+  })
+
+  it("routes reconciliation, payroll review and settings to their actual read-entry contracts", () => {
+    const data = composeOwnerWarRoomData(localizedInput("en"))
+    for (const id of ["cash_at_risk", "reconciliation_exceptions"]) {
+      expect(data.cards.find(card => card.id === id)).toMatchObject({ href: "/dashboard/finance/reconciliation", requiredPermission: "payments.reconciliation.read" })
+    }
+    expect(data.cards.find(card => card.id === "payroll_exposure")).toMatchObject({ href: "/dashboard/payroll/payments", requiredPermission: "payments.reconciliation.read" })
+    expect(data.cards.find(card => card.id === "module_observe")).toMatchObject({ href: "/dashboard/settings/modules", requiredPermission: "system.settings.update" })
+    expect(JSON.stringify([data.cards, data.morningBrief.zones, data.morningBrief.risks])).not.toContain("/dashboard/finance/payments")
+    expect(data.morningBrief.risks.find(risk => risk.id.includes("cash"))?.drillThrough).toMatchObject({ href: "/dashboard/finance/reconciliation" })
+  })
+
+  it("retains additional action permissions and localizes closed-action explanations", () => {
+    const input = localizedInput("fr")
+    input.actionQueue.actionItems[0].additionalRequiredPermissions = ["payroll.command.read"]
+    input.actionQueue.actionItems[0].status = "resolved"
+    const data = composeOwnerWarRoomData(input)
+    expect(data.morningBrief.priorityActions[0].actionLink).toMatchObject({ additionalRequiredPermissions: ["payroll.command.read"], disabled: true, disabledReason: "Cette action est résolue." })
+  })
+
+  it.each([
+    [undefined, false],
+    [[], false],
+    [["inventory.read"], false],
+    [["inventory.items.read"], false],
+    [["inventory.read", "inventory.items.read"], true],
+    [["*"], true],
+  ] as const)("aligns every stock handoff with item access for permissions %j", (actorPermissions, allowed) => {
+    const data = composeOwnerWarRoomData({
+      organizationId: "org-1", organizationName: "Owned", generatedAt, actorPermissions,
+      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
+      actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
+    })
+    const risk = data.morningBrief.risks.find(item => item.id === "owner-risk-stock-cash-exposure")!
+    const zone = data.morningBrief.zones.find(item => item.id === "owner-zone-stock-to-cash")!
+    expect(risk).toBeDefined()
+    expect(zone).toBeDefined()
+    expect(data.cards.find(item => item.id === "stock_cash_exposure")?.href).toBe("/dashboard/inventory/items")
+    for (const action of [risk.actionLink!, zone.actions[0], zone.primaryMetric!.actionLink!]) {
+      expect(action).toMatchObject({ href: "/dashboard/inventory/items", requiredPermission: "inventory.read", additionalRequiredPermissions: ["inventory.items.read"], disabled: !allowed })
+      const destination = getInventoryRouteSurfaceByRoute(action.href)
+      expect(destination).toBeDefined()
+      expect([action.requiredPermission, ...action.additionalRequiredPermissions!]).toEqual(expect.arrayContaining(destination!.permissions))
+      expect(action.disabledReason).toBe(allowed ? null : "Inventory item access is required to open this workspace.")
+    }
+    for (const drill of [risk.drillThrough, zone.drillThrough, zone.primaryMetric!.drillThrough]) {
+      expect(drill).toMatchObject({ available: allowed, additionalRequiredPermissions: ["inventory.items.read"] })
+      if (allowed) expect(drill).toHaveProperty("href", "/dashboard/inventory/items")
+      else expect(drill).not.toHaveProperty("href")
+    }
+    // Navigation denial must not relabel or zero the server-authorized summary.
+    expect(zone.primaryMetric).toMatchObject({ value: 450000, evidenceGrade: "operational" })
+    expect(JSON.stringify(data)).not.toContain("/dashboard/inventory/stock")
+  })
+
+  it.each([true, false])("uses current service actor permissions for stock navigation (item access=%s)", async allowed => {
+    mockOwnerWarRoomSources()
+    const result = await getOwnerWarRoomData({
+      organizationId: "org-1", actorId: "owner-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["dashboard.read", "inventory.read", ...(allowed ? ["inventory.items.read"] : [])],
+    })
+    expect(result.morningBrief.zones.find(zone => zone.id === "owner-zone-stock-to-cash")?.actions[0].disabled).toBe(!allowed)
+  })
+
   it("does not turn an unavailable currency total into zero cash risk", () => {
     const data = composeOwnerWarRoomData({ organizationId: "org-1", organizationName: "Owned", generatedAt, snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 }), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() }, actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }) })
     expect(data.cards.find(card => card.id === "cash_at_risk")).toMatchObject({ value: null, tone: "danger" })
@@ -130,7 +273,7 @@ describe("owner war room service", () => {
     ])
     expect(data.cards.find((card) => card.id === "payroll_exposure")).toMatchObject({
       state: "redacted",
-      requiredPermission: "payroll.read",
+      requiredPermission: "payments.reconciliation.read",
       value: 440000,
       unit: "value",
     })
@@ -160,7 +303,7 @@ describe("owner war room service", () => {
     expect(data.morningBrief.commandBrief).toMatchObject({
       title: "Owner morning brief",
       state: "blocked",
-      primaryAction: expect.objectContaining({ href: "/dashboard/finance/payments" }),
+      primaryAction: expect.objectContaining({ href: "/dashboard/finance/reconciliation" }),
     })
     expect(data.morningBrief.priorityActions).toEqual([
       expect.objectContaining({ title: "Resolve payment suspense", evidenceGrade: "blocked" }),
@@ -218,9 +361,9 @@ describe("owner war room service", () => {
         authoritative: false,
         reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
         message: "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
-        upcomingNetPayAmount: 0,
-        upcomingStatutoryLiabilityAmount: 0,
-        totalUpcomingAmount: 0,
+        upcomingNetPayAmount: null,
+        upcomingStatutoryLiabilityAmount: null,
+        totalUpcomingAmount: null,
         blockerCodes: ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING"],
       }),
     })
@@ -267,7 +410,7 @@ describe("owner war room service", () => {
     expect(card).toMatchObject({
       state: "blocked",
       tone: "danger",
-      value: 0,
+      value: null,
       blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
       redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
     })
@@ -345,7 +488,7 @@ describe("owner war room service", () => {
     expect(result.actionQueue.actionItems).toEqual([
       expect.objectContaining({
         signalType: "inventory_loss_review",
-        actionPath: "/dashboard/inventory/losses",
+        actionPath: "/dashboard/inventory/loss-control",
         requiredPermission: "inventory.levels.read",
       }),
     ])

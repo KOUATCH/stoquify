@@ -1,0 +1,39 @@
+{
+  "organizationId": "p07-org-97ee2d2e0f76",
+  "foreignOrganizationId": "p07-foreign-97ee2d2e0f76",
+  "actors": {
+    "maker": {
+      "id": "p07-maker-97ee2d2e0f76",
+      "email": "p07-maker-97ee2d2e0f76@retention.invalid"
+    },
+    "checker": {
+      "id": "p07-checker-97ee2d2e0f76",
+      "email": "p07-checker-97ee2d2e0f76@retention.invalid"
+    },
+    "foreign": {
+      "id": "p07-foreign-97ee2d2e0f76",
+      "email": "p07-foreign-97ee2d2e0f76@retention.invalid"
+    },
+    "denied": {
+      "id": "p07-denied-97ee2d2e0f76",
+      "email": "p07-denied-97ee2d2e0f76@retention.invalid"
+    }
+  },
+  "permissions": [
+    "dashboard.read",
+    "customers.read",
+    "customers.create",
+    "purchases.suppliers.read",
+    "purchases.suppliers.create",
+    "inventory.items.read",
+    "inventory.items.create"
+  ],
+  "csv": {
+    "CUSTOMER": "code,name\ncustomer-a,Synthetic customer\n",
+    "SUPPLIER": "code,name\nsupplier-a,Synthetic supplier\n",
+    "ITEM": "sku,nameEn,nameFr\nitem-each,Synthetic EA,Article EA\nitem-weight,Synthetic KG,Article KG\n"
+  },
+  "sourceVersion": "opening-fixture-v1",
+  "sourceSha256": "780e9561efc0d434bb4f6991aef6e22276793dba28eba62aae7dd43c6996c587",
+  "passwordKind": "known synthetic credential; no real customer"
+}

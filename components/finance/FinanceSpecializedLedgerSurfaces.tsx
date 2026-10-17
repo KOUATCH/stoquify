@@ -164,7 +164,7 @@ function useSpecializedFinanceDashboard(view: FinanceSpecializedView) {
 
   const dashboardQuery = useFinanceDashboard(queryInput)
   const response = dashboardQuery.data
-  const dashboard = response?.success ? response.data : null
+  const dashboard = !dashboardQuery.error && response?.success ? response.data : null
   const errorMessage = response && !response.success ? response.error : dashboardQuery.error instanceof Error ? dashboardQuery.error.message : null
   const currency = dashboard?.organization.currency ?? "USD"
   const moneyFormatter = useMemo(
@@ -286,6 +286,7 @@ function SurfaceFrame({
                   {dateFormatter.format(new Date(dashboard.filters.startDate))} - {dateFormatter.format(new Date(dashboard.filters.endDate))}
                 </Badge>
                 <span>{t("updated", { time: formatDateTime(dashboard.generatedAt) })}</span>
+                <span>{dashboard.organization.currency}</span>
               </div>
             ) : null}
           </div>
@@ -304,6 +305,16 @@ function SurfaceFrame({
       ) : null}
 
       {dashboard ? <>
+        {context.view !== "payments" ? <section aria-label={surfaceT("workQueue.title")} className={cn(dashboardPanelClass, "space-y-3 p-4")}>
+          <h2 className="font-semibold">{surfaceT(`workQueue.${context.view}Title`)}</h2>
+          <p className={cn(dashboardMutedTextClass, "text-sm")}>{surfaceT(`workQueue.${context.view}Help`)}</p>
+          <p className={cn(dashboardMutedTextClass, "text-sm")}>{surfaceT("workQueue.summaryScope")}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" className="dashboard-button-secondary"><Link href={context.localizedHref(context.view === "receivables" ? "/dashboard/finance/receivables/history" : "/dashboard/purchases/payables")}><FileText className="mr-2 h-4 w-4" aria-hidden="true" />{surfaceT(`workQueue.${context.view}Action`)}</Link></Button>
+            {context.view === "payables" ? <Button asChild variant="outline" className="dashboard-button-secondary"><Link href={context.localizedHref("/dashboard/purchases/payables/history")}><History className="mr-2 h-4 w-4" aria-hidden="true" />{surfaceT("actions.apHistory")}</Link></Button> : null}
+          </div>
+          <p className={cn(dashboardMutedTextClass, "text-xs")}>{surfaceT("workQueue.scope")}</p>
+        </section> : null}
         <WorkspaceSectionNavigation label={t("presentation.navigation")} items={[
           { id: "ledger-overview", label: t("cashFlow.navigationLabels.overview") },
           { id: "ledger-analysis", label: context.view === "payments" ? t("sections.methods") : surfaceT(`${context.view}.sections.aging`) },
@@ -1208,6 +1219,7 @@ function AgingPanel({
   empty,
   localizedHref,
   counterpartyHref,
+  scopeLabel,
 }: {
   title: string
   description: string
@@ -1218,6 +1230,7 @@ function AgingPanel({
   empty: string
   localizedHref: (href: string) => string
   counterpartyHref: (party: FinanceCounterparty) => string
+  scopeLabel: string
 }) {
   const total = Math.max(1, aging.current + aging.d31 + aging.d61 + aging.d90)
   const buckets: Array<[keyof FinanceAgingSummary, string, string]> = [
@@ -1249,6 +1262,7 @@ function AgingPanel({
             </div>
           ))}
         </div>
+        <p className={cn(dashboardMutedTextClass, "text-xs")}>{scopeLabel}</p>
         <div className="space-y-2">
           {counterparties.length === 0 ? (
             <div className={cn(dashboardEmptyClass, "p-6")}>{empty}</div>
@@ -1260,7 +1274,7 @@ function AgingPanel({
             >
               <div className="min-w-0">
                 <div className="truncate font-medium">{party.name}</div>
-                <div className="text-xs text-[var(--dash-text-soft)]">{party.terms ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")}</div>
+                <div className="text-xs text-[var(--dash-text-soft)]">{party.terms !== null ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")}</div>
               </div>
               <Badge variant="outline" className={cn("shrink-0", dashboardSeverityClass(party.severity))}>{money(party.balance)}</Badge>
             </Link>
@@ -1395,6 +1409,7 @@ export function FinanceReceivablesSurface() {
               description={surfaceT("receivables.sections.agingDescription")}
               aging={dashboard.aging.receivables}
               counterparties={dashboard.topReceivables}
+              scopeLabel={surfaceT("workQueue.balanceScope", { count: dashboard.topReceivables.length })}
               money={money}
               t={t}
               empty={surfaceT("empty.receivables")}
@@ -1424,6 +1439,7 @@ export function FinanceReceivablesSurface() {
                   <h2>{surfaceT("receivables.sections.receipts")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("receivables.sections.receiptsDescription")}</CardDescription>
+                <p className={cn("text-xs", dashboardMutedTextClass)}>{surfaceT("workQueue.recentScope")}</p>
               </CardHeader>
               <CardContent>
                 <PaymentsTable
@@ -1491,6 +1507,7 @@ export function FinancePayablesSurface() {
               description={surfaceT("payables.sections.agingDescription")}
               aging={dashboard.aging.payables}
               counterparties={dashboard.topPayables}
+              scopeLabel={surfaceT("workQueue.balanceScope", { count: dashboard.topPayables.length })}
               money={money}
               t={t}
               empty={surfaceT("empty.payables")}
@@ -1520,6 +1537,7 @@ export function FinancePayablesSurface() {
                   <h2>{surfaceT("payables.sections.disbursements")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payables.sections.disbursementsDescription")}</CardDescription>
+                <p className={cn("text-xs", dashboardMutedTextClass)}>{surfaceT("workQueue.recentScope")}</p>
               </CardHeader>
               <CardContent>
                 <PaymentsTable

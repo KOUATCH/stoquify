@@ -1,0 +1,81 @@
+{
+  "at": "2026-09-30T17:03:42.355Z",
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "1977190b728bf5861990ef41275e65288efe5f635baa77856373db444e5263ba",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "2694b41c8e16a57e77de81c464485b9deda0c2b49955f291f42d50aad0052941",
+    "services/evidence/__tests__/payment-proof-coverage.service.test.ts": "fe58e5a60ac1cfee6b19c3c676dbf2210d20512ae232265a67bbeeab6cc06635",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "f8a57c996aa50a436cdc9bd05d3ad02df7151873dfffc83ca120804b42c5493b"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/close-proof-invalidation.service.test.ts",
+        "services/evidence/__tests__/payment-proof-coverage.service.test.ts",
+        "services/evidence/__tests__/evidence-grade.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "actions/evidence/__tests__/proof-trail.module-boundary.test.ts",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx",
+        "services/accounting/__tests__/close-assurance-pack.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 8 passed, 8 total\nTests:       91 passed, 91 total\nSnapshots:   0 total\nTime:        35.407 s\nRan all test suites within paths \"services/evidence/__tests__/proof-trail.service.test.ts\", \"services/evidence/__tests__/close-proof-invalidation.service.test.ts\", \"services/evidence/__tests__/payment-proof-coverage.service.test.ts\", \"services/evidence/__tests__/evidence-grade.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"actions/evidence/__tests__/proof-trail.module-boundary.test.ts\", \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\", \"services/accounting/__tests__/close-assurance-pack.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/evidence/proof-trail.service.ts",
+        "services/evidence/evidence-grade.service.ts",
+        "components/evidence/proof-trail-presentation.ts",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/close-proof-invalidation.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "1977190b728bf5861990ef41275e65288efe5f635baa77856373db444e5263ba",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "2694b41c8e16a57e77de81c464485b9deda0c2b49955f291f42d50aad0052941",
+    "services/evidence/__tests__/payment-proof-coverage.service.test.ts": "fe58e5a60ac1cfee6b19c3c676dbf2210d20512ae232265a67bbeeab6cc06635",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "f8a57c996aa50a436cdc9bd05d3ad02df7151873dfffc83ca120804b42c5493b"
+  },
+  "sourceStable": true,
+  "passed": true
+}

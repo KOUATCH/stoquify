@@ -312,9 +312,44 @@ export async function createManualJournalEntry(
     await assertModuleNewWorkInTx(tx, { organizationId, moduleSlug: "accounting", operation: "accounting.manual-journal.create" })
     const journal = await assertJournalIsManualReady(organizationId, input.journalId, tx)
     const period = await getOpenPeriodForDate(organizationId, entryDate, tx)
+    const settings = await tx.organizationAccountingSettings.findUnique({ where: { organizationId } })
+    if (!settings) throw new BusinessRuleError("Initialize accounting settings before creating a manual journal")
+    const baseCurrency = normalizeCurrency(settings.baseCurrency)
+    // Journal amounts are persisted at two decimals. Other rounding contracts
+    // require an explicit migration, not an implicit change to existing entries.
+    if (settings.roundingScale !== 2 || settings.roundingMode !== "HALF_UP") {
+      throw new BusinessRuleError("Manual journals require the supported two-decimal HALF_UP rounding policy")
+    }
+    const preparedLines = input.lines.map((line) => {
+      const currency = normalizeCurrency(line.currency || baseCurrency)
+      if (currency !== baseCurrency && (line.exchangeRate === undefined || line.exchangeRate === null || line.exchangeRate === "")) {
+        throw new BusinessRuleError(`An exchange rate is required for ${currency} to ${baseCurrency}`)
+      }
+      let exchangeRate: Prisma.Decimal
+      try {
+        exchangeRate = new Prisma.Decimal(line.exchangeRate ?? 1)
+      } catch {
+        throw new BusinessRuleError("Exchange rate must be a positive finite decimal")
+      }
+      if (!exchangeRate.isFinite() || exchangeRate.lte(0) || exchangeRate.decimalPlaces() > 6) {
+        throw new BusinessRuleError("Exchange rate must be positive, finite and have at most six decimal places")
+      }
+      if (currency === baseCurrency && !exchangeRate.eq(1)) {
+        throw new BusinessRuleError("Base-currency journal lines require an exchange rate of one")
+      }
+      const debit = toDecimal(line.debit)
+      const credit = toDecimal(line.credit)
+      if (!debit.isFinite() || !credit.isFinite()) throw new BusinessRuleError("Journal amounts must be finite")
+      return {
+        ...line, currency, exchangeRate, debit, credit,
+        baseDebit: debit.times(exchangeRate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP),
+        baseCredit: credit.times(exchangeRate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP),
+      }
+    })
 
-    await assertLinesUsePostableAccounts(organizationId, input.lines, tx)
-    assertBalancedJournalEntry(input.lines)
+    await assertLinesUsePostableAccounts(organizationId, preparedLines, tx)
+    assertBalancedJournalEntry(preparedLines)
+    assertBalancedJournalEntry(preparedLines.map((line) => ({ debit: line.baseDebit, credit: line.baseCredit, currency: baseCurrency })))
 
     const entry = await tx.journalEntry.create({
       data: {
@@ -323,14 +358,14 @@ export async function createManualJournalEntry(
         periodId: period.id,
         entryNumber: await nextEntryNumber(tx, organizationId, entryDate),
         entryDate,
-        currency: normalizeCurrency(input.lines[0]?.currency),
+        currency: preparedLines[0]?.currency || baseCurrency,
         memo: input.memo?.trim() || null,
         reference: input.reference?.trim() || null,
         sourceType: AccountingSourceType.MANUAL,
         postingPurpose: AccountingPostingPurpose.MANUAL_JOURNAL,
         createdById: actorId,
         lines: {
-          create: input.lines.map((line, index) => {
+          create: preparedLines.map((line, index) => {
             const debit = toDecimal(line.debit)
             const credit = toDecimal(line.credit)
             const exchangeRate = line.exchangeRate ? new Prisma.Decimal(line.exchangeRate) : new Prisma.Decimal(1)
@@ -344,8 +379,8 @@ export async function createManualJournalEntry(
               credit,
               currency: normalizeCurrency(line.currency),
               exchangeRate,
-              baseDebit: debit,
-              baseCredit: credit,
+              baseDebit: line.baseDebit,
+              baseCredit: line.baseCredit,
               locationId: line.locationId || null,
               customerId: line.customerId || null,
               supplierId: line.supplierId || null,

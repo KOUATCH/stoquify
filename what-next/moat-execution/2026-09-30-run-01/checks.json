@@ -1,0 +1,65 @@
+{
+  "at": "2026-09-30T14:47:24.461Z",
+  "results": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "services/accounting/__tests__/accountant-work-desk.service.test.ts",
+        "components/accounting/__tests__/AccountantWorkDesk.test.tsx",
+        "actions/accounting/__tests__/accountant-work-desk.actions.test.ts",
+        "services/accounting/__tests__/accountant-access.service.test.ts",
+        "services/accounting/__tests__/missing-close-evidence-request-queue.service.test.ts",
+        "services/accounting/__tests__/missing-close-evidence-accountant-review-queue.service.test.ts",
+        "services/accounting/__tests__/close-assurance.service.test.ts",
+        "actions/accounting/__tests__/data-trust.actions.test.ts",
+        "hooks/__tests__/useAccountantPortal.scope.test.tsx",
+        "services/accounting/__tests__/data-trust.service.test.ts",
+        "actions/accounting/__tests__/close-assurance.actions.test.ts",
+        "--runInBand",
+        "--json",
+        "--outputFile=what-next/moat-execution/2026-09-30-run-01/regression-tests.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/accounting/accountant-work-desk.service.ts",
+        "services/accounting/accountant-work-desk.contracts.ts",
+        "components/accounting/AccountantWorkDesk.tsx",
+        "components/accounting/accountant-work-desk-copy.ts",
+        "components/accounting/AccountantPortfolio.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx",
+        "--max-warnings",
+        "0"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "boundary",
+      "args": [
+        "scripts/service-boundary-gate.js",
+        "--mode",
+        "fail",
+        "--baseline",
+        "what-next/service-boundary-ratchet-baseline-current.json",
+        "--json-out",
+        "what-next/moat-execution/2026-09-30-run-01/service-boundary.json"
+      ],
+      "exitCode": 0
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+--- a/components/finance/PaymentReconciliationWorkbench.tsx
++++ b/components/finance/PaymentReconciliationWorkbench.tsx
+@@ -57,6 +57,8 @@
+ import { ReconciliationSignReview, type SignedRunForExport } from "./ReconciliationSignReview"
+ import type { ReconciliationCertificateExportCommand } from "@/services/reconciliation/reconciliation-certificate-export.contracts"
+ import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
++import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
++import { localizePath } from "@/i18n/routing"
+ import { useNotifications } from "@/components/notifications/NotificationProvider"
+ import { usePermissions } from "@/hooks/usePermissions"
+ import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+@@ -513,8 +515,22 @@
+   if (workbenchQuery.isLoading && !workbench) return <LoadingState />
+ 
+   if (errorMessage && !workbench) {
++    if ((workbenchQuery.error as { code?: string })?.code === "FORBIDDEN") {
++      const isFrench = locale === "fr"
++      return <DashboardRouteState embedded kind="permission_denied" locale={isFrench ? "fr" : "en"}
++        title={isFrench ? "L’accès au rapprochement doit être vérifié" : "Reconciliation access needs review"}
++        message={isFrench
++          ? "Votre accès actuel n’a pas pu être confirmé. Consultez vos autorisations ou relancez leur vérification."
++          : "Your current access could not be confirmed. Review your permissions or refresh the access check."}
++        primaryHref={localizePath("/dashboard/access-requests", isFrench ? "fr" : "en")}
++        primaryLabel={isFrench ? "Vérifier mes autorisations" : "Review my access"}
++        actions={<Button type="button" variant="outline" className="h-auto min-h-10 whitespace-normal"
++          onClick={() => { void authority.refreshPermissions() }}>
++          {isFrench ? "Actualiser les autorisations" : "Refresh access check"}
++        </Button>} />
++    }
+     return <DashboardErrorState locale={locale === "fr" ? "fr" : "en"} error="Payment reconciliation workbench unavailable"
+-      reset={(workbenchQuery.error as { code?: string })?.code === "FORBIDDEN" ? undefined : () => { void workbenchQuery.refetch() }} />
++      reset={() => { void workbenchQuery.refetch() }} />
+   }
+ 
+   const canonicalTableQuery = createCanonicalTableQuery(paymentReconciliationTableContract, {
+--- a/components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx
++++ b/components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx
+@@ -5,8 +5,10 @@
+   return renderWithTestingLibrary(ui, { wrapper: ({ children }) => <QueryClientProvider client={client}>{children}</QueryClientProvider> })
+ }
+ import { usePermissions } from "@/hooks/usePermissions"
++import { useLocale } from "next-intl"
+ import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+ 
++jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
+ jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn(() => ({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })) }))
+ jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
+ jest.mock("@/actions/payments/alert-scan-recovery.actions", () => ({ readAlertScanRecoveryAction: jest.fn().mockResolvedValue({ ok: false, code: "UNAVAILABLE" }), recoverAlertScanPageAction: jest.fn() }))
+@@ -32,7 +34,7 @@
+ })
+ 
+ jest.mock("next-intl", () => ({
+-  useLocale: () => "en-US",
++  useLocale: jest.fn(() => "en-US"),
+   useTranslations: () => (key: string, values?: Record<string, string | number>) => {
+     const messages: Record<string, string> = {
+       title: "Payment reconciliation workbench",
+@@ -395,6 +397,45 @@
+   return row
+ }
+ 
++describe("reconciliation read recovery", () => {
++  afterEach(() => {
++    jest.mocked(useLocale).mockReturnValue("en-US")
++    ;(usePermissions as jest.Mock).mockReturnValue({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })
++  })
++
++  it.each(["en", "fr"])("offers a scoped access review and permission refresh in %s", locale => {
++    jest.mocked(useLocale).mockReturnValue(locale)
++    const refreshPermissions = jest.fn()
++    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions, hasPermission: () => false, user: { id: "checker-1" } })
++    const page = setupWorkbench()
++    const readAgain = jest.fn()
++    mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: false, error: Object.assign(new Error("PRIVATE_DIAGNOSTIC"), { code: "FORBIDDEN" }), refetch: readAgain })
++    page.rerender(<PaymentReconciliationWorkbench />)
++    expect(screen.getByRole("heading", { name: locale === "fr" ? "L’accès au rapprochement doit être vérifié" : "Reconciliation access needs review" })).toBeInTheDocument()
++    expect(screen.getByRole("link", { name: locale === "fr" ? "Vérifier mes autorisations" : "Review my access" })).toHaveAttribute("href", `/${locale}/dashboard/access-requests`)
++    fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Actualiser les autorisations" : "Refresh access check" }))
++    expect(refreshPermissions).toHaveBeenCalledTimes(1)
++    expect(readAgain).not.toHaveBeenCalled()
++    expect(screen.queryByText("PRIVATE_DIAGNOSTIC")).not.toBeInTheDocument()
++    expect(screen.queryByRole("heading", { name: "Payment reconciliation workbench" })).not.toBeInTheDocument()
++    expect(page.container.querySelector("main")).toBeNull()
++  })
++
++  it("retries the read for a service failure without misclassifying it as denied access", () => {
++    const log = jest.spyOn(console, "error").mockImplementation(() => {})
++    try {
++      const page = setupWorkbench()
++      const readAgain = jest.fn()
++      mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: false, error: new Error("PRIVATE_DIAGNOSTIC"), refetch: readAgain })
++      page.rerender(<PaymentReconciliationWorkbench />)
++      expect(screen.queryByRole("link", { name: "Review my access" })).not.toBeInTheDocument()
++      fireEvent.click(screen.getByRole("button"))
++      expect(readAgain).toHaveBeenCalledTimes(1)
++      expect(screen.queryByText("PRIVATE_DIAGNOSTIC")).not.toBeInTheDocument()
++    } finally { log.mockRestore() }
++  })
++})
++
+ describe("PaymentTrustBanner", () => {
+   it.each(["REQUESTED", "RUNNING", "FAILED", "COMPLETE"] as const)("shows authoritative %s scan progress without treating it as issue resolution", async state => {
+     setupWorkbench(workbenchData(), { ...dashboard, alertScan: { kind: "RECONCILIATION_ALERT_SCAN_V1", scanId: "c781b497-8491-46b9-bc94-e626b2c28816", workerId: "worker-1", startedAt: "2026-09-09T10:00:00Z", updatedAt: "2026-09-09T10:01:00Z", completedAt: null, state, phase: "SUSPENSE", cursor: null, version: 1, examined: 100, created: 90, errorCode: state === "FAILED" ? "ALERT_SCAN_PAGE_FAILED" : null } })
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**14 October — Delivery 11:** reconciliation now distinguishes an unconfirmed access check from a generic service failure, offers localized access review and refreshes the existing permission lookup. Local runtime recovered on port 3003; browser currently requires sign-in. This does not close the unresolved populated-accountant or responsive checks. See [Delivery 11](EXECUTION-11.md).
++
+ **Delivery 10 role acceptance update:** the Edge session now confirms ACCOUNTANT. The English dashboard correctly displays the permission limit and access-review action, closing that specific Delivery 02 rendered check. Reconciliation reached its accountant shell but remained loading; console reported workbench unavailable. Accountant portal, French and responsive checks remain blocked by runtime/browser failures, not by a missing sign-in. See [Delivery 10](EXECUTION-10.md). Historical role-gap notes below describe earlier observations.
+ 
+ 1. **Shared canvas and navigation:** implemented in this run; broad visual impact and shorter mobile navigation.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-11.md
+@@ -0,0 +1,48 @@
++# Delivery 11 — Reconciliation access recovery
++
++Date: 14 October 2026. Revision inspected: `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`, with substantial pre-existing working-tree changes. This delivery is a narrow presentation correction and runtime recovery attempt, not completion of the role acceptance matrix.
++
++## Change
++
++`PaymentReconciliationWorkbench` previously rendered the generic service-error page for `FORBIDDEN`, with a full-page reload as its only recovery. The current read hook uses that code when current read authority cannot be confirmed, including a failed permission lookup; it does not establish that the organization was deleted or that the role definitively lacks every relevant permission.
++
++The workbench now presents an English/French access-review state, a locale-preserving link to the existing access-review destination, and a button to refresh the existing permission lookup. It does not directly force a financial read when access is unconfirmed. Other service failures retain the read retry. The access panel reuses the existing embedded route-state primitive and does not add a second main landmark. Internal error text remains outside visible task copy.
++
++No server guard, entitlement, tenant binding, query scope, mutation, payment approval or financial calculation changed. The code does not claim to resolve the unidentified loading failure recorded in Delivery 10.
++
++## Verification
++
++- Workflow contract: passed; 196 scripts remain outside the reviewed manifest. Reviewed the current script, registry and lifecycle entries before running it.
++- Production-file ESLint: passed with exit 0.
++- Scoped TypeScript: passed with exit 0, using normal dependency resolution, `noEmit`, no incremental metadata, and the normal Next environment declarations. An initial configuration omission of CSS-module declarations was corrected in the scoped check configuration; no application types were weakened.
++- Mocked tests: **52 passed across two suites**, exit 0; final result recorded in `evidence/delivery-11-tests.json`. The lane includes the real component with mocked application actions/permission hooks, plus the existing actor/organization/revocation scope-hook suite. Initial runs exposed a missing Jest routing mock and test-state leakage; both were corrected in the owned test changes.
++- Browser: authenticated acceptance remains pending. No database test, migration, seed, build or deployment ran.
++
++Commands:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.reconciliation-recovery.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-11-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.reconciliation-recovery.json --pretty false
++node node_modules/eslint/bin/eslint.js components/finance/PaymentReconciliationWorkbench.tsx
++```
++
++## Current browser/runtime evidence
++
++The previously used application was not reachable at localhost:3000. The current repository already contained a new safe-development runner and configuration changes; these were inspected and retained. The runner creates a fresh output directory and session-specific TypeScript configuration. It loads the normal application environment and can access configured services, so it is not a database-isolated test.
++
++A sandbox-started process reported ready but was not reachable by the connected browser. That owned process was stopped. A host-accessible instance was then started with the same reviewed runner on loopback port 3003, with hidden process startup and separate local stdout/stderr files. No npm predev/Prisma helper was invoked. The host process remains available for user sign-in; runtime output is `.next-dev-session-o0Vvph`, with logs `.codex-tmp/ui11-host-dev.*.log`. The runner also generates the normal Next environment route reference; generated runtime artifacts are outside the owned source patch.
++
++| Route | Browser / role | Locale / viewport / state | Result |
++|---|---|---|---|
++| `/en/dashboard/finance/reconciliation`, port 3000 | Edge; role not available | EN; normal viewport; connection refused/timed out | No authenticated content verified |
++| `/en/dashboard/finance/reconciliation`, port 3003 | Edge; unauthenticated | EN; normal viewport | Redirected to login with the reconciliation callback retained |
++| `/en/login?callbackUrl=%2Fen%2Fdashboard%2Ffinance%2Freconciliation`, port 3003 | Edge; unauthenticated | EN; normal viewport; login | Sign-in form and return context rendered. Tab preserved for user sign-in |
++
++No viewport override was applied during this delivery. The user was asked to sign in through the browser, without sharing credentials. No permission or module changes, business transactions, messages or invitations were submitted. Normal reads may produce application audit records.
++
++## Open acceptance and rollback
++
++After accountant sign-in: inspect reconciliation's populated or accurately denied/error state, then French access recovery, accountant portal/access-review destinations, mobile/tablet containment and keyboard focus. Actual owner/cashier journeys and screen-reader checks remain open. Yesterday's accountant evidence remains valid only for its recorded context; today's unauthenticated page does not certify the changed recovery panel in a real role session.
++
++Use `evidence/delivery-11-owned.patch` and its captured baseline for scoped rollback. Do not reset the component/test to HEAD: both contained unrelated changes before this delivery. New check configurations and this report can be removed independently. Nothing was committed or deployed.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.reconciliation-recovery.config.cjs
+@@ -0,0 +1,12 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Reviewed mocked component/hook lane: no application config, env, database or server setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/components/finance/__tests__', '<rootDir>/hooks/payments/__tests__'],
++  testMatch: ['<rootDir>/components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx',
++    '<rootDir>/hooks/payments/__tests__/workbench-scope.test.tsx'],
++  collectCoverage: false,
++})
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.reconciliation-recovery.json
+@@ -0,0 +1,7 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
++  "files": ["../../../../next-env.d.ts", "../../../../components/finance/PaymentReconciliationWorkbench.tsx"],
++  "include": [],
++  "exclude": []
++}

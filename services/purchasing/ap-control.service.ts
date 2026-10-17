@@ -29,6 +29,8 @@ import {
 
 import { db } from "@/prisma/db"
 import { invoicePreparationSourceHash } from "./invoice-source-evidence"
+import { resolveInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
+import { netUninvoicedReceiptReturns } from "./receipt-invoice-capacity"
 import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
@@ -391,7 +393,9 @@ function conditionMatches(condition: Prisma.JsonValue | null | undefined, contex
   if (!condition || typeof condition !== "object" || Array.isArray(condition)) return true
 
   return Object.entries(condition as Record<string, unknown>).every(([key, expected]) => {
-    const actual = context[key]
+    // Historical invoices had no recognition context. Keep their legacy rule
+    // branch available without changing retained posting request hashes.
+    const actual = key === "receiptRecognition" ? (context[key] ?? "LEGACY") : context[key]
     if (Array.isArray(expected)) return expected.includes(actual)
     return actual === expected
   })
@@ -692,7 +696,7 @@ async function writeAPLedgerPosting(
     sourceDate: Date
     postingPurpose: AccountingPostingPurpose
     journalType: JournalType
-    journalPrefix: "APINV" | "APPAY" | "APRET" | "APCR"
+    journalPrefix: "APINV" | "APPAY" | "APRET" | "APCR" | "APGR"
     actorId?: string | null
     supplierId: string
     currency: string
@@ -814,7 +818,9 @@ async function writeAPLedgerPosting(
         debit: line.side === PostingRuleLineSide.DEBIT ? amount : new Prisma.Decimal(0),
         credit: line.side === PostingRuleLineSide.CREDIT ? amount : new Prisma.Decimal(0),
         mappingKey: normalizeMappingKey(line.mappingKey),
+        resolvedMappingKey: normalizeMappingKey(account.mappingKey),
         amountSource: line.amountSource,
+        explicitNonStockTreatment: !!line.condition && typeof line.condition === "object" && !Array.isArray(line.condition) && line.condition.receiptResidualTreatment === "NON_STOCK",
       }
     })
     .filter(Boolean) as Array<{
@@ -824,7 +830,9 @@ async function writeAPLedgerPosting(
     debit: Prisma.Decimal
     credit: Prisma.Decimal
     mappingKey: string | null
+    resolvedMappingKey: string | null
     amountSource: PostingRuleAmountSource
+    explicitNonStockTreatment: boolean
   }>
 
   const debitTotal = postingLines
@@ -833,6 +841,162 @@ async function writeAPLedgerPosting(
   const creditTotal = postingLines
     .reduce((total, line) => total.plus(line.credit), new Prisma.Decimal(0))
     .toDecimalPlaces(2)
+
+  if (input.sourceType === AccountingSourceType.GOODS_RECEIPT) {
+    const zero = new Prisma.Decimal(0)
+    const cost = input.amounts.costAmount ?? input.amounts.sourceAmount
+    const expected = new Map([
+      ["INVENTORY", { debit: cost, credit: zero }],
+      ["GRNI", { debit: zero, credit: cost }],
+    ])
+    const matches = input.postingPurpose === AccountingPostingPurpose.GOODS_RECEIPT && cost.gt(0) &&
+      input.amounts.sourceAmount.eq(cost) && input.amounts.netAmount.eq(cost) &&
+      input.amounts.grossAmount.eq(cost) && input.amounts.taxAmount.eq(0) &&
+      postingLines.every(line => !!line.resolvedMappingKey && expected.has(line.resolvedMappingKey)) &&
+      [...expected].every(([key, amount]) => {
+        const lines = postingLines.filter(line => line.resolvedMappingKey === key)
+        return lines.reduce((sum, line) => sum.plus(line.debit), zero).eq(amount.debit) &&
+          lines.reduce((sum, line) => sum.plus(line.credit), zero).eq(amount.credit)
+      })
+    if (!matches) {
+      const blockerCode = "GOODS_RECEIPT_RULE_REVIEW"
+      const message = "Receipt rules must recognize the accepted inventory cost against the goods-received accrual. Review the resolved accounts and amounts before recovery."
+      const ledgerBatch = await createLedgerBlocker(tx, {
+        organizationId: input.organizationId, periodId: input.periodId, sourceType: input.sourceType,
+        sourceId: input.sourceId, postingPurpose: input.postingPurpose, actorId: input.actorId,
+        documentHash: input.documentHash, blockerCode, message,
+        metadata: safeJson({ ...input.metadata, postingRuleId: rule.id, postingRuleCode: rule.code }),
+      })
+      return { ledgerBatch, ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode, blockerMessage: message }
+    }
+  }
+
+  if (input.sourceType === AccountingSourceType.PURCHASE_RETURN) {
+    const zero = new Prisma.Decimal(0), cost = input.amounts.costAmount ?? zero
+    const grni = input.amounts.varianceAmount ?? zero
+    const expected = new Map([
+      ["INVENTORY", { debit: zero, credit: cost }],
+      ["SUPPLIER_RETURN_CLAIM", { debit: input.amounts.netAmount, credit: zero }],
+      ["GRNI", { debit: grni, credit: zero }],
+    ])
+    const matches = input.postingPurpose === AccountingPostingPurpose.PURCHASE_RETURN &&
+      input.conditionContext?.receiptReturnRecognition === "VERIFIED" &&
+      typeof input.conditionContext.receiptReturnRecognitionHash === "string" &&
+      input.conditionContext.receiptReturnRecognitionHash.length > 0 &&
+      cost.gt(0) && input.amounts.netAmount.gte(0) && grni.gte(0) &&
+      input.amounts.sourceAmount.eq(cost) && input.amounts.grossAmount.eq(cost) &&
+      input.amounts.netAmount.plus(grni).eq(cost) && input.amounts.taxAmount.eq(0) &&
+      postingLines.every(line => !!line.resolvedMappingKey && expected.has(line.resolvedMappingKey)) &&
+      [...expected].every(([key, amount]) => {
+        const lines = postingLines.filter(line => line.resolvedMappingKey === key)
+        return lines.reduce((sum, line) => sum.plus(line.debit), zero).eq(amount.debit) &&
+          lines.reduce((sum, line) => sum.plus(line.credit), zero).eq(amount.credit)
+      })
+    if (!matches) {
+      const blockerCode = "PURCHASE_RETURN_RECOGNITION_RULE_REVIEW"
+      const message = "Return rules must release only verified inventory cost, supplier claims and goods-received accruals. Review the source allocation and resolved accounts."
+      const ledgerBatch = await createLedgerBlocker(tx, {
+        organizationId: input.organizationId, periodId: input.periodId, sourceType: input.sourceType,
+        sourceId: input.sourceId, postingPurpose: input.postingPurpose, actorId: input.actorId,
+        documentHash: input.documentHash, blockerCode, message,
+        metadata: safeJson({ ...input.metadata, postingRuleId: rule.id, postingRuleCode: rule.code }),
+      })
+      return { ledgerBatch, ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode, blockerMessage: message }
+    }
+  }
+
+  if (input.sourceType === AccountingSourceType.SUPPLIER_CREDIT_NOTE && input.conditionContext?.receiptCreditRecognition === "VERIFIED") {
+    const zero = new Prisma.Decimal(0), claim = input.amounts.costAmount ?? zero
+    const variance = input.amounts.varianceAmount ?? zero
+    const difference = input.amounts.netAmount.minus(claim)
+    const direction = difference.gte(0) ? "CREDIT" : "DEBIT"
+    const expected = new Map([
+      ["ACCOUNTS_PAYABLE", { debit: input.amounts.grossAmount, credit: zero }],
+      ["SUPPLIER_RETURN_CLAIM", { debit: zero, credit: claim }],
+      ["INPUT_VAT", { debit: zero, credit: input.amounts.taxAmount }],
+      ["INVENTORY_VARIANCE", { debit: direction === "DEBIT" ? variance : zero, credit: direction === "CREDIT" ? variance : zero }],
+    ])
+    const matches = input.postingPurpose === AccountingPostingPurpose.SUPPLIER_CREDIT_NOTE &&
+      typeof input.conditionContext.receiptCreditRecognitionHash === "string" && input.conditionContext.receiptCreditRecognitionHash.length > 0 &&
+      input.conditionContext.receiptCreditVarianceDirection === direction && variance.eq(difference.abs()) &&
+      input.amounts.netAmount.gte(0) && input.amounts.taxAmount.gte(0) && claim.gte(0) &&
+      input.amounts.sourceAmount.eq(input.amounts.grossAmount) && input.amounts.netAmount.plus(input.amounts.taxAmount).eq(input.amounts.grossAmount) &&
+      postingLines.every(line => !!line.resolvedMappingKey && expected.has(line.resolvedMappingKey)) &&
+      [...expected].every(([key, amount]) => {
+        const lines = postingLines.filter(line => line.resolvedMappingKey === key)
+        return lines.reduce((sum, line) => sum.plus(line.debit), zero).eq(amount.debit) &&
+          lines.reduce((sum, line) => sum.plus(line.credit), zero).eq(amount.credit)
+      })
+    if (!matches) {
+      const blockerCode = "SUPPLIER_CREDIT_RECOGNITION_RULE_REVIEW"
+      const message = "Supplier credit rules must release the verified payable, tax, return claim and allocated receipt rounding variance. Review the source allocation and resolved accounts."
+      const ledgerBatch = await createLedgerBlocker(tx, {
+        organizationId: input.organizationId, periodId: input.periodId, sourceType: input.sourceType,
+        sourceId: input.sourceId, postingPurpose: input.postingPurpose, actorId: input.actorId,
+        documentHash: input.documentHash, blockerCode, message,
+        metadata: safeJson({ ...input.metadata, postingRuleId: rule.id, postingRuleCode: rule.code }),
+      })
+      return { ledgerBatch, ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode, blockerMessage: message }
+    }
+  }
+
+  if (input.sourceType === AccountingSourceType.SUPPLIER_INVOICE && input.conditionContext?.receiptRecognition === "ACCRUAL") {
+    const zero = new Prisma.Decimal(0)
+    const variance = input.amounts.varianceAmount ?? zero
+    const nonStock = input.conditionContext.receiptResidualTreatment === "NON_STOCK"
+    // Non-stock identifies the source, not its statutory classification. Only
+    // an explicit tenant rule can choose its account; generic inventory recipes
+    // must not silently capitalize the residual. Validate actual accounts again
+    // so a stale direct account reference cannot evade tenant/leaf controls.
+    const residualLines = nonStock ? postingLines.filter(line => line.explicitNonStockTreatment &&
+      line.amountSource === PostingRuleAmountSource.SOURCE_AMOUNT && line.debit.gt(0) && line.credit.eq(0)) : []
+    const residualAccounts = residualLines.length ? await tx.chartOfAccount.findMany({
+      where: { organizationId: input.organizationId, id: { in: [...new Set(residualLines.map(line => line.accountId))] }, isActive: true, deletedAt: null },
+      include: { _count: { select: { children: true } } },
+    }) : []
+    const protectedMappings = new Set(["INVENTORY", "GRNI", "INPUT_VAT", "ACCOUNTS_PAYABLE", "ACCOUNTS_RECEIVABLE", "INVENTORY_VARIANCE", "SUPPLIER_RETURN_CLAIM", "BANK", "CASH_ON_HAND", "MOBILE_MONEY_CLEARING", "CARD_CLEARING", "CHEQUE_CLEARING"])
+    const residualValid = !nonStock || (
+      input.amounts.sourceAmount.gte(0) &&
+      residualLines.reduce((sum, line) => sum.plus(line.debit), zero).eq(input.amounts.sourceAmount) &&
+      residualLines.every(line => {
+        const account = residualAccounts.find(candidate => candidate.id === line.accountId)
+        return !!account && account.organizationId === input.organizationId && account.isActive && !account.deletedAt && account._count.children === 0 &&
+          !account.isControlAccount && (account.type === "ASSET" || account.type === "EXPENSE") && account.normalBalance === "DEBIT" &&
+          (!account.currency || account.currency.trim().toUpperCase() === input.currency.trim().toUpperCase()) &&
+          !protectedMappings.has(normalizeMappingKey(account.mappingKey) ?? "")
+      })
+    )
+    const controlledLines = nonStock ? postingLines.filter(line => !residualLines.includes(line)) : postingLines
+    const expected = new Map<string, { debit: Prisma.Decimal; credit: Prisma.Decimal }>([
+      ["INVENTORY", { debit: nonStock ? zero : input.amounts.sourceAmount, credit: zero }],
+      ["GRNI", { debit: input.amounts.costAmount ?? zero, credit: zero }],
+      ["INPUT_VAT", { debit: input.amounts.taxAmount, credit: zero }],
+      ["ACCOUNTS_PAYABLE", { debit: zero, credit: input.amounts.grossAmount }],
+      ["INVENTORY_VARIANCE", {
+        debit: input.conditionContext.receiptVarianceDirection === "DEBIT" ? variance : zero,
+        credit: input.conditionContext.receiptVarianceDirection === "CREDIT" ? variance : zero,
+      }],
+    ])
+    const matches = residualValid && controlledLines.every(line => !!line.resolvedMappingKey && expected.has(line.resolvedMappingKey)) &&
+      [...expected].every(([key, amount]) => {
+        const lines = controlledLines.filter(line => line.resolvedMappingKey === key)
+        return lines.reduce((sum, line) => sum.plus(line.debit), zero).eq(amount.debit) &&
+          lines.reduce((sum, line) => sum.plus(line.credit), zero).eq(amount.credit)
+      })
+    if (!matches) {
+      const message = nonStock
+        ? "Configure an explicit NON_STOCK source-amount debit to a tenant-owned active asset or expense leaf account compatible with the invoice currency and outside inventory, settlement and control accounts. Clear only the verified accrual, tax and price variance, then review and retry this invoice's accounting."
+        : "Supplier invoice rules must clear the verified receipt accrual, retain only unrecognized inventory and account for the price variance. Review the rule before recovery."
+      const blockerCode = nonStock ? "AP_NON_STOCK_TREATMENT_REVIEW" : "AP_RECEIPT_RECOGNITION_RULE_REVIEW"
+      const ledgerBatch = await createLedgerBlocker(tx, {
+        organizationId: input.organizationId, periodId: input.periodId, sourceType: input.sourceType,
+        sourceId: input.sourceId, postingPurpose: input.postingPurpose, actorId: input.actorId,
+        documentHash: input.documentHash, blockerCode, message,
+        metadata: safeJson({ ...input.metadata, postingRuleId: rule.id, postingRuleCode: rule.code }),
+      })
+      return { ledgerBatch, ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode, blockerMessage: message }
+    }
+  }
 
   if (postingLines.length < 2 || !debitTotal.eq(creditTotal) || debitTotal.lte(0)) {
     const message = `AP posting rule ${rule.code} did not produce a balanced non-zero journal entry.`
@@ -1032,6 +1196,10 @@ export type PurchaseCorrectionLedgerInput = {
   costAmount: Prisma.Decimal.Value
   varianceAmount?: Prisma.Decimal.Value
   metadata: Record<string, unknown>
+  sourceReviewBlocker?: { code: string; message: string }
+  receiptReturnRecognitionHash?: string
+  receiptCreditRecognitionHash?: string
+  receiptCreditVarianceDirection?: "DEBIT" | "CREDIT"
 }
 
 export async function postPurchaseCorrectionLedgerInTx(
@@ -1040,6 +1208,18 @@ export async function postPurchaseCorrectionLedgerInTx(
 ): Promise<APPostingStatus> {
   const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)
   const isReturn = input.sourceType === AccountingSourceType.PURCHASE_RETURN
+
+  if (isReturn && (input.sourceReviewBlocker || !input.receiptReturnRecognitionHash)) {
+    const blockerCode = input.sourceReviewBlocker?.code ?? "PURCHASE_RETURN_SOURCE_REVIEW"
+    const blockerMessage = input.sourceReviewBlocker?.message ?? "Verify the original inventory recognition and exact return allocation before accounting release."
+    const ledgerBatch = await createLedgerBlocker(tx, {
+      organizationId: input.organizationId, periodId: period.id, sourceType: input.sourceType,
+      sourceId: input.sourceId, postingPurpose: AccountingPostingPurpose.PURCHASE_RETURN,
+      actorId: input.actorId, documentHash: input.documentHash, blockerCode, message: blockerMessage,
+      metadata: safeJson(input.metadata),
+    })
+    return { ledgerBatch, ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode, blockerMessage }
+  }
 
   return createAPLedgerPosting(tx, {
     organizationId: input.organizationId,
@@ -1066,7 +1246,12 @@ export async function postPurchaseCorrectionLedgerInTx(
       costAmount: decimal2(input.costAmount),
       varianceAmount: decimal2(input.varianceAmount ?? 0),
     },
-    conditionContext: { correctionDirection: "CORRECTION" },
+    conditionContext: { correctionDirection: "CORRECTION", ...(isReturn ? {
+      receiptReturnRecognition: "VERIFIED", receiptReturnRecognitionHash: input.receiptReturnRecognitionHash,
+    } : {}), ...(input.receiptCreditRecognitionHash ? {
+      receiptCreditRecognition: "VERIFIED", receiptCreditRecognitionHash: input.receiptCreditRecognitionHash,
+      receiptCreditVarianceDirection: input.receiptCreditVarianceDirection,
+    } : {}) },
     blockerCode: isReturn ? "PURCHASE_RETURN_POSTING_RULE_REVIEW" : "SUPPLIER_CREDIT_POSTING_RULE_REVIEW",
     blockerMessage: isReturn
       ? "Purchase return requires configured inventory, supplier-claim, and GRNI posting rules."
@@ -1226,7 +1411,7 @@ async function nextAPJournalEntryNumber(
   tx: Prisma.TransactionClient,
   organizationId: string,
   entryDate: Date,
-  prefix: "APINV" | "APPAY" | "APRET" | "APCR",
+  prefix: "APINV" | "APPAY" | "APRET" | "APCR" | "APGR",
 ) {
   const datedPrefix = `${prefix}-${compactDate(entryDate)}`
   const lockKey = JSON.stringify(["ap-journal-number", organizationId, datedPrefix])
@@ -1284,6 +1469,8 @@ export async function buildInvoiceLinePlans(
 ) {
   const plans: InvoiceLinePlan[] = []
   const reservedByReceipt = new Map<string, Prisma.Decimal>()
+  const receiptLineIds = [...new Set(input.lines.map(line => line.goodsReceiptLineId))]
+  if (receiptLineIds.length) await tx.$queryRaw(Prisma.sql`SELECT r.id FROM goods_receipts r JOIN goods_receipt_lines l ON l."goodsReceiptId" = r.id WHERE r."organizationId" = ${input.organizationId} AND l.id IN (${Prisma.join(receiptLineIds)}) ORDER BY r.id FOR SHARE OF r`)
 
   for (const line of input.lines) {
     const quantity = decimal3(line.quantity)
@@ -1360,6 +1547,7 @@ export async function buildInvoiceLinePlans(
       throw new BusinessRuleError("Supplier invoice line item does not match the goods receipt line.")
     }
 
+    const returned = await netUninvoicedReceiptReturns(tx, { organizationId: input.organizationId, supplierId: input.supplierId, lines: [receiptLine] })
     const alreadyInvoiced = await tx.supplierInvoiceLine.aggregate({
       _sum: { quantity: true },
       where: {
@@ -1374,7 +1562,7 @@ export async function buildInvoiceLinePlans(
     })
 
     const previouslyInvoiced = decimal3(alreadyInvoiced._sum.quantity)
-    const remainingReceived = decimal3(receiptLine.receivedQuantity).minus(previouslyInvoiced).toDecimalPlaces(3)
+    const remainingReceived = decimal3(receiptLine.receivedQuantity).minus(previouslyInvoiced).minus(returned.get(receiptLine.id) ?? 0).toDecimalPlaces(3)
     const reservedQuantity = (reservedByReceipt.get(receiptLine.id) ?? new Prisma.Decimal(0)).plus(quantity)
     if (reservedQuantity.gt(remainingReceived)) {
       throw new BusinessRuleError("Supplier invoice quantity exceeds received and uninvoiced goods.")
@@ -1991,6 +2179,10 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       }
     }
 
+    const receiptRecognition = await resolveInvoiceReceiptRecognition(tx, {
+      organizationId: parsed.organizationId, supplierId: invoice.supplierId, invoiceId: invoice.id,
+      currency, subtotal, total, taxAmount, lines: invoice.lines,
+    })
     const balanceAfter = decimal2(supplier.currentBalance).plus(total).toDecimalPlaces(2)
     await tx.supplier.update({
       where: { id: supplier.id },
@@ -2026,13 +2218,8 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       journalPrefix: "APINV",
       memo: `Supplier invoice ${invoice.invoiceNumber}`,
       documentHash,
-      amounts: {
-        sourceAmount: total,
-        netAmount: subtotal,
-        grossAmount: total,
-        taxAmount,
-        costAmount: subtotal,
-      },
+      amounts: receiptRecognition.amounts,
+      conditionContext: receiptRecognition.conditionContext,
       blockerCode: "AP_POSTING_RULE_REVIEW",
       blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.",
       metadata: {
@@ -2040,6 +2227,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         supplierId: supplier.id,
         total: total.toFixed(2),
         currency,
+        ...(receiptRecognition.recognition ? { receiptRecognition: receiptRecognition.recognition } : {}),
         countryPackStatus: countryPackStatus.countryPackStatus,
         countryPackVersion: countryPackStatus.countryPackVersion,
         countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
@@ -2066,6 +2254,10 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         ledgerPostingBatchId: ledgerBatch.id,
         journalEntryId: postingResult.journalEntryId ?? null,
         ledgerStatus: postingResult.ledgerStatus,
+        ...(receiptRecognition.recognition ? { receiptRecognitionHash: hashBusinessPayload(receiptRecognition.recognition) } : {}),
+        makerId: invoice.createdById,
+        approverId: invoice.approvedById,
+        matchStatus: match.status,
       },
       occurredAt: invoiceDate,
       actorId: parsed.approvedById ?? parsed.createdById,
@@ -2080,6 +2272,15 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         countryPackVersion: countryPackStatus.countryPackVersion,
         countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
         gate: "011-purchasing-ap-controls",
+        // Record only what the persisted invoice and its exact match establish.
+        // This adds recovery evidence; it does not introduce a lifecycle gate.
+        makerCheckerVerified: Boolean(
+          invoice.createdById && invoice.approvedById && invoice.createdById !== invoice.approvedById &&
+          invoice.createdById === parsed.createdById && invoice.approvedById === parsed.approvedById &&
+          invoice.status === SupplierInvoiceStatus.POSTED && invoice.postedAt &&
+          match.supplierInvoiceId === invoice.id && match.organizationId === parsed.organizationId &&
+          match.status === ThreeWayMatchStatus.MATCHED && match.varianceAmount.eq(0),
+        ),
       },
       outboxMessages: [
         {
@@ -2113,6 +2314,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
           ledgerBlockerMessage: postingResult.blockerMessage ?? null,
           journalEntryId: postingResult.journalEntryId ?? null,
           accountingSourceLinkId: postingResult.accountingSourceLinkId ?? null,
+          ...(receiptRecognition.recognition ? { receiptRecognition: receiptRecognition.recognition } : {}),
           countryPackStatus: countryPackStatus.countryPackStatus,
           countryCode: countryPackStatus.countryCode,
           countryPackVersion: countryPackStatus.countryPackVersion,
@@ -2718,6 +2920,11 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
         currency: invoice.currency,
       })
 
+    const receiptRecognition = await resolveInvoiceReceiptRecognition(tx, {
+      organizationId: parsed.organizationId, supplierId: invoice.supplierId, invoiceId: invoice.id,
+      currency: invoice.currency, subtotal: invoice.subtotal, total: invoice.total,
+      taxAmount: invoice.taxAmount, lines: invoice.lines,
+    })
     const balanceAfter = decimal2(invoice.supplier.currentBalance).plus(invoice.total).toDecimalPlaces(2)
     await tx.supplier.update({
       where: { id: invoice.supplier.id },
@@ -2753,13 +2960,8 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
       journalPrefix: "APINV",
       memo: `Supplier invoice ${invoice.invoiceNumber}`,
       documentHash,
-      amounts: {
-        sourceAmount: invoice.total,
-        netAmount: invoice.subtotal,
-        grossAmount: invoice.total,
-        taxAmount: invoice.taxAmount,
-        costAmount: invoice.subtotal,
-      },
+      amounts: receiptRecognition.amounts,
+      conditionContext: receiptRecognition.conditionContext,
       blockerCode: "AP_POSTING_RULE_REVIEW",
       blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.",
       metadata: {
@@ -2767,6 +2969,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
         supplierId: invoice.supplier.id,
         total: invoice.total.toFixed(2),
         currency: invoice.currency,
+        ...(receiptRecognition.recognition ? { receiptRecognition: receiptRecognition.recognition } : {}),
         countryPackStatus: countryPackStatus.countryPackStatus,
         countryPackVersion: countryPackStatus.countryPackVersion,
         countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
@@ -2794,6 +2997,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
         journalEntryId: postingResult.journalEntryId ?? null,
         ledgerStatus: postingResult.ledgerStatus,
         makerId: invoice.createdById,
+        ...(receiptRecognition.recognition ? { receiptRecognitionHash: hashBusinessPayload(receiptRecognition.recognition) } : {}),
         approverId: parsed.approvedById,
         matchExceptionId: activeMatchException?.id ?? null,
         matchStatus: activeMatchException
@@ -2840,6 +3044,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
         postedBusinessEventId: eventResult.event.id,
         metadata: safeJson({
           ...asRecord(invoice.metadata),
+          ...(receiptRecognition.recognition ? { receiptRecognition: receiptRecognition.recognition } : {}),
           ledgerStatus: postingResult.ledgerStatus,
           ledgerBlockerCode: postingResult.blockerCode ?? null,
           ledgerBlockerMessage: postingResult.blockerMessage ?? null,

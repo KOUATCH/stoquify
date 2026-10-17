@@ -1,0 +1,31 @@
+{
+  "target": {
+    "host": "localhost",
+    "port": "5432",
+    "database": "stoquify_replay_next_20260830"
+  },
+  "commit": "62a56036a5ac9b37236a20c9b148052199069479",
+  "observedAt": "2026-09-27T12:40:06.709Z",
+  "migrations": 87,
+  "latestMigration": "20260920060000_pos_checkout_lifecycle",
+  "counts": {
+    "organizations": 3,
+    "roleRecords": 174,
+    "roleCodes": 58,
+    "users": 180,
+    "memberships": 180,
+    "employees": 144
+  },
+  "namedCandidateAssignments": 23,
+  "gateSummary": {
+    "executedGates": 21,
+    "passed": 13,
+    "blocked": 8,
+    "checkRows": 601
+  },
+  "capabilityRows": 75,
+  "fieldDefinitions": 485,
+  "externalFieldDefinitions": 436,
+  "dbMutations": 0,
+  "decision": "CONTINUE_SCOPED_DEVELOPMENT; REMEDIATE_DEMO_DATA_AND_ACCESS; PILOT/PRODUCTION_AUTHORITY_NOT_ESTABLISHED"
+}

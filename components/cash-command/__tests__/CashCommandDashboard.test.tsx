@@ -1,5 +1,5 @@
 import type { SVGProps } from "react"
-import { render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
@@ -23,9 +23,10 @@ jest.mock("@/actions/evidence/proof-trail.actions", () => ({
 }))
 
 jest.mock("@/components/evidence/ProofTrailDrawer", () => ({
-  ProofTrailDrawer: ({ open }: { open: boolean }) => (open ? <div>Proof drawer</div> : null),
+  ProofTrailDrawer: ({ open, proofTrail, isLoading, error, onOpenChange }: { open: boolean; proofTrail: { subjectId: string } | null; isLoading: boolean; error: string | null; onOpenChange: (value: boolean) => void }) => (open ? <div role="dialog"><button onClick={() => onOpenChange(false)}>Close proof</button>{isLoading ? "Loading selected proof" : error || proofTrail?.subjectId || "No selected proof"}</div> : null),
 }))
 
+import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
 import { CashCommandDashboard } from "../CashCommandDashboard"
 import type { CashCommandData } from "@/services/cash-command/cash-command-contracts"
 import type { BIFreshness, BIKpiCard, BIProvenance } from "@/services/bi/bi-contracts"
@@ -163,7 +164,7 @@ function buildData(): CashCommandData {
         title: "Unreconciled cash remains open",
         detail: "Suspense remains open.",
         businessImpact: "Cash cannot be treated as fully trusted.",
-        direction: "worsened",
+        direction: "observed",
         severity: "high",
         state: "blocked",
         evidenceGrade: "blocked",
@@ -300,6 +301,95 @@ function buildData(): CashCommandData {
 }
 
 describe("CashCommandDashboard", () => {
+  it.each(["en", "fr"] as const)("exposes authorized trust conditions and recovery guidance in %s", locale => {
+    const data = buildData()
+    const title = locale === "fr" ? "Preuve de clôture absente" : "Close evidence missing"
+    const nextAction = locale === "fr" ? "Examinez la clôture avant certification." : "Review the close before certification."
+    data.trustSignals = [{ id: "close_readiness", label: "Close blockers", value: "Review required", detail: null, tone: "danger", requiredPermission: "accounting.close.read", evidenceGrade: "blocked", trustState: "blocked", freshness, redactions: [],
+      blockers: [{ id: "close-certified-export-missing", gate: "close_readiness", severity: "high", title, detail: "Retained source condition", nextAction, sourceTables: ["close_pack_exports"] }] }]
+    render(<CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    const summary = screen.getByText(locale === "fr" ? "Examiner les conditions" : "Review conditions")
+    expect(summary.tagName).toBe("SUMMARY")
+    expect(summary.closest("details")).not.toHaveAttribute("open")
+    fireEvent.click(summary)
+    expect(summary.closest("details")).toHaveAttribute("open")
+    expect(screen.getByText(title)).toBeVisible()
+    expect(screen.getByText(nextAction)).toBeVisible()
+    fireEvent.click(summary)
+    expect(summary.closest("details")).not.toHaveAttribute("open")
+  })
+  it.each(["en", "fr"] as const)("distinguishes current observations from historical comparisons in %s", locale => {
+    render(<CashCommandDashboard data={buildData()} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    expect(screen.getByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).toBeVisible()
+    expect(screen.getByText(locale === "fr" ? "Observé" : "Observed")).toBeVisible()
+    expect(screen.queryByText(/What changed since yesterday|Ce qui a change depuis hier/)).not.toBeInTheDocument()
+    expect(screen.getByText(new RegExp(locale === "fr" ? "Valeur actuelle: 125000 XAF" : "Current value: 125000 XAF"))).toBeVisible()
+  })
+
+  it.each([
+    { locale: "en" as const, currency: "EUR" },
+    { locale: "fr" as const, currency: "EUR" },
+    { locale: "fr" as const, currency: "USD" },
+  ])("uses the tenant currency for $locale risk amounts in $currency", ({ locale, currency }) => {
+    const data = { ...buildData(), currency }
+    render(<CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    const radar = screen.getByRole("heading", { name: locale === "fr" ? "Risques de trésorerie" : "Cash risk radar" }).closest("section")!
+    const amount = new Intl.NumberFormat(locale, { style: "currency", currency }).format(data.risks[0].moneyImpact!)
+    expect(within(radar).getByText(amount, { normalizer: value => value })).toBeVisible()
+    expect(within(radar).queryByText(/FCFA|XAF/)).not.toBeInTheDocument()
+    expect(within(radar).getByText(locale === "fr" ? "aujourd’hui" : "today")).toBeVisible()
+  })
+
+  it("passes French through action states, empty guidance, freshness and the evidence legend", () => {
+    const data = buildData()
+    const { rerender } = render(<CashCommandDashboard data={data} locale="fr" title="Cash Command" subtitle="Lecture seule" />)
+    const actions = screen.getByRole("heading", { name: "Actions à traiter aujourd’hui" }).closest("section")!
+    expect(within(actions).getByText("critique")).toBeVisible()
+    expect(within(actions).getAllByText("Bloqué").length).toBeGreaterThan(0)
+    expect(screen.getByRole("heading", { name: "Légende des niveaux de preuve" })).toBeVisible()
+    expect(screen.getByText("Écart actuel")).toBeVisible()
+    expect(screen.getByText("Dépendances manquantes")).toBeVisible()
+    rerender(<CashCommandDashboard data={{ ...data, actionsToday: [] }} locale="fr" title="Cash Command" subtitle="Lecture seule" />)
+    expect(screen.getByText("Aucune action visible à traiter")).toBeVisible()
+  })
+
+  it.each(["en", "fr"] as const)("does not infer no risk from an empty observation list in %s", locale => {
+    render(<CashCommandDashboard data={{ ...buildData(), changes: [] }} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    expect(screen.getByText(locale === "fr" ? "Aucune observation visible" : "No visible observations")).toBeVisible()
+    expect(screen.getByText(new RegExp(locale === "fr" ? "cela ne confirme pas l’absence de risque" : "this does not confirm the absence of risk"))).toBeVisible()
+  })
+
+  it.each(["en", "fr"] as const)("shows the source UTC day and generation time in %s", locale => {
+    const data = buildData()
+    data.generatedAt = "2026-06-24T23:30:00.000Z"
+    data.commandBrief.generatedAt = data.generatedAt
+    render(<CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    const day = new Intl.DateTimeFormat(locale, { timeZone: "UTC", month: "short", day: "numeric" }).format(new Date(data.periodStart))
+    expect(screen.getAllByText(`${day} - ${day}`).length).toBe(2)
+    expect(screen.getAllByText(locale === "fr" ? /^Période \(UTC\):?$/ : /^Period \(UTC\):?$/).length).toBe(2)
+    expect(screen.getByText(locale === "fr" ? "Généré (UTC)" : "Generated (UTC)")).toBeVisible()
+    const time = new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", { timeZone: "UTC", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(data.generatedAt))
+    expect(screen.getAllByText(time).length).toBeGreaterThan(0)
+  })
+
+  it.each(["en", "fr"] as const)("keeps the destination denial explanation visible without hover in %s", locale => {
+    const data = buildData()
+    const reason = locale === "fr" ? "Vos droits ne permettent pas d’ouvrir cet espace." : "Your access does not permit this workspace."
+    data.cards[0].actionLink = { ...actionLink, disabled: true, disabledReason: reason }
+    render(<CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    expect(screen.getByText(reason)).toBeVisible()
+  })
+  it.each(["en", "fr"] as const)("explains unavailable data in %s without rendering denied drawer or module values", locale => {
+    const data = { ...buildData(), drawerState: null, moduleControl: null,
+      restrictedCapabilities: [{ id: "drawer_risk", title: "Drawer risk", reason: "permission_denied" as const }] }
+    render(<CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />)
+    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Une valeur indisponible ne signifie pas un solde nul" : "An unavailable value does not mean a zero balance")
+    expect(screen.queryByText("Live variance")).not.toBeInTheDocument()
+    expect(screen.queryByText("Entitled")).not.toBeInTheDocument()
+    expect(screen.queryByText("RBAC filtered")).not.toBeInTheDocument()
+    expect(screen.queryByText("Redaction-safe")).not.toBeInTheDocument()
+  })
+
   it("renders the cash command brief, trust banner, KPI cards, strips, and proof entry", () => {
     render(
       <CashCommandDashboard
@@ -314,10 +404,74 @@ describe("CashCommandDashboard", () => {
     expect(screen.getByRole("heading", { name: "Cash trust banner" })).toBeInTheDocument()
     expect(screen.getByText("Cash collected")).toBeInTheDocument()
     expect(screen.getAllByText("Unreconciled cash").length).toBeGreaterThan(0)
-    expect(screen.getByText("What changed since yesterday")).toBeInTheDocument()
+    expect(screen.getByText("Current cash observations")).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "What needs action today" })).toBeInTheDocument()
     expect(screen.getByText("Resolve payment suspense")).toBeInTheDocument()
     expect(screen.getByText("Payment transaction proof")).toBeInTheDocument()
     expect(screen.getByText("Reconciliation proof")).toBeInTheDocument()
+  })
+})
+
+describe("Cash Command proof request scope", () => {
+  const action = jest.mocked(getProofTrailAction)
+  const view = (data = buildData(), locale: "en" | "fr" = "en") => <CashCommandDashboard data={data} locale={locale} title="Cash Command" subtitle="Read-only" />
+  const response = (subjectId: string, subjectType = "payment.transaction", organizationId = "org-1") => ({ success: true, data: { organizationId, subjectId, subjectType } }) as Awaited<ReturnType<typeof getProofTrailAction>>
+  beforeEach(() => action.mockReset())
+
+  it("opens one drawer and discards a late response after changing subject", async () => {
+    let first!: (value: Awaited<ReturnType<typeof getProofTrailAction>>) => void
+    action.mockImplementationOnce(() => new Promise(resolve => { first = resolve }))
+    action.mockResolvedValueOnce(response("rr-1", "reconciliation.run"))
+    render(view())
+    fireEvent.click(screen.getByRole("button", { name: "Payment transaction proof" }))
+    expect(screen.getAllByRole("dialog")).toHaveLength(1)
+    expect(screen.getByRole("dialog")).toHaveTextContent("Loading selected proof")
+    fireEvent.click(screen.getByRole("button", { name: "Reconciliation proof" }))
+    await waitFor(() => expect(screen.getByRole("dialog")).toHaveTextContent("rr-1"))
+    await act(async () => first(response("pt-1")))
+    expect(screen.getAllByRole("dialog")).toHaveLength(1)
+    expect(screen.getByRole("dialog")).not.toHaveTextContent("pt-1")
+  })
+
+  it.each(["en", "fr"] as const)("catches transport failure, restores focus and retries in %s", async locale => {
+    action.mockRejectedValueOnce(new Error("private transport detail"))
+    action.mockResolvedValueOnce(response("pt-1"))
+    render(view(buildData(), locale))
+    const trigger = screen.getByRole("button", { name: "Payment transaction proof" })
+    fireEvent.click(trigger)
+    await waitFor(() => expect(screen.getByRole("dialog")).toHaveTextContent(locale === "fr" ? "réessayer" : "retry"))
+    expect(screen.getByRole("dialog")).not.toHaveTextContent("private transport detail")
+    fireEvent.click(screen.getByRole("button", { name: "Close proof" }))
+    await waitFor(() => expect(trigger).toHaveFocus())
+    fireEvent.click(trigger)
+    await waitFor(() => expect(screen.getByRole("dialog")).toHaveTextContent("pt-1"))
+  })
+
+  it("preserves proof during a server refresh with unchanged authority and subject scope", async () => {
+    action.mockResolvedValueOnce(response("pt-1"))
+    const { rerender } = render(view())
+    fireEvent.click(screen.getByRole("button", { name: "Payment transaction proof" }))
+    await waitFor(() => expect(screen.getByRole("dialog")).toHaveTextContent("pt-1"))
+    rerender(view({ ...buildData(), generatedAt: "2026-06-24T08:00:05.000Z" }))
+    expect(screen.getByRole("dialog")).toHaveTextContent("pt-1")
+  })
+
+  it("withdraws pending proof when current server scope changes", async () => {
+    let finish!: (value: Awaited<ReturnType<typeof getProofTrailAction>>) => void
+    action.mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+    const { rerender } = render(view())
+    fireEvent.click(screen.getByRole("button", { name: "Payment transaction proof" }))
+    rerender(view({ ...buildData(), proofSubjects: [] }))
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+    await act(async () => finish(response("pt-1")))
+    expect(screen.queryByText("pt-1")).not.toBeInTheDocument()
+  })
+
+  it("rejects a response for another tenant or selected record", async () => {
+    action.mockResolvedValueOnce(response("private-proof", "payment.transaction", "org-2"))
+    render(view())
+    fireEvent.click(screen.getByRole("button", { name: "Payment transaction proof" }))
+    await waitFor(() => expect(screen.getByRole("dialog")).toHaveTextContent("retry"))
+    expect(screen.queryByText("private-proof")).not.toBeInTheDocument()
   })
 })

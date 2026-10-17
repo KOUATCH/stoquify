@@ -55,6 +55,17 @@ beforeEach(() => {
 })
 
 describe("manual reconciliation allocation controls", () => {
+  it("refuses a payment changed during the provider wait before reading or allocating obsolete evidence", async () => {
+    const original = mocked.$queryRaw.getMockImplementation()!
+    mocked.$queryRaw.mockImplementation(async query => {
+      if (query.sql.includes("payment_transactions")) throw { code: "P2010", meta: { code: "40001" } }
+      return original(query)
+    })
+    await expect(proposed()).rejects.toMatchObject({ code: "CONCURRENCY_CONFLICT" })
+    expect(mocked.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(mocked.matchRecord.create).not.toHaveBeenCalled()
+    expect(rows).toHaveLength(0)
+  })
   it("turns a raw PostgreSQL serialization conflict into safe retry without masking other query failures", async () => {
     mocked.$queryRaw.mockRejectedValue({ code: "P2010", meta: { code: "40001" } })
     await expect(proposed()).rejects.toMatchObject({ code: "CONCURRENCY_CONFLICT" })

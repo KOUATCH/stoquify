@@ -23,6 +23,20 @@ function read(root, relativePath) {
   return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : ""
 }
 
+function hasLocalizedMessages(root, namespace, keys) {
+  return ["en", "fr"].every((locale) => {
+    try {
+      const messages = JSON.parse(read(root, `messages/${locale}.json`))[namespace]
+      return keys.every((key) => {
+        const value = key.split(".").reduce((current, part) => current?.[part], messages)
+        return typeof value === "string" && value.trim().length > 0
+      })
+    } catch {
+      return false
+    }
+  })
+}
+
 function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
   const service = read(root, "services/daily-habit/daily-habit-digest.service.ts")
   const contracts = read(root, "services/daily-habit/daily-habit-digest-contracts.ts")
@@ -33,12 +47,35 @@ function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
   const loading = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx")
   const error = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx")
   const packageJson = read(root, "package.json")
+  const organizationQuery = service.match(/db\.organization\.findFirst\(\{([\s\S]*?)\}\)/)?.[1] || ""
+  const organizationSelection = organizationQuery.match(/select:\s*\{([^}]+)\}/)?.[1] || ""
+  const accessStates = routeAccess || route
+  const localizedRecovery =
+    loading.includes('getTranslations("dailyDigestRecovery")') &&
+    loading.includes('kind="loading"') && loading.includes("locale={locale}") &&
+    ["loadingTitle", "loadingMessage"].every((key) => loading.includes(`t("${key}")`)) &&
+    error.includes('useTranslations("dailyDigestRecovery")') &&
+    error.includes("DashboardErrorState") && error.includes("locale={locale}") && error.includes('role="alert"') &&
+    ["errorTitle", "errorMessage", "retry"].every((key) => error.includes(`t("${key}")`)) &&
+    hasLocalizedMessages(root, "dailyDigestRecovery", ["loadingTitle", "loadingMessage", "errorTitle", "errorMessage", "retry"])
+  const localizedAccess =
+    accessStates.includes('namespace: "dailyDigestAccess"') &&
+    accessStates.includes('error instanceof RbacError') &&
+    /noActiveOrg\s*=\s*error\.code\s*===\s*"NO_ACTIVE_ORG"/.test(accessStates) &&
+    /kind=\{noActiveOrg\s*\?\s*"no_active_org"\s*:\s*error\.code\s*===\s*"UNAUTHENTICATED"\s*\?\s*"stale_session"\s*:\s*"permission_denied"\}/.test(accessStates) &&
+    accessStates.includes('error.code === "FORBIDDEN"') &&
+    accessStates.includes('error.code === "EMAIL_NOT_VERIFIED"') &&
+    accessStates.includes('t(`${error.code}.title`)') && accessStates.includes('t(`${error.code}.message`)') &&
+    accessStates.includes('localizePath("/login", locale)') && accessStates.includes('t("signIn")') &&
+    hasLocalizedMessages(root, "dailyDigestAccess", ["signIn", ...["UNAUTHENTICATED", "NO_ACTIVE_ORG", "EMAIL_NOT_VERIFIED", "ACCOUNT_LOCKED", "FORBIDDEN"].flatMap((code) => [`${code}.title`, `${code}.message`])])
 
   const checks = [
     {
       id: "tenant_metadata_is_service_owned",
-      ready: service.includes("db.organization.findFirst") && service.includes("isActive: true, deletedAt: null") &&
-        service.includes("select: { name: true, currency: true }") && service.includes("organization.currency.trim().toUpperCase()"),
+      ready: /id:\s*input\.organizationId/.test(organizationQuery) && /isActive:\s*true/.test(organizationQuery) && /deletedAt:\s*null/.test(organizationQuery) &&
+        ["name", "currency", "timezone"].every((field) => new RegExp(`\\b${field}:\\s*true\\b`).test(organizationSelection)) &&
+        service.includes("organizationName: organization.name") && service.includes("currency: organization.currency.trim().toUpperCase()") &&
+        service.includes('timezone: organization.timezone ?? "UTC"'),
     },
     {
       id: "route_propagates_roles_without_currency_override",
@@ -65,9 +102,7 @@ function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
     {
       id: "no_workspace_permission_and_session_states",
       ready: component.includes("No Daily Digest workspace is available") && component.includes('role="status"') &&
-        (route.includes('kind={noActiveOrg ? "no_active_org" : "permission_denied"}') ||
-          routeAccess.includes('kind={noActiveOrg ? "no_active_org" : "permission_denied"}')) &&
-        loading.includes("Preparing Daily Digest") && error.includes("Daily Digest could not load"),
+        localizedAccess && localizedRecovery,
     },
     {
       id: "command_center_anatomy_is_present",

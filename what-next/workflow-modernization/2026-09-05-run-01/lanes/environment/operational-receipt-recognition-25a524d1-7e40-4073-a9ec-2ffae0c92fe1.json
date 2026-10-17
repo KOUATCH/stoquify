@@ -1,0 +1,257 @@
+{
+  "run": "25a524d1-7e40-4073-a9ec-2ffae0c92fe1",
+  "at": "2026-09-30T22:31:50.802Z",
+  "checks": [
+    {
+      "name": "Actual receipt posts once in tenant currency, partial invoices consume accrual once",
+      "status": "passed",
+      "elapsedMs": 2701,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-partial",
+      "receiptId": "cmuook2er002cmaaoschm4eaz",
+      "result": {
+        "kind": "receive",
+        "orderId": "cmuook1zk0009maaoqbf1ke42",
+        "goodsReceiptId": "cmuook2er002cmaaoschm4eaz",
+        "receiptNumber": "GR-000001",
+        "requestReference": "a8b1bf89-4e02-432a-8784-14333b853dd6",
+        "reviewedRevision": "3e215b7de0abd01bc25d463861011de41ff45fb7ddf9194cae8a9cf9e31c7af3",
+        "actorId": "cmuook1xu0001maao2iba5o5y",
+        "recordedAt": "2026-09-30T22:31:55.848Z",
+        "disposition": "RECEIVED",
+        "quantity": "10",
+        "value": "25000",
+        "currency": "USD",
+        "stockStatus": "recorded",
+        "accountingStatus": "posted",
+        "replayed": false
+      },
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-25000.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      }
+    },
+    {
+      "name": "Uninvoiced return releases actual GRNI; remaining invoice consumes only seven",
+      "status": "passed",
+      "elapsedMs": 1369,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-uninvoiced-return",
+      "receiptId": "cmuook481008dmaaokn3iw53p",
+      "returnId": "bdc77776-a756-43cf-b2d7-daf4b0de854f",
+      "balances": {
+        "INVENTORY": "17500.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-17500.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      }
+    },
+    {
+      "name": "Mixed invoiced and uninvoiced return separates claim from remaining accrual",
+      "status": "passed",
+      "elapsedMs": 2332,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-mixed-return",
+      "returnId": "59c8a349-74fe-4def-b85c-a08b2600dc61",
+      "balances": {
+        "INVENTORY": "5000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-20000.00",
+        "SUPPLIER_RETURN_CLAIM": "15000.00",
+        "INVENTORY_VARIANCE": "0.00"
+      }
+    },
+    {
+      "name": "Exact return reversal restores source allocation once without replacing receipt journal",
+      "status": "passed",
+      "elapsedMs": 2659,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-reversal",
+      "returnId": "f4bfe17d-ea54-4a38-949b-20ac7444eaa1",
+      "reversalId": "f5f51564-a1a1-4923-8eda-e6db761c36a8",
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-25000.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      }
+    },
+    {
+      "name": "Missing receipt rule prevents invoice fallback; authorized recovery posts only accounting",
+      "status": "passed",
+      "elapsedMs": 2993,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery",
+      "receiptId": "cmuook99m00rzmaaogliwjjuk",
+      "journalEntryId": "cmuookad000timaaoove0q6nm",
+      "stockMovementCount": 1
+    },
+    {
+      "name": "Recovery rejects stale rule, missing authority and cross-tenant receipt without effects",
+      "status": "passed",
+      "elapsedMs": 1882,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery-boundaries",
+      "receiptId": "cmuookblk00x1maao4460l61l",
+      "staleAuthorityTenantAndFreshAuthDenied": true
+    },
+    {
+      "name": "Concurrent exact receipt recovery converges on one journal and no new stock",
+      "status": "passed",
+      "elapsedMs": 1409,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery-concurrent",
+      "receiptId": "cmuookd39012qmaaomrnb54wm",
+      "attempts": [
+        {
+          "status": "fulfilled",
+          "journalEntryId": "cmuookdjo013vmaao6mcs4nt5"
+        },
+        {
+          "status": "fulfilled",
+          "journalEntryId": "cmuookdjo013vmaao6mcs4nt5"
+        }
+      ],
+      "retryJournalEntryId": "cmuookdjo013vmaao6mcs4nt5"
+    },
+    {
+      "name": "Blocked receipt and physical return recover atomically, preserve history and consume seven",
+      "status": "passed",
+      "elapsedMs": 2190,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-receipt-return-recovery",
+      "receiptId": "cmuooke18016lmaaoembrzc15",
+      "returnId": "f90ffb85-a2e8-4ad3-bb5c-970debb39e19",
+      "receiptJournal": "cmuookeni018imaaocdrslxkr",
+      "returnJournal": "cmuookern018rmaaoloum9kuu",
+      "immutableReturnPreserved": true
+    },
+    {
+      "name": "Return rule failure rolls original receipt recovery back without partial journal",
+      "status": "passed",
+      "elapsedMs": 1066,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-atomic-return-failure",
+      "receiptId": "cmuookfoc01cumaaodfh5a29m",
+      "partialReceiptPostingPrevented": true
+    },
+    {
+      "name": "Closed original period blocks recovery without moving its effective date",
+      "status": "passed",
+      "elapsedMs": 696,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-closed-period",
+      "receiptId": "cmuookgho01hdmaao1984pq97",
+      "effectiveAt": "2026-09-30T22:32:13.679Z",
+      "originalPeriodClosed": true
+    },
+    {
+      "name": "Held stock has no accrual until independently accepted at its acceptance date",
+      "status": "passed",
+      "elapsedMs": 776,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-held-acceptance",
+      "receiptId": "cmuookh2o01ktmaao4mcwrx57",
+      "acceptanceDate": "2026-09-30T22:32:14.613Z",
+      "journalId": "cmuookhbm01lymaao81rv9io8"
+    },
+    {
+      "name": "Zero-value stock remains recorded without an accounting blocker or journal",
+      "status": "passed",
+      "elapsedMs": 468,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-zero-value",
+      "receiptId": "cmuookhn801oqmaaoavbwkkwx",
+      "accountingStatus": "not_required"
+    },
+    {
+      "name": "Non-stock receipt has no stock accrual and its invoice retains source-based posting",
+      "status": "passed",
+      "elapsedMs": 1063,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-non-stock",
+      "receiptId": "cmuookhzi01rzmaaoq0csnxns",
+      "receiptAccrualRequired": false,
+      "invoiceJournalCount": 1,
+      "scopeNote": "Existing invoice mapping retained; this does not certify a statutory expense policy."
+    },
+    {
+      "name": "Supplier credit waits for actual return claim, then clears recovered claim once",
+      "status": "passed",
+      "elapsedMs": 2013,
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-return-credit",
+      "receiptId": "cmuookit501w1maao9nx3x57x",
+      "returnId": "4f0ab071-3e1f-43e0-8ff7-931467801a5f",
+      "creditId": "f9df283e-f4f0-485a-9d64-d81ae916ee72",
+      "nonexistentClaimDenied": true,
+      "balances": {
+        "INVENTORY": "17500.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-17500.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      }
+    }
+  ],
+  "scope": "Owned localhost PostgreSQL, actual authenticated receiving/preparation/approval/recovery services and actual source-bound returns. Synthetic accounts, rules and fixture sessions are not professional approval. No fabricated receipt journals, real payments, messages, migrations or production certification.",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchasing/ap-control.service.ts": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/receipt-return-recognition.ts": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchase-order/purchase-order.service.ts": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchase-order/receipt-recognition.service.ts": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+    "services/purchase-order/receipt-ledger-recovery.service.ts": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+    "services/purchasing/purchase-return-credit.service.ts": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-recognition.cjs": "1f91dc98a9018b1c47b21bee8426505a278f84ea1e982e5ac89c0876ed5ea1a1"
+  },
+  "originalBefore": "295e9a0e6ee6831e888cde56f1ae79d9d76a9fc965c5294ce0e0813418392cb5",
+  "sourcesAfter": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchasing/ap-control.service.ts": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/receipt-return-recognition.ts": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchase-order/purchase-order.service.ts": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchase-order/receipt-recognition.service.ts": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+    "services/purchase-order/receipt-ledger-recovery.service.ts": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+    "services/purchasing/purchase-return-credit.service.ts": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-recognition.cjs": "1f91dc98a9018b1c47b21bee8426505a278f84ea1e982e5ac89c0876ed5ea1a1"
+  },
+  "sourceStable": true,
+  "originalAfter": "295e9a0e6ee6831e888cde56f1ae79d9d76a9fc965c5294ce0e0813418392cb5",
+  "originalUnchanged": true,
+  "passed": true,
+  "fixtureOrganizations": [
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-partial",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-uninvoiced-return",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-mixed-return",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-reversal",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery-boundaries",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-other-tenant",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-recovery-concurrent",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-receipt-return-recovery",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-atomic-return-failure",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-closed-period",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-held-acceptance",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-zero-value",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-non-stock",
+    "workflow_supplier_ack_en_receipt-handoff-d6cccc7a-1671-44d7-8552-8c493667307d-operational-25a524d1-7e40-4073-a9ec-2ffae0c92fe1-return-credit"
+  ]
+}

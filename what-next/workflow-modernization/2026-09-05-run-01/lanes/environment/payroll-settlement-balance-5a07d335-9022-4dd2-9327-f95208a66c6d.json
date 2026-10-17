@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-30T11:16:16.880Z",
+  "syntheticReleaseFixture": true,
+  "checks": [],
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "dcfdf785c330943a4960c7d5b7c092964afa54d7b587849cf32cf06a1b2f1480",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d"
+  },
+  "passed": false,
+  "error": "\nInvalid `db.payrollPaymentBatch.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-payroll-settlement-balance.cjs:17:44\n\n  14 const releaser=await db.user.findFirstOrThrow({where:{...scope,id:{not:actor.id}}});\n  15 const metadata={verificationOnly:true,componentRegisterProofHash:'synthetic',componentRegisterProofStatus:'MATCHED',payrollComponentMappingHash:'synthetic',payrollComponentMappingStatus:'BLOCKED_REQUIRES_EXPERT_REVIEW',yearToDatePolicyHash:'synthetic',yearToDateAccumulatorHashes:['synthetic'],paymentAdapterProofHash:'synthetic',paymentAdapterRegistryVersion:1,paymentProviderAdapterContractHash:'synthetic',paymentAdapterStatus:'MANUAL_PROVIDER_SETTLEMENT_REQUIRED',paymentProviderAdapterKey:'BANK_TRANSFER:MANUAL_DISBURSEMENT_FILE'};\n  16 async function fixture(label){\n→ 17  const batch=await db.payrollPaymentBatch.create({\n        data: {\n          organizationId: \"cmunzyce10000mafwymm38e1d\",\n          payrollRunId: \"cmunzycj40027mafwwrj2756t\",\n          batchNumber: \"5a07d335-9022-4dd2-9327-f95208a66c6d-sequential\",\n          status: \"RELEASED\",\n          method: \"BANK_TRANSFER\",\n          amount: \"100.00\",\n          currency: \"XAF\",\n          paymentDate: new Date(\"2026-09-30T11:16:17.451Z\"),\n          releasedById: \"cmunzycea0002mafwbdope85p\",\n          ledgerPostingBatchId: \"cmunzycv70045mafwum3s92dv\",\n          postedBusinessEventId: \"cmunzycx5004jmafwsqs0nnf1\",\n          metadata: {\n            verificationOnly: true,\n            componentRegisterProofHash: \"synthetic\",",
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "dcfdf785c330943a4960c7d5b7c092964afa54d7b587849cf32cf06a1b2f1480",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d"
+  },
+  "sourceStable": true
+}

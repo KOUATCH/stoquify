@@ -21,5 +21,5 @@ export async function purchaseReceivingAuthority(tx: Prisma.TransactionClient, s
   const session = await tx.session.findFirst({ where: { id: scope.sessionId, token: scope.sessionToken, userId: scope.actorId, expiresAt: { gt: now } }, select: { assuranceOrganizationId: true, assuranceVerifiedAt: true, assuranceLevel: true, assuranceMethod: true, assuranceLockedUntil: true } })
   if (!session) throw new ForbiddenError("Your session expired or was revoked. Sign in again.")
   const fresh = session.assuranceOrganizationId === scope.organizationId && session.assuranceMethod === "password" && session.assuranceLevel >= 1 && session.assuranceVerifiedAt != null && session.assuranceVerifiedAt <= now && now.getTime() - session.assuranceVerifiedAt.getTime() <= 300000 && (!session.assuranceLockedUntil || session.assuranceLockedUntil <= now)
-  return { fresh, canReceive: hasRbacPermission(permissions, "purchases.orders.receive") }
+  return { fresh, canReceive: hasRbacPermission(permissions, "purchases.orders.receive"), canReviewAccounting: hasRbacPermission(permissions, "purchasing.ap.invoice.post") }
 }

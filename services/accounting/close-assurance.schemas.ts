@@ -61,6 +61,10 @@ export const acceptMissingCloseEvidenceResponseInputSchema = z.object({
   requestId: idSchema,
   responseId: idSchema,
   resolutionNotes: z.string().trim().min(10).max(4000),
+  replacement: z.object({
+    checklistItemId: idSchema,
+    bindingHash: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  }).strict().optional(),
   correlationId: optionalCorrelationIdSchema,
 })
 
@@ -69,6 +73,14 @@ export const requestCloseWaiverInputSchema = z.object({
   reason: z.string().trim().min(10).max(4000),
   correlationId: optionalCorrelationIdSchema,
 })
+
+export const replaceMissingCloseEvidenceRecipientInputSchema = z.object({
+  requestId: idSchema,
+  expectedRevision: idSchema,
+  requestedFromId: idSchema,
+  reason: z.string().trim().min(10).max(4000),
+  correlationId: z.string().trim().min(1).max(200),
+}).strict()
 
 export const approveCloseWaiverInputSchema = z.object({
   findingId: idSchema,

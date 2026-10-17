@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-17T13:33:11.449Z",
+  "fixture": "p07-org-97ee2d2e0f76",
+  "steps": [
+    {
+      "name": "Authenticated empty guidance; five outstanding opening requirements"
+    },
+    {
+      "name": "Rejected incomplete mapping retained; zero domain writes"
+    },
+    {
+      "name": "CUSTOMER proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmvcfthgn0050ma1sl68aj8vs"
+    },
+    {
+      "name": "High-risk SUPPLIER self-approval denied by UI and actual server action"
+    },
+    {
+      "name": "SUPPLIER proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmvcfu1ew005ima1sa70fum9r"
+    },
+    {
+      "name": "High-risk ITEM self-approval denied by UI and actual server action"
+    }
+  ],
+  "origin": "http://127.0.0.1:3188",
+  "browser": "149.0.7827.55",
+  "before": {
+    "customers": 0,
+    "suppliers": 0,
+    "items": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0
+  },
+  "status": "FAIL",
+  "error": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\nCall Log:\n- Timeout 90000ms exceeded while waiting on the predicate\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright-core\\lib\\coreBundle.js:3172:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12877:57)\n    at Object.toBeGreaterThan (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12867:23)\n    at batch (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\browser.cjs:24:153)\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\browser.cjs:61:94)"
+}

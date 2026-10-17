@@ -1,0 +1,476 @@
+{
+  "databaseName": "stoquify_local_ui_workflow_20261004_01a10672",
+  "local": true,
+  "createdAt": "2026-10-04T14:50:08.145Z",
+  "applicationDatabaseChanged": false,
+  "seeded": false,
+  "migrationExitCode": 0,
+  "serverVersion": "PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit",
+  "migrations": [
+    {
+      "migration_name": "20260528124341_refine_item_barcode",
+      "finished_at": "2026-10-04T14:50:13.241Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260611120000_payment_provider_reference_uniqueness",
+      "finished_at": "2026-10-04T14:50:13.252Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260611130000_accounting_auth_baseline_bridge",
+      "finished_at": "2026-10-04T14:50:13.600Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260618154500_repair_accounting_source_links",
+      "finished_at": "2026-10-04T14:50:13.608Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260618160000_payroll_foundation_bridge",
+      "finished_at": "2026-10-04T14:50:13.843Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260618161000_ap_stock_count_foundation_bridge",
+      "finished_at": "2026-10-04T14:50:14.079Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260619120000_backfill_purchase_receive_permission",
+      "finished_at": "2026-10-04T14:50:14.083Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260621102500_workflow_assurance_enum_bridge",
+      "finished_at": "2026-10-04T14:50:14.091Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260621103000_workflow_assurance_registry_foundation",
+      "finished_at": "2026-10-04T14:50:14.149Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "finished_at": "2026-10-04T14:50:14.162Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260621113000_workflow_assurance_incident_spine",
+      "finished_at": "2026-10-04T14:50:14.243Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260625110000_payroll_kernel_immutability",
+      "finished_at": "2026-10-04T14:50:14.260Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260626093000_payroll_compensation_approval",
+      "finished_at": "2026-10-04T14:50:14.327Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260626103000_payroll_payment_evidence_readiness",
+      "finished_at": "2026-10-04T14:50:14.348Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "finished_at": "2026-10-04T14:50:14.352Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "finished_at": "2026-10-04T14:50:14.375Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "finished_at": "2026-10-04T14:50:14.378Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260628123000_payroll_employee_balance_lifecycle",
+      "finished_at": "2026-10-04T14:50:14.440Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260630090000_payment_reconciliation_foundation",
+      "finished_at": "2026-10-04T14:50:14.785Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "finished_at": "2026-10-04T14:50:14.792Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260703110000_public_receipt_access_tokens",
+      "finished_at": "2026-10-04T14:50:14.808Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260711133000_public_identity_abuse_limits",
+      "finished_at": "2026-10-04T14:50:14.821Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260714194500_inventory_history_accounting_time_controls",
+      "finished_at": "2026-10-04T14:50:14.838Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260714203000_session_assurance",
+      "finished_at": "2026-10-04T14:50:14.842Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260715090000_inventory_correction_reversal_lineage",
+      "finished_at": "2026-10-04T14:50:14.862Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260718100000_branch_daily_close_review_foundation",
+      "finished_at": "2026-10-04T14:50:14.892Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "finished_at": "2026-10-04T14:50:14.935Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260719190000_hris_org_manager_scope_foundation",
+      "finished_at": "2026-10-04T14:50:15.053Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260719203000_workflow_assurance_stable_case_identity",
+      "finished_at": "2026-10-04T14:50:15.065Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260720090000_close_assurance_schema_foundation",
+      "finished_at": "2026-10-04T14:50:15.163Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260720130000_cash_shortage_policy_governance",
+      "finished_at": "2026-10-04T14:50:15.181Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "finished_at": "2026-10-04T14:50:15.200Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722143000_agent_runtime_phase_1_foundation",
+      "finished_at": "2026-10-04T14:50:15.281Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722150000_agent_runtime_tenant_consistency",
+      "finished_at": "2026-10-04T14:50:15.312Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "finished_at": "2026-10-04T14:50:15.317Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "finished_at": "2026-10-04T14:50:15.323Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "finished_at": "2026-10-04T14:50:15.326Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "finished_at": "2026-10-04T14:50:15.334Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260723100000_agent_runtime_release_control",
+      "finished_at": "2026-10-04T14:50:15.388Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260724100000_agent_runtime_release_hardening",
+      "finished_at": "2026-10-04T14:50:15.394Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "finished_at": "2026-10-04T14:50:15.399Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260724193000_agent_reconciler_invocation_ledger",
+      "finished_at": "2026-10-04T14:50:15.413Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260726140000_business_event_foundation_bridge",
+      "finished_at": "2026-10-04T14:50:15.447Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260726143000_regulatory_isolation_outbox",
+      "finished_at": "2026-10-04T14:50:15.450Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260726190000_retire_production_bom_capability",
+      "finished_at": "2026-10-04T14:50:15.464Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260726213000_hris_operational_time_management",
+      "finished_at": "2026-10-04T14:50:15.618Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260727090000_accountant_access_portfolio",
+      "finished_at": "2026-10-04T14:50:15.647Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260727110000_offline_pos_sync_foundation",
+      "finished_at": "2026-10-04T14:50:15.821Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "finished_at": "2026-10-04T14:50:15.825Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260727143000_country_adapter_pilot_foundation",
+      "finished_at": "2026-10-04T14:50:16.017Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260727170000_ai_copilot_proposal_guardrails",
+      "finished_at": "2026-10-04T14:50:16.047Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "finished_at": "2026-10-04T14:50:16.070Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "finished_at": "2026-10-04T14:50:16.081Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260730160000_pos_sales_dependency_entitlement",
+      "finished_at": "2026-10-04T14:50:16.084Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260801153000_certified_fiscal_evidence_immutability",
+      "finished_at": "2026-10-04T14:50:16.092Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260808120000_customer_settlement_allocation_foundation",
+      "finished_at": "2026-10-04T14:50:16.157Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "finished_at": "2026-10-04T14:50:16.171Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809100000_customer_receivable_document_foundation",
+      "finished_at": "2026-10-04T14:50:16.235Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809113000_customer_statement_snapshot_foundation",
+      "finished_at": "2026-10-04T14:50:16.272Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809130000_customer_statement_external_access",
+      "finished_at": "2026-10-04T14:50:16.370Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809143000_customer_statement_delivery_referral",
+      "finished_at": "2026-10-04T14:50:16.461Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809160000_accountant_client_invite_onboarding",
+      "finished_at": "2026-10-04T14:50:16.523Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809170000_referral_accounting_source_types",
+      "finished_at": "2026-10-04T14:50:16.527Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260809180000_accounting_enum_completion",
+      "finished_at": "2026-10-04T14:50:16.531Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "finished_at": "2026-10-04T14:50:16.649Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260815130000_governed_master_data_onboarding",
+      "finished_at": "2026-10-04T14:50:16.718Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260815143000_pos_customer_location_scope",
+      "finished_at": "2026-10-04T14:50:16.743Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "finished_at": "2026-10-04T14:50:16.749Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260816100000_master_data_onboarding_risk_tier",
+      "finished_at": "2026-10-04T14:50:16.757Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260817120000_pos_commit_result_registry",
+      "finished_at": "2026-10-04T14:50:16.784Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260818100000_purchase_receiving_integrity",
+      "finished_at": "2026-10-04T14:50:16.806Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260818120000_governed_delivery_order_to_cash",
+      "finished_at": "2026-10-04T14:50:16.906Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260818120000_pos_electronic_tender_authority",
+      "finished_at": "2026-10-04T14:50:16.927Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260818130000_sales_order_reporting_schema_repair",
+      "finished_at": "2026-10-04T14:50:16.939Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260819100000_purchase_receiving_inspection_control",
+      "finished_at": "2026-10-04T14:50:16.980Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "finished_at": "2026-10-04T14:50:17.114Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "finished_at": "2026-10-04T14:50:17.145Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "finished_at": "2026-10-04T14:50:17.203Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260823100000_business_event_gateway_completion",
+      "finished_at": "2026-10-04T14:50:17.240Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260828190000_align_onboarding_risk_reasons_default",
+      "finished_at": "2026-10-04T14:50:17.243Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260905170000_add_tenant_module_composition",
+      "finished_at": "2026-10-04T14:50:17.280Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260905173000_protect_module_configuration_authority",
+      "finished_at": "2026-10-04T14:50:17.295Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260905200000_add_module_lifecycle_command_state",
+      "finished_at": "2026-10-04T14:50:17.298Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260905200100_add_module_lifecycle",
+      "finished_at": "2026-10-04T14:50:17.334Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260909093000_add_suspense_posting_cycles",
+      "finished_at": "2026-10-04T14:50:17.342Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260919110000_managed_picture_assets",
+      "finished_at": "2026-10-04T14:50:17.353Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260920060000_pos_checkout_lifecycle",
+      "finished_at": "2026-10-04T14:50:17.369Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260930211500_journal_posted_line_tenant_guards",
+      "finished_at": "2026-10-04T14:50:17.373Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260930213000_journal_posted_status_transitions",
+      "finished_at": "2026-10-04T14:50:17.375Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20260930231500_supplier_credit_zero_value_evidence",
+      "finished_at": "2026-10-04T14:50:17.379Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20261004000000_close_evidence_notifications",
+      "finished_at": "2026-10-04T14:50:17.393Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20261004120000_access_requests",
+      "finished_at": "2026-10-04T14:50:17.409Z",
+      "rolled_back_at": null
+    },
+    {
+      "migration_name": "20261004130000_purchase_order_authoring",
+      "finished_at": "2026-10-04T14:50:17.422Z",
+      "rolled_back_at": null
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Shared project rules: read [AGENTS.md](AGENTS.md), [docs/ecc/WORKFLOW.md](docs/ecc/WORKFLOW.md) and [docs/ecc/skill-routing.md](docs/ecc/skill-routing.md). For UI changes, start at [design-system/stoquify/MASTER.md](design-system/stoquify/MASTER.md). Use the active harness's available tools; neither a `Task` API nor a particular slash command is guaranteed.
+
 ---
 
 ## Commands
@@ -12,11 +14,14 @@ npm run dev              # Start dev server on :3000 (also runs prisma generate)
 npm run dev:turbopack    # Same, faster with Turbopack
 
 # Build & verify
-npm run build            # Production build (lint skipped)
-npm run build:linted     # Production build with lint
-npm run typecheck        # tsc --noEmit
+npm run agent:workflow:check # Read-only workflow/command-reference validation
+npm run agent:workflow:test  # Isolated workflow-contract fixture tests
+npm run build            # Secrets preflight + database migration + linted build
+npm run build:linted     # Lint + build wrapper (may clean stale build output)
+npm run typecheck        # tsc --noEmit; incremental metadata may be written
 npm run lint             # ESLint
-npm run verify:repo      # prisma validate + typecheck
+npm run verify:repo      # Prisma validation, types, lint, integration gates, build, tests
+npm run verify:ci        # Includes database migration; use isolated CI database
 
 # Database
 npm run seed             # Seed with comprehensive data
@@ -27,9 +32,11 @@ npx prisma migrate dev   # Create and apply migration
 # Tests
 npm test                              # All tests
 npm run test:watch                    # Watch mode
-npm test -- --testPathPattern=path    # Single file or pattern
+npm test -- --runTestsByPath path/to/file.test.ts # Select a file; inspect setup first
 npm run test:coverage                 # With coverage report
 ```
+
+Before selecting a command, read [docs/ecc/command-registry.json](docs/ecc/command-registry.json) and inspect its current scripts/helpers. Build, seed, reset and broad verification are not read-only checks. [docs/ecc/test-lanes.md](docs/ecc/test-lanes.md) separates mocked unit evidence from real PostgreSQL and browser evidence.
 
 ### Default seed accounts
 - Admin: `admin@admin.com` / `Admin@2025`
@@ -44,7 +51,7 @@ Copy `.example.env` to `.env` and fill in:
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | PostgreSQL connection string (Neon or local) |
-| `AUTH_SECRET` / `NEXTAUTH_SECRET` | NextAuth JWT signing secret (`openssl rand -base64 32`) |
+| `AUTH_SECRET` / `NEXTAUTH_SECRET` | Better Auth secret; the second name is a compatibility fallback in `lib/auth.ts` |
 | `NEXTAUTH_URL` / `NEXT_PUBLIC_BASE_URL` | App base URL |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
 | `GITHUB_CLIENT_ID` / `GITHUB_SECRET` | GitHub OAuth |
@@ -58,7 +65,7 @@ Copy `.example.env` to `.env` and fill in:
 
 ### What this is
 
-StockFlow is a **multi-tenant SaaS** POS / inventory / financial management system targeting Central African businesses (XAF currency, OHADA accounting). Every model is scoped to an `organizationId`; all Prisma queries must filter by it.
+Stoquify is a **multi-tenant SaaS** POS / inventory / financial management system targeting Central African businesses (including XAF currency and OHADA accounting). Tenant-owned data must be scoped to the authenticated organization. Global catalog/identity models differ; check the schema and trusted server context rather than assuming every model has `organizationId`.
 
 ### URL routing
 
@@ -73,14 +80,13 @@ app/
 
 Locale is **always prefixed** (`localePrefix: "always"`). Use helpers from `i18n/navigation.ts` for locale-aware `<Link>` and `redirect()`. Never hard-code `/en/` or `/fr/`.
 
-### Authentication (`auth.ts`, `middleware.ts`)
+### Authentication (`lib/auth.ts`, `lib/security/rbac.ts`, `middleware.ts`)
 
-- **NextAuth v5** with JWT session strategy (8h, refresh every 1h)
-- Credentials provider: email + Argon2id password. Google OAuth also supported.
-- Account locking: 5 failed attempts → 30-min lockout
-- Permissions stored in JWT (capped at 10 for cookie size). For full permission checks, always use server-side helpers.
-- MFA: TOTP via `speakeasy`; secret encrypted at rest with `MFA_ENCRYPTION_KEY`; backup codes stored as hashes
-- Revocable sessions: every JWT has a `jti` tracked in `AuthSession` table; middleware rejects revoked JTIs
+- **Better Auth** with the Prisma PostgreSQL adapter. Email/password sign-in uses `lib/password.ts`; Google OAuth is conditional on configured credentials.
+- Email verification, password limits and password-reset session revocation are configured in `lib/auth.ts`.
+- General session reads may use the cookie cache. `requireRbacContext()` disables that cache for authorization and reads the active user, organization and current role permissions.
+- Middleware uses cookie presence for optimistic routing; protected server layouts/actions perform authoritative checks. Cookie presence or navigation visibility never authorizes a mutation.
+- Use existing sensitive-action/step-up and MFA controls for the relevant domain; do not introduce a second authentication/session implementation.
 
 **Server-side auth helpers** (`lib/auth-server.ts`):
 ```ts
@@ -99,7 +105,7 @@ hasPermission("READ_ITEMS")
 - Permissions are **strings** stored in `Role.permissions[]`
 - `PERMISSIONS` const exports all permission names
 - `ROLE_TEMPLATES` has 7 predefined roles: SUPER_ADMIN → ADMIN → MANAGER → SUPERVISOR → EMPLOYEE → CASHIER → VIEWER
-- Wildcard `"*"` permission = super admin (bypasses all checks)
+- Wildcard `"*"` participates in permission evaluation; it does not bypass cross-organization, active-account or domain evidence checks. See `lib/security/rbac.ts`.
 - `can(user, action)` handles legacy role-matrix-based PO workflow permissions
 - Server component guard pattern: `PermissionGate` component (from README example)
 
@@ -109,11 +115,11 @@ Key design decisions that affect every query:
 
 | Concern | Implementation |
 |---|---|
-| Multi-tenancy | All models have `organizationId`; compound indexes start with it |
+| Multi-tenancy | Bind tenant-owned queries and related-resource lookups to trusted server organization context; inspect each model's keys |
 | Soft deletes | `deletedAt` on financial entities — always filter `deletedAt: null` for active records |
 | Bilingual | `nameEn` (required) + `nameFr` (optional) on all user-facing translatable fields |
-| POS concurrency | `InventoryLevel.version` (optimistic locking) — increment and check on every stock update |
-| Payment idempotency | `Payment.idempotencyKey` — deduplicate mobile money retry storms |
+| Stock concurrency | Use `services/inventory/inventory-stock-event.service.ts` and existing version/availability predicates; do not add direct quantity writers |
+| Payment/POS idempotency | Preserve each domain's scoped identity, payload/revision checks and retained execution evidence; see POS checkout and purchasing payment-release services |
 | Document numbers | Per-org unique (not globally unique): `@@unique([organizationId, orderNumber])` |
 
 **Prisma client** is at `prisma/db.ts`. Use `prisma/db-edge.ts` only for Edge Runtime contexts.
@@ -152,20 +158,20 @@ Organized by domain. Pattern: each file exports one or a few async server action
 
 - `argon2` is **server-only**. It's listed in `serverExternalPackages` and excluded from client bundles via webpack. Never import it in client components.
 - Build uses `output: 'standalone'` — self-contained for Docker deployment.
-- `npm run build` skips lint; use `npm run build:linted` to catch issues pre-deploy.
+- `npm run build` runs secrets preflight, migration deployment and the linted build. Select checks through the shared command contract; do not use it as a default audit command.
 
 ---
 
 ## Skills Integration
 
 ### graphify
-When the user types `/graphify`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run graphify skill"`, and `prompt: "Execute the graphify skill on the current directory following the instructions in ~/.claude/skills/graphify/SKILL.md"` before doing anything else.
+Resolve `/graphify` through the current skill catalog and follow the availability/fallback rules in AGENTS.md. Use existing graphs as discovery aids and verify current source.
 
 ### test-gen
-When the user types `/test-gen`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run test-gen skill"`, and `prompt: "Execute the test-gen skill on the current directory or specified files following the instructions in ~/.claude/skills/test-gen/SKILL.md. Generate comprehensive unit tests for the selected code."` before doing anything else.
+Resolve `/test-gen` through the current catalog. If unavailable, disclose that fact and use the existing repository test patterns within the requested scope.
 
 ### enterprise-error-handling
-When the user types `/enterprise-error-handling`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run enterprise error handling skill"`, and `prompt: "Execute the enterprise error handling skill following the instructions in ~/.claude/skills/enterprise-error-handling/SKILL.md."` before doing anything else.
+Resolve the installed enterprise-error-handling skill through the current catalog. Reuse existing safe-action errors, correlation, transactions and worker recovery. Use only delegation tools exposed by the active harness when delegation is authorized.
 
 ---
 

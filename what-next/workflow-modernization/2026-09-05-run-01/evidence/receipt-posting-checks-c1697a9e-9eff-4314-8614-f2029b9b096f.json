@@ -1,0 +1,62 @@
+{
+  "at": "2026-09-30T19:56:02.288Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "services/purchase-order/__tests__/purchase-receiving-contracts.test.ts": "ae95cd99205f759440bd3754f08bacb4d5404dbdf381066790f183cb1103dcc1",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+        "services/purchase-order/__tests__/purchase-receiving-contracts.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 3 passed, 3 total\nTests:       49 passed, 49 total\nSnapshots:   0 total\nTime:        6.376 s\nRan all test suites within paths \"services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts\", \"services/purchase-order/__tests__/purchase-receiving-contracts.test.ts\", \"services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+        "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "services/purchase-order/__tests__/purchase-receiving-contracts.test.ts": "ae95cd99205f759440bd3754f08bacb4d5404dbdf381066790f183cb1103dcc1",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+  },
+  "sourceStable": true,
+  "passed": true
+}

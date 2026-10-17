@@ -42,6 +42,7 @@ export type APHistoryOptions = {
 
 export type APHistoryAppliedFilters = {
   lane: "invoice" | "payment" | "all"
+  invoiceId?: string | null
   supplierId: string | null
   invoiceStatus: SupplierInvoiceStatus | null
   paymentStatus: SupplierPaymentStatus | null
@@ -273,7 +274,9 @@ export async function readAPHistory(
     invalidHistoryInput("effectiveAsOf cannot be later than the response time.")
   }
 
+  if (filters.invoiceId && filters.lane !== "invoice") invalidHistoryInput("Invoice selection requires the invoice lane.")
   const filterIdentity = {
+    invoiceId: filters.invoiceId ?? null,
     lane: filters.lane ?? "all",
     supplierId: filters.supplierId ?? null,
     invoiceStatus: filters.invoiceStatus ?? null,
@@ -322,6 +325,7 @@ export async function readAPHistory(
   if (effectiveAsOf) paymentDate.lte = effectiveAsOf
 
   const invoiceBaseWhere: Prisma.SupplierInvoiceWhereInput = {
+    ...(filters.invoiceId ? { id: filters.invoiceId } : {}),
     organizationId: organization.id,
     createdAt: { lte: recordedThrough },
     invoiceDate,

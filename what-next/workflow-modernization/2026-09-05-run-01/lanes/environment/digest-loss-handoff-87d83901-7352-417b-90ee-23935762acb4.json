@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-27T10:31:27.611Z",
+  "sourceBefore": {
+    "services/signals/business-signal-rules.service.ts": "bfdb4017ec28afd9046a1b8c5d8c26a90be63c7a6b875435e5b5ff4c31eff294",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "hooks/useInventoryLossWorkbench.ts": "06af3c718617360c571860baf8a194de5ebd8b676ac90c8bfac475120a5df25d",
+    "components/inventory/loss/InventoryLossWorkbench.tsx": "4eac7dfb2d71abfabb29f7498be034f460e73585723df554325172b417db019e",
+    "actions/inventory/inventoryLossReadActions.ts": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16",
+    "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx": "e2377fac2ca342cc44fbcb4fcf0180453093a0d7285b892310447161911c1026",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "120b514da2a60e19681fdf35cf883643646ef9791939a726fa8efc2251e55d88"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": []
+    }
+  ],
+  "passed": false,
+  "error": "page.waitForURL: Timeout 120000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"http://127.0.0.1:3110/en/dashboard/inventory/loss-control#top\" until \"load\"\n  navigated to \"http://127.0.0.1:3110/en/dashboard/daily-digest?digest=owner-morning&mode=command\"\n  navigated to \"http://127.0.0.1:3110/en/dashboard/inventory/loss-control\"\n  navigated to \"http://127.0.0.1:3110/en/dashboard/inventory/loss-control\"\n  navigated to \"http://127.0.0.1:3110/en/dashboard/inventory/loss-control\"\n============================================================",
+  "failureScreenshot": "digest-loss-handoff-87d83901-7352-417b-90ee-23935762acb4-failed.png",
+  "sourceAfter": {
+    "services/signals/business-signal-rules.service.ts": "bfdb4017ec28afd9046a1b8c5d8c26a90be63c7a6b875435e5b5ff4c31eff294",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "hooks/useInventoryLossWorkbench.ts": "06af3c718617360c571860baf8a194de5ebd8b676ac90c8bfac475120a5df25d",
+    "components/inventory/loss/InventoryLossWorkbench.tsx": "4eac7dfb2d71abfabb29f7498be034f460e73585723df554325172b417db019e",
+    "actions/inventory/inventoryLossReadActions.ts": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16",
+    "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx": "e2377fac2ca342cc44fbcb4fcf0180453093a0d7285b892310447161911c1026",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "120b514da2a60e19681fdf35cf883643646ef9791939a726fa8efc2251e55d88"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,25 @@
+{
+  "name": "report-control-behavior",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--runTestsByPath",
+    "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+    "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+    "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+    "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+    "services/analytics/__tests__/completed-sales-evidence.test.ts",
+    "--json",
+    "--outputFile=what-next/platform-remediation/2026-09-30-run-01/report-control-behavior.jest.json"
+  ],
+  "startedAt": "2026-09-30T20:57:57.982Z",
+  "endedAt": "2026-09-30T21:00:20.355Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 0,
+  "stderrBytes": 693
+}

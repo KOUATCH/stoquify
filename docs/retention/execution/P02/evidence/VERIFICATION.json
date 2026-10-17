@@ -1,0 +1,47 @@
+{
+  "recorded_utc": "2026-10-13T06:57:01.604544+00:00",
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exit_code": 0,
+    "result": "PASS",
+    "unclassified_scripts": 198,
+    "pre_post_hooks": "absent; inspected",
+    "application_commands_executed": false
+  },
+  "initial_tests": {
+    "command": "node node_modules/jest/bin/jest.js --config jest.retention-outcomes.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P02/evidence/JEST_RESULTS.json",
+    "exit_code": 1,
+    "passed_suites": 2,
+    "failed_to_load_suites": 1,
+    "passed_tests": 49,
+    "reason": "server-only marker was not resolved; subsequently supplied virtual test mock"
+  },
+  "final_tests": {
+    "command": "node node_modules/jest/bin/jest.js --config jest.retention-outcomes.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P02/evidence/JEST_RESULTS_FINAL_02.json",
+    "exit_code": 0,
+    "passed_suites": 3,
+    "passed_tests": 65,
+    "skipped_tests": 0,
+    "evidence_class": "pure/mocked",
+    "previous_passing_run": "JEST_RESULTS_FINAL.json; rerun after synthetic per-week operation ID clarification"
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --skipLibCheck --target ES2022 --module commonjs --moduleResolution node --types \"node,jest\" services/analytics/retention-outcomes.ts services/analytics/retention-cohorts.ts services/analytics/__tests__/retention-outcomes.test.ts services/analytics/__tests__/retention-cohorts.test.ts services/analytics/__tests__/retention-fixtures.ts",
+    "exit_code": 0,
+    "stdout": "",
+    "scope": "two pure modules, two pure test suites, shared fixture; not full application/service dependency graph"
+  },
+  "not_run": [
+    "real PostgreSQL",
+    "browser",
+    "provider",
+    "customer data",
+    "expert review",
+    "restore/load",
+    "build",
+    "migration",
+    "seed",
+    "P03-P24"
+  ],
+  "direct_test_command_review": "New isolated config uses installed SWC transformer and exact three suites. No npm hooks, Next project config, dotenv or global Jest setup. DB/RBAC/module dependencies mocked. No PrismaClient instantiation. Existing registry/config/package files unchanged."
+}

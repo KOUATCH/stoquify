@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-30T17:00:16.253Z",
+  "baseline": true,
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "8944d9b026ffe5647f272e3c410ac085227ed810ed25511ed62eb9208733f831",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "components/evidence/proof-trail-presentation.ts": "6f3b89192be0c5354a11feb664c238acff04f8e8d062eb1412697e2c0924e04e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "checks": [
+    {
+      "label": "status-without-any-certified-export",
+      "expected": "blocked",
+      "actual": "certified",
+      "blockers": [],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "actual-invalidation-of-retained-export",
+      "expected": "blocked",
+      "actual": "certified",
+      "packGrade": "certified",
+      "packLabel": "Redacted evidence",
+      "blockers": [],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "unavailable-high-risk-checklist",
+      "expected": "blocked",
+      "actual": "operational",
+      "blockers": [],
+      "readPreservedBusinessRecords": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuocpkra0000maao3a49fn2f",
+    "runnerId": "cmuocpksf0002maao9pm7nssz",
+    "reviewerId": "cmuocpksx0004maaoj9e1q86g",
+    "periodId": "cmuocpktb0008maaosaqulbtg",
+    "historicalRunId": "cmuocpl4o000cmaaousawo97g",
+    "packId": "cmuocpl56000emaao4bgydxnf"
+  },
+  "reproduced": [
+    "status-without-any-certified-export",
+    "actual-invalidation-of-retained-export",
+    "unavailable-high-risk-checklist"
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "8944d9b026ffe5647f272e3c410ac085227ed810ed25511ed62eb9208733f831",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "components/evidence/proof-trail-presentation.ts": "6f3b89192be0c5354a11feb664c238acff04f8e8d062eb1412697e2c0924e04e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "sourceStable": true
+}

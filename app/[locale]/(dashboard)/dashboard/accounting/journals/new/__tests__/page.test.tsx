@@ -155,6 +155,30 @@ describe("NewJournalEntryPage", () => {
     expect(screen.getByText("Ready")).toBeInTheDocument()
   })
 
+  it.each(["en", "fr"])("names a focusable line scroll region and its columns in %s", async locale => {
+    render(await NewJournalEntryPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
+    const region = screen.getByRole("region", { name: locale === "fr" ? "Lignes de l’écriture" : "Journal entry lines" })
+    expect(region).toHaveAttribute("tabindex", "0")
+    region.focus()
+    expect(region).toHaveFocus()
+    expect(region.querySelectorAll("th[scope='col']")).toHaveLength(4)
+    expect(screen.getByRole("columnheader", { name: locale === "fr" ? "Débit" : "Debit" })).toBeInTheDocument()
+    expect(screen.getByLabelText(locale === "fr" ? "Date de l’écriture" : "Entry date")).toHaveAttribute("type", "date")
+    expect(screen.getByLabelText(locale === "fr" ? "Devise" : "Currency")).toHaveValue("XAF")
+    expect(screen.getByRole("heading", { name: locale === "fr" ? "Nouvelle écriture comptable" : "New Journal Entry" })).toBeInTheDocument()
+    expect(screen.getByRole("option", { name: locale === "fr" ? "Sélectionner un journal" : "Select journal" })).toBeInTheDocument()
+    expect(createManualJournalEntryAction).not.toHaveBeenCalled()
+  })
+
+  it("uses a French success notice only after confirmed draft creation", async () => {
+    ;(createManualJournalEntryAction as jest.Mock).mockResolvedValue({ success: true })
+    const { container } = render(await NewJournalEntryPage({ params: Promise.resolve({ locale: "fr" }), searchParams: Promise.resolve({}) }))
+    fillDraft(container)
+    fireEvent.submit(container.querySelector("form")!)
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/fr/dashboard/accounting/journals?notice=${encodeURIComponent("Brouillon d’écriture créé")}`))
+    expect(createManualJournalEntryAction).toHaveBeenCalledTimes(1)
+  })
+
   it("stops before setup data access when create permission is denied", async () => {
     mockCheckPermission.mockRejectedValueOnce(new Error("Forbidden"))
 
@@ -208,6 +232,20 @@ describe("NewJournalEntryPage", () => {
     render(await NewJournalEntryPage({ params: Promise.resolve({ locale: "fr" }), searchParams: Promise.resolve({}) }))
     expect(screen.getByText("La configuration comptable n’a pas pu être chargée")).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Réessayer le chargement" })).toBeInTheDocument()
+    expect(document.querySelector("form")).toBeNull()
+    expect(createManualJournalEntryAction).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["accounts", "en"], ["accounts", "fr"], ["journals", "en"], ["journals", "fr"],
+  ])("explains denied %s setup access in %s without suggesting a retry", async (source, locale) => {
+    const lookup = source === "accounts" ? mockListChartAccountsAction : mockListJournalsAction
+    lookup.mockResolvedValue({ success: false, code: "FORBIDDEN", error: "Private access detail" })
+    render(await NewJournalEntryPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
+    expect(screen.getByText(locale === "fr" ? "Accès à la configuration comptable requis" : "Accounting setup access required")).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: locale === "fr" ? "Retour aux journaux" : "Back to journals" })).toHaveAttribute("href", "/dashboard/accounting/journals")
+    expect(screen.queryByRole("link", { name: locale === "fr" ? "Réessayer le chargement" : "Retry setup loading" })).not.toBeInTheDocument()
+    expect(screen.queryByText("Private access detail")).not.toBeInTheDocument()
     expect(document.querySelector("form")).toBeNull()
     expect(createManualJournalEntryAction).not.toHaveBeenCalled()
   })

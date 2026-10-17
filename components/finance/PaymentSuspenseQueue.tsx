@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { usePermissions } from "@/hooks/usePermissions"
+import type { usePermissions } from "@/hooks/usePermissions"
 import { useResolveSuspenseItem } from "@/hooks/payments/usePaymentReconciliationDashboard"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 import type { PaymentReconciliationDashboardData } from "@/actions/payments/reconciliation.actions"
@@ -23,13 +23,14 @@ type Item = PaymentReconciliationDashboardData["suspenseQueue"][number]
 type Draft = SuspenseDraft
 const editableStatuses = ["OPEN", "ASSIGNED", "IN_REVIEW", "RESOLUTION_PROPOSED", "REOPENED"]
 
-export function PaymentSuspenseQueue({ scope, items, formatDateTime, t, typeOptions }: {
+export function PaymentSuspenseQueue({ authority, scope, items, formatDateTime, t, typeOptions }: {
+  authority: ReturnType<typeof usePermissions>
   scope: PaymentReconciliationDashboardData["scope"]
   items: Item[]; money: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>; typeOptions: readonly string[]
 }) {
-  const workflow = useResolveSuspenseItem(), { hasPermission, user, organizationId, permissionState } = usePermissions()
+  const workflow = useResolveSuspenseItem(), { hasPermission, user, organizationId, permissionState } = authority
   const key = suspenseRecoveryKey(scope), activeKey = useRef(key); activeKey.current = key
   const scoped = permissionState === "ready" && user?.id === scope.actorId && organizationId === scope.organizationId && hasPermission("payments.reconciliation.read")
   const locale = useLocale()

@@ -1,0 +1,276 @@
+{
+  "kind": "PLANNING_PROTOTYPE_NOT_ACCOUNTING_FACT",
+  "assumptionVersion": "synthetic-v1",
+  "assumptionHash": "aa0d90b20b1ed10194c0734246593d3f0422eab080e50cb02e4af6476eec3481",
+  "inputHash": "4f57449a11b1f0a2909a3f2a09ce76e5f973d41b7868bfaa29c9b04ae5910ffc",
+  "currency": "XAF",
+  "minorUnits": 0,
+  "assumptions": {
+    "dailyOrder": "OUTFLOWS_BEFORE_RECEIPTS",
+    "uncertainty": "EXPECTED_RECEIPTS_DELAY_ONLY",
+    "baseline": "FROZEN_OPENING_CASH",
+    "coverageIsUserAttested": true
+  },
+  "scenarios": [
+    {
+      "id": "base",
+      "weekly": [
+        {
+          "week": 1,
+          "endsOn": "2026-10-04",
+          "closingMinor": "1000000"
+        },
+        {
+          "week": 2,
+          "endsOn": "2026-10-11",
+          "closingMinor": "1600000"
+        },
+        {
+          "week": 3,
+          "endsOn": "2026-10-18",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 4,
+          "endsOn": "2026-10-25",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 5,
+          "endsOn": "2026-11-01",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 6,
+          "endsOn": "2026-11-08",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 7,
+          "endsOn": "2026-11-15",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 8,
+          "endsOn": "2026-11-22",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 9,
+          "endsOn": "2026-11-29",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 10,
+          "endsOn": "2026-12-06",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 11,
+          "endsOn": "2026-12-13",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 12,
+          "endsOn": "2026-12-20",
+          "closingMinor": "800000"
+        },
+        {
+          "week": 13,
+          "endsOn": "2026-12-27",
+          "closingMinor": "800000"
+        }
+      ],
+      "minimumCashMinor": "800000",
+      "bufferBreachOn": null,
+      "beyondHorizon": [],
+      "lateChoices": [],
+      "proposedChoices": []
+    },
+    {
+      "id": "purchase-delay",
+      "weekly": [
+        {
+          "week": 1,
+          "endsOn": "2026-10-04",
+          "closingMinor": "1000000"
+        },
+        {
+          "week": 2,
+          "endsOn": "2026-10-11",
+          "closingMinor": "500000"
+        },
+        {
+          "week": 3,
+          "endsOn": "2026-10-18",
+          "closingMinor": "-300000"
+        },
+        {
+          "week": 4,
+          "endsOn": "2026-10-25",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 5,
+          "endsOn": "2026-11-01",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 6,
+          "endsOn": "2026-11-08",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 7,
+          "endsOn": "2026-11-15",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 8,
+          "endsOn": "2026-11-22",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 9,
+          "endsOn": "2026-11-29",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 10,
+          "endsOn": "2026-12-06",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 11,
+          "endsOn": "2026-12-13",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 12,
+          "endsOn": "2026-12-20",
+          "closingMinor": "300000"
+        },
+        {
+          "week": 13,
+          "endsOn": "2026-12-27",
+          "closingMinor": "300000"
+        }
+      ],
+      "minimumCashMinor": "-300000",
+      "bufferBreachOn": "2026-10-12",
+      "beyondHorizon": [],
+      "lateChoices": [
+        "p1"
+      ],
+      "proposedChoices": [
+        {
+          "id": "p1",
+          "kind": "PURCHASE",
+          "status": "REQUIRES_DOMAIN_APPROVAL",
+          "sourceRef": "SYNTHETIC/stock-need"
+        }
+      ]
+    },
+    {
+      "id": "transfer-delay",
+      "weekly": [
+        {
+          "week": 1,
+          "endsOn": "2026-10-04",
+          "closingMinor": "1000000"
+        },
+        {
+          "week": 2,
+          "endsOn": "2026-10-11",
+          "closingMinor": "950000"
+        },
+        {
+          "week": 3,
+          "endsOn": "2026-10-18",
+          "closingMinor": "150000"
+        },
+        {
+          "week": 4,
+          "endsOn": "2026-10-25",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 5,
+          "endsOn": "2026-11-01",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 6,
+          "endsOn": "2026-11-08",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 7,
+          "endsOn": "2026-11-15",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 8,
+          "endsOn": "2026-11-22",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 9,
+          "endsOn": "2026-11-29",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 10,
+          "endsOn": "2026-12-06",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 11,
+          "endsOn": "2026-12-13",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 12,
+          "endsOn": "2026-12-20",
+          "closingMinor": "750000"
+        },
+        {
+          "week": 13,
+          "endsOn": "2026-12-27",
+          "closingMinor": "750000"
+        }
+      ],
+      "minimumCashMinor": "150000",
+      "bufferBreachOn": "2026-10-12",
+      "beyondHorizon": [],
+      "lateChoices": [],
+      "proposedChoices": [
+        {
+          "id": "t1",
+          "kind": "TRANSFER",
+          "status": "REQUIRES_DOMAIN_APPROVAL",
+          "sourceRef": "SYNTHETIC/transfer-need"
+        }
+      ]
+    }
+  ],
+  "evaluation": {
+    "observedWeeks": 0,
+    "missingWeeks": 13,
+    "baselineAbsoluteErrorSumMinor": null,
+    "scenarioAbsoluteErrorSumMinor": [
+      {
+        "id": "base",
+        "sumMinor": null
+      },
+      {
+        "id": "purchase-delay",
+        "sumMinor": null
+      },
+      {
+        "id": "transfer-delay",
+        "sumMinor": null
+      }
+    ]
+  }
+}

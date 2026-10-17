@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-30T10:15:09.495Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-presentation.ts": "ddac604909a8beae095f5c364b28646c852dccd80a4b05dee2b53a7732dc738d",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "9911d46e47231f510f2152c5a8b9dc4ac7d94cd03f1f2d67dd06cff2cd6cf39e",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "838beab23dbce38de01f8641a35dfe9177c4ecb9d68ea3688757ea91510b6009",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "6a586a6ddb750c4aa94c57c591d28f674731b28f83a95939bf00a522821a3f04"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/cash-command/__tests__/cash-command.service.test.ts\n  ● getCashCommandData tenant authority › preserves custom copy and denied proof identity while translating canonical warnings\n\n    expect(received).toMatchObject(expected)\n\n    - Expected  - 1\n    + Received  + 1\n\n      Object {\n    -   \"unavailableReason\": \"Cette preuve n’est pas accessible avec vos droits actuels.\",\n    +   \"unavailableReason\": \"Vous n’avez pas l’autorisation de consulter cette preuve.\",\n      }\n\n      485 |     expect(fr.commandBrief.summary).toBe(data.commandBrief.summary)\n      486 |     expect(fr.proofSubjects.every(subject => !subject.available && !Object.hasOwn(subject, \"subjectId\"))).toBe(true)\n    > 487 |     expect(fr.proofSubjects[0]).toMatchObject({ unavailableReason: \"Cette preuve n’est pas accessible avec vos droits actuels.\" })\n          |                                 ^\n      488 |     expect(fr.cards[0].redactions[0]).toMatchObject({ id: data.cards[0].redactions[0].id, field: data.cards[0].redactions[0].field, policy: data.cards[0].redactions[0].policy, reason: expect.stringContaining(\"Vos droits\") })\n      489 |   })\n      490 |\n\n      at Object.toMatchObject (services/cash-command/__tests__/cash-command.service.test.ts:487:33)\n\nTest Suites: 1 failed, 2 passed, 3 total\nTests:       1 failed, 103 passed, 104 total\nSnapshots:   0 total\nTime:        8.952 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-presentation.ts": "ddac604909a8beae095f5c364b28646c852dccd80a4b05dee2b53a7732dc738d",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "9911d46e47231f510f2152c5a8b9dc4ac7d94cd03f1f2d67dd06cff2cd6cf39e",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "838beab23dbce38de01f8641a35dfe9177c4ecb9d68ea3688757ea91510b6009",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "6a586a6ddb750c4aa94c57c591d28f674731b28f83a95939bf00a522821a3f04"
+  },
+  "sourceStable": true,
+  "passed": false
+}

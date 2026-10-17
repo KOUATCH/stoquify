@@ -77,6 +77,7 @@ export type AccountantMissingCloseEvidenceReviewQueue = Readonly<{
   organizationId: string
   actorId: string
   generatedAt: string
+  nextCursor?: string | null
   source: {
     organizationScoped: true
     accessMode: "TENANT_MEMBER" | "DELEGATED_ACCOUNTANT"

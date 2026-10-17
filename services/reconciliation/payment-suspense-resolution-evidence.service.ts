@@ -10,7 +10,7 @@ import { suspenseResolutionClearingKey, suspenseResolutionDraftSchema, type Susp
 
 const clearingInclude = {
   ...correctionJournalInclude,
-  lines: { include: { account: { select: { organizationId: true, type: true, code: true, nameEn: true, nameFr: true } } }, orderBy: { lineNumber: "asc" } },
+  lines: { include: { account: { select: { organizationId: true, syscohadaClass: true, type: true, code: true, nameEn: true, nameFr: true } } }, orderBy: { lineNumber: "asc" } },
 } satisfies Prisma.JournalEntryInclude
 
 export async function loadSuspenseResolutionEvidenceInTx(tx: Prisma.TransactionClient, draft: SuspenseResolutionDraft, control: Pick<SuspenseCorrectionControl, "organizationId" | "now">, resolvedReceiptId?: string) {

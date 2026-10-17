@@ -1,0 +1,109 @@
+{
+  "startedAt": "2026-09-30T14:47:21.604Z",
+  "synthetic": true,
+  "base": "http://127.0.0.1:3110",
+  "checks": [
+    {
+      "name": "en two-client pending and submitted tasks visible",
+      "status": "PASS"
+    },
+    {
+      "name": "en keyboard detail focus and correct client-period portal link",
+      "status": "PASS"
+    },
+    {
+      "name": "en real password step-up then explicit same-command acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "en narrow workdesk does not overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "en revoked grant rejects browser acceptance and clears review data",
+      "status": "PASS"
+    },
+    {
+      "name": "en A downloaded hash",
+      "contentHash": "sha256:66df565ffd51ffa55dae1d16dae4f89a2c97b55d9a9f9f200b388a245cc13a39",
+      "status": "PASS"
+    },
+    {
+      "name": "en client A portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "en B downloaded hash",
+      "contentHash": "sha256:ddf1fd4490156698a9e3d6afdad86a9d3c2250acc7b1ab738a35fb2700a13fb7",
+      "status": "PASS"
+    },
+    {
+      "name": "en client B portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "fr two-client pending and submitted tasks visible",
+      "status": "PASS"
+    },
+    {
+      "name": "fr keyboard detail focus and correct client-period portal link",
+      "status": "PASS"
+    },
+    {
+      "name": "fr real password step-up then explicit same-command acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "fr narrow workdesk does not overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "fr revoked grant rejects browser acceptance and clears review data",
+      "status": "PASS"
+    },
+    {
+      "name": "fr A downloaded hash",
+      "contentHash": "sha256:f6598c8330dac67cd80d11a19056935188ab9d8a588a7e531c64e2706cfdbb6f",
+      "status": "PASS"
+    },
+    {
+      "name": "fr client A portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "fr B downloaded hash",
+      "contentHash": "sha256:6a532e7832b468cf12ea469a9b0748be4c8b3e6f1f8405532482461d9b182fe1",
+      "status": "PASS"
+    },
+    {
+      "name": "fr client B portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    }
+  ],
+  "fixtureOrganizations": [
+    "cmuo7ynnk0000maq48skuhyzb",
+    "cmuo7ynxf000bmaq45l67uwk3",
+    "cmuo7yo8u000wmaq4hjj7ptuq"
+  ],
+  "actionCodes": [
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER"
+  ],
+  "status": "PASS",
+  "completedAt": "2026-09-30T14:50:06.715Z",
+  "sources": {
+    "services/accounting/accountant-work-desk.contracts.ts": "982131dc57be59dd15c610506dc92cabfa93af5f628da78a08a39ef502a8255c",
+    "services/accounting/accountant-work-desk.service.ts": "92b31718d76360d52f05e3967bbe449a044298e080dd6b8d54d254d5179f68f2",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+    "actions/accounting/accountant-work-desk.actions.ts": "2ca7eb97bb4293b86ad81e19c193a3f2294a3ede7a0819f2c3b2d08d5619158e",
+    "components/accounting/AccountantWorkDesk.tsx": "8a851a9885f9b29448236b2f1479408e8d26890ff9e95c74da9e3e00f3b1b15b",
+    "components/accounting/accountant-work-desk-copy.ts": "4939dc768c3a3d4dad6c1160ca61121d0ed6e6eaee52ceef111d3185fa3c10ee",
+    "hooks/useAccountantPortal.ts": "413582bd96fc1c905cb3b02e1f5cf1b22c51e778d35ae23406caf2c5a425c4e4",
+    "components/accounting/AccountantPortal.tsx": "b2083d78d5ff8a822da662e1a8174f830331f7c81bdacac62bee51f2518a8d5d",
+    "components/accounting/AccountantPortfolio.tsx": "fac29652cea5bf53bda147b60774a29cba8bcb219bad0445293617fd4391e1f0",
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx": "1d3dfeb8457ba94c0b386e0703fff42534c771995a845f45fd97eee264d5ca7e",
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx": "a4d427f944db90053d62e9aa481dc006941f4a023d99af068719e5f8f9c83c2d"
+  }
+}

@@ -1,0 +1,2128 @@
+{
+  "at": "2026-09-30T16:04:32.267Z",
+  "environment": "Owned development app; profiles have measurement overhead; HTTP cache disabled by Playwright interception",
+  "sourceBefore": {
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "components/finance/finance-dashboard-theme.ts": "2bfa00818a1520ec5683c1ca43152cc95da03edf7b11c44fb845504f5bc8208d",
+    "components/cash-command/cash-command.module.css": "d98dc31d5e95fab331464b1a1096fc2ab7ed126ae069bf59fe42628a7bdcf761",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc",
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "services/modules/module-navigation.service.ts": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+  },
+  "samples": [
+    {
+      "locale": "en",
+      "sample": 0,
+      "cpuProfiled": false,
+      "cpu": null,
+      "metrics": {
+        "longTasks": [
+          {
+            "start": 1146.9000000357628,
+            "duration": 62
+          },
+          {
+            "start": 5800.300000011921,
+            "duration": 996
+          },
+          {
+            "start": 7133.800000011921,
+            "duration": 943
+          }
+        ],
+        "contentAt": 5327.400000035763,
+        "modesAt": 8077.200000047684,
+        "navigation": {
+          "requestStart": 27.900000035762787,
+          "responseStart": 830.5,
+          "responseEnd": 5210.200000047684,
+          "domInteractive": 5217.100000023842,
+          "domContentLoaded": 5217.200000047684,
+          "load": 6823.700000047684,
+          "bytes": 151436,
+          "decodedBytes": 687539
+        },
+        "paint": [
+          {
+            "name": "first-paint",
+            "at": 1404
+          },
+          {
+            "name": "first-contentful-paint",
+            "at": 1404
+          }
+        ],
+        "resources": [
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "type": "link",
+            "start": 1055,
+            "duration": 71.40000003576279,
+            "responseStart": 1098.5,
+            "responseEnd": 1126.4000000357628,
+            "bytes": 46888,
+            "decodedBytes": 318094
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "type": "link",
+            "start": 1057,
+            "duration": 60.10000002384186,
+            "responseStart": 1101.6000000238419,
+            "responseEnd": 1117.1000000238419,
+            "bytes": 28500,
+            "decodedBytes": 141135
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "type": "script",
+            "start": 1057.2000000476837,
+            "duration": 4699.199999988079,
+            "responseStart": 1176.4000000357628,
+            "responseEnd": 5756.400000035763,
+            "bytes": 1767687,
+            "decodedBytes": 7727105
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "type": "script",
+            "start": 1057.4000000357628,
+            "duration": 389.89999997615814,
+            "responseStart": 1177.2000000476837,
+            "responseEnd": 1447.300000011921,
+            "bytes": 64908,
+            "decodedBytes": 273640
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "type": "script",
+            "start": 1057.6000000238419,
+            "duration": 1631.3999999761581,
+            "responseStart": 1348.800000011921,
+            "responseEnd": 2689,
+            "bytes": 130307,
+            "decodedBytes": 539654
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "type": "script",
+            "start": 1057.7000000476837,
+            "duration": 1635.199999988079,
+            "responseStart": 1362.7000000476837,
+            "responseEnd": 2692.900000035763,
+            "bytes": 124573,
+            "decodedBytes": 526570
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "type": "script",
+            "start": 1057.9000000357628,
+            "duration": 1651.3999999761581,
+            "responseStart": 1363,
+            "responseEnd": 2709.300000011921,
+            "bytes": 129338,
+            "decodedBytes": 535363
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "type": "script",
+            "start": 1058,
+            "duration": 1663.7000000476837,
+            "responseStart": 2672.800000011921,
+            "responseEnd": 2721.7000000476837,
+            "bytes": 83683,
+            "decodedBytes": 334728
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "type": "script",
+            "start": 1058.2000000476837,
+            "duration": 3905.899999976158,
+            "responseStart": 2717.800000011921,
+            "responseEnd": 4964.100000023842,
+            "bytes": 130393,
+            "decodedBytes": 540035
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "type": "script",
+            "start": 1058.300000011921,
+            "duration": 3984.100000023842,
+            "responseStart": 2723.300000011921,
+            "responseEnd": 5042.400000035763,
+            "bytes": 266149,
+            "decodedBytes": 1173235
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "type": "script",
+            "start": 1058.4000000357628,
+            "duration": 3907.5,
+            "responseStart": 2725.400000035763,
+            "responseEnd": 4965.900000035763,
+            "bytes": 127774,
+            "decodedBytes": 525502
+          },
+          {
+            "path": "/_next/static/css/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.css",
+            "type": "link",
+            "start": 1058.6000000238419,
+            "duration": 42.60000002384186,
+            "responseStart": 1099.300000011921,
+            "responseEnd": 1101.2000000476837,
+            "bytes": 676,
+            "decodedBytes": 1686
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "type": "script",
+            "start": 5016.400000035763,
+            "duration": 643,
+            "responseStart": 5043.100000023842,
+            "responseEnd": 5659.400000035763,
+            "bytes": 1131929,
+            "decodedBytes": 4834754
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.js",
+            "type": "script",
+            "start": 5175.700000047684,
+            "duration": 240.0999999642372,
+            "responseStart": 5214.400000035763,
+            "responseEnd": 5415.800000011921,
+            "bytes": 455565,
+            "decodedBytes": 2044707
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "type": "script",
+            "start": 7050.600000023842,
+            "duration": 19.899999976158142,
+            "responseStart": 7069.5,
+            "responseEnd": 7070.5,
+            "bytes": 3104,
+            "decodedBytes": 6923
+          }
+        ]
+      },
+      "server": {
+        "flightBytes": 443582,
+        "debugRows": 66,
+        "components": [
+          {
+            "id": "1",
+            "names": [
+              "Preloads"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a",
+            "names": [
+              "RootLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "16",
+            "names": [
+              "LocaleLayout",
+              "NextIntlClientProviderServer"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "2f",
+            "names": [
+              "DashboardLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "42",
+            "names": [
+              "CashCommandPage"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "49",
+            "names": [
+              "__next_outlet_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "4c",
+            "names": [
+              "StreamingMetadataOutletImpl"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "52",
+            "names": [
+              "FinanceLoading"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "56",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "60",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "63",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "66",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "71",
+            "names": [
+              "DashboardLoader",
+              "DashboardLoadingState"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "85",
+            "names": [
+              "NonIndex"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "87",
+            "names": [
+              "ViewportTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8b",
+            "names": [
+              "__next_viewport_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8d",
+            "names": [
+              "MetadataTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "91",
+            "names": [
+              "__next_metadata_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "96",
+            "names": [
+              "MetadataResolver"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7e",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7f",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "80",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a5",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a8",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "ab",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "af",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b6",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b9",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bc",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bf",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "c2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          }
+        ]
+      },
+      "cacheControl": "no-store, must-revalidate",
+      "errors": []
+    },
+    {
+      "locale": "en",
+      "sample": 1,
+      "cpuProfiled": false,
+      "cpu": null,
+      "metrics": {
+        "longTasks": [
+          {
+            "start": 5172.699999988079,
+            "duration": 788
+          },
+          {
+            "start": 6337.399999976158,
+            "duration": 804
+          }
+        ],
+        "contentAt": 5045.699999988079,
+        "modesAt": 7142.300000011921,
+        "navigation": {
+          "requestStart": 9.600000023841858,
+          "responseStart": 762.8000000119209,
+          "responseEnd": 4751.800000011921,
+          "domInteractive": 4768.199999988079,
+          "domContentLoaded": 4768.399999976158,
+          "load": 6050.800000011921,
+          "bytes": 151303,
+          "decodedBytes": 685729
+        },
+        "paint": [
+          {
+            "name": "first-paint",
+            "at": 2476
+          },
+          {
+            "name": "first-contentful-paint",
+            "at": 2476
+          }
+        ],
+        "resources": [
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "type": "link",
+            "start": 861.5,
+            "duration": 1360.199999988079,
+            "responseStart": 978.3000000119209,
+            "responseEnd": 2221.699999988079,
+            "bytes": 46888,
+            "decodedBytes": 318094
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "type": "link",
+            "start": 867.8000000119209,
+            "duration": 167.80000001192093,
+            "responseStart": 979.1999999880791,
+            "responseEnd": 1035.6000000238419,
+            "bytes": 28500,
+            "decodedBytes": 141135
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "type": "script",
+            "start": 868,
+            "duration": 4257.600000023842,
+            "responseStart": 2285.5,
+            "responseEnd": 5125.600000023842,
+            "bytes": 1767687,
+            "decodedBytes": 7727105
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "type": "script",
+            "start": 868.1000000238419,
+            "duration": 1576.699999988079,
+            "responseStart": 2296.5,
+            "responseEnd": 2444.800000011921,
+            "bytes": 64908,
+            "decodedBytes": 273640
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "type": "script",
+            "start": 868.1999999880791,
+            "duration": 3632.199999988079,
+            "responseStart": 2335.800000011921,
+            "responseEnd": 4500.399999976158,
+            "bytes": 130307,
+            "decodedBytes": 539654
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "type": "script",
+            "start": 868.3999999761581,
+            "duration": 3629.7000000476837,
+            "responseStart": 2366.600000023842,
+            "responseEnd": 4498.100000023842,
+            "bytes": 124573,
+            "decodedBytes": 526570
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "type": "script",
+            "start": 868.3999999761581,
+            "duration": 3640.100000023842,
+            "responseStart": 2367.800000011921,
+            "responseEnd": 4508.5,
+            "bytes": 129338,
+            "decodedBytes": 535363
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "type": "script",
+            "start": 868.5,
+            "duration": 3656.899999976158,
+            "responseStart": 4491.800000011921,
+            "responseEnd": 4525.399999976158,
+            "bytes": 83683,
+            "decodedBytes": 334728
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "type": "script",
+            "start": 868.6999999880791,
+            "duration": 3707.900000035763,
+            "responseStart": 4518.199999988079,
+            "responseEnd": 4576.600000023842,
+            "bytes": 130393,
+            "decodedBytes": 540035
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "type": "script",
+            "start": 868.8000000119209,
+            "duration": 3718,
+            "responseStart": 4520.5,
+            "responseEnd": 4586.800000011921,
+            "bytes": 127774,
+            "decodedBytes": 525502
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "type": "script",
+            "start": 868.8000000119209,
+            "duration": 3778.699999988079,
+            "responseStart": 4518.899999976158,
+            "responseEnd": 4647.5,
+            "bytes": 266149,
+            "decodedBytes": 1173235
+          },
+          {
+            "path": "/_next/static/css/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.css",
+            "type": "link",
+            "start": 869.1000000238419,
+            "duration": 135.39999997615814,
+            "responseStart": 989.6999999880791,
+            "responseEnd": 1004.5,
+            "bytes": 676,
+            "decodedBytes": 1686
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "type": "script",
+            "start": 4737.800000011921,
+            "duration": 501.80000001192093,
+            "responseStart": 4763.899999976158,
+            "responseEnd": 5239.600000023842,
+            "bytes": 1131929,
+            "decodedBytes": 4834754
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.js",
+            "type": "script",
+            "start": 4746.600000023842,
+            "duration": 235.19999998807907,
+            "responseStart": 4769.300000011921,
+            "responseEnd": 4981.800000011921,
+            "bytes": 455565,
+            "decodedBytes": 2044707
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "type": "script",
+            "start": 6258.800000011921,
+            "duration": 19,
+            "responseStart": 6276.699999988079,
+            "responseEnd": 6277.800000011921,
+            "bytes": 3104,
+            "decodedBytes": 6923
+          }
+        ]
+      },
+      "server": {
+        "flightBytes": 441962,
+        "debugRows": 66,
+        "components": [
+          {
+            "id": "1",
+            "names": [
+              "Preloads"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a",
+            "names": [
+              "RootLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "16",
+            "names": [
+              "LocaleLayout",
+              "NextIntlClientProviderServer"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "2f",
+            "names": [
+              "DashboardLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "42",
+            "names": [
+              "CashCommandPage"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "49",
+            "names": [
+              "__next_outlet_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "4c",
+            "names": [
+              "StreamingMetadataOutletImpl"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "52",
+            "names": [
+              "FinanceLoading"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "56",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "60",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "63",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "66",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "71",
+            "names": [
+              "DashboardLoader",
+              "DashboardLoadingState"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "85",
+            "names": [
+              "NonIndex"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "87",
+            "names": [
+              "ViewportTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8b",
+            "names": [
+              "__next_viewport_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8d",
+            "names": [
+              "MetadataTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "91",
+            "names": [
+              "__next_metadata_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "96",
+            "names": [
+              "MetadataResolver"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7e",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7f",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "80",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a5",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a8",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "ab",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "af",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b6",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b9",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bc",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bf",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "c2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          }
+        ]
+      },
+      "cacheControl": "no-store, must-revalidate",
+      "errors": []
+    },
+    {
+      "locale": "fr",
+      "sample": 0,
+      "cpuProfiled": false,
+      "cpu": null,
+      "metrics": {
+        "longTasks": [
+          {
+            "start": 2207.399999976158,
+            "duration": 62
+          },
+          {
+            "start": 5390,
+            "duration": 985
+          },
+          {
+            "start": 6731.699999988079,
+            "duration": 911
+          }
+        ],
+        "contentAt": 5080.099999964237,
+        "modesAt": 7642.799999952316,
+        "navigation": {
+          "requestStart": 10.799999952316284,
+          "responseStart": 871,
+          "responseEnd": 4755.599999964237,
+          "domInteractive": 4893.299999952316,
+          "domContentLoaded": 4893.5,
+          "load": 6402.699999988079,
+          "bytes": 164346,
+          "decodedBytes": 747437
+        },
+        "paint": [
+          {
+            "name": "first-paint",
+            "at": 2544
+          },
+          {
+            "name": "first-contentful-paint",
+            "at": 2544
+          }
+        ],
+        "resources": [
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "type": "link",
+            "start": 1072.199999988079,
+            "duration": 1114.300000011921,
+            "responseStart": 2154,
+            "responseEnd": 2186.5,
+            "bytes": 46888,
+            "decodedBytes": 318094
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "type": "link",
+            "start": 1074,
+            "duration": 1104.5,
+            "responseStart": 2157.2999999523163,
+            "responseEnd": 2178.5,
+            "bytes": 28500,
+            "decodedBytes": 141135
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "type": "script",
+            "start": 1074.199999988079,
+            "duration": 4278.199999988079,
+            "responseStart": 2222.899999976158,
+            "responseEnd": 5352.399999976158,
+            "bytes": 1767687,
+            "decodedBytes": 7727105
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "type": "script",
+            "start": 1074.3999999761581,
+            "duration": 1366,
+            "responseStart": 2326.099999964237,
+            "responseEnd": 2440.399999976158,
+            "bytes": 64908,
+            "decodedBytes": 273640
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "type": "script",
+            "start": 1074.699999988079,
+            "duration": 3376.399999976158,
+            "responseStart": 2424.2999999523163,
+            "responseEnd": 4451.099999964237,
+            "bytes": 130307,
+            "decodedBytes": 539654
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "type": "script",
+            "start": 1074.7999999523163,
+            "duration": 3395.5,
+            "responseStart": 2434.699999988079,
+            "responseEnd": 4470.299999952316,
+            "bytes": 124573,
+            "decodedBytes": 526570
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "type": "script",
+            "start": 1075,
+            "duration": 3407.699999988079,
+            "responseStart": 2436.099999964237,
+            "responseEnd": 4482.699999988079,
+            "bytes": 129338,
+            "decodedBytes": 535363
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "type": "script",
+            "start": 1075.0999999642372,
+            "duration": 3423.900000035763,
+            "responseStart": 4412.099999964237,
+            "responseEnd": 4499,
+            "bytes": 83683,
+            "decodedBytes": 334728
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "type": "script",
+            "start": 1075.2999999523163,
+            "duration": 3507.7000000476837,
+            "responseStart": 4506.199999988079,
+            "responseEnd": 4583,
+            "bytes": 130393,
+            "decodedBytes": 540035
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "type": "script",
+            "start": 1075.3999999761581,
+            "duration": 3567.899999976158,
+            "responseStart": 4505.099999964237,
+            "responseEnd": 4643.299999952316,
+            "bytes": 266149,
+            "decodedBytes": 1173235
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "type": "script",
+            "start": 1075.5999999642372,
+            "duration": 3517.600000023842,
+            "responseStart": 4509.399999976158,
+            "responseEnd": 4593.199999988079,
+            "bytes": 127774,
+            "decodedBytes": 525502
+          },
+          {
+            "path": "/_next/static/css/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.css",
+            "type": "link",
+            "start": 1075.699999988079,
+            "duration": 1080.800000011921,
+            "responseStart": 2155.099999964237,
+            "responseEnd": 2156.5,
+            "bytes": 676,
+            "decodedBytes": 1686
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "type": "script",
+            "start": 4747.099999964237,
+            "duration": 571.6999999880791,
+            "responseStart": 4763.799999952316,
+            "responseEnd": 5318.799999952316,
+            "bytes": 1131929,
+            "decodedBytes": 4834754
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.js",
+            "type": "script",
+            "start": 4755.599999964237,
+            "duration": 289.30000001192093,
+            "responseStart": 4780,
+            "responseEnd": 5044.899999976158,
+            "bytes": 455565,
+            "decodedBytes": 2044707
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "type": "script",
+            "start": 6641.399999976158,
+            "duration": 13.600000023841858,
+            "responseStart": 6653.899999976158,
+            "responseEnd": 6655,
+            "bytes": 3104,
+            "decodedBytes": 6923
+          }
+        ]
+      },
+      "server": {
+        "flightBytes": 500200,
+        "debugRows": 66,
+        "components": [
+          {
+            "id": "1",
+            "names": [
+              "Preloads"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a",
+            "names": [
+              "RootLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "16",
+            "names": [
+              "LocaleLayout",
+              "NextIntlClientProviderServer"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "2f",
+            "names": [
+              "DashboardLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "42",
+            "names": [
+              "CashCommandPage"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "49",
+            "names": [
+              "__next_outlet_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "4c",
+            "names": [
+              "StreamingMetadataOutletImpl"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "52",
+            "names": [
+              "FinanceLoading"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "56",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "60",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "63",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "66",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "71",
+            "names": [
+              "DashboardLoader",
+              "DashboardLoadingState"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "85",
+            "names": [
+              "NonIndex"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "87",
+            "names": [
+              "ViewportTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8b",
+            "names": [
+              "__next_viewport_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8d",
+            "names": [
+              "MetadataTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "91",
+            "names": [
+              "__next_metadata_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "96",
+            "names": [
+              "MetadataResolver"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7e",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7f",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "80",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a5",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a8",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "ab",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "af",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b6",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b9",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bc",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bf",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "c2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          }
+        ]
+      },
+      "cacheControl": "no-store, must-revalidate",
+      "errors": []
+    },
+    {
+      "locale": "fr",
+      "sample": 1,
+      "cpuProfiled": false,
+      "cpu": null,
+      "metrics": {
+        "longTasks": [
+          {
+            "start": 5011.399999976158,
+            "duration": 715
+          },
+          {
+            "start": 6024.199999988079,
+            "duration": 733
+          }
+        ],
+        "contentAt": 4760.099999964237,
+        "modesAt": 6757.799999952316,
+        "navigation": {
+          "requestStart": 13.799999952316284,
+          "responseStart": 727.7999999523163,
+          "responseEnd": 4448.699999988079,
+          "domInteractive": 4503,
+          "domContentLoaded": 4503.199999988079,
+          "load": 5753.799999952316,
+          "bytes": 164343,
+          "decodedBytes": 747444
+        },
+        "paint": [
+          {
+            "name": "first-paint",
+            "at": 2280
+          },
+          {
+            "name": "first-contentful-paint",
+            "at": 2280
+          }
+        ],
+        "resources": [
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "type": "link",
+            "start": 827.5,
+            "duration": 1214.5,
+            "responseStart": 1984.3999999761581,
+            "responseEnd": 2042,
+            "bytes": 46888,
+            "decodedBytes": 318094
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "type": "link",
+            "start": 828.5,
+            "duration": 1197.0999999642372,
+            "responseStart": 1984.2999999523163,
+            "responseEnd": 2025.5999999642372,
+            "bytes": 28500,
+            "decodedBytes": 141135
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "type": "script",
+            "start": 828.6999999880791,
+            "duration": 1426.5999999642372,
+            "responseStart": 2104.699999988079,
+            "responseEnd": 2255.2999999523163,
+            "bytes": 64908,
+            "decodedBytes": 273640
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "type": "script",
+            "start": 828.6999999880791,
+            "duration": 4148.399999976158,
+            "responseStart": 2061.2999999523163,
+            "responseEnd": 4977.099999964237,
+            "bytes": 1767687,
+            "decodedBytes": 7727105
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "type": "script",
+            "start": 828.7999999523163,
+            "duration": 3379.7000000476837,
+            "responseStart": 2109.099999964237,
+            "responseEnd": 4208.5,
+            "bytes": 130307,
+            "decodedBytes": 539654
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "type": "script",
+            "start": 829,
+            "duration": 3391.899999976158,
+            "responseStart": 2152.2999999523163,
+            "responseEnd": 4220.899999976158,
+            "bytes": 124573,
+            "decodedBytes": 526570
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "type": "script",
+            "start": 829.1999999880791,
+            "duration": 3381.699999988079,
+            "responseStart": 2154,
+            "responseEnd": 4210.899999976158,
+            "bytes": 129338,
+            "decodedBytes": 535363
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "type": "script",
+            "start": 829.2999999523163,
+            "duration": 3417.2000000476837,
+            "responseStart": 4190.599999964237,
+            "responseEnd": 4246.5,
+            "bytes": 83683,
+            "decodedBytes": 334728
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "type": "script",
+            "start": 829.3999999761581,
+            "duration": 3456,
+            "responseStart": 4235.199999988079,
+            "responseEnd": 4285.399999976158,
+            "bytes": 130393,
+            "decodedBytes": 540035
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "type": "script",
+            "start": 829.3999999761581,
+            "duration": 3561.100000023842,
+            "responseStart": 4234.299999952316,
+            "responseEnd": 4390.5,
+            "bytes": 266149,
+            "decodedBytes": 1173235
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "type": "script",
+            "start": 829.5999999642372,
+            "duration": 3454.100000023842,
+            "responseStart": 4237.599999964237,
+            "responseEnd": 4283.699999988079,
+            "bytes": 127774,
+            "decodedBytes": 525502
+          },
+          {
+            "path": "/_next/static/css/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.css",
+            "type": "link",
+            "start": 829.6999999880791,
+            "duration": 1190.699999988079,
+            "responseStart": 2015,
+            "responseEnd": 2020.3999999761581,
+            "bytes": 676,
+            "decodedBytes": 1686
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "type": "script",
+            "start": 4441.599999964237,
+            "duration": 487.60000002384186,
+            "responseStart": 4460.299999952316,
+            "responseEnd": 4929.199999988079,
+            "bytes": 1131929,
+            "decodedBytes": 4834754
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/cash-command/page.js",
+            "type": "script",
+            "start": 4448.399999976158,
+            "duration": 294.89999997615814,
+            "responseStart": 4487.699999988079,
+            "responseEnd": 4743.299999952316,
+            "bytes": 455565,
+            "decodedBytes": 2044707
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "type": "script",
+            "start": 5945.599999964237,
+            "duration": 14.600000023841858,
+            "responseStart": 5959.199999988079,
+            "responseEnd": 5960.199999988079,
+            "bytes": 3104,
+            "decodedBytes": 6923
+          }
+        ]
+      },
+      "server": {
+        "flightBytes": 500207,
+        "debugRows": 66,
+        "components": [
+          {
+            "id": "1",
+            "names": [
+              "Preloads"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a",
+            "names": [
+              "RootLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "16",
+            "names": [
+              "LocaleLayout",
+              "NextIntlClientProviderServer"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "2f",
+            "names": [
+              "DashboardLayout"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "42",
+            "names": [
+              "CashCommandPage"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "49",
+            "names": [
+              "__next_outlet_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "4c",
+            "names": [
+              "StreamingMetadataOutletImpl"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "52",
+            "names": [
+              "FinanceLoading"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "56",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "5d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "60",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "63",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "66",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6a",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "6d",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "71",
+            "names": [
+              "DashboardLoader",
+              "DashboardLoadingState"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "85",
+            "names": [
+              "NonIndex"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "87",
+            "names": [
+              "ViewportTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8b",
+            "names": [
+              "__next_viewport_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "8d",
+            "names": [
+              "MetadataTree"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "91",
+            "names": [
+              "__next_metadata_boundary__"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "96",
+            "names": [
+              "MetadataResolver"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7e",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "7f",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "80",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a5",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "a8",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "ab",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "af",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b6",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "b9",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bc",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "bf",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          },
+          {
+            "id": "c2",
+            "names": [
+              "Skeleton"
+            ],
+            "times": [],
+            "awaited": []
+          }
+        ]
+      },
+      "cacheControl": "no-store, must-revalidate",
+      "errors": []
+    }
+  ],
+  "nextTrace": [
+    {
+      "name": "handle-request",
+      "milliseconds": 17.788,
+      "timestamp": 466089156307,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 5494.061,
+      "timestamp": 466089184122,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 18.633,
+      "timestamp": 466097989265,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 4761.164,
+      "timestamp": 466098018104,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 16.691,
+      "timestamp": 466105334858,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 4118.117,
+      "timestamp": 466105361245,
+      "url": "/en/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 15.498,
+      "timestamp": 466112651521,
+      "url": "/fr/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 5364.227,
+      "timestamp": 466112676387,
+      "url": "/fr/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 16.181,
+      "timestamp": 466121233291,
+      "url": "/fr/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 7552.868,
+      "timestamp": 466121260406,
+      "url": "/fr/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 25.25,
+      "timestamp": 466131364083,
+      "url": "/fr/dashboard/finance/cash-command"
+    },
+    {
+      "name": "handle-request",
+      "milliseconds": 5033.564,
+      "timestamp": 466131405207,
+      "url": "/fr/dashboard/finance/cash-command"
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "components/finance/finance-dashboard-theme.ts": "2bfa00818a1520ec5683c1ca43152cc95da03edf7b11c44fb845504f5bc8208d",
+    "components/cash-command/cash-command.module.css": "d98dc31d5e95fab331464b1a1096fc2ab7ed126ae069bf59fe42628a7bdcf761",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc",
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "services/modules/module-navigation.service.ts": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+  },
+  "sourceStable": true
+}

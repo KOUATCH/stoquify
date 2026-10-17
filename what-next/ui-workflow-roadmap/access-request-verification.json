@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-04",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "scope": ["UX12", "UX13"],
+  "status": "implemented_with_database_and_acceptance_gates_open",
+  "sourceManifest": "access-request-source-hashes.json",
+  "tests": { "report": "access-request-jest.json", "suitesPassed": 9, "testsPassed": 120, "exitCode": 0 },
+  "typecheck": { "session": 61915, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "exitCode": 0 },
+  "eslint": { "scope": "access-request services/actions/components/tests/routes, inventory route wrapper and account/header navigation", "exitCode": 0 },
+  "diffWhitespaceExitCode": 0,
+  "schema": {
+    "draft": "access-request-schema.prisma",
+    "draftPrismaValidationExitCode": 0,
+    "workingSchemaIntegrated": true,
+    "workingSchemaValidationExitCode": 0,
+    "previousSchemaWriteBlockerResolved": true,
+    "migration": "prisma/migrations/20261004120000_access_requests/migration.sql",
+    "migrationApplied": false,
+    "clientGenerationCompleted": false,
+    "clientBlocker": "Windows EPERM while replacing the in-use query_engine-windows.dll.node; running application not stopped.",
+    "clientRuntimeLoads": true,
+    "generatedModelRecognized": true
+  },
+  "flags": { "ACCESS_REQUEST_SUBMISSIONS_ENABLED": "default false; not enabled", "ACCESS_REQUEST_APPLICATION_ENABLED": "default false; not enabled" },
+  "databaseConcurrencyVerified": false,
+  "liveGrantPerformed": false,
+  "browser": {
+    "environment": "http://localhost:3000",
+    "account": "super.admin.rds-org001@stockflow.test",
+    "organization": "Wilkinson - Feeney 001",
+    "verified": ["Account-menu entry", "Keyboard selection of entry", "English and French page", "French header localization", "Refresh loading and unavailable states"],
+    "populatedWorkflowVerified": false,
+    "responsive": { "requestedViewport": { "width": 390, "height": 844 }, "reportedCssWidth": 433, "documentScrollWidth": 416, "horizontalOverflow": false, "viewportResetCalled": true },
+    "screenshot": null,
+    "screenshotFailure": "CDP capture timeout; no screenshot evidence claimed"
+  },
+  "operatingPolicy": "Proposed defaults; optional user question pending",
+  "remaining": ["Successful client engine regeneration", "Disposable PostgreSQL migration/concurrency/rollback checks", "Populated and restricted-role requester/reviewer browser tasks", "Additional target coverage", "Retention and operating ownership", "Screen-reader and populated mobile verification", "Pilot"],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

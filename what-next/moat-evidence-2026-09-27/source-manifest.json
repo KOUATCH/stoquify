@@ -1,0 +1,95 @@
+{
+  "assessedAt": "2026-09-27T17:09:35.459Z",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "statusMethod": "git status --porcelain --ignore-submodules",
+  "trackedChanges": 89,
+  "untrackedEntries": 489,
+  "originalPromptSha256": "52c8d6c17212abfd48417e4c954c96cc810ba68bb866328fe4a58134b90e38ee",
+  "files": [
+    {
+      "file": "services/accounting/accountant-access.service.ts",
+      "sha256": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+    },
+    {
+      "file": "actions/accounting/accountant-access.actions.ts",
+      "sha256": "05c3aead5ee588fdbb247050653c42833809cbe1491e3f3184ca415371dc6824"
+    },
+    {
+      "file": "components/accounting/AccountantPortfolio.tsx",
+      "sha256": "e0515b63c9a6210a8ae39e065b5a5dd940739382a52d82a35b8aa95a0b740042"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-accountant-review-queue-contracts.ts",
+      "sha256": "3f3e8e50104aeeb0d7c2e34a28044df9b936552adbbccdc2fa8ddc73db040db4"
+    },
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "sha256": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "sha256": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6"
+    },
+    {
+      "file": "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "sha256": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e"
+    },
+    {
+      "file": "services/payments/provider-event.service.ts",
+      "sha256": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+    },
+    {
+      "file": "services/reconciliation/payment-exception-closure.service.ts",
+      "sha256": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682"
+    },
+    {
+      "file": "services/cash-command/cash-command.service.ts",
+      "sha256": "fa382282eb632169aaced011aedb2d4b155abdbe59a0f0735d25e7433ad40cd9"
+    },
+    {
+      "file": "services/stock-to-cash/stock-to-cash-flow.service.ts",
+      "sha256": "d565afbf3e7642732980806cb7dd458f4619aa61c331331eda3978f1fb48b6ea"
+    },
+    {
+      "file": "services/onboarding/master-data-import.service.ts",
+      "sha256": "1ea6dc2cab1e1034151df210cd7054476a098f5ba3cddecc1ed7a4692e4ea6d7"
+    },
+    {
+      "file": "services/referrals/referral-funnel-read-model.service.ts",
+      "sha256": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a"
+    },
+    {
+      "file": "services/regulatory/country-packs/registry.ts",
+      "sha256": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb"
+    },
+    {
+      "file": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+    },
+    {
+      "file": "components/landing/public-product-copy.ts",
+      "sha256": "b2c1ef5ae13719a954d1714d577fa844274b7ace0aeeaafcf539711e21b7e526"
+    },
+    {
+      "file": "services/accounting/__tests__/accountant-access.service.test.ts",
+      "sha256": "306c2f6edb03d564c24fcc9186cee8209d6d52824443228db7c655654c6df2f8"
+    },
+    {
+      "file": "services/payments/__tests__/provider-event.service.test.ts",
+      "sha256": "8a5e3e7207cab545bd95ae89ee776d3022a1259a38b015692096ba276ede2232"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command.service.test.ts",
+      "sha256": "33d66d4a25381bb61f9249b78a41dd083fda1c07f0b5519e4089ed5931759ae5"
+    },
+    {
+      "file": "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts",
+      "sha256": "230b4212870006a7598f13ed06f5675e4c3f2801998c279be335ca315e888b63"
+    }
+  ]
+}

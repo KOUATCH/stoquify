@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-04",
+  "scope": ["UX08", "UX09"],
+  "status": "implemented_with_open_release_gates",
+  "jest": {"report": "delivery-issues-jest.json", "suitesPassed": 7, "testsPassed": 84, "exitCode": 0},
+  "typecheck": {"command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "session": 2708, "exitCode": 0},
+  "eslint": {"scope": "delivery service/contracts/tests, action, component, route, settings catalog and sidebar", "exitCode": 0, "warnings": 0},
+  "browser": {
+    "environment": "http://localhost:3000",
+    "account": "super.admin.rds-org001@stockflow.test",
+    "organizationLabel": "Wilkinson - Feeney 001",
+    "observed": ["English ready empty sources", "All status filter returns ready empty sources", "French content and navigation", "Source refresh/filter loading state"],
+    "responsive": {"requestedWidth": 390, "requestedHeight": 844, "observedCssWidth": 433, "observedCssHeight": 938, "documentWidth": 433, "horizontalOverflow": false, "screenshot": "unavailable: browser capture timeout", "overrideReset": true, "restoredCssWidth": 1371},
+    "screenshot": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/04/01a10672-554e-77c3-bc80-19e54163cb72/delivery-issues-desktop-fr.jpg",
+    "screenshotLimit": "Successful desktop capture predates final header/navigation translation; translated header was subsequently verified through rendered DOM text."
+  },
+  "notVerified": ["Populated-row browser flows", "Restricted-role browser flows", "Screen reader", "Real database concurrency", "High-volume query plans", "Receipt adapter", "Operator pilot"],
+  "mutations": {"messagesSent": 0, "deliveryRetries": 0, "migrations": 0, "deployments": 0}
+}

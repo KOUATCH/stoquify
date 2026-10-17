@@ -1,0 +1,543 @@
+{
+  "capturedAt": "2026-09-30T21:55:16.048Z",
+  "baselineCapturedAt": "2026-09-30T20:21:31.242Z",
+  "baselineHead": "62a56036a5ac9b37236a20c9b148052199069479",
+  "baselineSourceFileCount": 3030,
+  "currentSourceFileCount": 3037,
+  "changes": [
+    {
+      "file": "hooks/posHooks/__tests__/offline-flush-recovery.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "8c78ad4024413ef18093e7affac1bf1441af1a3af7656d924740f736cff1430a"
+    },
+    {
+      "file": "hooks/posHooks/useOfflineSync.ts",
+      "change": "modified",
+      "beforeSha256": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+      "afterSha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7"
+    },
+    {
+      "file": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "change": "modified",
+      "beforeSha256": "2746b0bc35e299142bb60d792c2b0d9a64fc4a229ac836a49d0da492e7c1d85e",
+      "afterSha256": "19c80c3d56478cb092872975e90924d99ea71e88a578f296aadbf324cbead6a9"
+    },
+    {
+      "file": "lib/pos/offline-local-queue.ts",
+      "change": "modified",
+      "beforeSha256": "27cd8b981e51e963a0298724b5c81b5cf75bf0a5ed711a821b69276a46ea49a3",
+      "afterSha256": "5200721e2214693cc7adcc05aef41e189235b01d6ad7085059c638183ce2bfe4"
+    },
+    {
+      "file": "prisma/comprehensive-seed.ts",
+      "change": "modified",
+      "beforeSha256": "9bf27629187dacbbb201f87dc61ac14d74335cc52873b43ee14e764b551e5001",
+      "afterSha256": "d97e5796fe368dff7d371d40fb52430dc4f1c3f43fa7a6c9190b3a1d3ec4c8e3"
+    },
+    {
+      "file": "prisma/migration-catalog-manifest.json",
+      "change": "modified",
+      "beforeSha256": "f9a7b67b487636e1821710f42d989524c1b66268102f6b5ae4aa19b9b7eb207e",
+      "afterSha256": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc"
+    },
+    {
+      "file": "prisma/migrations/20260930211500_journal_posted_line_tenant_guards/migration.sql",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde"
+    },
+    {
+      "file": "prisma/migrations/20260930213000_journal_posted_status_transitions/migration.sql",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97"
+    },
+    {
+      "file": "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+      "change": "modified",
+      "beforeSha256": "28db33a0efa1aa910649255dc9d079a8e2dae1392bacd076c9d1d734cb55ffd5",
+      "afterSha256": "9932facc62236097032b29b66d8ebd8fdcbd22256befe6a383f4fcdd20269ae5"
+    },
+    {
+      "file": "scripts/__tests__/report-trust-export-gate.test.js",
+      "change": "modified",
+      "beforeSha256": "735375417f82b15278769c6fbefe5e40c1503e72018dfea7818863a9eb9998a0",
+      "afterSha256": "54063fd6c9873c2e0961200b70919a82343a91a133580d075de96b256e9ccc6c"
+    },
+    {
+      "file": "scripts/payroll-trust-spine-readiness-gate.js",
+      "change": "modified",
+      "beforeSha256": "88d01d147b3b5c6f8328f3ce8fa69168348eccfdca346ad79caec9782609dd30",
+      "afterSha256": "a51a4e4c332abdb8fd077bece8e8760f2d7a37930f5d661dfcc307b33197ce79"
+    },
+    {
+      "file": "scripts/report-trust-export-gate.js",
+      "change": "modified",
+      "beforeSha256": "532739a5c9e27d598c046a8681874c59bb0dc9ef97e18593514376cc0f337e22",
+      "afterSha256": "e3062f1716709a7630832ac68eadaf60351ab28bbef2564f209e170769052bed"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+      "afterSha256": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "c31bb0cf4c9ca17a31d3ffd6b67513779b8aa3bd7d5c42785e35e00d1b2893fc",
+      "afterSha256": "2f041ba4a20a4cc2ca63f65752748f4ad314cf753111b30c34a388a1136026f1"
+    },
+    {
+      "file": "services/accounting/__tests__/financial-statements.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "d76b9761bc7d75e7ee650fb4971d5bf7f88414ef276973e03b4d094c0a003632",
+      "afterSha256": "a80aee67a63c17fe741ecb119569db61b838387fde981b68016f4ebc35832140"
+    },
+    {
+      "file": "services/accounting/__tests__/general-ledger-balances.service.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "16456a65f2b7fdc761833fec8b5b3c5b458def956c368428a473bfe160e7f9c5"
+    },
+    {
+      "file": "services/accounting/__tests__/journal-currency-regression.service.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7"
+    },
+    {
+      "file": "services/accounting/__tests__/manual-journal.test.ts",
+      "change": "modified",
+      "beforeSha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a",
+      "afterSha256": "0cc1a19f75d472af1c7fd05d030729daa1c4f5375672ccd685b1be1e26ad101e"
+    },
+    {
+      "file": "services/accounting/__tests__/periods.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "ab1cf6c7427067e837ed9bf4383ccc8994cd08a9640e187805578467b42b488d",
+      "afterSha256": "0137c98fe07020f2b0136c05f5f2626c83f83cc2c84090f07c675914d77429a2"
+    },
+    {
+      "file": "services/accounting/__tests__/posting.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "3ccb4048cc856b5b31c8464a878c18b2eae582948c273990a396d6424fbdbf7c",
+      "afterSha256": "4bc696f0168f4bbf70e80d02c5b5db9b6a7004e1cd4f32f6b2c9a750c9884a41"
+    },
+    {
+      "file": "services/accounting/__tests__/reports-export.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "7d15ac9f1d5e40d144a1bb6aa64ed010662e80d7a73c65c69ae99645f7b913ff",
+      "afterSha256": "391be89e62513ef457c5417b36bc1610bf7bdd7c0635b9a3de5b40abee520dfc"
+    },
+    {
+      "file": "services/accounting/__tests__/reports-retained-accounts.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "40d39dc18f59f1088565a8b72f8a7095b32d8b71297e23215b775a5e59b46f5c",
+      "afterSha256": "c9f26ae7322ffd5321b0e1e002d1d75d53fcc6a97e8a9ac13f513d67af135efc"
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "change": "modified",
+      "beforeSha256": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+      "afterSha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+    },
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "change": "modified",
+      "beforeSha256": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+      "afterSha256": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e"
+    },
+    {
+      "file": "services/accounting/close-assurance.service.ts",
+      "change": "modified",
+      "beforeSha256": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+      "afterSha256": "e910f53100112e113d570e927709025f310641d6a5f1cfe72bcd0244dcff686c"
+    },
+    {
+      "file": "services/accounting/financial-statements.service.ts",
+      "change": "modified",
+      "beforeSha256": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430",
+      "afterSha256": "db3de7b49290455eeee9d4cc381203740f626fe76422f2f51a9709bb9799a715"
+    },
+    {
+      "file": "services/accounting/journals.service.ts",
+      "change": "modified",
+      "beforeSha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+      "afterSha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+    },
+    {
+      "file": "services/accounting/periods.service.ts",
+      "change": "modified",
+      "beforeSha256": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+      "afterSha256": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "change": "modified",
+      "beforeSha256": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+      "afterSha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2"
+    },
+    {
+      "file": "services/accounting/reports.service.ts",
+      "change": "modified",
+      "beforeSha256": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268",
+      "afterSha256": "b6723ddd64c52d2b696e09d8bb5b76aed27fad30acb523c655c17e2ade7b11e6"
+    },
+    {
+      "file": "services/analytics/__tests__/business-pulse-links.test.ts",
+      "change": "modified",
+      "beforeSha256": "634cd389bf34eaab7decc450a5aa8c21a621fca44614b1d38c667ea3806a7dae",
+      "afterSha256": "24c5acdaed05c3bd5c2e915ee9a09da990e737f754037d38b6763cda7029735c"
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "d0a69a7b17dc7e07f68f85dfcb3ab34a5b0a433234134e4c844b9410e10a867a",
+      "afterSha256": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f"
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "change": "modified",
+      "beforeSha256": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "afterSha256": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "73b3821e3197a3afaf278670d987c1511d23d3ae60d40c1b7096076637782f2f",
+      "afterSha256": "ed1f36e88eb9bec8ae1c6cc0f4d162f37df70fc4ce7bdd75205edeabb99b61a4"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "5b68e5c5fef71560fed0bd267bfe2c713b4c1e5baa74c5a2b516735d44506328",
+      "afterSha256": "91e81ef1e99ad1ecfd7927d41c157c74415b1bc9998c8c4c0ada1a947cf33f2a"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "654e8472d0cb4df6312a861b92daa829ed3662cdaadbc77246a08cb477aa6417",
+      "afterSha256": "95b6c62a06d1e2d293fcb61818dc5bab71a3a3532535eefb6d97a37d15fab82e"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "093dd84ee0ca212b8ba0e47e51a91c4eb6900d1ca98b2301d5097a5b6bc8a8eb",
+      "afterSha256": "fb1784ab82e2cd47250de3ef93f9d763584f5f01e6340c46c1692efd476dd62e"
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "33af79a96e06973fe34b32c0e596f20ced9c17dfcc62bc9e91c6ce7fca751069",
+      "afterSha256": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d"
+    },
+    {
+      "file": "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "change": "modified",
+      "beforeSha256": "368986b640c13253b7deac890c538b52fcb5ca33c3ad3258e6c20c3ab8cae15b",
+      "afterSha256": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739"
+    },
+    {
+      "file": "services/purchasing/invoice-correction.service.ts",
+      "change": "modified",
+      "beforeSha256": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+      "afterSha256": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5"
+    },
+    {
+      "file": "services/purchasing/invoice-preparation.service.ts",
+      "change": "modified",
+      "beforeSha256": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+      "afterSha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+    },
+    {
+      "file": "services/purchasing/receipt-invoice-capacity.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+    }
+  ],
+  "declaredTaskChanges": [
+    {
+      "file": "hooks/posHooks/__tests__/offline-flush-recovery.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "8c78ad4024413ef18093e7affac1bf1441af1a3af7656d924740f736cff1430a"
+    },
+    {
+      "file": "hooks/posHooks/useOfflineSync.ts",
+      "change": "modified",
+      "beforeSha256": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+      "afterSha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7"
+    },
+    {
+      "file": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "change": "modified",
+      "beforeSha256": "2746b0bc35e299142bb60d792c2b0d9a64fc4a229ac836a49d0da492e7c1d85e",
+      "afterSha256": "19c80c3d56478cb092872975e90924d99ea71e88a578f296aadbf324cbead6a9"
+    },
+    {
+      "file": "lib/pos/offline-local-queue.ts",
+      "change": "modified",
+      "beforeSha256": "27cd8b981e51e963a0298724b5c81b5cf75bf0a5ed711a821b69276a46ea49a3",
+      "afterSha256": "5200721e2214693cc7adcc05aef41e189235b01d6ad7085059c638183ce2bfe4"
+    },
+    {
+      "file": "prisma/comprehensive-seed.ts",
+      "change": "modified",
+      "beforeSha256": "9bf27629187dacbbb201f87dc61ac14d74335cc52873b43ee14e764b551e5001",
+      "afterSha256": "d97e5796fe368dff7d371d40fb52430dc4f1c3f43fa7a6c9190b3a1d3ec4c8e3"
+    },
+    {
+      "file": "prisma/migration-catalog-manifest.json",
+      "change": "modified",
+      "beforeSha256": "f9a7b67b487636e1821710f42d989524c1b66268102f6b5ae4aa19b9b7eb207e",
+      "afterSha256": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc"
+    },
+    {
+      "file": "prisma/migrations/20260930211500_journal_posted_line_tenant_guards/migration.sql",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde"
+    },
+    {
+      "file": "prisma/migrations/20260930213000_journal_posted_status_transitions/migration.sql",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97"
+    },
+    {
+      "file": "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+      "change": "modified",
+      "beforeSha256": "28db33a0efa1aa910649255dc9d079a8e2dae1392bacd076c9d1d734cb55ffd5",
+      "afterSha256": "9932facc62236097032b29b66d8ebd8fdcbd22256befe6a383f4fcdd20269ae5"
+    },
+    {
+      "file": "scripts/__tests__/report-trust-export-gate.test.js",
+      "change": "modified",
+      "beforeSha256": "735375417f82b15278769c6fbefe5e40c1503e72018dfea7818863a9eb9998a0",
+      "afterSha256": "54063fd6c9873c2e0961200b70919a82343a91a133580d075de96b256e9ccc6c"
+    },
+    {
+      "file": "scripts/payroll-trust-spine-readiness-gate.js",
+      "change": "modified",
+      "beforeSha256": "88d01d147b3b5c6f8328f3ce8fa69168348eccfdca346ad79caec9782609dd30",
+      "afterSha256": "a51a4e4c332abdb8fd077bece8e8760f2d7a37930f5d661dfcc307b33197ce79"
+    },
+    {
+      "file": "scripts/report-trust-export-gate.js",
+      "change": "modified",
+      "beforeSha256": "532739a5c9e27d598c046a8681874c59bb0dc9ef97e18593514376cc0f337e22",
+      "afterSha256": "e3062f1716709a7630832ac68eadaf60351ab28bbef2564f209e170769052bed"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+      "afterSha256": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "c31bb0cf4c9ca17a31d3ffd6b67513779b8aa3bd7d5c42785e35e00d1b2893fc",
+      "afterSha256": "2f041ba4a20a4cc2ca63f65752748f4ad314cf753111b30c34a388a1136026f1"
+    },
+    {
+      "file": "services/accounting/__tests__/financial-statements.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "d76b9761bc7d75e7ee650fb4971d5bf7f88414ef276973e03b4d094c0a003632",
+      "afterSha256": "a80aee67a63c17fe741ecb119569db61b838387fde981b68016f4ebc35832140"
+    },
+    {
+      "file": "services/accounting/__tests__/general-ledger-balances.service.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "16456a65f2b7fdc761833fec8b5b3c5b458def956c368428a473bfe160e7f9c5"
+    },
+    {
+      "file": "services/accounting/__tests__/journal-currency-regression.service.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7"
+    },
+    {
+      "file": "services/accounting/__tests__/manual-journal.test.ts",
+      "change": "modified",
+      "beforeSha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a",
+      "afterSha256": "0cc1a19f75d472af1c7fd05d030729daa1c4f5375672ccd685b1be1e26ad101e"
+    },
+    {
+      "file": "services/accounting/__tests__/periods.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "ab1cf6c7427067e837ed9bf4383ccc8994cd08a9640e187805578467b42b488d",
+      "afterSha256": "0137c98fe07020f2b0136c05f5f2626c83f83cc2c84090f07c675914d77429a2"
+    },
+    {
+      "file": "services/accounting/__tests__/posting.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "3ccb4048cc856b5b31c8464a878c18b2eae582948c273990a396d6424fbdbf7c",
+      "afterSha256": "4bc696f0168f4bbf70e80d02c5b5db9b6a7004e1cd4f32f6b2c9a750c9884a41"
+    },
+    {
+      "file": "services/accounting/__tests__/reports-export.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "7d15ac9f1d5e40d144a1bb6aa64ed010662e80d7a73c65c69ae99645f7b913ff",
+      "afterSha256": "391be89e62513ef457c5417b36bc1610bf7bdd7c0635b9a3de5b40abee520dfc"
+    },
+    {
+      "file": "services/accounting/__tests__/reports-retained-accounts.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "40d39dc18f59f1088565a8b72f8a7095b32d8b71297e23215b775a5e59b46f5c",
+      "afterSha256": "c9f26ae7322ffd5321b0e1e002d1d75d53fcc6a97e8a9ac13f513d67af135efc"
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "change": "modified",
+      "beforeSha256": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+      "afterSha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+    },
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "change": "modified",
+      "beforeSha256": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+      "afterSha256": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e"
+    },
+    {
+      "file": "services/accounting/close-assurance.service.ts",
+      "change": "modified",
+      "beforeSha256": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+      "afterSha256": "e910f53100112e113d570e927709025f310641d6a5f1cfe72bcd0244dcff686c"
+    },
+    {
+      "file": "services/accounting/financial-statements.service.ts",
+      "change": "modified",
+      "beforeSha256": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430",
+      "afterSha256": "db3de7b49290455eeee9d4cc381203740f626fe76422f2f51a9709bb9799a715"
+    },
+    {
+      "file": "services/accounting/journals.service.ts",
+      "change": "modified",
+      "beforeSha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+      "afterSha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+    },
+    {
+      "file": "services/accounting/periods.service.ts",
+      "change": "modified",
+      "beforeSha256": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+      "afterSha256": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "change": "modified",
+      "beforeSha256": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+      "afterSha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2"
+    },
+    {
+      "file": "services/accounting/reports.service.ts",
+      "change": "modified",
+      "beforeSha256": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268",
+      "afterSha256": "b6723ddd64c52d2b696e09d8bb5b76aed27fad30acb523c655c17e2ade7b11e6"
+    },
+    {
+      "file": "services/analytics/__tests__/business-pulse-links.test.ts",
+      "change": "modified",
+      "beforeSha256": "634cd389bf34eaab7decc450a5aa8c21a621fca44614b1d38c667ea3806a7dae",
+      "afterSha256": "24c5acdaed05c3bd5c2e915ee9a09da990e737f754037d38b6763cda7029735c"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "73b3821e3197a3afaf278670d987c1511d23d3ae60d40c1b7096076637782f2f",
+      "afterSha256": "ed1f36e88eb9bec8ae1c6cc0f4d162f37df70fc4ce7bdd75205edeabb99b61a4"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "5b68e5c5fef71560fed0bd267bfe2c713b4c1e5baa74c5a2b516735d44506328",
+      "afterSha256": "91e81ef1e99ad1ecfd7927d41c157c74415b1bc9998c8c4c0ada1a947cf33f2a"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "654e8472d0cb4df6312a861b92daa829ed3662cdaadbc77246a08cb477aa6417",
+      "afterSha256": "95b6c62a06d1e2d293fcb61818dc5bab71a3a3532535eefb6d97a37d15fab82e"
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "093dd84ee0ca212b8ba0e47e51a91c4eb6900d1ca98b2301d5097a5b6bc8a8eb",
+      "afterSha256": "fb1784ab82e2cd47250de3ef93f9d763584f5f01e6340c46c1692efd476dd62e"
+    }
+  ],
+  "unattributedWorkspaceChanges": [
+    {
+      "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "d0a69a7b17dc7e07f68f85dfcb3ab34a5b0a433234134e4c844b9410e10a867a",
+      "afterSha256": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f"
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "change": "modified",
+      "beforeSha256": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "afterSha256": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7"
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "change": "modified",
+      "beforeSha256": "33af79a96e06973fe34b32c0e596f20ced9c17dfcc62bc9e91c6ce7fca751069",
+      "afterSha256": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d"
+    },
+    {
+      "file": "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "change": "modified",
+      "beforeSha256": "368986b640c13253b7deac890c538b52fcb5ca33c3ad3258e6c20c3ab8cae15b",
+      "afterSha256": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739"
+    },
+    {
+      "file": "services/purchasing/invoice-correction.service.ts",
+      "change": "modified",
+      "beforeSha256": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+      "afterSha256": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5"
+    },
+    {
+      "file": "services/purchasing/invoice-preparation.service.ts",
+      "change": "modified",
+      "beforeSha256": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+      "afterSha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+    },
+    {
+      "file": "services/purchasing/receipt-invoice-capacity.ts",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+    }
+  ],
+  "attributionNote": "Inventory/purchasing paths changed after the baseline but fall outside this team's declared ownership. They are preserved and included in workspace validation, not claimed as this remediation batch's implementation.",
+  "documentationOutsideBaseline": [
+    "docs/operations/runbooks/RUNBOOK.md",
+    "what-next/platform-remediation/2026-09-30-run-01/"
+  ],
+  "limitations": [
+    "The original checkout already contained extensive user changes; these hashes compare to this execution baseline, not HEAD.",
+    "Documentation and verification artifacts outside baseline scopes are listed separately.",
+    "A baseline delta is not a claim of exclusive authorship if another process edited the same files."
+  ],
+  "whitespaceCheck": {
+    "exitCode": 0,
+    "output": "warning: in the working copy of 'prisma/comprehensive-seed.ts', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'services/accounting/posting.service.ts', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'services/purchasing/__tests__/ap-control.service.test.ts', CRLF will be replaced by LF the next time Git touches it\n"
+  }
+}

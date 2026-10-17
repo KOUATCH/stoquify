@@ -1,0 +1,48 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=__dirname,repo=path.resolve(root,'../../..'),read=file=>JSON.parse(fs.readFileSync(path.join(root,file))),hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const prior=read('evidence/cash-authority-batch-review-2026-09-30-v2.json'),historicalFile='evidence/cash-proof-presentation-review-2026-09-30.json',historical=read(historicalFile);
+const baselineFile='lanes/environment/payment-match-proof-baseline-2f0d36be-3d79-409c-991b-b02276a98e74.json',baseline=read(baselineFile);
+const runtimeFile='lanes/environment/payment-match-proof-corrected-2dd52265-4edd-4a05-a2f8-2b0fff9402af.json',runtime=read(runtimeFile);
+const checksFile='evidence/payment-proof-checks-83f0f273-4f41-49ce-b7d5-edf2892e3d42.json',checks=read(checksFile);
+const browserFile='lanes/environment/cash-successful-proof-c3272855-7611-4220-8029-5157a53f5453.json',browser=read(browserFile);
+for(const r of [baseline,runtime,checks,browser])assert.ok(r.passed&&r.sourceStable);
+assert.equal(baseline.reproducedIncorrectStages.length,3);assert.equal(runtime.stages.length,6);assert.ok(runtime.stages.every(row=>row.actual===row.expected&&row.unchangedBusinessRecords));assert.deepEqual(runtime.reproducedIncorrectStages,[]);
+assert.equal(runtime.reconciliation.before,'reconciled');assert.equal(runtime.reconciliation.after,'certified');assert.ok(runtime.reconciliation.signingReplayWithoutDuplicate);
+assert.ok(checks.steps.every(row=>row.status===0&&!row.error));assert.equal(checks.steps.length,3);assert.ok(checks.steps[0].stderr.includes('62 passed'));
+assert.equal(browser.cases.length,6);assert.ok(browser.readsPreservedFinancialRecords);assert.ok(browser.cases.every(row=>row.actualResponse&&row.localizedReason&&row.keyboardContainmentAndReturn&&row.noHorizontalOverflow));
+const sourceHashes={...prior.sourceHashes,...checks.sourceAfter,...runtime.sourceAfter,...browser.sourceAfter};for(const [file,expected]of Object.entries(sourceHashes))assert.equal(hash(path.join(repo,file)),expected,file);
+const changed=['services/evidence/proof-trail.service.ts','services/evidence/evidence-grade.service.ts','services/evidence/__tests__/proof-trail.service.test.ts'];
+const priorImpact=changed.map(file=>{assert.equal(baseline.sourceBefore[file],historical.sourceHashes[file]);return{file,before:baseline.sourceBefore[file],after:sourceHashes[file],priorReview:historicalFile};});
+const report='CASH_PAYMENT_RECONCILIATION_PROOF_2026-09-30.md',reviewFile='evidence/cash-payment-reconciliation-proof-review-2026-09-30.json',remaining=[...prior.remaining];
+remaining[0]='Successful manual-payment proof now requires independently accepted full-amount same-currency allocation; pending/partial proposals remain below reconciled. Actual local HMAC capture, proposal/approval/replay and reconciliation run/signing/replay with certified proof are verified, including EN desktop/FR tablet/mobile drawers. Confirmed payment/provider/authority preconditions are synthetic; this does not complete upstream real-payment or provider settlement lifecycles. Certified-close proof lifecycle remains open. Actual payroll journal proof remains verified from synthetic calculated inputs.';
+const artifacts=[report,'run-payment-proof-checks.cjs','apply-payment-proof-coverage.cjs','fix-payment-proof-status-check.cjs','lanes/environment/verify-payment-match-proof.cjs','lanes/environment/verify-successful-cash-proof-browser.cjs','lanes/environment/verify-signoff-request-order.cjs','lanes/environment/payment-match-proof-source-before-2f0d36be-3d79-409c-991b-b02276a98e74.json',...browser.cases.map(row=>'lanes/environment/'+row.screenshot)];
+const review={at:new Date().toISOString(),workflow:'FA-CASH-COMMAND',completeWorkflowVerified:false,report,sourceHashes,priorImpact,verifiedSubcriteria:['payment_proof_requires_full_current_accepted_same_currency_decimal_coverage','payment_proposal_partial_full_approval_real_local_service_proof_lifecycle_and_replay','actual_local_reconciliation_signing_replay_and_certified_proof','successful_payment_and_reconciliation_proof_en_fr_three_widths_keyboard_and_unchanged_financial_records'],receipts:[baselineFile,runtimeFile,checksFile,browserFile,'evidence/payment-proof-checks-dc0bd371-7ba1-4cac-8a50-a355522af029.json','lanes/environment/payment-match-proof-corrected-6b246347-9368-44d0-be42-79785898fbf3.json','lanes/environment/cash-successful-proof-a6db074c-499b-428e-b367-aca928171bbf.json'].map(file=>({file,sha256:hash(path.join(root,file))})),artifacts:artifacts.map(file=>({file,sha256:hash(path.join(root,file))})),remaining,limits:['Synthetic confirmed payment, provider setup and direct-service authorization/freshness preconditions','No live payment, statutory approval, bank settlement or production certification','Baseline assertion receipt completed but verifier retained runtime handles; exact verifier process cleaned up','No new whole-workflow closure or latency/accessibility certification']};
+const target=path.join(root,'reconcile-current-progress.cjs');let source=fs.readFileSync(target,'utf8').replace(/\r\n/g,'\n');assert.ok(!source.includes('const cashPaymentProof ='));
+const top=`const cashPaymentProof = JSON.parse(fs.readFileSync(path.join(root, '${reviewFile}')));
+for (const row of [...cashPaymentProof.receipts, ...cashPaymentProof.artifacts]) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Cash payment proof evidence changed');
+for (const [file, expected] of Object.entries(cashPaymentProof.sourceHashes)) if (crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', file))).digest('hex') !== expected) throw new Error('Cash payment proof source changed: ' + file);
+for (const row of cashPaymentProof.priorImpact) if (JSON.parse(fs.readFileSync(path.join(root, row.priorReview))).sourceHashes[row.file] !== row.before || cashPaymentProof.sourceHashes[row.file] !== row.after) throw new Error('Cash payment proof prior impact changed');
+function cashPaymentProofExpected(source, expected) {
+  const row = cashPaymentProof.priorImpact.find(row => row.file === source);
+  if (!row) return expected;
+  if (row.before !== expected) throw new Error('Cash payment proof prior binding mismatch: ' + source);
+  return row.after;
+}
+`;
+source=source.replace('const root = __dirname;','const root = __dirname;\n'+top);
+const old=`function cashBatchExpected(source, expected) {
+  const row = cashBatch.priorImpact.find(row => row.file === source);
+  if (!row) return expected;
+  if (row.before !== expected) throw new Error('Cash batch prior binding mismatch: ' + source);
+  return row.after;
+}`;
+assert.ok(source.includes(old));source=source.replace(old,old.replace('if (!row) return expected;','if (!row) return cashPaymentProofExpected(source, expected);').replace('return row.after;','return cashPaymentProofExpected(source, row.after);'));
+const marker='cashRead.remaining = cashBatch.remaining;';assert.ok(source.includes(marker));source=source.replace(marker,`cashRead.remaining = cashPaymentProof.remaining;
+cashRead.closureReview.cashPaymentReconciliationProofBindingCurrent = true;
+cashRead.closureReview.verifiedCriteria = [...new Set([...(cashRead.closureReview.verifiedCriteria ?? []), ...cashPaymentProof.verifiedSubcriteria])];
+for (const report of [cashPaymentProof.report, '${reviewFile}']) if (!cashRead.evidence.includes(report)) cashRead.evidence.push(report);`);
+const note="cashRead.closureReview.note = 'Actual payroll journal posting/proof, rollback, retry and emitted immutability are verified from synthetic calculated inputs. Full payroll upstream/payment/declaration, other successful proof lifecycles and complete accessibility/latency remain open.';";assert.ok(source.includes(note));source=source.replace(note,"cashRead.closureReview.note = 'Actual local payment matching/approval and signed-reconciliation proof lifecycles now pass, alongside prior payroll journal proof. Synthetic setup/authentication/calculation preconditions remain explicit. Certified-close, full upstream/provider/payroll/declaration and complete accessibility/latency remain open.';");
+source=source.replace('Complete Cash/payroll accessibility and recovery; retain statutory dependency','Verify certified-close proof; finish accessibility/recovery and retain statutory dependency');
+const start=source.indexOf('**Since the previous report:**'),end=source.indexOf('\n\n**Remaining priority:**',start);assert.ok(start>0&&end>start);
+source=source.slice(0,start)+'**Since the previous report:** Corrected payment proof that labeled pending proposals and partial approvals reconciled. Full accepted same-currency coverage is now required. Actual local proposal/approval/replay and reconciliation signing/certificate proof pass, with EN desktop/FR tablet/mobile drawers and unchanged financial records during reads. 62 tests, lint and TypeScript pass; failed typecheck/browser attempts are retained. [Evidence and synthetic-precondition limits](CASH_PAYMENT_RECONCILIATION_PROOF_2026-09-30.md). No whole workflow closed. Certified-close, wider financial lifecycles and accessibility/performance remain.'+source.slice(end);
+fs.writeFileSync(path.join(root,reviewFile),JSON.stringify(review,null,2)+'\n',{flag:'wx'});fs.writeFileSync(target+'.retained-'+crypto.randomUUID(),fs.readFileSync(target),{flag:'wx'});const fd=fs.openSync(target,'r+');try{fs.writeFileSync(fd,source);fs.ftruncateSync(fd,Buffer.byteLength(source));}finally{fs.closeSync(fd);}console.log(JSON.stringify({reviewFile}));

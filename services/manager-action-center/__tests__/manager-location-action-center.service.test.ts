@@ -217,13 +217,13 @@ describe("manager location action center service", () => {
         subjectId: "location-b:recorded-loss",
         sourceSnapshotKind: "inventory.loss",
         sourceHash: "inventory-loss:location-b",
-        actionPath: "/dashboard/inventory/losses",
+        actionPath: "/dashboard/inventory/loss-control",
       }),
     ])
     expect(result.bundles[0].actionQueue.actionItems).toEqual([
       expect.objectContaining({
         signalType: "inventory_loss_review",
-        actionPath: "/dashboard/inventory/losses",
+        actionPath: "/dashboard/inventory/loss-control",
       }),
     ])
     expect(result.bundles[1].actionQueue.signals).toEqual([])

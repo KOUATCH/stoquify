@@ -1,0 +1,1666 @@
+===================================================================
+--- a/services/owner-war-room/owner-war-room.service.ts
++++ b/services/owner-war-room/owner-war-room.service.ts
+@@ -19,8 +19,9 @@
+ import type { EvidenceGrade, ProofTrailSubjectType } from "@/services/evidence/evidence-contracts"
+ import { SUBJECT_PERMISSION_MAP } from "@/services/evidence/evidence-contracts"
+ import { auditRbacDecision, RbacError } from "@/lib/security/rbac"
+ import { hasRbacPermission } from "@/lib/security/rbac-permissions"
++import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
+ import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+ import {
+   getModuleControlCenterData,
+   observeModuleAccess,
+@@ -56,9 +57,13 @@
+   OwnerWarRoomStrip,
+   OwnerWarRoomTone,
+ } from "./owner-war-room-contracts"
+ 
++import { ownerText, type OwnerLocale } from "./owner-war-room-copy"
++import { presentOwnerActionQueue, presentOwnerForecastMessage } from "./owner-signal-copy"
++
+ type OwnerWarRoomInput = {
++  locale?: OwnerLocale
+   organizationId: string
+   actorId?: string | null
+   actorPermissions: readonly string[]
+   actorRoleCodes?: readonly string[]
+@@ -134,8 +139,9 @@
+ 
+   return composeOwnerWarRoomData({
+     organizationId: input.organizationId,
+     organizationName: moduleControl.organizationName,
++    locale: input.locale,
+     actorPermissions: input.actorPermissions,
+     generatedAt: normalizeNow(input.now).toISOString(),
+     snapshots: {
+       tenantOperating,
+@@ -228,8 +234,22 @@
+   })
+ }
+ 
+ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerWarRoomData {
++  const displaySnapshot = <T,>(snapshot: SnapshotResult<T>): SnapshotResult<T> => ({
++    ...snapshot,
++    blockers: snapshot.blockers.map(blocker => presentSnapshotBlocker(blocker, input.locale ?? "en")),
++  })
++  input = {
++    ...input,
++    actionQueue: presentOwnerActionQueue(input.actionQueue, input.locale),
++    snapshots: {
++      tenantOperating: displaySnapshot(input.snapshots.tenantOperating),
++      paymentTruth: displaySnapshot(input.snapshots.paymentTruth),
++      inventoryCash: displaySnapshot(input.snapshots.inventoryCash),
++      closeReadiness: displaySnapshot(input.snapshots.closeReadiness),
++    },
++  }
+   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
+   const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
+   const payrollBalanceCaseCount = tenantOperating.metrics.activeEmployeeBalanceCaseCount
+   const payrollForecastBlocked = payrollForecast.blockerCodes.length > 0
+@@ -238,20 +258,22 @@
+   const payrollExposureUnit = payrollBalanceCaseCount > 0 ? "cases" : "value"
+   const payrollExposureHref = "/dashboard/payroll/payments"
+   const payrollExposureDetail =
+     payrollBalanceCaseCount > 0
+-      ? "Open employee balance recovery cases are counted without exposing person-level amounts."
++      ? ownerText("Open employee balance recovery cases are counted without exposing person-level amounts.", input.locale)
+       : payrollForecast.authoritative
+-        ? `Upcoming aggregate net pay and statutory liability total ${formatBriefAmount(payrollForecast.totalUpcomingAmount)}; person-level amounts stay inside payroll.`
+-        : payrollForecast.message
++        ? input.locale === "fr"
++          ? `Le total prévisionnel des salaires nets et obligations légales atteint ${formatBriefAmount(payrollForecast.totalUpcomingAmount, input.locale)} ; les montants individuels restent dans le module de paie.`
++          : `Upcoming aggregate net pay and statutory liability total ${formatBriefAmount(payrollForecast.totalUpcomingAmount)}; person-level amounts stay inside payroll.`
++        : presentOwnerForecastMessage(payrollForecast, input.locale)
+   const payrollExposureTone =
+     payrollBalanceCaseCount > 0 ? "danger" : payrollForecastBlocked ? "danger" : payrollForecast.totalUpcomingAmount !== null && payrollForecast.totalUpcomingAmount > 0 ? "gold" : "muted"
+   const payrollExposureState = payrollForecastBlocked ? "blocked" : payrollExposureValue !== null && payrollExposureValue > 0 ? "redacted" : undefined
+   const cards: OwnerWarRoomMetricCard[] = [
+     card({
+       id: "cash_at_risk",
+-      title: "Cash at risk",
+-      detail: "Unresolved payment suspense value that should be explained before owners trust cash.",
++      title: ownerText("Cash at risk", input.locale),
++      detail: ownerText("Unresolved payment suspense value that should be explained before owners trust cash.", input.locale),
+       value: paymentTruth.metrics.openSuspenseAmount,
+       unit: "value",
+       tone: paymentTruth.metrics.openSuspenseCount > 0 ? "danger" : paymentTruth.metrics.openSuspenseAmount === null ? "muted" : "success",
+       requiredPermission: "payments.reconciliation.read",
+@@ -259,24 +281,24 @@
+       snapshot: paymentTruth,
+     }),
+     card({
+       id: "reconciliation_exceptions",
+-      title: "Reconciliation exceptions",
+-      detail: "Open payment exceptions, critical issues, suspense items, and pending provider transactions.",
++      title: ownerText("Reconciliation exceptions", input.locale),
++      detail: ownerText("Open payment exceptions, critical issues, suspense items, and pending provider transactions.", input.locale),
+       value:
+         paymentTruth.metrics.openExceptionCount +
+         paymentTruth.metrics.openSuspenseCount +
+         paymentTruth.metrics.pendingTransactionCount,
+       unit: "items",
+       tone: paymentTruth.metrics.criticalExceptionCount > 0 ? "danger" : "gold",
+       requiredPermission: "payments.reconciliation.read",
+-      href: "/dashboard/finance/payments",
++      href: "/dashboard/finance/reconciliation",
+       snapshot: paymentTruth,
+     }),
+     card({
+       id: "stock_cash_exposure",
+-      title: "Stock cash exposure",
+-      detail: "Inventory value tied up in stock, with zero or negative-stock pressure highlighted.",
++      title: ownerText("Stock cash exposure", input.locale),
++      detail: ownerText("Inventory value tied up in stock, with zero or negative-stock pressure highlighted.", input.locale),
+       value: inventoryCash.metrics.inventoryValue,
+       unit: "value",
+       tone:
+         inventoryCash.metrics.negativeStockLevelCount > 0 || inventoryCash.metrics.zeroStockLevelCount > 0
+@@ -287,10 +309,10 @@
+       snapshot: inventoryCash,
+     }),
+     card({
+       id: "supplier_commitments",
+-      title: "Supplier commitments",
+-      detail: "Pending purchase orders that may soon become cash obligations or receiving blockers.",
++      title: ownerText("Supplier commitments", input.locale),
++      detail: ownerText("Pending purchase orders that may soon become cash obligations or receiving blockers.", input.locale),
+       value: tenantOperating.metrics.pendingPurchaseOrderCount,
+       unit: "orders",
+       tone: tenantOperating.metrics.pendingPurchaseOrderCount > 0 ? "info" : "success",
+       requiredPermission: "purchases.orders.read",
+@@ -299,22 +321,22 @@
+       sourceModules: ["purchasing", "finance", "accounting"],
+     }),
+     card({
+       id: "payroll_exposure",
+-      title: "Payroll exposure",
++      title: ownerText("Payroll exposure", input.locale),
+       detail: payrollExposureDetail,
+       value: payrollExposureValue,
+       unit: payrollExposureUnit,
+       tone: payrollExposureTone,
+-      requiredPermission: "payroll.read",
++      requiredPermission: "payments.reconciliation.read",
+       href: payrollExposureHref,
+       snapshot: tenantOperating,
+       redactions: [
+         ...tenantOperating.redactions,
+         {
+           id: "owner-war-room-payroll-person-values-redacted",
+           field: "payroll.personLevelAmounts",
+-          reason: "The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.",
++          reason: ownerText("The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.", input.locale),
+           policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
+         },
+       ],
+       state: payrollExposureState,
+@@ -322,10 +344,10 @@
+       sourceModules: ["payroll", "accounting", "finance"],
+     }),
+     card({
+       id: "close_readiness",
+-      title: "Close readiness",
+-      detail: "Open findings, unavailable evidence, readiness score, and close blockers for the active period.",
++      title: ownerText("Close readiness", input.locale),
++      detail: ownerText("Open findings, unavailable evidence, readiness score, and close blockers for the active period.", input.locale),
+       value: closeReadiness.metrics.averageReadinessScore ?? 0,
+       unit: "score",
+       tone:
+         closeReadiness.metrics.criticalOpenFindingCount > 0 || closeReadiness.metrics.blockedCloseRunCount > 0
+@@ -336,10 +358,10 @@
+       snapshot: closeReadiness,
+     }),
+     {
+       id: "action_queue",
+-      title: "Action queue",
+-      detail: "Permission-filtered owner actions generated from the current business signals.",
++      title: ownerText("Action queue", input.locale),
++      detail: ownerText("Permission-filtered owner actions generated from the current business signals.", input.locale),
+       value: input.actionQueue.summary.total,
+       unit: "actions",
+       tone: input.actionQueue.summary.bySeverity.critical > 0 ? "danger" : "info",
+       state: input.actionQueue.filteredOutCount > 0 ? "permission_denied" : input.actionQueue.summary.total ? "ready" : "empty",
+@@ -352,10 +374,10 @@
+       href: "/dashboard/owner-war-room",
+     },
+     {
+       id: "module_observe",
+-      title: "Module observe",
+-      detail: "Modules that would be blocked under entitlement enforcement, shown only as controlled upgrade pressure.",
++      title: ownerText("Module observe", input.locale),
++      detail: ownerText("Modules that would be blocked under entitlement enforcement, shown only as controlled upgrade pressure.", input.locale),
+       value: input.moduleControl.summary.wouldBlockCount,
+       unit: "modules",
+       tone: input.moduleControl.summary.wouldBlockCount > 0 ? "gold" : "success",
+       state: input.moduleControl.summary.wouldBlockCount > 0 ? "upgrade_request" : "ready",
+@@ -367,56 +389,56 @@
+       },
+       sourceModules: ["dashboard"],
+       blockers: [],
+       redactions: [],
+-      requiredPermission: "system.settings.read",
++      requiredPermission: "system.settings.update",
+       href: "/dashboard/settings/modules",
+     },
+   ]
+ 
+   const strips: OwnerWarRoomStrip[] = [
+     {
+       id: "cash_leakage_radar",
+-      title: "Cash Leakage Radar MVP",
++      title: ownerText("Cash Leakage Radar MVP", input.locale),
+       detail:
+         paymentTruth.metrics.openSuspenseCount > 0 || paymentTruth.metrics.criticalExceptionCount > 0
+-          ? "Cash truth has unresolved suspense or critical exceptions. Owners should clear these before trusting daily cash."
+-          : "No critical cash leakage signal is visible from the current payment snapshot.",
++          ? ownerText("Cash truth has unresolved suspense or critical exceptions. Owners should clear these before trusting daily cash.", input.locale)
++          : ownerText("No critical cash leakage signal is visible from the current payment snapshot.", input.locale),
+       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : paymentTruth.metrics.openSuspenseCount > 0 ? "high" : "info",
+       evidenceGrade: paymentTruth.evidenceGrade,
+       state: stateFromSnapshot(paymentTruth),
+       blockers: paymentTruth.blockers,
+       redactions: paymentTruth.redactions,
+     },
+     {
+       id: "close_autopilot",
+-      title: "Close Autopilot strip",
++      title: ownerText("Close Autopilot strip", input.locale),
+       detail:
+         closeReadiness.metrics.openFindingCount > 0
+-          ? "The close still has findings or unavailable evidence. Work the blockers before signoff."
+-          : "Close readiness has no open blocker surfaced by the current snapshot.",
++          ? ownerText("The close still has findings or unavailable evidence. Work the blockers before signoff.", input.locale)
++          : ownerText("Close readiness has no open blocker surfaced by the current snapshot.", input.locale),
+       severity: closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : closeReadiness.metrics.openFindingCount > 0 ? "high" : "info",
+       evidenceGrade: closeReadiness.evidenceGrade,
+       state: stateFromSnapshot(closeReadiness),
+       blockers: closeReadiness.blockers,
+       redactions: closeReadiness.redactions,
+     },
+     {
+       id: "module_control",
+-      title: "Module Control observe strip",
++      title: ownerText("Module Control observe strip", input.locale),
+       detail:
+         input.moduleControl.summary.wouldBlockCount > 0
+-          ? "Observe mode is showing modules that would be hidden after enforcement. Owners can request an upgrade from controlled surfaces."
+-          : "Module observe mode is clean for the current tenant entitlement set.",
++          ? ownerText("Observe mode is showing modules that would be hidden after enforcement. Owners can request an upgrade from controlled surfaces.", input.locale)
++          : ownerText("Module observe mode is clean for the current tenant entitlement set.", input.locale),
+       severity: input.moduleControl.summary.wouldBlockCount > 0 ? "medium" : "info",
+       evidenceGrade: "operational",
+       state: input.moduleControl.summary.wouldBlockCount > 0 ? "upgrade_request" : "ready",
+       blockers: [],
+       redactions: [],
+     },
+   ]
+ 
+-  const proofSubjects = buildOwnerProofSubjects(input.proofSubjectIds)
++  const proofSubjects = buildOwnerProofSubjects(input.proofSubjectIds, input.locale)
+   const summary = {
+     criticalCount: input.actionQueue.summary.bySeverity.critical,
+     highCount: input.actionQueue.summary.bySeverity.high,
+     redactedCount: cards.filter((item) => item.redactions.length > 0 || item.state === "redacted").length,
+@@ -455,42 +477,43 @@
+ }
+ 
+ function buildOwnerProofSubjects(
+   proofSubjectIds: ComposeOwnerWarRoomInput["proofSubjectIds"],
++  locale: OwnerLocale = "en",
+ ): OwnerWarRoomProofSubject[] {
+   return [
+     {
+       subjectType: "journal.entry",
+       subjectId: proofSubjectIds?.["journal.entry"] ?? "",
+-      label: "Ledger proof",
+-      detail: "Inspect ledger evidence when a posted journal entry is selected from accounting.",
++      label: ownerText("Ledger proof", locale),
++      detail: ownerText("Inspect ledger evidence when a posted journal entry is selected from accounting.", locale),
+       requiredPermission: SUBJECT_PERMISSION_MAP["journal.entry"],
+       enabled: Boolean(proofSubjectIds?.["journal.entry"]),
+       unavailableReason: proofSubjectIds?.["journal.entry"]
+         ? null
+-        : "No posted journal entry is visible in this period.",
++        : ownerText("No posted journal entry is visible in this period.", locale),
+     },
+     {
+       subjectType: "reconciliation.run",
+       subjectId: proofSubjectIds?.["reconciliation.run"] ?? "",
+-      label: "Reconciliation proof",
+-      detail: "Inspect payment reconciliation evidence and blockers for the selected run.",
++      label: ownerText("Reconciliation proof", locale),
++      detail: ownerText("Inspect payment reconciliation evidence and blockers for the selected run.", locale),
+       requiredPermission: SUBJECT_PERMISSION_MAP["reconciliation.run"],
+       enabled: Boolean(proofSubjectIds?.["reconciliation.run"]),
+       unavailableReason: proofSubjectIds?.["reconciliation.run"]
+         ? null
+-        : "No reconciliation run is visible in this period.",
++        : ownerText("No reconciliation run is visible in this period.", locale),
+     },
+     {
+       subjectType: "close.run",
+       subjectId: proofSubjectIds?.["close.run"] ?? "",
+-      label: "Close proof",
+-      detail: "Inspect close evidence, findings, redactions, and readiness blockers.",
++      label: ownerText("Close proof", locale),
++      detail: ownerText("Inspect close evidence, findings, redactions, and readiness blockers.", locale),
+       requiredPermission: SUBJECT_PERMISSION_MAP["close.run"],
+       enabled: Boolean(proofSubjectIds?.["close.run"]),
+       unavailableReason: proofSubjectIds?.["close.run"]
+         ? null
+-        : "No close run is visible in this period.",
++        : ownerText("No close run is visible in this period.", locale),
+     },
+   ]
+ }
+ type OwnerMorningBriefBuilderInput = {
+@@ -540,9 +563,9 @@
+     .sort(sortActionItems)
+     .slice(0, OWNER_BRIEF_MAX_ACTIONS)
+   const topVisibleAction = [...input.actionQueue.actionItems].sort(sortActionItems)[0] ?? null
+   const priorityActions = proofLinkedActionItems.map((item) =>
+-    priorityActionFromItem({ item, signal: signalById.get(item.signalId) ?? null, generatedAt: input.generatedAt }),
++    priorityActionFromItem({ locale: input.locale, item, signal: signalById.get(item.signalId) ?? null, generatedAt: input.generatedAt }),
+   )
+   const headlineMetrics = {
+     cashAtRisk: paymentTruth.metrics.openSuspenseAmount,
+     payrollForecastTotal: tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
+@@ -574,10 +597,10 @@
+     ...priorityActions.flatMap((item) => item.redactions),
+   ])
+   const primaryAction =
+     priorityActions[0]?.actionLink ??
+-    (topVisibleAction ? actionLinkFromItem(topVisibleAction, signalById.get(topVisibleAction.signalId) ?? null) : null)
+-  const proofDrawerSubjects = proofSubjects.map((subject) => proofSubjectToBI(input.organizationId, subject))
++    (topVisibleAction ? actionLinkFromItem(topVisibleAction, signalById.get(topVisibleAction.signalId) ?? null, input.locale) : null)
++  const proofDrawerSubjects = proofSubjects.map((subject) => proofSubjectToBI(input.organizationId, subject, input.locale))
+   const zones = buildOwnerMorningBriefZones(input)
+ 
+   return {
+     id: `owner-morning-brief:${input.organizationId}`,
+@@ -589,11 +612,11 @@
+     freshness,
+     commandBrief: {
+       id: `owner-command-brief:${input.organizationId}`,
+       organizationId: input.organizationId,
+-      title: "Owner morning brief",
+-      summary: buildMorningBriefSummary(headlineMetrics),
+-      conclusion: buildMorningBriefConclusion(headlineMetrics),
++      title: ownerText("Owner morning brief", input.locale),
++      summary: buildMorningBriefSummary(headlineMetrics, input.locale),
++      conclusion: buildMorningBriefConclusion(headlineMetrics, input.locale),
+       mode: "brief",
+       generatedAt: input.generatedAt,
+       periodStart: tenantOperating.periodStart,
+       periodEnd: tenantOperating.periodEnd,
+@@ -631,9 +654,9 @@
+       supported: true,
+       state: "not_started",
+       acknowledgedAt: null,
+       detail:
+-        "Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.",
++        ownerText("Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.", input.locale),
+     },
+     headlineMetrics,
+   }
+ }
+@@ -653,11 +676,11 @@
+       id: "owner-morning-brief-cash-at-risk",
+       organizationId: input.input.organizationId,
+       moduleSlug: "payment_reconciliation",
+       requiredPermission: "payments.reconciliation.read",
+-      title: "Cash at risk is visible since yesterday",
+-      detail: "Open suspense value is still present in the payment truth snapshot.",
+-      businessImpact: "Daily cash remains ambiguous until suspense is explained with reconciliation evidence.",
++      title: ownerText("Cash at risk is visible since yesterday", input.input.locale),
++      detail: ownerText("Open suspense value is still present in the payment truth snapshot.", input.input.locale),
++      businessImpact: ownerText("Daily cash remains ambiguous until suspense is explained with reconciliation evidence.", input.input.locale),
+       direction: "new",
+       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
+       state: ownerStateToBIState(stateFromSnapshot(paymentTruth)),
+       evidenceGrade: paymentTruth.evidenceGrade,
+@@ -671,12 +694,12 @@
+       format: "currency",
+       provenance: provenanceFromSnapshot(paymentTruth),
+       blockers: paymentTruth.blockers,
+       redactions: paymentTruth.redactions,
+-      drillThrough: routeDrillThrough("Open reconciliation", "/dashboard/finance/payments/reconciliation", "payments.reconciliation.read"),
++      drillThrough: routeDrillThrough(ownerText("Open reconciliation", input.input.locale), "/dashboard/finance/reconciliation", "payments.reconciliation.read"),
+       actionLink: actionLink({
+         id: "owner-morning-brief-open-cash-risk",
+-        label: "Review cash risk",
++        label: ownerText("Review cash risk", input.input.locale),
+         href: "/dashboard/finance/reconciliation",
+         requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payment_reconciliation",
+         disabled: false,
+@@ -689,11 +712,11 @@
+       id: "owner-morning-brief-close-blocked",
+       organizationId: input.input.organizationId,
+       moduleSlug: "close_assurance",
+       requiredPermission: "accounting.close.read",
+-      title: "Close blockers need owner attention",
+-      detail: "The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.",
+-      businessImpact: "Reporting confidence stays limited until close evidence is cleared.",
++      title: ownerText("Close blockers need owner attention", input.input.locale),
++      detail: ownerText("The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.", input.input.locale),
++      businessImpact: ownerText("Reporting confidence stays limited until close evidence is cleared.", input.input.locale),
+       direction: "new",
+       severity: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : "high",
+       state: ownerStateToBIState(stateFromSnapshot(closeReadiness)),
+       evidenceGrade: closeReadiness.evidenceGrade,
+@@ -707,12 +730,12 @@
+       format: "number",
+       provenance: provenanceFromSnapshot(closeReadiness),
+       blockers: closeReadiness.blockers,
+       redactions: closeReadiness.redactions,
+-      drillThrough: routeDrillThrough("Open close readiness", "/dashboard/accounting/close", "accounting.close.read"),
++      drillThrough: routeDrillThrough(ownerText("Open close readiness", input.input.locale), "/dashboard/accounting/close", "accounting.close.read"),
+       actionLink: actionLink({
+         id: "owner-morning-brief-open-close-risk",
+-        label: "Review close",
++        label: ownerText("Review close", input.input.locale),
+         href: "/dashboard/accounting/close",
+         requiredPermission: "accounting.close.read",
+         moduleSlug: "close_assurance",
+         disabled: false,
+@@ -727,11 +750,11 @@
+       id: "owner-morning-brief-stale-evidence",
+       organizationId: input.input.organizationId,
+       moduleSlug: "dashboard",
+       requiredPermission: "dashboard.read",
+-      title: "Evidence freshness needs review",
+-      detail: "One or more owner-war-room evidence surfaces are stale or signal-stale.",
+-      businessImpact: "The owner should refresh the underlying workflow before trusting the morning view.",
++      title: ownerText("Evidence freshness needs review", input.input.locale),
++      detail: ownerText("One or more owner-war-room evidence surfaces are stale or signal-stale.", input.input.locale),
++      businessImpact: ownerText("The owner should refresh the underlying workflow before trusting the morning view.", input.input.locale),
+       direction: "changed",
+       severity: "medium",
+       state: "stale",
+       evidenceGrade: "operational",
+@@ -745,12 +768,12 @@
+       format: "number",
+       provenance: null,
+       blockers: [],
+       redactions: [],
+-      drillThrough: routeDrillThrough("Open owner war room", "/dashboard/owner-war-room", "dashboard.read"),
++      drillThrough: routeDrillThrough(ownerText("Open owner war room", input.input.locale), "/dashboard/owner-war-room", "dashboard.read"),
+       actionLink: actionLink({
+         id: "owner-morning-brief-open-stale-evidence",
+-        label: "Review evidence",
++        label: ownerText("Review evidence", input.input.locale),
+         href: "/dashboard/owner-war-room",
+         requiredPermission: "dashboard.read",
+         moduleSlug: "dashboard",
+         disabled: false,
+@@ -765,17 +788,18 @@
+       id: `owner-morning-brief-proof-action:${item.id}`,
+       organizationId: input.input.organizationId,
+       moduleSlug: moduleSlugForAction(item, signal),
+       requiredPermission: item.requiredPermission,
++
+       title: item.title,
+       detail: item.nextStep,
+-      businessImpact: signal?.businessImpact ?? "A proof-linked action is open for owner review.",
++      businessImpact: signal?.businessImpact ?? ownerText("A proof-linked action is open for owner review.", input.input.locale),
+       direction: "new",
+       severity: item.severity,
+       state: actionItemState(item),
+       evidenceGrade: item.evidenceGrade,
+       trustState: evidenceGradeToBITrustState(item.evidenceGrade),
+-      freshness: freshnessFromSignal(signal, item.createdAt),
++      freshness: freshnessFromSignal(signal, item.createdAt, input.input.locale),
+       sourceModules: signal ? [signal.sourceModule] : ["dashboard"],
+       changedAt: item.createdAt,
+       previousValue: null,
+       currentValue: item.severityScore,
+@@ -783,10 +807,10 @@
+       format: "score",
+       provenance: signal ? provenanceFromSignal(signal) : null,
+       blockers: item.blockers,
+       redactions: item.redactions,
+-      drillThrough: signal ? proofDrillThrough(signal) : null,
+-      actionLink: actionLinkFromItem(item, signal),
++      drillThrough: signal ? proofDrillThrough(signal, input.input.locale) : null,
++      actionLink: actionLinkFromItem(item, signal, input.input.locale),
+     })
+   }
+ 
+   return changes.slice(0, 5)
+@@ -805,11 +829,11 @@
+     risks.push({
+       id: "owner-risk-cash-at-risk",
+       organizationId: input.input.organizationId,
+       moduleSlug: "payment_reconciliation",
+-      title: "Cash at risk",
+-      detail: "Payment suspense value is still open.",
+-      businessImpact: "Unresolved suspense weakens the owner's trust in daily cash.",
++      title: ownerText("Cash at risk", input.input.locale),
++      detail: ownerText("Payment suspense value is still open.", input.input.locale),
++      businessImpact: ownerText("Unresolved suspense weakens the owner's trust in daily cash.", input.input.locale),
+       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
+       severityScore: paymentTruth.metrics.criticalExceptionCount > 0 ? 96 : 82,
+       moneyImpact: input.headlineMetrics.cashAtRisk,
+       urgency: paymentTruth.metrics.criticalExceptionCount > 0 ? "now" : "today",
+@@ -819,12 +843,12 @@
+       freshness: freshnessFromSnapshot(paymentTruth),
+       sourceModules: paymentTruth.sourceModules,
+       blockers: paymentTruth.blockers,
+       redactions: paymentTruth.redactions,
+-      drillThrough: routeDrillThrough("Open reconciliation", "/dashboard/finance/payments/reconciliation", "payments.reconciliation.read"),
++      drillThrough: routeDrillThrough(ownerText("Open reconciliation", input.input.locale), "/dashboard/finance/reconciliation", "payments.reconciliation.read"),
+       actionLink: actionLink({
+         id: "owner-risk-open-cash-at-risk",
+-        label: "Open cash risk",
++        label: ownerText("Open cash risk", input.input.locale),
+         href: "/dashboard/finance/reconciliation",
+         requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payment_reconciliation",
+         disabled: false,
+@@ -837,11 +861,11 @@
+     risks.push({
+       id: "owner-risk-close-blockers",
+       organizationId: input.input.organizationId,
+       moduleSlug: "close_assurance",
+-      title: "Blocked close items",
+-      detail: "Close readiness still has blocked runs, critical findings, or unavailable evidence.",
+-      businessImpact: "The period cannot become owner-trustworthy until close blockers are cleared.",
++      title: ownerText("Blocked close items", input.input.locale),
++      detail: ownerText("Close readiness still has blocked runs, critical findings, or unavailable evidence.", input.input.locale),
++      businessImpact: ownerText("The period cannot become owner-trustworthy until close blockers are cleared.", input.input.locale),
+       severity: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : "high",
+       severityScore: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? 94 : 78,
+       moneyImpact: null,
+       urgency: closeReadiness.metrics.blockedCloseRunCount > 0 ? "now" : "today",
+@@ -851,12 +875,12 @@
+       freshness: freshnessFromSnapshot(closeReadiness),
+       sourceModules: closeReadiness.sourceModules,
+       blockers: closeReadiness.blockers,
+       redactions: closeReadiness.redactions,
+-      drillThrough: routeDrillThrough("Open close", "/dashboard/accounting/close", "accounting.close.read"),
++      drillThrough: routeDrillThrough(ownerText("Open close", input.input.locale), "/dashboard/accounting/close", "accounting.close.read"),
+       actionLink: actionLink({
+         id: "owner-risk-open-close-blockers",
+-        label: "Open close",
++        label: ownerText("Open close", input.input.locale),
+         href: "/dashboard/accounting/close",
+         requiredPermission: "accounting.close.read",
+         moduleSlug: "close_assurance",
+         disabled: false,
+@@ -870,11 +894,11 @@
+     risks.push({
+       id: "owner-risk-payroll-forecast-proof",
+       organizationId: input.input.organizationId,
+       moduleSlug: "payroll",
+-      title: "Payroll forecast proof",
+-      detail: "Payroll cash obligations are withheld because payroll forecast proof is incomplete.",
+-      businessImpact: "Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.",
++      title: ownerText("Payroll forecast proof", input.input.locale),
++      detail: ownerText("Payroll cash obligations are withheld because payroll forecast proof is incomplete.", input.input.locale),
++      businessImpact: ownerText("Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.", input.input.locale),
+       severity: "high",
+       severityScore: 88,
+       moneyImpact: null,
+       urgency: "today",
+@@ -884,14 +908,14 @@
+       freshness: freshnessFromSnapshot(tenantOperating),
+       sourceModules: ["payroll", "accounting", "finance"],
+       blockers: payrollForecastBlockers,
+       redactions: tenantOperating.redactions,
+-      drillThrough: routeDrillThrough("Open payroll", "/dashboard/payroll/payments", "payroll.payments.reconcile"),
++      drillThrough: routeDrillThrough(ownerText("Open payroll", input.input.locale), "/dashboard/payroll/payments", "payments.reconciliation.read"),
+       actionLink: actionLink({
+         id: "owner-risk-open-payroll-forecast-proof",
+-        label: "Open payroll",
++        label: ownerText("Open payroll", input.input.locale),
+         href: "/dashboard/payroll/payments",
+-        requiredPermission: "payroll.payments.reconcile",
++        requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payroll",
+         disabled: false,
+         disabledReason: null,
+       }),
+@@ -902,11 +926,11 @@
+     risks.push({
+       id: "owner-risk-stale-evidence",
+       organizationId: input.input.organizationId,
+       moduleSlug: "dashboard",
+-      title: "Stale evidence",
+-      detail: "At least one evidence-backed owner metric is stale.",
+-      businessImpact: "Refresh or investigate before using the brief as today's truth.",
++      title: ownerText("Stale evidence", input.input.locale),
++      detail: ownerText("At least one evidence-backed owner metric is stale.", input.input.locale),
++      businessImpact: ownerText("Refresh or investigate before using the brief as today's truth.", input.input.locale),
+       severity: "medium",
+       severityScore: 62,
+       moneyImpact: null,
+       urgency: "today",
+@@ -916,12 +940,12 @@
+       freshness: input.freshness,
+       sourceModules: ["dashboard"],
+       blockers: [],
+       redactions: [],
+-      drillThrough: routeDrillThrough("Open owner war room", "/dashboard/owner-war-room", "dashboard.read"),
++      drillThrough: routeDrillThrough(ownerText("Open owner war room", input.input.locale), "/dashboard/owner-war-room", "dashboard.read"),
+       actionLink: actionLink({
+         id: "owner-risk-open-stale-evidence",
+-        label: "Review evidence",
++        label: ownerText("Review evidence", input.input.locale),
+         href: "/dashboard/owner-war-room",
+         requiredPermission: "dashboard.read",
+         moduleSlug: "dashboard",
+         disabled: false,
+@@ -929,16 +953,16 @@
+       }),
+     })
+   }
+   if (inventoryCash.metrics.zeroStockLevelCount > 0 || inventoryCash.metrics.negativeStockLevelCount > 0) {
+-    const stockAction = ownerStockAction("owner-risk-open-stock-cash-exposure", input.input.actorPermissions)
++    const stockAction = ownerStockAction("owner-risk-open-stock-cash-exposure", input.input.actorPermissions, input.input.locale)
+     risks.push({
+       id: "owner-risk-stock-cash-exposure",
+       organizationId: input.input.organizationId,
+       moduleSlug: "inventory",
+-      title: "Stock-to-cash exposure",
+-      detail: "Zero or negative stock levels can turn working capital into missed sales.",
+-      businessImpact: "Resolve stock pressure before it becomes a cash leakage story.",
++      title: ownerText("Stock-to-cash exposure", input.input.locale),
++      detail: ownerText("Zero or negative stock levels can turn working capital into missed sales.", input.input.locale),
++      businessImpact: ownerText("Resolve stock pressure before it becomes a cash leakage story.", input.input.locale),
+       severity: inventoryCash.metrics.negativeStockLevelCount > 0 ? "high" : "medium",
+       severityScore: inventoryCash.metrics.negativeStockLevelCount > 0 ? 74 : 58,
+       moneyImpact: inventoryCash.metrics.inventoryValue,
+       urgency: inventoryCash.metrics.negativeStockLevelCount > 0 ? "today" : "soon",
+@@ -966,28 +990,30 @@
+     zoneFromSnapshot({
+       id: "owner-zone-cash-truth",
+       organizationId: input.organizationId,
+       moduleSlug: "finance",
+-      title: "Cash truth",
+-      businessQuestion: "How much cash is at risk before the owner trusts the day?",
++      title: ownerText("Cash truth", input.locale),
++      businessQuestion: ownerText("How much cash is at risk before the owner trusts the day?", input.locale),
+       summary:
+         paymentTruth.metrics.openSuspenseAmount === null
+-          ? "A combined suspense value is unavailable. Review the source currency breakdown."
++          ? ownerText("A combined suspense value is unavailable. Review the source currency breakdown.", input.locale)
+           : paymentTruth.metrics.openSuspenseAmount > 0
+-          ? `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount)} remains in suspense.`
+-          : "No suspense value is visible in the current payment truth snapshot.",
++          ? input.locale === "fr"
++            ? `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount, input.locale)} restent en suspens.`
++            : `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount)} remains in suspense.`
++          : ownerText("No suspense value is visible in the current payment truth snapshot.", input.locale),
+       snapshot: paymentTruth,
+       metric: {
+         id: "owner-zone-cash-at-risk",
+-        title: "Cash at risk",
+-        detail: "Open suspense amount from payment truth.",
++        title: ownerText("Cash at risk", input.locale),
++        detail: ownerText("Open suspense amount from payment truth.", input.locale),
+         value: paymentTruth.metrics.openSuspenseAmount,
+         unit: paymentTruth.metrics.suspenseCurrencyCode ?? "",
+         format: "currency",
+       },
+       action: actionLink({
+         id: "owner-zone-open-cash-truth",
+-        label: "Open cash",
++        label: ownerText("Open cash", input.locale),
+         href: "/dashboard/finance/reconciliation",
+         requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payment_reconciliation",
+         disabled: false,
+@@ -997,27 +1023,29 @@
+     zoneFromSnapshot({
+       id: "owner-zone-payroll-finance-forecast",
+       organizationId: input.organizationId,
+       moduleSlug: "payroll",
+-      title: "Payroll finance forecast",
+-      businessQuestion: "What payroll and statutory cash obligations are coming next?",
++      title: ownerText("Payroll finance forecast", input.locale),
++      businessQuestion: ownerText("What payroll and statutory cash obligations are coming next?", input.locale),
+       summary: tenantOperating.metrics.payrollFinanceForecast.authoritative
+-        ? `${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount)} net pay and ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount)} statutory liability are forecast from payroll evidence.`
+-        : tenantOperating.metrics.payrollFinanceForecast.message,
++        ? input.locale === "fr"
++          ? `Les preuves de paie prévoient ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount, input.locale)} de salaires nets et ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount, input.locale)} d’obligations légales.`
++          : `${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount)} net pay and ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount)} statutory liability are forecast from payroll evidence.`
++        : presentOwnerForecastMessage(tenantOperating.metrics.payrollFinanceForecast, input.locale),
+       snapshot: tenantOperating,
+       metric: {
+         id: "owner-zone-payroll-forecast-total",
+-        title: "Upcoming payroll obligations",
+-        detail: "Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.",
++        title: ownerText("Upcoming payroll obligations", input.locale),
++        detail: ownerText("Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.", input.locale),
+         value: tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
+         unit: "XAF",
+         format: "currency",
+       },
+       action: actionLink({
+         id: "owner-zone-open-payroll-forecast",
+-        label: "Open payroll",
++        label: ownerText("Open payroll", input.locale),
+         href: "/dashboard/payroll/payments",
+-        requiredPermission: "payroll.payments.reconcile",
++        requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payroll",
+         disabled: false,
+         disabledReason: null,
+       }),
+@@ -1025,41 +1053,45 @@
+     zoneFromSnapshot({
+       id: "owner-zone-stock-to-cash",
+       organizationId: input.organizationId,
+       moduleSlug: "inventory",
+-      title: "Stock-to-cash truth",
+-      businessQuestion: "Is working capital trapped in stock pressure?",
+-      summary: `${formatBriefAmount(inventoryCash.metrics.inventoryValue)} is tied up in inventory, with ${inventoryCash.metrics.zeroStockLevelCount} zero-stock levels and ${inventoryCash.metrics.negativeStockLevelCount} negative levels.`,
++      title: ownerText("Stock-to-cash truth", input.locale),
++      businessQuestion: ownerText("Is working capital trapped in stock pressure?", input.locale),
++      summary: input.locale === "fr"
++        ? `${formatBriefAmount(inventoryCash.metrics.inventoryValue, input.locale)} sont immobilisés en stock ; niveaux de stock nuls : ${inventoryCash.metrics.zeroStockLevelCount}, négatifs : ${inventoryCash.metrics.negativeStockLevelCount}.`
++        : `${formatBriefAmount(inventoryCash.metrics.inventoryValue)} is tied up in inventory, with ${inventoryCash.metrics.zeroStockLevelCount} zero-stock levels and ${inventoryCash.metrics.negativeStockLevelCount} negative levels.`,
+       snapshot: inventoryCash,
+       metric: {
+         id: "owner-zone-inventory-value",
+-        title: "Inventory value",
+-        detail: "Current inventory value from the inventory cash snapshot.",
++        title: ownerText("Inventory value", input.locale),
++        detail: ownerText("Current inventory value from the inventory cash snapshot.", input.locale),
+         value: inventoryCash.metrics.inventoryValue,
+         unit: "XAF",
+         format: "currency",
+       },
+-      action: ownerStockAction("owner-zone-open-stock-to-cash", input.actorPermissions),
++      action: ownerStockAction("owner-zone-open-stock-to-cash", input.actorPermissions, input.locale),
+     }),
+     zoneFromSnapshot({
+       id: "owner-zone-close-readiness",
+       organizationId: input.organizationId,
+       moduleSlug: "close_assurance",
+-      title: "Close readiness",
+-      businessQuestion: "Can this period be trusted for owner reporting?",
+-      summary: `${closeReadiness.metrics.openFindingCount} open findings and ${closeReadiness.metrics.unavailableEvidenceCount} unavailable evidence items remain.`,
++      title: ownerText("Close readiness", input.locale),
++      businessQuestion: ownerText("Can this period be trusted for owner reporting?", input.locale),
++      summary: input.locale === "fr"
++        ? `Constats encore ouverts : ${closeReadiness.metrics.openFindingCount} ; preuves indisponibles : ${closeReadiness.metrics.unavailableEvidenceCount}.`
++        : `${closeReadiness.metrics.openFindingCount} open findings and ${closeReadiness.metrics.unavailableEvidenceCount} unavailable evidence items remain.`,
+       snapshot: closeReadiness,
+       metric: {
+         id: "owner-zone-close-score",
+-        title: "Readiness score",
+-        detail: "Average close readiness score for the active period.",
++        title: ownerText("Readiness score", input.locale),
++        detail: ownerText("Average close readiness score for the active period.", input.locale),
+         value: closeReadiness.metrics.averageReadinessScore ?? 0,
+         unit: "%",
+         format: "score",
+       },
+       action: actionLink({
+         id: "owner-zone-open-close-readiness",
+-        label: "Open close",
++        label: ownerText("Open close", input.locale),
+         href: "/dashboard/accounting/close",
+         requiredPermission: "accounting.close.read",
+         moduleSlug: "close_assurance",
+         disabled: false,
+@@ -1069,16 +1101,18 @@
+     zoneFromSnapshot({
+       id: "owner-zone-payment-reconciliation",
+       organizationId: input.organizationId,
+       moduleSlug: "payment_reconciliation",
+-      title: "Payment and reconciliation truth",
+-      businessQuestion: "Are payment exceptions blocking cash confidence?",
+-      summary: `${paymentTruth.metrics.openExceptionCount} open exceptions, ${paymentTruth.metrics.openSuspenseCount} suspense items, and ${paymentTruth.metrics.pendingTransactionCount} pending transactions are visible.`,
++      title: ownerText("Payment and reconciliation truth", input.locale),
++      businessQuestion: ownerText("Are payment exceptions blocking cash confidence?", input.locale),
++      summary: input.locale === "fr"
++        ? `Anomalies ouvertes : ${paymentTruth.metrics.openExceptionCount} ; éléments en suspens : ${paymentTruth.metrics.openSuspenseCount} ; transactions en attente : ${paymentTruth.metrics.pendingTransactionCount}.`
++        : `${paymentTruth.metrics.openExceptionCount} open exceptions, ${paymentTruth.metrics.openSuspenseCount} suspense items, and ${paymentTruth.metrics.pendingTransactionCount} pending transactions are visible.`,
+       snapshot: paymentTruth,
+       metric: {
+         id: "owner-zone-payment-exceptions",
+-        title: "Open payment issues",
+-        detail: "Exceptions, suspense items, and pending provider transactions.",
++        title: ownerText("Open payment issues", input.locale),
++        detail: ownerText("Exceptions, suspense items, and pending provider transactions.", input.locale),
+         value:
+           paymentTruth.metrics.openExceptionCount +
+           paymentTruth.metrics.openSuspenseCount +
+           paymentTruth.metrics.pendingTransactionCount,
+@@ -1086,10 +1120,10 @@
+         format: "number",
+       },
+       action: actionLink({
+         id: "owner-zone-open-payment-reconciliation",
+-        label: "Open payments",
+-        href: "/dashboard/finance/payments",
++        label: ownerText("Open reconciliation", input.locale),
++        href: "/dashboard/finance/reconciliation",
+         requiredPermission: "payments.reconciliation.read",
+         moduleSlug: "payment_reconciliation",
+         disabled: false,
+         disabledReason: null,
+@@ -1159,8 +1193,9 @@
+   }
+ }
+ 
+ function priorityActionFromItem(input: {
++  locale?: OwnerLocale
+   item: ActionItem
+   signal: BusinessSignal | null
+   generatedAt: string
+ }): OwnerMorningBriefPriorityAction {
+@@ -1169,59 +1204,67 @@
+     title: input.item.title,
+     nextStep: input.item.nextStep,
+     severity: input.item.severity,
+     state: actionItemState(input.item),
+-    actionLink: actionLinkFromItem(input.item, input.signal),
++    actionLink: actionLinkFromItem(input.item, input.signal, input.locale),
+     evidenceGrade: input.item.evidenceGrade,
+     trustState: evidenceGradeToBITrustState(input.item.evidenceGrade),
+-    freshness: freshnessFromSignal(input.signal, input.generatedAt),
+-    dueLabel: dueLabel(input.item.dueAt),
+-    ownerLabel: input.item.assignedRole,
++    freshness: freshnessFromSignal(input.signal, input.generatedAt, input.locale),
++    dueLabel: dueLabel(input.item.dueAt, input.locale),
++    ownerLabel: input.locale === "fr" ? {
++      owner: "Dirigeant", accountant: "Comptable", finance: "Finance", stockkeeper: "Gestionnaire de stock",
++      purchasing: "Achats", payroll: "Paie", manager: "Responsable",
++    }[input.item.assignedRole] : input.item.assignedRole,
+     blockers: input.item.blockers,
+     redactions: input.item.redactions,
+   }
+ }
+ 
+-function actionLinkFromItem(item: ActionItem, signal: BusinessSignal | null): BIActionLink {
++function actionLinkFromItem(item: ActionItem, signal: BusinessSignal | null, locale: OwnerLocale = "en"): BIActionLink {
+   const disabled = item.status === "expired" || item.status === "resolved" || item.status === "dismissed"
+   return actionLink({
+     id: `owner-action-link:${item.id}`,
+-    label: disabled ? "Unavailable" : "Open",
++    label: disabled ? ownerText("Unavailable", locale) : ownerText("Open", locale),
+     href: item.actionPath,
+     requiredPermission: item.requiredPermission,
++    additionalRequiredPermissions: item.additionalRequiredPermissions,
+     moduleSlug: moduleSlugForAction(item, signal),
+     disabled,
+-    disabledReason: disabled ? `Action is ${item.status}.` : null,
++    disabledReason: disabled
++      ? locale === "fr"
++        ? item.status === "expired" ? "Cette action a expiré." : item.status === "resolved" ? "Cette action est résolue." : "Cette action est écartée."
++        : `Action is ${item.status}.`
++      : null,
+   })
+ }
+ 
+ function actionLink(input: BIActionLink): BIActionLink {
+   return input
+ }
+ 
+-function ownerStockAction(id: string, actorPermissions: readonly string[] = []): BIActionLink {
++function ownerStockAction(id: string, actorPermissions: readonly string[] = [], locale: OwnerLocale = "en"): BIActionLink {
+   const disabled = !["inventory.read", "inventory.items.read"].every(permission =>
+     hasRbacPermission(actorPermissions, permission),
+   )
+   return {
+     id,
+-    label: "Open stock items",
++    label: ownerText("Open stock items", locale),
+     href: OWNER_STOCK_WORKSPACE,
+     requiredPermission: "inventory.read",
+     additionalRequiredPermissions: ["inventory.items.read"],
+     moduleSlug: "inventory",
+     disabled,
+-    disabledReason: disabled ? "Inventory item access is required to open this workspace." : null,
++    disabledReason: disabled ? ownerText("Inventory item access is required to open this workspace.", locale) : null,
+   }
+ }
+ 
+-function actionDrillThrough(action: BIActionLink): BIDrillThrough {
++function actionDrillThrough(action: BIActionLink, locale: OwnerLocale = "en"): BIDrillThrough {
+   const permissions = {
+     requiredPermission: action.requiredPermission,
+     ...(action.additionalRequiredPermissions ? { additionalRequiredPermissions: action.additionalRequiredPermissions } : {}),
+   }
+   if (action.disabled) {
+-    return { available: false, type: "route", label: action.label, ...permissions, unavailableReason: action.disabledReason ?? "This workspace is unavailable." }
++    return { available: false, type: "route", label: action.label, ...permissions, unavailableReason: action.disabledReason ?? ownerText("This workspace is unavailable.", locale) }
+   }
+   return { available: true, type: "route", label: action.label, href: action.href, ...permissions }
+ }
+ 
+@@ -1234,24 +1277,24 @@
+     requiredPermission,
+   }
+ }
+ 
+-function proofDrillThrough(signal: BusinessSignal) {
++function proofDrillThrough(signal: BusinessSignal, locale: OwnerLocale = "en") {
+   if (!signal.proofLink) {
+-    return routeDrillThrough("Open action", signal.actionPath, signal.requiredPermission)
++    return routeDrillThrough(ownerText("Open action", locale), signal.actionPath, signal.requiredPermission)
+   }
+   return {
+     available: true as const,
+     type: "route_and_proof" as const,
+-    label: "Open proof-linked action",
++    label: ownerText("Open proof-linked action", locale),
+     href: signal.actionPath,
+     subjectType: signal.proofLink.subjectType,
+     subjectId: signal.proofLink.subjectId,
+     requiredPermission: SUBJECT_PERMISSION_MAP[signal.proofLink.subjectType] ?? signal.requiredPermission,
+   }
+ }
+ 
+-function proofSubjectToBI(organizationId: string, subject: OwnerWarRoomProofSubject): BIProofDrawerSubject {
++function proofSubjectToBI(organizationId: string, subject: OwnerWarRoomProofSubject, locale: OwnerLocale = "en"): BIProofDrawerSubject {
+   const moduleSlug = PROOF_MODULE_BY_SUBJECT[subject.subjectType]
+   const sourceModules: SnapshotSourceModule[] = [
+     moduleSlug === "payment_reconciliation" ? "payments" : moduleSlug === "close_assurance" ? "close" : "accounting",
+   ]
+@@ -1273,9 +1316,9 @@
+     organizationId,
+     moduleSlug,
+     label: subject.label,
+     requiredPermission: subject.requiredPermission,
+-    unavailableReason: subject.unavailableReason ?? "No authorized proof subject is available.",
++    unavailableReason: subject.unavailableReason ?? ownerText("No authorized proof subject is available.", locale),
+     sourceModules,
+   }
+ }
+ 
+@@ -1305,26 +1348,29 @@
+   if (input.summary.criticalCount > 0 || input.summary.highCount > 0) return "partial"
+   return "ready"
+ }
+ 
+-function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
++function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"], locale: OwnerLocale = "en") {
++  if (locale === "fr") {
++    return `Trésorerie à risque : ${formatBriefAmount(input.cashAtRisk, locale)} ; engagements de paie à venir : ${formatBriefAmount(input.payrollForecastTotal, locale)} ; éléments de clôture bloqués : ${input.blockedCloseItems} ; preuves non à jour : ${input.staleEvidenceItems} ; actions liées à des preuves ouvertes depuis hier : ${input.proofLinkedActionCount}.`
++  }
+   return `${formatBriefAmount(input.cashAtRisk)} cash at risk, ${formatBriefAmount(input.payrollForecastTotal)} upcoming payroll obligations, ${input.blockedCloseItems} blocked close item${input.blockedCloseItems === 1 ? "" : "s"}, ${input.staleEvidenceItems} stale evidence item${input.staleEvidenceItems === 1 ? "" : "s"}, and ${input.proofLinkedActionCount} proof-linked action${input.proofLinkedActionCount === 1 ? "" : "s"} opened since yesterday.`
+ }
+ 
+-function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
++function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"], locale: OwnerLocale = "en") {
+   if (input.cashAtRisk === null || input.cashAtRisk > 0) {
+-    return "Start with cash risk: suspense must be explained before the owner can trust daily cash."
++    return ownerText("Start with cash risk: suspense must be explained before the owner can trust daily cash.", locale)
+   }
+   if (input.blockedCloseItems > 0) {
+-    return "Close evidence is the first blocker: clear missing or critical close items before signoff."
++    return ownerText("Close evidence is the first blocker: clear missing or critical close items before signoff.", locale)
+   }
+   if (input.payrollForecastTotal !== null && input.payrollForecastTotal > 0) {
+-    return "Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan."
++    return ownerText("Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan.", locale)
+   }
+   if (input.staleEvidenceItems > 0) {
+-    return "Refresh stale evidence before using this view as today's owner truth."
++    return ownerText("Refresh stale evidence before using this view as today's owner truth.", locale)
+   }
+-  return "No cash, close, or freshness blocker is visible in the current owner brief."
++  return ownerText("No cash, close, or freshness blocker is visible in the current owner brief.", locale)
+ }
+ 
+ function aggregateBriefFreshness(generatedAt: string, snapshots: Array<SnapshotResult<unknown>>): BIFreshness {
+   const freshnesses = snapshots.map(freshnessFromSnapshot)
+@@ -1354,9 +1400,9 @@
+     staleReason: snapshot.freshness.staleReason,
+   }
+ }
+ 
+-function freshnessFromSignal(signal: BusinessSignal | null, fallbackGeneratedAt: string): BIFreshness {
++function freshnessFromSignal(signal: BusinessSignal | null, fallbackGeneratedAt: string, locale: OwnerLocale = "en"): BIFreshness {
+   if (!signal) {
+     return { state: "unknown", generatedAt: fallbackGeneratedAt, sourceMaxUpdatedAt: null, maxAgeMinutes: null, stale: false, staleReason: null }
+   }
+   return {
+@@ -1364,9 +1410,9 @@
+     generatedAt: signal.freshness.generatedAt,
+     sourceMaxUpdatedAt: signal.freshness.sourceMaxUpdatedAt,
+     maxAgeMinutes: signal.freshness.maxAgeMinutes,
+     stale: signal.status === "expired" || signal.freshness.stale,
+-    staleReason: signal.status === "expired" ? "Signal is expired." : signal.freshness.staleReason,
++    staleReason: signal.status === "expired" ? ownerText("Signal is expired.", locale) : signal.freshness.staleReason,
+   }
+ }
+ 
+ function provenanceFromSnapshot(snapshot: SnapshotResult<unknown>): BIProvenance {
+@@ -1426,17 +1472,17 @@
+   const parsed = new Date(value)
+   return !Number.isNaN(parsed.getTime()) && parsed.getTime() >= cutoff.getTime()
+ }
+ 
+-function dueLabel(value: string) {
++function dueLabel(value: string, locale: OwnerLocale = "en") {
+   const parsed = new Date(value)
+   if (Number.isNaN(parsed.getTime())) return null
+-  return `Due ${new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)}`
++  return `${locale === "fr" ? "Échéance :" : "Due"} ${new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(parsed)}`
+ }
+ 
+-function formatBriefAmount(value: number | null) {
+-  if (value === null) return "total unavailable"
+-  return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} XAF`
++function formatBriefAmount(value: number | null, locale: OwnerLocale = "en") {
++  if (value === null) return locale === "fr" ? "total indisponible" : "total unavailable"
++  return `${new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", { maximumFractionDigits: 0 }).format(value)} XAF`
+ }
+ 
+ function card(input: {
+   id: OwnerWarRoomCardId
+===================================================================
+--- a/services/owner-war-room/owner-war-room-contracts.ts
++++ b/services/owner-war-room/owner-war-room-contracts.ts
+@@ -160,8 +160,9 @@
+   closeReadiness: SnapshotResult<CloseReadinessMetrics>
+ }
+ 
+ export type ComposeOwnerWarRoomInput = {
++  locale?: "en" | "fr"
+   organizationId: string
+   organizationName: string | null
+   /** Server-resolved permissions; omitted context cannot enable stock navigation. */
+   actorPermissions?: readonly string[]
+===================================================================
+--- a/services/owner-war-room/__tests__/owner-war-room.service.test.ts
++++ b/services/owner-war-room/__tests__/owner-war-room.service.test.ts
+@@ -88,8 +88,66 @@
+ 
+ const generatedAt = "2026-06-20T10:00:00.000Z"
+ 
+ describe("owner war room service", () => {
++  function localizedInput(locale: "en" | "fr") {
++    return {
++      locale, organizationId: "org-1", organizationName: "Owner custom name", generatedAt, actorPermissions: ["*"],
++      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
++      actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
++    }
++  }
++
++  it("localizes owned narratives while preserving figures, provenance, source evidence and custom actions", () => {
++    const input = localizedInput("fr")
++    const original = JSON.stringify(input)
++    const fr = composeOwnerWarRoomData(input)
++    const en = composeOwnerWarRoomData({ ...input, locale: "en" })
++    expect(fr.morningBrief.commandBrief.title).toBe("Point du jour du dirigeant")
++    expect(fr.morningBrief.commandBrief.summary).toContain("125\u202f000 XAF")
++    expect(fr.morningBrief.commandBrief.summary).toContain("éléments de clôture bloqués : 1")
++    expect(fr.morningBrief.commandBrief.conclusion).toContain("Commencez par le risque de trésorerie")
++    expect(fr.morningBrief.zones.map(zone => zone.title)).toEqual(["Situation de trésorerie", "Prévisions financières de paie", "Situation du stock et de la trésorerie", "Préparation de la clôture", "Situation des paiements et rapprochements"])
++    expect(fr.morningBrief.zones[2].summary).toContain("450\u202f000 XAF")
++    expect(fr.morningBrief.priorityActions[0].dueLabel).toContain("Échéance :")
++    expect(fr.morningBrief.priorityActions[0].actionLink.label).toBe("Ouvrir")
++    expect(fr.proofSubjects[0].unavailableReason).toBe("Aucune écriture comptabilisée n’est visible pour cette période.")
++    expect(fr.morningBrief.headlineMetrics).toEqual(en.morningBrief.headlineMetrics)
++    expect(fr.morningBrief.commandBrief.provenance).toEqual(en.morningBrief.commandBrief.provenance)
++    expect(fr.actionQueue.actionItems).toEqual(input.actionQueue.actionItems)
++    expect(fr.cards.map(({ value, state, evidenceGrade, href, requiredPermission }) => ({ value, state, evidenceGrade, href, requiredPermission }))).toEqual(en.cards.map(({ value, state, evidenceGrade, href, requiredPermission }) => ({ value, state, evidenceGrade, href, requiredPermission })))
++    expect(fr.cards[0].redactions).toEqual(en.cards[0].redactions)
++    expect(JSON.stringify(input)).toBe(original)
++  })
++
++  it("keeps unavailable cash distinct from zero in French", () => {
++    const input = localizedInput("fr")
++    input.snapshots.paymentTruth = paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 })
++    const data = composeOwnerWarRoomData(input)
++    expect(data.morningBrief.headlineMetrics.cashAtRisk).toBeNull()
++    expect(data.morningBrief.commandBrief.summary).toContain("Trésorerie à risque : total indisponible")
++    expect(data.morningBrief.zones[0].summary).toContain("ventilation par devise")
++  })
++
++  it("routes reconciliation, payroll review and settings to their actual read-entry contracts", () => {
++    const data = composeOwnerWarRoomData(localizedInput("en"))
++    for (const id of ["cash_at_risk", "reconciliation_exceptions"]) {
++      expect(data.cards.find(card => card.id === id)).toMatchObject({ href: "/dashboard/finance/reconciliation", requiredPermission: "payments.reconciliation.read" })
++    }
++    expect(data.cards.find(card => card.id === "payroll_exposure")).toMatchObject({ href: "/dashboard/payroll/payments", requiredPermission: "payments.reconciliation.read" })
++    expect(data.cards.find(card => card.id === "module_observe")).toMatchObject({ href: "/dashboard/settings/modules", requiredPermission: "system.settings.update" })
++    expect(JSON.stringify([data.cards, data.morningBrief.zones, data.morningBrief.risks])).not.toContain("/dashboard/finance/payments")
++    expect(data.morningBrief.risks.find(risk => risk.id.includes("cash"))?.drillThrough).toMatchObject({ href: "/dashboard/finance/reconciliation" })
++  })
++
++  it("retains additional action permissions and localizes closed-action explanations", () => {
++    const input = localizedInput("fr")
++    input.actionQueue.actionItems[0].additionalRequiredPermissions = ["payroll.command.read"]
++    input.actionQueue.actionItems[0].status = "resolved"
++    const data = composeOwnerWarRoomData(input)
++    expect(data.morningBrief.priorityActions[0].actionLink).toMatchObject({ additionalRequiredPermissions: ["payroll.command.read"], disabled: true, disabledReason: "Cette action est résolue." })
++  })
++
+   it.each([
+     [undefined, false],
+     [[], false],
+     [["inventory.read"], false],
+@@ -174,9 +232,9 @@
+       "module_observe",
+     ])
+     expect(data.cards.find((card) => card.id === "payroll_exposure")).toMatchObject({
+       state: "redacted",
+-      requiredPermission: "payroll.read",
++      requiredPermission: "payments.reconciliation.read",
+       value: 440000,
+       unit: "value",
+     })
+     expect(data.cards.find((card) => card.id === "module_observe")).toMatchObject({
+===================================================================
+--- a/actions/owner-war-room/owner-war-room.actions.ts
++++ b/actions/owner-war-room/owner-war-room.actions.ts
+@@ -10,16 +10,18 @@
+ 
+ export type { OwnerWarRoomData }
+ 
+ const ownerWarRoomInputSchema = z.object({
++  locale: z.enum(["en", "fr"]).optional(),
+   periodStart: z.coerce.date().nullable().optional(),
+   periodEnd: z.coerce.date().nullable().optional(),
+   maxAgeMinutes: z.number().int().positive().max(60 * 24 * 31).nullable().optional(),
+ })
+ 
+ function asOwnerWarRoomInput(input: unknown) {
+   const parsed = ownerWarRoomInputSchema.parse(input && typeof input === "object" ? input : {})
+   return {
++    locale: parsed.locale ?? "en",
+     periodStart: parsed.periodStart ?? null,
+     periodEnd: parsed.periodEnd ?? null,
+     maxAgeMinutes: parsed.maxAgeMinutes ?? null,
+   }
+===================================================================
+--- a/actions/owner-war-room/__tests__/owner-war-room.actions.test.ts
++++ b/actions/owner-war-room/__tests__/owner-war-room.actions.test.ts
+@@ -51,8 +51,9 @@
+   it("loads the command center with RBAC tenant and actor context", async () => {
+     const result = await getOwnerWarRoomAction({ maxAgeMinutes: 60 })
+ 
+     expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith({
++      locale: "en",
+       organizationId: "org-session",
+       actorId: "user-session",
+       actorPermissions: ["DASHBOARD_READ", "payments.reconciliation.read"],
+       actorRoleCodes: ["administrator"],
+@@ -65,5 +66,17 @@
+       success: true,
+       data: { organizationId: "org-session" },
+     })
+   })
++
++  it("accepts French presentation without accepting caller-owned access context", async () => {
++    await getOwnerWarRoomAction({ locale: "fr", organizationId: "other-org", actorPermissions: ["*"], isSuperUser: true })
++    expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith(expect.objectContaining({
++      locale: "fr", organizationId: "org-session", actorPermissions: ["DASHBOARD_READ", "payments.reconciliation.read"], isSuperUser: false,
++    }))
++  })
++
++  it("rejects unsupported locales before loading the dashboard", async () => {
++    await expect(getOwnerWarRoomAction({ locale: "de" })).rejects.toThrow()
++    expect(mockGetOwnerWarRoomData).not.toHaveBeenCalled()
++  })
+ })
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
+@@ -17,11 +17,11 @@
+     subtitle:
+       "A read-only, evidence-backed command center for cash truth, reconciliation pressure, stock exposure, supplier commitments, payroll exposure, close readiness, action pressure, and module state.",
+   },
+   fr: {
+-    title: "Salle de controle proprietaire",
++    title: "Tableau du dirigeant",
+     subtitle:
+-      "Un centre de commandement en lecture seule, appuye sur les preuves, pour la tresorerie, le rapprochement, le stock, les engagements fournisseurs, la paie, la cloture, les actions et les modules.",
++      "Un centre de commandement en lecture seule, appuyé sur les preuves, pour la trésorerie, le rapprochement, le stock, les engagements fournisseurs, la paie, la clôture, les actions et les modules.",
+   },
+ } as const
+ 
+ function pickLocale(locale: string) {
+@@ -45,8 +45,9 @@
+     params,
+     surface,
+     onAllowed: async (ctx, _locale) => {
+       const data = await getOwnerWarRoomData({
++        locale: resolvedLocale,
+         organizationId: ctx.orgId,
+         actorId: ctx.userId,
+         actorPermissions: ctx.permissions,
+         actorRoleCodes: ctx.roles.map((role) => role.code),
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx
+@@ -66,8 +66,9 @@
+       resource: "KontavaOwnerWarRoom",
+       auditAllowed: true,
+     })
+     expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith({
++      locale: "en",
+       organizationId: "org-session",
+       actorId: "user-session",
+       actorPermissions: ["dashboard.read", "inventory.levels.read"],
+       actorRoleCodes: ["administrator"],
+@@ -89,5 +90,11 @@
+ 
+     expect(screen.getByText("route:permission_denied")).toBeInTheDocument()
+     expect(screen.queryByText("org-session:en")).not.toBeInTheDocument()
+   })
++
++  it("passes the French route locale into generated narratives", async () => {
++    render(await OwnerWarRoomPage({ params: Promise.resolve({ locale: "fr" }) }))
++    expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith(expect.objectContaining({ locale: "fr", organizationId: "org-session" }))
++    expect(screen.getByText("org-session:fr")).toBeInTheDocument()
++  })
+ })
+===================================================================
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -115,8 +115,9 @@
+ | 2026-10-12 | UX01 | Shared shell implemented; 70 focused tests passed; SUPER_ADMIN browser checks recorded; restricted-role acceptance open | [Execution report](EXECUTION-01.md), [owned patch](evidence/owned-changes.patch) |
+ | 2026-10-13 | UX01-A | Dashboard denial/session classification corrected; 20 regression tests passed; post-fix browser acceptance pending | [Delivery 02](EXECUTION-02.md) |
+ | 2026-10-13 | UX02/UX03 | Compact owner summary, French interface copy and shared context-preserving action controls; 42 component tests and scoped lint passed; rendered acceptance pending | [Delivery 03](EXECUTION-03.md), [owned patch](evidence/command-center-2026-10-13.patch) |
+ | 2026-10-13 | UX03 | Owner stock handoff repaired with item-access checks; duplicate zone controls removed; 22 mocked service and 47 component tests passed; browser acceptance pending | [Delivery 04](EXECUTION-04.md) |
++| 2026-10-13 | UX02/UX03 | Owner-generated EN/FR narratives and canonical source copy localized; reconciliation/payroll/settings handoffs aligned; 57 tests passed; EN/FR owner views and 11 destination surfaces inspected under SUPER ADMIN, broader role/journey acceptance open | [Delivery 05](EXECUTION-05.md) |
+ 
+ ### First five changes, in execution order
+ 
+ 1. **Shared canvas and navigation:** implemented in this run; broad visual impact and shorter mobile navigation.
+@@ -124,9 +125,9 @@
+ 3. **Clear, localized action handoffs:** correct destinations and purpose labels; preserve and validate task context.
+ 4. **POS task workspace:** prioritize products, cart and tender while preserving recovery and shift controls.
+ 5. **Inventory/purchasing workbench:** normalize filters, review tables and controlled entry journeys.
+ 
+-Next engineering slice: finish backend-generated EN/FR narratives and continue the remaining owner destination audit. Delivery 03 normalized selected action primitives and compacted the owner summary; Delivery 04 aligned stock destinations and required permissions. UX01–UX03 acceptance still requires rendered desktop/tablet/mobile checks, actual restricted-role sessions, the alternate/light-theme matrix and usability feedback; SUPER_ADMIN and mocked permission tests do not replace these.
++Next acceptance slice: exercise the reviewed owner destinations and EN/FR modes in actual role sessions, then normalize remaining shared evidence units and technical labels. Delivery 05 localized owner-generated narratives and reviewed 11 implemented destination paths, repairing reconciliation, payroll-review and module-settings navigation metadata. The generic cash-drawer signal default remains a separate follow-up. UX01–UX03 acceptance still requires rendered desktop/tablet/mobile checks, actual restricted-role sessions, the alternate/light-theme matrix and usability feedback; SUPER_ADMIN and mocked permission tests do not replace these.
+ 
+ **Role-check update:** Chrome now confirms an ACCOUNTANT shell with four modules. The dashboard displays a misleading missing-organization recovery message; current source maps every `FORBIDDEN` error to this diagnosis. Add P1 acceptance correction **UX01-A: distinguish denied access from stale/missing organization and provide an authorized entry path**, before accepting restricted-role navigation. Preserve all server guards; verify EN/FR denial, inactive organization, stale session, successful authorized read and unexpected error independently. Accounting destination verification was interrupted by browser connection timeouts. Firefox is not exposed to the browser tools, so cashier acceptance remains open. See [role-session evidence](ROLE-SESSION-RECHECK.md).
+ 
+ Estimates are engineering person-days, not calendar promises. User research, external dependencies and production approval can add elapsed time. Completion of the roadmap document is not completion of this program.
+===================================================================
+--- a/services/owner-war-room/owner-war-room-copy.ts
++++ b/services/owner-war-room/owner-war-room-copy.ts
+@@ -1,0 +1,115 @@
+\ No newline at end of file
++export type OwnerLocale = "en" | "fr"
++
++// Only application-owned narrative copy belongs here. Source evidence and custom notes
++// are not passed through this dictionary.
++const french = {
++  "Open employee balance recovery cases are counted without exposing person-level amounts.": "Les dossiers de recouvrement des soldes salariés sont comptés sans exposer les montants individuels.",
++  "Cash at risk": "Trésorerie à risque",
++  "Unresolved payment suspense value that should be explained before owners trust cash.": "Montant des paiements en suspens à expliquer avant de se fier à la trésorerie.",
++  "Reconciliation exceptions": "Anomalies de rapprochement",
++  "Open payment exceptions, critical issues, suspense items, and pending provider transactions.": "Anomalies de paiement ouvertes, problèmes critiques, éléments en suspens et transactions du prestataire en attente.",
++  "Stock cash exposure": "Trésorerie immobilisée en stock",
++  "Inventory value tied up in stock, with zero or negative-stock pressure highlighted.": "Valeur immobilisée en stock, avec mise en évidence des stocks nuls ou négatifs.",
++  "Supplier commitments": "Engagements fournisseurs",
++  "Pending purchase orders that may soon become cash obligations or receiving blockers.": "Commandes fournisseurs en attente susceptibles de créer des décaissements ou des blocages à la réception.",
++  "Payroll exposure": "Engagements de paie",
++  "The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.": "Le tableau du dirigeant présente uniquement les prévisions et engagements de paie agrégés ; les montants individuels restent dans le module de paie.",
++  "Close readiness": "Préparation de la clôture",
++  "Open findings, unavailable evidence, readiness score, and close blockers for the active period.": "Constats ouverts, preuves indisponibles, score de préparation et blocages de clôture pour la période active.",
++  "Action queue": "Actions à traiter",
++  "Permission-filtered owner actions generated from the current business signals.": "Actions du dirigeant issues des signaux métier actuels, filtrées selon les autorisations.",
++  "Module observe": "Observation des modules",
++  "Modules that would be blocked under entitlement enforcement, shown only as controlled upgrade pressure.": "Modules qui seraient bloqués si les droits d’abonnement étaient appliqués, présentés pour examiner les besoins d’évolution.",
++  "Cash Leakage Radar MVP": "Surveillance des écarts de trésorerie",
++  "Cash truth has unresolved suspense or critical exceptions. Owners should clear these before trusting daily cash.": "La trésorerie présente des suspens non résolus ou des anomalies critiques. Examinez-les avant de vous fier à la situation du jour.",
++  "No critical cash leakage signal is visible from the current payment snapshot.": "Aucun signal critique d’écart de trésorerie n’apparaît dans l’état actuel des paiements.",
++  "Close Autopilot strip": "Suivi de la clôture",
++  "The close still has findings or unavailable evidence. Work the blockers before signoff.": "La clôture présente encore des constats ou des preuves indisponibles. Traitez les blocages avant validation.",
++  "Close readiness has no open blocker surfaced by the current snapshot.": "L’état actuel de la préparation de clôture ne fait apparaître aucun blocage ouvert.",
++  "Module Control observe strip": "Suivi des droits des modules",
++  "Observe mode is showing modules that would be hidden after enforcement. Owners can request an upgrade from controlled surfaces.": "Le mode observation indique les modules qui seraient masqués après application des droits. Le dirigeant peut demander une évolution depuis les espaces autorisés.",
++  "Module observe mode is clean for the current tenant entitlement set.": "Le mode observation ne relève aucun écart dans les droits actuels de l’organisation.",
++  "Ledger proof": "Preuves comptables",
++  "Inspect ledger evidence when a posted journal entry is selected from accounting.": "Examinez les preuves du grand livre pour une écriture comptabilisée sélectionnée dans la comptabilité.",
++  "No posted journal entry is visible in this period.": "Aucune écriture comptabilisée n’est visible pour cette période.",
++  "Reconciliation proof": "Preuves de rapprochement",
++  "Inspect payment reconciliation evidence and blockers for the selected run.": "Examinez les preuves et les blocages du rapprochement de paiements sélectionné.",
++  "No reconciliation run is visible in this period.": "Aucun rapprochement n’est visible pour cette période.",
++  "Close proof": "Preuves de clôture",
++  "Inspect close evidence, findings, redactions, and readiness blockers.": "Examinez les preuves, constats, données masquées et blocages de préparation de la clôture.",
++  "No close run is visible in this period.": "Aucune clôture n’est visible pour cette période.",
++  "Owner morning brief": "Point du jour du dirigeant",
++  "Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.": "La prise de connaissance est conservée pour cette session du navigateur ; aucun enregistrement de comptabilité, clôture, trésorerie, stock, paie ou preuve n’est modifié.",
++  "Cash at risk is visible since yesterday": "Trésorerie à risque visible depuis hier",
++  "Open suspense value is still present in the payment truth snapshot.": "Un montant en suspens figure toujours dans l’état des paiements.",
++  "Daily cash remains ambiguous until suspense is explained with reconciliation evidence.": "La trésorerie du jour reste incertaine tant que les suspens ne sont pas expliqués par des preuves de rapprochement.",
++  "Open reconciliation": "Ouvrir le rapprochement",
++  "Review cash risk": "Examiner le risque de trésorerie",
++  "Close blockers need owner attention": "Des blocages de clôture nécessitent votre attention",
++  "The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.": "L’état de préparation de la clôture comporte encore des clôtures bloquées, des constats critiques ou des preuves indisponibles.",
++  "Reporting confidence stays limited until close evidence is cleared.": "La fiabilité des rapports reste limitée jusqu’à la résolution des problèmes de preuves de clôture.",
++  "Open close readiness": "Ouvrir la préparation de clôture",
++  "Review close": "Examiner la clôture",
++  "Evidence freshness needs review": "L’actualité des preuves doit être examinée",
++  "One or more owner-war-room evidence surfaces are stale or signal-stale.": "Une ou plusieurs sources de preuves ou leurs signaux ne sont plus à jour.",
++  "The owner should refresh the underlying workflow before trusting the morning view.": "Actualisez le processus concerné avant de vous fier au point du jour.",
++  "Open owner war room": "Ouvrir le tableau du dirigeant",
++  "Review evidence": "Examiner les preuves",
++  "A proof-linked action is open for owner review.": "Une action liée à des preuves attend l’examen du dirigeant.",
++  "Payment suspense value is still open.": "Un montant de paiement reste en suspens.",
++  "Unresolved suspense weakens the owner's trust in daily cash.": "Les suspens non résolus réduisent la fiabilité de la trésorerie du jour.",
++  "Open cash risk": "Ouvrir les risques de trésorerie",
++  "Blocked close items": "Éléments de clôture bloqués",
++  "Close readiness still has blocked runs, critical findings, or unavailable evidence.": "La préparation de clôture comporte encore des clôtures bloquées, des constats critiques ou des preuves indisponibles.",
++  "The period cannot become owner-trustworthy until close blockers are cleared.": "Le dirigeant ne peut pas se fier à la période tant que les blocages de clôture ne sont pas résolus.",
++  "Open close": "Ouvrir la clôture",
++  "Payroll forecast proof": "Preuves des prévisions de paie",
++  "Payroll cash obligations are withheld because payroll forecast proof is incomplete.": "Les engagements de trésorerie liés à la paie sont masqués car les preuves de prévision sont incomplètes.",
++  "Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.": "La planification de trésorerie et la rentabilité ne doivent pas utiliser les estimations de paie avant la remise en état des preuves du registre, du grand livre, des paiements et des déclarations.",
++  "Open payroll": "Ouvrir la paie",
++  "Stale evidence": "Preuves non à jour",
++  "At least one evidence-backed owner metric is stale.": "Au moins un indicateur du dirigeant fondé sur des preuves n’est plus à jour.",
++  "Refresh or investigate before using the brief as today's truth.": "Actualisez ou examinez les sources avant de vous fier au point du jour.",
++  "Stock-to-cash exposure": "Risque de trésorerie lié au stock",
++  "Zero or negative stock levels can turn working capital into missed sales.": "Des stocks nuls ou négatifs peuvent entraîner des ventes perdues malgré le capital immobilisé.",
++  "Resolve stock pressure before it becomes a cash leakage story.": "Résolvez les tensions sur le stock avant qu’elles ne créent des pertes de trésorerie.",
++  "Cash truth": "Situation de trésorerie",
++  "How much cash is at risk before the owner trusts the day?": "Quel montant de trésorerie reste à sécuriser pour se fier à la situation du jour ?",
++  "A combined suspense value is unavailable. Review the source currency breakdown.": "Le total des suspens est indisponible. Examinez la ventilation par devise à la source.",
++  "No suspense value is visible in the current payment truth snapshot.": "Aucun montant en suspens n’apparaît dans l’état actuel des paiements.",
++  "Open suspense amount from payment truth.": "Montant des suspens ouverts dans l’état des paiements.",
++  "Open cash": "Ouvrir la trésorerie",
++  "Payroll finance forecast": "Prévisions financières de paie",
++  "What payroll and statutory cash obligations are coming next?": "Quels décaissements de paie et quelles obligations légales sont à venir ?",
++  "Upcoming payroll obligations": "Engagements de paie à venir",
++  "Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.": "Prévision agrégée des salaires nets et obligations légales ; les montants individuels de paie sont masqués.",
++  "Stock-to-cash truth": "Situation du stock et de la trésorerie",
++  "Is working capital trapped in stock pressure?": "Le stock immobilise-t-il le fonds de roulement ?",
++  "Inventory value": "Valeur du stock",
++  "Current inventory value from the inventory cash snapshot.": "Valeur actuelle du stock issue de l’état de trésorerie des stocks.",
++  "Can this period be trusted for owner reporting?": "Cette période est-elle fiable pour les rapports du dirigeant ?",
++  "Readiness score": "Score de préparation",
++  "Average close readiness score for the active period.": "Score moyen de préparation de clôture pour la période active.",
++  "Payment and reconciliation truth": "Situation des paiements et rapprochements",
++  "Are payment exceptions blocking cash confidence?": "Les anomalies de paiement empêchent-elles de se fier à la trésorerie ?",
++  "Open payment issues": "Problèmes de paiement ouverts",
++  "Exceptions, suspense items, and pending provider transactions.": "Anomalies, éléments en suspens et transactions du prestataire en attente.",
++  "Unavailable": "Indisponible",
++  "Open": "Ouvrir",
++  "Open stock items": "Ouvrir les articles en stock",
++  "Inventory item access is required to open this workspace.": "L’accès aux articles en stock est nécessaire pour ouvrir cet espace.",
++  "This workspace is unavailable.": "Cet espace est indisponible.",
++  "Open action": "Ouvrir l’action",
++  "Open proof-linked action": "Ouvrir l’action liée aux preuves",
++  "No authorized proof subject is available.": "Aucun sujet de preuve autorisé n’est disponible.",
++  "Start with cash risk: suspense must be explained before the owner can trust daily cash.": "Commencez par le risque de trésorerie : les suspens doivent être expliqués avant de se fier à la trésorerie du jour.",
++  "Close evidence is the first blocker: clear missing or critical close items before signoff.": "Les preuves de clôture sont le premier blocage : résolvez les éléments manquants ou critiques avant validation.",
++  "Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan.": "Les obligations de paie et obligations légales sont visibles : confirmez les preuves avant de vous fier au plan de trésorerie.",
++  "Refresh stale evidence before using this view as today's owner truth.": "Actualisez les preuves avant d’utiliser cette vue comme situation du jour.",
++  "No cash, close, or freshness blocker is visible in the current owner brief.": "Aucun blocage de trésorerie, de clôture ou d’actualité des preuves n’apparaît dans le point du jour.",
++  "Signal is expired.": "Le signal a expiré.",
++} as const
++
++export function ownerText(text: keyof typeof french, locale: OwnerLocale = "en"): string {
++  return locale === "fr" ? french[text] : text
++}
+===================================================================
+--- a/services/owner-war-room/owner-signal-copy.ts
++++ b/services/owner-war-room/owner-signal-copy.ts
+@@ -1,0 +1,112 @@
+\ No newline at end of file
++import type { ActionQueueResult, BusinessSignalType } from "@/services/signals/business-signal-contracts"
++import type { OwnerLocale } from "./owner-war-room-copy"
++import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
++
++// Exact canonical source copy only. Unknown or customized evidence stays verbatim.
++const signals: Record<BusinessSignalType, { title: string; step: readonly [string, string]; impact: readonly [string, string] }> = {
++  cash_drawer_variance: {
++    title: "Écart de caisse",
++    step: ["Review drawer movements and attach variance evidence.", "Examinez les mouvements de caisse et joignez les preuves de l’écart."],
++    impact: ["Cash variance can hide leakage, posting drift, or process breakdown.", "Un écart de caisse peut masquer des pertes, des écarts comptables ou un défaut de processus."],
++  },
++  open_payment_suspense: {
++    title: "Paiements en suspens",
++    step: ["Review suspense lines and resolve missing payment evidence.", "Examinez les lignes en suspens et complétez les preuves de paiement manquantes."],
++    impact: ["Unresolved suspense weakens cash truth and period-close confidence.", "Les suspens non résolus réduisent la fiabilité de la trésorerie et de la clôture."],
++  },
++  duplicate_provider_reference: {
++    title: "Référence du prestataire en double",
++    step: ["Investigate duplicate provider reference before matching or close.", "Examinez la référence du prestataire en double avant rapprochement ou clôture."],
++    impact: ["Duplicate provider references can indicate replay, duplicate capture, or reconciliation error.", "Les références en double peuvent indiquer une répétition, une double saisie ou une erreur de rapprochement."],
++  },
++  refund_void_spike: {
++    title: "Hausse des remboursements et annulations",
++    step: ["Review refund and void evidence for the affected period.", "Examinez les preuves de remboursement et d’annulation pour la période concernée."],
++    impact: ["Refund or void spikes can point to cash leakage or control weakness.", "Une hausse des remboursements ou annulations peut signaler des pertes de trésorerie ou une faiblesse des contrôles."],
++  },
++  stockout_risk: {
++    title: "Risque de rupture de stock",
++    step: ["Review stock levels and confirm reorder or transfer action.", "Examinez les niveaux de stock et confirmez le réapprovisionnement ou le transfert."],
++    impact: ["Stockout risk can turn demand into lost sales and unhappy customers.", "Les ruptures de stock peuvent entraîner des ventes perdues et l’insatisfaction des clients."],
++  },
++  dead_stock_cash_exposure: {
++    title: "Trésorerie immobilisée en stock dormant",
++    step: ["Review slow-moving stock and decide markdown, transfer, or supplier action.", "Examinez les stocks à faible rotation et décidez d’une remise, d’un transfert ou d’une action auprès du fournisseur."],
++    impact: ["Dead stock traps working capital that could fund faster-moving inventory.", "Le stock dormant immobilise du capital qui pourrait financer des articles à rotation plus rapide."],
++  },
++  inventory_loss_review: {
++    title: "Examen des pertes de stock",
++    step: ["Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.", "Examinez les preuves d’ajustement, la valorisation et l’attribution de l’approbation avant de vous fier aux pertes enregistrées."],
++    impact: ["Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.", "Les pertes enregistrées non examinées peuvent réduire la fiabilité de la valorisation, du contrôle de trésorerie et de la clôture."],
++  },
++  purchase_order_receiving_delay: {
++    title: "Retard de réception fournisseur",
++    step: ["Follow up pending purchase orders and receiving evidence.", "Suivez les commandes fournisseurs en attente et les preuves de réception."],
++    impact: ["Receiving delays can hide supplier risk, stockouts, or AP timing issues.", "Les retards de réception peuvent masquer des risques fournisseurs, des ruptures ou des décalages de dettes fournisseurs."],
++  },
++  payroll_exposure: {
++    title: "Engagements de paie",
++    step: ["Review payroll payment and posting evidence without exposing person-level amounts.", "Examinez les preuves de paiement et de comptabilisation de la paie sans exposer les montants individuels."],
++    impact: ["Payroll exposure can affect staff trust, cash planning, and close accuracy.", "Les engagements de paie peuvent affecter la confiance des salariés, la planification de trésorerie et la précision de la clôture."],
++  },
++  close_blocker: {
++    title: "Blocage de clôture",
++    step: ["Resolve close blockers or attach missing evidence before certification.", "Résolvez les blocages de clôture ou joignez les preuves manquantes avant certification."],
++    impact: ["Close blockers delay reliable reporting and accountant review.", "Les blocages de clôture retardent les rapports fiables et l’examen comptable."],
++  },
++}
++
++function title(value: string, type: BusinessSignalType) {
++  const canonical = type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
++  if (value === canonical) return signals[type].title
++  if (type === "inventory_loss_review" && value === "Recorded inventory loss needs review") return "Les pertes de stock enregistrées doivent être examinées"
++  if (type === "payroll_exposure" && value === "Payroll forecast proof is blocked") return "Les preuves des prévisions de paie sont bloquées"
++  return value
++}
++
++const payrollSteps: Record<string, string> = {
++  "Open payroll declarations and repair source register, declaration, or receipt proof.": "Ouvrez les déclarations de paie et rétablissez les preuves du registre source, de la déclaration ou du reçu.",
++  "Open payroll payments and repair payment batch, provider, settlement, or ledger proof.": "Ouvrez les paiements de paie et rétablissez les preuves du lot, du prestataire, du règlement ou du grand livre.",
++  "Open payroll register proof and repair source-linked payroll evidence.": "Ouvrez les preuves du registre de paie et rétablissez les preuves liées aux sources.",
++  "Review employee balance recovery evidence before payment and close claims are trusted.": "Examinez les preuves de recouvrement des soldes salariés avant de vous fier aux affirmations de paiement et de clôture.",
++}
++
++function step(value: string, type: BusinessSignalType) {
++  if (value === signals[type].step[0]) return signals[type].step[1]
++  return type === "payroll_exposure" && Object.prototype.hasOwnProperty.call(payrollSteps, value) ? payrollSteps[value] : value
++}
++
++function impact(value: string, type: BusinessSignalType) {
++  if (value === signals[type].impact[0]) return signals[type].impact[1]
++  if (type === "payroll_exposure" && value === "Manager cash planning and profitability work must not use payroll forecasts until payroll register, ledger, payment, and declaration proof are complete.") {
++    return "La planification de trésorerie et l’analyse de rentabilité ne doivent pas utiliser les prévisions de paie tant que les preuves du registre, du grand livre, des paiements et des déclarations sont incomplètes."
++  }
++  return value
++}
++
++export function presentOwnerActionQueue(queue: ActionQueueResult, locale: OwnerLocale = "en"): ActionQueueResult {
++  if (locale !== "fr") return queue
++  return {
++    ...queue,
++    actionItems: queue.actionItems.map(item => ({
++      ...item,
++      title: title(item.title, item.signalType),
++      nextStep: step(item.nextStep, item.signalType),
++      blockers: item.blockers.map(blocker => presentSnapshotBlocker(blocker, locale)),
++    })),
++    signals: queue.signals.map(signal => ({
++      ...signal,
++      title: title(signal.title, signal.signalType),
++      suggestedAction: step(signal.suggestedAction, signal.signalType),
++      businessImpact: impact(signal.businessImpact, signal.signalType),
++      blockers: signal.blockers.map(blocker => presentSnapshotBlocker(blocker, locale)),
++    })),
++  }
++}
++
++export function presentOwnerForecastMessage(forecast: { reasonCode: string; message: string }, locale: OwnerLocale = "en") {
++  if (locale === "fr" && forecast.reasonCode === "PAYROLL_FORECAST_PROOF_INCOMPLETE" && forecast.message === "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.") {
++    return "Les prévisions financières de paie sont masquées car les preuves de devise, prestataire, déclaration, paiement ou grand livre sont incomplètes."
++  }
++  return forecast.message
++}
+===================================================================
+--- a/services/owner-war-room/__tests__/owner-signal-copy.test.ts
++++ b/services/owner-war-room/__tests__/owner-signal-copy.test.ts
+@@ -1,0 +1,61 @@
+\ No newline at end of file
++import { buildBusinessSignalsFromFacts } from "@/services/signals/business-signal-rules.service"
++import { buildActionQueue } from "@/services/signals/action-queue.service"
++import type { BusinessSignalType } from "@/services/signals/business-signal-contracts"
++import { presentOwnerActionQueue, presentOwnerForecastMessage } from "../owner-signal-copy"
++import { existsSync } from "node:fs"
++import { join } from "node:path"
++
++it.each([
++  "finance/reconciliation", "inventory/items", "inventory/loss-control", "purchase-orders",
++  "payroll", "payroll/payments", "payroll/register", "payroll/declarations",
++  "accounting/close", "settings/modules", "owner-war-room",
++])("has an implemented owner destination: %s", route => {
++  expect(existsSync(join(process.cwd(), "app/[locale]/(dashboard)/dashboard", route, "page.tsx"))).toBe(true)
++})
++
++jest.mock("@/services/_shared/action-errors", () => ({ BusinessRuleError: class extends Error {} }))
++
++const types: BusinessSignalType[] = ["cash_drawer_variance", "open_payment_suspense", "duplicate_provider_reference", "refund_void_spike", "stockout_risk", "dead_stock_cash_exposure", "inventory_loss_review", "purchase_order_receiving_delay", "payroll_exposure", "close_blocker"]
++const now = "2026-10-13T10:00:00Z"
++
++function queue(type: BusinessSignalType) {
++  const signals = buildBusinessSignalsFromFacts([{ organizationId: "org-1", signalType: type, moduleSlug: "dashboard", sourceModule: "dashboard", subjectType: "test", subjectId: "fixture", generatedAt: now }])
++  return buildActionQueue({ organizationId: "org-1", actorPermissions: [signals[0].requiredPermission, ...(signals[0].additionalRequiredPermissions ?? [])], now,
++    signals,
++  })
++}
++
++it.each(types)("localizes canonical %s copy without changing action authority or provenance", type => {
++  const en = queue(type)
++  const fr = presentOwnerActionQueue(en, "fr")
++  expect(fr.actionItems[0].title).not.toBe(en.actionItems[0].title)
++  expect(fr.actionItems[0].nextStep).not.toBe(en.actionItems[0].nextStep)
++  expect(fr.signals[0].businessImpact).not.toBe(en.signals[0].businessImpact)
++  const { title, nextStep, ...frAction } = fr.actionItems[0]
++  expect({ ...frAction, title: en.actionItems[0].title, nextStep: en.actionItems[0].nextStep }).toEqual(en.actionItems[0])
++  expect(presentOwnerActionQueue(en, "en")).toBe(en)
++})
++
++it("preserves custom source language and notes", () => {
++  const en = queue("open_payment_suspense")
++  en.actionItems[0].title = "Customer wording remains authoritative"
++  en.actionItems[0].nextStep = "Call our reviewer about document 42"
++  en.signals[0].businessImpact = "User note: awaiting evidence"
++  const fr = presentOwnerActionQueue(en, "fr")
++  expect(fr.actionItems).toEqual(en.actionItems)
++  expect(fr.signals[0].businessImpact).toBe(en.signals[0].businessImpact)
++})
++
++it("preserves custom payroll wording that matches an object property name", () => {
++  const en = queue("payroll_exposure")
++  en.actionItems[0].nextStep = "constructor"
++  expect(presentOwnerActionQueue(en, "fr").actionItems[0].nextStep).toBe("constructor")
++})
++
++it("translates forecast messages only when both source reason and canonical wording match", () => {
++  const source = { reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE", message: "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete." }
++  expect(presentOwnerForecastMessage(source, "fr")).toContain("sont masquées")
++  expect(presentOwnerForecastMessage(source, "en")).toBe(source.message)
++  expect(presentOwnerForecastMessage({ ...source, message: "Review custom evidence" }, "fr")).toBe("Review custom evidence")
++  expect(presentOwnerForecastMessage({ ...source, reasonCode: "CUSTOM" }, "fr")).toBe(source.message)
++})
+===================================================================
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.owner-localization.config.cjs
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.owner-localization.config.cjs
+@@ -1,0 +1,21 @@
+\ No newline at end of file
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Installed transform only; no Next app config, environment, DB setup or global hooks.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root,
++  testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: [
++    '<rootDir>/services/owner-war-room/__tests__',
++    '<rootDir>/actions/owner-war-room/__tests__',
++    '<rootDir>/app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__',
++  ],
++  testMatch: [
++    '<rootDir>/services/owner-war-room/__tests__/owner-war-room.service.test.ts',
++    '<rootDir>/services/owner-war-room/__tests__/owner-signal-copy.test.ts',
++    '<rootDir>/actions/owner-war-room/__tests__/owner-war-room.actions.test.ts',
++    '<rootDir>/app/**/owner-war-room/__tests__/page.test.tsx',
++  ],
++  collectCoverage: false,
++})
+===================================================================
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-05.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-05.md
+@@ -1,0 +1,90 @@
+\ No newline at end of file
++# Delivery 05 — owner narrative localization and destination review
++
++13 October 2026. **Implemented locally; 57 focused tests passed. EN/FR owner views and all 11 reviewed destination surfaces inspected under SUPER ADMIN. Full role and clicked-journey acceptance remains open.**
++
++## Visible result
++
++The owner page now passes its resolved EN/FR locale into the service. The protected action accepts only those two presentation locales and still takes organization, identity, roles and permissions from its server context. Omitted locale preserves English behavior.
++
++Application-owned card descriptions, strips, morning brief, conclusions, risk explanations, changes, investigation-zone questions/summaries, proof labels, action labels, disabled reasons, due dates and displayed responsibility labels now use the selected language. French dynamic summaries format numbers and dates with the French locale. Missing amounts remain unavailable rather than becoming zero. This delivery preserves the existing currency and financial calculations; it does not introduce currency conversion.
++
++Ten canonical signal families and the owner payroll-proof/recovery next steps have French presentation copy. Exact source wording and signal identity determine whether a known default is translated. Custom notes, unknown source messages, identifiers, financial amounts, source hashes, evidence grades and access metadata are preserved. The existing snapshot-blocker presenter translates recognized payment/close warnings by identity and exact canonical copy. No translated evidence is persisted.
++
++## Destination review
++
++All 11 paths below have an implemented page, checked against current source and by filesystem regression tests. This establishes route existence, not successful data loading or authorization for every role.
++
++| Destination under `/dashboard` | Current entry contract / finding | Delivery result |
++|---|---|---|
++| `finance/reconciliation` | `payments.reconciliation.read`, reconciliation module | Owner exception card and payment zone now use this workbench instead of provider accounts at `finance/payments`; nonexistent nested `finance/payments/reconciliation` risk drill-through repaired |
++| `inventory/items` | `inventory.items.read`, inventory module | Delivery 04 stock action retains `inventory.read` plus item-read checks; unchanged here |
++| `inventory/loss-control` | `inventory.levels.read`; inventory entitlement and owner-scope checks precede the owner source | Source route inspected; French empty workspace rendered under SUPER ADMIN |
++| `purchase-orders` | `purchases.orders.read`, purchasing controls | Source route matches; direct navigation rendered, owner click remained unresolved |
++| `payroll` | `payroll.command.read`, payroll module | Generic payroll-signal destination exists; owner balance/forecast cases use more specific destinations |
++| `payroll/payments` | `payments.reconciliation.read`, payroll module | Owner card/risk/zone navigation metadata aligned with the read-entry contract; destination action/mutation guards unchanged |
++| `payroll/register` | `payroll.reports.read`, payroll module | Forecast-proof signal target exists; signal additional payroll-command requirement retained |
++| `payroll/declarations` | `payroll.command.read`, payroll module | Forecast-proof signal target matches current route |
++| `accounting/close` | `accounting.close.read`, close controls | Source route matches; French owner links observed |
++| `settings/modules` | `MANAGE_SYSTEM_SETTINGS`, alias `system.settings.update` | Owner card previously declared settings-read; now declares the actual settings-management requirement |
++| `owner-war-room` | `dashboard.read` plus server-verified tenant-wide authority | Self-review target exists; French SUPER_ADMIN route rendered |
++
++Priority action links now retain the action queue's additional permission metadata. Navigation metadata does not grant access: destination RBAC, tenant, entitlement and mutation controls remain authoritative. Generic BI controls still need explicit denied/changed-session journey acceptance; this report does not certify every static action's disabled presentation.
++
++The generic signal defaults also contain `/dashboard/cash-drawer`, while the implemented page is `/dashboard/finance/cash-drawer` (finance cash-drawer/read entry requirements). Cash-drawer variance and refund/void spike are not emitted by the owner's current snapshot builder. Record the generic cash-drawer handoff as a separate follow-up rather than claiming the owner fixes repair every signal consumer. The analytics default points to an existing `/dashboard/analytics` page, whose entry allows reports-read or dashboard-read; its analytics entitlement must still be evaluated at the destination.
++
++## Evidence classes
++
++| Class | Result |
++|---|---|
++| Workflow contract | Passed; 198 scripts remain outside the reviewed manifest |
++| Mocked owner service | 26 passing tests, including French narratives, null cash, destination corrections and additional permissions |
++| Pure presentation/source checks | 24 passing tests: ten signal families, custom text (including inherited-object property names), exact forecast matching and 11 page paths |
++| Mocked protected action | Four passing tests, including French input, rejected unsupported locale and rejected caller-owned access context |
++| Mocked route/DOM | Three passing tests, including locale propagation and permission-denied rendering |
++| Scoped lint | Ten changed TS/TSX files, passed |
++| Syntax diagnostics | Ten changed TS/TSX files, no syntax errors; not a full semantic project type check |
++| Scoped whitespace | Passed |
++| Browser | EN/FR owner page and all 11 reviewed surfaces inspected in Edge; SUPER ADMIN, blocked/stale evidence, dark desktop. Close rendered a controlled unavailable state; other surfaces rendered. See journey limits below |
++| Real DB test lane / build / deployment | Not run |
++
++[Final test JSON](evidence/owner-localization-tests-2026-10-13.json). Source HEAD: `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`, with substantial pre-existing local changes. [Starting file contents/hashes](evidence/delivery-05-baseline.json) distinguish this delivery from earlier work. The owned patch and file manifest are recorded alongside the test evidence.
++
++## Browser note and limits
++
++Edge initially timed out on navigation. The created tab later exposed `http://localhost:3000/fr/dashboard/owner-war-room`, allowing an actual accessibility-tree and screenshot review. A later reload also timed out, then completed. Final observed copy included “Point du jour du dirigeant”, “Blocage de clôture”, French next steps, “Comptable”, “Des constats de clôture restent ouverts”, “Des suspens de paiement restent ouverts” and “Aucun compte de prestataire actif”. The risk action points to `/fr/dashboard/finance/reconciliation`.
++
++The screenshot was returned inline by the browser tool at 1523 × 733 pixels; no explicit viewport override was applied, so that image size is not a certified CSS viewport measurement. The sidebar visibly identified SUPER ADMIN. This is not acceptance under a restricted owner, accountant or cashier account. No financial workflow or acknowledgement was submitted. Native screenshot evidence is in the conversation; no local screenshot file is claimed.
++
++| Browser journey, French / Edge / SUPER ADMIN | Observed result |
++|---|---|
++| Owner brief and Pilotage mode | Localized headings, generated card copy, priority actions and warnings rendered |
++| English owner brief | “Owner morning brief”, English conclusion, priorities and risks rendered after the French route checks |
++| Cash-risk action → reconciliation | Actual owner link navigated to “Atelier rapprochement paiements”; workbench preserved the message that current access cannot propose reconciliations |
++| Owner purchase-order action | Click remained on the owner page during observation; direct navigation subsequently rendered “Bons de commande” and its register. Destination rendering passes; the clicked journey remains unresolved |
++| Payroll payments, direct navigation | Rendered payment batches and employee recovery. **Localization gap:** “Payment reconciliation”, “Payment batches” and “Employee balance recovery” remain English on `/fr` |
++| Module settings, direct navigation | Rendered “Modules et espace de travail”, module groups, existing draft and known restrictions. No settings or entitlements changed |
++| Accounting close, direct navigation | Rendered “L’assurance de clôture est indisponible”. Explanation says close-assurance or accounting-dependency read access/validity is unavailable. Recovery link returns to the dashboard. This is a confirmed unavailable state, not an authorized close-workbench pass |
++| Inventory items, direct navigation | Rendered the item workspace. **Localization gap:** “Inventory Items” and “Items” remain English on `/fr` |
++| Inventory loss control, direct navigation | Rendered the reporting-period/trust sections and “Aucune perte de stock enregistree” empty state; no adjustment created |
++| Payroll register, direct navigation | Rendered tie-out, proof, blockers and register rows. **Localization gap:** the main headings remain English on `/fr` |
++| Payroll declarations, direct navigation | Rendered declaration evidence workbench, lifecycle and source scope. **Localization gap:** headings remain English on `/fr` |
++| Payroll command center, direct navigation | Rendered HR/payroll/evidence/close controls, action board and run review. **Localization gap:** headings remain English on `/fr` |
++
++Navigation timeouts were followed by bounded state reads; some pages completed after the navigation call had timed out. A timeout alone was not treated as an application failure. The owner page's browser metadata title remains English; generated in-page narratives are the scope of this delivery.
++
++Further owner-brief finding: the observed conclusion prioritizes cash risk while the primary brief action points to close review. The selected priority comes from existing signal ranking; translation does not reconcile this pre-existing decision-order mismatch. Follow up with a shared conclusion/primary-action decision rule and explicit task label before declaring the owner journey fully accepted.
++
++Remaining rendered checks: English operational/investigate modes and French investigate mode, long French text at mobile/tablet sizes, keyboard/focus, restricted-role denial, broader module-lock and destination data/recovery states. Direct navigation to a workspace does not complete an owner-to-workspace journey test. Source identifiers and technical units such as `items`/`score` remain visible in the existing shared evidence timeline; that shared presentation needs a separate normalization pass. Custom source wording intentionally stays verbatim.
++
++## Verification execution and side effects
++
++Reviewed package definitions, command registry and isolated runner imports before execution. The new runner loads installed Next/Jest transforms without the application configuration/environment, scopes discovery to the three owner test directories and uses Jest DOM only for route tests. DB, audit, entitlement and snapshot providers are mocked in service tests; signal construction and permission filtering are pure. No migration, seed, build, server launch or business mutation ran.
++
++The first test discovery attempt scanned too broadly and was interrupted; the config was narrowed before the completed runs. Initial failures exposed an outdated expected payroll permission, an assertion that incorrectly included custom source routes, and test fixtures assuming wildcard access to sensitive permissions. Fixtures now use explicit canonical signal permissions; production RBAC was not weakened. Windows rejected some direct writes because files had user-mapped sections open; exact owned files were safely replaced via same-directory temporary files, without stopping other sessions.
++
++```powershell
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.owner-localization.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/owner-localization-tests-2026-10-13.json
++```
++
++Lint used the installed ESLint CLI on the ten owned source/test files, without fix flags. Syntax used TypeScript `transpileModule` diagnostics, with no emitted artifacts. Rollback: reverse only this delivery's owned patch after checking subsequent edits; no database rollback is needed.

@@ -1,3 +1,5 @@
+@import "./public-contours.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -149,9 +151,11 @@
 
   .auth-shell-grid {
     background-image:
-      linear-gradient(color-mix(in srgb, var(--auth-brand) 7.5%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in srgb, var(--auth-spruce) 7%, transparent) 1px, transparent 1px);
-    background-size: 44px 44px;
+      linear-gradient(color-mix(in srgb, var(--auth-text-soft) 12%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--auth-text-soft) 12%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--auth-brand) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--auth-brand) 6%, transparent) 1px, transparent 1px);
+    background-size: 42px 42px, 42px 42px, 210px 210px, 210px 210px;
   }
 
   .auth-shell-wash {
@@ -382,6 +386,27 @@
       linear-gradient(to bottom, rgba(21, 32, 39, 0), rgba(21, 32, 39, 0.34));
   }
 
+  /* A quiet drafting grid over the product canvas; solid work surfaces stay legible.
+     Keep the explicitly separate bee-eater variant and public/auth themes intact. */
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) {
+    background: var(--dash-canvas);
+  }
+
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme)::before {
+    content: "";
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--dash-text-soft) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--dash-text-soft) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--dash-brand) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--dash-brand) 4%, transparent) 1px, transparent 1px);
+    background-size: 42px 42px, 42px 42px, 210px 210px, 210px 210px;
+    mask-image: radial-gradient(ellipse at 50% 0%, black 12%, rgba(0, 0, 0, 0.55) 55%, transparent 95%);
+  }
+
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme)::after {
+    content: none;
+  }
+
   .bee-eater-dashboard-theme {
     --dash-canvas: #0d1517;
     --dash-chrome: #142326;
@@ -524,6 +549,14 @@
       0 18px 50px rgba(5, 14, 19, 0.22),
       inset 0 1px 0 rgba(255, 255, 255, 0.075);
     transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+  }
+
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-glass-panel,
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-stat-card,
+  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-table-shell {
+    background: var(--dash-surface);
+    box-shadow: none;
+    backdrop-filter: none;
   }
 
   .dashboard-stat-card::after {
@@ -865,6 +898,21 @@
     background: rgba(24, 38, 45, 0.66);
   }
 
+  .dashboard-enterprise-toolbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--product-text-soft) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--product-text-soft) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--product-brand) 3%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--product-brand) 3%, transparent) 1px, transparent 1px);
+    background-size: 34px 34px, 34px 34px, 170px 170px, 170px 170px;
+    mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.55));
+  }
+
   .dashboard-enterprise-sidebar {
     --dash-canvas: var(--product-canvas);
     --dash-chrome: var(--product-chrome);
@@ -896,11 +944,9 @@
     --sidebar-border: rgba(170, 199, 207, 0.16);
     position: relative;
     isolation: isolate;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0)),
-      linear-gradient(180deg, var(--sidebar-panel), var(--sidebar-canvas));
+    background: var(--dash-chrome);
     border-color: var(--sidebar-border);
-    box-shadow: 18px 0 60px rgba(5, 12, 16, 0.28);
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar::before {
@@ -910,14 +956,16 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(170, 199, 207, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(170, 199, 207, 0.08) 1px, transparent 1px);
-    background-size: 34px 34px;
-    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.88), transparent 92%);
+      linear-gradient(color-mix(in srgb, var(--dash-text-soft) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--dash-text-soft) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--dash-brand) 3%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--dash-brand) 3%, transparent) 1px, transparent 1px);
+    background-size: 34px 34px, 34px 34px, 170px 170px, 170px 170px;
+    mask-image: linear-gradient(to bottom, black 8%, rgba(0, 0, 0, 0.55) 60%, transparent 100%);
   }
 
   .dashboard-enterprise-sidebar::after {
-    content: "";
+    content: none;
     position: absolute;
     inset: 0;
     z-index: 0;
@@ -943,8 +991,7 @@
     bottom: 0.62rem;
     width: 3px;
     border-radius: 999px;
-    background: linear-gradient(180deg, var(--dash-brand-strong), var(--dash-spruce), var(--dash-gold));
-    box-shadow: 0 0 18px rgba(45, 212, 191, 0.24);
+    background: var(--dash-brand-strong);
     opacity: 0;
     transform: scaleY(0.64);
     transition: opacity 160ms ease, transform 160ms ease;
@@ -959,13 +1006,9 @@
   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"],
   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-child-active="true"] {
     border-color: color-mix(in srgb, var(--dash-brand) 46%, var(--dash-border-subtle));
-    background:
-      linear-gradient(135deg, var(--dash-brand-soft), var(--dash-spruce-soft) 58%, var(--dash-gold-soft)),
-      rgba(37, 57, 67, 0.84);
+    background: var(--dash-brand-soft);
     color: var(--dash-text);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.09),
-      0 14px 34px rgba(5, 14, 19, 0.2);
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"]::before,
@@ -975,22 +1018,18 @@
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-module-icon {
-    border: 1px solid rgba(170, 199, 207, 0.08);
-    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid transparent;
+    background: transparent;
     color: var(--dash-brand-strong);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"] .dashboard-sidebar-module-icon,
   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-child-active="true"] .dashboard-sidebar-module-icon {
-    border-color: color-mix(in srgb, var(--dash-spruce) 44%, var(--dash-border-subtle));
-    background:
-      linear-gradient(135deg, rgba(47, 125, 246, 0.24), rgba(45, 212, 191, 0.2)),
-      rgba(255, 255, 255, 0.06);
-    color: #eaffff;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 8px 20px rgba(45, 212, 191, 0.14);
+    border-color: transparent;
+    background: transparent;
+    color: var(--dash-brand-strong);
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-module-description {
@@ -1023,11 +1062,9 @@
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu {
-    border-color: var(--dash-border-subtle);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
-      rgba(14, 26, 32, 0.66);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-item {
@@ -1044,14 +1081,10 @@
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-item[data-active="true"] {
-    border-color: color-mix(in srgb, var(--dash-spruce) 50%, var(--dash-border-subtle));
-    background:
-      linear-gradient(90deg, var(--dash-spruce-soft), var(--dash-brand-soft) 64%, rgba(215, 168, 79, 0.1)),
-      rgba(37, 57, 67, 0.82);
+    border-color: var(--dash-border-subtle);
+    background: var(--dash-surface-raised);
     color: var(--dash-text);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 10px 24px rgba(5, 14, 19, 0.14);
+    box-shadow: none;
   }
 
   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-dot {

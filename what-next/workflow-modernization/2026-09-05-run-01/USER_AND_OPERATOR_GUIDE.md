@@ -1,4 +1,16 @@
+Current signing closure: [criterion/source audit](RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md), [operating and recovery guide](RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md). [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md) identifies the active workflow and current totals; earlier checkpoints below retain their original scope.
+
 # User/operator guidance — changes under verification
+
+Current PR-10 milestone: [current amount review, version 3 certificates, operator guidance and evidence](RECONCILIATION_AMOUNT_REVIEW_2026-09-27.md). PR-10 remains In progress; authority/accessibility reconciliation and warm-entry latency remain.
+
+Current PR-10 correction: [withdrawal procedure, required inputs/authority and recovery limits](RECONCILIATION_SOURCE_WITHDRAWAL_2026-09-27.md). Earlier source approval guidance remains in the [corroborating-source guide](RECONCILIATION_CORROBORATING_SOURCE_IMPLEMENTATION_2026-09-27.md).
+
+Current signed-event worker instructions: [inbox meaning, operator inputs, command and retry](RECONCILIATION_SIGNOFF_HANDOFF_VERIFICATION_2026-09-27.md#operator-and-user-guide).
+
+Current reconciliation recovery instructions: [review additional sources, retry, retained history and independent signing](RECONCILIATION_RECOVERY_INTERFACE_VERIFICATION_2026-09-27.md#user-and-operator-instructions).
+
+Current Daily Digest instructions: [configuration-free use, source limitations, access, session recovery and operator support](DAILY_DIGEST_OPERATING_GUIDE.md). Its existing read workflow is verified within the recorded isolated scope; other workflows below retain their individual verification status.
 
 Password reset: use the most recently issued unexpired link. Successful reset consumes that link and revokes prior sessions. If another request already used or replaced it, request a new link. Actual PostgreSQL concurrency, denial and rollback/retry checks pass; full public reset-browser verification remains pending.
 

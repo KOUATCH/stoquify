@@ -1,0 +1,302 @@
+{
+  "run": "c71ea2e8-44fa-491d-87c0-fc2ac5485b7f",
+  "at": "2026-09-30T21:41:18.117Z",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs": "08278ab5a6c7737337867632af984446e4baad839f7f618e02b93f76c20c422c"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "kind": "preparation",
+      "stages": [
+        "Real return reduces displayed capacity to seven; eight is denied without invoice effects and the draft survives reload",
+        "Keyboard review focus and return verified; seven saved through the application as one unapproved invoice, with stock/return evidence retained and no journal/liability/payment"
+      ],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-available-seven.png",
+          "sha256": "adabf789b8af3d2c55fd9635088557ef87c925889c35a9263e755d20e6181315"
+        },
+        {
+          "stage": "eight-denied-draft-retained",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-eight-denied-draft-retained.png",
+          "sha256": "04902f4fd05378c76469a558e480cd8e7c268c1edda71ee5a076ffa1d1c64670"
+        },
+        {
+          "stage": "seven-review",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-seven-review.png",
+          "sha256": "3070b09314e881e283b8a483b36c6764f78166d94fd0f69cc269f99ab6032083"
+        },
+        {
+          "stage": "seven-saved",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-seven-saved.png",
+          "sha256": "19e115baaf6e1ed66909a492774c4e5ddface5f6f25751f91742c35de0fa0000"
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "routeAndDraftMs": 8755,
+      "sourceLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "reviewLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "confirmInteractionMs": 1636,
+      "savedLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en-preparation",
+      "receiptId": "cmuomr5mz0022ma98rkrxo0bj",
+      "returnId": "c2911074-6301-456e-97e9-963913cf7389",
+      "invoiceId": "cmuoms49802pjmab47jdleocy",
+      "persistedQuantity": "7",
+      "invoiceStatus": "MATCHED",
+      "noInvoiceApprovalOrFinancialEffects": true
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "kind": "correction",
+      "stages": [
+        "Real return reduces displayed capacity to seven; eight is denied without invoice effects and the draft survives reload",
+        "Keyboard review focus and return verified; seven saved through the application as one unapproved invoice, with stock/return evidence retained and no journal/liability/payment"
+      ],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-available-seven.png",
+          "sha256": "231d3acc4013743b30273b80420429ef145edde8d08a3f61e0637db6de137f98"
+        },
+        {
+          "stage": "eight-denied-draft-retained",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-eight-denied-draft-retained.png",
+          "sha256": "6e97330655da362ee2af4667de1118a83d7b9be11ee7c5f5a9a13f9137d1c906"
+        },
+        {
+          "stage": "seven-review",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-seven-review.png",
+          "sha256": "1b8b1f67fc6586abcedc35ed77256447f0874f712d382a990a89a5f0a1b07241"
+        },
+        {
+          "stage": "seven-saved",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-seven-saved.png",
+          "sha256": "82a9d86303cbbd53e98a1a83cd05b97423aecb12610068b0ce8d969f8b696acd"
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "routeAndDraftMs": 10319,
+      "sourceLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "actualPasswordStepUp": true,
+      "reviewLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "confirmInteractionMs": 3780,
+      "savedLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en-correction",
+      "receiptId": "cmuoms65m005oma98ilb0mih0",
+      "returnId": "389987f5-7e93-4834-9c96-a8c8285c3dfb",
+      "invoiceId": "cmuoms6m9006lma98b29rezag",
+      "persistedQuantity": "7",
+      "invoiceStatus": "MATCHED",
+      "noInvoiceApprovalOrFinancialEffects": true
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "kind": "preparation",
+      "stages": [
+        "Real return reduces displayed capacity to seven; eight is denied without invoice effects and the draft survives reload",
+        "Keyboard review focus and return verified; seven saved through the application as one unapproved invoice, with stock/return evidence retained and no journal/liability/payment"
+      ],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-available-seven.png",
+          "sha256": "ff1d832acc0f6697b6ea1cf4851d7349cc8e75ea5f739a2f2c24a61a000387b3"
+        },
+        {
+          "stage": "eight-denied-draft-retained",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-eight-denied-draft-retained.png",
+          "sha256": "1a587cfc1ec70e4250f36a02662da7565977a40ff480fa5d197ad34e5f4bc7d9"
+        },
+        {
+          "stage": "seven-review",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-seven-review.png",
+          "sha256": "2234d15883c81cb4817843df5f4791013332e1ecf1c3390623ad154a0ee379f7"
+        },
+        {
+          "stage": "seven-saved",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-seven-saved.png",
+          "sha256": "c73b07d48a22e806997cda846884359e58b21bf10786beae0c7346a4f7a68aa8"
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "routeAndDraftMs": 8925,
+      "sourceLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "reviewLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "confirmInteractionMs": 2243,
+      "savedLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "organizationId": "workflow_supplier_ack_fr_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr-preparation",
+      "receiptId": "cmuomt07m009oma98chchf9lb",
+      "returnId": "46d237f5-8e49-42d0-8ec3-2d679772a638",
+      "invoiceId": "cmuomtrt702snmab4pt4ne3kf",
+      "persistedQuantity": "7",
+      "invoiceStatus": "MATCHED",
+      "noInvoiceApprovalOrFinancialEffects": true
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "kind": "correction",
+      "stages": [
+        "Real return reduces displayed capacity to seven; eight is denied without invoice effects and the draft survives reload",
+        "Keyboard review focus and return verified; seven saved through the application as one unapproved invoice, with stock/return evidence retained and no journal/liability/payment"
+      ],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-available-seven.png",
+          "sha256": "2ceb5fd6db437bf26c1e36c4d4e0b3fc5806abf1142ccf2499d3baba6d07f9d3"
+        },
+        {
+          "stage": "eight-denied-draft-retained",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-eight-denied-draft-retained.png",
+          "sha256": "ff6497b04d2f449497b075141fbb6f58b0763965ff3bbbe690ceb973d2295e15"
+        },
+        {
+          "stage": "seven-review",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-seven-review.png",
+          "sha256": "d83e631d74ace4ba13fa17212c40f0b478b953f67ca476bdc4bc8ca53c51ba16"
+        },
+        {
+          "stage": "seven-saved",
+          "file": "receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-seven-saved.png",
+          "sha256": "ef5da54ee4b97826c54a74a0d57d4523572e0c13692da540b7540bfd03af96b3"
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "routeAndDraftMs": 16851,
+      "sourceLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "actualPasswordStepUp": true,
+      "reviewLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "confirmInteractionMs": 3699,
+      "savedLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "organizationId": "workflow_supplier_ack_fr_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr-correction",
+      "receiptId": "cmuomttfi00dama98rcf84fdk",
+      "returnId": "99638c8b-31f2-46d2-a1a5-ae3ced330d21",
+      "invoiceId": "cmuomttxs00e7ma988x9bew9c",
+      "persistedQuantity": "7",
+      "invoiceStatus": "MATCHED",
+      "noInvoiceApprovalOrFinancialEffects": true
+    }
+  ],
+  "scope": "Owned localhost PostgreSQL and actual localhost:3110 application. Actual reviewed receiving and purchase-return domain effects; normal credential sign-in. New preparation and correction after returns, EN desktop and FR narrow mobile, keyboard/dialog/focus/overflow and actual persisted invoice quantities. No fabricated receipt journal, invoice approval, supplier liability, payment, external message, migration or certification.",
+  "productionReceiptProducerImplemented": false,
+  "originalBefore": "9995d46c260b7e8bd9f5fd0dd761c44233299713e590ab4f69ca9fcbadc4cdff",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs": "08278ab5a6c7737337867632af984446e4baad839f7f618e02b93f76c20c422c"
+  },
+  "sourceStable": true,
+  "fixtureOrganizations": [
+    "workflow_supplier_ack_en_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en-preparation",
+    "workflow_supplier_ack_en_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en-correction",
+    "workflow_supplier_ack_fr_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr-preparation",
+    "workflow_supplier_ack_fr_receipt-handoff-80b9e08d-ac38-4c6c-bc93-8b9e93b2f5e8-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr-correction"
+  ],
+  "passed": true
+}

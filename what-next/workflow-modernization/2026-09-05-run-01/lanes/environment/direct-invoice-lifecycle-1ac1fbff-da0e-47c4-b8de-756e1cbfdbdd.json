@@ -1,0 +1,38 @@
+{
+  "run": "1ac1fbff-da0e-47c4-b8de-756e1cbfdbdd",
+  "at": "2026-09-30T20:28:48.301Z",
+  "scope": "Synthetic owned-local internal-domain lifecycle probe; no production approval or metadata repair",
+  "cases": [
+    {
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-8ffc2286-73b8-45c9-89a9-855a596208d5-direct-lifecycle-1ac1fbff-da0e-47c4-b8de-756e1cbfdbdd-false",
+      "invoiceId": "cmuok5u1y002vmab85vbbki9a",
+      "accrued": false,
+      "invoiceStatus": "POSTED",
+      "matchStatus": "MATCHED",
+      "variance": "0.00",
+      "persistedApprovalAgrees": true,
+      "ledgerStatus": "POSTED",
+      "eventHasMaker": false,
+      "eventHasApprover": false,
+      "eventHasMatch": false,
+      "eventHasIndependentEvidence": false
+    },
+    {
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-8ffc2286-73b8-45c9-89a9-855a596208d5-direct-lifecycle-1ac1fbff-da0e-47c4-b8de-756e1cbfdbdd-true",
+      "invoiceId": "cmuok5vh1006rmab8s0eoqn2f",
+      "accrued": true,
+      "invoiceStatus": "POSTED",
+      "matchStatus": "MATCHED",
+      "variance": "0.00",
+      "persistedApprovalAgrees": true,
+      "ledgerStatus": "BLOCKED_PENDING_RULES",
+      "eventHasMaker": false,
+      "eventHasApprover": false,
+      "eventHasMatch": false,
+      "eventHasIndependentEvidence": false,
+      "recoveryError": "The invoice approval, liability or posting evidence needs accounting review."
+    }
+  ],
+  "passed": true,
+  "sourceHash": "368986b640c13253b7deac890c538b52fcb5ca33c3ad3258e6c20c3ab8cae15b"
+}

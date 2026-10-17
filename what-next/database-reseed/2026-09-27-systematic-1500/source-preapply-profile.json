@@ -1,0 +1,925 @@
+{
+  "generatedAt": "2026-09-27T11:20:39.595Z",
+  "target": {
+    "host": "localhost",
+    "database": "stoquify_replay_next_20260830"
+  },
+  "tableCount": 216,
+  "totalRows": 14851,
+  "counts": [
+    {
+      "table": "_UserRoles",
+      "count": 99
+    },
+    {
+      "table": "_prisma_migrations",
+      "count": 87
+    },
+    {
+      "table": "accountant_access_grants",
+      "count": 0
+    },
+    {
+      "table": "accountant_client_invite_states",
+      "count": 0
+    },
+    {
+      "table": "accountant_client_invites",
+      "count": 0
+    },
+    {
+      "table": "accountant_comments",
+      "count": 24
+    },
+    {
+      "table": "accountant_reviews",
+      "count": 24
+    },
+    {
+      "table": "accounting_periods",
+      "count": 24
+    },
+    {
+      "table": "accounting_source_links",
+      "count": 36
+    },
+    {
+      "table": "accounts",
+      "count": 30
+    },
+    {
+      "table": "agent_activation_approvals",
+      "count": 0
+    },
+    {
+      "table": "agent_activation_owners",
+      "count": 0
+    },
+    {
+      "table": "agent_activation_packages",
+      "count": 0
+    },
+    {
+      "table": "agent_cost_ledger",
+      "count": 0
+    },
+    {
+      "table": "agent_definitions",
+      "count": 0
+    },
+    {
+      "table": "agent_evidence_links",
+      "count": 0
+    },
+    {
+      "table": "agent_feedback",
+      "count": 0
+    },
+    {
+      "table": "agent_pilot_certifications",
+      "count": 0
+    },
+    {
+      "table": "agent_policy_incidents",
+      "count": 0
+    },
+    {
+      "table": "agent_reconciler_invocations",
+      "count": 0
+    },
+    {
+      "table": "agent_runs",
+      "count": 0
+    },
+    {
+      "table": "agent_skill_definitions",
+      "count": 0
+    },
+    {
+      "table": "agent_steps",
+      "count": 0
+    },
+    {
+      "table": "agent_tool_definitions",
+      "count": 0
+    },
+    {
+      "table": "ai_action_proposals",
+      "count": 0
+    },
+    {
+      "table": "audit_logs",
+      "count": 9990
+    },
+    {
+      "table": "branch_daily_close_runs",
+      "count": 0
+    },
+    {
+      "table": "branch_daily_close_sign_offs",
+      "count": 0
+    },
+    {
+      "table": "brands",
+      "count": 15
+    },
+    {
+      "table": "business_event_anomalies",
+      "count": 0
+    },
+    {
+      "table": "business_event_audits",
+      "count": 38
+    },
+    {
+      "table": "business_event_outbox",
+      "count": 46
+    },
+    {
+      "table": "business_events",
+      "count": 46
+    },
+    {
+      "table": "cash_drawer_transactions",
+      "count": 41
+    },
+    {
+      "table": "cash_drawers",
+      "count": 25
+    },
+    {
+      "table": "cash_shortage_policies",
+      "count": 0
+    },
+    {
+      "table": "categories",
+      "count": 15
+    },
+    {
+      "table": "chart_of_accounts",
+      "count": 36
+    },
+    {
+      "table": "close_assurance_findings",
+      "count": 24
+    },
+    {
+      "table": "close_checklist_items",
+      "count": 24
+    },
+    {
+      "table": "close_evidence_items",
+      "count": 24
+    },
+    {
+      "table": "close_pack_exports",
+      "count": 24
+    },
+    {
+      "table": "close_runs",
+      "count": 24
+    },
+    {
+      "table": "compliance_adapter_configs",
+      "count": 24
+    },
+    {
+      "table": "compliance_evidence",
+      "count": 24
+    },
+    {
+      "table": "compliance_submissions",
+      "count": 24
+    },
+    {
+      "table": "customer_ledger_entries",
+      "count": 24
+    },
+    {
+      "table": "customer_locations",
+      "count": 0
+    },
+    {
+      "table": "customer_receivable_document_states",
+      "count": 24
+    },
+    {
+      "table": "customer_receivable_documents",
+      "count": 24
+    },
+    {
+      "table": "customer_settlement_allocations",
+      "count": 0
+    },
+    {
+      "table": "customer_settlements",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_access_logs",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_access_tokens",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_deliveries",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_delivery_states",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_recipient_action_states",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_recipient_actions",
+      "count": 0
+    },
+    {
+      "table": "customer_statement_snapshots",
+      "count": 2
+    },
+    {
+      "table": "customers",
+      "count": 26
+    },
+    {
+      "table": "daily_sales_report_cash_events",
+      "count": 24
+    },
+    {
+      "table": "daily_sales_report_items",
+      "count": 24
+    },
+    {
+      "table": "daily_sales_reports",
+      "count": 24
+    },
+    {
+      "table": "delivery_billing_lines",
+      "count": 0
+    },
+    {
+      "table": "delivery_billing_outcomes",
+      "count": 0
+    },
+    {
+      "table": "delivery_goods_issue_lines",
+      "count": 0
+    },
+    {
+      "table": "delivery_goods_issues",
+      "count": 0
+    },
+    {
+      "table": "delivery_reservation_lines",
+      "count": 0
+    },
+    {
+      "table": "delivery_reservations",
+      "count": 0
+    },
+    {
+      "table": "document_sequences",
+      "count": 0
+    },
+    {
+      "table": "expense_categories",
+      "count": 14
+    },
+    {
+      "table": "expenses",
+      "count": 24
+    },
+    {
+      "table": "fiscal_document_lines",
+      "count": 24
+    },
+    {
+      "table": "fiscal_documents",
+      "count": 24
+    },
+    {
+      "table": "fiscal_sequences",
+      "count": 24
+    },
+    {
+      "table": "fiscal_years",
+      "count": 2
+    },
+    {
+      "table": "goods_receipt_inspection_resolutions",
+      "count": 0
+    },
+    {
+      "table": "goods_receipt_inspections",
+      "count": 0
+    },
+    {
+      "table": "goods_receipt_lines",
+      "count": 24
+    },
+    {
+      "table": "goods_receipts",
+      "count": 24
+    },
+    {
+      "table": "hris_attendance_anomalies",
+      "count": 0
+    },
+    {
+      "table": "hris_employment_assignments",
+      "count": 94
+    },
+    {
+      "table": "hris_leave_balance_entries",
+      "count": 0
+    },
+    {
+      "table": "hris_leave_policies",
+      "count": 0
+    },
+    {
+      "table": "hris_manager_delegations",
+      "count": 0
+    },
+    {
+      "table": "hris_org_units",
+      "count": 14
+    },
+    {
+      "table": "hris_positions",
+      "count": 94
+    },
+    {
+      "table": "hris_public_holidays",
+      "count": 0
+    },
+    {
+      "table": "hris_reporting_relationships",
+      "count": 92
+    },
+    {
+      "table": "hris_time_entries",
+      "count": 0
+    },
+    {
+      "table": "hris_time_import_batches",
+      "count": 0
+    },
+    {
+      "table": "hris_time_requests",
+      "count": 0
+    },
+    {
+      "table": "hris_work_calendars",
+      "count": 2
+    },
+    {
+      "table": "hris_work_schedules",
+      "count": 94
+    },
+    {
+      "table": "inventory_levels",
+      "count": 540
+    },
+    {
+      "table": "inventory_transactions",
+      "count": 94
+    },
+    {
+      "table": "invites",
+      "count": 24
+    },
+    {
+      "table": "item_suppliers",
+      "count": 24
+    },
+    {
+      "table": "items",
+      "count": 41
+    },
+    {
+      "table": "journal_entries",
+      "count": 44
+    },
+    {
+      "table": "journal_entry_lines",
+      "count": 174
+    },
+    {
+      "table": "journals",
+      "count": 16
+    },
+    {
+      "table": "ledger_audit_events",
+      "count": 50
+    },
+    {
+      "table": "ledger_posting_batches",
+      "count": 36
+    },
+    {
+      "table": "legacy_production_batches",
+      "count": 0
+    },
+    {
+      "table": "legacy_recipe_ingredients",
+      "count": 0
+    },
+    {
+      "table": "legacy_recipes",
+      "count": 0
+    },
+    {
+      "table": "locations",
+      "count": 27
+    },
+    {
+      "table": "match_records",
+      "count": 24
+    },
+    {
+      "table": "onboarding_import_batches",
+      "count": 0
+    },
+    {
+      "table": "onboarding_import_issues",
+      "count": 0
+    },
+    {
+      "table": "onboarding_import_mappings",
+      "count": 0
+    },
+    {
+      "table": "onboarding_import_rows",
+      "count": 0
+    },
+    {
+      "table": "onboarding_readiness_milestones",
+      "count": 0
+    },
+    {
+      "table": "organization_accounting_settings",
+      "count": 2
+    },
+    {
+      "table": "organizations",
+      "count": 3
+    },
+    {
+      "table": "password_history",
+      "count": 29
+    },
+    {
+      "table": "payment_exceptions",
+      "count": 24
+    },
+    {
+      "table": "payment_rails",
+      "count": 24
+    },
+    {
+      "table": "payment_reconciliation_inbox_items",
+      "count": 25
+    },
+    {
+      "table": "payment_refunds",
+      "count": 24
+    },
+    {
+      "table": "payment_transactions",
+      "count": 24
+    },
+    {
+      "table": "payments",
+      "count": 30
+    },
+    {
+      "table": "payroll_attendance_snapshots",
+      "count": 24
+    },
+    {
+      "table": "payroll_contracts",
+      "count": 118
+    },
+    {
+      "table": "payroll_declaration_evidence",
+      "count": 24
+    },
+    {
+      "table": "payroll_declarations",
+      "count": 24
+    },
+    {
+      "table": "payroll_employee_balance_cases",
+      "count": 0
+    },
+    {
+      "table": "payroll_employee_balance_events",
+      "count": 0
+    },
+    {
+      "table": "payroll_employee_rubrique_assignments",
+      "count": 24
+    },
+    {
+      "table": "payroll_employees",
+      "count": 118
+    },
+    {
+      "table": "payroll_payment_allocations",
+      "count": 24
+    },
+    {
+      "table": "payroll_payment_batches",
+      "count": 24
+    },
+    {
+      "table": "payroll_payment_destination_change_requests",
+      "count": 24
+    },
+    {
+      "table": "payroll_payslip_lines",
+      "count": 24
+    },
+    {
+      "table": "payroll_payslips",
+      "count": 24
+    },
+    {
+      "table": "payroll_periods",
+      "count": 24
+    },
+    {
+      "table": "payroll_rubriques",
+      "count": 24
+    },
+    {
+      "table": "payroll_run_lines",
+      "count": 24
+    },
+    {
+      "table": "payroll_run_transitions",
+      "count": 0
+    },
+    {
+      "table": "payroll_runs",
+      "count": 24
+    },
+    {
+      "table": "payroll_salary_change_requests",
+      "count": 24
+    },
+    {
+      "table": "picture_assets",
+      "count": 5
+    },
+    {
+      "table": "pos_cash_shortage_worker_checkpoints",
+      "count": 0
+    },
+    {
+      "table": "pos_checkout_workspaces",
+      "count": 5
+    },
+    {
+      "table": "pos_commit_results",
+      "count": 6
+    },
+    {
+      "table": "pos_offline_devices",
+      "count": 24
+    },
+    {
+      "table": "pos_offline_events",
+      "count": 24
+    },
+    {
+      "table": "pos_offline_sync_batches",
+      "count": 24
+    },
+    {
+      "table": "pos_offline_sync_certificates",
+      "count": 24
+    },
+    {
+      "table": "pos_offline_sync_conflicts",
+      "count": 24
+    },
+    {
+      "table": "pos_sessions",
+      "count": 31
+    },
+    {
+      "table": "pos_terminals",
+      "count": 25
+    },
+    {
+      "table": "posting_rule_lines",
+      "count": 152
+    },
+    {
+      "table": "posting_rules",
+      "count": 30
+    },
+    {
+      "table": "provider_accounts",
+      "count": 24
+    },
+    {
+      "table": "provider_events",
+      "count": 24
+    },
+    {
+      "table": "public_identity_abuse_buckets",
+      "count": 2
+    },
+    {
+      "table": "public_receipt_access_tokens",
+      "count": 0
+    },
+    {
+      "table": "purchase_order_lines",
+      "count": 24
+    },
+    {
+      "table": "purchase_orders",
+      "count": 24
+    },
+    {
+      "table": "purchase_return_lines",
+      "count": 0
+    },
+    {
+      "table": "purchase_returns",
+      "count": 0
+    },
+    {
+      "table": "reconciliation_runs",
+      "count": 24
+    },
+    {
+      "table": "referral_attribution_events",
+      "count": 0
+    },
+    {
+      "table": "referral_attributions",
+      "count": 0
+    },
+    {
+      "table": "roles",
+      "count": 95
+    },
+    {
+      "table": "sales_order_lines",
+      "count": 56
+    },
+    {
+      "table": "sales_orders",
+      "count": 34
+    },
+    {
+      "table": "serial_numbers",
+      "count": 24
+    },
+    {
+      "table": "sessions",
+      "count": 61
+    },
+    {
+      "table": "settlement_accounts",
+      "count": 24
+    },
+    {
+      "table": "statement_files",
+      "count": 24
+    },
+    {
+      "table": "statement_lines",
+      "count": 24
+    },
+    {
+      "table": "stock_adjustment_lines",
+      "count": 24
+    },
+    {
+      "table": "stock_adjustments",
+      "count": 24
+    },
+    {
+      "table": "stock_count_lines",
+      "count": 24
+    },
+    {
+      "table": "stock_count_sessions",
+      "count": 24
+    },
+    {
+      "table": "stock_transfer_lines",
+      "count": 26
+    },
+    {
+      "table": "stock_transfers",
+      "count": 25
+    },
+    {
+      "table": "supplier_bank_accounts",
+      "count": 24
+    },
+    {
+      "table": "supplier_bank_change_requests",
+      "count": 24
+    },
+    {
+      "table": "supplier_credit_note_lines",
+      "count": 0
+    },
+    {
+      "table": "supplier_credit_notes",
+      "count": 0
+    },
+    {
+      "table": "supplier_invoice_lines",
+      "count": 24
+    },
+    {
+      "table": "supplier_invoice_match_exceptions",
+      "count": 0
+    },
+    {
+      "table": "supplier_invoices",
+      "count": 24
+    },
+    {
+      "table": "supplier_ledger_entries",
+      "count": 24
+    },
+    {
+      "table": "supplier_payment_allocations",
+      "count": 24
+    },
+    {
+      "table": "supplier_payments",
+      "count": 24
+    },
+    {
+      "table": "supplier_po_access_logs",
+      "count": 0
+    },
+    {
+      "table": "supplier_po_access_tokens",
+      "count": 0
+    },
+    {
+      "table": "supplier_po_envelopes",
+      "count": 0
+    },
+    {
+      "table": "supplier_po_proposal_lines",
+      "count": 0
+    },
+    {
+      "table": "supplier_po_proposal_states",
+      "count": 0
+    },
+    {
+      "table": "supplier_po_proposals",
+      "count": 0
+    },
+    {
+      "table": "suppliers",
+      "count": 24
+    },
+    {
+      "table": "suspense_items",
+      "count": 24
+    },
+    {
+      "table": "tax_rates",
+      "count": 4
+    },
+    {
+      "table": "tenant_module_configuration_commands",
+      "count": 0
+    },
+    {
+      "table": "tenant_module_configurations",
+      "count": 0
+    },
+    {
+      "table": "tenant_module_grants",
+      "count": 0
+    },
+    {
+      "table": "tenant_module_lifecycle_events",
+      "count": 0
+    },
+    {
+      "table": "tenant_module_lifecycle_operations",
+      "count": 0
+    },
+    {
+      "table": "tenant_module_lifecycle_steps",
+      "count": 0
+    },
+    {
+      "table": "three_way_matches",
+      "count": 24
+    },
+    {
+      "table": "units",
+      "count": 14
+    },
+    {
+      "table": "users",
+      "count": 99
+    },
+    {
+      "table": "verifications",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_alert_deliveries",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_check_definitions",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_check_findings",
+      "count": 0
+    },
+    {
+      "table": "workflow_assurance_check_runs",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_incident_events",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_incidents",
+      "count": 24
+    },
+    {
+      "table": "workflow_assurance_waivers",
+      "count": 24
+    }
+  ],
+  "preservation": {
+    "organizations": {
+      "count": 3,
+      "sha256": "8aadf79bfd60fb6c857e7d0962d72f26e1c49af5fb50a0e89368822894405d70"
+    },
+    "users": {
+      "count": 99,
+      "sha256": "abd13ff3ad43f0fc960cfdd97832db4af268a3120ec18784359d8f7eef867ddd"
+    },
+    "roles": {
+      "count": 95,
+      "sha256": "7339b3e54fc0667bc1c66b6270c7f5a781aa519b2388578c3510cf79b12af891"
+    },
+    "locations": {
+      "count": 27,
+      "sha256": "9cb5af3137549483706aa375913e54522c0332463dec30947cb6847491e90e78"
+    },
+    "customers": {
+      "count": 26,
+      "sha256": "58db02ab79a95284ac6079d49acb9249f923e8e49382c7abfcd9bdd817c3bcad"
+    },
+    "suppliers": {
+      "count": 24,
+      "sha256": "a38cd392873bb584d6f6984c1cfaa1946ddce99ff0235ffb70b240039684eeb3"
+    },
+    "items": {
+      "count": 41,
+      "sha256": "544f2c9977c78b2c075791f105dc9151e16c53ab6228b3d683003b69926b1fcc"
+    },
+    "payroll_employees": {
+      "count": 118,
+      "sha256": "9c3256348ebb0185a99853c722fffbf08199be778013d2deb9154f80965c30b9"
+    },
+    "accounts": {
+      "count": 30,
+      "sha256": "d6e706d29823a303cbf00aede1dfdb6160cf36f2c395f805149ef4d98e62305b"
+    },
+    "_UserRoles": {
+      "count": 99,
+      "sha256": "8b2db37de8bf136e17f075e4f101861a25455b18e1149a51385a28fa5d34d5af"
+    }
+  },
+  "migrationCount": 87,
+  "unfinished": [],
+  "stock": {
+    "items": 41,
+    "below1500": 8,
+    "missingLevels": 1,
+    "minimum": 0
+  }
+}

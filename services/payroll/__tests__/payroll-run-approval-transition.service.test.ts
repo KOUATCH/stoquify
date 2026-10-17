@@ -7,6 +7,14 @@ import {
   Prisma,
 } from "@prisma/client";
 
+// Isolate lifecycle/CAS mechanics from the production admission contract.
+// The real guard and direct financial-boundary denials have dedicated coverage
+// in payroll-production-admission.test.ts, including a complete emission.
+jest.mock("../payroll-production-admission", () => ({
+  assertPayrollProductionAdmission: jest.fn(),
+  assertPayrollProductionAdmissionInTx: jest.fn(),
+}));
+
 jest.mock("@/prisma/db", () => ({
   db: { $transaction: jest.fn() },
 }));
@@ -295,6 +303,7 @@ function buildTx(sourceRun = reviewedRun) {
     },
     payrollPayslip: {
       create: jest.fn().mockResolvedValue({ id: "payslip-1" }),
+      update: jest.fn().mockResolvedValue({ id: "payslip-1" }),
     },
     journal: {
       findFirst: jest
@@ -566,10 +575,17 @@ describe("emitPayrollPayslips APPROVED -> EMITTED", () => {
       data: expect.objectContaining({
         organizationId: "org-1",
         payrollRunId: "run-1",
-        status: PayrollPayslipStatus.EMITTED,
+        status: PayrollPayslipStatus.DRAFT,
         emittedBusinessEventId: "event-emitted-1",
       }),
     });
+    expect(tx.payrollPayslip.update).toHaveBeenCalledWith({
+      where: { id: "payslip-1", organizationId: "org-1" },
+      data: { status: PayrollPayslipStatus.EMITTED },
+    });
+    expect(tx.payrollPayslip.create.mock.invocationCallOrder[0]).toBeLessThan(
+      tx.payrollPayslip.update.mock.invocationCallOrder[0],
+    );
     expect(tx.payrollRun.updateMany).toHaveBeenCalledWith({
       where: expect.objectContaining({
         id: "run-1",

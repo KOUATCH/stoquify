@@ -1,0 +1,26 @@
+STOQUIFY | R00 | DRAFT - AWAITING HUMAN VALIDATION
+R00 GUIDE | v1.0 | 7 October 2026 | 3
+Acceptance limits and a worked example
+R00 can advance when every in-scope capability has a named accountable owner, release boundary, acceptance
+scenario and evidence location; decisions and valid deferrals are recorded and reviewer appointments are verified.
+Later-stage decisions need owners, due gates and operating restrictions. The delivery lead prepares the evidence
+and product owner/QA lead review it. R00 is not complete merely because forms exist. [S2, S8]
+After R00, the actual software and operating evidence must still pass the relevant gates: security/tenant isolation,
+data and financial integrity, HRIS/payroll workflows, country/provider qualification, build and authenticated
+browser checks, recovery and pilot/release acceptance. Scope approval is not production, payment or filing
+authorization. No legal conclusion about signature enforceability is made by this internal guide.
+Fictional example only not an approval
+Example D06: Fictional owner A, supported by fictional customer B, selects “defer customer-cohort analytics for
+the first pilot.” Reason: the fictional pilot has no reviewed customer-identity/consent dataset or defined
+retention-analysis need. Restriction: no cohort-analytics capability is promised or enabled for that pilot. Reopen
+when a customer requirement and suitable data/consent review exist. Fictional domain reviewer C agrees only
+with this scope decision. Evidence: a fictional customer interview and data assessment. These names and
+references are illustrative, do not appear in live appointment fields, and confer no approval.
+Sources and reuse
+S1 defines these eight R00 decisions; S8 defines package gates. S2 is the current execution record. S3 confirms
+your operating choices; S4 records research limits. S5/S6 provide the existing appointment and verification
+process. S7 is used only to prevent mistaken reuse of separate POS G1 decisions or unverified people/signature
+images. R00 D01–D08 is not POS G1 D-01–D-11.
+This pack adapts the existing process to R00 because the existing X1/G1 forms approve different objects. It does
+not replace those controls or create a new approval platform. Source paths and hashes are listed in
+SOURCE_INDEX.md and decision-data.json beside these documents.

@@ -1,3 +1,4 @@
+jest.mock("@/prisma/db", () => ({ db: {} }))
 import { PaymentMethod, Prisma, SupplierInvoiceStatus, SupplierPaymentStatus } from "@prisma/client"
 
 import { HistoryCursorError, type HistoryCursorCodec } from "@/services/history/transaction-history.types"
@@ -101,6 +102,19 @@ function mockClient(overrides: {
 }
 
 describe("readAPHistory", () => {
+  it("scopes exact invoice rows and full-summary evidence to the same tenant and invoice", async () => {
+    const client = mockClient({ paymentRows: [], paymentSummaryRows: [] })
+    const result = await readAPHistory({ organizationId: "org-1", actorUserId: "u1", actorPermissions: ["finance.payables.read"], filters: { lane: "invoice", invoiceId: "invoice-1", supplierId: "supplier-1", pageSize: 25 } }, { client: client as never, cursorCodec: cursorCodec(), now: () => now })
+    expect(result.appliedFilters.invoiceId).toBe("invoice-1")
+    for (const [args] of client.supplierInvoice.findMany.mock.calls) expect(args.where).toMatchObject({ id: "invoice-1", organizationId: "org-1", supplierId: "supplier-1" })
+    expect(client.supplierPayment.findMany).not.toHaveBeenCalled()
+    expect(result.rows[0].id).toBe("supplier-invoice:invoice-1")
+  })
+  it("rejects invoice selection in a mixed or payment lane", async () => {
+    const client = mockClient()
+    await expect(readAPHistory({ organizationId: "org-1", actorUserId: "u1", filters: { lane: "payment", invoiceId: "invoice-1", pageSize: 25 } }, { client: client as never, cursorCodec: cursorCodec(), now: () => now })).rejects.toThrow(/invoice lane/)
+    expect(client.supplierInvoice.findMany).not.toHaveBeenCalled()
+  })
   it("rejects an oversized export before financial resolution instead of returning the visible page", async () => {
     const client = mockClient({ invoiceSummaryRows: Array.from({length: 5001}, (_, i) => ({ id: `i${i}` })), paymentSummaryRows: [] })
     await expect(readAPHistory({ organizationId: "org-1", actorUserId: "u1", actorPermissions: [], filters: {pageSize: 25} }, {client: client as never, cursorCodec: cursorCodec(), now: () => now, exportRowLimit: 5000})).rejects.toThrow(/5000/)

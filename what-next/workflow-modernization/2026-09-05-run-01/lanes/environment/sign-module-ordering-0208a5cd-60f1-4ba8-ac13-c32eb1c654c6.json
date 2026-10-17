@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-27T16:23:57.328Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "d3b63d2c65ed846cbb61e8d51309ea42c7bfec08e4a0fd03b524514c9a478cc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "cases": [
+    {
+      "order": "withdrawal holds authority lock before signing",
+      "organizationId": "cmuk13b4r0000maoo1s5ndw4z",
+      "runId": "cmuk13bc4001amaoozkc2hooq",
+      "observedLock": {
+        "wait_event_type": "Lock",
+        "wait_event": "transactionid"
+      },
+      "transactionErrors": [
+        {
+          "code": "P2010",
+          "sqlState": "40001"
+        }
+      ],
+      "sign": {
+        "error": {
+          "code": "BUSINESS_RULE_VIOLATION",
+          "message": "Payment reconciliation sign-off could not be completed safely."
+        }
+      }
+    }
+  ],
+  "passed": false,
+  "error": "A committed withdrawal must be reported as unavailable module authority\n+ actual - expected\n\n+ 'BUSINESS_RULE_VIOLATION'\n- 'FORBIDDEN'\n",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "d3b63d2c65ed846cbb61e8d51309ea42c7bfec08e4a0fd03b524514c9a478cc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

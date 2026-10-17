@@ -1,0 +1,109 @@
+{
+  "preparedAt": "2026-10-12T10:57:40.152Z",
+  "database": "stoquify_replay_next_20260830",
+  "organizationId": "rds_org_001",
+  "device": {
+    "id": "rds_org_001_pos_offline_device_011",
+    "organizationId": "rds_org_001",
+    "terminalId": "rds_org_001_pos_station_011",
+    "locationId": "rds_org_001_location_011",
+    "deviceLabel": "POSOfflineDevice deviceLabel rds-org001 011",
+    "status": "ACTIVE",
+    "metadata": null
+  },
+  "events": [
+    {
+      "id": "rds_org_001_pos_offline_event_011",
+      "status": "PENDING_REPLAY",
+      "payload": {
+        "seed": true
+      },
+      "deviceId": "rds_org_001_pos_offline_device_011",
+      "metadata": null,
+      "prevHash": null,
+      "createdAt": "2026-05-11T09:00:00",
+      "deviceSeq": 11,
+      "entryHash": "hash-rds-org001-POSOfflineEvent-entryHash-011",
+      "eventType": "OFFLINE_SALE_CAPTURED",
+      "sessionId": null,
+      "signature": null,
+      "updatedAt": "2026-05-11T09:00:00",
+      "locationId": "rds_org_001_location_011",
+      "terminalId": "rds_org_001_pos_station_011",
+      "blockerCode": null,
+      "payloadHash": "hash-rds-org001-POSOfflineEvent-payloadHash-011",
+      "syncBatchId": null,
+      "documentHash": null,
+      "schemaVersion": 1,
+      "blockerMessage": null,
+      "idempotencyKey": "key-rds-org001-POSOfflineEvent-idempotencyKey-011",
+      "organizationId": "rds_org_001",
+      "postingBatchId": null,
+      "businessEventId": null,
+      "capturedAtDevice": "2026-05-11T09:00:00",
+      "receivedAtServer": "2026-08-30T19:51:53.303",
+      "policySnapshotHash": null,
+      "sourceSnapshotHash": null,
+      "provisionalReference": null
+    }
+  ],
+  "conflicts": [
+    {
+      "id": "rds_org_001_pos_offline_sync_conflict_011",
+      "status": "OPEN",
+      "eventId": null,
+      "message": "POSOfflineSyncConflict message rds-org001 011",
+      "deviceId": "rds_org_001_pos_offline_device_011",
+      "metadata": null,
+      "severity": "HIGH",
+      "createdAt": "2026-05-11T09:00:00",
+      "updatedAt": "2026-05-11T09:00:00",
+      "actualHash": null,
+      "resolvedAt": null,
+      "syncBatchId": null,
+      "conflictType": "IDEMPOTENCY_PAYLOAD_MISMATCH",
+      "expectedHash": null,
+      "resolvedById": null,
+      "actualSequence": null,
+      "organizationId": "rds_org_001",
+      "resolutionNote": null,
+      "expectedSequence": null,
+      "existingPayloadHash": null,
+      "incomingPayloadHash": null
+    }
+  ],
+  "certificates": [
+    {
+      "id": "rds_org_001_pos_offline_sync_certificate_011",
+      "status": "OPEN",
+      "deviceId": "rds_org_001_pos_offline_device_011",
+      "metadata": null,
+      "createdAt": "2026-05-11T09:00:00",
+      "updatedAt": "2026-05-11T09:00:00",
+      "eventCount": 0,
+      "locationId": "rds_org_001_location_011",
+      "terminalId": "rds_org_001_pos_station_011",
+      "blockerCode": null,
+      "certifiedAt": null,
+      "closeBlocker": true,
+      "acceptedCount": 0,
+      "certifiedById": null,
+      "conflictCount": 0,
+      "blockerMessage": null,
+      "organizationId": "rds_org_001",
+      "certificateHash": null,
+      "certificationScope": "DEVICE",
+      "pendingReplayCount": 0,
+      "lastCertifiedSequence": 0
+    }
+  ],
+  "batches": [
+    {
+      "id": "rds_org_001_pos_offline_sync_batch_011",
+      "organizationId": "rds_org_001",
+      "deviceId": "rds_org_001_pos_offline_device_011",
+      "status": "RECEIVED",
+      "metadata": null
+    }
+  ]
+}

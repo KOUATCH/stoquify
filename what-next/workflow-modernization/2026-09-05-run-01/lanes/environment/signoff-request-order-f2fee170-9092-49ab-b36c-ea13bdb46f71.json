@@ -1,0 +1,143 @@
+{
+  "at": "2026-09-27T12:37:47.615Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "44c3f34ad39ca8773c8732dd36cbb0846d53dcf39cfefc02b03afd6c8f541478",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sameSigner": true,
+      "earlyRequestAt": "2026-09-27T12:37:50.121Z",
+      "winner": {
+        "runId": "cmujt0i08001amak0lesxuhcq",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "a182e36958ea8e9d687f1afb12e1ba9153202c1698d79e03961ad29fc97f7c23",
+        "sourceVersionHash": "sha256:e5e621586610eee729543644fb99eebd5ae631ac97acb1093663a674402daea1",
+        "signedAt": "2026-09-27T12:37:50.131Z",
+        "correlationId": "79ba5a02-bea7-4b6f-9e8c-47a6a0f3c33b"
+      },
+      "earlier": {
+        "value": {
+          "runId": "cmujt0i08001amak0lesxuhcq",
+          "status": "SIGNED",
+          "outcome": "SIGNED",
+          "replayed": true,
+          "completedByAnotherActor": false,
+          "certificateHash": "a182e36958ea8e9d687f1afb12e1ba9153202c1698d79e03961ad29fc97f7c23",
+          "sourceVersionHash": "sha256:e5e621586610eee729543644fb99eebd5ae631ac97acb1093663a674402daea1",
+          "signedAt": "2026-09-27T12:37:50.131Z",
+          "correlationId": "c1948d93-eee8-47ea-98ff-2757fe6b5f68"
+        }
+      },
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": false,
+      "earlyRequestAt": "2026-09-27T12:37:51.156Z",
+      "winner": {
+        "runId": "cmujt0j02002ymak0fc2jtws5",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "7c59bcea00ba38ff5074f0367cfbd28f40d8f0e27a47b195c4bf1c20ce80f90e",
+        "sourceVersionHash": "sha256:b3fb355ed792437268f62359f89b42f06f876036fa7d2d2069ce7c1573f7a747",
+        "signedAt": "2026-09-27T12:37:51.175Z",
+        "correlationId": "881511d0-faeb-4144-985e-13e6c0f87ce7"
+      },
+      "earlier": {
+        "value": {
+          "runId": "cmujt0j02002ymak0fc2jtws5",
+          "status": "SIGNED",
+          "outcome": "ALREADY_SIGNED",
+          "replayed": false,
+          "completedByAnotherActor": true,
+          "certificateHash": "7c59bcea00ba38ff5074f0367cfbd28f40d8f0e27a47b195c4bf1c20ce80f90e",
+          "sourceVersionHash": "sha256:b3fb355ed792437268f62359f89b42f06f876036fa7d2d2069ce7c1573f7a747",
+          "signedAt": "2026-09-27T12:37:51.175Z",
+          "correlationId": "f76c8e68-5f02-4f10-afbc-78224189bc7a"
+        }
+      },
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": true,
+      "simultaneousTransactions": true,
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmujt0jpx004mmak0ypditd6j",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": false,
+            "certificateHash": "1d74e1a3be7c166022abb54067b7c82fb51543354cbbb73807e87764d493e7e6",
+            "sourceVersionHash": "sha256:e9fb6844373d3cd9d735019412c52ca25fa19b7d3ec68543ea2fedb9bf4db886",
+            "signedAt": "2026-09-27T12:37:52.038Z",
+            "correlationId": "dbfb5b5b-cb57-406a-b2e9-d4f6a6d68e45"
+          }
+        },
+        {
+          "value": {
+            "runId": "cmujt0jpx004mmak0ypditd6j",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": true,
+            "completedByAnotherActor": false,
+            "certificateHash": "1d74e1a3be7c166022abb54067b7c82fb51543354cbbb73807e87764d493e7e6",
+            "sourceVersionHash": "sha256:e9fb6844373d3cd9d735019412c52ca25fa19b7d3ec68543ea2fedb9bf4db886",
+            "signedAt": "2026-09-27T12:37:52.038Z",
+            "correlationId": "5baebfbf-e030-4bb3-a1e9-efcf563791a3"
+          }
+        }
+      ],
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": false,
+      "simultaneousTransactions": true,
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmujt0kch006cmak09nuh8nls",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": false,
+            "certificateHash": "ea2d18141b4f1929ace77cf84bfd08241ab0aa414802e8fc4496519cd0b210fc",
+            "sourceVersionHash": "sha256:f26ac131b2270e8b49348c9c6848030e2cc86e3469b693c3c25cf2e398497bcd",
+            "signedAt": "2026-09-27T12:37:52.844Z",
+            "correlationId": "aa19973e-d202-4d3a-b782-3be47c61a8d9"
+          }
+        },
+        {
+          "value": {
+            "runId": "cmujt0kch006cmak09nuh8nls",
+            "status": "SIGNED",
+            "outcome": "ALREADY_SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": true,
+            "certificateHash": "ea2d18141b4f1929ace77cf84bfd08241ab0aa414802e8fc4496519cd0b210fc",
+            "sourceVersionHash": "sha256:f26ac131b2270e8b49348c9c6848030e2cc86e3469b693c3c25cf2e398497bcd",
+            "signedAt": "2026-09-27T12:37:52.844Z",
+            "correlationId": "c63d2d50-e6a4-49dd-a1db-c8bb19256382"
+          }
+        }
+      ],
+      "noDuplicateOrFinancialEffects": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "44c3f34ad39ca8773c8732dd36cbb0846d53dcf39cfefc02b03afd6c8f541478",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-27T14:10:17.705Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "1a892f5d0ac79c112c0f453b81e01dbfc5c0f2fd83028b27ac44fcc8982526b8",
+    "services/reconciliation/payment-exception-closure.service.ts": "01d3cd21fb6185fdcae98d1b4a34383b722c329010b29e8e91f17918255ea946",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "cases": [
+    {
+      "kind": "statement",
+      "organizationId": "cmujwbfal0000mayopyd1eec4",
+      "runId": "cmujwbfnk001amayolsl3c3zp",
+      "passed": true,
+      "noFinancialOrAllocationEffects": true,
+      "independentDecisionRequired": true,
+      "concurrentExactRetry": true,
+      "freshPrepareSignExport": true
+    },
+    {
+      "kind": "event",
+      "organizationId": "cmujwbi12002qmayodsq3va4l",
+      "runId": "cmujwbi6j0040mayopwe3cj4i",
+      "passed": true,
+      "noFinancialOrAllocationEffects": true,
+      "independentDecisionRequired": true,
+      "concurrentExactRetry": true,
+      "freshPrepareSignExport": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "1a892f5d0ac79c112c0f453b81e01dbfc5c0f2fd83028b27ac44fcc8982526b8",
+    "services/reconciliation/payment-exception-closure.service.ts": "01d3cd21fb6185fdcae98d1b4a34383b722c329010b29e8e91f17918255ea946",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "sourceStable": true
+}

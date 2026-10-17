@@ -28,3 +28,25 @@ it("retains an editable draft after stale confirmation without reporting success
 it("does not turn a failed queue read into an empty state",async()=>{jest.mocked(actions.loadSupplierPaymentExecutions).mockRejectedValue(new Error("database failed"));mount();expect(await screen.findByRole("alert")).toHaveTextContent(en.loadFailed);expect(screen.queryByText(en.empty)).not.toBeInTheDocument()})
 it("prevents requester or approver selection with a visible reason",async()=>{jest.mocked(actions.loadSupplierPaymentExecutions).mockResolvedValue({success:true,data:{...scope,checkedAt:"2026-09-08T12:00:00Z",rows:[{...row,independentRecorderRequired:true}],next:null}} as never);mount();expect(await screen.findByRole("button",{name:en.choose})).toBeDisabled();expect(screen.getByText(en.independent)).toBeVisible()})
 it("rejects a mismatched response identity and clears private draft state",async()=>{jest.mocked(actions.reviewSupplierPaymentExecution).mockResolvedValue({success:true,data:{...preview,organizationId:"other"}} as never);mount();fireEvent.click(await screen.findByRole("button",{name:en.choose}));for(const [field,label]of [["executionReference","reference"],["executedAt","executedAt"],["evidenceUri","uri"],["evidenceSha256","hash"]] as const)fireEvent.change(screen.getByLabelText(en[label],{exact:true}),{target:{value:draft[field]}});fireEvent.click(screen.getByRole("button",{name:en.review}));expect(await screen.findByRole("alert")).toHaveTextContent(en.denied);expect(screen.queryByText("PAY-1")).not.toBeInTheDocument();expect(sessionStorage.getItem(key+":draft")).toBeNull()})
+it("keeps a verified outcome distinct from a local cleanup failure",async()=>{
+  jest.mocked(actions.recordSupplierPaymentExecution).mockResolvedValue({success:true,data:outcome} as never)
+  mount();const dialog=await review()
+  const remove=jest.spyOn(Storage.prototype,"removeItem").mockImplementation(()=>{throw new Error("storage unavailable")})
+  try {
+    fireEvent.change(within(dialog).getByLabelText(en.password),{target:{value:"password"}})
+    fireEvent.click(within(dialog).getByRole("button",{name:en.confirm}))
+    await waitFor(()=>expect(within(dialog).getByRole("status")).toHaveTextContent(en.states.RELEASED))
+    expect(within(dialog).queryByText(en.unknown)).not.toBeInTheDocument()
+    expect(within(dialog).getByRole("alert")).toHaveTextContent(/browser|navigateur/i)
+    expect(JSON.parse(sessionStorage.getItem(key)!)).toEqual(command)
+  } finally {remove.mockRestore()}
+})
+it("returns focus to the page heading when completion removes the review control",async()=>{
+  jest.mocked(actions.recordSupplierPaymentExecution).mockResolvedValue({success:true,data:outcome} as never)
+  mount();const dialog=await review()
+  fireEvent.change(within(dialog).getByLabelText(en.password),{target:{value:"password"}})
+  fireEvent.click(within(dialog).getByRole("button",{name:en.confirm}))
+  await waitFor(()=>expect(within(dialog).getByRole("status")).toHaveTextContent(en.states.RELEASED))
+  fireEvent.click(within(dialog).getAllByRole("button",{name:en.close})[0])
+  await waitFor(()=>expect(screen.getByRole("heading",{level:1})).toHaveFocus())
+})

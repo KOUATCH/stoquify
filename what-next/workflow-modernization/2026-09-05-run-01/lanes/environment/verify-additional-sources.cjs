@@ -1,0 +1,70 @@
+const { fixture } = require('./verify-signoff-request-order.cjs');
+const f = require('./statement-recipient-fixtures.cjs'), { db, fs, path, crypto, assert, helper } = f;
+const recovery = require(path.join(f.root, 'services/reconciliation/reconciliation-additional-sources.service.ts'));
+const preparation = require(path.join(f.root, 'services/reconciliation/reconciliation-run-preparation.service.ts'));
+const certification = require(path.join(f.root, 'services/reconciliation/payment-reconciliation-certification.service.ts'));
+const { captureProviderEvent } = require(path.join(f.root, 'services/payments/provider-event.service.ts'));
+const permissions = ['payments.reconciliation.read','payments.reconciliation.run','payments.reconciliation.sign','accounting.journal.read'];
+const files = ['services/reconciliation/reconciliation-additional-sources.service.ts','services/reconciliation/payment-reconciliation-run.service.ts','services/reconciliation/reconciliation-run-preparation-evidence.ts','services/reconciliation/reconciliation-run-preparation.service.ts','services/reconciliation/payment-reconciliation-certification.service.ts'];
+const hashes = () => Object.fromEntries(files.map(file => [file,crypto.createHash('sha256').update(fs.readFileSync(path.join(f.root,file))).digest('hex')]));
+const stamp=crypto.randomUUID(), report={at:new Date().toISOString(),sourceBefore:hashes(),checks:[]};
+const control=(x,actor=x.other.id)=>{const now=new Date();return {organizationId:x.org.id,actorId:actor,actorPermissions:permissions,now,lastAuthAt:now};};
+async function add(x,internal=true,reference=crypto.randomUUID()) {
+  const transactionId=crypto.randomUUID(),now=new Date();
+  if(internal)await db.paymentTransaction.create({data:{organizationId:x.org.id,providerAccountId:x.provider.id,amount:'25.00',currencyCode:'XAF',direction:'INBOUND',state:'CONFIRMED',occurredAt:now,confirmedAt:now,providerTransactionId:transactionId,providerReference:reference,sourceType:'SYNTHETIC_WORKFLOW_VERIFICATION'}});
+  const rawBody=JSON.stringify({eventId:'addition-'+transactionId,transactionId,reference,eventType:'PAYMENT_CONFIRMED',direction:'INBOUND',amount:'25.00',currency:'XAF',occurredAt:now.toISOString()});
+  const secret=crypto.randomBytes(32).toString('hex'),timestamp=String(now.getTime()),signature=crypto.createHmac('sha256',secret).update(`${timestamp}.${x.adapter.canonicalPayload(rawBody)}`).digest('hex');
+  await captureProviderEvent({organizationId:x.org.id,providerAccountId:x.provider.id,adapter:x.adapter,rawBody,headers:{'x-provider-timestamp':timestamp,'x-provider-signature':signature},secret,now,receivedAt:now});
+}
+async function snapshot(x) { return f.hash(await Promise.all(['reconciliationRun','matchRecord','paymentException','suspenseItem','paymentReconciliationInboxItem','ledgerAuditEvent','journalEntry','paymentTransaction'].map(model=>db[model].findMany({where:{organizationId:x.org.id},orderBy:{id:'asc'}})))); }
+async function main(){
+  await helper.withClient(f.target,helper.assertOwned);
+  const x=await fixture('addition-recovery'); await add(x);
+  const commandBase={runId:x.run.runId};
+  const preview=await recovery.previewAdditionalReconciliationSources(commandBase,control(x));
+  assert.deepEqual(preview.counts,{payments:1,providerEvents:1,statementLines:0});assert.equal(preview.canIncorporate,true);
+  const command={...commandBase,expectedRevision:preview.revision,reason:'Review additional captured payment evidence',idempotencyKey:crypto.randomUUID()};
+  const before=await snapshot(x), originalMatches=await db.matchRecord.findMany({where:{organizationId:x.org.id}});
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources(command,{...control(x),actorPermissions:[]}),/operator/);
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources(command,{...control(x),actorId:crypto.randomUUID()}),/operator/);
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources(command,{...control(x),organizationId:crypto.randomUUID()}),/operator/);
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources(command,{...control(x),lastAuthAt:new Date(0)}));
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources({...command,expectedRevision:'sha256:'+'0'.repeat(64)},control(x)),/sources changed/);
+  assert.equal(await snapshot(x),before);report.checks.push('Permissions, inactive/foreign actor and tenant, stale authentication and stale revision refuse without effects.');
+  const original=db.$transaction.bind(db);
+  db.$transaction=async(callback,options)=>original(tx=>callback(new Proxy(tx,{get(target,key){if(key!=='ledgerAuditEvent')return Reflect.get(target,key);return new Proxy(target.ledgerAuditEvent,{get(model,operation){return operation==='create'?async()=>{throw new Error('Controlled late audit failure')}:Reflect.get(model,operation);}});}})),options);
+  try{await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources(command,control(x)),/Controlled late audit/);}finally{db.$transaction=original;}
+  assert.equal(await snapshot(x),before);report.checks.push('Late audit failure rolls back matches, run totals, recovery receipt and notifications.');
+  const results=await Promise.allSettled([recovery.incorporateAdditionalReconciliationSources(command,control(x)),recovery.incorporateAdditionalReconciliationSources(command,control(x))]);
+  assert.ok(results.some(r=>r.status==='fulfilled'),JSON.stringify(results.map(r=>r.status==='rejected'?f.safe(r.reason):r.value)));
+  const retry=await recovery.incorporateAdditionalReconciliationSources(command,control(x));assert.equal(retry.replayed,true);
+  assert.equal(await db.paymentReconciliationInboxItem.count({where:{organizationId:x.org.id,idempotencyKey:'reconciliation-additional-sources:'+command.idempotencyKey}}),1);
+  assert.equal(await db.ledgerAuditEvent.count({where:{organizationId:x.org.id,action:'RECONCILIATION_ADDITIONAL_SOURCES'}}),1);
+  assert.equal(await db.matchRecord.count({where:{organizationId:x.org.id}}),2);
+  assert.deepEqual(await db.matchRecord.findMany({where:{id:{in:originalMatches.map(r=>r.id)}}}),originalMatches);
+  const updated=await db.reconciliationRun.findUniqueOrThrow({where:{id:x.run.runId}});
+  assert.equal(updated.status,'NEEDS_REVIEW');assert.equal(updated.totalInternalAmount.toFixed(2),'125.25');assert.equal(updated.totalExternalAmount.toFixed(2),'125.25');assert.equal(updated.matchedAmount.toFixed(2),'125.25');
+  assert.equal(await db.journalEntry.count({where:{organizationId:x.org.id}}),0);
+  assert.equal((await recovery.previewAdditionalReconciliationSources(commandBase,control(x))).canIncorporate,false);
+  await assert.rejects(()=>recovery.incorporateAdditionalReconciliationSources({...command,reason:'Different request intent'},control(x)),/idempotency/i);
+  report.checks.push('Concurrent recovery and response-loss retry retain one receipt/audit, preserve original match and add the exact pair once without journals.');
+  const preparing=await preparation.previewReconciliationPreparation(commandBase,control(x,x.maker.id));assert.equal(preparing.canPrepare,true);
+  await preparation.prepareReconciliationRun({...commandBase,expectedRevision:preparing.revision,reason:'Review all retained and additional sources',idempotencyKey:crypto.randomUUID()},control(x,x.maker.id));
+  const self=await certification.previewReconciliationSignOff({organizationId:x.org.id,runId:x.run.runId,actorId:x.other.id,actorPermissions:permissions});assert.equal(self.canSign,false);assert.equal(self.blocker,'INDEPENDENT_SIGNER');
+  const review=await certification.previewReconciliationSignOff({organizationId:x.org.id,runId:x.run.runId,actorId:x.signer.id,actorPermissions:permissions});assert.equal(review.canSign,true);
+  const now=new Date();await certification.signReconciliationRun({organizationId:x.org.id,runId:x.run.runId,signedById:x.signer.id,expectedSourceVersionHash:review.expectedSourceVersionHash,expectedEvidenceRevision:review.expectedEvidenceRevision,control:{actorPermissions:permissions,now,lastAuthAt:now}});
+  assert.equal((await recovery.incorporateAdditionalReconciliationSources(command,control(x))).currentStatus,'SIGNED');
+  assert.equal((await db.reconciliationRun.findUniqueOrThrow({where:{id:x.run.runId}})).status,'SIGNED');
+  report.checks.push('Fresh preparation required; recovery actor cannot sign; independent signature succeeds; old recovery retry leaves signed state intact.');
+  const collision=await fixture('addition-retained-reference'), payment=await db.paymentTransaction.findFirstOrThrow({where:{organizationId:collision.org.id}});
+  await add(collision,false,payment.providerReference);
+  const c=await recovery.previewAdditionalReconciliationSources({runId:collision.run.runId},control(collision));
+  await recovery.incorporateAdditionalReconciliationSources({runId:collision.run.runId,expectedRevision:c.revision,reason:'Review late evidence for retained source',idempotencyKey:crypto.randomUUID()},control(collision));
+  assert.equal(await db.matchRecord.count({where:{organizationId:collision.org.id}}),1);
+  const exception=await db.paymentException.findFirstOrThrow({where:{organizationId:collision.org.id}});assert.equal(exception.type,'MANUAL_REVIEW_REQUIRED');assert.equal(exception.evidence.rule,'ADDITIONAL_EVIDENCE_FOR_RETAINED_SOURCE');
+  assert.equal((await preparation.previewReconciliationPreparation({runId:collision.run.runId},control(collision))).canPrepare,false);
+  report.checks.push('A new callback sharing a retained payment reference becomes manual review, never a second automatic allocation or a false missing-payment claim.');
+  report.passed=true;
+}
+module.exports = { add };
+if (require.main === module) main().catch(error=>{report.passed=false;report.error=f.safe(error);process.exitCode=1;}).finally(async()=>{report.sourceAfter=hashes();report.sourceStable=JSON.stringify(report.sourceBefore)===JSON.stringify(report.sourceAfter);const output=path.join(__dirname,'additional-sources-'+stamp+'.json');fs.writeFileSync(output,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({output,...report}));await db.$disconnect();process.exit(process.exitCode||0);});

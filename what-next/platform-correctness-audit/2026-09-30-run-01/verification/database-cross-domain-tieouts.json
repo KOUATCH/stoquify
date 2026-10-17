@@ -1,0 +1,111 @@
+{
+  "capturedAt": "2026-09-30T14:32:19.462Z",
+  "scope": "Aggregate diagnostics on configured local database; no production inference and no business identifiers",
+  "checks": [
+    {
+      "name": "payrollRegisterCoverage",
+      "sql": "SELECT r.status::text,count(*)::text AS runs,count(*) FILTER(WHERE p.id IS NOT NULL)::text AS runs_with_payslips FROM payroll_runs r LEFT JOIN (SELECT DISTINCT \"payrollRunId\" AS id FROM payroll_payslips WHERE status::text<>'VOIDED') p ON p.id=r.id GROUP BY r.status ORDER BY r.status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "status": "DRAFT",
+          "runs": "24",
+          "runs_with_payslips": "24"
+        }
+      ]
+    },
+    {
+      "name": "apLedgerCoverage",
+      "sql": "SELECT status::text,count(*)::text AS invoices,count(*) FILTER(WHERE \"ledgerPostingBatchId\" IS NOT NULL)::text AS linked,count(*) FILTER(WHERE \"ledgerPostingBatchId\" IS NOT NULL AND NOT EXISTS(SELECT 1 FROM ledger_posting_batches b WHERE b.id=i.\"ledgerPostingBatchId\" AND b.\"organizationId\"=i.\"organizationId\"))::text AS invalid_links FROM supplier_invoices i GROUP BY status ORDER BY status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "status": "DRAFT",
+          "invoices": "24",
+          "linked": "0",
+          "invalid_links": "0"
+        }
+      ]
+    },
+    {
+      "name": "apAllocationCoverage",
+      "sql": "SELECT count(*)::text AS allocations,count(*) FILTER(WHERE a.\"organizationId\"<>p.\"organizationId\" OR a.\"organizationId\"<>i.\"organizationId\" OR p.\"supplierId\"<>i.\"supplierId\" OR p.currency<>i.currency)::text AS inconsistent_tenant_supplier_currency FROM supplier_payment_allocations a JOIN supplier_payments p ON p.id=a.\"supplierPaymentId\" JOIN supplier_invoices i ON i.id=a.\"supplierInvoiceId\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "allocations": "24",
+          "inconsistent_tenant_supplier_currency": "0"
+        }
+      ]
+    },
+    {
+      "name": "apAllocatedPayment",
+      "sql": "SELECT p.status::text,count(*)::text AS payments,count(*) FILTER(WHERE coalesce(a.total,0)>p.amount)::text AS overallocated FROM supplier_payments p LEFT JOIN(SELECT \"supplierPaymentId\",sum(amount) AS total FROM supplier_payment_allocations GROUP BY \"supplierPaymentId\") a ON a.\"supplierPaymentId\"=p.id GROUP BY p.status ORDER BY p.status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "status": "DRAFT",
+          "payments": "24",
+          "overallocated": "0"
+        }
+      ]
+    },
+    {
+      "name": "inventoryMovementCoverage",
+      "sql": "SELECT count(*)::text AS levels,count(*) FILTER(WHERE m.movements IS NULL)::text AS without_movements,count(*) FILTER(WHERE m.movements IS NOT NULL AND m.quantity<>v.\"quantityOnHand\")::text AS movement_projection_delta_candidates FROM inventory_levels v LEFT JOIN(SELECT \"itemId\",\"locationId\",count(*) AS movements,sum(quantity) AS quantity FROM inventory_transactions WHERE type::text NOT IN ('RESERVATION','RESERVATION_RELEASE') GROUP BY \"itemId\",\"locationId\") m ON m.\"itemId\"=v.\"itemId\" AND m.\"locationId\"=v.\"locationId\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "levels": "541",
+          "without_movements": "0",
+          "movement_projection_delta_candidates": "0"
+        }
+      ]
+    },
+    {
+      "name": "reconciliationCoverage",
+      "sql": "SELECT status::text,count(*)::text AS runs,count(*) FILTER(WHERE \"certificateHash\" IS NOT NULL)::text AS with_certificate_hash,count(*) FILTER(WHERE \"signedAt\" IS NOT NULL)::text AS with_signoff FROM reconciliation_runs GROUP BY status ORDER BY status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "status": "DRAFT",
+          "runs": "24",
+          "with_certificate_hash": "0",
+          "with_signoff": "0"
+        }
+      ]
+    },
+    {
+      "name": "sourceLinkCoverage",
+      "sql": "SELECT \"sourceType\"::text,status::text,count(*)::text AS batches FROM ledger_posting_batches GROUP BY \"sourceType\",status ORDER BY \"sourceType\",status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "sourceType": "OPENING_BALANCE",
+          "status": "POSTED",
+          "batches": "2"
+        },
+        {
+          "sourceType": "POS_PAYMENT",
+          "status": "POSTED",
+          "batches": "6"
+        },
+        {
+          "sourceType": "POS_SALE",
+          "status": "POSTED",
+          "batches": "30"
+        },
+        {
+          "sourceType": "STOCK_ADJUSTMENT",
+          "status": "POSTED",
+          "batches": "95"
+        }
+      ]
+    }
+  ],
+  "readOnly": [
+    {
+      "transaction_read_only": "on"
+    }
+  ]
+}

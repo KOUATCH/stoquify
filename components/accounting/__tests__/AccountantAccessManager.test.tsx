@@ -51,6 +51,35 @@ function grant(
 }
 
 describe("AccountantAccessManager", () => {
+  afterEach(() => jest.restoreAllMocks())
+
+  it("localizes grants without broadening revocation or changing expiry evidence", () => {
+    render(<AccountantAccessManager locale="fr" initialGrants={[grant("active", "ACTIVE"), grant("scheduled", "SCHEDULED"), grant("expired", "EXPIRED"), grant("revoked", "REVOKED")]} />)
+    expect(screen.getByRole("heading", { name: "Inviter un comptable" })).toBeInTheDocument()
+    expect(screen.getByLabelText("Empreinte du justificatif de consentement signé")).toBeRequired()
+    expect(screen.getByLabelText("Expiration")).toBeRequired()
+    expect(screen.getByRole("option", { name: "Lecture seule" })).toHaveValue("READ_ONLY")
+    expect(screen.getByRole("option", { name: "Réviseur" })).toHaveValue("REVIEWER")
+    expect(screen.getByText("Planifié")).toBeInTheDocument()
+    expect(screen.getAllByRole("button", { name: "Révoquer" })).toHaveLength(2)
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Planifié" } })
+    expect(screen.getByText("Firm scheduled")).toBeVisible()
+    expect(screen.queryByText("Firm active")).not.toBeInTheDocument()
+    expect(document.querySelector("time")).toHaveAttribute("datetime", "2026-12-31T23:59:59.000Z")
+    expect(mockGrantAction).not.toHaveBeenCalled()
+    expect(mockRevokeAction).not.toHaveBeenCalled()
+  })
+
+  it("reports an expiry race in French without claiming revocation", async () => {
+    const prompt = jest.spyOn(window, "prompt").mockReturnValue("Fin du mandat")
+    mockRevokeAction.mockResolvedValue({ success: true, data: grant("active", "EXPIRED") })
+    render(<AccountantAccessManager locale="fr" initialGrants={[grant("active", "ACTIVE")]} />)
+    fireEvent.click(screen.getByRole("button", { name: "Révoquer" }))
+    expect(prompt).toHaveBeenCalledWith("Motif de révocation")
+    expect(await screen.findByRole("status")).toHaveTextContent("L’accès comptable avait déjà expiré.")
+    expect(screen.queryByText("Accès comptable révoqué.")).not.toBeInTheDocument()
+    expect(mockRevokeAction).toHaveBeenCalledWith({ grantId: "active", reason: "Fin du mandat" })
+  })
   beforeEach(() => {
     jest.clearAllMocks()
     mockGrantAction.mockResolvedValue({
@@ -83,7 +112,7 @@ describe("AccountantAccessManager", () => {
       />,
     )
 
-    expect(screen.getByText("SCHEDULED")).toBeInTheDocument()
+    expect(screen.getByText("Scheduled")).toBeInTheDocument()
     expect(screen.getAllByRole("button", { name: "Revoke" })).toHaveLength(2)
   })
 

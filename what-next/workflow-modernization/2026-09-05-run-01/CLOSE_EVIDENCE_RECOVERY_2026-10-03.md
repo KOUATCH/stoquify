@@ -1,0 +1,38 @@
+# Close evidence recovery: expired retry and actual interface verification
+
+Primary FA-CASH-COMMAND; supporting FA-CLOSE-PACK. The previous turn was progress: it integrated the missing-evidence interface and verified four persisted service/read-model checks. This continuation preserves the full workflow objective and existing workflow boundaries. No workflow closure is claimed.
+
+Baseline: branch `codex/migration-control-plane-release-2026-08-29`, HEAD `62a56036a5ac9b37236a20c9b148052199069479`; register SHA256 `e0f6c502d1ce2611852c5c3becf552215fa4da9a1bdc1acd9b26e3d7d3129bc2`. 270 workflows, 17 families, four Complete—verified, two In progress, 264 Queued, 191 unmapped entries. Discovery is incomplete. Unrelated changes and the rejected manual-posting proposal remain untouched.
+
+## Reproduced defect and correction
+
+An exact retry of a committed missing-evidence request failed when its due date had arrived. The service checked the deadline before looking for the saved correlation ID. This prevented an operator from confirming a previously committed request after losing its response.
+
+`requestMissingCloseEvidence` now validates the date format, resolves current authorized client access, then checks the saved request. An exact existing request returns its original record, including after its deadline. A changed payload still fails the matching check. A new request must have a future deadline at the transaction attempt. The original deadline and all retained records remain unchanged.
+
+Acceptance boundaries: exact replay before/at/after the deadline; no duplicate comment, assignment, audit or business event; changed-payload rejection; invalid-date rejection; no newly created expired request. This correction does not grant access to a revoked actor or change the request/response authority-concurrency implementation.
+
+## Verification
+
+- Reproduction: `evidence/close-evidence-recovery-regression-7c416576-d421-4c02-9bd7-cb3a21441430.json` — three expected failures, 19 passed, 103 unselected. Failures show the two expired exact retries and the changed-payload check masked by the deadline check.
+- Final focused suites: `evidence/close-evidence-recovery-jest-c9bf1e19-7870-4a44-8d8d-dad3bda5b555.json` — 183 passed across five suites, no skips or failures. Includes Close service, read model, actions and interface suites.
+- TypeScript: `evidence/close-evidence-recovery-typecheck-78bfd929-c4fc-4369-ae5f-78bec44e4a04.json` — passed, no emit.
+- Lint: `evidence/close-evidence-recovery-lint-48bc2910-6f41-4040-9bbc-7701ee3ac7ea.json` — passed.
+- Actual database: `lanes/environment/close-evidence-workflow-runtime-f107cbd1-062f-451f-8fa0-be1aaa51ba59.json` — four checks passed. The request genuinely expired on the clock before replay. Exact replay, new-expired rejection and altered-payload rejection left comments, finding assignment, audit and business events unchanged. Historical recovery, ownership, independent acceptance and original-evidence retention also passed. Financial and outside-fixture observations remained unchanged; source hashes stayed stable.
+- Actual EN/FR browser: both journeys passed in `lanes/environment/close-evidence-browser-f9cbd785-de8b-4a06-a3d9-9cf39e491dbe.json`, using the inspected `close-evidence-workflow-browser.cjs`, a receipt-bound synthetic fixture and listener PID 4712 at `127.0.0.1:3110`. Each journey verified draft restoration, persisted request, assigned response, absent recipient review control, source-bound independent review, genuine stale-session refusal, password verification without acceptance, explicit retry and retained original evidence. Financial and outside-fixture snapshots stayed unchanged; source hashes stayed stable. There were no captured page errors. Recorded screenshots cover EN desktop and FR mobile, with final-state reflow at 1440, 768 and 320 pixels and reduced-motion preference. Primary actions used keyboard Enter; assertions verified focus on recovery messages and the password field. This is bounded browser evidence, not full keyboard/screen-reader/zoom or accessibility certification. Development navigation observations ranged from 7.064 to 9.375 seconds; no production performance claim is made.
+
+The first receipt, `lanes/environment/close-evidence-browser-c2deb4b3-72a9-4515-abe7-b0e3918ff59b.json`, failed before submission: the exact label-text selector did not locate the rendered select; the second journey's title selector matched two retained historical findings. Source and outside-fixture snapshots stayed stable. The EN screenshot was visually inspected: the form and select were present in the inherited dashboard theme. The driver now uses accessible roles/names and the verified finding order rather than assuming finding titles are unique.
+
+Prior receipts in `CLOSE_EVIDENCE_WORKFLOW_2026-10-03.md` describe the previous source version. This report's receipts bind the expired-retry correction. No migration, seed, reset, production deployment, live activation, external delivery or real payment occurred.
+
+Second browser attempt `close-evidence-browser-fa738733-ad73-4ea0-9714-f2971004aadb` passed the dropdown accessible-name selection, then the exact textarea-label selector failed after reload in both languages. Visual inspection of the EN failure screenshot confirms that the selected owner, deadline and full text were restored. The wrapper label's text includes the restored textarea content; role/name selection corrected the verifier. This is not evidence that the draft was lost. Its failed screenshots remain retained. No product change was made to obtain the browser pass.
+
+Visual inspection of the final EN desktop and FR 320-pixel explicit-retry screenshots confirmed legible wrapped controls, visible notice focus and reachable actions in the inherited dashboard theme. The French screenshot also exposes remaining localization work: source-owned historical finding titles still appear in English. Multiple historical findings can have identical titles without a visible assessment date. This remains product work; role-based test selection does not resolve that user-facing ambiguity.
+
+After verification, the owned listener PID 4712 was stopped only after rechecking its loopback port and parent PID 28304's workspace Next.js development command. The checkpoint was published with predecessor/result SHA256 checks and retained backups in `evidence/close-recovery-checkpoint-c8fb7174-d5b9-4cdb-8a1b-3658d504660e/`. `CURRENT_PROGRESS.md` is 441 words; workflow statuses and denominator are unchanged.
+
+## Operator behavior and remaining scope
+
+After an uncertain request result, keep the saved request and retry it exactly; a saved deadline is not extended. A new request still requires a future deadline. The recipient answers in the selected period's Close center. A different authorized reviewer evaluates a current replacement observation and explicitly accepts it after any required identity verification. Identity verification alone is not acceptance. Original missing evidence stays retained.
+
+Remaining: historical finding localization and assessment context, full request/response permission concurrency, complete access beyond bounded lists, requester tracking, full accessibility/zoom coverage, and original cash/purchase/Close handoff criteria. The full goal, primary workflow and supporting workflow remain in progress. Platform/backend/data, security, UX/localization/accessibility, accounting/audit, quality and operations reviews apply; no statutory, payroll, inventory, AI or commercial rule changed, so those changes are not applicable. These checks do not establish professional certification.

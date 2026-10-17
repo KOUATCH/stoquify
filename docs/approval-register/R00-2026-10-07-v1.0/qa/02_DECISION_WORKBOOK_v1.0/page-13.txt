@@ -1,0 +1,25 @@
+STOQUIFY | R00 | DRAFT - AWAITING HUMAN VALIDATION
+R00 WORKBOOK | v1.0 | 7 October 2026 | 13
+D07 Operational service objectives
+Canonical definition: Deployment workload, latency, error, backlog, cost, RPO/RTO and alert objectives. [S1]
+Agree the operating conditions and measurable service limits before judging operational readiness. RPO means
+acceptable data-loss window; RTO means acceptable recovery time.
+Already confirmed
+Current evidence does not qualify a fresh integrated build/package, complete browser journeys or production
+recovery. No measured production service objectives are approved here. [S2, S3]
+Proposal for your review
+Proposed: first measure representative workloads in a controlled environment, then agree explicit thresholds and
+measurement windows with product, finance and SRE. Do not publish unmeasured service promises.
+Alternatives and consequences
+Tighter latency/recovery targets generally require more capacity, recovery automation and support expenditure.
+A smaller bounded cohort may reduce the initial operating envelope but still needs measured acceptance.
+Evidence to inspect
+Deployment topology; workload model; reproducible baseline measurements; restore drill; worker/backlog
+monitoring; alert delivery and cost model. [S1, S2]
+Decision timing and deferral
+Leave unknown thresholds blank with a measurement owner/date. That service promise remains unqualified.
+Record zero silent event loss, duplicate economic effects and unauthorized access as proposed invariants, not
+measured achievements.
+Accountable roles: SRE + product + finance. Review: Product owner and finance owner; independent QA/technical
+evidence review.
+Due gate: R23/R30 before measuring operational acceptance against agreed limits.

@@ -7,7 +7,6 @@ import {
 import { db } from "@/prisma/db"
 import {
   ApplicationError,
-  NotFoundError,
   isApplicationError,
 } from "@/services/_shared/action-errors"
 
@@ -37,6 +36,17 @@ export type BusinessEventOutboxMessage = {
   lockedAt: Date | null
   lockedBy: string | null
   correlationId: string | null
+}
+
+type ClaimedBusinessEventOutboxMessage = BusinessEventOutboxMessage & {
+  status: "LOCKED"
+  lockedAt: Date
+  lockedBy: string
+}
+
+type BusinessEventOutboxLease = {
+  attempts: number
+  lockedAt: Date
 }
 
 type OutboxMessageWithEvent = BusinessEventOutboxMessage & {
@@ -86,6 +96,14 @@ function requiredScope(value: string, label: string) {
     throw new ApplicationError("VALIDATION_ERROR", `${label} is required.`, 400)
   }
   return normalized
+}
+
+function requiredLease(input: BusinessEventOutboxLease) {
+  if (!Number.isSafeInteger(input.attempts) || input.attempts < 1 ||
+    !(input.lockedAt instanceof Date) || !Number.isFinite(input.lockedAt.getTime())) {
+    throw new ApplicationError("VALIDATION_ERROR", "An exact outbox lease is required.", 400)
+  }
+  return { attempts: input.attempts, lockedAt: new Date(input.lockedAt) }
 }
 
 function retryAt(attempts: number, now: Date, baseDelayMs = 15_000) {
@@ -164,7 +182,7 @@ export async function claimBusinessEventOutboxMessages(
     },
   })
 
-  const claimed: BusinessEventOutboxMessage[] = []
+  const claimed: ClaimedBusinessEventOutboxMessage[] = []
   for (const candidate of candidates) {
     if (claimed.length >= limit) break
 
@@ -231,7 +249,7 @@ export async function claimBusinessEventOutboxMessages(
 }
 
 export async function markBusinessEventOutboxDelivered(
-  input: {
+  input: BusinessEventOutboxLease & {
     organizationId: string
     workerId: string
     messageId: string
@@ -245,6 +263,7 @@ export async function markBusinessEventOutboxDelivered(
   )
   const workerId = requiredScope(input.workerId, "Worker identity")
   const messageId = requiredScope(input.messageId, "Outbox message")
+  const lease = requiredLease(input)
   const now = input.now ?? new Date()
 
   return client.$transaction(async (tx) => {
@@ -254,13 +273,11 @@ export async function markBusinessEventOutboxDelivered(
         organizationId,
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
+        ...lease,
       },
       include: { businessEvent: true },
     })
-    if (!message)
-      throw new NotFoundError(
-        "Claimed business-event outbox message was not found.",
-      )
+    if (!message) return { messageId, status: "LEASE_LOST" as const }
 
     const updated = await tx.businessEventOutbox.updateMany({
       where: {
@@ -268,6 +285,7 @@ export async function markBusinessEventOutboxDelivered(
         organizationId,
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
+        ...lease,
       },
       data: {
         status: BusinessOutboxStatus.SENT,
@@ -279,10 +297,7 @@ export async function markBusinessEventOutboxDelivered(
         lastErrorMessage: null,
       },
     })
-    if (updated.count !== 1)
-      throw new NotFoundError(
-        "Claimed business-event outbox message was not found.",
-      )
+    if (updated.count !== 1) return { messageId, status: "LEASE_LOST" as const }
 
     await tx.businessEventAudit.create({
       data: {
@@ -307,7 +322,7 @@ export async function markBusinessEventOutboxDelivered(
 }
 
 export async function markBusinessEventOutboxFailed(
-  input: {
+  input: BusinessEventOutboxLease & {
     organizationId: string
     workerId: string
     messageId: string
@@ -322,6 +337,7 @@ export async function markBusinessEventOutboxFailed(
   )
   const workerId = requiredScope(input.workerId, "Worker identity")
   const messageId = requiredScope(input.messageId, "Outbox message")
+  const lease = requiredLease(input)
   const now = input.now ?? new Date()
   const failure = safeFailure(input.error)
 
@@ -332,13 +348,11 @@ export async function markBusinessEventOutboxFailed(
         organizationId,
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
+        ...lease,
       },
       include: { businessEvent: true },
     })
-    if (!message)
-      throw new NotFoundError(
-        "Claimed business-event outbox message was not found.",
-      )
+    if (!message) return { messageId, status: "LEASE_LOST" as const }
 
     const exhausted = message.attempts >= message.maxAttempts
     const status = exhausted
@@ -352,6 +366,7 @@ export async function markBusinessEventOutboxFailed(
         organizationId,
         status: BusinessOutboxStatus.LOCKED,
         lockedBy: workerId,
+        ...lease,
       },
       data: {
         status,
@@ -363,10 +378,7 @@ export async function markBusinessEventOutboxFailed(
         lastErrorMessage: failure.message,
       },
     })
-    if (updated.count !== 1)
-      throw new NotFoundError(
-        "Claimed business-event outbox message was not found.",
-      )
+    if (updated.count !== 1) return { messageId, status: "LEASE_LOST" as const }
 
     await tx.businessEventAudit.create({
       data: {
@@ -444,7 +456,7 @@ export async function getBusinessEventOutboxReadiness(
 
 export async function runBusinessEventOutboxWorker(
   input: ClaimBusinessEventOutboxInput,
-  handler: (message: BusinessEventOutboxMessage) => Promise<void>,
+  handler: (message: ClaimedBusinessEventOutboxMessage) => Promise<void>,
   client: BusinessEventOutboxClient = defaultOutboxClient,
 ) {
   const messages = await claimBusinessEventOutboxMessages(input, client)
@@ -459,6 +471,8 @@ export async function runBusinessEventOutboxWorker(
             organizationId: message.organizationId,
             workerId: input.workerId,
             messageId: message.id,
+            attempts: message.attempts,
+            lockedAt: message.lockedAt,
             now: input.now,
           },
           client,
@@ -471,6 +485,8 @@ export async function runBusinessEventOutboxWorker(
             organizationId: message.organizationId,
             workerId: input.workerId,
             messageId: message.id,
+            attempts: message.attempts,
+            lockedAt: message.lockedAt,
             error,
             now: input.now,
           },

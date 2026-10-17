@@ -1,0 +1,21 @@
+{
+  "name": "baseline-payroll-gate",
+  "command": [
+    "node",
+    "scripts/payroll-trust-spine-readiness-gate.js",
+    "--mode",
+    "fail",
+    "--out",
+    "what-next/platform-remediation/2026-09-30-run-01/baseline-payroll-gate.md",
+    "--json-out",
+    "what-next/platform-remediation/2026-09-30-run-01/baseline-payroll-gate.json"
+  ],
+  "startedAt": "2026-09-30T20:25:00.789Z",
+  "endedAt": "2026-09-30T20:25:01.758Z",
+  "code": 1,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 795,
+  "stderrBytes": 0
+}

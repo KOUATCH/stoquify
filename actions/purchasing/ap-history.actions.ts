@@ -60,6 +60,9 @@ export async function getAPHistoryAction(input: unknown = {}) {
       actorPermissions: ctx.permissions,
       filters: parsed.filters,
     });
+    const current = await requireAnyPermission(apReadPermissions, { resource: "APHistory" });
+    if (current.orgId !== ctx.orgId || current.userId !== ctx.userId) throw new ForbiddenError("History workspace changed. Refresh the current workspace.");
+    await enforceAPHistoryModule(current);
     return ok(history);
   } catch (error) {
     const safe = toSafeActionError(error instanceof HistoryCursorError && error.code !== "not_configured" ? new BusinessRuleError("Invalid history cursor or filters. Refresh the history.", "VALIDATION_ERROR") : error);

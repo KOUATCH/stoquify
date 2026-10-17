@@ -103,12 +103,11 @@ export function WorkflowAtlas() {
   }
 
   return (
-    <main data-workflow-atlas>
+    <main className="public-contour-page" data-workflow-atlas>
       <section
         id="workflow-atlas"
         className="section-divider relative isolate overflow-hidden bg-[var(--ink-0)] px-6 py-14 lg:px-8"
       >
-        <div className="landing-grid-bg absolute inset-0 opacity-70" aria-hidden="true" />
         <div className="relative mx-auto max-w-7xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(24rem,0.85fr)] lg:items-stretch">
             <div className="flex min-h-[24rem] flex-col justify-center">
@@ -334,7 +333,7 @@ export function WorkflowAtlas() {
         </div>
       </section>
 
-      <section className="surface-grid bg-[var(--paper-0)] px-6 py-16 text-[var(--color-text-on-paper)] lg:px-8" data-workflow-launchpad>
+      <section className="bg-[var(--paper-0)] px-6 py-16 text-[var(--color-text-on-paper)] lg:px-8" data-workflow-launchpad>
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
             <div>

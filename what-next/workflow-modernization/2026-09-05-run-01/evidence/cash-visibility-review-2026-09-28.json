@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-28T09:00:55.571Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_COMMAND_VISIBILITY_2026-09-28.md",
+  "sourceHashes": {
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "2cdb8e86b4b5e6b730cecca1723400ef942070edfbe7291b8dc97a10e67a0bcc",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5"
+  },
+  "receipts": [
+    {
+      "file": "evidence/cash-visibility-checks-c19d425c-ef36-43e6-92cb-718f9f21d9a8.json",
+      "sha256": "ae8cfbf0936a20d2557c13de5ad56f26f807951cb131ff4b82e0474b5e33bdd2"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd.json",
+      "sha256": "9e0622948003414b8c3a182b56f97760d27b2158dc334b340b7faa0fd320a2c3"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-allowed.png",
+      "sha256": "2f686e42a54f2a7522862ada8951d42b397a797f648e13794e65ffd9f2c2d297"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-allowed.png",
+      "sha256": "ce9033fd189afbec2b502282d79a9ffe88e7a41be4681ad8434ceb7ec50f3241"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-permission-revoked.png",
+      "sha256": "fc70fbb0a6c107f3a6e7381e6f59674b58d3fa84d87847f9c6d53a4b45625420"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-permission-revoked.png",
+      "sha256": "42f4f8391504567e44ba71045ad2ef02aa3ae401562bbf383ad1df6e2e4536b6"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-module-suspended.png",
+      "sha256": "f786ef859b7e10c70c4cf16165776ca17b412cf9f9b12e62542bc030d5f4f288"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-module-suspended.png",
+      "sha256": "7102bc45971b30800d5e93f702032d2d6d14fdd6307f95a177383fcc12c6cdde"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-retained-read.png",
+      "sha256": "d724b9edee15095fa904467e3855ddfbe418f1696409496811103863c1f17f51"
+    },
+    {
+      "file": "lanes/environment/cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-retained-read.png",
+      "sha256": "156c8766826583f63af71b58445c8978439c1bc2e6c6c67d89576afbfa882e6a"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "unit_proof_identifiers_authorized_before_discovery",
+    "unit_module_admission_ordering_and_request_revocation",
+    "unit_tenant_period_and_posted_journal_query_contract",
+    "unit_read_intent_and_propagated_query_failures",
+    "unit_domain_projection_and_hidden_source_invariance",
+    "unit_independent_payroll_subdomain_permissions",
+    "owned_en_fr_payroll_permission_module_revocation_retained_read",
+    "owned_foreign_payroll_balance_absent_from_dto_and_route_payload",
+    "owned_cash_read_preserves_business_records"
+  ],
+  "remaining": [
+    "Domain aggregates are projected before browser serialization; broad source snapshots are still loaded before domain admission. Implement scoped source reads and useful domain-specific provenance without duplicate queries.",
+    "Cash Command proof drawer identity, concurrent request order, transport recovery and scope withdrawal require correction and runtime verification.",
+    "Actual proof discovery/opening and recovery need database/browser verification; aggregate runtime proof does not establish that lifecycle.",
+    "Payroll destination permissions disagree with some card links; the stock card targets a nonexistent inventory/stock route. Verify and correct authorized handoffs.",
+    "Complete EN/FR service and shared-component copy, honest current-observation labels, keyboard/contrast/reflow and route-latency investigation. Synthetic read fixtures do not verify genuine posted payroll."
+  ],
+  "limits": [
+    "Synthetic DRAFT payroll read fixtures; no approval, posting or payment execution claimed.",
+    "Eight views cover aggregate access, not full Cash Command lifecycle or localization.",
+    "Development interaction times include compilation and screenshot/assertion work; no production latency claim."
+  ],
+  "interruptedAttempt": "Earlier session 56446 lost its tool host and retained no result. On Sept 28 no matching owned verifier process or receipt remained; a new isolated fixture run produced the current receipt."
+}

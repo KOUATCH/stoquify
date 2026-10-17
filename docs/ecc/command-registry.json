@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "reviewedOn": "2026-10-07",
+  "scope": "Small repository-owned command contract, not an ECC/Codex schema or whole-repository safety certification. Only auditAllowed commands with unchanged reviewed inputs can be selected. Omitted commands always require review. Denied entries intentionally do not certify delegated helpers.",
+  "requiredReferences": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/ecc/WORKFLOW.md",
+    "docs/ecc/test-lanes.md",
+    "design-system/stoquify/MASTER.md",
+    "docs/ecc/skill-routing.md",
+    "docs/ecc/maintenance.md"
+  ],
+  "commands": {
+    "dev": {
+      "script": "node scripts/dev-app-safe.js",
+      "auditAllowed": false,
+      "reason": "Starts the local application with fresh isolated build output. The pre-hook may generate Prisma Client; application requests can access configured services. Not a read-only audit command.",
+      "lifecycle": {
+        "pre": "npm run prisma:ensure",
+        "post": null
+      },
+      "files": {}
+    },
+    "dev:turbopack": {
+      "script": "node scripts/dev-app-safe.js --turbopack",
+      "auditAllowed": false,
+      "reason": "Starts the local application with Turbopack and fresh isolated build output. The pre-hook may generate Prisma Client; application requests can access configured services. Not a read-only audit command.",
+      "lifecycle": {
+        "pre": "npm run prisma:ensure",
+        "post": null
+      },
+      "files": {}
+    },
+    "test:dev:startup": {
+      "script": "node --test scripts/__tests__/dev-app-safe.node-test.cjs",
+      "auditAllowed": true,
+      "reason": "Node tests create/remove only owned OS temporary fixtures and exercise Next config with mocked Webpack inputs. No application startup, environment-file loading, Prisma preparation, database or network requests.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {
+        "scripts/dev-app-safe.js": "b0a1fe5fc5ff3923c7430ae2813e1df816b13725176754d78b208b723535f52f",
+        "scripts/__tests__/dev-app-safe.node-test.cjs": "4e72638209dfe7e885e7ebfcab53105d953a4fc02850244e79834a03ce44d0de",
+        "next.config.mjs": "fac541a56d635599b44b86fe33fcfa8bff45289b48d21135ee03b49f2bc82641"
+      }
+    },
+    "agent:workflow:check": {
+      "script": "node scripts/verify-agent-workflow-contract.js",
+      "auditAllowed": true,
+      "reason": "Read-only manifest/reference/hash validation. Does not execute selected commands, load environment files, or contact services.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {
+        "scripts/verify-agent-workflow-contract.js": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29"
+      }
+    },
+    "agent:workflow:test": {
+      "script": "node node_modules/jest/bin/jest.js --config scripts/jest.agent-workflow.config.cjs --runInBand --no-cache",
+      "auditAllowed": true,
+      "reason": "Isolated Node Jest fixture tests. Creates and removes only its OS temporary fixtures; no application setup, database, or network. Uses installed Jest.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {
+        "scripts/verify-agent-workflow-contract.js": "cb86a260bf7bd5924e06cf9ba444cd07d3bab57832f76c8d12e31b7e4e61db29",
+        "scripts/jest.agent-workflow.config.cjs": "8dbb482b5fcc32460c4b7eceada1d278a927ffac1bb92b31e44fef271a3f1f76",
+        "scripts/__tests__/verify-agent-workflow-contract.test.js": "0f8a86263c2f7c9b6a792e7d97bc7331bf5c03613720c141f52169dc4ad7d066"
+      }
+    },
+    "build": {
+      "script": "npm run release:secrets:preflight && npm run build:linted",
+      "auditAllowed": false,
+      "reason": "Validates release secrets and builds application output; loads application configuration. No schema promotion. Not a read-only audit.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "verify:ci": {
+      "script": "npm run ci:release:gate && npm run prisma:migrate:deploy && npm run prisma:migration:history:health && npm run prisma:migrate:status && npm run verify:repo",
+      "auditAllowed": false,
+      "reason": "Includes migration deploy, migration history/database checks, build and broad tests. Prohibited for read-only audits.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "prisma:migrate:deploy": {
+      "script": "prisma migrate deploy",
+      "auditAllowed": false,
+      "reason": "Changes the configured database schema. Requires explicit reviewed target and release workflow.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "prisma:migrate:deploy:safe": {
+      "script": "node scripts/prisma-production-migration-gate.js --mode execute --environment auto --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
+      "auditAllowed": false,
+      "reason": "Executes migration gate/deployment and writes evidence. A safety gate does not make deployment read-only.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "seed:e2e:payroll": {
+      "script": "node scripts/seed-payroll-e2e-user.js",
+      "auditAllowed": false,
+      "reason": "Writes database fixture users. Requires an explicitly disposable target.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "test:purchase-receiving:postgres": {
+      "script": "node scripts/run-purchase-receiving-postgres-tests.js",
+      "auditAllowed": false,
+      "reason": "Drops/recreates a local certification schema, runs db push and migration SQL, executes database tests and drops schema. Requires reviewed disposable target.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "payroll:trust-spine:postgres": {
+      "script": "npm run payroll:immutability:prepare && node scripts/with-payroll-immutability-test-db.js -- node scripts/payroll-trust-spine-postgres-certification.js --out what-next/payroll/payroll-trust-spine-postgres-certification.md --json-out what-next/payroll/payroll-trust-spine-postgres-certification.json",
+      "auditAllowed": false,
+      "reason": "Prepares/resets a test database before PostgreSQL certification and writes evidence. Requires reviewed disposable target.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "test:ecc:pilots": {
+      "script": "node node_modules/jest/bin/jest.js --config jest.ecc-pilots.config.cjs --runInBand --no-cache",
+      "auditAllowed": true,
+      "reason": "Bounded mocked-unit/jsdom and static-source pilot suites. Uses installed Next/SWC/Jest and generated Prisma; nextJest without dir avoids application Next config, dotenv and tsconfig loading. Existing setup mocks persistence. Temporary Jest filesystem work is possible; no database/network intended. Application import changes still require review.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {
+        "jest.ecc-pilots.config.cjs": "c649e25dd823e3e1b76f2747935cf71efaa3c721d4a93aed6a794597bd7394bb",
+        "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+        "lib/security/__tests__/rbac.test.ts": "2f2d43d7556e2846d5df238c952179c313cf694705625b2c9a0088da1d5c2931",
+        "services/pos/__tests__/checkout-lifecycle.service.test.ts": "f944d7ded1d168186eb802ceb094ff76ef48489667ff0e69ba875fb570b16fa0",
+        "services/purchasing/__tests__/payment-release-evidence.test.ts": "32a74254e418a785ffa3258be5ceef686783c7b722f758094c5f90dfba849d2d",
+        "services/inventory/__tests__/inventory-stock-event.service.test.ts": "52b5eaa255ba2a647678b9120012618b26a8d178c3e322dc37130a5e0e73ebf9",
+        "services/accounting/__tests__/close-assurance-current-proof.test.ts": "b0c5ea4a8e0c2ed56c1f56372269c37277a13de5112b3f0f973affdeb3a7ae48",
+        "services/payroll/__tests__/payroll-immutability-migration.test.ts": "bc89fd20e8010fa66f7bf7aaec219df6a7cfa5c1094e820882c98ffc37df712b",
+        "scripts/__tests__/public-color-contract.test.js": "a272a503537c5e61cb35f53c4c52915800c1ea2c6256cdde9da89c2c1225521f",
+        "components/dashboard/__tests__/DashboardRouteState.test.tsx": "f5dcb0a281d9797ecbecfd373f5a562583927c7ade8bc5f431261025153b3319",
+        "components/auth/__tests__/LoginSubmissionSafety.test.tsx": "4a112b34581fe7509fb95b16763fe629783b1cd3da401f2c94365dda3b6b7c24",
+        "components/auth/v2/__tests__/PasswordRecoveryForms.test.tsx": "08a14eb19705ffa044d6e2d96818eb01c21e35a0b044d33df421330dffe014e2"
+      }
+    },
+    "release:artifact": {
+      "script": "node scripts/release-artifact.cjs prepare",
+      "auditAllowed": false,
+      "reason": "Builds application and writes a new standalone artifact with source/content digests. Requires isolated build environment.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "release:artifact:verify": {
+      "script": "node scripts/release-artifact.cjs verify",
+      "auditAllowed": false,
+      "reason": "Reads artifact/source files and validates digests; requires explicit artifact path and trusted digest; not a generic audit lane.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
+    "release:schema:promote": {
+      "script": "node scripts/promote-release-schema.cjs",
+      "auditAllowed": false,
+      "reason": "Mutating target-bound migration stage; verifies trusted artifact digest and existing secret/migration gates under a database advisory lock.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    }
+  }
+}

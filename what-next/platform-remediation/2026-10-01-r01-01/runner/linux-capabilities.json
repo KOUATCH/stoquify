@@ -1,0 +1,74 @@
+{
+  "capturedAt": "2026-10-01 08:25:00 UTC",
+  "scope": "Read-only Linux execution capability discovery. No installs, service starts, repository changes, push, CI dispatch, or database access.",
+  "repository": {
+    "host": "github.com",
+    "name": "kouatch/stoquify",
+    "source": "sanitized git remote identity"
+  },
+  "wsl": {
+    "executablePresent": true,
+    "installed": false,
+    "probes": [
+      {
+        "command": "wsl --list --quiet",
+        "timeoutMs": 12000,
+        "exitCode": 1
+      },
+      {
+        "command": "wsl --status",
+        "timeoutMs": 12000,
+        "exitCode": 50
+      }
+    ],
+    "outputClassification": "Both probes explicitly report Windows Subsystem for Linux is not installed."
+  },
+  "containers": {
+    "dockerOnPath": false,
+    "podmanOnPath": false,
+    "standardInstallPathsFound": false,
+    "checkedLocations": [
+      "Program Files/Docker/Docker/resources/bin",
+      "Program Files/RedHat/Podman",
+      "Program Files/Podman",
+      "LocalAppData/Programs/Docker/Docker/resources/bin",
+      "LocalAppData/Programs/Podman",
+      "ProgramData/chocolatey/bin"
+    ],
+    "limitation": "No executable found in PATH or these standard locations; no exhaustive disk search or daemon query."
+  },
+  "githubCli": {
+    "present": true,
+    "version": "2.81.0",
+    "authenticated": false,
+    "normalAuthStatusExitCode": 1,
+    "unsandboxedReadOnlyConfirmation": {
+      "exitCode": 1,
+      "notLoggedIn": true
+    },
+    "repositoryMetadataProbe": {
+      "command": "gh api repos/kouatch/stoquify (selected metadata fields only)",
+      "exitCode": 4,
+      "classification": "authentication-required"
+    },
+    "tokensPrinted": false,
+    "remoteRepositoryPermissions": "NOT_VERIFIED",
+    "remoteWorkflowState": "NOT_VERIFIED"
+  },
+  "localCiConfiguration": {
+    "path": ".github/workflows/ci.yml",
+    "runner": "ubuntu-latest",
+    "node": "20",
+    "install": "npm ci"
+  },
+  "conclusion": {
+    "localLinuxRoute": "NOT_AVAILABLE_IN_DISCOVERED_CAPABILITIES",
+    "remoteLinuxRoute": "Existing GitHub Actions workflow is the practical route after GitHub CLI authentication and repository/Actions access verification.",
+    "prerequisites": [
+      "Authenticate GitHub CLI interactively without sharing a token in chat.",
+      "Verify access to kouatch/stoquify and permission to run the intended workflow.",
+      "Make the frozen candidate available as the exact remote ref under separately authorized push/CI actions, or provide an existing Linux execution host."
+    ],
+    "noRepeatedWindowsPackagingWorkaround": true
+  }
+}

@@ -34,6 +34,8 @@ function workerInput(overrides: Record<string, unknown> = {}) {
     payrollPaymentBatchId: "batch-1",
     matchRecordId: "match-1",
     actorId: "controller-1",
+    sessionId: "verified-session",
+    sessionToken: "verified-token",
     actorPermissions: ["payroll.payments.reconcile"],
     approvedById: "approver-1",
     sourceRegisterHash: "sha256:register",
@@ -146,6 +148,8 @@ describe("processPayrollProviderInboxSettlementItem", () => {
       expect.objectContaining({
         organizationId: "org-1",
         payrollPaymentBatchId: "batch-1",
+        sessionId: "verified-session",
+        sessionToken: "verified-token",
         matchRecordId: "match-1",
         sourceRegisterHash: "sha256:register",
       }),

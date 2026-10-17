@@ -28,8 +28,29 @@ const setupCopy: Record<string, { gate: string; en: Copy; fr: Copy }> = {
 }
 
 export function presentSnapshotBlocker<T extends SnapshotBlocker>(blocker: T, locale: "en" | "fr"): T {
+  if (locale === "fr" && blocker.gate === "payroll_finance_forecast" && blocker.id === "tenant-payroll-finance-forecast-payroll-forecast-currency-mismatch") {
+    const match = /^Forecast source currencies: ([A-Z]{3}(?:; [A-Z]{3})*)\. No conversion evidence establishes a total in ([A-Z]{3})\.$/.exec(blocker.detail ?? "")
+    return {
+      ...blocker,
+      title: blocker.title === "Payroll forecast currencies cannot be combined" ? "Les devises des prévisions de paie ne peuvent pas être additionnées" : blocker.title,
+      detail: match ? `Devises des sources de prévision : ${match[1]}. Aucune preuve de conversion ne permet d’établir un total en ${match[2]}.` : blocker.detail,
+      nextAction: blocker.nextAction === "Review payment batches and declarations by currency before relying on a combined cash forecast."
+        ? "Examinez les lots de paiement et les déclarations par devise avant de vous fier à une prévision de trésorerie combinée." : blocker.nextAction,
+    }
+  }
   const source = presentSourceBlocker(blocker, locale)
   if (source) return source
+  if (locale === "fr" && blocker.gate === "payroll_employee_balance" && ["tenant-payroll-balance-currency-mismatch", "tenant-payroll-settlement-currency-mismatch"].includes(blocker.id)) {
+    const match = /^Amounts by currency: ((?:-?\d+\.\d{2} [A-Z]{3})(?:; -?\d+\.\d{2} [A-Z]{3})*)\. No conversion evidence establishes a total in ([A-Z]{3})\.$/.exec(blocker.detail ?? "")
+    return {
+      ...blocker,
+      title: blocker.title === "Employee balance currencies cannot be combined" ? "Les soldes salariés de devises différentes ne peuvent pas être additionnés"
+        : blocker.title === "Employee settlement currencies cannot be combined" ? "Les règlements salariés de devises différentes ne peuvent pas être additionnés" : blocker.title,
+      detail: match ? `Montants par devise : ${match[1]}. Aucune preuve de conversion ne permet d’établir un total en ${match[2]}.` : blocker.detail,
+      nextAction: blocker.nextAction === "Review payroll balances and settlements by currency; do not treat them as one converted total."
+        ? "Examinez les soldes et règlements de paie par devise ; ces montants ne constituent pas un total converti." : blocker.nextAction,
+    }
+  }
   if (locale === "fr" && blocker.gate === "payment_truth" && blocker.id === "payment-suspense-currency-mismatch") {
     const match = /^Open suspense by currency: ((?:-?\d+\.\d{2} [A-Z]{3})(?:; -?\d+\.\d{2} [A-Z]{3})*)\. No conversion evidence establishes a total in ([A-Z]{3})\.$/.exec(blocker.detail ?? "")
     return {

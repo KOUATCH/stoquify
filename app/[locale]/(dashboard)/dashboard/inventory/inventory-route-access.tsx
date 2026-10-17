@@ -4,6 +4,7 @@ import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { RbacError, requireAllPermissions, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { getItemAccessRequestDenial } from "@/services/access-requests/access-request-entry"
 import type { RbacContext } from "@/lib/security/rbac"
 import type { Locale } from "@/types/bilingual"
 
@@ -87,16 +88,22 @@ async function evaluateInventoryRouteAccess(
   } catch (error) {
     if (error instanceof RbacError) {
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+      const requestEntry = error.code === "FORBIDDEN" && ["inventory-items", "inventory-items-detail"].includes(surface.key) ? await getItemAccessRequestDenial() : null
+      if (requestEntry?.moduleBlocked) return { kind: "blocked", node: <DashboardRouteState kind="locked_module" locale={locale}
+        message={locale === "fr" ? "Le module d’inventaire est indisponible. Une demande d’autorisation ne peut pas l’activer." : "The inventory module is unavailable. A permission request cannot enable it."}
+        primaryHref={localizePath("/dashboard", locale)} /> }
 
       return {
         kind: "blocked",
         node: (
           <DashboardRouteState
-            kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={locale === "fr"
+            kind={noActiveOrg ? "no_active_org" : error.code === "UNAUTHENTICATED" ? "stale_session" : "permission_denied"}
+            secondaryHref={requestEntry?.requestHref ? localizePath(requestEntry.requestHref, locale) : undefined}
+            secondaryLabel={requestEntry?.requestHref ? locale === "fr" ? "Demander un examen des accès" : "Request access review" : undefined}
+            title={error.code === "UNAUTHENTICATED" ? undefined : locale === "fr"
               ? (noActiveOrg ? "Une organisation active est requise" : "Accès à l’inventaire refusé")
               : (noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`)}
-            message={locale === "fr"
+            message={error.code === "UNAUTHENTICATED" ? undefined : locale === "fr"
               ? (noActiveOrg ? "Actualisez votre session depuis le tableau de bord pour accéder aux données de votre organisation." : "Votre rôle ne dispose pas des autorisations nécessaires pour accéder à cette page.")
               : (noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE)}
             primaryLabel={locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}

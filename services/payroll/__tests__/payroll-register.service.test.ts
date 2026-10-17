@@ -538,6 +538,37 @@ function buildClient(row = runRow(), links = sourceLinks(), journalLines = journ
 }
 
 describe("payroll register service", () => {
+  it.each([PayrollPaymentBatchStatus.CANCELLED, PayrollPaymentBatchStatus.FAILED])("excludes %s allocations while retaining batch history", async (status) => {
+    const row = runRow()
+    row.paymentBatches[0].status = status
+    row.lines[0].payslip.paymentAllocations[0].payrollPaymentBatch.status = status
+    const result = await getPayrollRegister({
+      organizationId: "org-1", actorId: "controller-1", payrollRunId: "run-1",
+      actorPermissions: ["payroll.reports.read", "payroll.payslips.read"],
+    }, buildClient(row) as any)
+    expect(result.summary).toMatchObject({ allocatedAmount: "0.00", paymentBatchCount: 1 })
+    expect(result.summary).not.toHaveProperty("paidAmount")
+    expect(result.rows[0].amounts).toMatchObject({ allocatedAmount: "0.00", paymentDeltaAmount: "143700.00" })
+    expect(result.rows[0].tieOut.payment).toBe("MISSING")
+    expect(result.tieOut.payments.actualAmount).toBe("0.00")
+    expect(result.paymentBatches[0].status).toBe(status)
+  })
+
+  it.each(["status", "amount"])("binds allocation %s changes into the register hash", async (change) => {
+    const input = { organizationId: "org-1", actorId: "controller-1", payrollRunId: "run-1", actorPermissions: ["payroll.reports.read", "payroll.payslips.read"] }
+    const original = await getPayrollRegister(input, buildClient() as any)
+    const row = runRow()
+    if (change === "status") {
+      row.paymentBatches[0].status = PayrollPaymentBatchStatus.CANCELLED
+      row.lines[0].payslip.paymentAllocations[0].payrollPaymentBatch.status = PayrollPaymentBatchStatus.CANCELLED
+    } else {
+      row.paymentBatches[0].allocations[0].amount = new Prisma.Decimal("100.00")
+      row.lines[0].payslip.paymentAllocations[0].amount = new Prisma.Decimal("100.00")
+    }
+    const changed = await getPayrollRegister(input, buildClient(row) as any)
+    expect(changed.summary.registerHash).not.toBe(original.summary.registerHash)
+  })
+
   it("ties the register to payslips, payments, declarations, ledger links, and close evidence", async () => {
     const client = buildClient()
 
@@ -560,7 +591,7 @@ describe("payroll register service", () => {
       paymentBatchCount: 1,
       declarationCount: 1,
       netPayableAmount: "143700.00",
-      paidAmount: "143700.00",
+      allocatedAmount: "143700.00",
       declaredAmount: "26600.00",
       registerHash: expect.stringMatching(/^sha256:/),
       componentTotals: expect.objectContaining({
@@ -983,6 +1014,10 @@ describe("payroll register service", () => {
       businessEventId: "business-event-1",
     }))
     expect(result.content).toContain("AQSTOQFLOW_PAYROLL_REGISTER_TIE_OUT_EXPORT")
+    const exported = JSON.parse(result.content)
+    expect(exported.version).toBe(2)
+    expect(exported.register.summary.allocatedAmount).toBe("143700.00")
+    expect(exported.register.summary).not.toHaveProperty("paidAmount")
     expect(client.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         action: "CONTROLLED_EXPORT_ALLOWED",

@@ -1,0 +1,25 @@
+STOQUIFY | R00 | DRAFT - AWAITING HUMAN VALIDATION
+R00 WORKBOOK | v1.0 | 7 October 2026 | 5
+D03 Offline operating limits
+Canonical definition: Offline devices, storage/eviction, supported tenders, fiscal limits and recovery. [S1]
+Decide whether offline selling is in scope and the exact devices, payments and recovery limits that must be
+proven before admitting it.
+Already confirmed
+The current continuation does not qualify a complete offline pilot. No supported device/tender matrix is approved
+here. [S2, S3]
+Proposal for your review
+Proposed: defer live offline admission until R04/R05 data-conservation evidence and R32 device/pilot criteria pass.
+Continue controlled engineering tests with synthetic data.
+Alternatives and consequences
+Online-only admission has a narrower recovery surface. A controlled offline pilot adds device enrollment, storage
+loss, retries, uncertain payments, fiscal and support obligations. Browser storage alone is not a durability
+guarantee.
+Evidence to inspect
+Browser/OS/device matrix; capacity and eviction tests; replay/conservation tests; tender/provider/fiscal review;
+operator recovery drill. [S1, S2]
+Decision timing and deferral
+If offline is excluded, record that decision and prohibit offline capability promises/admission. Reopen D03 before
+enabling it; do not mark the capability verified.
+Accountable roles: POS/product + security + country owner. Review: Security owner and country owner; QA and
+support for device/recovery evidence.
+Due gate: R04/R05 design; finalize before R32 offline admission.

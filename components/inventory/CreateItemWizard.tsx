@@ -150,9 +150,9 @@ const formStepIconClass =
 const formInsetClass =
   "rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.68)] text-[var(--dash-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]"
 const formPrimaryButtonClass =
-  "!rounded-lg !border !border-[var(--dash-brand)] !bg-[var(--dash-brand)] !text-white shadow-[0_16px_34px_rgba(47,125,246,0.22)] hover:!border-[var(--dash-brand-strong)] hover:!bg-[var(--dash-brand-strong)] hover:!text-white"
+  "dashboard-button-primary min-h-10 rounded-lg"
 const formSecondaryButtonClass =
-  "!rounded-lg !border !border-[var(--dash-border-subtle)] !bg-[rgba(24,38,45,0.66)] !text-[var(--dash-text-muted)] hover:!border-[var(--dash-brand)] hover:!bg-[var(--dash-brand-soft)] hover:!text-[var(--dash-text)]"
+  "dashboard-button-secondary min-h-10 rounded-lg"
 
 const FORM_STEPS = [
   { id: 'basic', title: 'Basic Info', icon: Package, description: 'Product name and description' },
@@ -589,7 +589,7 @@ export function CreateItemWizard({
                       <FormDescription className={formDescriptionClass}>
                         Stored as the English product name
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -614,7 +614,7 @@ export function CreateItemWizard({
                       <FormDescription className={formDescriptionClass}>
                         Used for French locale display when available
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -638,7 +638,7 @@ export function CreateItemWizard({
                       <FormDescription className={formDescriptionClass}>
                         Stored as the English product description
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -660,7 +660,7 @@ export function CreateItemWizard({
                       <FormDescription className={formDescriptionClass}>
                         Used for French locale display when available
                       </FormDescription>
-                      <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -741,7 +741,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Unique identifier for inventory tracking
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -766,7 +766,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Optional - for scanning and POS systems
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -794,7 +794,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Helps organize your inventory
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -820,7 +820,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Product manufacturer or brand
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -871,7 +871,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Your cost to acquire this item
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -907,7 +907,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Price customers will pay
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -976,7 +976,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       How this product is counted/measured
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1002,7 +1002,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Applicable tax rate for this product
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1045,7 +1045,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Alert when stock falls below this level
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1073,7 +1073,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Leave blank when no maximum stock level applies
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1104,7 +1104,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       For shipping calculations
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1129,7 +1129,7 @@ export function CreateItemWizard({
                     <FormDescription className={formDescriptionClass}>
                       Physical dimensions of the item
                     </FormDescription>
-                    <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                   </FormItem>
                 )}
               />
@@ -1251,7 +1251,7 @@ export function CreateItemWizard({
                                     <SelectValue placeholder="Select location" />
                                   </SelectTrigger>
                                 </FormControl>
-                                <SelectContent>
+                                <SelectContent className="enterprise-floating-surface">
                                   {locations.map((location) => (
                                     <SelectItem key={location.id} value={location.id}>
                                       {location.name} ({location.code})
@@ -1259,7 +1259,7 @@ export function CreateItemWizard({
                                   ))}
                                 </SelectContent>
                               </Select>
-                              <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                             </FormItem>
                           )}
                         />
@@ -1282,7 +1282,7 @@ export function CreateItemWizard({
                                   name={field.name}
                                 />
                               </FormControl>
-                              <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                             </FormItem>
                           )}
                         />
@@ -1305,7 +1305,7 @@ export function CreateItemWizard({
                                   name={field.name}
                                 />
                               </FormControl>
-                              <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                             </FormItem>
                           )}
                         />
@@ -1326,7 +1326,7 @@ export function CreateItemWizard({
                                   value={field.value ?? ""}
                                 />
                               </FormControl>
-                              <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                             </FormItem>
                           )}
                         />
@@ -1345,7 +1345,7 @@ export function CreateItemWizard({
                                   value={field.value ?? ""}
                                 />
                               </FormControl>
-                              <FormMessage />
+                      <FormMessage className="text-[var(--dash-danger)]" />
                             </FormItem>
                           )}
                         />

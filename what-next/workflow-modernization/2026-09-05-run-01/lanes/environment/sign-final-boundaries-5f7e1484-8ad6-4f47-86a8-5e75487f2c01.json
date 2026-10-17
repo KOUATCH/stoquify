@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-27T17:28:29.201Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "cases": [
+    {
+      "kind": "provider-suspended",
+      "organizationId": "cmuk3eami0000ma1oxqg2lgtv",
+      "runId": "cmuk3eat1001ama1o5hwunc6x",
+      "error": {
+        "code": "BUSINESS_RULE_VIOLATION",
+        "message": "An active provider account is required for payment reconciliation."
+      }
+    }
+  ],
+  "passed": false,
+  "error": "The validation function is expected to return \"true\". Received false\n\nCaught error:\n\nBusinessRuleError: An active provider account is required for payment reconciliation.",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

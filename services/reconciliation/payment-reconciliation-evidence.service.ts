@@ -1,4 +1,5 @@
 import {
+  MatchStatus,
   PaymentTransactionState,
   ProviderAccountStatus,
   ProviderEventStatus,
@@ -6,9 +7,17 @@ import {
 } from "@prisma/client"
 import { createHash } from "node:crypto"
 
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { reconciliationAmountSummary, type ReconciliationAmountSummary } from "./reconciliation-amount-summary"
+import { suspenseMetadata } from "./payment-suspense-evidence"
+import { BusinessRuleError, ConflictError } from "@/services/_shared/action-errors"
 import { suspenseResolutionManifestEvidenceInTx } from "./payment-suspense-resolution-evidence.service"
 import { exceptionClosureManifestEvidenceInTx } from "./payment-exception-closure-evidence.service"
+
+export class UnreconciledSourcesError extends BusinessRuleError {
+  constructor() {
+    super("Current payment or provider evidence is not covered by this reconciliation run. Additional sources require reconciliation before preparing or signing.")
+  }
+}
 
 export type ProviderAccountReconciliationContext = {
   id: string
@@ -25,6 +34,7 @@ export type ProviderAccountReconciliationContext = {
 export type ReconciliationEvidenceManifestResult = {
   version: 1
   sourceHash: string
+  amountSummary?: ReconciliationAmountSummary
   counts: {
     paymentTransactionCount: number
     providerEventCount: number
@@ -90,6 +100,8 @@ export async function buildReconciliationEvidenceManifestInTx(
     reconciliationRunId: string
     periodStart: Date
     periodEnd: Date
+    includeAmountSummary?: boolean
+    requireCompleteCoverage?: boolean
   },
 ): Promise<ReconciliationEvidenceManifestResult> {
   const [
@@ -218,10 +230,34 @@ export async function buildReconciliationEvidenceManifestInTx(
     }),
   ])
 
-  const resolutionEvidence = new Map(await Promise.all(suspenseItems.map(async row =>
-    [row.id, await suspenseResolutionManifestEvidenceInTx(tx, input.organizationId, row)] as const)))
   const exceptionDecisions = new Map(await Promise.all(exceptions.map(async row =>
     [row.id, await exceptionClosureManifestEvidenceInTx(tx, input.organizationId, row)] as const)))
+  const resolutionEvidence = new Map<string, Awaited<ReturnType<typeof suspenseResolutionManifestEvidenceInTx>> | { nonfinancialClosure: NonNullable<Awaited<ReturnType<typeof exceptionClosureManifestEvidenceInTx>>> }>(await Promise.all(suspenseItems.map(async row => {
+    const exceptionId = suspenseMetadata(row.metadata).nonfinancialExceptionId
+    if (exceptionId !== undefined) {
+      const proof = typeof exceptionId === "string" ? exceptionDecisions.get(exceptionId) : null
+      if (!proof?.sourceReview || proof.suspenseItemId !== row.id || row.status !== "RESOLVED")
+        throw new ConflictError("Nonfinancial investigation evidence requires review.")
+      return [row.id, { nonfinancialClosure: proof }] as const
+    }
+    return [row.id, await suspenseResolutionManifestEvidenceInTx(tx, input.organizationId, row)] as const
+  })))
+  if (input.requireCompleteCoverage) {
+    // A new source can arrive after matching without creating a run exception.
+    // Signing requires every current source to have a retained disposition.
+    const completedMatches = matchRecords.filter(row =>
+      ([MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED, MatchStatus.CORRECTED] as MatchStatus[]).includes(row.status))
+    const closedExceptions = exceptions.filter(row => exceptionDecisions.get(row.id))
+    const dispositions = [...completedMatches, ...closedExceptions]
+    const coveredPayments = new Set(dispositions.map(row => row.paymentTransactionId).filter(Boolean))
+    const coveredEvents = new Set(dispositions.map(row => row.providerEventId).filter(Boolean))
+    const coveredLines = new Set(dispositions.map(row => row.statementLineId).filter(Boolean))
+    if (paymentTransactions.some(row => !coveredPayments.has(row.id))
+      || providerEvents.some(row => !coveredEvents.has(row.id))
+      || statementLines.some(row => !coveredLines.has(row.id))) {
+      throw new UnreconciledSourcesError()
+    }
+  }
   const manifest = {
     version: 1,
     providerAccountId: input.providerAccountId,
@@ -304,6 +340,7 @@ export async function buildReconciliationEvidenceManifestInTx(
 
   return {
     version: 1,
+    ...(input.includeAmountSummary ? { amountSummary: reconciliationAmountSummary({ paymentTransactions, providerEvents, statementLines, matchRecords, suspenseItems }) } : {}),
     sourceHash: createHash("sha256").update(stableReconciliationEvidenceStringify(manifest)).digest("hex"),
     counts: {
       paymentTransactionCount: paymentTransactions.length,

@@ -1,0 +1,5134 @@
+[
+  {
+    "model": "Organization",
+    "table": "organizations",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "tradeName",
+        "column": "tradeName",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "slug",
+        "column": "slug",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": []
+      },
+      {
+        "name": "country",
+        "column": "country",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "currency",
+        "column": "currency",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "timezone",
+        "column": "timezone",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "defaultLocale",
+        "column": "defaultLocale",
+        "type": "Locale",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "EN",
+          "FR"
+        ],
+        "relations": []
+      },
+      {
+        "name": "requestedModules",
+        "column": "requestedModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "isActive",
+        "column": "isActive",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "deletedAt",
+        "column": "deletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "onboardingCompletedAt",
+        "column": "onboardingCompletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "slug"
+      ]
+    ]
+  },
+  {
+    "model": "User",
+    "table": "users",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "email",
+        "column": "email",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": []
+      },
+      {
+        "name": "firstName",
+        "column": "firstName",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "lastName",
+        "column": "lastName",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "jobTitle",
+        "column": "jobTitle",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "isActive",
+        "column": "isActive",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "isVerified",
+        "column": "isVerified",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "emailVerified",
+        "column": "emailVerified",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "isLocked",
+        "column": "isLocked",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "lockedUntil",
+        "column": "lockedUntil",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "mfaEnabledAt",
+        "column": "mfaEnabledAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "preferredLocale",
+        "column": "preferredLocale",
+        "type": "Locale",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "EN",
+          "FR"
+        ],
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "Role",
+    "table": "roles",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "nameEn",
+        "column": "nameEn",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "nameFr",
+        "column": "nameFr",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "description",
+        "column": "description",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "permissions",
+        "column": "permissions",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code"
+      ]
+    ]
+  },
+  {
+    "model": "Location",
+    "table": "locations",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "type",
+        "column": "type",
+        "type": "LocationType",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "WAREHOUSE",
+          "STORE",
+          "DISTRIBUTION_CENTER",
+          "SUPPLIER",
+          "CUSTOMER",
+          "MANUFACTURING",
+          "QUARANTINE",
+          "DAMAGED",
+          "TRANSIT",
+          "VIRTUAL"
+        ],
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "managerId",
+        "column": "managerId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "managerId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "isActive",
+        "column": "isActive",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "isDefault",
+        "column": "isDefault",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "deletedAt",
+        "column": "deletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "requiresApproval",
+        "column": "requiresApproval",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "allowNegativeStock",
+        "column": "allowNegativeStock",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "PayrollEmployee",
+    "table": "payroll_employees",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "userId",
+        "column": "userId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "employeeNumber",
+        "column": "employeeNumber",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "displayName",
+        "column": "displayName",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "PayrollEmployeeStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "SUSPENDED",
+          "TERMINATED",
+          "ARCHIVED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "department",
+        "column": "department",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "jobTitle",
+        "column": "jobTitle",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "deletedAt",
+        "column": "deletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "employeeNumber"
+      ],
+      [
+        "organizationId",
+        "userId"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "HrisOrgUnit",
+    "table": "hris_org_units",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "parentId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "type",
+        "column": "type",
+        "type": "HrisOrgUnitType",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "COMPANY",
+          "DIVISION",
+          "DEPARTMENT",
+          "TEAM",
+          "BRANCH",
+          "COST_CENTER"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisOrgUnitStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "INACTIVE"
+        ],
+        "relations": []
+      },
+      {
+        "name": "parentId",
+        "column": "parentId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "parentId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "HrisPosition",
+    "table": "hris_positions",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "orgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "Location",
+            "from": [
+              "organizationId",
+              "locationId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "orgUnitId",
+        "column": "orgUnitId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "orgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Location",
+            "from": [
+              "organizationId",
+              "locationId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "title",
+        "column": "title",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisPositionStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "INACTIVE"
+        ],
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "HrisEmploymentAssignment",
+    "table": "hris_employment_assignments",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "employeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "HrisPosition",
+            "from": [
+              "organizationId",
+              "positionId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "orgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "employeeId",
+        "column": "employeeId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "employeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "positionId",
+        "column": "positionId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "HrisPosition",
+            "from": [
+              "organizationId",
+              "positionId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "orgUnitId",
+        "column": "orgUnitId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "orgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "type",
+        "column": "type",
+        "type": "HrisEmploymentAssignmentType",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "PRIMARY",
+          "SECONDARY"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisEmploymentAssignmentStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "SUSPENDED",
+          "ENDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "HrisManagerDelegation",
+    "table": "hris_manager_delegations",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "delegatorEmployeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "delegateEmployeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "scopeOrgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "HrisManagerDelegation",
+            "from": [
+              "organizationId",
+              "supersedesDelegationId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "delegatorEmployeeId",
+        "column": "delegatorEmployeeId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "delegatorEmployeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "delegateEmployeeId",
+        "column": "delegateEmployeeId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "organizationId",
+              "delegateEmployeeId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "scopeOrgUnitId",
+        "column": "scopeOrgUnitId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "HrisOrgUnit",
+            "from": [
+              "organizationId",
+              "scopeOrgUnitId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "authority",
+        "column": "authority",
+        "type": "HrisManagerDelegationAuthority",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "PEOPLE_READ",
+          "APPROVAL_DECISION"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisManagerDelegationStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "REVOKED",
+          "SUPERSEDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvalEvidenceHash",
+        "column": "approvalEvidenceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "revokedAt",
+        "column": "revokedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "OrganizationAccountingSettings",
+    "table": "organization_accounting_settings",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "accountingEnabled",
+        "column": "accountingEnabled",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "setupStatus",
+        "column": "setupStatus",
+        "type": "AccountingSetupStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "NOT_STARTED",
+          "IN_PROGRESS",
+          "READY",
+          "LOCKED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "countryPack",
+        "column": "countryPack",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "baseCurrency",
+        "column": "baseCurrency",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "fiscalYearStartMonth",
+        "column": "fiscalYearStartMonth",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "fiscalYearStartDay",
+        "column": "fiscalYearStartDay",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "inventoryValuationPolicy",
+        "column": "inventoryValuationPolicy",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "roundingMode",
+        "column": "roundingMode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "roundingScale",
+        "column": "roundingScale",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "taxRegime",
+        "column": "taxRegime",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "payrollCnpsFamilyAllowanceSector",
+        "column": "payrollCnpsFamilyAllowanceSector",
+        "type": "PayrollCnpsFamilyAllowanceSector",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "GENERAL",
+          "AGRICULTURE",
+          "PRIVATE_EDUCATION"
+        ],
+        "relations": []
+      },
+      {
+        "name": "payrollCnpsOccupationalRiskGroup",
+        "column": "payrollCnpsOccupationalRiskGroup",
+        "type": "PayrollCnpsOccupationalRiskGroup",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "A",
+          "B",
+          "C"
+        ],
+        "relations": []
+      },
+      {
+        "name": "setupCompletedAt",
+        "column": "setupCompletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "setupCompletedById",
+        "column": "setupCompletedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "FiscalYear",
+    "table": "fiscal_years",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "startDate",
+        "column": "startDate",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "endDate",
+        "column": "endDate",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "FiscalYearStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "OPEN",
+          "CLOSED",
+          "LOCKED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "closedAt",
+        "column": "closedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "closedById",
+        "column": "closedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "name"
+      ]
+    ]
+  },
+  {
+    "model": "AccountingPeriod",
+    "table": "accounting_periods",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "fiscalYearId",
+        "column": "fiscalYearId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "FiscalYear",
+            "from": [
+              "fiscalYearId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "periodNumber",
+        "column": "periodNumber",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "startDate",
+        "column": "startDate",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "endDate",
+        "column": "endDate",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AccountingPeriodStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "OPEN",
+          "LOCKED",
+          "CLOSED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "lockedAt",
+        "column": "lockedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "closedAt",
+        "column": "closedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "closedById",
+        "column": "closedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "fiscalYearId",
+        "periodNumber"
+      ]
+    ]
+  },
+  {
+    "model": "AccountantAccessGrant",
+    "table": "accountant_access_grants",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "accountantUserId",
+        "column": "accountantUserId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "accountantFirmName",
+        "column": "accountantFirmName",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "role",
+        "column": "role",
+        "type": "AccountantAccessRole",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "READ_ONLY",
+          "REVIEWER",
+          "PREPARER"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AccountantAccessStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "REVOKED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "consentGrantedById",
+        "column": "consentGrantedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "consentGrantedAt",
+        "column": "consentGrantedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "consentEvidenceHash",
+        "column": "consentEvidenceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "expiresAt",
+        "column": "expiresAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "revokedById",
+        "column": "revokedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "revokedAt",
+        "column": "revokedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "AccountantReview",
+    "table": "accountant_reviews",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "periodId",
+        "column": "periodId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AccountingPeriod",
+            "from": [
+              "periodId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "closeRunId",
+        "column": "closeRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "CloseRun",
+            "from": [
+              "closeRunId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AccountantReviewStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "OPEN",
+          "CHANGES_REQUESTED",
+          "READY_TO_CLOSE",
+          "APPROVED_FOR_CLOSE",
+          "REJECTED",
+          "CANCELLED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "reviewerId",
+        "column": "reviewerId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "openedById",
+        "column": "openedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewedAt",
+        "column": "reviewedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "CloseRun",
+    "table": "close_runs",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "periodId",
+        "column": "periodId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AccountingPeriod",
+            "from": [
+              "periodId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "CloseRunStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "RUNNING",
+          "READY",
+          "BLOCKED",
+          "CERTIFIED",
+          "EXPORTED",
+          "VOIDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "readinessScore",
+        "column": "readinessScore",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "criticalBlockerCount",
+        "column": "criticalBlockerCount",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "highBlockerCount",
+        "column": "highBlockerCount",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "asOf",
+        "column": "asOf",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "runById",
+        "column": "runById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "completedAt",
+        "column": "completedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "HrisWorkCalendar",
+    "table": "hris_work_calendars",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "timezone",
+        "column": "timezone",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "version",
+        "column": "version",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisOperationalStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "RETIRED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "sourceHash",
+        "column": "sourceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewedById",
+        "column": "reviewedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewedAt",
+        "column": "reviewedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code",
+        "version"
+      ]
+    ]
+  },
+  {
+    "model": "HrisLeavePolicy",
+    "table": "hris_leave_policies",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "version",
+        "column": "version",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "annualEntitlementMinutes",
+        "column": "annualEntitlementMinutes",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "carryOverLimitMinutes",
+        "column": "carryOverLimitMinutes",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "HrisOperationalStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "RETIRED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "preparedById",
+        "column": "preparedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedAt",
+        "column": "approvedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "sourceHash",
+        "column": "sourceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvalEvidenceHash",
+        "column": "approvalEvidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "code",
+        "version"
+      ]
+    ]
+  },
+  {
+    "model": "PayrollContract",
+    "table": "payroll_contracts",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "employeeId",
+        "column": "employeeId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "employeeId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "contractNumber",
+        "column": "contractNumber",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "type",
+        "column": "type",
+        "type": "PayrollContractType",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "CDI",
+          "CDD",
+          "INTERNSHIP",
+          "DAILY",
+          "CONSULTANT",
+          "OTHER"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "PayrollContractStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "SUSPENDED",
+          "ENDED",
+          "CANCELLED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "effectiveFrom",
+        "column": "effectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "effectiveTo",
+        "column": "effectiveTo",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "currency",
+        "column": "currency",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "signedDocumentHash",
+        "column": "signedDocumentHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activatedBusinessEventId",
+        "column": "activatedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "deletedAt",
+        "column": "deletedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "contractNumber"
+      ]
+    ]
+  },
+  {
+    "model": "ProviderAccount",
+    "table": "provider_accounts",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "paymentRailId",
+        "column": "paymentRailId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PaymentRail",
+            "from": [
+              "paymentRailId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "providerCode",
+        "column": "providerCode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "displayName",
+        "column": "displayName",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "ProviderAccountStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "SUSPENDED",
+          "ARCHIVED",
+          "UNMAPPED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "currencyCode",
+        "column": "currencyCode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "settlementLagDays",
+        "column": "settlementLagDays",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "archivedAt",
+        "column": "archivedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "settlementLedgerAccountId",
+        "column": "settlementLedgerAccountId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "ChartOfAccount",
+            "from": [
+              "settlementLedgerAccountId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "suspenseLedgerAccountId",
+        "column": "suspenseLedgerAccountId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "ChartOfAccount",
+            "from": [
+              "suspenseLedgerAccountId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "feeLedgerAccountId",
+        "column": "feeLedgerAccountId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "ChartOfAccount",
+            "from": [
+              "feeLedgerAccountId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "providerCode"
+      ],
+      [
+        "organizationId",
+        "paymentRailId",
+        "externalAccountHash"
+      ]
+    ]
+  },
+  {
+    "model": "ComplianceAdapterConfig",
+    "table": "compliance_adapter_configs",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "countryCode",
+        "column": "countryCode",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "authorityChannel",
+        "column": "authorityChannel",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "adapterKey",
+        "column": "adapterKey",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "environment",
+        "column": "environment",
+        "type": "ComplianceAdapterEnvironment",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "FAKE_SANDBOX",
+          "SANDBOX",
+          "PRODUCTION",
+          "MANUAL_PORTAL"
+        ],
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "ComplianceAdapterConfigStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "DISABLED",
+          "REQUIRES_CONFIGURATION",
+          "REQUIRES_EXPERT_REVIEW"
+        ],
+        "relations": []
+      },
+      {
+        "name": "countryPackVersion",
+        "column": "countryPackVersion",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "countryPackResolutionHash",
+        "column": "countryPackResolutionHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "capabilityStatus",
+        "column": "capabilityStatus",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "credentialReference",
+        "column": "credentialReference",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "credentialExpiresAt",
+        "column": "credentialExpiresAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "credentialRotatedAt",
+        "column": "credentialRotatedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "credentialRotatedById",
+        "column": "credentialRotatedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecTitle",
+        "column": "officialSpecTitle",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecVersion",
+        "column": "officialSpecVersion",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecPublishedAt",
+        "column": "officialSpecPublishedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecEffectiveFrom",
+        "column": "officialSpecEffectiveFrom",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecReference",
+        "column": "officialSpecReference",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "officialSpecHash",
+        "column": "officialSpecHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewStatus",
+        "column": "reviewStatus",
+        "type": "ComplianceAdapterReviewStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "REQUIRES_EXPERT_REVIEW",
+          "EXPERT_APPROVED",
+          "REGULATOR_CONFIRMED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "reviewedById",
+        "column": "reviewedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewedAt",
+        "column": "reviewedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewerQualification",
+        "column": "reviewerQualification",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewerConflictDeclared",
+        "column": "reviewerConflictDeclared",
+        "type": "Boolean",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewEvidenceHash",
+        "column": "reviewEvidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "configHash",
+        "column": "configHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "createdById",
+        "column": "createdById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "updatedById",
+        "column": "updatedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedAt",
+        "column": "approvedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "disabledAt",
+        "column": "disabledAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "countryCode",
+        "authorityChannel",
+        "environment"
+      ]
+    ]
+  },
+  {
+    "model": "TenantModuleConfiguration",
+    "table": "tenant_module_configurations",
+    "fields": [
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "revision",
+        "column": "revision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activeRevision",
+        "column": "activeRevision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "selectedModules",
+        "column": "selectedModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activeModules",
+        "column": "activeModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "newWorkStoppedModules",
+        "column": "newWorkStoppedModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "legacyUnknownValues",
+        "column": "legacyUnknownValues",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "manifestHash",
+        "column": "manifestHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "TenantModuleGrant",
+    "table": "tenant_module_grants",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "TenantModuleConfiguration",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "organizationId"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "moduleSlug",
+        "column": "moduleSlug",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "source",
+        "column": "source",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "startsAt",
+        "column": "startsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "endsAt",
+        "column": "endsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "readOnly",
+        "column": "readOnly",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "trial",
+        "column": "trial",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "revision",
+        "column": "revision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "moduleSlug"
+      ]
+    ]
+  },
+  {
+    "model": "TenantModuleConfigurationCommand",
+    "table": "tenant_module_configuration_commands",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "TenantModuleConfiguration",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "organizationId"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "idempotencyKey",
+        "column": "idempotencyKey",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "expectedRevision",
+        "column": "expectedRevision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "resultRevision",
+        "column": "resultRevision",
+        "type": "Int",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "state",
+        "column": "state",
+        "type": "TenantModuleConfigurationCommandState",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "REQUESTED",
+          "ACTIVE",
+          "FAILED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "selectedModules",
+        "column": "selectedModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "previousModules",
+        "column": "previousModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "previewHash",
+        "column": "previewHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "errorCode",
+        "column": "errorCode",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "actorId",
+        "column": "actorId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "idempotencyKey"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "TenantModuleLifecycleOperation",
+    "table": "tenant_module_lifecycle_operations",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "TenantModuleConfiguration",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "organizationId"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "TenantModuleConfigurationCommand",
+            "from": [
+              "organizationId",
+              "commandId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "commandId",
+        "column": "commandId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": [
+          {
+            "target": "TenantModuleConfigurationCommand",
+            "from": [
+              "organizationId",
+              "commandId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "desiredRevision",
+        "column": "desiredRevision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "baseActiveRevision",
+        "column": "baseActiveRevision",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "desiredModules",
+        "column": "desiredModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "stopNewWorkModules",
+        "column": "stopNewWorkModules",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "authorityHash",
+        "column": "authorityHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "state",
+        "column": "state",
+        "type": "TenantModuleLifecycleState",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "REQUESTED",
+          "PREPARING",
+          "ACTIVE",
+          "FAILED",
+          "RETAINED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "version",
+        "column": "version",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "errorCode",
+        "column": "errorCode",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "actorId",
+        "column": "actorId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "completedAt",
+        "column": "completedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "commandId"
+      ],
+      [
+        "organizationId",
+        "id"
+      ],
+      [
+        "organizationId",
+        "desiredRevision"
+      ]
+    ]
+  },
+  {
+    "model": "TenantModuleLifecycleStep",
+    "table": "tenant_module_lifecycle_steps",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "TenantModuleLifecycleOperation",
+            "from": [
+              "organizationId",
+              "operationId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "operationId",
+        "column": "operationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "TenantModuleLifecycleOperation",
+            "from": [
+              "organizationId",
+              "operationId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "moduleSlug",
+        "column": "moduleSlug",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "stepKey",
+        "column": "stepKey",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "state",
+        "column": "state",
+        "type": "TenantModuleLifecycleStepState",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "PENDING",
+          "RUNNING",
+          "WAITING_INPUT",
+          "SUCCEEDED",
+          "FAILED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "code",
+        "column": "code",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "href",
+        "column": "href",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "checkedAt",
+        "column": "checkedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "operationId",
+        "moduleSlug",
+        "stepKey"
+      ]
+    ]
+  },
+  {
+    "model": "AgentDefinition",
+    "table": "agent_definitions",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "key",
+        "column": "key",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": []
+      },
+      {
+        "name": "name",
+        "column": "name",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "ownerModuleSlug",
+        "column": "ownerModuleSlug",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AgentDefinitionStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "ACTIVE",
+          "PAUSED",
+          "RETIRED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "rolloutMode",
+        "column": "rolloutMode",
+        "type": "AgentRolloutMode",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "INTERNAL",
+          "SHADOW",
+          "PILOT",
+          "GENERAL"
+        ],
+        "relations": []
+      },
+      {
+        "name": "riskLevel",
+        "column": "riskLevel",
+        "type": "AgentRiskLevel",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "READ_ONLY",
+          "DRAFT",
+          "LOW_RISK",
+          "SENSITIVE",
+          "PROHIBITED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "allowedToolKeys",
+        "column": "allowedToolKeys",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "allowedSkillKeys",
+        "column": "allowedSkillKeys",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "AgentActivationPackage",
+    "table": "agent_activation_packages",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "agentKey",
+        "column": "agentKey",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "releaseVersion",
+        "column": "releaseVersion",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "environment",
+        "column": "environment",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "commitSha",
+        "column": "commitSha",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "manifestHash",
+        "column": "manifestHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "allowedRoleCodes",
+        "column": "allowedRoleCodes",
+        "type": "String",
+        "list": true,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activationStartsAt",
+        "column": "activationStartsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activationEndsAt",
+        "column": "activationEndsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "state",
+        "column": "state",
+        "type": "AgentActivationState",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "REVIEWED",
+          "APPROVED",
+          "PROVISIONED_INACTIVE",
+          "PILOT_CERTIFIED",
+          "ACTIVE_INTERNAL",
+          "SUSPENDED",
+          "RETIRED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "version",
+        "column": "version",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "requestedById",
+        "column": "requestedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activatedById",
+        "column": "activatedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "activatedAt",
+        "column": "activatedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "suspendedAt",
+        "column": "suspendedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "retiredAt",
+        "column": "retiredAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "retiredById",
+        "column": "retiredById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "lastReconciledAt",
+        "column": "lastReconciledAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reconciliationState",
+        "column": "reconciliationState",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "alertTransportReady",
+        "column": "alertTransportReady",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "environment",
+        "agentKey",
+        "releaseVersion"
+      ]
+    ]
+  },
+  {
+    "model": "AgentActivationOwner",
+    "table": "agent_activation_owners",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "packageId",
+        "column": "packageId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AgentActivationPackage",
+            "from": [
+              "packageId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "responsibility",
+        "column": "responsibility",
+        "type": "AgentOwnerResponsibility",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ROLLOUT",
+          "ROLLBACK",
+          "SUPPORT",
+          "PILOT",
+          "SECURITY_INCIDENT",
+          "ON_CALL_BACKUP"
+        ],
+        "relations": []
+      },
+      {
+        "name": "primaryUserId",
+        "column": "primaryUserId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "backupUserId",
+        "column": "backupUserId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "escalationRouteRef",
+        "column": "escalationRouteRef",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "runbookVersion",
+        "column": "runbookVersion",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "acceptedAt",
+        "column": "acceptedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "validUntil",
+        "column": "validUntil",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "coverageStartsAt",
+        "column": "coverageStartsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "coverageEndsAt",
+        "column": "coverageEndsAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "packageId",
+        "responsibility"
+      ]
+    ]
+  },
+  {
+    "model": "AgentActivationApproval",
+    "table": "agent_activation_approvals",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "packageId",
+        "column": "packageId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AgentActivationPackage",
+            "from": [
+              "packageId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "approvalType",
+        "column": "approvalType",
+        "type": "AgentApprovalType",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "PRODUCT",
+          "SECURITY"
+        ],
+        "relations": []
+      },
+      {
+        "name": "decision",
+        "column": "decision",
+        "type": "AgentApprovalDecision",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "APPROVED",
+          "REJECTED",
+          "REVOKED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "approverId",
+        "column": "approverId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "decidedAt",
+        "column": "decidedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "expiresAt",
+        "column": "expiresAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "revokedAt",
+        "column": "revokedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "packageId",
+        "idempotencyKey"
+      ]
+    ]
+  },
+  {
+    "model": "AgentPilotCertification",
+    "table": "agent_pilot_certifications",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "packageId",
+        "column": "packageId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AgentActivationPackage",
+            "from": [
+              "packageId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "commitSha",
+        "column": "commitSha",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "manifestHash",
+        "column": "manifestHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "suiteVersion",
+        "column": "suiteVersion",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "ciRunId",
+        "column": "ciRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "result",
+        "column": "result",
+        "type": "AgentCertificationResult",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "PASSED",
+          "FAILED",
+          "INVALIDATED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "reportHash",
+        "column": "reportHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "passedAt",
+        "column": "passedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "expiresAt",
+        "column": "expiresAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "packageId",
+        "idempotencyKey"
+      ],
+      [
+        "packageId",
+        "ciRunId"
+      ]
+    ]
+  },
+  {
+    "model": "BranchDailyCloseSignOff",
+    "table": "branch_daily_close_sign_offs",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "BranchDailyCloseRun",
+            "from": [
+              "organizationId",
+              "branchDailyCloseRunId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "BranchDailyCloseSignOff",
+            "from": [
+              "organizationId",
+              "supersedesSignOffId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "branchDailyCloseRunId",
+        "column": "branchDailyCloseRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BranchDailyCloseRun",
+            "from": [
+              "organizationId",
+              "branchDailyCloseRunId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "BranchDailyCloseSignOffStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "REVOKED",
+          "SUPERSEDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "signedReadinessSourceHash",
+        "column": "signedReadinessSourceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "signedEvidenceHash",
+        "column": "signedEvidenceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "signedEvidenceObservedAt",
+        "column": "signedEvidenceObservedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "signedById",
+        "column": "signedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "signedById"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "signedAt",
+        "column": "signedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "authAssuranceLevel",
+        "column": "authAssuranceLevel",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "freshAuthAt",
+        "column": "freshAuthAt",
+        "type": "DateTime",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "invalidatedById",
+        "column": "invalidatedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "invalidatedById"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "invalidatedAt",
+        "column": "invalidatedAt",
+        "type": "DateTime",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "id"
+      ],
+      [
+        "organizationId",
+        "activeKey"
+      ],
+      [
+        "organizationId",
+        "idempotencyKey"
+      ]
+    ]
+  }
+]

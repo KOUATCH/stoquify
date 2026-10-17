@@ -1,0 +1,184 @@
+{
+  "at": "2026-09-30T22:49:41.675Z",
+  "startedAt": "2026-09-30T22:49:25.568Z",
+  "runId": "111c228a-7c48-42b8-9600-65a360dc501d",
+  "workflow": "FA-CASH-COMMAND",
+  "passed": true,
+  "sourceStable": true,
+  "scope": "Exact close-assessment production/test drift review and one mocked suite; no broader workflow, database race or certification claim.",
+  "sourceHashesBefore": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+    "services/accounting/__tests__/close-assurance.service.test.ts": "2f041ba4a20a4cc2ca63f65752748f4ad314cf753111b30c34a388a1136026f1",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/close-assurance.schemas.ts": "2d35eb17f8819863fcc8d4caaf8a6a9d986742a62b45a914813d1f94f8320370",
+    "services/accounting/close-assurance.service.ts": "e910f53100112e113d570e927709025f310641d6a5f1cfe72bcd0244dcff686c",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "7fb261e866065aeed90819fd6dfe649e1ee7cf202f14b3e4fcbb5b28747ae957",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-close-assessment-drift-2026-09-30.cjs": "d8a3c43db10602a4f7c344dc6cf149258a8d5f168a53dc17c89ce4cf52f0790e"
+  },
+  "sourceHashes": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+    "services/accounting/__tests__/close-assurance.service.test.ts": "2f041ba4a20a4cc2ca63f65752748f4ad314cf753111b30c34a388a1136026f1",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/close-assurance.schemas.ts": "2d35eb17f8819863fcc8d4caaf8a6a9d986742a62b45a914813d1f94f8320370",
+    "services/accounting/close-assurance.service.ts": "e910f53100112e113d570e927709025f310641d6a5f1cfe72bcd0244dcff686c",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "7fb261e866065aeed90819fd6dfe649e1ee7cf202f14b3e4fcbb5b28747ae957",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-close-assessment-drift-2026-09-30.cjs": "d8a3c43db10602a4f7c344dc6cf149258a8d5f168a53dc17c89ce4cf52f0790e"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/close-assurance.service.ts",
+      "before": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+      "after": "e910f53100112e113d570e927709025f310641d6a5f1cfe72bcd0244dcff686c",
+      "priorReview": "evidence/accounting-setup-trust-review-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "before": "c31bb0cf4c9ca17a31d3ffd6b67513779b8aa3bd7d5c42785e35e00d1b2893fc",
+      "after": "2f041ba4a20a4cc2ca63f65752748f4ad314cf753111b30c34a388a1136026f1",
+      "priorReview": "evidence/accounting-setup-trust-review-2026-09-30.json"
+    }
+  ],
+  "productReconstruction": {
+    "method": "Replace only the current runCloseAssurance declaration with its retained pre-freshness declaration in memory. The whole result exactly matches both later accounting-setup and inventory-freshness reviewed production hashes.",
+    "baseline": {
+      "file": "evidence/inventory-freshness-source-before-acaa82bf-8889-4d00-b86e-1e0c8879d47a.json",
+      "sha256": "30a29a500a2a1068bc3f269154808a0848789b0e737aaa206ccd7ac419f19ee9"
+    },
+    "declaration": "runCloseAssurance",
+    "reconstructedSha256": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+    "allOtherDeclarationsExactlyPreserved": true
+  },
+  "testReconstruction": {
+    "method": "Remove only seven exact matched additions in memory: updateMany mock/type/default, two clean functional-currency preflight fields, RUNNING assertion, ordered collection/finalization assertions, and the three new cases.",
+    "operations": [
+      {
+        "pattern": "(    closeRun: \\{\\r?\\n      create: jest.fn\\(\\),\\r?\\n)      updateMany: jest.fn\\(\\),\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "(  closeRun: \\{\\r?\\n    create: jest.Mock\\r?\\n)    updateMany: jest.Mock\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "^  mockDb.closeRun.updateMany.mockResolvedValue\\(\\{ count: 1 \\}\\)\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "^    missingFunctionalAmountCount: 0,\\r?\\n    functionalBalanceIssue: null,\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "^          status: \"RUNNING\",\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "^    for \\(const collector of \\[mockGetPeriodClosePreflight,[^\\r\\n]*\\r?\\n[\\s\\S]*?^    \\}\\)\\)\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "^  it\\(\"does not overwrite an in-flight source invalidation with an older READY assessment\", async \\(\\) => \\{[\\s\\S]*?(?=^  it\\(\"defaults finding assignment to the current actor and audits the action\")",
+        "flags": "m",
+        "replacement": ""
+      }
+    ],
+    "reconstructedSha256": "c31bb0cf4c9ca17a31d3ffd6b67513779b8aa3bd7d5c42785e35e00d1b2893fc",
+    "historicalAssertionsOtherwiseExactlyPreserved": true
+  },
+  "reviewFindings": [
+    "This is a production and test delta, not a harmless test-only hash drift. No previous proof is rewritten.",
+    "A tenant/period-bound RUNNING close row is persisted before evidence collection, giving concurrent source invalidation a target. The already reviewed close-pack invalidator includes RUNNING and READY states.",
+    "Finalization conditionally updates only the same tenant/period/run while it remains RUNNING. A zero row count returns the current persisted run without writing checklist, evidence, findings, completion audit or completion business event from the older snapshot.",
+    "Finalization and child evidence/audit records remain inside the existing transaction. The original create-then-collect ordering changes, but all production declarations outside runCloseAssurance match the retained reviewed file exactly.",
+    "Collector/setup or transaction failures attempt a tenant/run-scoped RUNNING-to-BLOCKED cleanup and rethrow. Existing BLOCKED invalidation metadata is preserved because cleanup matches only RUNNING.",
+    "The extended success test checks that the row is created before each collector, verifies RUNNING identity and READY conditional finalization. Three new cases check intervening invalidation, pre-finalization collection failure and transaction failure. Other historical test bytes reconstruct exactly."
+  ],
+  "limitations": [
+    "Prisma is mocked. These assertions do not establish real PostgreSQL lock ordering, transactional rollback or cross-connection race behavior. No full close workflow is declared complete.",
+    "A process crash after publishing RUNNING, or a database outage during cleanup, may leave RUNNING until a separate recovery process handles it; this suite does not test that operational recovery.",
+    "The final dashboard read is returned without await inside the try block; a later read rejection is propagated to the caller and does not turn a successfully committed assessment into a failure cleanup. No read-failure recovery certification is claimed.",
+    "Only this source/test pair and its explicit contract bindings were examined. Any later reconciler drift remains separately unreviewed."
+  ],
+  "command": {
+    "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/accounting/__tests__/close-assurance.service.test.ts",
+      "--json",
+      "--outputFile=E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\close-assessment-drift-111c228a-7c48-42b8-9600-65a360dc501d-jest.json"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "error": null
+  },
+  "results": {
+    "suites": 1,
+    "passedTests": 76,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "addedCases": [
+      {
+        "title": "does not overwrite an in-flight source invalidation with an older READY assessment",
+        "status": "passed"
+      },
+      {
+        "title": "retains a blocked failure state when collection fails before finalization",
+        "status": "passed"
+      },
+      {
+        "title": "retains a blocked failure state when assessment persistence rolls back",
+        "status": "passed"
+      }
+    ]
+  },
+  "receipts": [
+    {
+      "file": "evidence/close-assessment-drift-111c228a-7c48-42b8-9600-65a360dc501d.log",
+      "sha256": "6f878821db02abd45c077fdac4e5987e35322036167cad95fa72425fe094f461"
+    },
+    {
+      "file": "evidence/close-assessment-drift-111c228a-7c48-42b8-9600-65a360dc501d-jest.json",
+      "sha256": "786faf63a012401b6425adb69c9cc383bcc5f8e28e36a0d748a8b9361b267c94"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "evidence/inventory-freshness-source-before-acaa82bf-8889-4d00-b86e-1e0c8879d47a.json",
+      "sha256": "30a29a500a2a1068bc3f269154808a0848789b0e737aaa206ccd7ac419f19ee9"
+    },
+    {
+      "file": "evidence/accounting-setup-trust-review-2026-09-30.json",
+      "sha256": "897d9e0a08c31c4079db6d974f6a879919794c407e9e8911f604c65f3df2b85e"
+    },
+    {
+      "file": "evidence/cash-close-inventory-freshness-review-2026-09-30.json",
+      "sha256": "80acbb04c64ce0c76f7538181ab2bee529577a2e7980541513ae9d151c679632"
+    },
+    {
+      "file": "evidence/verify-close-assessment-drift-2026-09-30.cjs",
+      "sha256": "d8a3c43db10602a4f7c344dc6cf149258a8d5f168a53dc17c89ce4cf52f0790e"
+    }
+  ],
+  "conclusion": "Focused current source/test review supports accepting these exact two predecessor transitions within the stated mocked verification limits; it does not establish complete close lifecycle or database race assurance."
+}

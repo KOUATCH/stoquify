@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-30T11:03:08.788Z",
+  "syntheticInput": true,
+  "steps": [
+    {
+      "name": "review",
+      "status": "REVIEWED",
+      "eventId": "cmunzycm3002dmafwwdjwiu7s"
+    },
+    {
+      "name": "approve",
+      "status": "APPROVED",
+      "eventId": "cmunzycnw002rmafwxqej2jxo"
+    },
+    {
+      "name": "emit",
+      "status": "EMITTED",
+      "eventId": "cmunzycs0003kmafw041bp3p9"
+    },
+    {
+      "name": "post",
+      "status": "POSTED",
+      "eventId": "cmunzycx5004jmafwsqs0nnf1"
+    }
+  ],
+  "sourceBefore": {
+    "services/payroll/payroll-control.service.ts": "a78fa4fd3c9090485b4e195815a0720bca3c73ef2cfa3aab9624698c765a4736",
+    "services/accounting/posting.service.ts": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "selfReviewDenied": true,
+  "stage": "post",
+  "failedSealRolledBack": true,
+  "emittedLineMutationDenied": true,
+  "result": {
+    "organizationId": "cmunzyce10000mafwymm38e1d",
+    "payrollRunId": "cmunzycj40027mafwwrj2756t",
+    "journalEntryId": "cmunzycvt0047mafw9w4xr26g",
+    "ledgerPostingBatchId": "cmunzycv70045mafwum3s92dv",
+    "sourceLinkId": "cmunzycwn004fmafw53oif4od",
+    "proofGrade": "posted",
+    "debit": "112950.00",
+    "credit": "112950.00",
+    "transitionCount": 4,
+    "idempotentReplay": true
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/payroll/payroll-control.service.ts": "a78fa4fd3c9090485b4e195815a0720bca3c73ef2cfa3aab9624698c765a4736",
+    "services/accounting/posting.service.ts": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "sourceStable": true
+}

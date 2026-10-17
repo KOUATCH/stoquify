@@ -471,10 +471,10 @@
         "AI-COMMAND",
         "AI-PROPOSAL"
       ],
-      "implementationStatus": "digest_expiry_navigation_and_selected_workspace_visibility_corrected",
+      "implementationStatus": "payroll_forecast_currency_proof_and_nullable_consumers_corrected",
       "reviewStatus": "partial_current_source_and_visual_review",
-      "runtimeStatus": "owned_en_fr_operating_handoffs_and_126_workspace_views_verified",
-      "completeWorkflowVerified": false,
+      "runtimeStatus": "complete_verified_owned_en_fr_read_lifecycle_authority_recovery_and_source_handoffs",
+      "completeWorkflowVerified": true,
       "evidence": [
         "../../PROPOSAL_RECOVERY_V153.md",
         "../../evidence/proposal-recovery-v153.json",
@@ -492,17 +492,20 @@
         "../../evidence/digest-observations-v159.json",
         "../../DAILY_DIGEST_METRIC_TRUTH_V160.md",
         "../../evidence/digest-metrics-v160.json",
-        "../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md"
+        "../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md",
+        "../../INVENTORY_LOSS_HANDOFF_VERIFICATION_2026-09-27.md",
+        "../../DAILY_DIGEST_SIGNAL_AUDIT_2026-09-27.md",
+        "../../PAYROLL_CURRENCY_READ_VERIFICATION_2026-09-27.md",
+        "../../FORECAST_CURRENCY_VERIFICATION_2026-09-27.md",
+        "../../DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md",
+        "../../DAILY_DIGEST_OPERATING_GUIDE.md",
+        "../../evidence/digest-closure-2026-09-27.json"
       ],
-      "remaining": [
-        "Seven-day weekly aggregation and selected-period evidence are verified. Audit remaining source rules, generated labels/units and destination localization. Agent adapter/validator handoff and disabled release are verified; enabled governed-run lifecycle still requires genuine release authorization.",
-        "Shared permission provenance, close and payment handoffs are verified. Finance/reconciliation and payroll module matrices are verified. Close module, direct-page and read-action boundaries are verified; inventory source/direct item read boundaries are verified; purchasing source/list read admission is verified; core/Weekly grants and analytics destination are verified; Owner/Manager/daily-close page and action grants are verified; Digest authority, keyboard handoff, current revocation, top entry and Back are verified in EN/FR; broader governed-agent lifecycle remains. Compilation overhead and full-document navigation were identified in development; production performance remains unverified. Inventory Loss has its own explicit module guard.",
-        "Evidence badge aria rule and Chromium text exposure pass. EN/FR Manager all-mode rendered text contrast and primary focus/hover verified; axe contrast remains incomplete due to pseudo-elements. 126 seven-workspace EN/FR keyboard/reflow/reduced-motion views now pass, including selected-label visibility. Remaining: other workspace-content contrast and text enlargement. Native screen-reader speech/browser zoom are unverified limits."
-      ],
-      "status": "In progress",
+      "remaining": [],
+      "status": "Complete—verified",
       "closureReview": {
         "checklist": "DAILY_DIGEST_CLOSURE.md",
-        "evidence": "DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md",
+        "evidence": "evidence/digest-closure-2026-09-27.json",
         "verifiedCriteria": [
           "overdue-count-date-status-tenant-location-contract",
           "source-read-failure-not-zero",
@@ -571,10 +574,29 @@
           "owner_denial_french_mobile_rendering",
           "seven_workspace_en_fr_three_mode_three_width_keyboard_reflow_motion",
           "selected_workspace_label_not_clipped_after_selection",
-          "digest_read_no_background_business_mutation"
+          "digest_read_no_background_business_mutation",
+          "inventory_loss_actual_route_keyboard_handoff_back_en_fr",
+          "loss_permission_module_revocation_and_read_only_recovery_en_fr",
+          "loss_cache_identity_period_and_drawer_withdrawal",
+          "historical_payroll_count_does_not_infer_exposure",
+          "en_fr_owned_payroll_history_and_forecast_blocker_preservation",
+          "six_generated_signal_family_labels_units_and_source_contracts",
+          "payroll_forecast_currency_decimal_and_withheld_source_fingerprint",
+          "unavailable_forecast_totals_preserved_across_shared_consumers",
+          "owned_en_fr_forecast_currency_revocation_and_independent_proof_controls",
+          "payroll_recovery_settlement_currency_grouping_no_conversion",
+          "en_fr_owned_currency_disclosure_revocation_recovery",
+          "null_total_preserves_cash_recovery_and_failed_query_not_zero",
+          "all_seven_workspace_contrast_and_controlled_text_enlargement",
+          "current_session_query_recovery_and_concurrent_read_refresh",
+          "current_authority_matrix_and_final_source_binding_review"
         ],
-        "completeWorkflowVerified": false
-      }
+        "completeWorkflowVerified": true
+      },
+      "verificationLimits": [
+        "Native screen-reader speech and browser-chrome zoom unverified; controlled text enlargement and keyboard/reflow verified.",
+        "Production latency and downstream source business lifecycles are outside this read-workflow closure."
+      ]
     }
   ]
 }

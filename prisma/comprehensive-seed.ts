@@ -645,6 +645,7 @@ const ROLE_DEFINITIONS = [
       "JOURNAL",
       "BUDGET",
       "PROFIT",
+      PERMISSIONS.VIEW_CHART_OF_ACCOUNTS,
     ),
     email: "accountant@stockflow.test",
     firstName: "Nadia",
@@ -2280,7 +2281,7 @@ async function seedAccountingEntries() {
     data: seedIndexes.map((index) => ({
       id: id("ledger_posting_batch", index),
       organizationId: orgId(),
-      periodId: id("accounting_period", ((index - 1) % 12) + 1),
+      periodId: id("accounting_period", day(index).getUTCMonth() + 1),
       sourceType: AccountingSourceType.POS_SALE,
       sourceId: id("sales_order", index),
       postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
@@ -2300,7 +2301,7 @@ async function seedAccountingEntries() {
       id: id("journal_entry", index),
       organizationId: orgId(),
       journalId: id("journal", 4),
-      periodId: id("accounting_period", ((index - 1) % 12) + 1),
+      periodId: id("accounting_period", day(index).getUTCMonth() + 1),
       postingBatchId: id("ledger_posting_batch", index),
       entryNumber: orgScopedNumber("JE", index),
       entryDate: day(index),
@@ -2329,6 +2330,8 @@ async function seedAccountingEntries() {
       const costAmount = money(soldQuantity * unitCost);
       const lineBase = (index - 1) * 5;
 
+      // Seed settings and these sales share currentOrg().currency, so the
+      // recorded base amounts use a unit rate regardless of the org currency.
       return [
         {
           id: id("journal_entry_line", lineBase + 1),
@@ -2339,6 +2342,9 @@ async function seedAccountingEntries() {
           description: `Cash/customer settlement for ${orgScopedNumber("SO", index)}`,
           debit: total,
           credit: 0,
+          exchangeRate: 1,
+          baseDebit: total,
+          baseCredit: 0,
           currency: currentOrg().currency,
           locationId: id("location", index),
           customerId: id("customer", index),
@@ -2352,6 +2358,9 @@ async function seedAccountingEntries() {
           description: `COGS for ${orgScopedNumber("SO", index)}`,
           debit: costAmount,
           credit: 0,
+          exchangeRate: 1,
+          baseDebit: costAmount,
+          baseCredit: 0,
           currency: currentOrg().currency,
           locationId: id("location", index),
           itemId: id("item", index),
@@ -2365,6 +2374,9 @@ async function seedAccountingEntries() {
           description: `Revenue for ${orgScopedNumber("SO", index)}`,
           debit: 0,
           credit: revenue,
+          exchangeRate: 1,
+          baseDebit: 0,
+          baseCredit: revenue,
           currency: currentOrg().currency,
           customerId: id("customer", index),
         },
@@ -2377,6 +2389,9 @@ async function seedAccountingEntries() {
           description: `Output VAT for ${orgScopedNumber("SO", index)}`,
           debit: 0,
           credit: taxAmount,
+          exchangeRate: 1,
+          baseDebit: 0,
+          baseCredit: taxAmount,
           currency: currentOrg().currency,
           customerId: id("customer", index),
         },
@@ -2389,6 +2404,9 @@ async function seedAccountingEntries() {
           description: `Inventory relief for ${orgScopedNumber("SO", index)}`,
           debit: 0,
           credit: costAmount,
+          exchangeRate: 1,
+          baseDebit: 0,
+          baseCredit: costAmount,
           currency: currentOrg().currency,
           locationId: id("location", index),
           itemId: id("item", index),

@@ -5,14 +5,14 @@ import { runPaymentReconciliation } from "../payment-reconciliation-run.service"
 jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
 jest.mock("@/services/reconciliation/payment-reconciliation-notifications", () => ({ publishPaymentReconciliationNotification: jest.fn() }))
 jest.mock("@/prisma/db", () => ({ db: {
-  $transaction: jest.fn(),
+  $transaction: jest.fn(), $queryRaw: jest.fn(),
   providerAccount: { findFirst: jest.fn() },
   reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
   paymentTransaction: { findMany: jest.fn() }, providerEvent: { findMany: jest.fn() },
   statementLine: { findMany: jest.fn() }, matchRecord: { create: jest.fn(), findMany: jest.fn() },
   paymentException: { create: jest.fn(), update: jest.fn() }, suspenseItem: { create: jest.fn() },
 } }))
-const mocks = db as unknown as Record<string, Record<string, jest.Mock>> & { $transaction: jest.Mock }
+const mocks = db as unknown as Record<string, Record<string, jest.Mock>> & { $transaction: jest.Mock; $queryRaw: jest.Mock }
 const amount = (value: string | number) => new Prisma.Decimal(value)
 const payment = (id = "p1", extra = {}) => ({ id, amount: amount("100.25"), currencyCode: "XAF", providerTransactionId: `txn-${id}`, providerReference: `ref-${id}`, direction: "INBOUND", state: "CONFIRMED", ...extra })
 const event = (id = "e1", extra = {}) => ({ id, providerEventId: id, providerTransactionId: "txn-p1", providerReference: "ref-p1", amount: amount("100.25"), currencyCode: "XAF", direction: "INBOUND", status: "VERIFIED", signatureValid: true, ...extra })
@@ -23,6 +23,7 @@ const saved = () => mocks.reconciliationRun.update.mock.calls[0][0].data
 describe("automatic reconciliation evidence and amount truth", () => {
   beforeEach(() => {
     jest.resetAllMocks()
+    mocks.$queryRaw.mockResolvedValue([{ id: "pa1" }])
     mocks.$transaction.mockImplementation(async (work) => work(mocks))
     mocks.providerAccount.findFirst.mockResolvedValue({ id: "pa1", currencyCode: "XAF", status: "ACTIVE", paymentRailId: "rail1", paymentRail: { id: "rail1", isActive: true }, settlementLedgerAccountId: "a1", suspenseLedgerAccountId: "a2", settlementAccounts: [{ id: "s1" }] })
     mocks.reconciliationRun.findFirst.mockResolvedValue(null)
@@ -37,6 +38,26 @@ describe("automatic reconciliation evidence and amount truth", () => {
     mocks.suspenseItem.create.mockResolvedValue({ id: "s1" })
   })
 
+  it("locks payment sources before loading them and refuses an obsolete transaction snapshot without matching", async () => {
+    mocks.$queryRaw.mockImplementation(async query => {
+      if (query.sql.includes("payment_transactions")) throw { code: "P2010", meta: { code: "40001" } }
+      return [{ id: "pa1" }]
+    })
+    await expect(run()).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mocks.paymentTransaction.findMany).not.toHaveBeenCalled()
+    expect(mocks.matchRecord.create).not.toHaveBeenCalled()
+    expect(mocks.paymentException.create).not.toHaveBeenCalled()
+    expect(mocks.reconciliationRun.update).not.toHaveBeenCalled()
+    const lock = mocks.$queryRaw.mock.calls.find(([query]) => query.sql.includes("payment_transactions"))![0]
+    expect(lock.sql).toContain("ORDER BY id FOR SHARE")
+    expect(lock.values).toEqual(expect.arrayContaining(["org-1", "pa1"]))
+  })
+  it("does not disguise a source-lock database failure as a retryable conflict", async () => {
+    const failure = { code: "P2010", meta: { code: "42P01" } }
+    mocks.$queryRaw.mockRejectedValue(failure)
+    await expect(run()).rejects.toBe(failure)
+    expect(mocks.matchRecord.create).not.toHaveBeenCalled()
+  })
   it("counts only successful matches when missing and mismatched evidence coexist", async () => {
     mocks.paymentTransaction.findMany.mockResolvedValue([payment(), payment("p2", { amount: amount("20.10") }), payment("p3", { amount: amount("80.15") })])
     mocks.providerEvent.findMany.mockResolvedValue([event(), event("e2", { providerTransactionId: "txn-p2", providerReference: "ref-p2", amount: amount("19.10") })])

@@ -1,0 +1,13 @@
+{
+  "supersedesSourceBinding": "evidence/receipt-return-recognition-blocked-metadata-fix.json",
+  "scope": "Prevent supplier credit accounting from consuming a claim that its original return never posted.",
+  "behavior": "After exact invoice/return mappings and before any credit journal, supplier balance, ledger entry or credit record, verify the effective original return journal, original receipt recognition, canonical currency and each mapped source-owned invoiced claim quantity/value. Recovered return journals resolve through immutable resolution events. Pending returns require explicit authorized recovery first. Unmarked legacy claim funding requires accounting source review.",
+  "files": [
+    { "path": "services/purchasing/receipt-return-recognition.ts", "sha256": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45" },
+    { "path": "services/purchasing/purchase-return-credit.service.ts", "sha256": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12" },
+    { "path": "services/purchasing/__tests__/receipt-return-recognition.test.ts", "sha256": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b" },
+    { "path": "services/purchasing/__tests__/purchase-return-credit.service.test.ts", "sha256": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7" }
+  ],
+  "verification": { "focusedJest": { "sessionId": 21227, "suites": 2, "tests": 38, "exitCode": 0, "durationSeconds": 3.071 }, "changedFileEslint": { "exitCode": 0 } },
+  "dbReverification": "Parent agent owns actual PostgreSQL chain and final receipt."
+}

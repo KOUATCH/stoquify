@@ -10,6 +10,9 @@ import { db } from "@/prisma/db"
 
 const mockTx = {
   $queryRaw: jest.fn(),
+  organizationAccountingSettings: {
+    findUnique: jest.fn(),
+  },
   journal: {
     findFirst: jest.fn(),
   },
@@ -64,7 +67,14 @@ const postableAccounts = [
 describe("manual journal service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockTx.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }])
+    mockTx.$queryRaw.mockImplementation(async (query: { sql: string } | TemplateStringsArray) => {
+      const sql = "sql" in query ? query.sql : query.join("?")
+      if (sql.includes("accounting_periods")) return [openPeriod]
+      return sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }]
+    })
+    mockTx.organizationAccountingSettings.findUnique.mockResolvedValue({
+      baseCurrency: "XAF", roundingScale: 2, roundingMode: "HALF_UP",
+    })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.journal.findFirst.mockResolvedValue({
       id: "journal-1",

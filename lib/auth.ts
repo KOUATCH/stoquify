@@ -1,11 +1,9 @@
-import { betterAuth } from "better-auth"
-import { prismaAdapter } from "better-auth/adapters/prisma"
-import { APIError } from "better-auth/api"
-import { db } from "@/prisma/db"
-import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
-import { buildTrustedOrigins } from "@/lib/security/trusted-origins"
-import { credentialSignInSucceeded } from "@/lib/security/credential-sign-in-outcome"
-import { selfSignOutPlugin } from "@/lib/security/self-sign-out-plugin"
+import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log";
+import { credentialSignInSucceeded } from "@/lib/security/credential-sign-in-outcome";
+import { buildTrustedOrigins } from "@/lib/security/trusted-origins";
+import { db } from "@/prisma/db";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 
 const baseURL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"
 const configuredTrustedOrigins = buildTrustedOrigins([
@@ -48,7 +46,6 @@ function getRequestAuditContext(ctx: any) {
 
 export const auth = betterAuth({
   baseURL,
-  plugins: [selfSignOutPlugin],
 
   database: prismaAdapter(db, {
     provider: "postgresql",
@@ -144,14 +141,9 @@ export const auth = betterAuth({
 
       const user = await db.user.findFirst({
         where: { email: { equals: email, mode: "insensitive" } },
-        select: { id: true, organizationId: true, isActive: true, isLocked: true, lockedUntil: true },
+        select: { id: true, organizationId: true, isLocked: true, lockedUntil: true },
       })
       if (!user) return
-
-      // Account deactivation is distinct from an expired login throttle.
-      if (!user.isActive || (user.isLocked && !user.lockedUntil)) {
-        throw new APIError("FORBIDDEN", { message: "Account unavailable" })
-      }
 
       const now = new Date()
       if (user.isLocked && user.lockedUntil && user.lockedUntil > now) {
@@ -175,9 +167,9 @@ export const auth = betterAuth({
           { status: 403, headers: { "content-type": "application/json" } }
         )
       }
-      if (user.isLocked && user.lockedUntil && user.lockedUntil <= now) {
-        await db.user.updateMany({
-          where: { id: user.id, isActive: true, isLocked: true, lockedUntil: { lte: now } },
+      if (user.isLocked && (!user.lockedUntil || user.lockedUntil <= now)) {
+        await db.user.update({
+          where: { id: user.id },
           data: { isLocked: false, lockedUntil: null, failedLoginAttempts: 0 },
         })
       }
@@ -193,15 +185,14 @@ export const auth = betterAuth({
 
       const user = await db.user.findFirst({
         where: { email: { equals: email, mode: "insensitive" } },
-        select: { id: true, organizationId: true, failedLoginAttempts: true, isActive: true, isLocked: true, lockedUntil: true },
+        select: { id: true, organizationId: true, failedLoginAttempts: true },
       })
       if (!user) return {}
-      if (!user.isActive || (user.isLocked && !user.lockedUntil)) return {}
 
       const audit = getRequestAuditContext(ctx)
       if (isSuccess) {
-        await db.user.updateMany({
-          where: { id: user.id, isActive: true, OR: [{ isLocked: false }, { lockedUntil: { lte: new Date() } }] },
+        await db.user.update({
+          where: { id: user.id },
           data: { failedLoginAttempts: 0, isLocked: false, lockedUntil: null, lastLogin: new Date() },
         })
         await logSecurityEvent({

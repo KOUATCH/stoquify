@@ -1,0 +1,149 @@
+import { retainedReconciliationSignatureInTx } from "./reconciliation-retained-signature"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+import { randomUUID } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { db } from "@/prisma/db"
+import { FreshAuthRequiredError } from "@/lib/security/auth-session"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+import { loadRunForCertification } from "./payment-reconciliation-certification.service"
+import { assertProviderAccountReconciliationReady } from "./payment-reconciliation-evidence.service"
+import { reconcileUnallocatedSourcesInTx } from "./payment-reconciliation-run.service"
+import { lockReconciliationProviderInTx, lockReconciliationPaymentSourcesInTx } from "./reconciliation-source-locks"
+import { preparationHash as hash, preparationJson as json } from "./reconciliation-run-preparation-evidence"
+import { suspenseMetadata } from "./payment-suspense-evidence"
+import { reconciliationPreparationReadSchema, reconciliationPreparationSchema } from "./reconciliation-run-preparation.contracts"
+import type { SuspenseCorrectionControl } from "./payment-suspense-correction.service"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx, withReconciliationCloseRetry } from "./reconciliation-close-order.service"
+
+async function authorize(tx: Prisma.TransactionClient, control: SuspenseCorrectionControl, write = false) {
+  if (!["payments.reconciliation.read", "payments.reconciliation.run", "accounting.journal.read"].every(p => hasRbacPermission(control.actorPermissions, p))
+    || !await tx.user.findFirst({ where: { id: control.actorId, organizationId: control.organizationId, isActive: true }, select: { id: true } }))
+    throw new ForbiddenError("An active workspace reconciliation operator is required.")
+  const now = (control.now ?? new Date()).getTime(), at = control.lastAuthAt?.getTime()
+  if (write && (at === undefined || !Number.isFinite(at) || at > now || now - at > 300_000)) throw new FreshAuthRequiredError()
+}
+
+async function currentSources(tx: Prisma.TransactionClient, control: SuspenseCorrectionControl, runId: string, lockPayments = false) {
+  const run = await loadRunForCertification(tx, control.organizationId, runId, control.now ?? new Date())
+  const signedCertificate = run.status === "SIGNED" ? await retainedReconciliationSignatureInTx(tx, control.organizationId, run, control.now ?? new Date()) : null
+  if ((!signedCertificate && (!["NEEDS_REVIEW", "READY_FOR_SIGNOFF"].includes(run.status) || run.signedAt || run.signedById || run.certificateHash || run.certificatePayload)) || !run.runById?.trim() || run.voidedAt)
+    throw new BusinessRuleError("Only a reviewed unsigned run or a verified retained signature can incorporate additional sources.")
+  assertProviderAccountReconciliationReady({ ...run.providerAccount, paymentRail: run.paymentRail })
+  const period = await getOpenPeriodForDate(control.organizationId, run.businessDate, tx)
+  if (run.accountingPeriodId && run.accountingPeriodId !== period.id) throw new ConflictError("The run's accounting period requires review.")
+  const scope = { organizationId: control.organizationId, providerAccountId: run.providerAccountId }
+  const dates = { gte: run.periodStart, lt: run.periodEnd }
+  if (lockPayments) await lockReconciliationPaymentSourcesInTx(tx, { ...scope, periodStart: run.periodStart, periodEnd: run.periodEnd })
+  const [transactions, providerEvents, statementLines, matches, exceptions] = await Promise.all([
+    tx.paymentTransaction.findMany({ where: { ...scope, state: { in: ["CONFIRMED", "SETTLED"] }, occurredAt: dates }, orderBy: { id: "asc" } }),
+    tx.providerEvent.findMany({ where: { ...scope, status: { in: ["VERIFIED", "PROCESSED"] }, OR: [{ occurredAt: dates }, { receivedAt: dates }] }, orderBy: { id: "asc" } }),
+    tx.statementLine.findMany({ where: { ...scope, occurredAt: dates }, orderBy: { id: "asc" } }),
+    // Every retained claim, including a pending or rejected decision, requires
+    // its own correction path. An automatic refresh must not reuse its source.
+    tx.matchRecord.findMany({ where: scope, orderBy: { id: "asc" }, select: { id: true, reconciliationRunId: true, paymentTransactionId: true, providerEventId: true, statementLineId: true, status: true } }),
+    tx.paymentException.findMany({ where: scope, orderBy: { id: "asc" }, select: { id: true, reconciliationRunId: true, paymentTransactionId: true, providerEventId: true, statementLineId: true, status: true, evidence: true } }),
+  ])
+  const claims = [...matches, ...exceptions]
+  const payments = new Set(claims.map(row => row.paymentTransactionId)), events = new Set(claims.map(row => row.providerEventId)), lines = new Set(claims.map(row => row.statementLineId))
+  for (const row of exceptions) {
+    const evidence = suspenseMetadata(row.evidence)
+    for (const id of Array.isArray(evidence.providerEventIds) ? evidence.providerEventIds : []) if (typeof id === "string") events.add(id)
+    for (const id of Array.isArray(evidence.statementLineIds) ? evidence.statementLineIds : []) if (typeof id === "string") lines.add(id)
+  }
+  const additions = { transactions: transactions.filter(row => !payments.has(row.id)), providerEvents: providerEvents.filter(row => !events.has(row.id)),
+    statementLines: statementLines.filter(row => !lines.has(row.id) && row.status === "UNMATCHED") }
+  const retained = [...transactions.filter(row => payments.has(row.id)), ...providerEvents.filter(row => events.has(row.id)), ...statementLines.filter(row => lines.has(row.id))]
+  const reservedReferences = [...new Set(retained.flatMap(row => [row.providerReference, row.providerTransactionId]).filter((v): v is string => Boolean(v)).map(v => v.trim().toUpperCase()))]
+  const counts = { payments: additions.transactions.length, providerEvents: additions.providerEvents.length, statementLines: additions.statementLines.length }
+  return { run, period, additions, reservedReferences, counts, signedCertificate, revision: hash({ run, period, transactions, providerEvents, statementLines, matches, exceptions }) }
+}
+
+export async function previewAdditionalReconciliationSources(input: unknown, control: SuspenseCorrectionControl) {
+  const command = reconciliationPreparationReadSchema.parse(input)
+  return db.$transaction(async tx => {
+    await authorize(tx, control)
+    const current = await currentSources(tx, control, command.runId)
+    return { runId: current.run.id, revision: current.revision, counts: current.counts, signedCertificate: current.signedCertificate,
+      canIncorporate: Object.values(current.counts).some(n => n > 0), asOf: (control.now ?? new Date()).toISOString() }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+}
+
+export async function incorporateAdditionalReconciliationSources(input: unknown, control: SuspenseCorrectionControl) {
+  const startedAt = Date.now()
+  const command = reconciliationPreparationSchema.parse(input), now = control.now ?? new Date()
+  const key = "reconciliation-additional-sources:" + command.idempotencyKey
+  const requestHash = hash({ command, organizationId: control.organizationId, actorId: control.actorId })
+  try {
+    return await withReconciliationCloseRetry(() => db.$transaction(async tx => {
+      await authorize(tx, { ...control, now }, true)
+      const prior = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId: control.organizationId, idempotencyKey: key } })
+      if (prior) {
+        const payload = suspenseMetadata(prior.payloadSummary)
+        if (payload.requestHash !== requestHash) throw new IdempotencyConflictError()
+        if (prior.source !== "RECONCILIATION_RUN" || prior.status !== "PROCESSED" || prior.externalId !== command.runId
+          || payload.kind !== "RECONCILIATION_ADDITIONAL_SOURCES_V1" || payload.organizationId !== control.organizationId || payload.runId !== command.runId
+          || prior.payloadHash !== hash(prior.payloadSummary).slice(7) || prior.processedAt?.toISOString() !== payload.incorporatedAt
+          || !await tx.ledgerAuditEvent.findFirst({ where: { organizationId: control.organizationId, resourceId: command.runId, resourceType: "ReconciliationRun",
+            action: "RECONCILIATION_ADDITIONAL_SOURCES", actorId: control.actorId, metadata: { path: ["receiptId"], equals: prior.id } } }))
+          throw new ConflictError("Retained additional-source evidence requires review.")
+        const run = await loadRunForCertification(tx, control.organizationId, command.runId, now)
+        return { runId: run.id, receiptId: prior.id, currentStatus: run.status, replayed: true }
+      }
+      await lockReconciliationCloseCatalogInTx(tx, control.organizationId)
+      const runScope = await tx.reconciliationRun.findFirst({ where: { id: command.runId, organizationId: control.organizationId }, select: { providerAccountId: true, businessDate: true } })
+      if (!runScope) throw new NotFoundError("Reconciliation run not found")
+      await getOpenPeriodForDate(control.organizationId, runScope.businessDate, tx)
+      const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, control.organizationId)
+      await lockReconciliationProviderInTx(tx, control.organizationId, runScope.providerAccountId)
+      await tx.$queryRaw(Prisma.sql`SELECT id FROM reconciliation_runs WHERE id = ${command.runId}
+        AND "organizationId" = ${control.organizationId} AND "providerAccountId" = ${runScope.providerAccountId} FOR UPDATE`)
+      const current = await currentSources(tx, { ...control, now }, command.runId, true)
+      await authorize(tx, { ...control, now: new Date(now.getTime() + Math.max(0, Date.now() - startedAt)) }, true)
+      if (current.revision !== command.expectedRevision) throw new ConflictError("The reviewed sources changed. Refresh the additional-source preview.")
+      if (!Object.values(current.counts).some(n => n > 0)) throw new BusinessRuleError("There are no unallocated additional sources to incorporate.")
+      const receiptId = randomUUID(), run = current.run
+      // Competes with sign-off/preparation on the same version. Transaction
+      // rollback also removes any new matches, exceptions or notification rows.
+      const transition = await tx.reconciliationRun.updateMany({ where: { id: run.id, organizationId: control.organizationId, updatedAt: run.updatedAt,
+        status: run.status, signedAt: run.signedAt, signedById: run.signedById, certificateHash: run.certificateHash },
+        data: { status: "NEEDS_REVIEW", updatedAt: now,
+          ...(current.signedCertificate ? { signedAt: null, signedById: null, certificateHash: null, certificatePayload: Prisma.JsonNull } : {}),
+          metadata: json({ ...suspenseMetadata(run.metadata), ...(current.signedCertificate ? { immutableAfterSignoff: false, signedSourceVersionHash: null } : {}), additionalSourcesReceiptId: receiptId }) } })
+      if (transition.count !== 1) throw new ConflictError("The run changed concurrently. Refresh or retry the same request.")
+      const added = await reconcileUnallocatedSourcesInTx(tx, { organizationId: control.organizationId, providerAccount: run.providerAccount, run,
+        ...current.additions, reservedReferences: current.reservedReferences, correlationId: receiptId, now })
+      await tx.reconciliationRun.update({ where: { id: run.id, organizationId: control.organizationId }, data: {
+        totalInternalAmount: run.totalInternalAmount.plus(current.additions.transactions.reduce((sum, row) => sum.plus(row.amount), new Prisma.Decimal(0))),
+        totalExternalAmount: run.totalExternalAmount.plus([...current.additions.providerEvents, ...current.additions.statementLines].reduce((sum, row) => sum.plus(row.amount ?? 0), new Prisma.Decimal(0))),
+        matchedAmount: run.matchedAmount.plus(added.matchedAmount), suspenseAmount: run.suspenseAmount.plus(added.suspenseAmount),
+        matchCount: run.matchCount + added.matchCount, exceptionCount: run.exceptionCount + added.exceptionCount,
+        invariantResult: { reviewRequired: true, additionalSourcesReceiptId: receiptId, ledgerPostingRequested: false },
+      } })
+      const payload = json({ kind: "RECONCILIATION_ADDITIONAL_SOURCES_V1", organizationId: control.organizationId, runId: run.id,
+        actorId: control.actorId, incorporatedAt: now.toISOString(), requestHash, reviewedRevision: current.revision, reason: command.reason,
+        counts: current.counts, additions: { paymentIds: current.additions.transactions.map(r => r.id), providerEventIds: current.additions.providerEvents.map(r => r.id), statementLineIds: current.additions.statementLines.map(r => r.id) },
+        result: added, beforeRun: run })
+      await tx.paymentReconciliationInboxItem.create({ data: { id: receiptId, organizationId: control.organizationId, source: "RECONCILIATION_RUN", status: "PROCESSED",
+        externalId: run.id, idempotencyKey: key, payloadSummary: payload, payloadHash: hash(payload).slice(7), processedAt: now, correlationId: receiptId } })
+      await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: "RECONCILIATION_ADDITIONAL_SOURCES",
+        resourceType: "ReconciliationRun", resourceId: run.id, message: "Additional sources reconciled; prior records retained and fresh preparation required",
+        metadata: json({ receiptId, reviewedRevision: current.revision }) } })
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, control.organizationId, { sourceCode: "PAYMENT_RECONCILIATION_SOURCE_REPAIRED", sourceId: run.id,
+        periodIds: affectedPeriodIds, previousEvidenceHash: run.certificateHash, newEvidenceHash: hash(payload), correlationId: receiptId,
+        staleReason: "Additional reconciliation sources require fresh preparation, review and independent signing." }, { actorId: control.actorId, now })
+      if (current.signedCertificate) {
+        await publishPaymentReconciliationNotification({ type: "payment-reconciliation.run.reopened", organizationId: control.organizationId,
+          providerAccountId: run.providerAccountId, evidenceRef: { reconciliationRunId: run.id }, correlationId: receiptId, dedupeKey: receiptId }, tx)
+      }
+      return { runId: run.id, receiptId, currentStatus: "NEEDS_REVIEW" as const, replayed: false }
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }))
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (["P2002", "P2034"].includes(error.code)
+      || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code)))))
+      throw new ConflictError("Additional-source recovery changed concurrently. Refresh or retry the same request.")
+    throw error
+  }
+}

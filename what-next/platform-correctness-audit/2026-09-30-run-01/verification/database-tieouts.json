@@ -1,0 +1,235 @@
+{
+  "capturedAt": "2026-09-30T14:16:55.138Z",
+  "scope": "Aggregate diagnostics on configured local database; no production inference and no business identifiers",
+  "checks": [
+    {
+      "name": "rowCounts",
+      "sql": "SELECT 'sales_orders' AS source,count(*)::text AS rows FROM sales_orders UNION ALL SELECT 'payments',count(*)::text FROM payments UNION ALL SELECT 'journal_entries',count(*)::text FROM journal_entries UNION ALL SELECT 'inventory_transactions',count(*)::text FROM inventory_transactions UNION ALL SELECT 'supplier_invoices',count(*)::text FROM supplier_invoices UNION ALL SELECT 'supplier_payments',count(*)::text FROM supplier_payments UNION ALL SELECT 'payroll_runs',count(*)::text FROM payroll_runs UNION ALL SELECT 'reconciliation_runs',count(*)::text FROM reconciliation_runs UNION ALL SELECT 'pos_offline_events',count(*)::text FROM pos_offline_events",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "source": "sales_orders",
+          "rows": "34"
+        },
+        {
+          "source": "payments",
+          "rows": "30"
+        },
+        {
+          "source": "journal_entries",
+          "rows": "141"
+        },
+        {
+          "source": "inventory_transactions",
+          "rows": "709"
+        },
+        {
+          "source": "supplier_invoices",
+          "rows": "24"
+        },
+        {
+          "source": "supplier_payments",
+          "rows": "24"
+        },
+        {
+          "source": "payroll_runs",
+          "rows": "24"
+        },
+        {
+          "source": "reconciliation_runs",
+          "rows": "24"
+        },
+        {
+          "source": "pos_offline_events",
+          "rows": "24"
+        }
+      ]
+    },
+    {
+      "name": "journalBalance",
+      "sql": "SELECT count(*)::text AS unbalanced_posted_entry_currency_groups FROM (SELECT l.\"journalEntryId\",l.currency FROM journal_entry_lines l JOIN journal_entries j ON j.id=l.\"journalEntryId\" WHERE j.status::text IN ('POSTED','REVERSED') GROUP BY l.\"journalEntryId\",l.currency HAVING sum(l.debit)<>sum(l.credit)) s",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "unbalanced_posted_entry_currency_groups": "0"
+        }
+      ]
+    },
+    {
+      "name": "journalTenant",
+      "sql": "SELECT count(*)::text AS inconsistent_line_entry_account_tenants FROM journal_entry_lines l JOIN journal_entries j ON j.id=l.\"journalEntryId\" JOIN chart_of_accounts a ON a.id=l.\"accountId\" WHERE l.\"organizationId\"<>j.\"organizationId\" OR l.\"organizationId\"<>a.\"organizationId\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "inconsistent_line_entry_account_tenants": "0"
+        }
+      ]
+    },
+    {
+      "name": "journalBase",
+      "sql": "SELECT count(*)::text AS non_unit_rate_lines,count(*) FILTER (WHERE abs(coalesce(\"baseDebit\",0)-round(debit*\"exchangeRate\",2))>0.01 OR abs(coalesce(\"baseCredit\",0)-round(credit*\"exchangeRate\",2))>0.01)::text AS candidate_base_conversion_mismatches FROM journal_entry_lines WHERE \"exchangeRate\"<>1",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "non_unit_rate_lines": "12",
+          "candidate_base_conversion_mismatches": "0"
+        }
+      ]
+    },
+    {
+      "name": "journalCurrencies",
+      "sql": "SELECT currency,count(*)::text AS lines FROM journal_entry_lines GROUP BY currency ORDER BY currency",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "currency": "EUR",
+          "lines": "8"
+        },
+        {
+          "currency": "USD",
+          "lines": "4"
+        },
+        {
+          "currency": "XAF",
+          "lines": "356"
+        }
+      ]
+    },
+    {
+      "name": "journalSources",
+      "sql": "SELECT \"sourceType\"::text,status::text,count(*)::text AS entries FROM journal_entries GROUP BY \"sourceType\",status ORDER BY \"sourceType\",status",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "sourceType": "OPENING_BALANCE",
+          "status": "POSTED",
+          "entries": "2"
+        },
+        {
+          "sourceType": "POS_PAYMENT",
+          "status": "POSTED",
+          "entries": "6"
+        },
+        {
+          "sourceType": "POS_SALE",
+          "status": "POSTED",
+          "entries": "30"
+        },
+        {
+          "sourceType": "STOCK_ADJUSTMENT",
+          "status": "POSTED",
+          "entries": "95"
+        },
+        {
+          "sourceType": null,
+          "status": "DRAFT",
+          "entries": "2"
+        },
+        {
+          "sourceType": null,
+          "status": "POSTED",
+          "entries": "2"
+        },
+        {
+          "sourceType": null,
+          "status": "REVERSED",
+          "entries": "2"
+        },
+        {
+          "sourceType": null,
+          "status": "VOIDED",
+          "entries": "2"
+        }
+      ]
+    },
+    {
+      "name": "journalLink",
+      "sql": "SELECT count(*)::text AS posted_without_posting_batch FROM journal_entries WHERE status::text IN ('POSTED','REVERSED') AND \"postingBatchId\" IS NULL",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "posted_without_posting_batch": "4"
+        }
+      ]
+    },
+    {
+      "name": "inventoryTenant",
+      "sql": "SELECT count(*)::text AS inconsistent_item_location_tenants FROM inventory_levels v JOIN items i ON i.id=v.\"itemId\" JOIN locations l ON l.id=v.\"locationId\" WHERE i.\"organizationId\"<>l.\"organizationId\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "inconsistent_item_location_tenants": "0"
+        }
+      ]
+    },
+    {
+      "name": "inventoryProjection",
+      "sql": "SELECT count(*)::text AS levels,count(*) FILTER(WHERE \"quantityAvailable\"<>\"quantityOnHand\"-\"quantityReserved\")::text AS available_mismatches,count(*) FILTER(WHERE \"quantityOnHand\"<0 OR \"quantityReserved\"<0 OR \"quantityAvailable\"<0)::text AS negative_levels,count(*) FILTER(WHERE abs(\"totalValue\"-round(\"quantityOnHand\"*\"averageCost\",2))>0.01)::text AS valuation_rounding_candidates FROM inventory_levels",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "levels": "541",
+          "available_mismatches": "0",
+          "negative_levels": "0",
+          "valuation_rounding_candidates": "0"
+        }
+      ]
+    },
+    {
+      "name": "payrollArithmetic",
+      "sql": "SELECT count(*)::text AS runs,count(*) FILTER(WHERE \"netPayableAmount\"<>\"grossAmount\"-\"employeeDeductionAmount\")::text AS arithmetic_mismatches FROM payroll_runs",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "runs": "24",
+          "arithmetic_mismatches": "0"
+        }
+      ]
+    },
+    {
+      "name": "payrollRegister",
+      "sql": "SELECT count(*)::text AS emitted_run_total_mismatches FROM payroll_runs r JOIN (SELECT \"payrollRunId\",sum(\"grossAmount\") AS gross,sum(\"netPayableAmount\") AS net FROM payroll_payslips WHERE status::text<>'VOIDED' GROUP BY \"payrollRunId\") p ON p.\"payrollRunId\"=r.id WHERE r.status::text IN ('EMITTED','POSTED','ARCHIVED') AND (p.gross<>r.\"grossAmount\" OR p.net<>r.\"netPayableAmount\")",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "emitted_run_total_mismatches": "0"
+        }
+      ]
+    },
+    {
+      "name": "salesPaymentTenant",
+      "sql": "SELECT count(*)::text AS inconsistent_sale_payment_tenants FROM payments p JOIN sales_orders s ON s.id=p.\"salesOrderId\" WHERE p.\"organizationId\"<>s.\"organizationId\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "inconsistent_sale_payment_tenants": "0"
+        }
+      ]
+    },
+    {
+      "name": "periodOverlap",
+      "sql": "SELECT count(*)::text AS overlapping_period_pairs FROM accounting_periods a JOIN accounting_periods b ON a.\"organizationId\"=b.\"organizationId\" AND a.id<b.id AND a.\"startDate\"<=b.\"endDate\" AND b.\"startDate\"<=a.\"endDate\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "overlapping_period_pairs": "0"
+        }
+      ]
+    },
+    {
+      "name": "fiscalBounds",
+      "sql": "SELECT count(*)::text AS periods_outside_fiscal_year FROM accounting_periods p JOIN fiscal_years f ON f.id=p.\"fiscalYearId\" WHERE p.\"startDate\"<f.\"startDate\" OR p.\"endDate\">f.\"endDate\"",
+      "status": "EXECUTED",
+      "rows": [
+        {
+          "periods_outside_fiscal_year": "0"
+        }
+      ]
+    }
+  ],
+  "readOnly": [
+    {
+      "transaction_read_only": "on"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { localizePath } from "@/i18n/routing"
 import { ArrowUpRight, Eye, LockKeyhole, ShieldAlert } from "lucide-react"
 
 import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
@@ -81,7 +82,7 @@ export function BIKpiCard({ card, locale = "en", currencyCode = "XAF", className
                 {card.actionLink.label}
               </span>
             ) : (
-              <Link href={card.actionLink.href}>
+              <Link href={localizePath(card.actionLink.href, biLocale(locale))}>
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 {card.actionLink.label}
               </Link>
@@ -131,7 +132,7 @@ export function BIDrillThroughButton({ drillThrough, locale = "en" }: BIDrillThr
       variant="outline"
       className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
     >
-      <Link href={drillThrough.href}>
+      <Link href={localizePath(drillThrough.href, biLocale(locale))}>
         <Eye className="h-4 w-4" aria-hidden="true" />
         {drillThrough.label}
       </Link>

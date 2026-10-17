@@ -33,8 +33,6 @@ export function BIEvidenceBadgeRow({
 }: BIEvidenceBadgeRowProps) {
   const sourceCount = provenance?.sourceModules.length ?? 0
   const t = biCopy[biLocale(locale)]
-  const sourceDate = freshness.sourceMaxUpdatedAt ? new Date(freshness.sourceMaxUpdatedAt) : null
-  const validSourceDate = sourceDate && Number.isFinite(sourceDate.getTime()) ? sourceDate : null
   const freshnessState = freshness.stale && freshness.state === "fresh" ? "stale" : freshness.state
 
   return (
@@ -64,16 +62,28 @@ export function BIEvidenceBadgeRow({
           {biCopy[biLocale(locale)].sourceHash}
         </Badge>
       ) : null}
-      {freshness.stale ? (
-        <div className="w-full min-w-0 rounded-md border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-2 text-xs leading-5 text-[var(--dash-text)] [overflow-wrap:anywhere]">
-          <p className="font-semibold">{t.staleSource}</p>
-          {validSourceDate ? (
-            <p>{t.sourceUpdated}: <time dateTime={freshness.sourceMaxUpdatedAt!}>{new Intl.DateTimeFormat(biLocale(locale) === "fr" ? "fr-FR" : "en-GB", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }).format(validSourceDate)} UTC</time></p>
-          ) : <p>{t.sourceTimeMissing}</p>}
-          {freshness.maxAgeMinutes !== null && Number.isFinite(freshness.maxAgeMinutes) && freshness.maxAgeMinutes > 0 ? <p>{t.freshnessLimit}: {freshness.maxAgeMinutes} {t.minutes}</p> : null}
-          <p>{t.staleGuidance}</p>
-        </div>
-      ) : null}
+      <BIFreshnessNotice freshness={freshness} locale={locale} />
+    </div>
+  )
+}
+
+export function BIFreshnessNotice({ freshness, locale = "en", compact = false }: {
+  freshness: BIFreshness
+  locale?: string
+  compact?: boolean
+}) {
+  const t = biCopy[biLocale(locale)]
+  const sourceDate = freshness.sourceMaxUpdatedAt ? new Date(freshness.sourceMaxUpdatedAt) : null
+  const validSourceDate = sourceDate && Number.isFinite(sourceDate.getTime()) ? sourceDate : null
+  if (!freshness.stale) return null
+  return (
+    <div className={cn("w-full min-w-0 rounded-md border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-2 text-xs leading-5 text-[var(--dash-text)] [overflow-wrap:anywhere]", compact && "flex flex-wrap gap-x-3")}>
+      <p className="font-semibold">{t.staleSource}</p>
+      {validSourceDate ? (
+        <p>{t.sourceUpdated}: <time dateTime={freshness.sourceMaxUpdatedAt!}>{new Intl.DateTimeFormat(biLocale(locale) === "fr" ? "fr-FR" : "en-GB", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }).format(validSourceDate)} UTC</time></p>
+      ) : <p>{t.sourceTimeMissing}</p>}
+      {freshness.maxAgeMinutes !== null && Number.isFinite(freshness.maxAgeMinutes) && freshness.maxAgeMinutes > 0 ? <p>{t.freshnessLimit}: {freshness.maxAgeMinutes} {t.minutes}</p> : null}
+      <p className={compact ? "w-full" : undefined}>{t.staleGuidance}</p>
     </div>
   )
 }

@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 
-import { protect } from "@/services/_shared/protect"
+import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+import { requireFreshAuth } from "@/lib/security/auth-session"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
 import {
   postPurchaseReturn,
   postSupplierCreditNote,
@@ -18,6 +20,24 @@ import {
 
 function asRecord(input: unknown) {
   return input && typeof input === "object" && !Array.isArray(input) ? input : {}
+}
+
+function reversalAuthority(ctx: ProtectedActionContext, permission: string, resource: string) {
+  if (ctx.freshAuth?.claims.userId !== ctx.userId || ctx.freshAuth.claims.tenantId !== ctx.orgId) {
+    throw new RbacError("Session identity mismatch", "UNAUTHENTICATED", 401)
+  }
+  return {
+    // This closure is constructed only from the protected server context. The
+    // owner calls it after source/period waits and before the first write.
+    async assertCurrentAuthority() {
+      const verified = await requireFreshAuth(300)
+      const current = await requirePermission(permission, { resource, auditAllowed: false })
+      if (verified.claims.userId !== ctx.userId || verified.claims.tenantId !== ctx.orgId ||
+          current.userId !== ctx.userId || current.orgId !== ctx.orgId) {
+        throw new RbacError("Session identity changed; refresh before reversing.", "UNAUTHENTICATED", 401)
+      }
+    },
+  }
 }
 
 function revalidatePurchaseEvidencePaths() {
@@ -63,7 +83,8 @@ const reverseReturn = protect<unknown, Awaited<ReturnType<typeof reversePurchase
       organizationId: ctx.orgId,
       postedById: ctx.userId,
     })
-    const result = await reversePurchaseReturn(parsed)
+    const result = await reversePurchaseReturn(parsed, undefined,
+      reversalAuthority(ctx, "purchasing.returns.post", "PurchaseReturn"))
     revalidatePurchaseEvidencePaths()
     return result
   },
@@ -109,7 +130,8 @@ const reverseCredit = protect<unknown, Awaited<ReturnType<typeof reverseSupplier
       organizationId: ctx.orgId,
       postedById: ctx.userId,
     })
-    const result = await reverseSupplierCreditNote(parsed)
+    const result = await reverseSupplierCreditNote(parsed, undefined,
+      reversalAuthority(ctx, "purchasing.ap.credit.post", "SupplierCreditNote"))
     revalidatePurchaseEvidencePaths()
     return result
   },

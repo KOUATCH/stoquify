@@ -14,6 +14,13 @@ import {
   Prisma,
 } from "@prisma/client";
 
+// Component/calculation fixtures do not constitute production admission.
+// Its real contract and service-boundary tests live in payroll-production-admission.test.ts.
+jest.mock("../payroll-production-admission", () => ({
+  assertPayrollProductionAdmission: jest.fn(),
+  assertPayrollProductionAdmissionInTx: jest.fn(),
+}));
+
 import { ConflictError } from "@/services/_shared/action-errors";
 
 jest.mock("@/prisma/db", () => ({
@@ -3958,6 +3965,10 @@ describe("payroll control service", () => {
   });
   it("marks certified close evidence stale when a payroll run is posted", async () => {
     const tx = buildTx();
+    // The retained close service takes an actual row lock before invalidating.
+    tx.$queryRaw.mockImplementation(async (query: Prisma.Sql) =>
+      query.sql.includes('FROM "close_runs"') ? [{ id: "close-run-1" }] : [],
+    );
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
     tx.payrollRun.findFirst.mockResolvedValue(payrollRunFixture());
     tx.journal.findFirst.mockResolvedValue({

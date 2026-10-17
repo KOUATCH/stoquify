@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useTransition } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   getInventoryLossSummaryAction,
@@ -145,7 +145,8 @@ export function inventoryLossErrorState(
   return "error"
 }
 
-export function useInventoryLossWorkbench() {
+export function useInventoryLossWorkbench(organizationId: string, actorId: string) {
+  const queryClient = useQueryClient()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -167,9 +168,10 @@ export function useInventoryLossWorkbench() {
     [filters],
   )
 
-  const lossQuery = useQuery({
-    queryKey: ["inventory-loss-workbench", actionFilters],
-    enabled: !periodError,
+  const queryKey = ["inventory-loss-workbench", organizationId, actorId, actionFilters]
+  const lossQuery = useQuery<InventoryLossQueryResult | null>({
+    queryKey,
+    enabled: Boolean(organizationId && actorId) && !periodError,
     queryFn: async (): Promise<InventoryLossQueryResult> => {
       const response = await getInventoryLossSummaryAction(actionFilters)
       if (!response.success) {
@@ -179,12 +181,23 @@ export function useInventoryLossWorkbench() {
         error.status = response.status
         error.code = response.code
         error.retryable = response.retryable
+        if (inventoryLossErrorState(error) !== "error") {
+          // Discard rejected evidence so neither retry nor remount can revive it.
+          queryClient.setQueriesData<InventoryLossQueryResult | null>(
+            { queryKey: ["inventory-loss-workbench", organizationId, actorId] },
+            null,
+          )
+        }
         throw error
       }
 
       return response.data
     },
-    placeholderData: (previous) => previous,
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === organizationId && previousQuery.queryKey[2] === actorId
+        ? previous : undefined,
+    retry: (failureCount, error) => inventoryLossErrorState(error) === "error"
+      && (error as InventoryLossActionError).retryable !== false && failureCount < 3,
   })
 
   const updateFilters = useCallback(
@@ -202,7 +215,7 @@ export function useInventoryLossWorkbench() {
   return {
     filters,
     periodError,
-    response: lossQuery.data,
+    response: lossQuery.data ?? undefined,
     result: lossQuery.data?.data,
     scope: lossQuery.data?.scope,
     isLoading: lossQuery.isLoading || isPending,

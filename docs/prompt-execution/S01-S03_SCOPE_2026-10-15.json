@@ -1,0 +1,33 @@
+{
+  "scope": "S01 source reproduction, S02 operational logging, S03 payroll settlement authorization; local implementation only",
+  "baselineHead": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "ownedFiles": [
+    "scripts/candidate-snapshot.cjs",
+    "scripts/__tests__/candidate-snapshot.node-test.cjs",
+    "scripts/run-s01-s03-postgres.cjs",
+    "jest.s01-s03.config.cjs",
+    "jest.s01-s03-postgres.config.cjs",
+    "tsconfig.s01-s03.json",
+    "tests/s01-s03/server-only.cjs",
+    "lib/logger.ts",
+    "lib/__tests__/logger.test.ts",
+    "lib/security/audit-log.ts",
+    "lib/security/__tests__/audit-log-fallback.test.ts",
+    "services/_shared/protect.ts",
+    "services/_shared/__tests__/protect.test.ts",
+    "services/payroll/payment-settlement-authority.ts",
+    "services/payroll/__tests__/payment-settlement-authority.test.ts",
+    "services/payroll/payment-reconciliation.service.ts",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts",
+    "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts",
+    "services/payroll/payroll-provider-settlement-bridge.service.ts",
+    "services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts",
+    "services/payroll/payroll-provider-inbox-settlement-worker.service.ts",
+    "services/payroll/__tests__/payroll-provider-inbox-settlement-worker.service.test.ts",
+    "tests/postgres/ui-workflow/payroll-settlement.test.ts",
+    "docs/operations/runbooks/RUNBOOK.md",
+    "docs/prompt-execution/S01-S03_SCOPE_2026-10-15.json",
+    "docs/prompt-execution/S01-S03_EXECUTION_2026-10-15.md"
+  ]
+}

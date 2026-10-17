@@ -90,3 +90,11 @@ A UI change is ready only when:
 ## Contrast and focus evidence note — 2026-09-19
 
 Keep automated contrast `incomplete` separate from a pass when themed pseudo-elements prevent analysis. Record any supplementary rendered-background method, exclusions and remaining manual checks. Check focus outlines against scrolling/clipping ancestors, not only computed outline styles. [Daily Digest example](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md).
+
+Measure scrollable text only after accounting for ancestor clipping; bring offscreen text into view and restore the scroll position afterwards. Record controlled text enlargement separately from native browser zoom. Reuse screenshots only after checking relevant source bindings. [Current seven-workspace example](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md).
+
+For content inside the authenticated dashboard, inspect the rendered landmark tree before adding a main element: the current layout owns main. Verify focus colors against the active theme token, not just the presence of an outline. The [payroll run/register correction](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_PAYROLL_LANDMARKS_2026-09-30.md) records this scoped check without claiming full accessibility certification.
+
+Test service-level authority denial after route permission admission: an allowed route does not guarantee permission to read its aggregate. Preserve genuine source failures, localize denied recovery and verify that no aggregate is rendered. Include enlarged French text at desktop card widths as well as mobile. [Cash Command evidence](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_ACCESSIBILITY_AND_DENIAL_2026-09-30.md).
+
+For a small white primary-action label, verify the lightest rendered background, including hover/focus; the brand gradient alone does not guarantee contrast. Prefer the existing product action tokens where appropriate. Record local request timings separately from service-only timings and do not treat their difference as a proven bottleneck. [Cash contrast and latency baseline](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_CONTRAST_AND_LATENCY_2026-09-30.md).

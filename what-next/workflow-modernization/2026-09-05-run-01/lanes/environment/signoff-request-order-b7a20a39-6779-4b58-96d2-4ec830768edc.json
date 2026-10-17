@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-27T12:40:57.911Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "44c3f34ad39ca8773c8732dd36cbb0846d53dcf39cfefc02b03afd6c8f541478",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sourceArrival": true,
+      "preview": {
+        "runId": "cmujt4k6o001amaj0s1u9u4k0",
+        "status": "READY_FOR_SIGNOFF",
+        "asOf": "2026-09-27T12:40:59.458Z",
+        "provider": "Owned request ordering",
+        "currencyCode": "XAF",
+        "businessDate": "2026-09-27T00:00:00.000Z",
+        "totals": {
+          "internal": "100.25",
+          "external": "100.25",
+          "matched": "100.25",
+          "suspense": "0.00"
+        },
+        "canSign": true,
+        "blocker": null,
+        "expectedSourceVersionHash": "sha256:4fe60580c14fa75077499221e7bdd124448961add98dc56f02914627409bd1ea",
+        "expectedEvidenceRevision": "sha256:9d4ff8e003cd1c3eaba8e464e232672c53da293ebf2451caa45cd17892d86e8b",
+        "counts": {
+          "paymentTransactionCount": 1,
+          "providerEventCount": 2,
+          "statementFileCount": 0,
+          "statementLineCount": 0,
+          "matchRecordCount": 1,
+          "exceptionCount": 0,
+          "suspenseCount": 0
+        }
+      }
+    }
+  ],
+  "passed": false,
+  "error": "New unmatched provider evidence must require reconciliation before offering sign-off\n\ntrue !== false\n",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "44c3f34ad39ca8773c8732dd36cbb0846d53dcf39cfefc02b03afd6c8f541478",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-30T11:40:25.560Z",
+  "syntheticReleaseFixtures": true,
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "2ce0068da2da464581a10266cb2cbb01ae024914d4204d84618f2b1c6c51bc23",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "6909a3eac5606bd2d9044c641cc69e9ef56b0cc77fde8017c91e5fa1392c0f46",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "7fe579d29e997a186371e2e26068e4b873df7d2fe3fd8e93cbc77d7dddc369c3"
+  },
+  "checks": [],
+  "stage": "en fresh authentication",
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('row').filter({ hasText: '77f176c0-2afa-474f-9d26-b8941acf3c20-en' }).getByRole('form').getByLabel('Current password', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('row').filter({ hasText: '77f176c0-2afa-474f-9d26-b8941acf3c20-en' }).getByRole('form').getByLabel('Current password', { exact: true })\n    - waiting for \"http://127.0.0.1:3110/en/dashboard/payroll/payments?\" navigation to finish...\n    - navigated to \"http://127.0.0.1:3110/en/dashboard/payroll/payments?\"\n",
+  "failureScreenshot": "settlement-form-77f176c0-2afa-474f-9d26-b8941acf3c20-failed.png",
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "2ce0068da2da464581a10266cb2cbb01ae024914d4204d84618f2b1c6c51bc23",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "6909a3eac5606bd2d9044c641cc69e9ef56b0cc77fde8017c91e5fa1392c0f46",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "7fe579d29e997a186371e2e26068e4b873df7d2fe3fd8e93cbc77d7dddc369c3"
+  },
+  "sourceStable": true
+}

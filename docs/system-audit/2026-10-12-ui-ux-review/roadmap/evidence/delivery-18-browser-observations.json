@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-16",
+  "role": "ACCOUNTANT",
+  "browser": "Chrome",
+  "origin": "http://localhost:3000",
+  "preference": "dark; no theme or zoom change requested by agent",
+  "trialBalance": {
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "viewports": [
+      [
+        320,
+        844
+      ],
+      [
+        1440,
+        900
+      ]
+    ],
+    "phoneDocumentWidths": [
+      300,
+      300
+    ],
+    "desktopDocumentWidths": [
+      1420,
+      1420
+    ],
+    "before": {
+      "scrollViewportWidth": 245,
+      "frozenIdentityWidth": 368,
+      "scrollOffsetAfterKeyboard": 457.78,
+      "numericColumnsObscured": true
+    },
+    "after": {
+      "phoneIdentityPosition": "static",
+      "desktopIdentityPosition": "sticky",
+      "numericColumnsReachable": true,
+      "keyboardSort": [
+        "ascending",
+        "descending"
+      ],
+      "sortSemantics": "aria-sort on active header",
+      "filtersWrap": true,
+      "frenchDocumentLanguage": "fr",
+      "footerPreservedUnderSearchAndNoMatch": true
+    }
+  },
+  "portfolio": {
+    "locale": "fr",
+    "viewports": [
+      [
+        1440,
+        900
+      ],
+      [
+        320,
+        844
+      ]
+    ],
+    "phoneDocumentWidths": [
+      300,
+      300
+    ],
+    "mainLandmarks": 1,
+    "states": [
+      "no active mandate",
+      "no outstanding evidence",
+      "loading authorized work after keyboard refresh"
+    ],
+    "beforeFixFocusAfterRefresh": "body",
+    "postFixLiveFocus": "not verified: browser timeouts",
+    "postFixMockedFocusAndDuplicatePrevention": "passed EN and FR"
+  },
+  "navigation": "Client-link attempts stalled; exact observed destinations loaded with direct navigation. Cause unresolved.",
+  "cleanup": {
+    "viewportResetAttempted": true,
+    "viewportResetConfirmed": false,
+    "lastConfirmedViewport": [
+      320,
+      844
+    ],
+    "lastConfirmedRoute": "/fr/dashboard/accounting/accountant-portfolio"
+  },
+  "open": [
+    "Owner and Cashier sessions",
+    "refresh live focus check",
+    "viewport restoration confirmation",
+    "delegated populated portfolio",
+    "screen reader, forced colors, reduced motion and broader contrast/state matrix"
+  ],
+  "businessMutations": false
+}

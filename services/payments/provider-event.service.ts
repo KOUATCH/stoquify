@@ -15,6 +15,7 @@ import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "@/services/reconciliation/reconciliation-close-order.service"
 
 import type { ParsedProviderEvent, PaymentProviderAdapter, ProviderWebhookHeaders } from "./payment-ingestion.types"
 import { PaymentIngestionError } from "./payment-ingestion.types"
@@ -138,6 +139,17 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
       })
     }
 
+    // Close reads provider availability and critical exceptions tenant-wide.
+    // Serialize source writes after the complete assessment set, then reread
+    // provider status and idempotency under its row lock using Read Committed.
+    await lockReconciliationCloseCatalogInTx(tx, input.organizationId)
+    const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, input.organizationId)
+    await tx.$queryRaw`SELECT id FROM provider_accounts WHERE id = ${providerAccount.id} AND "organizationId" = ${input.organizationId} FOR UPDATE`
+    const currentProvider = await tx.providerAccount.findFirst({ where: { id: providerAccount.id, organizationId: input.organizationId }, select: { status: true } })
+    if (currentProvider?.status !== ProviderAccountStatus.ACTIVE) {
+      throw new PaymentIngestionError("PROVIDER_ACCOUNT_INACTIVE", "Provider account is not active for ingestion.", { correlationId, providerAccountId: providerAccount.id })
+    }
+
     const existing = await tx.providerEvent.findFirst({
       where: {
         organizationId: input.organizationId,
@@ -220,6 +232,12 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
           correlationId,
         },
         select: { id: true },
+      })
+
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+        sourceCode: "PAYMENT_PROVIDER_EVENT_REJECTED", sourceId: exception.id, periodIds: affectedPeriodIds,
+        staleReason: "Altered provider evidence created a critical exception; review the retained original and rejected payload hashes.",
+        newEvidenceHash: rawPayloadHash, correlationId,
       })
 
       await emitIngestionAlert({
@@ -325,6 +343,12 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
           correlationId,
         },
         select: { id: true },
+      })
+
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+        sourceCode: "PAYMENT_PROVIDER_EVENT_REJECTED", sourceId: exception.id, periodIds: affectedPeriodIds,
+        staleReason: "Rejected provider evidence created a critical exception; review signature or replay failure before close.",
+        newEvidenceHash: rawPayloadHash, correlationId,
       })
 
       await emitIngestionAlert({
@@ -438,8 +462,7 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
     await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
       sourceCode: "PAYMENT_PROVIDER_EVENT_CAPTURED",
       sourceId: event.id,
-      periodStart: parsed.occurredAt ?? receivedAt,
-      periodEnd: parsed.occurredAt ?? receivedAt,
+      periodIds: affectedPeriodIds,
       staleReason: "Provider event capture changed certified close evidence.",
       newEvidenceHash: rawPayloadHash,
       correlationId,
@@ -453,5 +476,5 @@ export async function captureProviderEvent(input: CaptureProviderEventInput): Pr
       rawPayloadHash,
       correlationId,
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }

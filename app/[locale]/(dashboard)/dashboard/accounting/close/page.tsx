@@ -2,7 +2,6 @@ import { ClipboardCheck, FileSearch, ShieldCheck } from "lucide-react"
 
 import { getCloseAssuranceDashboardAction } from "@/actions/accounting/close-assurance.actions"
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
-import { CloseReadinessJourneyPanel } from "@/components/accounting/CloseReadinessJourneyPanel"
 import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingLinkButton, AccountingPageShell } from "../_components/accounting-ui"
@@ -48,7 +47,6 @@ async function CloseAssurancePageImpl({ params }: CloseAssurancePageProps) {
         </>
       }
     >
-      <CloseReadinessJourneyPanel data={initialData} locale={normalizedLocale} />
       <CloseAssuranceCenter
         locale={normalizedLocale}
         initialData={initialData}

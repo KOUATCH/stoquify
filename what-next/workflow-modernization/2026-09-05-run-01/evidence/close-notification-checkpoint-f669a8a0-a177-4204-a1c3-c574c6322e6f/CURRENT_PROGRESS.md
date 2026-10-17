@@ -1,0 +1,21 @@
+# Current progress
+
+Updated 2026-10-04T07:11:59.437Z; branch codex/migration-control-plane-release-2026-08-29, HEAD 62a56036a5ac9b37236a20c9b148052199069479. Register SHA256: f3c98fa126743998a4fa39c8804034a845dc7313dd5e52e5797b0b14acd4561f. Shared changes preserved.
+
+**Position:** 270 workflows /17 families; discovery incomplete; 191 unmapped entries. Queued 264; In progress 2; Complete—verified 4; other statuses zero. No workflow closure or denominator change.
+
+| Priority | Workflow and outcome | Status | Verified progress | Remaining closure | Blocker/owner; next action |
+|---|---|---|---|---|---|
+| Primary | FA-CASH-COMMAND: truthful financial actions | In progress | Cash/Close recovery and current authority | All producers, authority and complete recovery | Engineering; complete recovery boundaries |
+| Supporting | FA-CLOSE-PACK: trustworthy retained evidence | In progress | Another manager continues a departed requester's work | Delivery, delegated context, remaining races/accessibility | Engineering; trace notification ownership and delivery |
+| Next 1 | PR-17: reconciliation exceptions | Queued | Prior scoped handoffs | Financial/legacy treatment and recovery | Engineering; reconcile original closure scope |
+| Next 2 | ID-04: invitation redemption | Queued | Prior authority/recipient evidence | Accessibility, onboarding and transport | Engineering; verify transport |
+| Next 3 | MC-11: permitted workspace | Queued | Selected route/action boundaries | Cross-domain transport and scanner gaps | Engineering; preserve guards and improve diagnostics |
+
+**Since the previous report:** Added a server-owned, permission-controlled view of other colleagues' Close requests, separate from personally authored requests. Managers can find and change an unanswered request's response owner even when its original requester is inactive. The original author, request and deadline remain unchanged. The service checks current permissions before and after reading, isolates cursors and permits inspection without changes in a read-only module. Restored uncertain recovery submissions now have a visibly disabled retry button under read-only access. No workflow was discovered, reopened or closed.
+
+**Verification:** 626 focused tests, no-emit TypeScript and lint passed. Seven owned-database checks cover recipient changes, retry, concurrency and the departed-requester handoff. Actual EN/FR application journeys discover the work as another manager, preserve the replacement draft after reload, reassign, respond and independently accept with the original requester inactive throughout. Keyboard actions, focus feedback, reduced motion and 1440/768/320px reflow passed. Source, original-record, financial and outside-fixture checks passed. Receipts, screenshots, development timings and limits are recorded once in the [supervision report](CLOSE_REQUEST_SUPERVISION_2026-10-04.md). An initial mistyped receipt hash stopped the browser harness before fixture mutation; its failed receipt is retained.
+
+**Remaining:** Response notifications still name the original requester; supervision does not establish delivery to a replacement manager. Correction where no valid chain matches the finding state, delegated context, diagnostics, full accessibility/zoom and further authority races remain. Tab draft storage retains its 24-hour expiry/privacy limits. Investigation remains bounded to 100 records/audits and the latest 20 recovery events. Bank import/provenance, finalization, concurrent evidence reuse and original cash/purchase/Close handoffs remain. Other producers, freshness, manual-session/legacy-role authority, signing/publication races, country/payroll evidence and capacity remain required. The all-period manual-posting helper rejected by automatic approval review remains unapplied pending the existing approval request.
+
+All workflow families remain in the [register](WORKFLOW_REGISTER.json), including identity/modules, finance, sales/POS, inventory/purchasing, payroll, compliance/reporting, notifications/integrations and AI. No migration, reset, deployment, live activation, real payment, external message or X1 clearance occurred. Full goal remains active; ETA is not reliable.

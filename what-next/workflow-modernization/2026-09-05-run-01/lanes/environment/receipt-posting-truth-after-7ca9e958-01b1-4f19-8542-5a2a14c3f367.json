@@ -1,0 +1,30 @@
+{
+  "at": "2026-09-30T19:54:44.312Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+  },
+  "expectedDefect": false,
+  "multiline": true,
+  "syntheticNegativeFixture": true,
+  "organizationId": "workflow_supplier_ack_en_receipt-posting-truth-7ca9e958-01b1-4f19-8542-5a2a14c3f367",
+  "orderId": "cmuoixy0r0009maao6w0e9m0x",
+  "receiptId": "cmuoixyl90013maao5vxg271z",
+  "stockStatus": "recorded",
+  "accountingStatus": "unverified",
+  "noReadTimeMutation": true,
+  "negativeProbeHadNoJournalLinkOrPayment": true,
+  "readMs": 198,
+  "positiveKernelEvidence": {
+    "accountingStatus": "posted",
+    "oneJournalAndLink": true,
+    "stockMovementCount": 2,
+    "identicalKernelReplay": true,
+    "noPayment": true,
+    "productionReceiptProducerImplemented": false
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+  },
+  "sourceStable": true
+}

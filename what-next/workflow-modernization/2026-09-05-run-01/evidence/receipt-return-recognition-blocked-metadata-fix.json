@@ -1,0 +1,12 @@
+{
+  "supersedesSourceBinding": "evidence/receipt-return-recognition-source-frozen.json",
+  "reason": "Actual owned PostgreSQL scenarios exposed nested metadata.details for FAILED batches; the posted-batch direct shape differs. Reader now accepts the two actual producer shapes and reports missing proof as source-review instead of hashing undefined.",
+  "files": [
+    { "path": "services/purchasing/receipt-return-recognition.ts", "sha256": "88401830a7d1c5cab46823f23547951676c745c2e81ec1d863ec464c0fe39944" },
+    { "path": "services/purchasing/purchase-return-credit.service.ts", "sha256": "5101e693d122d85d6865ce2e91b2b35739d9e1d2e98c91e90caacb7b0da5dde9" },
+    { "path": "services/purchasing/__tests__/receipt-return-recognition.test.ts", "sha256": "a847a3f2d0afce9f0065776847964d703e986458fca0311b90ca5fcf6a4ca3c4" },
+    { "path": "services/purchasing/__tests__/purchase-return-credit.service.test.ts", "sha256": "9efd6e4f4990c0a27a6f907b9733382658e6af6732a8139de5295345c9add6a7" }
+  ],
+  "verification": { "focusedJest": { "suites": 2, "tests": 35, "exitCode": 0, "durationSeconds": 2.363 }, "changedFileEslint": { "exitCode": 0 } },
+  "dbReverification": "Parent agent owns actual PostgreSQL rerun and final receipt; not claimed by this file."
+}

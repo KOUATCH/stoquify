@@ -31,3 +31,12 @@ it.each([
   expect(result).toEqual(expect.objectContaining({ success: false, data: null, code }))
   expect(result.error).not.toContain("Private cursor diagnostics")
 })
+
+it.each(["organization", "permission", "module"])("withholds history after %s changes during a read", async kind => {
+  ;(requireAnyPermission as jest.Mock).mockReset().mockResolvedValue(verified().ctx)
+  ;(readAPHistory as jest.Mock).mockResolvedValue({ rows: [{ sourceId: "private" }] })
+  if (kind === "organization") (requireAnyPermission as jest.Mock).mockResolvedValueOnce(verified().ctx).mockResolvedValueOnce({ ...verified().ctx, orgId: "other" })
+  if (kind === "permission") (requireAnyPermission as jest.Mock).mockResolvedValueOnce(verified().ctx).mockRejectedValueOnce(new Error("revoked"))
+  if (kind === "module") (observeModuleAccess as jest.Mock).mockResolvedValueOnce({ allowed: true }).mockResolvedValueOnce({ allowed: false })
+  expect(await getAPHistoryAction({ filters: { lane: "invoice", invoiceId: "i1" } })).toMatchObject({ success: false, data: null })
+})

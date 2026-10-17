@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-28T10:26:35.022Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts": "9c660fd23ff09717d4cb5ce91d02aa940e5bf174b6e3c2d8ea8f4d3beba816e7",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "actions/payroll/payroll-control.actions.ts": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "178cc880fad07fefc536bcbc59af95ed759f56954c3f54a77f99a789dcb9a056",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [
+    {
+      "id": "stock_cash_buffer",
+      "locale": "en",
+      "aggregatePreserved": true,
+      "destinationPermissionVerified": true,
+      "keyboardHandoff": true,
+      "backRetainedLocale": true,
+      "renderedLinkRevocation": true,
+      "destinationMs": 14103,
+      "screenshots": [
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-en-disabled.png",
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-en-destination.png",
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-en-revoked.png"
+      ]
+    },
+    {
+      "id": "stock_cash_buffer",
+      "locale": "fr",
+      "aggregatePreserved": true,
+      "destinationPermissionVerified": true,
+      "keyboardHandoff": true,
+      "backRetainedLocale": true,
+      "renderedLinkRevocation": true,
+      "destinationMs": 6482,
+      "screenshots": [
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-fr-disabled.png",
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-fr-destination.png",
+        "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-stock_cash_buffer-fr-revoked.png"
+      ]
+    }
+  ],
+  "stage": "employee_balance_recovery en revoked keyboard handoff",
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   \"Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\\n\" +\n+     '\\n' +\n+     \"- A server/client branch `if (typeof window !== 'undefined')`.\\n\" +\n+     \"- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\\n\" +\n+     \"- Date formatting in a user's locale which doesn't match the server.\\n\" +\n+     '- External changing data without sending a snapshot of it along with the HTML.\\n' +\n+     '- Invalid HTML tag nesting.\\n' +\n+     '\\n' +\n+     'It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\\n' +\n+     '\\n' +\n+     'https://react.dev/link/hydration-mismatch\\n' +\n+     '\\n' +\n+     '  ...\\n' +\n+     '    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\\n' +\n+     '      <HTTPAccessFallbackErrorBoundary pathname=\"/en/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\\n' +\n+     '        <RedirectBoundary>\\n' +\n+     '          <RedirectErrorBoundary router={{...}}>\\n' +\n+     '            <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\\n' +\n+     '              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\\n' +\n+     '                <SegmentTrieNode>\\n' +\n+     '                <DashboardLayout>\\n' +\n+     '                  <div classNa",
+  "failedUrl": "http://127.0.0.1:3110/en/dashboard/finance/cash-command",
+  "failedScreen": "cash-navigation-5ecd6ed7-726d-46e7-af1e-e4bcebf246cd-failed.png"
+}

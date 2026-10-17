@@ -9,7 +9,7 @@ import { getManagerActionCenterQuery } from "@/services/manager-action-center/ma
 import { routeByKey, withManagerActionSurfaceAccess } from "./manager-action-route-access"
 
 export const metadata: Metadata = {
-  title: "Manager Action Center | Kontava",
+  title: "Manager Action Center | Stoquify",
   description: "Permission-filtered, evidence-backed manager action center for daily operating control.",
 }
 

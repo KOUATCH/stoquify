@@ -1,0 +1,538 @@
+{
+  "generatedAt": "2026-09-27T11:31:08.257Z",
+  "target": {
+    "host": "localhost",
+    "database": "stoquify_replay_next_20260830"
+  },
+  "readOnlyTransaction": true,
+  "reports": [
+    {
+      "organizationId": "rds_org_001",
+      "currency": "XAF",
+      "recordedThrough": "2026-09-27T11:31:06.665Z",
+      "periodStart": null,
+      "periodEnd": null,
+      "inventoryValue": "57620125.00",
+      "ledgerClass3Value": "57620125.00",
+      "driftAmount": "0.00",
+      "rollForward": {
+        "openingInventoryValue": "0.00",
+        "movementInventoryValue": "57620125.00",
+        "closingInventoryValue": "57620125.00",
+        "inventoryRollForwardVariance": "0.00",
+        "openingLedgerClass3Value": "0.00",
+        "movementLedgerClass3Value": "57620125.00",
+        "closingLedgerClass3Value": "57620125.00",
+        "ledgerRollForwardVariance": "0.00"
+      },
+      "sourceCounts": {
+        "inventoryLevelCount": 281,
+        "inventoryTransactionCount": 373,
+        "stockAdjustmentCount": 46,
+        "stockWriteOffCount": 0,
+        "stockCountVarianceCount": 0,
+        "purchaseReceiptCount": 12,
+        "posMovementCount": 34,
+        "openingStockCount": 279,
+        "class3JournalLineCount": 62,
+        "stockBusinessEventCount": 319
+      },
+      "failureCount": 1,
+      "status": "BLOCKED",
+      "reportHash": "sha256:b762a492657670eb7acf573119642ef4755c86591d5ce7fa28c6804d67655fa3",
+      "failures": [
+        {
+          "type": "MISSING_STOCK_EVENT",
+          "severity": "high",
+          "message": "24 inventory movement(s) are missing business-event evidence at the declared cutoff.",
+          "metadata": {
+            "missingMovementCount": 24,
+            "sampledMovementCount": 24,
+            "samples": [
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_001",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_001",
+                "referenceNumber": "RDS001-GR-001",
+                "itemId": "rds_org_001_item_001",
+                "locationId": "rds_org_001_location_001"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_002",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_002",
+                "referenceNumber": "RDS001-GR-002",
+                "itemId": "rds_org_001_item_002",
+                "locationId": "rds_org_001_location_002"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_003",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_003",
+                "referenceNumber": "RDS001-GR-003",
+                "itemId": "rds_org_001_item_003",
+                "locationId": "rds_org_001_location_003"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_004",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_004",
+                "referenceNumber": "RDS001-GR-004",
+                "itemId": "rds_org_001_item_004",
+                "locationId": "rds_org_001_location_004"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_005",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_005",
+                "referenceNumber": "RDS001-GR-005",
+                "itemId": "rds_org_001_item_005",
+                "locationId": "rds_org_001_location_005"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_006",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_006",
+                "referenceNumber": "RDS001-GR-006",
+                "itemId": "rds_org_001_item_006",
+                "locationId": "rds_org_001_location_006"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_007",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_007",
+                "referenceNumber": "RDS001-GR-007",
+                "itemId": "rds_org_001_item_007",
+                "locationId": "rds_org_001_location_007"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_008",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_008",
+                "referenceNumber": "RDS001-GR-008",
+                "itemId": "rds_org_001_item_008",
+                "locationId": "rds_org_001_location_008"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_009",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_009",
+                "referenceNumber": "RDS001-GR-009",
+                "itemId": "rds_org_001_item_009",
+                "locationId": "rds_org_001_location_009"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_010",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_010",
+                "referenceNumber": "RDS001-GR-010",
+                "itemId": "rds_org_001_item_010",
+                "locationId": "rds_org_001_location_010"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_011",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_011",
+                "referenceNumber": "RDS001-GR-011",
+                "itemId": "rds_org_001_item_011",
+                "locationId": "rds_org_001_location_011"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_purchase_transaction_012",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_001_goods_receipt_012",
+                "referenceNumber": "RDS001-GR-012",
+                "itemId": "rds_org_001_item_012",
+                "locationId": "rds_org_001_location_012"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_001",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_001",
+                "referenceNumber": "RDS001-SO-001",
+                "itemId": "rds_org_001_item_001",
+                "locationId": "rds_org_001_location_001"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_002",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_002",
+                "referenceNumber": "RDS001-SO-002",
+                "itemId": "rds_org_001_item_002",
+                "locationId": "rds_org_001_location_002"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_003",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_003",
+                "referenceNumber": "RDS001-SO-003",
+                "itemId": "rds_org_001_item_003",
+                "locationId": "rds_org_001_location_003"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_004",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_004",
+                "referenceNumber": "RDS001-SO-004",
+                "itemId": "rds_org_001_item_004",
+                "locationId": "rds_org_001_location_004"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_005",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_005",
+                "referenceNumber": "RDS001-SO-005",
+                "itemId": "rds_org_001_item_005",
+                "locationId": "rds_org_001_location_005"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_006",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_006",
+                "referenceNumber": "RDS001-SO-006",
+                "itemId": "rds_org_001_item_006",
+                "locationId": "rds_org_001_location_006"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_007",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_007",
+                "referenceNumber": "RDS001-SO-007",
+                "itemId": "rds_org_001_item_007",
+                "locationId": "rds_org_001_location_007"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_008",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_008",
+                "referenceNumber": "RDS001-SO-008",
+                "itemId": "rds_org_001_item_008",
+                "locationId": "rds_org_001_location_008"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_009",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_009",
+                "referenceNumber": "RDS001-SO-009",
+                "itemId": "rds_org_001_item_009",
+                "locationId": "rds_org_001_location_009"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_010",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_010",
+                "referenceNumber": "RDS001-SO-010",
+                "itemId": "rds_org_001_item_010",
+                "locationId": "rds_org_001_location_010"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_011",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_011",
+                "referenceNumber": "RDS001-SO-011",
+                "itemId": "rds_org_001_item_011",
+                "locationId": "rds_org_001_location_011"
+              },
+              {
+                "inventoryTransactionId": "rds_org_001_inventory_sale_transaction_012",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_001_sales_order_012",
+                "referenceNumber": "RDS001-SO-012",
+                "itemId": "rds_org_001_item_012",
+                "locationId": "rds_org_001_location_012"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "organizationId": "rds_org_002",
+      "currency": "XAF",
+      "recordedThrough": "2026-09-27T11:31:07.626Z",
+      "periodStart": null,
+      "periodEnd": null,
+      "inventoryValue": "56858075.00",
+      "ledgerClass3Value": "56858075.00",
+      "driftAmount": "0.00",
+      "rollForward": {
+        "openingInventoryValue": "0.00",
+        "movementInventoryValue": "56858075.00",
+        "closingInventoryValue": "56858075.00",
+        "inventoryRollForwardVariance": "0.00",
+        "openingLedgerClass3Value": "0.00",
+        "movementLedgerClass3Value": "56858075.00",
+        "closingLedgerClass3Value": "56858075.00",
+        "ledgerRollForwardVariance": "0.00"
+      },
+      "sourceCounts": {
+        "inventoryLevelCount": 260,
+        "inventoryTransactionCount": 336,
+        "stockAdjustmentCount": 55,
+        "stockWriteOffCount": 0,
+        "stockCountVarianceCount": 0,
+        "purchaseReceiptCount": 12,
+        "posMovementCount": 12,
+        "openingStockCount": 259,
+        "class3JournalLineCount": 65,
+        "stockBusinessEventCount": 312
+      },
+      "failureCount": 1,
+      "status": "BLOCKED",
+      "reportHash": "sha256:8b7d3c0a39e742ac59806cd4942db6535385c0cb7c0811569fd151fa0d0f5d08",
+      "failures": [
+        {
+          "type": "MISSING_STOCK_EVENT",
+          "severity": "high",
+          "message": "24 inventory movement(s) are missing business-event evidence at the declared cutoff.",
+          "metadata": {
+            "missingMovementCount": 24,
+            "sampledMovementCount": 24,
+            "samples": [
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_001",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_001",
+                "referenceNumber": "RDS002-GR-001",
+                "itemId": "rds_org_002_item_001",
+                "locationId": "rds_org_002_location_001"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_002",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_002",
+                "referenceNumber": "RDS002-GR-002",
+                "itemId": "rds_org_002_item_002",
+                "locationId": "rds_org_002_location_002"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_003",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_003",
+                "referenceNumber": "RDS002-GR-003",
+                "itemId": "rds_org_002_item_003",
+                "locationId": "rds_org_002_location_003"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_004",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_004",
+                "referenceNumber": "RDS002-GR-004",
+                "itemId": "rds_org_002_item_004",
+                "locationId": "rds_org_002_location_004"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_005",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_005",
+                "referenceNumber": "RDS002-GR-005",
+                "itemId": "rds_org_002_item_005",
+                "locationId": "rds_org_002_location_005"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_006",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_006",
+                "referenceNumber": "RDS002-GR-006",
+                "itemId": "rds_org_002_item_006",
+                "locationId": "rds_org_002_location_006"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_007",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_007",
+                "referenceNumber": "RDS002-GR-007",
+                "itemId": "rds_org_002_item_007",
+                "locationId": "rds_org_002_location_007"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_008",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_008",
+                "referenceNumber": "RDS002-GR-008",
+                "itemId": "rds_org_002_item_008",
+                "locationId": "rds_org_002_location_008"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_009",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_009",
+                "referenceNumber": "RDS002-GR-009",
+                "itemId": "rds_org_002_item_009",
+                "locationId": "rds_org_002_location_009"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_010",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_010",
+                "referenceNumber": "RDS002-GR-010",
+                "itemId": "rds_org_002_item_010",
+                "locationId": "rds_org_002_location_010"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_011",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_011",
+                "referenceNumber": "RDS002-GR-011",
+                "itemId": "rds_org_002_item_011",
+                "locationId": "rds_org_002_location_011"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_purchase_transaction_012",
+                "expectedSourceType": "GOODS_RECEIPT",
+                "referenceType": "GOODS_RECEIPT",
+                "referenceId": "rds_org_002_goods_receipt_012",
+                "referenceNumber": "RDS002-GR-012",
+                "itemId": "rds_org_002_item_012",
+                "locationId": "rds_org_002_location_012"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_001",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_001",
+                "referenceNumber": "RDS002-SO-001",
+                "itemId": "rds_org_002_item_001",
+                "locationId": "rds_org_002_location_001"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_002",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_002",
+                "referenceNumber": "RDS002-SO-002",
+                "itemId": "rds_org_002_item_002",
+                "locationId": "rds_org_002_location_002"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_003",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_003",
+                "referenceNumber": "RDS002-SO-003",
+                "itemId": "rds_org_002_item_003",
+                "locationId": "rds_org_002_location_003"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_004",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_004",
+                "referenceNumber": "RDS002-SO-004",
+                "itemId": "rds_org_002_item_004",
+                "locationId": "rds_org_002_location_004"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_005",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_005",
+                "referenceNumber": "RDS002-SO-005",
+                "itemId": "rds_org_002_item_005",
+                "locationId": "rds_org_002_location_005"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_006",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_006",
+                "referenceNumber": "RDS002-SO-006",
+                "itemId": "rds_org_002_item_006",
+                "locationId": "rds_org_002_location_006"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_007",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_007",
+                "referenceNumber": "RDS002-SO-007",
+                "itemId": "rds_org_002_item_007",
+                "locationId": "rds_org_002_location_007"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_008",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_008",
+                "referenceNumber": "RDS002-SO-008",
+                "itemId": "rds_org_002_item_008",
+                "locationId": "rds_org_002_location_008"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_009",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_009",
+                "referenceNumber": "RDS002-SO-009",
+                "itemId": "rds_org_002_item_009",
+                "locationId": "rds_org_002_location_009"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_010",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_010",
+                "referenceNumber": "RDS002-SO-010",
+                "itemId": "rds_org_002_item_010",
+                "locationId": "rds_org_002_location_010"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_011",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_011",
+                "referenceNumber": "RDS002-SO-011",
+                "itemId": "rds_org_002_item_011",
+                "locationId": "rds_org_002_location_011"
+              },
+              {
+                "inventoryTransactionId": "rds_org_002_inventory_sale_transaction_012",
+                "expectedSourceType": "POS_SALE",
+                "referenceType": "SALES_ORDER",
+                "referenceId": "rds_org_002_sales_order_012",
+                "referenceNumber": "RDS002-SO-012",
+                "itemId": "rds_org_002_item_012",
+                "locationId": "rds_org_002_location_012"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

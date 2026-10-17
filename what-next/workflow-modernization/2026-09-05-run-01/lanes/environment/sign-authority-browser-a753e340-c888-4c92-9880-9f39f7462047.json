@@ -1,0 +1,235 @@
+{
+  "startedAt": "2026-09-27T16:04:04.488Z",
+  "sourceBefore": {
+    "components/finance/ReconciliationSignReview.tsx": "ba40dd0c83ff42cd8f28ce60e37e6ad63f4f4413f6f5cd1318f24c6e359f5054",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmuk0dqwx0000ma382ygkcata",
+      "runId": "cmuk0dr2b001ama38748w13m2",
+      "scans": [],
+      "screenshots": [
+        "sign-authority-browser-a753e340-c888-4c92-9880-9f39f7462047-en-ready-320.png",
+        "sign-authority-browser-a753e340-c888-4c92-9880-9f39f7462047-en-ready-1440.png",
+        "sign-authority-browser-a753e340-c888-4c92-9880-9f39f7462047-en-authority-withdrawn.png",
+        "sign-authority-browser-a753e340-c888-4c92-9880-9f39f7462047-en-failed.png"
+      ],
+      "requests": [
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525046006,
+          "elapsedMs": 1003
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525048868,
+          "elapsedMs": 181
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525049057,
+          "elapsedMs": 155
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525050075,
+          "elapsedMs": 771
+        },
+        {
+          "phase": "cold-entry",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525051167,
+          "elapsedMs": 1181
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525052595,
+          "elapsedMs": 1777
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525056470,
+          "elapsedMs": 208
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525056691,
+          "elapsedMs": 328
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525058320,
+          "elapsedMs": 1258
+        },
+        {
+          "phase": "authenticate",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525065718,
+          "elapsedMs": 792
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525066792,
+          "elapsedMs": 961
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525069115,
+          "elapsedMs": 842
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525071671,
+          "elapsedMs": 300
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525071983,
+          "elapsedMs": 287
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525073085,
+          "elapsedMs": 1687
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525073638,
+          "elapsedMs": 1134
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525075655,
+          "elapsedMs": 1238
+        },
+        {
+          "phase": "restored-sign",
+          "method": "POST",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525079428,
+          "elapsedMs": 1113
+        }
+      ],
+      "errors": [],
+      "phase": "restored-sign",
+      "firstEntryMs": 6600,
+      "warmEntryMs": 9043,
+      "navigation": {
+        "responseStart": 1009.4000000059605,
+        "responseEnd": 1773.699999988079,
+        "domContentLoadedEventEnd": 1778.5999999940395,
+        "loadEventEnd": 3243.0999999940395
+      },
+      "warmResources": [
+        {
+          "pathname": "/api/auth/get-session",
+          "startTime": 3876.300000011921,
+          "responseStart": 4080.5,
+          "responseEnd": 4081.800000011921,
+          "duration": 205.5
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 4094.9000000059605,
+          "responseStart": 4422.0999999940395,
+          "responseEnd": 4423.5,
+          "duration": 328.59999999403954
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 4443.5,
+          "responseStart": 4930.5,
+          "responseEnd": 5361.199999988079,
+          "duration": 917.6999999880791
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 5163.199999988079,
+          "responseStart": 5900,
+          "responseEnd": 6608.5999999940395,
+          "duration": 1445.4000000059605
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 5366.199999988079,
+          "responseStart": 6588.199999988079,
+          "responseEnd": 6590.4000000059605,
+          "duration": 1224.2000000178814
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 7790.699999988079,
+          "responseStart": 8598.199999988079,
+          "responseEnd": 8888.699999988079,
+          "duration": 1098
+        }
+      ],
+      "reusedReadyContrast": "sign-authority-browser-518f0abb-c9f7-46f6-b3e4-6d8c4c5f85c8.json#journeys[0].scans[0]",
+      "actualServerReadWithdrawalDenied": true,
+      "currentAuthorityReread": true,
+      "error": "locator.scrollIntoViewIfNeeded: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('p[role=\"status\"]').first()\u001b[22m\n"
+    }
+  ],
+  "limits": [
+    "Owned local Chromium development application; no live customer changes.",
+    "Automated accessibility and controlled text enlargement are not native speech or browser zoom certification."
+  ],
+  "passed": false,
+  "error": "locator.scrollIntoViewIfNeeded: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('p[role=\"status\"]').first()\u001b[22m\n",
+  "sourceAfter": {
+    "components/finance/ReconciliationSignReview.tsx": "ba40dd0c83ff42cd8f28ce60e37e6ad63f4f4413f6f5cd1318f24c6e359f5054",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975"
+  },
+  "sourceStable": true,
+  "endedAt": "2026-09-27T16:05:49.994Z"
+}

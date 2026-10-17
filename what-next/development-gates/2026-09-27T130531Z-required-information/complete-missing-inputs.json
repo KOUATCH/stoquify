@@ -1,0 +1,254 @@
+[
+  {
+    "id": "INPUT-01",
+    "priority": 1,
+    "category": "Your decision",
+    "request": "Choose the next target stage, existing tenant, branches and modules. Existing tenant IDs/names and module states are supplied; do not invent a new ID.",
+    "currentEvidence": [
+      {
+        "id": "96a74406-95a9-49ad-8399-2bd005623787",
+        "name": "Stoquify Corp Lmt",
+        "countryCode": null,
+        "requestedModules": [
+          "POS",
+          "Sales",
+          "Inventory",
+          "Accounting",
+          "Payment reconciliation",
+          "Payroll"
+        ]
+      },
+      {
+        "id": "rds_org_001",
+        "name": "Wilkinson - Feeney 001",
+        "countryCode": "CM",
+        "requestedModules": [
+          "POS",
+          "Sales",
+          "Inventory",
+          "Accounting",
+          "Finance",
+          "Payment reconciliation",
+          "Payroll",
+          "Compliance"
+        ]
+      },
+      {
+        "id": "rds_org_002",
+        "name": "McDermott, Greenholt and Johnson 002",
+        "countryCode": "CM",
+        "requestedModules": [
+          "POS",
+          "Sales",
+          "Inventory",
+          "Accounting",
+          "Finance",
+          "Payment reconciliation",
+          "Payroll",
+          "Compliance"
+        ]
+      }
+    ],
+    "gateIds": [
+      "MODULE_SETUP_AND_ENTITLEMENT",
+      "POS_G1_ACCOUNTABLE_APPROVAL"
+    ],
+    "when": "Before scoped pilot/configuration work",
+    "expectedFormat": "stage = development/demo/controlled pilot; organizationId = an existing listed ID; locationIds = selected existing locations; moduleSlugs = exact canonical slugs; optional AI pilot = yes/no",
+    "provider": "Product/business owner; nominate scope approver if not already formally appointed",
+    "storage": "Decision record first; authorized engineering later applies TenantModuleConfiguration lifecycle with expectedRevision/previewHash/idempotencyKey. No universal pilot-scope appointment column is inferred.",
+    "validation": "Existing tenant/location ownership, canonical module slugs, prerequisites, explicit scope and promotion criteria",
+    "canContinue": "All independent code and clearly synthetic fixture repairs.",
+    "requiredDates": "Business decision record: record the actual decision date. If an AI activation window is selected, use AgentActivationPackage.activationStartsAt and activationEndsAt. Other pilot planning dates are planning metadata, not newly invented database columns.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-02",
+    "priority": 1,
+    "category": "Appointments and identity resolution",
+    "request": "Confirm or correct existing nominated responsibilities, authority scope/effective dates and conflicts. Resolve checker Yonga Claude in the supplied working copy versus Yonga Springfield in DB; clarify Kouatchoua mMark versus Kouatchoua Mark and repeated Tamen Marceline/Yonga Springfield accounts.",
+    "currentEvidence": "23 named candidate assignments, IDs/emails/employee/location links already extracted. Source documents disclaim authority/signature. No need to resubmit all names.",
+    "gateIds": [
+      "POS_G1_ACCOUNTABLE_APPROVAL",
+      "CAP-BRANCH-001",
+      "CAP-BRANCH-002",
+      "CAP-AI-001",
+      "CAP-AI-002"
+    ],
+    "when": "Before a person is credited with pilot or production authority",
+    "expectedFormat": "Use existing userId/roleCode; approve/correct nomination; accountable appointing authority/reference; tenant/branch scope; effectiveFrom/effectiveTo; conflict/independence statement. Confirm usable work email only for selected real operators.",
+    "provider": "Authorized appointing business/governance owner; nominees acknowledge their actual responsibilities",
+    "storage": "Relevant workflow-specific authorityReference/approval artifact, AccountantAccessGrant or HrisManagerDelegation when applicable. Employee provenance metadata is not an appointment store; a general verified human-appointment workflow was not established in this audit.",
+    "validation": "Identity-to-account match, accepted authority document, correct scope and separation of people rather than login IDs",
+    "canContinue": "Development with explicitly synthetic personas; engineering can prepare least-privilege changes for review.",
+    "requiredDates": "Genuine appointment/delegation document effective-from/effective-to and date of signing/acceptance, where its contract requires them. AccountantAccessGrant uses consentGrantedAt/effectiveFrom/expiresAt; HrisManagerDelegation uses effectiveFrom/effectiveTo and existing evidence references. No generic appointmentAt or _UserRoles.assignedAt column is implemented.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-03",
+    "priority": 1,
+    "category": "Qualified expert evidence",
+    "request": "Obtain actual accounting and Cameroon country-pack reviewer qualification, appointment, independence and signed/attested review. Existing candidates are Tchana Nikita and Kouatchoua mMark; use them only if qualified and authorized.",
+    "currentEvidence": "Candidate IDs already in named-candidates.json. CM source artifact hashes verify; requiredApproval reviewer/date/artifact fields are absent, productionUseAllowed=false, reviewStatus=PENDING_EXPERT_REVIEW.",
+    "gateIds": [
+      "statutory-country-pack-production-gate:source_artifact_expert_approval",
+      "POS_G1_ACCOUNTABLE_APPROVAL"
+    ],
+    "when": "Before production CNPS/statutory authority and relevant G1 decisions; not ordinary software development",
+    "expectedFormat": "Exact CM_CNPS_PRODUCTION_APPROVAL contract: actual reviewerIdentity, reviewedAt, effectiveFrom/effectiveTo, approvalArtifactFile, raw 64-hex SHA256 approvalArtifactHash and approvedFixtureFamilies; verifiable qualification/authority reference and conflict declaration in the authentic artifact.",
+    "provider": "Appointed qualified independent reviewers; engineering computes hashes from supplied genuine files",
+    "storage": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json and co-located genuine approval artifact; runtime publication follows approved review. Runtime compliance review uses ComplianceAdapterConfig.reviewedById/reviewerQualification/reviewerConflictDeclared/reviewEvidenceHash.",
+    "validation": "Artifact bytes/hash, scope/version/source binding, authentic qualification/approval, effective dates and exact producer contracts; static nonempty checks alone are insufficient",
+    "canContinue": "Draft/source-checked country-pack development, simulations and sandbox fixtures. No production authority is inferred.",
+    "requiredDates": "requiredApproval.reviewedAt, effectiveFrom, effectiveTo (optional/open-ended only when justified); actual document dates and source effective period. ComplianceAdapterConfig reviewedAt/approvedAt/officialSpecPublishedAt/officialSpecEffectiveFrom are separate fields.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-04",
+    "priority": 1,
+    "category": "Accountable product/control decisions",
+    "request": "Have the already nominated owners approve the 11 frozen POS G1 decisions or record required changes. Supply genuine authority and attestation, not additional names or signature images.",
+    "currentEvidence": "17 responsibility labels have existing candidate names. 33 role approval obligations, 0/11 approved decisions; technical13/13 and partial runtime conformance.",
+    "gateIds": [
+      "pos-g1-contract-gate"
+    ],
+    "when": "Before G1-controlled promotion beyond contract-scoped work",
+    "expectedFormat": "Use G1_APPROVAL_ROSTER.md and POS_G1_ACCOUNTABLE_APPROVAL field contract: selectedOption/rationale/effectiveVersion, contract binding, future reviewOrExpiryAt, approval authorityReference, freshAuthenticatedAt/approvedAt and trusted signature evidence.",
+    "provider": "Each legitimately appointed decision owner; infrastructure/security custodian supplies trusted public-key path and attestation integration",
+    "storage": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json; operator-controlled public-key file outside candidate repository",
+    "validation": "Frozen artifact/version/hash, required per-decision roles, authenticity, freshness, expiry and trusted Ed25519 envelope verification",
+    "canContinue": "Existing technical decisions can guide limited development; missing approval does not authorize the gate-controlled promotion.",
+    "requiredDates": "For each of 33 G1 role obligations: actual freshAuthenticatedAt and approvedAt. For each of 11 decisions: future reviewOrExpiryAt. Attestation verifiedAt/reviewOrExpiryAt and signing-key validFrom/validUntil are also required by the evidence contract.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-05",
+    "priority": 2,
+    "category": "Real company, workforce and product inputs",
+    "request": "For the selected real pilot entity, confirm legal/country setup and supply qualified classification evidence for employer CNPS sector/risk group and product tax treatment; validate real contract/calendar/leave/source records only for the selected workforce.",
+    "currentEvidence": "rds_org_001 and rds_org_002 use CM/XAF/Africa-Douala, VAT_CM_STANDARD, SYSCOHADA_CM and IN_PROGRESS accounting setup. Both payrollCnpsFamilyAllowanceSector/payrollCnpsOccupationalRiskGroup values are null. Seeded company/tax/source values are not verified business facts.",
+    "gateIds": [
+      "MODULE_SETUP_AND_ENTITLEMENT",
+      "statutory-country-pack-production-gate",
+      "COUNTRY_ADAPTER_SYNTHETIC_REVIEW_GAPS"
+    ],
+    "when": "Before real payroll, tax, fiscal output or real-data pilot",
+    "expectedFormat": "Reviewed classification/reference with country/pack/version and effective dates; source documents through protected application workflows. Select existing item/employee/location IDs from extracts; engineering maps valid enum/config values.",
+    "provider": "Business owner and qualified accountant/country reviewer; authorized HR owner for workforce source approval",
+    "storage": "OrganizationAccountingSettings payrollCnpsFamilyAllowanceSector/payrollCnpsOccupationalRiskGroup/setupStatus and relevant tax configuration; HrisWorkCalendar/HrisLeavePolicy/PayrollContract evidence fields. Exact product-tax implementation findings are in runtime tax assessment.",
+    "validation": "Supported fields/values, authentic source provenance, correct effective period and entity/item applicability; do not fabricate a blanket tax rate",
+    "canContinue": "Synthetic data and development scenarios. Engineering does not need new personal data to repair synthetic historical fixtures.",
+    "requiredDates": "Employer/product classification source-effective dates and genuine review date in its evidence document; current schema does not provide a complete per-product tax-approval record. HR uses PayrollEmployee.hireDate/terminationDate, PayrollContract.effectiveFrom/effectiveTo, HrisWorkCalendar.reviewedAt/effectiveFrom/effectiveTo, HrisLeavePolicy.approvedAt/effectiveFrom/effectiveTo. Preserve business dates and period timezone.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-06",
+    "priority": 2,
+    "category": "Provider and integration inputs",
+    "request": "Identify only the providers/channels selected for the pilot and supply their official specifications, sandbox authorization and managed credential references through the deployment secret manager.",
+    "currentEvidence": "24 ProviderAccount records are DRAFT with missing settlement/suspense/fee ledger references;24 compliance adapter rows are SANDBOX/REQUIRES_EXPERT_REVIEW with synthetic channels/versions and absent official/reviewer evidence.",
+    "gateIds": [
+      "MODULE_SETUP_AND_ENTITLEMENT",
+      "COUNTRY_ADAPTER_SYNTHETIC_REVIEW_GAPS"
+    ],
+    "when": "Before testing a real selected integration or making a real submission/payment",
+    "expectedFormat": "ProviderCode/channel/adapter, country/currency, officialSpecTitle/version/publishedAt/effectiveFrom/reference/hash, sandbox contract/authority and credentialReference/expiry. Engineering extracts and maps existing paymentRailId and ledger IDs; no passwords or raw secrets in reports.",
+    "provider": "Provider/account owner, integration operator and independent required country reviewer",
+    "storage": "ProviderAccount, ComplianceAdapterConfig and supported module setupInputs; credentials remain in managed secret storage",
+    "validation": "Implemented adapter matches specification, same-tenant account mapping, effective credentials, independent review and provider sandbox conformance",
+    "canContinue": "Local fake adapters, clear synthetic scenarios and implementation fixes.",
+    "requiredDates": "ComplianceAdapterConfig officialSpecPublishedAt/officialSpecEffectiveFrom, reviewedAt, approvedAt, credentialExpiresAt and actual credentialRotatedAt if applicable. SettlementAccount approvedAt/effectiveFrom/effectiveTo. Provider dates and managed-secret expiry come from the provider/operator, not invented defaults.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-07",
+    "priority": 3,
+    "category": "Conditional AI pilot / operations",
+    "request": "Only if AI/internal pilot is selected: confirm distinct Product and Security approvers, six operational responsibilities with distinct primary/backup coverage, escalation/runbooks and actual deployment/evidence endpoints.",
+    "currentEvidence": "Product approver Kouatchoua Mark, Security owner Yonga Springfield, SRE Ronald Djakou and Support Etoo Naomie are existing nominees; there are no AgentDefinition/ActivationPackage/Owner/Approval/Certification rows. Some seeded tenants also lack required AI permissions.",
+    "gateIds": [
+      "agent-external-input-readiness",
+      "agent-operational-release-gate",
+      "agent-credential-rotation-gate"
+    ],
+    "when": "Before optional AI internal pilot; not a prerequisite for general development",
+    "expectedFormat": "Follow AGENT_EXTERNAL_INPUTS, AGENT_OPERATIONAL_RELEASE and CREDENTIAL_CLASSIFICATION_AND_ROTATION contracts: real external directory IDs, approved references/dates/expiry, accepted runbook, primary/backup coverage, managed identity/reference IDs, release/CI hashes, endpoint references and authentic scheduler/alert evidence.",
+    "provider": "Appointed Product/Security/SRE/Support owners, infrastructure operator and external evidence authorities",
+    "storage": "Three existing docs/agents-runtime JSON templates listed in assurance/required-input-contracts.json; supported runtime package workflows when scope is authorized",
+    "validation": "Real directory identity mapping (do not substitute DB IDs blindly), distinct approvers/backups, current release binding, authentic external evidence and operational readiness; passing does not itself activate",
+    "canContinue": "All non-AI work and local guardrail development. Engineering generates CI hashes and technical evidence; the user does not invent them.",
+    "requiredDates": "Product/security decidedAt/expiresAt; six owner acceptedAt/coverageStartsAt/coverageEndsAt (plus runtime owner validUntil when used); release activationStartsAt/activationEndsAt; certification passedAt/expiresAt; CI/governance/deployment/scheduler/alert/rotation times listed in TIME_RULES.md and external-required-timestamps.csv.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-08",
+    "priority": 3,
+    "category": "Deployment inputs",
+    "request": "Choose the actual pilot deployment target and responsible operator; the operator configures required secrets/identities and reports only presence/reference/rotation evidence.",
+    "currentEvidence": "Local process and repository evidence do not establish deployed configuration. No raw credential values were extracted.",
+    "gateIds": [
+      "release-evidence-ratchet",
+      "RELEASE_ENVIRONMENT_INPUTS"
+    ],
+    "when": "Before deployment/release validation",
+    "expectedFormat": "Deployment/environment/reference, approved scope, public URL when applicable, managed secret reference names, trust anchor location and operator-owned verification evidence; no raw secret or recovery material",
+    "provider": "Deployment/SRE/security operator",
+    "storage": "Deployment secret manager/environment and release evidence templates; not chat or checked-in secret files",
+    "validation": "Environment-specific focused release checks and authentic operational evidence after engineering fixes",
+    "canContinue": "All local development and audit remediation.",
+    "requiredDates": "Actual deployment, attestation, credential rotation/review and operational test timestamps from the deployment/evidence systems. Generated audit or file-modification time is not deployment/approval time.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  },
+  {
+    "id": "INPUT-09",
+    "priority": 2,
+    "category": "Four existing stocking-unit choices",
+    "request": "Confirm whether Orange juice 1 L and Mango nectar 1 L are stocked/sold by measured litre or by sealed one-litre package. Their names alone do not decide this. If packages, design a unit conversion and quantity-preserving migration rather than merely changing the unit label.",
+    "currentEvidence": [
+      {
+        "id": "rds_org_001_item_002",
+        "name": "Orange juice 1 L",
+        "unitId": "rds_org_001_unit_007",
+        "unit": "Liter"
+      },
+      {
+        "id": "rds_org_001_item_013",
+        "name": "Mango nectar 1 L",
+        "unitId": "rds_org_001_unit_007",
+        "unit": "Liter"
+      },
+      {
+        "id": "rds_org_002_item_002",
+        "name": "Orange juice 1 L",
+        "unitId": "rds_org_002_unit_007",
+        "unit": "Liter"
+      },
+      {
+        "id": "rds_org_002_item_013",
+        "name": "Mango nectar 1 L",
+        "unitId": "rds_org_002_unit_007",
+        "unit": "Liter"
+      }
+    ],
+    "gateIds": [
+      "STOCKING_UNIT_CONFIRMATION"
+    ],
+    "when": "Before a trustworthy demonstration or real inventory use of these four items",
+    "expectedFormat": "For the existing Orange juice 1 L and Mango nectar 1 L items in each reseeded tenant: measured litre or sealed one-litre package; approved conversion if packages are intended.",
+    "provider": "Inventory/catalog owner; existing candidate Tchana Rose with retail owner Tamen Max",
+    "storage": "Supported Item.unitId and Unit.baseUnit/conversionRate workflow after review; preserve quantities if units change.",
+    "validation": "Stocking/selling unit matches business meaning; quantity/value preserving conversion and POS tests if changed.",
+    "canContinue": "Unrelated development and synthetic scenarios with explicit unit assumptions.",
+    "requiredDates": "Record the catalog decision and its intended effective business date in supporting evidence if a change is authorized. Item.updatedAt/Unit.updatedAt are written by the system and do not prove user approval. There is no dedicated stocking-unit approval timestamp in the inspected Item/Unit schema.",
+    "knownInformationSource": "current-information.json, people-with-timestamps.json, database-timestamps.csv and exact external source documents",
+    "responseStatus": "AWAITING_ONLY_GENUINELY_MISSING_DECISION_OR_EVIDENCE; no invented dates"
+  }
+]

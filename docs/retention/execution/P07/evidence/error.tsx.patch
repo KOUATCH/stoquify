@@ -1,0 +1,30 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\error.tsx.before" "b/E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)\\dashboard\\settings\\data-onboarding\\error.tsx"
+index 673be5b9..4ba9e756 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\error.tsx.before"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)\\dashboard\\settings\\data-onboarding\\error.tsx"	
+@@ -1,6 +1,8 @@
+ "use client"
+ 
+ import { useLocale, useTranslations } from "next-intl"
++import { useRouter } from "next/navigation"
++import { startTransition } from "react"
+ 
+ import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+ 
+@@ -13,11 +15,15 @@ export default function MasterDataOnboardingError({
+ }) {
+   const t = useTranslations("masterDataOnboarding.states.error")
+   const locale = useLocale() === "fr" ? "fr" : "en"
++  const router = useRouter()
+ 
+   return (
+     <DashboardErrorState
+       error={error}
+-      reset={reset}
++      reset={() => startTransition(() => {
++        router.refresh()
++        reset()
++      })}
+       title={t("title")}
+       message={t("message")}
+       retryLabel={t("retry")}

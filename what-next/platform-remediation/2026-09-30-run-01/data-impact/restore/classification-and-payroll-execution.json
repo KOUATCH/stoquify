@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-09-30T20:59:58.492Z",
+  "status": "CLASSIFICATION_AND_PAYROLL_PROOF_COMPLETE",
+  "target": "stoquify_restore_local_remediation_20260930_run01",
+  "sourceMutationAttempted": false,
+  "command": "node what-next/platform-remediation/2026-09-30-run-01/data-impact/restore/classify-and-certify-restored.cjs",
+  "fixtureCountsBefore": {
+    "synthetic_organizations": "0",
+    "synthetic_periods": "0",
+    "synthetic_runs": "0",
+    "synthetic_transitions": "0",
+    "nonfixture_organizations": "3",
+    "nonfixture_payroll_runs": "24",
+    "journal_entries": "141"
+  },
+  "certificateModuleSha256": "f0171e050a716767c69fafa2a189d387d2a7130261edf86e206aa47dab216e4e",
+  "certificateElapsedMs": 1554,
+  "fixtureCountsAfter": {
+    "synthetic_organizations": "2",
+    "synthetic_periods": "2",
+    "synthetic_runs": "2",
+    "synthetic_transitions": "1",
+    "nonfixture_organizations": "3",
+    "nonfixture_payroll_runs": "24",
+    "journal_entries": "141"
+  },
+  "completedAt": "2026-09-30T21:00:01.132Z"
+}

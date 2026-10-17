@@ -1,4 +1,7 @@
 jest.mock("server-only", () => ({}));
+// Separate lifecycle evidence semantics from the real admission contract suite.
+jest.mock("../payroll-production-admission", () => ({ assertPayrollProductionAdmissionInTx: jest.fn() }));
+import { assertPayrollProductionAdmissionInTx } from "../payroll-production-admission";
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -114,7 +117,7 @@ const authorityCertificationProofEnvelope = {
   legalReviewHash: "sha256:legal-review",
 };
 
-function declarationFixture(status = PayrollDeclarationStatus.PREPARED) {
+function declarationFixture(status: PayrollDeclarationStatus = PayrollDeclarationStatus.PREPARED) {
   return {
     id: "declaration-1",
     organizationId: "org-1",
@@ -144,7 +147,7 @@ function declarationFixture(status = PayrollDeclarationStatus.PREPARED) {
   };
 }
 
-function buildTx(status = PayrollDeclarationStatus.PREPARED) {
+function buildTx(status: PayrollDeclarationStatus = PayrollDeclarationStatus.PREPARED) {
   const declaration = declarationFixture(status);
   return {
     payrollDeclaration: {
@@ -276,6 +279,7 @@ function mockWorkbenchCounts(
 describe("payroll declaration lifecycle service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockReset().mockResolvedValue(undefined);
     mockDb.$transaction.mockImplementation((callback) => callback(buildTx()));
     mockEvaluateSensitiveAction.mockReturnValue({
       allowed: true,
@@ -294,6 +298,17 @@ describe("payroll declaration lifecycle service", () => {
     });
     mockMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1" });
     mockRecordCloseInvalidation.mockResolvedValue([]);
+  });
+
+  it.each(["submit", "amend"] as const)("blocks new %s evidence before writes when admission fails", async (transition) => {
+    const tx = buildTx(transition === "submit" ? PayrollDeclarationStatus.PREPARED : PayrollDeclarationStatus.SUBMITTED);
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new Error("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
+    await expect(recordPayrollDeclarationEvidence({ organizationId: "org-1", declarationId: "declaration-1", transition, actorId: "operator", actorPermissions: ["payroll.declarations.manage"], approvedById: "approver", authorityStatus: "SUBMITTED", submittedPayloadHash: "sha256:payload", portalReceiptHash: "sha256:receipt", sourceRegisterHash: "sha256:register", idempotencyKey: `blocked-${transition}` })).rejects.toThrow("PAYROLL_PRODUCTION_ADMISSION_BLOCKED");
+    expect(assertPayrollProductionAdmissionInTx).toHaveBeenCalledWith(tx, "org-1", "run-1");
+    expect(tx.payrollDeclarationEvidence.create).not.toHaveBeenCalled();
+    expect(tx.payrollDeclaration.update).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
 
   it("builds a proof-backed declaration workbench read model", async () => {

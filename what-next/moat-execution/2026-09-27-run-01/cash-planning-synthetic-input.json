@@ -1,0 +1,9 @@
+{
+  "version": 1, "assumptionVersion": "synthetic-v1", "currency": "XAF", "minorUnits": 0,
+  "startsOn": "2026-09-28", "openingCashMinor": "1000000", "openingSourceRef": "SYNTHETIC/opening", "coverageConfirmed": true,
+  "receipts": [{"id":"r1","date":"2026-10-05","amountMinor":"600000","currency":"XAF","certainty":"EXPECTED","sourceRef":"SYNTHETIC/receivable"}],
+  "obligations": [{"id":"o1","date":"2026-10-12","amountMinor":"800000","currency":"XAF","sourceRef":"SYNTHETIC/obligation"}],
+  "choices": [{"id":"p1","kind":"PURCHASE","date":"2026-10-06","neededOn":"2026-10-10","leadDays":7,"amountMinor":"500000","currency":"XAF","sourceRef":"SYNTHETIC/stock-need"}, {"id":"t1","kind":"TRANSFER","date":"2026-10-06","neededOn":"2026-10-10","leadDays":1,"amountMinor":"50000","currency":"XAF","sourceRef":"SYNTHETIC/transfer-need"}],
+  "scenarios": [{"id":"base","receiptDelayDays":0,"choiceIds":[],"bufferMinor":"200000"}, {"id":"purchase-delay","receiptDelayDays":14,"choiceIds":["p1"],"bufferMinor":"200000"}, {"id":"transfer-delay","receiptDelayDays":14,"choiceIds":["t1"],"bufferMinor":"200000"}],
+  "actuals": []
+}

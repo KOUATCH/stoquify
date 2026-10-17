@@ -38,11 +38,12 @@ export type TransactionHistoryWorkbenchShellProps<Row> = {
   labels: TransactionHistoryShellLabels; filters: TransactionHistoryFilters; typeOptions: TransactionHistoryFilterOption[]; kpis: TransactionHistoryKpi[]; actionItems: ActionQueueItemData[]
   columns: TransactionHistoryColumn<Row>[]; rows: Row[]; rowIdentity: TransactionHistoryRowIdentity<Row>; selectedRow: Row | null; selectedRowId: string | null
   drawerTitle: (row: Row) => string; drawerDescription?: (row: Row) => string; drawerMetadata: (row: Row) => CommandMetadataItem[]; renderDrawer: (row: Row) => ReactNode
-  onFilterChange: (patch: Partial<TransactionHistoryFilters>) => void; onResetFilters: () => void; onSelectRow: (id: string | null) => void; onNextPage: () => void; onPreviousPage?: () => void; onFirstPage?: () => void; onRetry: () => void; onExport: () => void
+  onFilterChange: (patch: Partial<TransactionHistoryFilters>) => void; onResetFilters: () => void; onSelectRow: (id: string | null) => void; onNextPage: () => void; onPreviousPage?: () => void; onFirstPage?: () => void; onRetry: () => void; onExport?: () => void
   isLoading?: boolean; isFetching?: boolean; isError?: boolean; errorMessage?: string; hasMore?: boolean; canPreviousPage?: boolean; pageIndex?: number; isPartial?: boolean; partialSources?: string[]; noOrganization?: boolean; permissionDenied?: boolean; isExporting?: boolean; exportStatus?: string | null; snapshotMetadata: CommandMetadataItem[]; headerActions?: CommandCenterAction[]; hideEmptyActionQueue?: boolean; locale?: Locale
   tableVariant?: "default" | "system"; rowActionVariant?: "button" | "icon"; enableRowSelection?: boolean; enableColumnVisibility?: boolean
   renderTable?: (onSelectRow: (id: string | null) => void) => ReactNode
   showProofSummary?: boolean
+  wrapProofSummary?: boolean
   exportInHeader?: boolean
 }
 
@@ -64,8 +65,8 @@ export function TransactionHistoryWorkbenchShell<Row>(props: TransactionHistoryW
         summary={labels.summary}
         state={{ label: isPartial ? labels.partialTitle : labels.scopeLabel, tone: isPartial ? "gold" : "success", icon: isPartial ? AlertTriangle : CalendarClock }}
         metadata={snapshotMetadata}
-        actions={[...headerActions, ...(props.exportInHeader === false ? [] : [{ label: isExporting ? labels.exporting : labels.export, icon: Download, onClick: onExport, disabled: isExporting || isLoading || isError || noOrganization || permissionDenied, variant: "primary" as const }])]}
-        proof={props.showProofSummary === false ? undefined : { state: "unavailable", label: labels.proofUnavailableTitle, source: labels.proofUnavailableMessage, ariaLabel: labels.proofUnavailableMessage }}
+        actions={[...headerActions, ...(!onExport || props.exportInHeader === false ? [] : [{ label: isExporting ? labels.exporting : labels.export, icon: Download, onClick: onExport, disabled: isExporting || isLoading || isError || noOrganization || permissionDenied, variant: "primary" as const }])]}
+        proof={props.showProofSummary === false ? undefined : { state: "unavailable", label: labels.proofUnavailableTitle, source: labels.proofUnavailableMessage, ariaLabel: labels.proofUnavailableMessage, wrap: props.wrapProofSummary }}
       />
 
       {exportStatus ? <div className={cn(dashboardRowClass, "p-3 text-sm text-[var(--dash-text-soft)]")} role="status">{exportStatus}</div> : null}
@@ -112,7 +113,7 @@ type SystemHistoryTableProps<Row> = {
   onPreviousPage?: () => void
   onFirstPage?: () => void
   onRetry: () => void
-  onExport: () => void
+  onExport?: () => void
   isLoading: boolean
   isFetching: boolean
   emptyFiltered: boolean
@@ -180,7 +181,7 @@ function SystemHistoryTable<Row>({ labels, filters, typeOptions, columns, rows, 
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text-soft)]">{labels.liveData ?? labels.scopeLabel}</Badge>
           <Button type="button" variant="outline" size="sm" className="dashboard-button-secondary h-9 rounded-lg" onClick={onRetry} disabled={isLoading || isFetching} aria-label={refreshLabel}><RefreshCcw className={cn("mr-2 h-4 w-4", isFetching && "animate-spin")} aria-hidden="true" />{refreshLabel}</Button>
-          <Button type="button" size="sm" className="dashboard-button-primary h-9 rounded-lg" onClick={onExport} disabled={isLoading || isExporting}><Download className="mr-2 h-4 w-4" aria-hidden="true" />{isExporting ? labels.exporting : labels.export}</Button>
+          {onExport && <Button type="button" size="sm" className="dashboard-button-primary h-9 rounded-lg" onClick={onExport} disabled={isLoading || isExporting}><Download className="mr-2 h-4 w-4" aria-hidden="true" />{isExporting ? labels.exporting : labels.export}</Button>}
         </div>
       </div>
 

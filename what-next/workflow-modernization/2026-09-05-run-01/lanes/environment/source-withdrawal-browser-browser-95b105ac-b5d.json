@@ -1,0 +1,137 @@
+{
+  "at": "2026-09-27T14:50:01.678Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "face0db84bb6c78d2787956ea325865485c5e6f25f883b6b0ebba44b6ef51a35",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "56a99d328c1946b7020471d4160491c9c9132a378a9ff5984653a6fa60e9a21c",
+    "messages/fr.json": "4f196a1206c7ff7030323d2d1bee110bd0d878f53a8334bbf4ce1f85ec957e26"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "routeLoadMs": [
+        9511,
+        6835,
+        9115
+      ],
+      "screenshots": [
+        "source-withdrawal-browser-en-source-review-320-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-source-review-768-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-source-review-1440-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-open-preview-text-enlargement-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-history-320-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-history-768-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-history-1440-95b105ac-b5d.png",
+        "source-withdrawal-browser-en-failure-95b105ac-b5d.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520612287 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520614624 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520616246 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520624312 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520629122 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520666236 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520662309 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520672796 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520686656 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520690619 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520688520 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520692115 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520704494 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520710516 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "readOnlyDenied": true,
+      "exactProposalRetry": true,
+      "proposerDecisionDenied": true,
+      "independentRejection": true,
+      "priorCertificateRetained": true,
+      "independentApproval": true,
+      "verifiedHistory": true,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Exception cases and decisions', exact: true }).getByRole('article', { name: 'Exception cmujxqja8001qma3wu7p1w0os', exact: true }).getByText('Resolved', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Exception cases and decisions', exact: true }).getByRole('article', { name: 'Exception cmujxqja8001qma3wu7p1w0os', exact: true }).getByText('Resolved', { exact: true })\n",
+      "stack": [
+        "Error: expect(locator).toBeVisible() failed",
+        "",
+        "Locator: getByRole('region', { name: 'Exception cases and decisions', exact: true }).getByRole('article', { name: 'Exception cmujxqja8001qma3wu7p1w0os', exact: true }).getByText('Resolved', { exact: true })",
+        "Expected: visible",
+        "Timeout: 60000ms"
+      ]
+    },
+    {
+      "locale": "fr",
+      "routeLoadMs": [
+        8715,
+        8379,
+        11715
+      ],
+      "screenshots": [
+        "source-withdrawal-browser-fr-source-review-320-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-source-review-768-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-source-review-1440-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-open-preview-text-enlargement-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-history-320-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-history-768-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-history-1440-95b105ac-b5d.png",
+        "source-withdrawal-browser-fr-failure-95b105ac-b5d.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520795335 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520793468 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520790813 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520807675 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520810860 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520809281 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520838370 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520841890 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520860921 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520858353 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520862559 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520869138 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520867495 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520865764 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520877805 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1790520881205 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "readOnlyDenied": true,
+      "exactProposalRetry": true,
+      "proposerDecisionDenied": true,
+      "independentRejection": true,
+      "priorCertificateRetained": true,
+      "independentApproval": true,
+      "verifiedHistory": true,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Dossiers et décisions d’exception', exact: true }).getByRole('article', { name: 'Exception cmujxue1o004qma3wxxc1xcnn', exact: true }).getByText('Résolu', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Dossiers et décisions d’exception', exact: true }).getByRole('article', { name: 'Exception cmujxue1o004qma3wxxc1xcnn', exact: true }).getByText('Résolu', { exact: true })\n",
+      "stack": [
+        "Error: expect(locator).toBeVisible() failed",
+        "",
+        "Locator: getByRole('region', { name: 'Dossiers et décisions d’exception', exact: true }).getByRole('article', { name: 'Exception cmujxue1o004qma3wxxc1xcnn', exact: true }).getByText('Résolu', { exact: true })",
+        "Expected: visible",
+        "Timeout: 60000ms"
+      ]
+    }
+  ],
+  "scope": "Source withdrawal: actual owned EN/FR cases, proposal, fresh authentication, independent rejection and approval, retained request reload, duplicate retry and historical decision browsing. Real statement import and additional-source recovery precede the nonfinancial source decision in synthetic owned fixtures.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "face0db84bb6c78d2787956ea325865485c5e6f25f883b6b0ebba44b6ef51a35",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "56a99d328c1946b7020471d4160491c9c9132a378a9ff5984653a6fa60e9a21c",
+    "messages/fr.json": "4f196a1206c7ff7030323d2d1bee110bd0d878f53a8334bbf4ce1f85ec957e26"
+  },
+  "sourceStable": true
+}

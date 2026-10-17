@@ -13,6 +13,7 @@ import { createHash, randomUUID } from "node:crypto"
 import { db } from "@/prisma/db"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { JournalReversalSnapshotChangedError, lockJournalReversalCatalogInTx, lockJournalReversalClosePeriodsInTx } from "@/services/accounting/journal-reversal-order.service"
 import {
   ApplicationError,
   BusinessRuleError,
@@ -33,11 +34,13 @@ import {
   assertProviderAccountReconciliationReady,
   buildReconciliationEvidenceManifestInTx,
   reconciliationCertificateSourceEvidenceHash,
+  UnreconciledSourcesError,
 } from "./payment-reconciliation-evidence.service"
 import {
   buildPaymentReconciliationSignOffSourceVersionHash,
   isPaymentReconciliationSourceVersionHash,
 } from "./payment-reconciliation-sign-off-source-version"
+import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { assertCurrentRunPreparationInTx, preparationHash } from "./reconciliation-run-preparation-evidence"
 import { reconciliationCertificateExportSchema, retainedCertificateExportSchema, type ReconciliationCertificateExportCommand } from "./reconciliation-certificate-export.contracts"
@@ -50,6 +53,8 @@ type ControlContext = {
 type ControlledResult<T> =
   | { denied: SensitiveActionDecision; value?: never }
   | { denied?: never; value: T }
+type SignTransactionResult = ControlledResult<SignReconciliationRunResult> | { moduleDenied: true }
+
 type CertificateExportTransactionResult =
   | ControlledResult<ReconciliationCertificateExportResult>
   | { driftError: string }
@@ -449,7 +454,7 @@ export async function getReconciliationRunDetail(
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 
-export type ReconciliationPreparationBlocker = "PROVIDER_SETUP_REQUIRED" | "ACCOUNTING_PERIOD_REQUIRED" | "EXTERNAL_EVIDENCE_REQUIRED" | "OPEN_EXCEPTIONS" | "OPEN_SUSPENSE" | "MISSING_LEDGER_LINK" | "LEDGER_REVIEW_REQUIRED" | "SOURCE_EVIDENCE_REVIEW_REQUIRED"
+export type ReconciliationPreparationBlocker = "PROVIDER_SETUP_REQUIRED" | "ACCOUNTING_PERIOD_REQUIRED" | "EXTERNAL_EVIDENCE_REQUIRED" | "OPEN_EXCEPTIONS" | "OPEN_SUSPENSE" | "MISSING_LEDGER_LINK" | "LEDGER_REVIEW_REQUIRED" | "SOURCE_EVIDENCE_REVIEW_REQUIRED" | "UNRECONCILED_SOURCES"
 
 // Shared by preparation and signing. Database/infrastructure failures propagate unchanged.
 export async function validateReconciliationRunEvidenceInTx(
@@ -568,6 +573,8 @@ export async function validateReconciliationRunEvidenceInTx(
         reconciliationRunId: run.id,
         periodStart: run.periodStart,
         periodEnd: run.periodEnd,
+        requireCompleteCoverage: true,
+        includeAmountSummary: true,
       },
     )
     if (
@@ -578,8 +585,10 @@ export async function validateReconciliationRunEvidenceInTx(
         "Reconciliation source evidence changed during sign-off; rerun reconciliation.",
       )
     }
-    return { period, providerEventCount, statementLineCount, openExceptionCount, openSuspenseCount, sourceEvidence }
+    if (!sourceEvidence.amountSummary) throw new ConflictError("Current reconciliation amounts require review.")
+    return { period, providerEventCount, statementLineCount, openExceptionCount, openSuspenseCount, sourceEvidence, amountSummary: sourceEvidence.amountSummary }
   } catch (error) {
+    if (error instanceof UnreconciledSourcesError) blocker = "UNRECONCILED_SOURCES"
     if (error instanceof BusinessRuleError || error instanceof ConflictError) Object.assign(error, { preparationBlocker: blocker })
     throw error
   }
@@ -591,17 +600,23 @@ export async function previewReconciliationSignOff(input: { organizationId: stri
     if (!["payments.reconciliation.read", "payments.reconciliation.sign"].every(p => hasRbacPermission(input.actorPermissions, p))
       || !await tx.user.findFirst({ where: { id: input.actorId, organizationId: input.organizationId, isActive: true }, select: { id: true } }))
       throw new ForbiddenError("Current workspace read and sign authority are required.")
+    const moduleContext = { organizationId: input.organizationId, userId: input.actorId, actorPermissions: input.actorPermissions,
+      moduleSlug: "payment_reconciliation" as const, surfaceType: "action" as const, surface: "services/reconciliation/payment-reconciliation-certification.service.ts", mode: "enforce" as const }
+    if (!(await evaluateModuleAccessInTx(tx, { ...moduleContext, accessIntent: "read" })).allowed)
+      throw new ForbiddenError("Reconciliation module read access is unavailable.")
+    const moduleWrite = await evaluateModuleAccessInTx(tx, { ...moduleContext, accessIntent: "write" })
     const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
     const summary = { runId: run.id, status: run.status, asOf: now.toISOString(), provider: run.providerAccount.displayName,
       currencyCode: run.providerAccount.currencyCode, businessDate: run.businessDate.toISOString(),
-      totals: { internal: decimalString(run.totalInternalAmount), external: decimalString(run.totalExternalAmount), matched: decimalString(run.matchedAmount), suspense: decimalString(run.suspenseAmount) } }
+      amountSummary: null as import("./reconciliation-amount-summary").ReconciliationAmountSummary | null }
     const blocked = (blocker: string) => ({ ...summary, canSign: false as const, blocker, expectedSourceVersionHash: null, expectedEvidenceRevision: null, counts: null })
+    if (!moduleWrite.allowed) return blocked("MODULE_WRITE_REQUIRED")
     if (run.status !== ReconciliationRunStatus.READY_FOR_SIGNOFF || run.signedAt || run.signedById || run.certificateHash || run.certificatePayload || !run.runById?.trim()) return blocked("RUN_STATE_REQUIRED")
     if (run.runById === input.actorId) return blocked("INDEPENDENT_SIGNER")
     try {
       const evidence = await validateReconciliationRunEvidenceInTx(tx, run, input.organizationId)
       await assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, input.actorId)
-      return { ...summary, canSign: true as const, blocker: null, expectedSourceVersionHash: sourceVersionHashForRun(run),
+      return { ...summary, amountSummary: evidence.amountSummary, canSign: true as const, blocker: null, expectedSourceVersionHash: sourceVersionHashForRun(run),
         expectedEvidenceRevision: preparationHash({ run, evidence }), counts: evidence.sourceEvidence.counts }
     } catch (error) {
       const blocker = (error as { preparationBlocker?: ReconciliationPreparationBlocker })?.preparationBlocker
@@ -617,11 +632,22 @@ export async function signReconciliationRun(
   input: SignReconciliationRunInput,
 ): Promise<SignReconciliationRunResult> {
   const normalized = normalizeSignInput(input)
-  let result: ControlledResult<SignReconciliationRunResult>
+  const requestStartedAt = Date.now()
+  if (!hasRbacPermission(normalized.actorPermissions, "payments.reconciliation.read"))
+    throw new ForbiddenError("Reconciliation read permission is required for sign-off.")
+  let result: SignTransactionResult
 
+  for (let attempt = 0; ; attempt += 1) {
   try {
     result = await db.$transaction(
-      async (tx): Promise<ControlledResult<SignReconciliationRunResult>> => {
+      async (tx): Promise<SignTransactionResult> => {
+        if (!await tx.user.findFirst({ where: { id: normalized.signedById, organizationId: normalized.organizationId, isActive: true }, select: { id: true } }))
+          throw new ForbiddenError("An active workspace signer is required for sign-off.")
+        if (!await signModuleWriteAllowed(tx, normalized)) return { moduleDenied: true }
+        // Keep the Serializable snapshot contract. Waiting for a catalog or
+        // publication lock does not refresh that snapshot; the shared ordering
+        // helper compares it with committed membership on a separate reader.
+        await lockJournalReversalCatalogInTx(tx, normalized.organizationId, db)
         const run = await loadRunForCertification(
           tx,
           normalized.organizationId,
@@ -694,8 +720,28 @@ export async function signReconciliationRun(
         if (normalized.expectedEvidenceRevision && normalized.expectedEvidenceRevision !== reviewedEvidenceRevision)
           throw new ConflictError("The reviewed source evidence changed. Review the current run before signing.")
 
+        // Close consumes the reconciliation dashboard across the organization,
+        // including in non-overlapping periods. Lock that complete tenant set
+        // before signing or discovering invalidation targets.
+        const affectedPeriodIds = await lockJournalReversalClosePeriodsInTx(tx, normalized.organizationId, {
+          originalPeriodId: null, reversalPeriodId: period.id,
+          originalEntryDate: run.businessDate, reversalDate: run.businessDate,
+          includeLaterPeriods: false, includeAllPeriods: true,
+        }, db)
+        const currentDecision = evaluateSensitiveAction({
+          action: "payment.reconciliation.sign", actorId: normalized.signedById,
+          organizationId: normalized.organizationId, actorPermissions: normalized.actorPermissions,
+          resourceType: "ReconciliationRun", resourceId: run.id, subjectActorId: run.runById,
+          lastAuthAt: normalized.lastAuthAt,
+          now: new Date(normalized.now.getTime() + Math.max(0, Date.now() - requestStartedAt)),
+        })
+        if (!currentDecision.allowed) {
+          await auditSensitiveActionDecision(tx, currentDecision)
+          return { denied: currentDecision }
+        }
+
         const certificatePayload = {
-          version: 2,
+          version: 3,
           mode: "DURABLE_EVIDENCE_KERNEL",
           organizationId: normalized.organizationId,
           runId: run.id,
@@ -708,7 +754,9 @@ export async function signReconciliationRun(
           accountingPeriodId: period.id,
           sourceVersionHash,
           reviewedEvidenceRevision,
-          totals: {
+          amountSummary: evidence.amountSummary,
+          recordedRunTotals: {
+            basis: "CUMULATIVE_RUN_CAPTURE_NOT_CURRENT_EXPOSURE",
             internalAmount: decimalString(run.totalInternalAmount),
             externalAmount: decimalString(run.totalExternalAmount),
             matchedAmount: decimalString(run.matchedAmount),
@@ -796,7 +844,7 @@ export async function signReconciliationRun(
           organizationId: normalized.organizationId,
           eventType: "payment.reconciliation.signed",
           eventSource: "SYSTEM",
-          idempotencyKey: `reconciliation-run:${run.id}:signed`,
+          idempotencyKey: `reconciliation-run:${run.id}:signed:${certificateHash}`,
           actorId: normalized.signedById,
           sourceType: "PAYMENT_RECONCILIATION",
           sourceId: run.id,
@@ -836,6 +884,7 @@ export async function signReconciliationRun(
             sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
             sourceId: run.id,
             periodId: period.id,
+            periodIds: affectedPeriodIds,
             periodStart: run.periodStart,
             periodEnd: run.periodEnd,
             staleReason:
@@ -858,17 +907,24 @@ export async function signReconciliationRun(
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
     )
+    break
   } catch (error) {
+    if (error instanceof JournalReversalSnapshotChangedError) {
+      if (attempt < 2) continue
+      throw new ConflictError("Close evidence changed concurrently. Refresh and retry signing.")
+    }
     if (
       error instanceof ReconciliationSignTransitionConflict ||
-      ["P2002", "P2034"].includes(prismaErrorCode(error) ?? "")
+      ["P2002", "P2034"].includes(prismaErrorCode(error) ?? "") || isRawSerializationFailure(error)
     ) {
       return recoverConcurrentReconciliationSign(normalized)
     }
     if (error instanceof ApplicationError) throw error
     throw new BusinessRuleError("Payment reconciliation sign-off could not be completed safely.")
   }
+  }
 
+  if ("moduleDenied" in result) throw new ForbiddenError("Reconciliation module write access is unavailable.")
   if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)
     throw new BusinessRuleError("Sensitive action denied.")
@@ -996,26 +1052,40 @@ export function sourceVersionHashForRun(
   })
 }
 
-async function recoverConcurrentReconciliationSign(
-  normalized: NormalizedSignInput,
-) {
-  const signed = await db.reconciliationRun.findFirst({
-    where: {
-      id: normalized.runId,
-      organizationId: normalized.organizationId,
-    },
-    select: SIGNED_RUN_RESULT_SELECT,
+async function signModuleWriteAllowed(tx: Prisma.TransactionClient, normalized: NormalizedSignInput) {
+  const decision = await evaluateModuleAccessInTx(tx, {
+    organizationId: normalized.organizationId, userId: normalized.signedById, actorPermissions: normalized.actorPermissions,
+    moduleSlug: "payment_reconciliation", surfaceType: "action", surface: "services/reconciliation/payment-reconciliation-certification.service.ts",
+    accessIntent: "write", mode: "enforce",
   })
-  if (signed?.status === ReconciliationRunStatus.SIGNED) {
-    return signedRunResult(signed, normalized, {
-      created: false,
-      committedSourceVersionHash: null,
-    })
-  }
+  if (!decision.allowed) await tx.auditLog.create({ data: {
+    organizationId: normalized.organizationId, userId: normalized.signedById,
+    entityType: "ModuleEntitlementDecision", entityId: "payment_reconciliation:sign:" + normalized.runId,
+    action: "MODULE_ENTITLEMENT_ENFORCED", changes: {
+      moduleSlug: decision.moduleSlug, surface: decision.surface, accessIntent: decision.accessIntent,
+      result: decision.result, reason: decision.reason, entitlementStatus: decision.entitlement?.status ?? null,
+      missingDependencies: decision.missingDependencies.map(item => item.dependsOnSlug),
+      rbacWildcardPresent: decision.rbacWildcardPresent, rbacWildcardBypassedEntitlement: false,
+    },
+  } })
+  return decision.allowed
+}
 
-  throw new BusinessRuleError(
-    "Reconciliation source evidence changed; refresh before signing.",
-  )
+async function recoverConcurrentReconciliationSign(normalized: NormalizedSignInput) {
+  const result = await db.$transaction(async (tx): Promise<{ moduleDenied: true } | { value: SignReconciliationRunResult }> => {
+    if (!await tx.user.findFirst({ where: { id: normalized.signedById, organizationId: normalized.organizationId, isActive: true }, select: { id: true } }))
+      throw new ForbiddenError("An active workspace signer is required for sign-off recovery.")
+    if (!await signModuleWriteAllowed(tx, normalized)) return { moduleDenied: true }
+    const signed = await tx.reconciliationRun.findFirst({
+      where: { id: normalized.runId, organizationId: normalized.organizationId }, select: SIGNED_RUN_RESULT_SELECT,
+    })
+    if (signed?.status === ReconciliationRunStatus.SIGNED) return { value: signedRunResult(signed, normalized, {
+      created: false, committedSourceVersionHash: null,
+    }) }
+    throw new BusinessRuleError("Reconciliation source evidence changed; refresh before signing.")
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+  if ("moduleDenied" in result) throw new ForbiddenError("Reconciliation module write access is unavailable.")
+  return result.value
 }
 
 function signedRunResult(
@@ -1044,6 +1114,13 @@ function signedRunResult(
   const sourceVersionHash =
     payloadSourceVersionHash ?? metadataSourceVersionHash
 
+  // A request can wait while a later request commits first. Validate retained
+  // evidence against its observation time, not the losing request's start time.
+  // Newly created evidence must still agree with this request's signing clock.
+  const latestSignedAt = options.created
+    ? normalized.now.getTime()
+    : Math.max(normalized.now.getTime(), Date.now())
+
   if (
     run.id !== normalized.runId ||
     run.organizationId !== normalized.organizationId ||
@@ -1051,7 +1128,7 @@ function signedRunResult(
     !run.signedById?.trim() ||
     !run.signedAt ||
     Number.isNaN(run.signedAt.getTime()) ||
-    run.signedAt.getTime() > normalized.now.getTime() ||
+    run.signedAt.getTime() > latestSignedAt ||
     !run.certificateHash ||
     !/^[a-f0-9]{64}$/.test(run.certificateHash) ||
     Object.keys(certificatePayload).length === 0 ||
@@ -1115,6 +1192,12 @@ function prismaErrorCode(error: unknown) {
   if (!error || typeof error !== "object" || !("code" in error)) return null
   const code = (error as { code?: unknown }).code
   return typeof code === "string" ? code : null
+}
+
+function isRawSerializationFailure(error: unknown) {
+  if (prismaErrorCode(error) !== "P2010" || !error || typeof error !== "object" || !("meta" in error)) return false
+  const meta = error.meta
+  return !!meta && typeof meta === "object" && "code" in meta && meta.code === "40001"
 }
 
 function inconsistentSignedEvidence() {

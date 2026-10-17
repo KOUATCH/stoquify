@@ -1,0 +1,42 @@
+{
+  "startedAt": "2026-09-27T15:50:34.470Z",
+  "sourceBefore": {
+    "components/finance/ReconciliationSignReview.tsx": "7767302c09b6eba1f7728419204fa5ac56bef75d023088911d9463108fff886a",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "d0a0cc42c171df294bd770ba50302aab588599e0cd301abd282d77c075631a6a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "5847ba0bfbcfde1624d6d999554b2cfd1a293483645be39fd26b52a4fecba27e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "actions/payments/__tests__/reconciliation-sign-review.actions.test.ts",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+      ],
+      "startedAt": "2026-09-27T15:50:34.474Z",
+      "endedAt": "2026-09-27T15:50:54.968Z",
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\n  ● payment reconciliation certification service › blocks self sign-off before mutating the run\n\n    expect(received).rejects.toThrow(expected)\n\n    Expected pattern: /independent approval/i\n    Received message: \"Reconciliation read permission is required for sign-off.\"\n\n          624 |   const normalized = normalizeSignInput(input)\n          625 |   if (!hasRbacPermission(normalized.actorPermissions, \"payments.reconciliation.read\"))\n        > 626 |     throw new ForbiddenError(\"Reconciliation read permission is required for sign-off.\")\n              |           ^\n          627 |   let result: ControlledResult<SignReconciliationRunResult>\n          628 |\n          629 |   try {\n\n      at signReconciliationRun (services/reconciliation/payment-reconciliation-certification.service.ts:626:11)\n      at Object.<anonymous> (services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts:641:28)\n      at Object.toThrow (node_modules/.pnpm/expect@30.4.1/node_modules/expect/build/index.js:2155:20)\n      at Object.toThrow (services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts:650:15)\n\n  ● payment reconciliation certification service › blocks sign-off when the provider account is no longer ready\n\n    expect(received).rejects.toThrow(expected)\n\n    Expected pattern: /active provider account/i\n    Received message: \"Reconciliation read permission is required for sign-off.\"\n\n          624 |   const normalized = normalizeSignInput(input)\n          625 |   if (!hasRbacPermission(normalized.actorPermissions, \"payments.reconciliation.read\"))\n        > 626 |     throw new ForbiddenError(\"Reconciliation read permission is required for sign-off.\")\n              |           ^\n          627 |   let result: ControlledResult<SignReconciliationRunResult>\n          628 |\n          629 |   try {\n\n      at signReconciliationRun (services/reconciliation/payment-reconciliation-certification.service.ts:626:11)\n      at Object.<anonymous> (services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts:803:39)\n      at Object.toThrow (node_modules/.pnpm/expect@30.4.1/node_modules/expect/build/index.js:2155:20)\n      at Object.toThrow (services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts:812:17)\n\n\nTest Suites: 1 failed, 3 passed, 4 total\nTests:       2 failed, 87 passed, 89 total\nSnapshots:   0 total\nTime:        16.278 s\nRan all test suites within paths \"components/finance/__tests__/ReconciliationSignReview.test.tsx\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"actions/payments/__tests__/reconciliation-sign-review.actions.test.ts\", \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "components/finance/ReconciliationSignReview.tsx": "7767302c09b6eba1f7728419204fa5ac56bef75d023088911d9463108fff886a",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "d0a0cc42c171df294bd770ba50302aab588599e0cd301abd282d77c075631a6a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "5847ba0bfbcfde1624d6d999554b2cfd1a293483645be39fd26b52a4fecba27e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e"
+  },
+  "sourceStable": true,
+  "passed": false,
+  "endedAt": "2026-09-27T15:50:54.973Z"
+}

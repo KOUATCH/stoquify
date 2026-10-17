@@ -1,4 +1,4 @@
-import { FinancePayablesSurface } from "@/components/finance/FinanceSpecializedLedgerSurfaces"
+import { OpenItemsDashboard } from "@/components/finance/OpenItemsDashboard"
 
 import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
 
@@ -17,6 +17,6 @@ export default async function FinancePayablesPage({ params }: { params: Promise<
   return withFinanceSurfaceAccess({
     params,
     surface,
-    onAllowed: () => <FinancePayablesSurface />,
+    onAllowed: () => <OpenItemsDashboard view="payables" />,
   })
 }

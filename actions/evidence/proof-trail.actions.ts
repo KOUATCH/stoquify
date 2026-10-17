@@ -35,6 +35,7 @@ function requireSubjectType(value: unknown): ProofTrailSubjectType {
 const getJournalEntryProofTrail = protect<unknown, ProofTrailResult>(
   {
     permission: SUBJECT_PERMISSION_MAP["journal.entry"],
+    module: { moduleSlug: "accounting", accessIntent: "read", mode: "enforce", audit: true, surface: "evidence.proof-trail.journal.entry" },
     auditResource: "EvidenceProofTrail",
     auditAllowed: true,
   },
@@ -52,6 +53,7 @@ const getJournalEntryProofTrail = protect<unknown, ProofTrailResult>(
 const getReconciliationRunProofTrail = protect<unknown, ProofTrailResult>(
   {
     permission: SUBJECT_PERMISSION_MAP["reconciliation.run"],
+    module: { moduleSlug: "payment_reconciliation", accessIntent: "read", mode: "enforce", audit: true, surface: "evidence.proof-trail.reconciliation.run" },
     auditResource: "EvidenceProofTrail",
     auditAllowed: true,
   },
@@ -69,6 +71,7 @@ const getReconciliationRunProofTrail = protect<unknown, ProofTrailResult>(
 const getCloseRunProofTrail = protect<unknown, ProofTrailResult>(
   {
     permission: SUBJECT_PERMISSION_MAP["close.run"],
+    module: { moduleSlug: "close_assurance", accessIntent: "read", mode: "enforce", audit: true, surface: "evidence.proof-trail.close.run" },
     auditResource: "EvidenceProofTrail",
     auditAllowed: true,
   },
@@ -86,6 +89,7 @@ const getCloseRunProofTrail = protect<unknown, ProofTrailResult>(
 const getPaymentTransactionProofTrail = protect<unknown, ProofTrailResult>(
   {
     permission: SUBJECT_PERMISSION_MAP["payment.transaction"],
+    module: { moduleSlug: "payment_reconciliation", accessIntent: "read", mode: "enforce", audit: true, surface: "evidence.proof-trail.payment.transaction" },
     auditResource: "EvidenceProofTrail",
     auditAllowed: true,
   },

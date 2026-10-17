@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-30T17:07:57.453Z",
+  "fixtureReceipt": "close-proof-corrected-8488c6c5-37d5-4448-9050-b6f5272e2251.json",
+  "sourceBefore": {
+    "services/inventory/inventory-reconciliation.service.ts": "d13cd4d3245a5058303d549591570006a2b5d999361172d8795fe904cd2f6158",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "syntheticOnly": true,
+  "passed": true,
+  "observation": {
+    "first": {
+      "recordedThrough": "2026-09-30T17:07:57.843Z",
+      "hash": "sha256:38e39cb14516c58e9f2fb4090a03db308981501bfd2a972652d9bad4f4580cc1",
+      "status": "PASSED"
+    },
+    "second": {
+      "recordedThrough": "2026-09-30T17:07:58.590Z",
+      "hash": "sha256:b72ff549481853dbea25973e72067b4db141ebcad55e58e43991cc93b7609a05",
+      "status": "PASSED"
+    },
+    "identicalReturnedBusinessEvidence": true,
+    "fixedCutoffReproducesFirstHash": true,
+    "noWritesByVerifier": true
+  },
+  "finding": "Close assessment and export call inventory reconciliation with a new default cutoff. On this unchanged owned fixture, time alone changes reportHash and therefore invalidates the stored annex. Fix the comparison contract while preserving detection of later/backdated financial changes; do not merely reuse an old cutoff to hide them.",
+  "sourceAfter": {
+    "services/inventory/inventory-reconciliation.service.ts": "d13cd4d3245a5058303d549591570006a2b5d999361172d8795fe904cd2f6158",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "sourceStable": true
+}

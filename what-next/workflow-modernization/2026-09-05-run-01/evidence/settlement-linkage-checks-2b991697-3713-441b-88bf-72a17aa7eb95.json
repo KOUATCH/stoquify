@@ -1,0 +1,81 @@
+{
+  "at": "2026-09-30T13:55:33.492Z",
+  "sourceBefore": {
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51",
+    "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts": "276602a6374a83ee45151eb4aa853c25021bcad7e6373de9218334933fe3dd65",
+    "services/payroll/payment-reconciliation.service.ts": "bcbf27c1fd70b28fd46883f1dc487ffdf9bb983eadf7ef3d46b2a6819333c630",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "0db5fc785e6f7dedaa556d12b8ea53a6a3c73bbe890076bd6d96ff9e6f20b334",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx": "acb563af1ed83b9d73535a3345a4d2059282ddd6c09520acce25d749fd5d02e8",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "43611315a623897b1a7af5ee8a9b0c497636da26d1c842987bdfbcae86d0e7e7",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "1b61e86a0a2d5ef65846bac6244a820f5730d21ffa3827184bc126952310d499",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts",
+        "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx",
+        "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payment-settlement-balance.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       73 passed, 73 total\nSnapshots:   0 total\nTime:        16.574 s\nRan all test suites within paths \"actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts\", \"components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx\", \"services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts\", \"services/payroll/__tests__/payment-settlement-balance.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "actions/payroll/payroll-payment-reconciliation.actions.ts",
+        "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts",
+        "services/payroll/payment-reconciliation.service.ts",
+        "components/payroll/PayrollPaymentReconciliationWorkbench.tsx",
+        "components/payroll/PayrollPaymentSettlementForm.tsx",
+        "components/payroll/payroll-settlement-copy.ts",
+        "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx",
+        "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51",
+    "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts": "276602a6374a83ee45151eb4aa853c25021bcad7e6373de9218334933fe3dd65",
+    "services/payroll/payment-reconciliation.service.ts": "bcbf27c1fd70b28fd46883f1dc487ffdf9bb983eadf7ef3d46b2a6819333c630",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "0db5fc785e6f7dedaa556d12b8ea53a6a3c73bbe890076bd6d96ff9e6f20b334",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx": "acb563af1ed83b9d73535a3345a4d2059282ddd6c09520acce25d749fd5d02e8",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "43611315a623897b1a7af5ee8a9b0c497636da26d1c842987bdfbcae86d0e7e7",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "1b61e86a0a2d5ef65846bac6244a820f5730d21ffa3827184bc126952310d499",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "sourceStable": true,
+  "passed": true
+}

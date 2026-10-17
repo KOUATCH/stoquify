@@ -9,7 +9,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -17,8 +17,13 @@ import {
   type SensitiveActionDecision,
 } from "@/services/controls/sensitive-action.service"
 import { assertOpenPeriod } from "./invariants"
+import { lockAccountingPeriodCatalogInTx } from "./accounting-period-catalog.service"
+
+import { lockPeriodControlInTx, requirePeriodCloseApprovalInTx } from "./period-control.service"
+import { readCloseAssessmentPublicationTimeInTx } from "./close-assessment-order.service"
 
 export type AccountingPeriodControlContext = {
+  expectedVersion?: number
   actorPermissions: readonly string[]
   lastAuthAt?: Date | number | string | null
   now?: Date | number | string | null
@@ -105,6 +110,9 @@ export async function createFiscalYearWithPeriods(
   }
 
   return db.$transaction(async (tx) => {
+    // One creation contract, including requests without monthly periods. This
+    // must precede all writes; count evidence readers hold the shared key.
+    await lockAccountingPeriodCatalogInTx(tx, organizationId, "exclusive")
     const fiscalYear = await tx.fiscalYear.create({
       data: {
         organizationId,
@@ -128,7 +136,7 @@ export async function createFiscalYearWithPeriods(
           fiscalYearId: fiscalYear.id,
           periodNumber,
           name: periodName(cursor),
-          startDate: cursor,
+          startDate: cursor < input.startDate ? input.startDate : cursor,
           endDate: monthEnd > input.endDate ? endOfDay(input.endDate) : monthEnd,
         })
         cursor = nextMonth
@@ -162,11 +170,14 @@ export async function getOpenPeriodForDate(
   // takes the conflicting lock before preflight, so neither side can rely on
   // an open-state read made before the other transaction completed.
   // Root-client calls are read-only checks; they cannot hold a transaction lock.
+  // Prisma stores DateTime as UTC timestamp without time zone, but raw Date
+  // parameters are timestamptz. Match UTC storage instead of the session zone.
   const period = !("$transaction" in tx)
     ? (await tx.$queryRaw<AccountingPeriod[]>`
         SELECT * FROM accounting_periods
         WHERE "organizationId" = ${organizationId}
-          AND "startDate" <= ${entryDate} AND "endDate" >= ${entryDate}
+          AND "startDate" <= (${entryDate}::timestamptz AT TIME ZONE 'UTC')
+          AND "endDate" >= (${entryDate}::timestamptz AT TIME ZONE 'UTC')
         ORDER BY "startDate" DESC LIMIT 1 FOR SHARE
       `)[0]
     : await tx.accountingPeriod.findFirst({
@@ -183,6 +194,8 @@ export async function getOpenPeriodForDate(
 }
 
 export type PeriodClosePreflight = {
+  missingFunctionalAmountCount: number
+  functionalBalanceIssue: { debit: Prisma.Decimal; credit: Prisma.Decimal } | null
   draftEntryCount: number
   unresolvedPostingBatchCount: number
   unlinkedPostedEntryCount: number
@@ -282,14 +295,25 @@ export async function getPeriodClosePreflight(
       select: {
         debit: true,
         credit: true,
+        baseDebit: true,
+        baseCredit: true,
         currency: true,
       },
     }),
   ])
 
   const totalsByCurrency = new Map<string, { debit: Prisma.Decimal; credit: Prisma.Decimal }>()
+  let missingFunctionalAmountCount = 0
+  let functionalDebit = zeroDecimal()
+  let functionalCredit = zeroDecimal()
 
   for (const line of lines) {
+    if (line.baseDebit == null || line.baseCredit == null) {
+      missingFunctionalAmountCount += 1
+    } else {
+      functionalDebit = functionalDebit.add(line.baseDebit)
+      functionalCredit = functionalCredit.add(line.baseCredit)
+    }
     const currency = (line.currency || "XAF").trim().toUpperCase()
     const totals = totalsByCurrency.get(currency) ?? { debit: zeroDecimal(), credit: zeroDecimal() }
     totals.debit = totals.debit.add(line.debit ?? 0)
@@ -302,6 +326,8 @@ export async function getPeriodClosePreflight(
     .map(([currency, totals]) => ({ currency, debit: totals.debit, credit: totals.credit }))
 
   return {
+    missingFunctionalAmountCount,
+    functionalBalanceIssue: functionalDebit.eq(functionalCredit) ? null : { debit: functionalDebit, credit: functionalCredit },
     draftEntryCount,
     unresolvedPostingBatchCount,
     unlinkedPostedEntryCount,
@@ -314,6 +340,13 @@ export async function getPeriodClosePreflight(
 
 export function getPeriodClosePreflightFailures(preflight: PeriodClosePreflight) {
   const failures: string[] = []
+
+  if (preflight.missingFunctionalAmountCount > 0) {
+    failures.push(`${preflight.missingFunctionalAmountCount} posted journal lines are missing functional-currency amounts`)
+  }
+  if (preflight.functionalBalanceIssue) {
+    failures.push(`Functional-currency trial balance is not balanced: debits ${preflight.functionalBalanceIssue.debit.toFixed(2)} credits ${preflight.functionalBalanceIssue.credit.toFixed(2)}`)
+  }
 
   if (preflight.draftEntryCount > 0) {
     failures.push(`${preflight.draftEntryCount} draft journal entr${preflight.draftEntryCount === 1 ? "y" : "ies"} must be posted or voided`)
@@ -353,11 +386,7 @@ export async function closeAccountingPeriod(
   control?: AccountingPeriodControlContext,
 ) {
   const result = await db.$transaction(async (tx) => {
-    await tx.$queryRaw`
-      SELECT id FROM accounting_periods
-      WHERE id = ${periodId} AND "organizationId" = ${organizationId}
-      FOR UPDATE
-    `
+    const { period, sourceRevision } = await lockPeriodControlInTx(tx, organizationId, periodId)
     const preflight = await getPeriodClosePreflight(organizationId, periodId, tx)
     const failures = getPeriodClosePreflightFailures(preflight)
 
@@ -371,7 +400,7 @@ export async function closeAccountingPeriod(
       organizationId,
       actorPermissions: control?.actorPermissions ?? [],
       lastAuthAt: control?.lastAuthAt,
-      now: control?.now,
+      now: new Date(),
       resourceType: "AccountingPeriod",
       resourceId: periodId,
       metadata: {
@@ -387,11 +416,26 @@ export async function closeAccountingPeriod(
     await auditSensitiveActionDecision(tx, controlDecision)
     if (!controlDecision.allowed) return { denied: controlDecision }
 
+    if (period.controlVersion !== control?.expectedVersion) throw new ConflictError("The period changed; refresh before closing.")
+    const now = await readCloseAssessmentPublicationTimeInTx(tx)
+    if (period.endDate >= now) throw new BusinessRuleError("Only a completed accounting period can be closed.")
+    const approval = await requirePeriodCloseApprovalInTx(tx, organizationId, periodId, sourceRevision)
+    assertSensitiveActionAllowed(evaluateSensitiveAction({ action: "accounting.period.close", actorId, organizationId,
+      actorPermissions: control?.actorPermissions ?? [], lastAuthAt: control?.lastAuthAt, now: new Date() }))
+    const event = await tx.periodControlEvent.create({ data: {
+      organizationId, periodId, version: period.controlVersion + 1, operation: "CLOSE", fromStatus: "OPEN", toStatus: "CLOSED",
+      actorId: actorId!, reason: "Current independently certified close approval accepted", idempotencyKey: "close:" + periodId + ":" + period.controlVersion,
+      sourceRevision: sourceRevision.revision, approval, createdAt: now,
+    } })
+
     const closed = await tx.accountingPeriod.update({
       where: { id: periodId },
       data: {
         status: "CLOSED",
-        closedAt: new Date(),
+        closedAt: now,
+        lockedAt: now,
+        controlVersion: event.version,
+        lastControlEventId: event.id,
         closedById: actorId,
       },
     })
@@ -403,6 +447,11 @@ export async function closeAccountingPeriod(
       resourceId: periodId,
       message: `Accounting period ${closed.name} closed`,
       metadata: {
+        closeRunId: approval.closeRunId,
+        certifiedExportId: approval.certifiedExportId,
+        contentHash: approval.contentHash,
+        eventId: event.id,
+        version: event.version,
         draftEntryCount: preflight.draftEntryCount,
         unresolvedPostingBatchCount: preflight.unresolvedPostingBatchCount,
         unlinkedPostedEntryCount: preflight.unlinkedPostedEntryCount,
@@ -413,7 +462,7 @@ export async function closeAccountingPeriod(
     })
 
     return { value: closed }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted, timeout: 20000 })
 
   if (result.denied) {
     assertSensitiveActionAllowed(result.denied)

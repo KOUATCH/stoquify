@@ -46,6 +46,12 @@ function makeRepo(input = {}) {
 }
 
 describe("CI release readiness gate", () => {
+  it("reads database identity from the verify job, not an earlier client-generation dummy", () => {
+    const prefix = 'jobs:\n  agent-workflow:\n    steps:\n      - env:\n          DATABASE_URL: "postgresql://unused:unused@127.0.0.1:1/unused"\n'
+    const multiJob = workflow.replace('jobs:\n', prefix)
+    expect(buildCiReleaseReadiness(makeRepo({ workflow: multiJob })).summary.status).toBe("ready")
+    expect(buildCiReleaseReadiness(makeRepo({ workflow: multiJob.replace('localhost:5432/aqstoqflow_ci', 'localhost:5432/wrong_target') })).blockers).toContain("ci_databases_are_isolated")
+  })
   it("accepts an isolated database-backed verification workflow", () => {
     const report = buildCiReleaseReadiness(makeRepo())
     expect(report.summary).toMatchObject({ status: "ready", readyCount: 11, checkCount: 11, blockerCount: 0 })

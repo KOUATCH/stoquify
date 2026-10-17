@@ -13,10 +13,11 @@ type ThemeMode = "system" | "light" | "dark"
 const copy = {
   en: {
     title: "Appearance",
-    subtitle: "Theme mode reflects the current next-themes provider configuration.",
-    mode: "Theme mode",
-    active: "Active",
-    resolved: "Resolved theme",
+    subtitle: "The dashboard uses a fixed dark appearance. Choose your theme preference for pages outside the dashboard below.",
+    mode: "Theme outside the dashboard",
+    active: "Preference for other pages",
+    resolved: "Theme for other pages",
+    dashboard: "Dashboard appearance",
     provider: "Provider",
     strategy: "Class strategy",
     system: "System preference",
@@ -32,10 +33,11 @@ const copy = {
   },
   fr: {
     title: "Apparence",
-    subtitle: "Le mode theme reflete la configuration actuelle du provider next-themes.",
-    mode: "Mode theme",
-    active: "Actif",
-    resolved: "Theme resolu",
+    subtitle: "Le tableau de bord utilise une apparence sombre fixe. Choisissez ci-dessous votre préférence de thème pour les autres pages.",
+    mode: "Thème hors du tableau de bord",
+    active: "Préférence pour les autres pages",
+    resolved: "Thème des autres pages",
+    dashboard: "Apparence du tableau de bord",
     provider: "Provider",
     strategy: "Strategie class",
     system: "Preference systeme",
@@ -137,6 +139,7 @@ export default function AppearanceSettingsClient({ locale }: { locale: Locale })
         </div>
 
         <div className="mt-5 grid gap-3">
+          <StateRow label={t.dashboard} value={t.dark} />
           <StateRow label={t.resolved} value={resolved} />
           <StateRow label={t.provider} value="next-themes" />
           <StateRow label={t.strategy} value="class" />

@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-27T17:38:50.628Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "purpose": "Reproduce stale outer module admission; passed means defect reproduced, not acceptable behavior.",
+  "organizationId": "cmuk3rm4d0000maugstp955sh",
+  "runId": "cmuk3rmbc001amaugwucgr7gw",
+  "initialAdmission": true,
+  "currentWriteAdmission": false,
+  "previewAfterWithdrawal": {
+    "runId": "cmuk3rmbc001amaugwucgr7gw",
+    "status": "READY_FOR_SIGNOFF",
+    "canPrepare": true,
+    "revision": "sha256:e6ed612368651cab1aac6060cbdb66c2e87665529804691e0b67600c388164fc",
+    "blocker": null,
+    "counts": {
+      "paymentTransactionCount": 1,
+      "providerEventCount": 1,
+      "statementFileCount": 0,
+      "statementLineCount": 0,
+      "matchRecordCount": 1,
+      "exceptionCount": 0,
+      "suspenseCount": 0
+    },
+    "asOf": "2026-09-27T17:38:51.506Z"
+  },
+  "result": {
+    "runId": "cmuk3rmbc001amaugwucgr7gw",
+    "receiptId": "e8e59c22-cda5-4392-bd99-f3ad21069664",
+    "preparedAt": "2026-09-27T17:38:51.551Z",
+    "currentStatus": "READY_FOR_SIGNOFF",
+    "replayed": false
+  },
+  "preparationAudits": 1,
+  "signatures": 0,
+  "journals": 0,
+  "defectReproduced": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

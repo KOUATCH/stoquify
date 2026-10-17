@@ -5,7 +5,7 @@ import { suspenseEvidenceHash, suspenseMetadata, suspensePostingCycle } from "./
 
 export const correctionJournalInclude = {
   postingBatch: true, sourceLinks: true,
-  lines: { include: { account: { select: { organizationId: true } } }, orderBy: { lineNumber: "asc" } },
+  lines: { include: { account: { select: { organizationId: true, syscohadaClass: true } } }, orderBy: { lineNumber: "asc" } },
 } satisfies Prisma.JournalEntryInclude
 export type CorrectionJournal = Prisma.JournalEntryGetPayload<{ include: typeof correctionJournalInclude }>
 

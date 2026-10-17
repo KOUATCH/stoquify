@@ -1,0 +1,169 @@
+--- before/services/pos/pos.service.ts
++++ after/services/pos/pos.service.ts
+@@ -2237,7 +2237,8 @@
+     if (typeof rawInput.checkoutLeaseId === "string") {
+       const workspace = await assertCheckoutLeaseInTx(tx, { ...rawInput, sessionId: input.sessionId }, rawInput.checkoutLeaseId, true)
+       const retained = retainedCheckoutRequest(workspace.pendingRequest)
+-      if (!retained || posSaleCommitRequestHash(rawInput, retained) !== requestHash) throw new ConflictError("POS_CHECKOUT_RECOVERY_REQUIRED")
++      // The payload hash excludes the operation key; both must match retained intent.
++      if (!retained || retained.clientCommitId !== input.clientCommitId || posSaleCommitRequestHash(rawInput, retained) !== requestHash) throw new ConflictError("POS_CHECKOUT_RECOVERY_REQUIRED")
+     }
+     await assertPOSTenderWriteAccessInTx(tx, writeScope)
+     await assertModuleNewWorkInTx(tx, {
+--- before/services/pos/__tests__/pos.service.test.ts
++++ after/services/pos/__tests__/pos.service.test.ts
+@@ -488,6 +488,55 @@
+     mockSendReceipt.mockResolvedValue(null)
+   })
+ 
++  it("P05 rejects replacing the retained commit identity before financial work", async () => {
++    const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
++    const sale = draftSaleFixture()
++    mockTx.salesOrder.findFirst.mockResolvedValue({ ...sale, lines: sale.lines.map(line => ({
++      ...line, item: { ...line.item, sellingPrice: line.unitPrice, taxRate: { rate: line.taxRate } },
++    })) })
++    mockTx.pOSCheckoutWorkspace.findFirst.mockResolvedValue({
++      leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(Date.now() + 60_000),
++      pendingRequest: { ...input, clientCommitId: "pos-original-retained" },
++    })
++    mockTx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 1 })
++
++    await expect(commitPOSSale(input)).rejects.toThrow("POS_CHECKOUT_RECOVERY_REQUIRED")
++    expect(mockTx.salesOrder.findFirst).not.toHaveBeenCalled()
++    expect(mockTx.pOSCommitResult.create).not.toHaveBeenCalled()
++    expect(mockTx.payment.create).not.toHaveBeenCalled()
++    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
++    expect(mockPostSale).not.toHaveBeenCalled()
++    expect(mockPostPayment).not.toHaveBeenCalled()
++  })
++
++  it("P05 preserves the matching retained identity and original outcome on retry", async () => {
++    const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
++    const sale = draftSaleFixture()
++    mockTx.salesOrder.findFirst.mockResolvedValue({ ...sale, lines: sale.lines.map(line => ({
++      ...line, item: { ...line.item, sellingPrice: line.unitPrice, taxRate: { rate: line.taxRate } },
++    })) })
++    const retained = { ...input }
++    mockTx.pOSCheckoutWorkspace.findFirst.mockResolvedValue({
++      leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(Date.now() + 60_000), pendingRequest: retained,
++    })
++    mockTx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 1 })
++    const original = await commitPOSSale(input)
++    const effects = {
++      payments: mockTx.payment.create.mock.calls.length,
++      stock: mockTx.inventoryTransaction.create.mock.calls.length,
++      salePosting: mockPostSale.mock.calls.length,
++      paymentPosting: mockPostPayment.mock.calls.length,
++    }
++    mockTx.pOSCommitResult.findUnique.mockResolvedValue(completedCommitRecord())
++    await expect(commitPOSSale(input)).resolves.toEqual({ ...original, replayed: true })
++    expect(original.clientCommitId).toBe(retained.clientCommitId)
++    expect(retained).toEqual(input)
++    expect(mockTx.payment.create).toHaveBeenCalledTimes(effects.payments)
++    expect(mockTx.inventoryTransaction.create).toHaveBeenCalledTimes(effects.stock)
++    expect(mockPostSale).toHaveBeenCalledTimes(effects.salePosting)
++    expect(mockPostPayment).toHaveBeenCalledTimes(effects.paymentPosting)
++  })
++
+   it("requires a fresh review if live prices changed before a browser submission", async () => {
+     const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
+     const sale = draftSaleFixture()
+--- before/services/pos/__tests__/commit-recovery.service.test.ts
++++ after/services/pos/__tests__/commit-recovery.service.test.ts
+@@ -66,6 +66,51 @@
+   await expect(getPOSSaleCommitStatus(input)).rejects.toBe(unavailable)
+ })
+ 
++it.each([
++  ["tenant", { organizationId: "org-2" }],
++  ["cashier", { userId: "cashier-2" }],
++  ["location", { locationId: "loc-2" }],
++  ["terminal", { terminalId: "till-2" }],
++  ["session", { sessionId: "shift-2" }],
++  ["sale", { salesOrderId: "sale-2" }],
++  ["commit identity", { clientCommitId: "other-attempt" }],
++])("P05 does not disclose another %s's recorded outcome", async (_label, change) => {
++  const stored = record()
++  const tx = {
++    pOSCommitResult: { findFirst: jest.fn(async ({ where }) =>
++      Object.entries(where).every(([key, value]) => stored[key as keyof typeof stored] === value) ? stored : null,
++    ) },
++    salesOrder: { findFirst: jest.fn().mockResolvedValue(null) },
++  }
++  ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))
++  const attempted = { ...input, ...change }
++  await expect(getPOSSaleCommitStatus(attempted)).resolves.toEqual({ kind: "NOT_FOUND" })
++  expect(tx.pOSCommitResult.findFirst).toHaveBeenCalledWith({ where: {
++    organizationId: attempted.organizationId, actorId: attempted.userId,
++    locationId: attempted.locationId, terminalId: attempted.terminalId, sessionId: attempted.sessionId,
++    salesOrderId: attempted.salesOrderId, clientCommitId: attempted.clientCommitId,
++  } })
++})
++
++it("P05 recovers original identity and amount after response loss without rewriting current sale state", async () => {
++  const stored = record()
++  const tx = {
++    pOSCommitResult: { findFirst: jest.fn().mockResolvedValue(stored) },
++    salesOrder: { findFirst: jest.fn().mockResolvedValue({ status: "CANCELLED", paymentStatus: "CANCELLED" }) },
++  }
++  ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))
++  await expect(getPOSSaleCommitStatus(input)).resolves.toMatchObject({
++    kind: "RECORDED", clientCommitId: input.clientCommitId, saleId: input.salesOrderId,
++    orderNumber: "POS-1", total: 100, originalStatus: "COMPLETED", currentStatus: "CANCELLED",
++  })
++  // This transaction double has only reads; accidental completion/posting cannot succeed.
++  expect(tx.salesOrder.findFirst).toHaveBeenCalledWith({
++    where: { id: input.salesOrderId, organizationId: input.organizationId, createdById: input.userId,
++      locationId: input.locationId, terminalId: input.terminalId, sessionId: input.sessionId },
++    select: { status: true, paymentStatus: true },
++  })
++})
++
+ it("requires explicit current review for an unrecorded legacy request without changing it", async () => {
+   const tx = { pOSCommitResult: { findFirst: jest.fn().mockResolvedValue(null) }, salesOrder: { findFirst: jest.fn().mockResolvedValue({ id: input.salesOrderId, lines: [], session: { status: "ACTIVE", endTime: null } }) } }
+   ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))
+--- before/services/pos/__tests__/pos-full-commit.postgres.test.ts
++++ after/services/pos/__tests__/pos-full-commit.postgres.test.ts
+@@ -131,6 +131,21 @@
+   })
+   afterAll(async () => { await db.$disconnect() })
+ 
++  it("P05 rejects a substituted retained commit ID without financial effects and permits the original retry", async () => {
++    const input = await fixture()
++    const before = await financialSnapshot(input)
++    await expect(commitPOSSale({ ...input.request, clientCommitId: `pos:${randomUUID()}` }))
++      .rejects.toThrow("POS_CHECKOUT_RECOVERY_REQUIRED")
++    expect(await financialSnapshot(input)).toEqual(before)
++    const workspace = await db.pOSCheckoutWorkspace.findUniqueOrThrow({ where: { sessionId: input.sessionId } })
++    expect(workspace.pendingRequest).toMatchObject({ clientCommitId: input.request.clientCommitId })
++    const original = await commitPOSSale(input.request)
++    const after = await financialSnapshot(input)
++    await expect(commitPOSSale(input.request)).resolves.toEqual({ ...original, replayed: true })
++    expect(original.clientCommitId).toBe(input.request.clientCommitId)
++    expect(await financialSnapshot(input)).toEqual(after)
++  })
++
+   it("commits stock, cash, receivable, ledger, events and durable result exactly once under duplicate completion", async () => {
+     const input = await fixture()
+     const results = await Promise.all([commitPOSSale(input.request), commitPOSSale(input.request)])
+--- /dev/null
++++ after/jest.retention-checkout.config.cjs
+@@ -0,0 +1,18 @@
++const nextJest = require('next/jest')
++
++// P05: bounded mocked checkout/recovery tests, no Next config or dotenv loading.
++module.exports = nextJest()({
++  rootDir: __dirname,
++  roots: ['<rootDir>/services/pos/__tests__', '<rootDir>/actions/pos/__tests__'],
++  testEnvironment: 'node',
++  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  testMatch: [
++    '<rootDir>/services/pos/__tests__/pos.service.test.ts',
++    '<rootDir>/services/pos/__tests__/commit-recovery.service.test.ts',
++    '<rootDir>/actions/pos/__tests__/commit-recovery.actions.test.ts',
++    '<rootDir>/actions/pos/__tests__/tender.actions.test.ts',
++  ],
++  collectCoverage: false,
++  testTimeout: 15000,
++})

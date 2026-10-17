@@ -1,0 +1,107 @@
+{
+  "at": "2026-09-30T21:50:20.098Z",
+  "workflow": "FA-CASH-COMMAND",
+  "scope": "Source-only review of a concurrent test-file change blocking the wider workflow-register refresh",
+  "verificationStatus": "Exact predecessor reconstruction verified in memory; changed test suite and related implementation not revalidated by this review",
+  "source": {
+    "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+    "before": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+    "after": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441"
+  },
+  "deterministicReconstruction": {
+    "input": "Read the exact current test-file bytes as UTF-8; verify the after hash first. Apply these four JavaScript String.replace operations, preserving original line endings. Hash the result as UTF-8.",
+    "operations": [
+      {
+        "pattern": "^  recordCloseCertificationInvalidationsForSource,\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "(    closeRun: \\{\\r?\\n)      findMany: jest.fn\\(\\),\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "(  closeRun: \\{\\r?\\n)    findMany: jest.Mock\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "^  it.each\\(\\[\"RUNNING\", \"READY\", \"CERTIFIED\", \"EXPORTED\"\\]\\)\\(\"invalidates a %s assessment on a new source event even without an export\", async \\(status\\) => \\{[\\s\\S]*?^  \\}\\)\\r?\\n\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      }
+    ],
+    "removedLineCount": 25,
+    "actualReconstructedSha256": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+    "exactMatchToRetainedPredecessor": true,
+    "productOrExistingEvidenceWrites": false
+  },
+  "impact": {
+    "classification": "Additional close-invalidation tests and their mocks; not a currency-fixture adjustment",
+    "added": [
+      "Import recordCloseCertificationInvalidationsForSource from close-assurance-pack.service.",
+      "Add closeRun.findMany to the runtime Prisma mock and its TypeScript test type.",
+      "Add one parameterized test with RUNNING, READY, CERTIFIED and EXPORTED states. Its mock admits runs according to the implementation query and asserts invalidation of a newly changed source even when no close-pack export exists.",
+      "The four cases assert invalidatedCount=1, organization/period-scoped run selection, BLOCKED run metadata naming the new source, and no closePackExport.update."
+    ],
+    "existingTestsExactlyPreserved": true,
+    "completionOrCertificationClaim": false
+  },
+  "setupReviewComparison": {
+    "review": "evidence/setup-rule-selection-review-2026-09-30.json",
+    "reviewSha256": "7c1530cadadc473a956153bae3a425beec4a75dbadab4c336e44b77c4337ab2f",
+    "sourceHashCount": 11,
+    "directMatches": [
+      "services/accounting/__tests__/accounting-settings.service.test.ts",
+      "services/accounting/posting-rules.service.ts",
+      "services/accounting/__tests__/posting-rules.service.test.ts",
+      "services/accounting/control-center.service.ts",
+      "services/accounting/__tests__/control-center.service.test.ts",
+      "services/accounting/__tests__/data-trust.service.test.ts",
+      "components/accounting/AccountingControlCenter.tsx",
+      "actions/accounting/settings.actions.ts"
+    ],
+    "rawDrift": [
+      {
+        "file": "services/accounting/accounting-settings.service.ts",
+        "before": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+        "after": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+        "existingBridge": "evidence/receipt-capacity-review-2026-09-30.json"
+      },
+      {
+        "file": "services/accounting/__tests__/default-posting-rules.service.test.ts",
+        "before": "3d7b6410eece0e5d97f537f143ea5663470d51de5c4ff4b8a6e2e1ee6f64f6b8",
+        "after": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+        "existingBridge": "evidence/inventory-direction-review-2026-09-30.json"
+      },
+      {
+        "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+        "before": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+        "after": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+        "existingBridge": null
+      }
+    ],
+    "remainingUnbridgedDriftCount": 1
+  },
+  "requiredNextProof": [
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "function": "recordCloseCertificationInvalidationsForSource",
+      "observedCurrentSha256": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+      "action": "Bind and inspect the current invalidation implementation and affected source callers against their relevant previous evidence before accepting a source bridge. This hash is an observation, not correctness proof."
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "action": "Run the modified close-pack suite with exact current source/test hashes and retain its terminal results. Verify the added cases exercise the intended source invalidation contract and preserve prior assertions. Existing passing historical tests do not establish that the four new cases pass."
+    },
+    {
+      "action": "Only after source review and appropriate revalidation succeeds, add a separately retained reviewed bridge and rerun the whole-register reconciler. Do not rewrite predecessor hashes or promote workflow closure from this source-only finding."
+    }
+  ],
+  "limitations": [
+    "No additional tests, browser journeys, database operations, source changes or previous-evidence edits were performed during this review.",
+    "Today's receipt-capacity correction has independent current evidence; the failed wider refresh remains accurately recorded.",
+    "This comparison covers setup-rule-selection-review sourceHashes and known bridge paths, not all deeper historical review dependencies."
+  ]
+}

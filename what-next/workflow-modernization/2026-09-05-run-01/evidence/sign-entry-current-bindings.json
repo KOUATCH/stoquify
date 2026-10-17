@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-27T17:25:05.694Z",
+  "workflow": "PR-10",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "components/finance/PaymentSuspenseQueue.tsx": "f41fbf539244b51b579a7cdee64ac044adaa65d01f799186f2b1dc9c0e82e701",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "bd4ca1eda65c6826dc92e3d38092bd406df4910b46b28afa7a99a8b579881684",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "08b45d2261a0107dd290d29b9f1002d1f883fa48e3eb2279716b20aefa36f414",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "hooks/usePermissions.ts": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+    "hooks/__tests__/usePermissions.workflow.test.tsx": "1c1ce552e5774805d8cfa034b70d871fa86de6335ab5960a7d0726f72099e267"
+  },
+  "receipts": [
+    {
+      "file": "lanes/environment/sign-entry-profile-0ffb9b60-f931-48a6-b8d4-22f6df7b9933.json",
+      "sha256": "9e783e28c181606bb5f63c20f1e78ffa1eac371ebc3473c77fd609f992b5fe0e"
+    },
+    {
+      "file": "lanes/environment/sign-entry-profile-2d6a4d8a-c992-4b2b-9b86-79079e20e912.json",
+      "sha256": "46affbc8360dedcdb81283b4324402ed7f93f62b53598a7f90076384347db501"
+    },
+    {
+      "file": "evidence/sign-entry-checks-45b48b8f-7057-4adb-9028-0ce9e7acdf3f.json",
+      "sha256": "f1bde3586ca97a2a018a52e412582dd3e1f25afdbc591ab8b72953ded612a554"
+    },
+    {
+      "file": "evidence/sign-entry-independent-catalog-edit.json",
+      "sha256": "6316dbe339e572cba3212b701ff9c670b50ff44bba611a0f8c2b0cc3540eb0ee"
+    }
+  ],
+  "scope": "Bounded entry correction: live permission read shared before conditional panels mount; EN/FR withdrawal/failure/recovery/signing. Earlier service/transaction evidence retains identical source bytes; full workflow closure audit remains."
+}

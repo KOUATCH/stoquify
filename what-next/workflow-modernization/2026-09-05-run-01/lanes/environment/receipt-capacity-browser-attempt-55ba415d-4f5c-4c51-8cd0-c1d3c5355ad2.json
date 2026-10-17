@@ -1,0 +1,31 @@
+{
+  "run": "55ba415d-4f5c-4c51-8cd0-c1d3c5355ad2",
+  "evidenceDate": "2026-09-30",
+  "scope": "Partial failed browser attempt; reconstructed from authoritative exec output, not a completed driver receipt",
+  "driver": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs",
+  "driverSha256AtStart": "e04e717f658a95e10acab819abcde8abd8b89e27450b956774a3123eeeeb0ce1",
+  "execSessionId": 93988,
+  "observedNodeProcessId": 11860,
+  "observedBrowserChildProcessId": 21156,
+  "terminalExitCode": 1,
+  "termination": "Interrupted the owned verification via its existing exec handle after a confirmed screenshot-write EPERM made required artifact capture unavailable in that runtime",
+  "passed": false,
+  "journeys": [
+    {
+      "locale": "en", "width": 1440, "kind": "preparation", "passed": false,
+      "error": "expect(locator).toBeChecked() failed: getByRole('checkbox') remained unchecked for 60000ms",
+      "interpretation": "Runner pressed Space after choosing a file without waiting for asynchronous hashing to re-enable the enclosing fieldset. Correct runner readiness before attributing this to product behavior. No invoice submission was reached."
+    },
+    {
+      "locale": "en", "width": 1440, "kind": "correction", "passed": false,
+      "error": "EPERM: operation not permitted, open 'E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\receipt-capacity-browser-55ba415d-4f5c-4c51-8cd0-c1d3c5355ad2-en1440-correction-available-seven.png'",
+      "interpretation": "The driver passed the displayed available-seven assertion and reached its first screenshot; no correction submission was reached."
+    }
+  ],
+  "limitations": [
+    "No successful screenshot or final source-hash receipt was written by this sandboxed attempt.",
+    "Product source was frozen by the coordinating agent, but this partial receipt does not independently establish a before/after source map.",
+    "No final outside-fixture invariant result was emitted. Failed-attempt synthetic fixtures remain retained.",
+    "FR journeys were not verified in this attempt; interruption may have occurred after the next fixture started. No four-journey completion is claimed."
+  ]
+}

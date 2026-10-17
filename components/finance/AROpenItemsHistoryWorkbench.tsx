@@ -1,5 +1,6 @@
 "use client"
 
+import { OpenItemsReturnLink } from "@/components/finance/OpenItemsReturnLink"
 import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { CalendarClock, Database, HandCoins, UserRound } from "lucide-react"
@@ -13,6 +14,7 @@ import {
   type TransactionHistoryKpi,
 } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
 import { financeReceivablesHistoryTableContract } from "@/components/DataTableComponents/finance-accounting-contracts"
 import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
@@ -37,6 +39,7 @@ export function AROpenItemsHistoryWorkbench() {
     resetFilters,
     selectRow,
     exportHistory,
+    canExport,
     exportStatus,
     isExporting,
   } = useAROpenItemsHistoryWorkbench()
@@ -44,8 +47,9 @@ export function AROpenItemsHistoryWorkbench() {
   const [pageIndex, setPageIndex] = useState(0)
   const loadedRows = result?.items ?? rows
   const filteredRows = loadedRows.filter((row) => [
-    row.documentNumber, row.customerName, formatDate(row.dueDate, locale), row.status, row.currency,
-    formatMoney(row.openingAmount, locale, row.currency), formatMoney(row.openAmount, locale, row.currency), row.evidenceGrade,
+    row.documentNumber, row.customerName, formatDate(row.dueDate, locale), row.status, t(`status.${row.status}`), row.currency,
+    row.agingBucket, t(`aging.${row.agingBucket}`),
+    formatMoney(row.openingAmount, locale, row.currency), formatMoney(row.openAmount, locale, row.currency), row.evidenceGrade, evidenceLabel(row, t),
   ].join(" ").toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()))
   const currentPage = Math.min(pageIndex, Math.max(0, Math.ceil(filteredRows.length / filters.pageSize) - 1))
   const visibleRows = filteredRows.slice(currentPage * filters.pageSize, (currentPage + 1) * filters.pageSize)
@@ -77,6 +81,9 @@ export function AROpenItemsHistoryWorkbench() {
       query={canonicalQuery}
       state={canonicalState}
     >
+      <OpenItemsReturnLink locale={locale === "fr" ? "fr" : "en"} />
+      {filters.customerId && <p className="px-4 pb-3 text-sm">{locale === "fr" ? "Filtre client appliqué. Les exports couvrent ses factures dans la période de l’historique, y compris les factures réglées. Réinitialisez les filtres pour toute l’organisation." : "Customer filter applied. Exports cover this customer’s invoices in the history scope, including settled records. Reset filters for the whole organization."}</p>}
+      {filters.customerId && <Button className="mx-4 mb-3" variant="outline" disabled={isLoading} onClick={resetFilters}>{locale === "fr" ? "Effacer le filtre client" : "Clear customer filter"}</Button>}
       <TransactionHistoryWorkbenchShell
         tableVariant="system"
         locale={locale === "fr" ? "fr" : "en"}
@@ -129,12 +136,12 @@ export function AROpenItemsHistoryWorkbench() {
       rowIdentity={{
         id: (row) => row.referenceId,
         title: (row) => row.orderNumber ?? row.referenceId,
-        subtitle: (row) => `${row.customerName} / ${row.agingBucket}`,
-        status: (row) => <StateBadge state={row.status} />,
-        value: (row) => formatMoney(row.openAmount, locale, row.currency),
+        subtitle: (row) => `${row.customerName} / ${t(`aging.${row.agingBucket}`)}`,
+        status: (row) => <StateBadge state={row.status} t={t} />,
+        value: (row) => <div className="space-y-2"><div>{formatMoney(row.openAmount, locale, row.currency)}</div><p className="break-words text-sm font-normal text-[var(--dash-text-soft)]">{t("drawer.evidenceGrade")}: {evidenceLabel(row, t)}</p></div>,
       }}
       drawerTitle={(row) => row.orderNumber ?? row.referenceId}
-      drawerDescription={(row) => `${row.customerName} / ${row.referenceType}`}
+      drawerDescription={(row) => `${row.customerName} / ${t("drawer.documentType")}`}
       drawerMetadata={(row) => [
         { label: t("drawer.customer"), value: row.customerName, icon: UserRound },
         { label: t("drawer.dueDate"), value: formatDate(row.dueDate, locale), icon: CalendarClock },
@@ -156,12 +163,13 @@ export function AROpenItemsHistoryWorkbench() {
       onPreviousPage={() => setPageIndex(Math.max(0, currentPage - 1))}
       onNextPage={() => setPageIndex(currentPage + 1)}
       onRetry={() => refetch()}
-      onExport={exportHistory}
+      onExport={canExport ? exportHistory : undefined}
       isLoading={isLoading}
       isError={isError}
       errorMessage={error instanceof Error ? error.message : undefined}
       hasMore={(currentPage + 1) * filters.pageSize < filteredRows.length}
       isPartial={false}
+      wrapProofSummary
       isExporting={isExporting}
       exportStatus={exportStatusLabel}
       snapshotMetadata={[
@@ -179,12 +187,12 @@ function ARDrawer({ row, locale, t }: { row: AROpenItem; locale: string; t: ARHi
       <DetailSection title={t("drawer.openItem")}>
         <dl>
           <DetailLine label={t("drawer.customer")} value={row.customerName} />
-          <DetailLine label={t("drawer.reference")} value={`${row.referenceType} / ${row.referenceId}`} />
+          <DetailLine label={t("drawer.reference")} value={<span className="break-all">{row.referenceId}</span>} />
           <DetailLine label={t("drawer.currency")} value={row.currency} />
           <DetailLine label={t("drawer.opened")} value={formatMoney(row.openingAmount, locale, row.currency)} />
           <DetailLine label={t("drawer.allocated")} value={formatMoney(row.allocatedAmount, locale, row.currency)} />
           <DetailLine label={t("drawer.open")} value={formatMoney(row.openAmount, locale, row.currency)} />
-          <DetailLine label={t("drawer.status")} value={row.status} />
+          <DetailLine label={t("drawer.status")} value={t(`status.${row.status}`)} />
         </dl>
       </DetailSection>
       <DetailSection title={t("drawer.aging")}>
@@ -192,14 +200,14 @@ function ARDrawer({ row, locale, t }: { row: AROpenItem; locale: string; t: ARHi
           <DetailLine label={t("drawer.invoiceDate")} value={formatDate(row.invoiceDate, locale)} />
           <DetailLine label={t("drawer.dueDate")} value={formatDate(row.dueDate, locale)} />
           <DetailLine label={t("drawer.daysPastDue")} value={row.daysPastDue} />
-          <DetailLine label={t("drawer.bucket")} value={row.agingBucket} />
-          <DetailLine label={t("drawer.evidenceGrade")} value={row.evidenceGrade} />
+          <DetailLine label={t("drawer.bucket")} value={t(`aging.${row.agingBucket}`)} />
+          <DetailLine label={t("drawer.evidenceGrade")} value={evidenceLabel(row, t)} />
         </dl>
       </DetailSection>
       <DetailSection title={t("drawer.allocations")}>
         <dl>
           {row.allocations.length === 0 ? <DetailLine label={t("drawer.allocations")} value={t("drawer.noAllocations")} /> : row.allocations.map((allocation) => (
-            <DetailLine key={allocation.ledgerEntryId} label={allocation.type} value={`${formatMoney(allocation.amount, locale, row.currency)} / ${formatDate(allocation.entryDate, locale)}`} />
+            <DetailLine key={allocation.ledgerEntryId} label={t(`allocationTypes.${allocation.type}`)} value={`${formatMoney(allocation.amount, locale, row.currency)} / ${formatDate(allocation.entryDate, locale)}`} />
           ))}
         </dl>
       </DetailSection>
@@ -233,12 +241,18 @@ function buildColumns(t: ARHistoryT, locale: string): TransactionHistoryColumn<A
     { id: "documentNumber", header: t("table.reference"), cell: (row) => row.documentNumber },
     { id: "counterparty", header: t("table.customer"), cell: (row) => row.customerName },
     { id: "dueDate", header: t("drawer.dueDate"), cell: (row) => formatDate(row.dueDate, locale) },
-    { id: "status", header: t("table.status"), cell: (row) => <StateBadge state={row.status} /> },
+    { id: "status", header: t("table.status"), cell: (row) => <StateBadge state={row.status} t={t} /> },
     { id: "currency", header: t("table.currency"), cell: (row) => row.currency },
     { id: "amount", header: t("table.opened"), cell: (row) => formatMoney(row.openingAmount, locale, row.currency) },
     { id: "balance", header: t("table.open"), cell: (row) => formatMoney(row.openAmount, locale, row.currency) },
-    { id: "evidence", header: t("drawer.evidenceGrade"), cell: (row) => row.evidenceGrade },
+    { id: "evidence", header: t("drawer.evidenceGrade"), cell: (row) => evidenceLabel(row, t) },
   ]
+}
+
+function evidenceLabel(row: AROpenItem, t: ARHistoryT) {
+  if (row.evidenceGrade === "posted") return t("proof.posted")
+  if (row.evidenceGrade === "operational") return t("proof.operational")
+  return t("proof.statusUnavailable")
 }
 
 function mapPatch(patch: Partial<TransactionHistoryFilters>) {
@@ -249,8 +263,8 @@ function mapPatch(patch: Partial<TransactionHistoryFilters>) {
   }
 }
 
-function StateBadge({ state }: { state: AROpenItem["status"] }) {
-  return <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)]">{state}</Badge>
+function StateBadge({ state, t }: { state: AROpenItem["status"]; t: ARHistoryT }) {
+  return <Badge variant="outline" className="whitespace-normal break-words rounded-md border-[var(--dash-border-subtle)]">{t(`status.${state}`)}</Badge>
 }
 
 function formatMoney(value: string | number, locale: string, currency: string) {

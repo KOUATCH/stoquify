@@ -193,7 +193,7 @@ describe("Kontava action queue service", () => {
     expect(visible.actionItems).toEqual([
       expect.objectContaining({
         signalType: "inventory_loss_review",
-        actionPath: "/dashboard/inventory/losses",
+        actionPath: "/dashboard/inventory/loss-control",
         requiredPermission: "inventory.levels.read",
         assignedRole: "manager",
         status: "open",

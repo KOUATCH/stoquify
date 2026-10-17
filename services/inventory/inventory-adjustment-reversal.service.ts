@@ -17,7 +17,11 @@ import {
   ConflictError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
-import { recordReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import {
+  lockJournalReversalCatalogInTx,
+  lockJournalReversalClosePeriodsInTx,
+} from "@/services/accounting/journal-reversal-order.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
 import {
@@ -470,7 +474,21 @@ export async function reverseStockAdjustment(
     assertBalancedJournal(originalJournal.lines)
 
     const plans = await buildReversalPlans(tx, parsed.organizationId, movements)
+    // Supplied transactions must enter this boundary before acquiring period or
+    // domain write locks. Without a fresh reader, the helper requires Read Committed.
+    await lockJournalReversalCatalogInTx(tx, parsed.organizationId)
     const period = await getOpenPeriodForDate(parsed.organizationId, parsed.effectiveAt, tx)
+    const affectedPeriodIds = await lockJournalReversalClosePeriodsInTx(tx, parsed.organizationId, {
+      originalPeriodId: originalJournal.periodId,
+      reversalPeriodId: period.id,
+      originalEntryDate: originalJournal.entryDate,
+      reversalDate: parsed.effectiveAt,
+      // Physical compensation changes cumulative stock evidence independently
+      // of the original journal's account classification.
+      includeLaterPeriods: true,
+      additionalEvidenceDates: [original.adjustmentDate, ...movements.map(movement => movement.effectiveAt)],
+      additionalPeriodIds: originalBatch.periodId ? [originalBatch.periodId] : [],
+    })
     const now = new Date()
     const correction = await tx.stockAdjustment.create({
       data: {
@@ -776,16 +794,18 @@ export async function reverseStockAdjustment(
       organizationId: parsed.organizationId,
       sourceId: correction.id,
       periodId: period.id,
+      affectedPeriodIds,
       occurredAt: parsed.effectiveAt,
       actorId: parsed.approvedById,
       documentHash,
       correlationId: parsed.correlationId ?? postedBatch.id,
     })
-    await recordReversedJournalCloseInvalidationsInTx(tx, parsed.organizationId, {
+    await recordOrderedReversedJournalCloseInvalidationsInTx(tx, parsed.organizationId, {
       originalJournalEntryId: originalJournal.id,
       reversalJournalEntryId: reversalJournal.id,
       originalPeriodId: originalJournal.periodId,
       reversalPeriodId: period.id,
+      affectedPeriodIds,
       reversalDate: parsed.effectiveAt,
       correlationId: parsed.correlationId ?? postedBatch.id,
     }, {
@@ -807,7 +827,9 @@ export async function reverseStockAdjustment(
   }
 
   try {
-    return hasTransaction(client) ? await client.$transaction(run) : await run(client)
+    return hasTransaction(client)
+      ? await client.$transaction(run, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
+      : await run(client)
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       throw new ConflictError("Stock adjustment or one of its movements has already been reversed.")

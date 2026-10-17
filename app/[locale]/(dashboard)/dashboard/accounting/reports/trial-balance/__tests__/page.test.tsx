@@ -7,8 +7,10 @@ import TrialBalancePage from "../page"
 
 jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
   routeByKey: jest.fn(() => ({ key: "accounting-test" })),
-  withAccountingSurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+  withAccountingSurfaceAccess: jest.fn(async ({ params, onAllowed }) => onAllowed({ orgId: "org-1" }, (await params).locale)),
 }))
+
+jest.mock("@/i18n/routing", () => ({ localizePath: (href: string, locale: string) => `/${locale}${href}` }))
 
 jest.mock("@/config/useAuth", () => ({
   checkPermission: jest.fn(),
@@ -134,7 +136,41 @@ describe("TrialBalancePage", () => {
 
     expect(mockCheckPermission).toHaveBeenCalledWith("accounting.reports.read")
     expect(mockGetTrialBalanceAction).toHaveBeenCalledWith({ includeZeroBalance: true })
-    expect(screen.getByText("Trial balance access")).toBeInTheDocument()
-    expect(screen.getByText("Trial balance unavailable")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Trial balance unavailable" })).toBeInTheDocument()
+    expect(screen.getAllByText("Trial balance unavailable")).toHaveLength(2)
+    expect(screen.getByRole("link", { name: "Reload report" })).toHaveAttribute("href", "/en/dashboard/accounting/reports/trial-balance")
+    expect(screen.queryByText(/Check accounting report permissions/)).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ["en", "Trial balance unavailable", "Review journal entries", /Totals are withheld/],
+    ["fr", "Balance générale indisponible", "Consulter les écritures", /Les totaux restent masqués/],
+  ] as const)("routes incomplete currency evidence to journal review in %s without displaying totals", async (locale, title, link, message) => {
+    mockGetTrialBalanceAction.mockResolvedValue({
+      success: false, code: "BUSINESS_RULE_VIOLATION", status: 422,
+      error: "Functional-currency evidence is missing from a journal line. Review the historical entry before reporting.",
+    })
+    render(await TrialBalancePage({ params: Promise.resolve({ locale }) }))
+    expect(screen.getByRole("heading", { name: title })).toBeVisible()
+    expect(screen.getByText(message)).toBeVisible()
+    expect(screen.getByRole("link", { name: link })).toHaveAttribute("href", `/${locale}/dashboard/accounting/journals`)
+    expect(screen.queryByRole("table")).not.toBeInTheDocument()
+    expect(screen.queryByText(/Balanced|Équilibrée|Check accounting report permissions/)).not.toBeInTheDocument()
+    if (locale === "fr") expect(screen.queryByText(/Functional-currency evidence/)).not.toBeInTheDocument()
+  })
+
+  it("offers access review only when the protected action actually denies access", async () => {
+    mockGetTrialBalanceAction.mockResolvedValue({ success: false, code: "FORBIDDEN", status: 403, error: "Access denied" })
+    render(await TrialBalancePage({ params: Promise.resolve({ locale: "fr" }) }))
+    expect(screen.getByRole("heading", { name: "Accès à la balance générale" })).toBeVisible()
+    expect(screen.getByRole("link", { name: "Vérifier mes autorisations" })).toHaveAttribute("href", "/fr/dashboard/access-requests")
+    expect(screen.queryByRole("table")).not.toBeInTheDocument()
+  })
+
+  it("passes the French route locale into the existing table and summary", async () => {
+    render(await TrialBalancePage({ params: Promise.resolve({ locale: "fr" }) }))
+    expect(screen.getByRole("heading", { name: "Balance générale", level: 1 })).toBeVisible()
+    expect(screen.getByText("Équilibrée")).toBeVisible()
+    expect(screen.getByRole("searchbox", { name: "Rechercher des comptes" })).toBeVisible()
   })
 })

@@ -205,29 +205,30 @@ export const AddSuppliersToItemModal = ({
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant={triggerButtonVariant} className="gap-2">
+          <Button variant={triggerButtonVariant} className="dashboard-button-primary min-h-10 gap-2 rounded-lg">
             <Users className="h-4 w-4" />
             {triggerButtonText}
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col" onKeyDown={handleKeyDown}>
+        <DialogContent className="dashboard-landing-theme dark enterprise-floating-surface flex max-h-[90vh] w-[calc(100%-2rem)] flex-col rounded-lg sm:max-w-xl" onKeyDown={handleKeyDown}>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex flex-wrap items-center gap-2 break-words">
               <Users className="h-5 w-5" />
               Add Suppliers to Item
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-[var(--dash-text-soft)]">
               Select suppliers to associate with this item. You can search by name, email, or phone number.
             </DialogDescription>
           </DialogHeader>
 
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--dash-text-soft)]" />
             <Input
               placeholder="Search suppliers by name, email, or phone..."
-              className="ps-10 pe-10"
+              aria-label="Search available suppliers"
+              className="dashboard-control h-10 ps-10 pe-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               disabled={isSubmitting}
@@ -238,6 +239,7 @@ export const AddSuppliersToItemModal = ({
                 size="sm"
                 className="absolute end-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
                 onClick={() => setSearchQuery("")}
+                aria-label="Clear available supplier search"
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -246,9 +248,9 @@ export const AddSuppliersToItemModal = ({
 
           {/* Selection Controls */}
           {availableCount > 0 && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <div className="flex flex-wrap items-center gap-2 break-words">
+                <Badge variant="outline" className="dashboard-filter-chip">
                   {selectedCount} of {availableCount} selected
                 </Badge>
               </div>
@@ -256,22 +258,23 @@ export const AddSuppliersToItemModal = ({
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="dashboard-button-secondary"
                   onClick={selectAllAvailable}
                   disabled={isSubmitting || selectedCount === availableCount}
                 >
                   Select All
                 </Button>
-                <Button variant="ghost" size="sm" onClick={deselectAll} disabled={isSubmitting || selectedCount === 0}>
+                <Button variant="ghost" size="sm" className="dashboard-button-secondary" onClick={deselectAll} disabled={isSubmitting || selectedCount === 0}>
                   Clear
                 </Button>
               </div>
             </div>
           )}
 
-          <Separator />
+          <Separator className="bg-[var(--dash-border-subtle)]" />
 
           {/* Suppliers List */}
-          <ScrollArea className="flex-1 max-h-[300px] rounded-md border">
+          <ScrollArea className="min-h-0 max-h-[360px] flex-1 overflow-y-auto rounded-lg border border-[var(--dash-border-subtle)]">
             <div className="p-4">
               {filteredSuppliers.length > 0 ? (
                 <div className="space-y-3">
@@ -283,19 +286,20 @@ export const AddSuppliersToItemModal = ({
                       <div
                         key={supplier.id}
                         className={`flex items-start space-x-3 p-3 rounded-lg border transition-colors ${isExisting
-                          ? "bg-muted/50 border-muted"
+                          ? "border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]"
                           : isSelected
-                            ? "bg-primary/5 border-primary/20"
-                            : "hover:bg-muted/50"
+                            ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]"
+                            : "border-[var(--dash-border-subtle)] hover:bg-[var(--dash-brand-soft)]"
                           }`}
                       >
                         <div className="flex items-center justify-center mt-0.5">
                           {isExisting ? (
-                            <div className="h-4 w-4 flex items-center justify-center rounded-sm border-primary border bg-primary text-primary-foreground">
+                            <div className="h-4 w-4 flex items-center justify-center rounded-sm border border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]">
                               <Check className="h-3 w-3" />
                             </div>
                           ) : (
                             <Checkbox
+                              className="border-[var(--dash-border)] data-[state=checked]:bg-[var(--dash-brand)] data-[state=checked]:text-white"
                               id={`supplier-${supplier.id}`}
                               checked={isSelected}
                               onCheckedChange={() => toggleSupplier(supplier.id)}
@@ -307,19 +311,19 @@ export const AddSuppliersToItemModal = ({
                         <div className="flex-1 min-w-0">
                           <Label
                             htmlFor={`supplier-${supplier.id}`}
-                            className={`block text-sm font-medium leading-none cursor-pointer ${isExisting ? "text-muted-foreground" : ""
+                            className={`block text-sm font-medium leading-none cursor-pointer ${isExisting ? "text-[var(--dash-text-soft)]" : ""
                               }`}
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2 break-words">
                               {supplier.name}
                               {isExisting && (
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-xs text-[var(--dash-success)]">
                                   Already Added
                                 </Badge>
                               )}
                             </div>
                             {(supplier.email || supplier.phone) && (
-                              <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
+                              <div className="mt-2 space-y-1 break-all text-xs text-[var(--dash-text-soft)]">
                                 {supplier.email && <div>{supplier.email}</div>}
                                 {supplier.phone && <div>{supplier.phone}</div>}
                               </div>
@@ -332,12 +336,12 @@ export const AddSuppliersToItemModal = ({
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Search className="h-8 w-8 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
+                  <Search className="h-8 w-8 text-[var(--dash-text-soft)] mb-2" />
+                  <p className="text-sm text-[var(--dash-text-soft)]">
                     {searchQuery ? "No suppliers found matching your search" : "No suppliers available"}
                   </p>
                   {searchQuery && (
-                    <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")} className="mt-2">
+                    <Button variant="ghost" size="sm" onClick={() => setSearchQuery("")} className="mt-2 text-[var(--dash-brand-strong)]">
                       Clear search
                     </Button>
                   )}
@@ -348,15 +352,15 @@ export const AddSuppliersToItemModal = ({
 
           {/* Error Display */}
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-              <AlertCircle className="h-4 w-4 text-destructive" />
-              <p className="text-sm text-destructive">{error}</p>
+            <div role="alert" className="flex items-center gap-2 rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-3">
+              <AlertCircle className="h-4 w-4 text-[var(--dash-danger)]" />
+              <p className="text-sm text-[var(--dash-danger)]">{error}</p>
             </div>
           )}
 
           {/* Dialog Footer */}
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <div className="flex-1 text-sm text-muted-foreground">
+            <div className="flex-1 text-sm text-[var(--dash-text-soft)]">
               {selectedCount > 0 && (
                 <span>
                   {selectedCount} supplier{selectedCount !== 1 ? "s" : ""} selected
@@ -364,10 +368,10 @@ export const AddSuppliersToItemModal = ({
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              <Button variant="outline" className="dashboard-button-secondary" onClick={handleClose} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button onClick={handleSubmit} disabled={selectedCount === 0 || isSubmitting} className="gap-2">
+              <Button onClick={handleSubmit} disabled={selectedCount === 0 || isSubmitting} className="dashboard-button-primary min-h-10 gap-2 rounded-lg">
                 {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isSubmitting ? "Adding..." : `Add Selected (${selectedCount})`}
               </Button>
@@ -378,17 +382,17 @@ export const AddSuppliersToItemModal = ({
 
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="dashboard-landing-theme dark enterprise-floating-surface w-[calc(100%-2rem)] rounded-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Discard changes?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-[var(--dash-text-soft)]">
               You have selected {selectedCount} supplier{selectedCount !== 1 ? "s" : ""}. Are you sure you want to close
               without saving?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Continue editing</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmClose} >
+            <AlertDialogCancel className="dashboard-button-secondary">Continue editing</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmClose} className="border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)] hover:bg-[var(--dash-danger)] hover:text-white">
               Discard changes
             </AlertDialogAction>
           </AlertDialogFooter>

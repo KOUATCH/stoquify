@@ -29,10 +29,15 @@ export async function retainLegacyPOSCheckout(rawInput: Input) {
   })
 }
 
-async function transaction<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>) {
+async function transaction<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>, isolationLevel: Prisma.TransactionIsolationLevel = Prisma.TransactionIsolationLevel.Serializable, startupRetry = false) {
   for (let attempt = 0; ; attempt++) {
-    try { return await db.$transaction(fn, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }) }
-    catch (error) { if ((error as { code?: string }).code !== "P2034" || attempt >= 2) throw error }
+    try { return await db.$transaction(fn, { isolationLevel }) }
+    catch (error) {
+      if ((error as { code?: string }).code !== "P2034" || attempt >= (startupRetry ? 5 : 2)) throw error
+      // Cold tills can contend on serializable predicates. Retry the whole
+      // rolled-back acquisition with bounded jitter; never retry domain denials.
+      if (startupRetry) await new Promise(resolve => setTimeout(resolve, Math.floor((0.5 + Math.random() * 0.5) * Math.min(800, 50 * 2 ** attempt))))
+    }
   }
 }
 
@@ -45,6 +50,29 @@ async function requireSession(tx: Prisma.TransactionClient, input: Input) {
   } })
   if (!session) throw new ConflictError("POS_CHECKOUT_SHIFT_UNAVAILABLE")
   return parsed
+}
+
+/** Renew only an existing, unexpired owner. Recovery and takeover require acquisition. */
+export async function renewPOSCheckout(rawInput: Input) {
+  const input = checkoutWorkspaceSchema.parse(rawInput)
+  return transaction(async tx => {
+    // Lock the authority rows until the compare-and-set commits. Closure/terminal
+    // reassignment cannot cross this check. READ COMMITTED avoids broad SSI
+    // predicate conflicts between unrelated tills on small workspace tables.
+    const active = await tx.$queryRaw<{ id: string }[]>`
+      SELECT s.id FROM pos_sessions s JOIN pos_terminals t ON t.id = s."terminalId"
+      WHERE s.id = ${input.sessionId} AND s."organizationId" = ${rawInput.organizationId}
+        AND s."userId" = ${rawInput.userId} AND s."locationId" = ${input.locationId}
+        AND s."terminalId" = ${input.terminalId} AND s.status = 'ACTIVE'
+        AND t."currentSessionId" = s.id AND t."isActive" = true
+      FOR SHARE OF s, t`
+    if (active.length !== 1) throw new ConflictError("POS_CHECKOUT_SHIFT_UNAVAILABLE")
+    const renewed = await tx.pOSCheckoutWorkspace.updateMany({ where: {
+      ...checkoutScope({ ...rawInput, sessionId: input.sessionId }),
+      leaseId: input.checkoutLeaseId, leaseExpiresAt: { gt: new Date() },
+    }, data: { leaseExpiresAt: new Date(Date.now() + CHECKOUT_LEASE_MS) } })
+    if (renewed.count !== 1) throw new ConflictError("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+  }, Prisma.TransactionIsolationLevel.ReadCommitted)
 }
 
 /** Startup/reconnect reconciliation keeps unknown requests intact. Result lookup itself is read-only. */
@@ -63,11 +91,17 @@ export async function acquirePOSCheckout(rawInput: Input) {
 
     let settled = false
     const recoveredSales: { salesOrderId: string; orderNumber: string; total: number }[] = []
-    const workspaces = await tx.pOSCheckoutWorkspace.findMany({ where: {
+    const current = await tx.pOSCheckoutWorkspace.findFirstOrThrow({ where: checkoutScope(scope) })
+    const historyPage = await tx.pOSCheckoutWorkspace.findMany({ where: {
       organizationId: rawInput.organizationId, actorId: rawInput.userId,
-      OR: [{ sessionId: input.sessionId }, { session: { status: "CLOSED" } }],
+      sessionId: { not: input.sessionId, ...(input.recoveryAfter ? { gt: input.recoveryAfter } : {}) },
+      session: { status: "CLOSED" },
       pendingRequest: { not: Prisma.DbNull },
-    } })
+    }, orderBy: { sessionId: "asc" }, take: 21 })
+    const recoveryAfter = historyPage.length > 20 ? historyPage[19].sessionId : null
+    // Reconcile the current checkout on every pass; rotate through history by key,
+    // never delete unknown intent or let an unresolved first page starve later work.
+    const workspaces = [...(current.pendingRequest ? [current] : []), ...historyPage.slice(0, 20)]
     for (const workspace of workspaces) {
       const request = retainedCheckoutRequest(workspace.pendingRequest)
       if (!request) continue
@@ -113,8 +147,8 @@ export async function acquirePOSCheckout(rawInput: Input) {
     } })
     return { pendingRequest: retainedCheckoutRequest(workspace.pendingRequest), historicalRequests: historical.flatMap(row => {
       const request = retainedCheckoutRequest(row.pendingRequest); return request ? [request] : []
-    }), parked, settled, recoveredSales }
-  })
+    }), parked, settled, recoveredSales, recoveryAfter }
+  }, Prisma.TransactionIsolationLevel.Serializable, true)
 }
 
 /** Durable intent precedes financial submission; a lost response can always recover this exact request. */

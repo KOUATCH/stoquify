@@ -1,0 +1,120 @@
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+import AccessRequests from "../AccessRequests"
+import * as actions from "@/actions/access-requests/access-request.actions"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+const mockPush = jest.fn()
+jest.mock("next/navigation", () => ({ useRouter: () => ({ push: mockPush }) }))
+jest.mock("next/link", () => ({ __esModule: true, default: ({ children, ...props }: any) => <a {...props}>{children}</a> }))
+jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
+jest.mock("@/actions/access-requests/access-request.actions", () => ({ listAccessRequestsAction: jest.fn(), submitAccessRequestAction: jest.fn(), previewAccessRequestAction: jest.fn(), decideAccessRequestAction: jest.fn(), applyAccessRequestAction: jest.fn(), withdrawAccessRequestAction: jest.fn(), readAccessRequestHistoryAction: jest.fn(), accessRequestReturnPathAction: jest.fn() }))
+const entry = { id: "request-1", target: "items", requesterId: "requester", reviewerId: null, reason: "Count warehouse stock", decision: "PENDING", application: "NOT_REQUIRED", revision: 1,
+  createdAt: "2026-10-04T10:00:00.000Z", expiresAt: "2026-10-11T10:00:00.000Z", decidedAt: null, appliedAt: null, decisionReason: null, applicationError: null,
+  canWithdraw: true, canReview: false, canApply: false, canCheckAccess: false }
+const result = (entries: any[] = [entry], extra = {}) => ({ success: true, data: { entries, nextCursor: null, canReview: false, submissionsEnabled: true, ...extra } })
+beforeEach(() => {
+  jest.clearAllMocks()
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result())
+  ;(actions.submitAccessRequestAction as jest.Mock).mockResolvedValue({ success: true, data: entry })
+  ;(stepUpWithPasswordAction as jest.Mock).mockResolvedValue({ success: true })
+  Object.defineProperty(global.crypto, "randomUUID", { configurable: true, value: () => "6384d99f-4504-4ee6-8c91-016ca9414173" })
+})
+it("shows ownership and separate decision/application status", async () => {
+  render(<AccessRequests locale="en" />)
+  expect(await screen.findByText("Authorized administrators’ queue")).toBeInTheDocument()
+  expect(screen.getByText("Pending")).toBeInTheDocument(); expect(screen.getByText("Not requested")).toBeInTheDocument()
+  expect(screen.queryByRole("button", { name: "Apply approved access" })).not.toBeInTheDocument()
+})
+it("does not compute successful access from approval", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, decision: "APPROVED", application: "PENDING", canWithdraw: false }]))
+  render(<AccessRequests locale="en" />)
+  expect(await screen.findByText(/Access has not yet been confirmed/)).toBeInTheDocument()
+  expect(screen.queryByRole("button", { name: "Check current access and return" })).not.toBeInTheDocument()
+})
+it("retries exactly the same submission after an uncertain response", async () => {
+  ;(actions.submitAccessRequestAction as jest.Mock).mockRejectedValueOnce(new Error("network"))
+  render(<AccessRequests locale="en" initialTarget="items" />)
+  const reason = await screen.findByLabelText("Why is this access needed?")
+  fireEvent.change(reason, { target: { value: "Count stock" } }); fireEvent.click(screen.getByRole("button", { name: "Submit request" }))
+  fireEvent.click(await screen.findByRole("button", { name: "Retry the same request" }))
+  await waitFor(() => expect(actions.submitAccessRequestAction).toHaveBeenCalledTimes(2))
+  expect((actions.submitAccessRequestAction as jest.Mock).mock.calls[0][0]).toEqual((actions.submitAccessRequestAction as jest.Mock).mock.calls[1][0])
+})
+it("respects disabled submissions while preserving history", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([entry], { submissionsEnabled: false }))
+  render(<AccessRequests locale="en" initialTarget="items" />)
+  expect(await screen.findByText(/New requests are currently unavailable/)).toBeInTheDocument()
+  expect(screen.queryByRole("button", { name: "Submit request" })).not.toBeInTheDocument()
+  expect(screen.getByRole("button", { name: "Request history" })).toBeInTheDocument()
+})
+it("shows French failure state with no success claim", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, decision: "APPROVED", application: "FAILED", canWithdraw: false }]))
+  render(<AccessRequests locale="fr" />)
+  expect(await screen.findByText("Échouée")).toBeInTheDocument()
+  expect(screen.getByText(/l’application des droits a échoué/)).toBeInTheDocument()
+})
+it("verifies access on the server before navigating", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, decision: "APPROVED", application: "APPLIED", canWithdraw: false, canCheckAccess: true }]))
+  ;(actions.accessRequestReturnPathAction as jest.Mock).mockResolvedValue({ success: true, data: "/dashboard/inventory/items" })
+  render(<AccessRequests locale="fr" />)
+  fireEvent.click(await screen.findByRole("button", { name: "Vérifier l’accès actuel et reprendre" }))
+  await waitFor(() => expect(mockPush).toHaveBeenCalledWith("/fr/dashboard/inventory/items"))
+  expect(actions.accessRequestReturnPathAction).toHaveBeenCalledWith("request-1")
+})
+it("does not navigate after current authority is revoked", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, decision: "APPROVED", application: "APPLIED", canCheckAccess: true }]))
+  ;(actions.accessRequestReturnPathAction as jest.Mock).mockResolvedValue({ success: false, reason: "restricted" })
+  render(<AccessRequests locale="en" />); fireEvent.click(await screen.findByRole("button", { name: "Check current access and return" }))
+  expect(await screen.findByRole("alert")).toHaveTextContent("cannot perform this action"); expect(mockPush).not.toHaveBeenCalled()
+})
+it("requires complete role-impact acknowledgement before approval", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, canWithdraw: false, canReview: true }], { canReview: true }))
+  ;(actions.previewAccessRequestAction as jest.Mock).mockResolvedValue({ success: true, data: { request: entry.id, revision: 1, memberRevision: "a".repeat(64), existingRoleCount: 1,
+    roles: [{ id: "stock", nameEn: "Stock role", nameFr: null, permissions: ["inventory.items.read", "inventory.items.update"] }] } })
+  ;(actions.decideAccessRequestAction as jest.Mock).mockResolvedValue({ success: true, data: { ...entry, decision: "APPROVED", application: "PENDING", revision: 2, canReview: false, canWithdraw: false } })
+  render(<AccessRequests locale="en" />); fireEvent.click(await screen.findByRole("button", { name: "Review request" }))
+  expect(await screen.findByText("inventory.items.update")).toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "Roles to add" })).toHaveFocus()
+  fireEvent.click(screen.getByLabelText("Stock role")); fireEvent.change(screen.getByLabelText("Reviewer’s reason"), { target: { value: "Warehouse responsibilities" } })
+  expect(screen.getByRole("button", { name: "Record approval" })).toBeDisabled()
+  fireEvent.click(screen.getByLabelText("I reviewed the complete permissions of the selected roles.")); fireEvent.click(screen.getByRole("button", { name: "Record approval" }))
+  await waitFor(() => expect(actions.decideAccessRequestAction).toHaveBeenCalledWith(expect.objectContaining({ roleIds: ["stock"], memberRevision: "a".repeat(64), revision: 1, decision: "APPROVED" })))
+  await waitFor(() => expect(screen.getByRole("heading", { name: "View inventory items" })).toHaveFocus())
+  expect(actions.applyAccessRequestAction).not.toHaveBeenCalled()
+})
+it("fresh identity verification never automatically applies access", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue(result([{ ...entry, decision: "APPROVED", application: "PENDING", canApply: true, canWithdraw: false }]))
+  ;(actions.applyAccessRequestAction as jest.Mock).mockResolvedValue({ success: false, reason: "fresh-auth" })
+  render(<AccessRequests locale="en" />); fireEvent.click(await screen.findByRole("button", { name: "Apply approved access" }))
+  const password = await screen.findByLabelText("Confirm your password"); expect(password).toHaveFocus()
+  fireEvent.change(password, { target: { value: "unit-fixture" } }); fireEvent.click(screen.getByRole("button", { name: "Verify identity" }))
+  expect(await screen.findByText(/Identity confirmed/)).toBeInTheDocument(); expect(actions.applyAccessRequestAction).toHaveBeenCalledTimes(1)
+})
+it("loads recorded history independently of current status", async () => {
+  ;(actions.readAccessRequestHistoryAction as jest.Mock).mockResolvedValue({ success: true, data: { entries: [{ id: "event", at: entry.createdAt, actorId: "reviewer", action: "ACCESS_REQUEST_DECIDED", state: { decision: "APPROVED", application: "PENDING", revision: 2, target: "items" } }], nextCursor: null } })
+  render(<AccessRequests locale="en" />); fireEvent.click(await screen.findByRole("button", { name: "Request history" }))
+  expect(await screen.findByText(/Recorded by: reviewer/)).toBeInTheDocument()
+  expect(actions.readAccessRequestHistoryAction).toHaveBeenCalledWith({ id: entry.id, revision: 1 })
+})
+it("suppresses a stale queue response after switching scope", async () => {
+  let resolve!: (value: any) => void
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValueOnce(result([entry], { canReview: true })).mockImplementationOnce(() => new Promise(r => { resolve = r })).mockResolvedValueOnce(result([], { canReview: true }))
+  render(<AccessRequests locale="en" />); fireEvent.click(await screen.findByRole("button", { name: "Review queue" }))
+  fireEvent.click(screen.getByRole("button", { name: "My requests" }))
+  expect(await screen.findByText("No requests in this view.")).toBeInTheDocument()
+  await act(async () => resolve(result([{ ...entry, reason: "stale secret" }], { canReview: true })))
+  expect(screen.queryByText("stale secret")).not.toBeInTheDocument()
+})
+it("removes prior authority data when the server page remounts for another actor", async () => {
+  const rendered = render(<AccessRequests key="actor-a" locale="en" />)
+  expect(await screen.findByText(entry.reason)).toBeInTheDocument()
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue({ success: false, reason: "restricted" })
+  rendered.rerender(<AccessRequests key="actor-b" locale="en" />)
+  expect(await screen.findByRole("alert")).toHaveTextContent("cannot perform this action")
+  expect(screen.queryByText(entry.reason)).not.toBeInTheDocument()
+})
+it("provides safe session recovery without treating it as permission denial", async () => {
+  ;(actions.listAccessRequestsAction as jest.Mock).mockResolvedValue({ success: false, reason: "session" })
+  render(<AccessRequests locale="en" />)
+  expect(await screen.findByRole("link", { name: "Sign in again" })).toHaveAttribute("href", "/en/login?callbackUrl=%2Fen%2Fdashboard%2Faccess-requests")
+  expect(screen.queryByRole("button", { name: "Submit request" })).not.toBeInTheDocument()
+})

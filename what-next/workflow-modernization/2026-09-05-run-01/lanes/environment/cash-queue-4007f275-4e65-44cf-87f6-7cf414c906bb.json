@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-30T09:46:23.349Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "services/cash-command/cash-command.service.ts": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "components/cash-command/CashCommandDashboard.tsx": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93",
+    "components/bi/BIActionPriorityBoard.tsx": "93185424dbf7c162a16eb4e4bfa954c88433ed1976c92b2d7009bf9fa9604c76",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx": "536f5075893d9ba9ce2288c52d3e65d7bc8bc0ad26aabfdfe36e6f198e4d8b8f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx": "1ae7153ac9174fb826536052efaad1aa17d47091484f51a03e41f7e0b71adfe7",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "192c596cf6963987d54b663536d2f87bd7b9da11674b2d0e02444418668f8069",
+    "components/accounting/CloseAssuranceCenter.tsx": "6d15164b715ec20b4e0598b2afa63ba0991221231f920fcf2869c58ceba3012b",
+    "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx": "5e8c5a91d0706a0c0e97997a2b996a5a27d6528a05698c30ae80c2b6d945ab30",
+    "components/inventory/loss/InventoryLossWorkbench.tsx": "75c4cdedacb49225883f7cb71ba9edf0a3ebb14b32f3702a4f7478bcedd84417",
+    "actions/inventory/inventoryLossReadActions.ts": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16"
+  },
+  "checks": [],
+  "stage": "close en",
+  "pageErrors": [
+    {
+      "stage": "close en",
+      "detail": "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>\n      <RedirectBoundary>\n        <RedirectErrorBoundary router={{...}}>\n          <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n            <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n              <SegmentTrieNode>\n              <AccountingRoutePage>\n                <AccountingPageShell>\n                  <div className=\"dashboard-...\">\n                    <div className=\"dashboard-...\">\n                      <header>\n                      <div className=\"min-w-0 sp...\">\n                        <section>\n                        <CloseAssuranceCenter locale=\"en\" initialData={{source:{...}, ...}} initialError={null}>\n                          <div className=\"min-w-0 sp...\">\n                            <WorkspaceSectionNavigation>\n                            <div className=\"grid min-w...\">\n                              <MetricTile>\n                              <MetricTile>\n                              <MetricTile>\n                              <MetricTile>\n                              <MetricTile>\n                              <MetricTile label=\"Trust level\" value=\"T0\" detail=\"As of: Sep...\" icon={{...}} ...>\n                                <div className=\"min-h-[7.5...\">\n                                  <div>\n                                  <p className=\"mt-3 text-xs leading-5 text-[var(--dash-text-soft)]\">\n+                                   As of: Sep 30, 2026, 5:46 AM\n-                                   As of: Sep 30, 2026, 10:46 AM\n                            ...\n            ...\n          ...\n"
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   \"Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\\n\" +\n+     '\\n' +\n+     \"- A server/client branch `if (typeof window !== 'undefined')`.\\n\" +\n+     \"- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\\n\" +\n+     \"- Date formatting in a user's locale which doesn't match the server.\\n\" +\n+     '- External changing data without sending a snapshot of it along with the HTML.\\n' +\n+     '- Invalid HTML tag nesting.\\n' +\n+     '\\n' +\n+     'It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\\n' +\n+     '\\n' +\n+     'https://react.dev/link/hydration-mismatch\\n' +\n+     '\\n' +\n+     '  ...\\n' +\n+     '    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>\\n' +\n+     '      <RedirectBoundary>\\n' +\n+     '        <RedirectErrorBoundary router={{...}}>\\n' +\n+     '          <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\\n' +\n+     '            <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\\n' +\n+     '              <SegmentTrieNode>\\n' +\n+     '              <AccountingRoutePage>\\n' +\n+     '                <AccountingPageShell>\\n' +\n+     '                  <div className=\"dashboard-...\">\\n' +\n+     '                    <div className=\"dashboard-...\">\\n' +\n+     '    ",
+  "failureScreenshot": "cash-queue-4007f275-4e65-44cf-87f6-7cf414c906bb-failed.png",
+  "failureText": "Some indicators are unavailable with your current permissions or modules. An unavailable value does not mean a zero balance.\n\nPartial\nCommand brief\nunknown\nCash command brief\n\nNo cash indicators are available with your current access.\n\nReview the permitted source workspaces before making a cash decision. Unavailable indicators do not establish a zero balance or readiness.\n\nevidence:\nOperational\nOperational\nunknown\nBrief\nCommand\nInvestigate\n\nPeriod (UTC): Sep 30 - Sep 30\n\nGenerated: Sep 30, 09:46 AM\n\nSources: No sources\n\nRead-only\nCash Command Intelligence\n\nRead-only cash truth for collected cash, unreconciled cash, suspense, drawer risk, provider risk, freshness, and proof-linked action pressure.\n\nWorkflow registration Cash queue 4007f275-4e65-44cf-87f6-7cf414c906bb\nGenerated (UTC)\nSep 30, 09:46 AM\nPeriod (UTC)\nSep 30 - Sep 30\n01\nCash trust banner\n02\nWhat needs action today\n03\nCash risk radar\nCASH TRUST BANNER\n\nPayment, drawer, close, and freshness signals carried from trusted read models.\n\nCurrent cash observations\n\nCurrent source observations for this scope. No comparison with an earlier snapshot is available.\n\n0 observations\n\nNo visible observations\n\nNo observations are available for this scope and your permissions. Review source limitations; this does not confirm the absence of risk.\n\nWhat needs action today\n\nPermission-filtered cash actions ranked from business signals and drawer evidence.\n\n0 actions\n\nNo visible action is due\n\nThere is no permission-filtered command action for this user and tenant right now.\n\nCash risk radar\n\nUnreconciled cash, drawer risk, and provide",
+  "sourceAfter": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "services/cash-command/cash-command.service.ts": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "components/cash-command/CashCommandDashboard.tsx": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93",
+    "components/bi/BIActionPriorityBoard.tsx": "93185424dbf7c162a16eb4e4bfa954c88433ed1976c92b2d7009bf9fa9604c76",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx": "536f5075893d9ba9ce2288c52d3e65d7bc8bc0ad26aabfdfe36e6f198e4d8b8f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx": "1ae7153ac9174fb826536052efaad1aa17d47091484f51a03e41f7e0b71adfe7",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "192c596cf6963987d54b663536d2f87bd7b9da11674b2d0e02444418668f8069",
+    "components/accounting/CloseAssuranceCenter.tsx": "6d15164b715ec20b4e0598b2afa63ba0991221231f920fcf2869c58ceba3012b",
+    "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx": "5e8c5a91d0706a0c0e97997a2b996a5a27d6528a05698c30ae80c2b6d945ab30",
+    "components/inventory/loss/InventoryLossWorkbench.tsx": "75c4cdedacb49225883f7cb71ba9edf0a3ebb14b32f3702a4f7478bcedd84417",
+    "actions/inventory/inventoryLossReadActions.ts": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16"
+  },
+  "sourceStable": true
+}

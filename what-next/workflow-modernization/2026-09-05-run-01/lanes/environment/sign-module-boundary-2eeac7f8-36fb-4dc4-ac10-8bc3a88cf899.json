@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-27T16:18:55.484Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+  },
+  "cases": [
+    {
+      "name": "write authority withdrawn after admitted action",
+      "readAllowed": true,
+      "writeAllowed": false,
+      "previewCanSign": true,
+      "previewBlocker": null,
+      "signatureCreated": true
+    }
+  ],
+  "reproduction": true,
+  "organizationId": "cmuk0wu6l0000mavkdi6zeqsv",
+  "runId": "cmuk0wucq001amavk4j7ti5gf",
+  "demonstratedDefect": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+  },
+  "sourceStable": true
+}

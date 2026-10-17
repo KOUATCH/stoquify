@@ -221,6 +221,42 @@ export async function listPostingRules(
   })
 }
 
+const activePostingRuleOrder = [{ priority: "asc" }, { createdAt: "desc" }, { id: "asc" }] satisfies Prisma.PostingRuleOrderByWithRelationInput[]
+
+export async function getPostingRuleReadiness(
+  organizationId: string,
+  contracts: ReadonlyArray<{ sourceType: AccountingSourceType; postingPurpose: AccountingPostingPurpose }>,
+  tx: Prisma.TransactionClient | typeof db = db,
+  now = new Date(),
+) {
+  const rules = await tx.postingRule.findMany({
+    where: {
+      organizationId,
+      isActive: true,
+      OR: contracts.map(({ sourceType, postingPurpose }) => ({ sourceType, postingPurpose })),
+      AND: [
+        { OR: [{ effectiveFrom: null }, { effectiveFrom: { lte: now } }] },
+        { OR: [{ effectiveTo: null }, { effectiveTo: { gte: now } }] },
+      ],
+    },
+    include: postingRuleInclude,
+    orderBy: activePostingRuleOrder,
+  })
+  return Promise.all(contracts.map(async (contract) => {
+    const rule = rules.find((candidate) => candidate.sourceType === contract.sourceType && candidate.postingPurpose === contract.postingPurpose) ?? null
+    let validationError: string | null = null
+    if (rule) {
+      try {
+        await validatePostingRuleLines(organizationId, rule.lines, tx)
+      } catch (error) {
+        if (!(error instanceof BusinessRuleError)) throw error
+        validationError = error.message
+      }
+    }
+    return { ...contract, rule, validationError }
+  }))
+}
+
 export async function getActivePostingRule(
   organizationId: string,
   input: {
@@ -243,7 +279,7 @@ export async function getActivePostingRule(
       ],
     },
     include: postingRuleInclude,
-    orderBy: [{ priority: "asc" }, { createdAt: "desc" }],
+    orderBy: activePostingRuleOrder,
   })
 
   if (!rule) return null

@@ -1,4 +1,5 @@
 import { getPaymentReconciliationSummary, type PaymentReconciliationSummary } from "./payment-reconciliation-summary.service"
+import { projectAlertProcessing, type AlertProcessingDiagnostic } from "./reconciliation-alert-processing"
 import { getSuspenseWorkQueue } from "./payment-suspense-read.service"
 import { readLatestReconciliationAlertScan, type ReconciliationAlertScan } from "./payment-reconciliation-alert-scan.service"
 import {
@@ -98,6 +99,7 @@ export type PaymentReconciliationDashboardData = {
   }>
   notificationQueue: Array<{
     id: string
+    processing?: AlertProcessingDiagnostic
     type: string
     severity: string | null
     ownerId: string | null
@@ -370,6 +372,10 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         status: true,
         payloadSummary: true,
         createdAt: true,
+        attempts: true,
+        nextAttemptAt: true,
+        processedAt: true,
+        lastError: true,
       },
     }),
     readLatestReconciliationAlertScan(organizationId),
@@ -439,6 +445,7 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
             source: item.source,
             createdAt: item.createdAt.toISOString(),
             evidenceRef: payload.evidenceRef,
+            processing: projectAlertProcessing(item, reviewedAt),
           },
         ]
       })

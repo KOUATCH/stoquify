@@ -1,0 +1,100 @@
+{
+  "validated_utc": "2026-10-13T06:57:01.606505+00:00",
+  "status": "PASS",
+  "scope": "artifact integrity, not runtime readiness",
+  "source_hashes_revalidated": 81,
+  "relevant_source_drift": [],
+  "existing_status_changes": [],
+  "concurrent_unowned_changes": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/page.tsx",
+      "status": " M"
+    },
+    {
+      "path": "components/dashboard/__tests__/DashboardPageAccess.test.tsx",
+      "status": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-02.md",
+      "status": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/dashboard-access-2026-10-13.patch",
+      "status": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/dashboard-access-tests-2026-10-13.json",
+      "status": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.access.config.cjs",
+      "status": "??"
+    },
+    {
+      "path": "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_05_ROBUST_STATES_REPORT_2026-10-13.md",
+      "status": "??"
+    }
+  ],
+  "only_P02_status_row_changed": true,
+  "P03_P24": "NOT_RUN",
+  "local_tests": {
+    "suites": 3,
+    "passed": 65
+  },
+  "links_checked": 24,
+  "outputs": [
+    {
+      "path": "docs/retention/execution/P02/METRIC_CONTRACT.md",
+      "sha256": "fb764126423dac238d0dd8817a6f9ec2556f3983a90a179f2555f8b207b2ab02"
+    },
+    {
+      "path": "docs/retention/execution/P02/RESULT.md",
+      "sha256": "05cbd0a7b9210d40cd3252bda1eb2b0c35321de8aa8aeaf27e8aa763c1f0be6d"
+    },
+    {
+      "path": "docs/retention/execution/P02/SOURCE_TRACE.md",
+      "sha256": "539314da2226acd3499b17918eb5d83ae828345329a933bb9c30c5e5f3731dcc"
+    },
+    {
+      "path": "docs/retention/execution/P02/SYNTHETIC_COHORT_EXPECTATIONS.md",
+      "sha256": "ef1cf43a9195425ad48559e66df0d8ff83d80cf9bed5c78ac5cafe9f56e4b882"
+    },
+    {
+      "path": "docs/retention/execution/STATUS.md",
+      "sha256": "ce09733a8e2001296176bfcc4906e2fe7e80a7576cbce8e6970044ecc5df7feb"
+    },
+    {
+      "path": "jest.retention-outcomes.config.cjs",
+      "sha256": "fdf2d36076dfc1c19bb36803d534664718375916c986625a25c8ae0d0f07326c"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-cohorts.test.ts",
+      "sha256": "5640dd098dcc7cc2fed9391a5af94b09058466967fa2e1771504fe7975e8386e"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-fixtures.ts",
+      "sha256": "a775d9ed2bf691e1b3f4cff9208fd2f49ab30915ce7eea89c236d0756ddbd2b5"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.service.test.ts",
+      "sha256": "1b2809064438e34a5c585819972fd442047faae9aa173ab60545589bb71a0ab1"
+    },
+    {
+      "path": "services/analytics/__tests__/retention-outcomes.test.ts",
+      "sha256": "90edb15bfc81a2facbdd86b50fd6aacb6109bdcbd197b37c08c368bd10c8158c"
+    },
+    {
+      "path": "services/analytics/retention-cohorts.ts",
+      "sha256": "ee7e00f02132f7e2edb4b6866701c4de78a48b0cd702b1b22f948bd69d0fe4f6"
+    },
+    {
+      "path": "services/analytics/retention-outcomes.service.ts",
+      "sha256": "21935e0365d1616ddeb756274ecc142f00be6a4aea8ad42fd414fb534f30470e"
+    },
+    {
+      "path": "services/analytics/retention-outcomes.ts",
+      "sha256": "1be4474706826281f519cde87e6e79d50d96fe1f0f918b93ed0c137d62c20479"
+    }
+  ],
+  "errors": []
+}

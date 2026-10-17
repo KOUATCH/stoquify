@@ -1,0 +1,84 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\offline-local-queue.ts.before.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\lib\\pos\\offline-local-queue.ts"
+index ff87d73d..d0dd8432 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\offline-local-queue.ts.before.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\lib\\pos\\offline-local-queue.ts"	
+@@ -300,6 +300,79 @@ export async function loadOfflineLocalQueue(config: OfflineLocalQueueConfig): Pr
+   return (await loadRecord(config)).state
+ }
+ 
++export type OfflineLocalQueueSummary = {
++  config: OfflineLocalQueueConfig
++  pendingCount: number
++  acknowledgedCount: number
++  conflictCount: number
++  uncertainCount: number
++}
++
++// Discover this browser's evidence without relying on a server device list:
++// revoked, unenrolled and never-uploaded queues must remain visible. Only counts
++// and scope leave this reader; customer payloads stay in the existing store.
++export async function inspectOfflineLocalQueues(scope: {
++  organizationKey: string
++  locationId?: string | null
++  terminalId?: string | null
++}): Promise<OfflineLocalQueueSummary[]> {
++  if (!scope.organizationKey) throw recoveryError()
++  const prefix = `${QUEUE_PREFIX}:${scope.organizationKey}:`
++  const storage = resolveStorage()
++  const database = await openQueueDatabase({ organizationKey: scope.organizationKey, deviceId: "", terminalId: "", locationId: "" })
++  let records: Map<string, StoredQueue>
++  try {
++    records = await new Promise((resolve, reject) => {
++      const tx = database.transaction(QUEUE_STORE, "readonly")
++      const found = new Map<string, StoredQueue>()
++      const request = tx.objectStore(QUEUE_STORE).openCursor()
++      request.onsuccess = () => {
++        const cursor = request.result
++        if (!cursor) return
++        if (typeof cursor.key === "string" && cursor.key.startsWith(prefix)) found.set(cursor.key, cursor.value)
++        cursor.continue()
++      }
++      tx.oncomplete = () => resolve(found)
++      tx.onabort = () => reject(tx.error ?? recoveryError())
++      tx.onerror = () => { /* onabort owns rejection */ }
++    })
++  } finally { database.close() }
++  const keys = new Set(records.keys())
++  for (let i = 0; i < storage.length; i += 1) {
++    const key = storage.key(i)
++    if (key?.startsWith(prefix)) keys.add(key.endsWith(":indexeddb-migrated") ? key.slice(0, -":indexeddb-migrated".length) : key)
++  }
++  const summaries: OfflineLocalQueueSummary[] = []
++  for (const key of keys) {
++    const record = records.get(key)
++    let state: OfflineLocalQueueState | undefined = record?.state
++    if (!state) {
++      // A marker without its database is evidence loss, never an empty queue.
++      if (storage.getItem(`${key}:indexeddb-migrated`)) throw recoveryError()
++      try { state = JSON.parse(storage.getItem(key) ?? "null") } catch { throw recoveryError() }
++    }
++    if (!state || state.organizationKey !== scope.organizationKey || key !== offlineQueueStorageKey(state) || !state.deviceId || !state.locationId || !state.terminalId) throw recoveryError()
++    const config = { organizationKey: state.organizationKey, deviceId: state.deviceId, locationId: state.locationId, terminalId: state.terminalId, sessionId: state.sessionId }
++    // Check the complete organization inventory before applying station filters.
++    // Corrupt evidence whose scope cannot be trusted fails closed.
++    if (record && (!Number.isSafeInteger(record.revision) || record.revision < 0 || record.legacySnapshot !== storage.getItem(key))) throw recoveryError()
++    await validateState(state, config)
++    if ((scope.locationId && scope.locationId !== state.locationId) || (scope.terminalId && scope.terminalId !== state.terminalId)) continue
++    summaries.push({ config,
++      pendingCount: state.entries.filter(e => e.status !== "SYNCED").length,
++      acknowledgedCount: state.entries.filter(e => e.status === "SYNCED").length,
++      conflictCount: state.entries.filter(e => e.status === "CONFLICT").length,
++      uncertainCount: state.entries.filter(e => e.status === "UNCERTAIN" || e.status === "SYNCING").length,
++    })
++  }
++  return summaries
++}
++
++export async function assertNoLocalOfflineWork(scope: Parameters<typeof inspectOfflineLocalQueues>[0]) {
++  const queues = await inspectOfflineLocalQueues(scope)
++  if (queues.some(queue => queue.pendingCount > 0)) throw new OfflineQueueRecoveryError("POS_CHECKOUT_OFFLINE_PENDING")
++}
++
+ async function updateQueue<T>(
+   config: OfflineLocalQueueConfig,
+   mutate: (state: OfflineLocalQueueState) => Promise<{ state: OfflineLocalQueueState; value: T }> | { state: OfflineLocalQueueState; value: T },

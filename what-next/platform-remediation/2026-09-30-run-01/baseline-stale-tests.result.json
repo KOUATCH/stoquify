@@ -1,0 +1,25 @@
+{
+  "name": "baseline-stale-tests",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--config",
+    "what-next/platform-correctness-audit/2026-09-30-run-01/jest-direct.config.cjs",
+    "--runInBand",
+    "--runTestsByPath",
+    "services/accounting/__tests__/manual-journal.test.ts",
+    "services/analytics/__tests__/business-pulse-links.test.ts",
+    "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+    "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+    "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+    "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts"
+  ],
+  "startedAt": "2026-09-30T20:24:19.407Z",
+  "endedAt": "2026-09-30T20:25:14.563Z",
+  "code": 1,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 0,
+  "stderrBytes": 25650
+}

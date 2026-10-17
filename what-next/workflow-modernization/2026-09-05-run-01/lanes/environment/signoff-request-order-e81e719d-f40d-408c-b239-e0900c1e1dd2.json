@@ -1,0 +1,145 @@
+{
+  "at": "2026-09-27T12:51:26.165Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sameSigner": true,
+      "earlyRequestAt": "2026-09-27T12:51:29.927Z",
+      "winner": {
+        "runId": "cmujti26y001amai47yp3dkfx",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "ffead7140f6bdb890f1073a7fb5e14f1e6f5e1a65c7b66f58c59b120821cb161",
+        "sourceVersionHash": "sha256:5ce4a3ace3d15f5ec1e5e57f003f6bd5ef5c886d518a179a9d6054c06e9f8f10",
+        "signedAt": "2026-09-27T12:51:29.954Z",
+        "correlationId": "429d8edf-4a18-42a7-8487-c61299a8a75e"
+      },
+      "earlier": {
+        "value": {
+          "runId": "cmujti26y001amai47yp3dkfx",
+          "status": "SIGNED",
+          "outcome": "SIGNED",
+          "replayed": true,
+          "completedByAnotherActor": false,
+          "certificateHash": "ffead7140f6bdb890f1073a7fb5e14f1e6f5e1a65c7b66f58c59b120821cb161",
+          "sourceVersionHash": "sha256:5ce4a3ace3d15f5ec1e5e57f003f6bd5ef5c886d518a179a9d6054c06e9f8f10",
+          "signedAt": "2026-09-27T12:51:29.954Z",
+          "correlationId": "ce6148b2-1c81-4bc1-ac0b-da8eb908d2dd"
+        }
+      },
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": false,
+      "earlyRequestAt": "2026-09-27T12:51:30.964Z",
+      "winner": {
+        "runId": "cmujti3k5002ymai42d1djra3",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "723325487dd52d5649917ba9893682fdf1f8d27cfdfe68f09a1987bfb5a0eac6",
+        "sourceVersionHash": "sha256:261549febec7c81bc2101cb4b1a9559728d6bd0ce6f30ceff11cadfa4cc9523b",
+        "signedAt": "2026-09-27T12:51:30.980Z",
+        "correlationId": "4cf8f4d8-382f-4b68-8947-c1f23d24831a"
+      },
+      "earlier": {
+        "value": {
+          "runId": "cmujti3k5002ymai42d1djra3",
+          "status": "SIGNED",
+          "outcome": "ALREADY_SIGNED",
+          "replayed": false,
+          "completedByAnotherActor": true,
+          "certificateHash": "723325487dd52d5649917ba9893682fdf1f8d27cfdfe68f09a1987bfb5a0eac6",
+          "sourceVersionHash": "sha256:261549febec7c81bc2101cb4b1a9559728d6bd0ce6f30ceff11cadfa4cc9523b",
+          "signedAt": "2026-09-27T12:51:30.980Z",
+          "correlationId": "3651794f-5e0d-47ff-a1d5-288a47a8a98d"
+        }
+      },
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": true,
+      "simultaneousTransactions": true,
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmujti462004mmai4u7b42r4l",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": true,
+            "completedByAnotherActor": false,
+            "certificateHash": "c90f5c4339e9d8edbfffe09870a8d0c606d51bd21d75361494113641c011fd98",
+            "sourceVersionHash": "sha256:76c1a773de61a4cd9c6e499eb1c9e704a79c1e5343d3f21d58ba0d43dfd58f9e",
+            "signedAt": "2026-09-27T12:51:31.736Z",
+            "correlationId": "e166fd59-2655-40d5-90e8-4641cfb540be"
+          }
+        },
+        {
+          "value": {
+            "runId": "cmujti462004mmai4u7b42r4l",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": false,
+            "certificateHash": "c90f5c4339e9d8edbfffe09870a8d0c606d51bd21d75361494113641c011fd98",
+            "sourceVersionHash": "sha256:76c1a773de61a4cd9c6e499eb1c9e704a79c1e5343d3f21d58ba0d43dfd58f9e",
+            "signedAt": "2026-09-27T12:51:31.736Z",
+            "correlationId": "c7e44543-ba31-41de-9acd-29e03875c35d"
+          }
+        }
+      ],
+      "noDuplicateOrFinancialEffects": true
+    },
+    {
+      "sameSigner": false,
+      "simultaneousTransactions": true,
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmujti4mk006cmai4n71avkvm",
+            "status": "SIGNED",
+            "outcome": "SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": false,
+            "certificateHash": "80612cbdd7b1bd0725a003c5e88683efc1da4ea2a8fe94d2e69ff36ceb04be13",
+            "sourceVersionHash": "sha256:a2b4446254dfba49f563da7a96deda714fa65d20daeed87344b80eaff40f2494",
+            "signedAt": "2026-09-27T12:51:32.333Z",
+            "correlationId": "52aa0d0b-4a50-45d5-a703-8ac31ec2bb25"
+          }
+        },
+        {
+          "value": {
+            "runId": "cmujti4mk006cmai4n71avkvm",
+            "status": "SIGNED",
+            "outcome": "ALREADY_SIGNED",
+            "replayed": false,
+            "completedByAnotherActor": true,
+            "certificateHash": "80612cbdd7b1bd0725a003c5e88683efc1da4ea2a8fe94d2e69ff36ceb04be13",
+            "sourceVersionHash": "sha256:a2b4446254dfba49f563da7a96deda714fa65d20daeed87344b80eaff40f2494",
+            "signedAt": "2026-09-27T12:51:32.333Z",
+            "correlationId": "d0dbb15b-c1d5-4049-9a4a-534d3725e0b3"
+          }
+        }
+      ],
+      "noDuplicateOrFinancialEffects": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

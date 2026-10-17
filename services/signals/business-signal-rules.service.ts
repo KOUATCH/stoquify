@@ -57,7 +57,7 @@ const TYPE_DEFAULTS: Record<
     moduleSlug: "cash_drawer",
     requiredPermission: "pos.cash.drawer.open",
     assignedRole: "manager",
-    actionPath: "/dashboard/cash-drawer",
+    actionPath: "/dashboard/finance/cash-drawer",
     suggestedAction: "Review drawer movements and attach variance evidence.",
     businessImpact:
       "Cash variance can hide leakage, posting drift, or process breakdown.",
@@ -121,7 +121,7 @@ const TYPE_DEFAULTS: Record<
     moduleSlug: "inventory",
     requiredPermission: "inventory.levels.read",
     assignedRole: "manager",
-    actionPath: "/dashboard/inventory/losses",
+    actionPath: "/dashboard/inventory/loss-control",
     suggestedAction:
       "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
     businessImpact:
@@ -204,6 +204,8 @@ export function createBusinessSignalFromFact(
   const actionPath = fact.actionPath ?? defaults.actionPath;
   const opensPayroll = fact.signalType === "payroll_exposure" &&
     (actionPath === "/dashboard/payroll" || actionPath.startsWith("/dashboard/payroll/"));
+  const opensCashDrawerReview = fact.signalType === "cash_drawer_variance" &&
+    actionPath === "/dashboard/finance/cash-drawer";
   const severity =
     fact.severity ??
     severityFromScore(fact.severityScore ?? severityScoreForFact(fact));
@@ -258,8 +260,8 @@ export function createBusinessSignalFromFact(
     suggestedAction: fact.suggestedAction ?? defaults.suggestedAction,
     actionPath,
     requiredPermission: fact.requiredPermission ?? defaults.requiredPermission,
-    ...(opensPayroll || fact.additionalRequiredPermissions?.length ? {
-      additionalRequiredPermissions: [...new Set([...(opensPayroll ? ["payroll.command.read"] : []), ...(fact.additionalRequiredPermissions ?? [])])],
+    ...(opensPayroll || opensCashDrawerReview || fact.additionalRequiredPermissions?.length ? {
+      additionalRequiredPermissions: [...new Set([...(opensPayroll ? ["payroll.command.read"] : []), ...(opensCashDrawerReview ? ["finance.cash-drawer.read"] : []), ...(fact.additionalRequiredPermissions ?? [])])],
     } : {}),
     assignedRole: fact.assignedRole ?? defaults.assignedRole,
     assigneeId: fact.assigneeId ?? null,
@@ -503,7 +505,8 @@ function buildSnapshotSignals(
             nowInput,
           )
         : null,
-      metrics.approvedOrPaidPayrollRunCount > 0 ||
+      // Approved/paid run counts include completed history, not evidence of an
+      // outstanding obligation. Forecast proof has its own signal above.
       metrics.activeEmployeeBalanceCaseCount > 0
         ? createBusinessSignalFromFact(
             {
@@ -511,31 +514,16 @@ function buildSnapshotSignals(
               signalType: "payroll_exposure",
               moduleSlug: "payroll",
               sourceModule: "payroll",
-              subjectType:
-                metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "payroll.employee_balance"
-                  : "payroll.run",
-              subjectId:
-                metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "active-employee-balance"
-                  : "approved-or-paid",
+              subjectType: "payroll.employee_balance",
+              subjectId: "active-employee-balance",
               severity:
-                metrics.employeeBalanceOutstandingAmount >= 500_000 ||
+                (metrics.employeeBalanceOutstandingAmount !== null && metrics.employeeBalanceOutstandingAmount >= 500_000) ||
                 metrics.activeEmployeeBalanceCaseCount >= 3
                   ? "high"
                   : "medium",
-              actionPath:
-                metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "/dashboard/payroll/payments"
-                  : "/dashboard/payroll",
-              requiredPermission:
-                metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "payments.reconciliation.read"
-                  : "payroll.command.read",
-              suggestedAction:
-                metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "Review employee balance recovery evidence before payment and close claims are trusted."
-                  : "Review payroll payment and posting evidence without exposing person-level amounts.",
+              actionPath: "/dashboard/payroll/payments",
+              requiredPermission: "payments.reconciliation.read",
+              suggestedAction: "Review employee balance recovery evidence before payment and close claims are trusted.",
               redactions: [
                 ...snapshot.redactions,
                 {

@@ -1,0 +1,52 @@
+{
+  "startedAt": "2026-09-27T16:40:30.585Z",
+  "sourceBefore": {
+    "components/finance/ReconciliationSignReview.tsx": "1847f7fb5df0272ab8d948a81d1deebce6e69d6bc15e9a57dc61447ee80e14e4",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "8b69d4d09296e36b74036d6055115b010f0beae579dd647b6207138c1044cad4",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "messages/en.json": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+    "messages/fr.json": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "actions/payments/__tests__/reconciliation-sign-review.actions.test.ts",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+      ],
+      "startedAt": "2026-09-27T16:40:30.609Z",
+      "endedAt": "2026-09-27T16:43:05.700Z",
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL components/finance/__tests__/ReconciliationSignReview.test.tsx\n  ● confirms password without automatically signing and retains the reviewed request\n\n    expect(element).toHaveFocus()\n\n    Expected element with focus:\n      <button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-10 px-4 py-2 dashboard-button-primary\">retry</button>\n    Received element with focus:\n      <body><div><section aria-busy=\"false\" aria-label=\"title\" class=\"root min-w-0 space-y-3 rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-surface)] p-3 text-sm [overflow-wrap:anywhere] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)] sm:p-4 [&_button]:h-auto [&_button]:min-h-10 [&_button]:max-w-full [&_button]:whitespace-normal\" role=\"region\" tabindex=\"-1\"><div class=\"flex flex-wrap justify-between gap-2\"><h4 class=\"font-semibold\">title</h4><button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">close</button></div><p>description</p><p>runPreparation.run{\"id\":\"run\"}</p><p>pending</p><p class=\"font-medium\">Provider · XAF · 9/13/2026</p><p>runPreparation.asOf{\"time\":\"9/13/2026, 11:00:00 AM\"}</p><p>ready</p><div class=\"space-y-3\"><p>amounts.explanation</p><div class=\"space-y-2\"><h5 class=\"font-semibold\">XAF</h5><dl class=\"grid grid-cols-1 gap-2 sm:grid-cols-2\"><div><dt class=\"text-[var(--dash-text-soft)]\">amounts.payments</dt><dd>100.25 XAF</dd></div><div><dt class=\"text-[var(--dash-text-soft)]\">amounts.providerEvents</dt><dd>100.25 XAF</dd></div><div><dt class=\"text-[var(--dash-text-soft)]\">amounts.statementLines</dt><dd>100.25 XAF</dd></div><div><dt class=\"text-[var(--dash-text-soft)]\">amounts.matched</dt><dd>100.25 XAF</dd></div><div><dt class=\"text-[var(--dash-text-soft)]\">amounts.unresolvedSuspense</dt><dd>0.00 XAF</dd></div></dl></div></div><dl class=\"grid grid-cols-1 gap-2 sm:grid-cols-2\"><div><dt class=\"text-[var(--dash-text-soft)]\">runPreparation.counts.providerEventCount</dt><dd>1</dd></div></dl><div class=\"flex flex-wrap gap-2\"><button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-10 px-4 py-2 dashboard-button-primary\">retry</button><button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">reviewAgain</button></div></section></div></body>\n\n      32 |   fireEvent.change(screen.getByLabelText(\"manualMatch.passwordLabel\"), { target: { value: \"not-retained-password\" } }); fireEvent.click(screen.getByRole(\"button\", { name: \"suspenseWorkflow.review.authenticate\" }))\n      33 |   await waitFor(() => expect(screen.getByRole(\"button\", { name: \"retry\" })).toBeEnabled()); expect(sign).toHaveBeenCalledTimes(1); expect(sessionStorage.getItem(key)).not.toContain(\"password\")\n    > 34 |   expect(screen.getByRole(\"button\", { name: \"retry\" })).toHaveFocus()\n         |                                                         ^\n      35 | })\n      36 | it(\"blocks signing with corrupt recovery and keeps it when authoritative reread fails\", async () => {\n      37 |   sessionStorage.setItem(key, \"broken\"); render(<ReconciliationSignReview {...props} />); await screen.findByText(\"ready\")\n\n      at Object.toHaveFocus (components/finance/__tests__/ReconciliationSignReview.test.tsx:34:57)\n\n\nTest Suites: 1 failed, 3 passed, 4 total\nTests:       1 failed, 97 passed, 98 total\nSnapshots:   0 total\nTime:        135.903 s\nRan all test suites within paths \"components/finance/__tests__/ReconciliationSignReview.test.tsx\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"actions/payments/__tests__/reconciliation-sign-review.actions.test.ts\", \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "components/finance/ReconciliationSignReview.tsx": "1847f7fb5df0272ab8d948a81d1deebce6e69d6bc15e9a57dc61447ee80e14e4",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "8b69d4d09296e36b74036d6055115b010f0beae579dd647b6207138c1044cad4",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "messages/en.json": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+    "messages/fr.json": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9"
+  },
+  "sourceStable": true,
+  "passed": false,
+  "endedAt": "2026-09-27T16:43:05.724Z"
+}

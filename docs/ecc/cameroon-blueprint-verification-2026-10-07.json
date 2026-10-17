@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-07",
+  "scope": "Cameroon blueprint initial 00/01 engineering implementation; no release activation",
+  "head": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "files": [
+    {
+      "path": "services/payroll/payroll-production-admission.ts",
+      "sha256": "48b722fe75bc7db244d6ad8a2d394c08bb7a9449346c2959ed03e5552bf608da"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "2076ab7774f1ddfbc2628b153a94de422b2accbbfe1bda3c60822f2dfe12c747"
+    },
+    {
+      "path": "services/payroll/authority-adapter-execution.service.ts",
+      "sha256": "0da109ee754f485e81100eed3036e107c38e1344d16d626236066e8e20ade2e3"
+    },
+    {
+      "path": "services/payroll/authority-adapter-worker.service.ts",
+      "sha256": "dcc8e2966207d754948afd868d885ac2a03d9ff769bec93e44b7d8963748bca2"
+    },
+    {
+      "path": "services/payroll/declaration-lifecycle.service.ts",
+      "sha256": "3fddde2b040c572b4ec76ca306816c5f9f618666db12f880e4ed7eb054ba26c8"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-production-admission.test.ts",
+      "sha256": "b3cf113da4fd70243e50b318b42d18fc16a17846719ad84d997150d2925a7f59"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-execution.service.test.ts",
+      "sha256": "1731dd6df346c99862493cad9dd6814b384321861c3457eb5ef55ae480b80608"
+    },
+    {
+      "path": "services/payroll/__tests__/authority-adapter-worker.service.test.ts",
+      "sha256": "1816a6d0307930847724373416d78253965587030050d93e88f9284aff7e2af1"
+    },
+    {
+      "path": "services/payroll/__tests__/declaration-lifecycle.service.test.ts",
+      "sha256": "cb9871fbe963cf74da62cefcf4b4aadc927944d82cdf3ecdd06ce18c921fe020"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "sha256": "3579ea23fb34659bf622f73d9f25eefa2a3a3054702f6f59a0e1ef636d5a4e00"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+      "sha256": "800862dc345600b116dd3b98060acc9058868b866be1e1804231aac6d493bfa1"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-completion.service.test.ts",
+      "sha256": "066231c0fe080ad4b662ddb645d0a68fa9867f91ce99c2bd05fb14f96afcb05b"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-tenant-boundary.service.test.ts",
+      "sha256": "fed89d885ba6eacc4bdf7d7901587ae3b190372f178371d859ac8d1851ece623"
+    }
+  ],
+  "baselineNote": "Dirty pre-existing working tree; source hashes record final selected files, not ownership of every change from HEAD.",
+  "workflow": {
+    "status": "PASS",
+    "command": "node scripts/verify-agent-workflow-contract.js",
+    "unclassifiedScripts": 198
+  },
+  "mockedTests": {
+    "status": "PASS",
+    "suites": 10,
+    "tests": 175,
+    "seconds": 11.328,
+    "command": "node node_modules/jest/bin/jest.js --config jest.payroll-trust-spine.config.cjs --runInBand --no-cache --roots services/payroll/__tests__ --runTestsByPath services/payroll/__tests__/payroll-production-admission.test.ts services/payroll/__tests__/payroll-run-approval-transition.service.test.ts services/payroll/__tests__/payroll-control.service.test.ts services/payroll/__tests__/payroll-completion.service.test.ts services/payroll/__tests__/payroll-tenant-boundary.service.test.ts services/payroll/__tests__/authority-adapter-execution.service.test.ts services/payroll/__tests__/authority-adapter-worker.service.test.ts services/payroll/__tests__/declaration-lifecycle.service.test.ts services/payroll/__tests__/payroll-provider-settlement-bridge.service.test.ts services/payroll/__tests__/payroll-payslip-self-service.service.test.ts",
+    "limitations": "Persistence, sensitive-action dependencies and selected domain seams mocked; the dedicated admission suite exercises the real guard."
+  },
+  "types": {
+    "implementationStatus": "PASS",
+    "implementationAndNewTestRoots": 6,
+    "implementationDiagnostics": 0,
+    "expandedFixtureCheck": "FAIL_EXISTING_FIXTURE_DIAGNOSTICS",
+    "expandedRoots": 13,
+    "currentDiagnostics": 24,
+    "headFixtureBaselineDiagnostics": 26,
+    "newFixtureDiagnosticKinds": [],
+    "method": "TypeScript createProgram with repository compilerOptions, explicit roots, incremental:false,noEmit:true; then recheck using a read-only compiler host substituting seven legacy fixtures from git show HEAD. No on-disk restoration or file emission.",
+    "remainingFixtureDiagnostics": [
+      {
+        "file": "services\\payroll\\__tests__\\authority-adapter-execution.service.test.ts",
+        "code": 1117,
+        "message": "An object literal cannot have multiple properties with the same name."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\authority-adapter-execution.service.test.ts",
+        "code": 2322,
+        "message": "Type '{ kind: \"AQSTOQFLOW_PAYROLL_AUTHORITY_ADAPTER_EXECUTION\"; version: number; status: PayrollAuthorityAdapterExecutionStatus; ... 45 more ...; redactionPolicy: string; }' is not assignable to type 'PayrollAuthorityAdapterExecutionRecord'.   Types of property 'countryCode' are incompatible.     Type 'string | undefined' is not assignable to type 'string'.       Type 'undefined' is not assignable to type 'string'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\authority-adapter-worker.service.test.ts",
+        "code": 2322,
+        "message": "Type '{ kind: \"AQSTOQFLOW_PAYROLL_AUTHORITY_ADAPTER_EXECUTION\"; version: number; status: PayrollAuthorityAdapterExecutionStatus; ... 45 more ...; redactionPolicy: string; }' is not assignable to type 'PayrollAuthorityAdapterExecutionRecord'.   Types of property 'adapterChaosReleaseGateHash' are incompatible.     Type 'string | undefined' is not assignable to type 'string'.       Type 'undefined' is not assignable to type 'string'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-completion.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type 'null' is not assignable to parameter of type 'string | undefined'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2367,
+        "message": "This comparison appears to be unintentional because the types '\"CALCULATED\"' and '\"POSTED\"' have no overlap."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2367,
+        "message": "This comparison appears to be unintentional because the types '\"CALCULATED\"' and '\"POSTED\"' have no overlap."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-control.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '\"POSTED\"' is not assignable to parameter of type '\"CALCULATED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"CALCULATED\"; version: number; reviewedById: null; reviewedAt: null; reviewedBusinessEventId: null; id: string; organizationId: string; runNumber: string; payrollPeriodId: string; ... 10 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"CALCULATED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"CALCULATED\"; version: number; reviewedById: null; reviewedAt: null; reviewedBusinessEventId: null; id: string; organizationId: string; runNumber: string; payrollPeriodId: string; ... 10 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"CALCULATED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"CALCULATED\"; version: number; reviewedById: null; reviewedAt: null; reviewedBusinessEventId: null; id: string; organizationId: string; runNumber: string; payrollPeriodId: string; ... 10 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"CALCULATED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"CALCULATED\"; version: number; reviewedById: null; reviewedAt: null; reviewedBusinessEventId: null; id: string; organizationId: string; runNumber: string; payrollPeriodId: string; ... 10 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"CALCULATED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ runType: string; originalRunId: null; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; countryCode: string; countryPackVersion: string; ... 31 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"APPROVED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ runType: string; originalRunId: null; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; countryCode: string; countryPackVersion: string; ... 31 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"APPROVED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ runType: string; originalRunId: null; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; countryCode: string; countryPackVersion: string; ... 31 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"APPROVED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"EMITTED\"; version: number; emittedById: string; emittedAt: Date; emittedBusinessEventId: string; payslips: { id: string; status: \"EMITTED\"; emittedBusinessEventId: string; }[]; ... 30 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"EMITTED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"EMITTED\"; version: number; emittedById: string; emittedAt: Date; emittedBusinessEventId: string; payslips: { id: string; status: \"EMITTED\"; emittedBusinessEventId: string; }[]; ... 30 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"EMITTED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2353,
+        "message": "Object literal may only specify known properties, and 'payslips' does not exist in type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2345,
+        "message": "Argument of type '{ status: \"EMITTED\"; version: number; emittedById: string; emittedAt: Date; emittedBusinessEventId: string; payslips: { id: string; status: \"EMITTED\"; emittedBusinessEventId: string; }[]; ... 30 more ...; deletedAt: null; }' is not assignable to parameter of type '{ id: string; organizationId: string; runNumber: string; payrollPeriodId: string; payrollPeriod: { id: string; accountingPeriodId: string; periodStart: Date; periodEnd: Date; payDate: Date; }; ... 14 more ...; deletedAt: null; }'.   Types of property 'status' are incompatible.     Type '\"EMITTED\"' is not assignable to type '\"REVIEWED\"'."
+      },
+      {
+        "file": "services\\payroll\\__tests__\\payroll-run-approval-transition.service.test.ts",
+        "code": 2322,
+        "message": "Type 'string' is not assignable to type 'null'."
+      }
+    ]
+  },
+  "notRun": [
+    "PostgreSQL transaction/concurrency/rollback",
+    "Browser/accessibility",
+    "Live provider/authority",
+    "Employer eligibility/pilot acceptance",
+    "Qualified Cameroon statutory sign-off",
+    "Remote CI/deployment"
+  ],
+  "release": {
+    "approved": false,
+    "cameroonPackModified": false,
+    "productionAdmissionParameterPublished": false,
+    "scopeConfirmed": [
+      "Cameroon private-sector SMEs, 10–250 employees",
+      "Monthly payroll",
+      "One legal employer per tenant"
+    ]
+  },
+  "independentReview": {
+    "status": "BOUNDED_ENGINEERING_REVIEW",
+    "resolved": [
+      "Lowercase declaration transition comparison",
+      "Explicit separate full-scope release parameter",
+      "Successful exact replay preservation",
+      "Settlement/reversal recovery preservation",
+      "Persisted monthly-frequency and Cameroon scope enforcement"
+    ]
+  }
+}

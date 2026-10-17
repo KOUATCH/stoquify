@@ -31,7 +31,7 @@ type SetupData = {
     fiscalYearStartDay: number
   }
   fiscalYears: Array<{ id: string; name: string; startDate: Date; endDate: Date; status: string }>
-  periods: Array<{ id: string; name: string; startDate: Date; endDate: Date; status: string }>
+  periods: Array<{ id: string; name: string; startDate: Date; endDate: Date; status: string; controlVersion: number }>
   journals: Array<{ id: string; code: string; nameEn: string; type: string; isActive: boolean; allowManualEntries: boolean }>
 }
 
@@ -90,6 +90,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
     "use server"
     const result = await closeAccountingPeriodAction({
       periodId: String(formData.get("periodId") || ""),
+      expectedVersion: Number(formData.get("expectedVersion") ?? NaN),
     })
 
     redirect(resultPath(locale, result.success, result.success ? "Accounting period closed" : result.error))
@@ -282,6 +283,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
                           {period.status === "OPEN" ? (
                             <form action={closePeriod}>
                               <input type="hidden" name="periodId" value={period.id} />
+                              <input type="hidden" name="expectedVersion" value={period.controlVersion} />
                               <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">
                                 Close
                               </button>

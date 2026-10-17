@@ -1,0 +1,156 @@
+{
+  "at": "2026-09-30T09:05:08.716Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_COMMAND_TIMEZONE_AND_DRAWER_2026-09-30.md",
+  "sourceHashes": {
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "ce1cc23ac86c387026fe46e85e806e000e5c66073e1e5a5e3621014b50b9c057",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/_shared/__tests__/protect.test.ts": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "cf0418eef3e2375ebca28aaee9f819dae3eed451400e1d3846c9fe2e7da77a98",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "a3866bbcd1639f737679a54fddab47893febc495409930d86368972d4df0e97a",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "80a29913e0b60b152415fd6e71353c45e926029f0df3f7c9378d08af17fd5501",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts": "9c660fd23ff09717d4cb5ce91d02aa940e5bf174b6e3c2d8ea8f4d3beba816e7",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "actions/payroll/payroll-control.actions.ts": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71",
+    "actions/pos/drawer-dashboard.actions.ts": "d92847a55e816a276764a38b12c0713c4878edf17d98fb7b1246e4208bc031e8",
+    "hooks/posHooks/useDrawerDashboard.ts": "67d7c33b20b084eeca250615070512045a325779ebedc507f16d22af191369f8",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "components/pos/CashDrawerManagementDashboard.tsx": "e81550d6fc74a7687ee815b82d9609f531e3a839eddcbd48765230a398015871",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643"
+  },
+  "priorImpact": [
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "178cc880fad07fefc536bcbc59af95ed759f56954c3f54a77f99a789dcb9a056",
+      "after": "ce1cc23ac86c387026fe46e85e806e000e5c66073e1e5a5e3621014b50b9c057"
+    },
+    {
+      "file": "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+      "before": "de4c21c6f0ff214b76ace29360f4d43366812e887323c03fc3d38c68cc96b3c0",
+      "after": "cf0418eef3e2375ebca28aaee9f819dae3eed451400e1d3846c9fe2e7da77a98"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command.service.test.ts",
+      "before": "3f0321f2f6ec927e0fec4b1b7ec0255d1963e3955497ff1bece5692d584b64a9",
+      "after": "a3866bbcd1639f737679a54fddab47893febc495409930d86368972d4df0e97a"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "cash_source_utc_period_and_generation_display",
+    "en_fr_cross_timezone_hydration_and_drawer_handoff",
+    "legacy_and_canonical_drawer_permission_alias_current_revocation"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/cash-navigation-checks-2822c380-1434-4547-aeed-9cd7b4a7253b.json",
+      "sha256": "5f2ffcc1c5f096da77f6c51ad40ad2910712ce1964d07ebf89f037486085d350"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01.json",
+      "sha256": "1e103ad57cf686bf3c05f8ad046ec6265ac8755bb84bacaa10f657ecc0bee5bf"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-5c554d14-0c2b-4ef6-9d17-a68b301cbf28.json",
+      "sha256": "478e5be715728a0f13a917a62b2c679b3fea808c5afb3d8e07e844c23b12fc64"
+    },
+    {
+      "file": "evidence/cash-navigation-checks-8c397995-baef-48fd-b373-d2b0f6c7724c.json",
+      "sha256": "9ffcfaea2d0e84ec537b5f763cae048b6cc10035d7af502315d0ed41f2dcf0e2"
+    },
+    {
+      "file": "evidence/cash-navigation-checks-247c7008-8679-4caf-be86-bef15fcd0293.json",
+      "sha256": "3a3670e57896dccc4becdfd775b825d454b7888ec24e1e1429973b06bc470910"
+    },
+    {
+      "file": "evidence/cash-navigation-checks-e55954c5-0e8a-45f4-abc4-74cad182dc15.json",
+      "sha256": "fc7479321d626fcc56a763faf321021212046d94f4aa445c40c147447a1b8000"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-en-disabled.png",
+      "sha256": "2f8809379fbf158f35948f2b18390b22600eba6a0e1775e675d694bc585ce67c"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-en-destination.png",
+      "sha256": "f120671a6c42e054d2745b5a7e8f1a0bad103c435ae7fa106a76eddfe27a4340"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-en-revoked.png",
+      "sha256": "2b3f0c6da1cab47cbff05bdc64c4d4ed77b8ac6611c92b98b056123f79d8ac5a"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-fr-disabled.png",
+      "sha256": "a1964e69afb48d9fc4624516a807d209cd8bd62350749431f0d2305287eea7ec"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-fr-destination.png",
+      "sha256": "d16384d8c1e1b136ce316523433541eb79eafb38663277077e54b240cad1a141"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-0-fr-revoked.png",
+      "sha256": "7505b062511ac8e9db2be97aa568d2c6c0ced4b5083c3dd287b37fefb84ff9ce"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-en-disabled.png",
+      "sha256": "945d5d1da6fe2cca7099e6ec64842e0512a5c5f650616bf8ed39e9bba3e02908"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-en-destination.png",
+      "sha256": "076d5a13bca5b76d1130a81aea1360f12d565f93a31e544e18c40d38aa94a87d"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-en-revoked.png",
+      "sha256": "2b3f0c6da1cab47cbff05bdc64c4d4ed77b8ac6611c92b98b056123f79d8ac5a"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-fr-disabled.png",
+      "sha256": "001614a001b9fc9414fcaa203555b7e1e8e88950d46da174f041b8faf8f4aab2"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-fr-destination.png",
+      "sha256": "25953f12a4715045c0881c100154840020f8cf0ffc022b187c945bf759b4af55"
+    },
+    {
+      "file": "lanes/environment/cash-drawer-34845454-4f6e-4dfc-9658-11f83957ca01-drawer-1-fr-revoked.png",
+      "sha256": "7505b062511ac8e9db2be97aa568d2c6c0ced4b5083c3dd287b37fefb84ff9ce"
+    }
+  ],
+  "remaining": [
+    "Finish remaining finance/action-queue handoffs, server-authored EN/FR, current-observation labels and empty-forecast grading.",
+    "Verify remaining proof subjects, genuine posted payroll lifecycle and full accessibility/latency requirements. The original truncated shell hydration trace cannot be conclusively attributed to the reproduced date defect; investigate any recurrence."
+  ]
+}

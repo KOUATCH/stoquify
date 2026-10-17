@@ -1,0 +1,3673 @@
+{
+  "auditId": "development-gates-2026-09-27T123553Z",
+  "generatedAt": "2026-09-27T12:50:01.443Z",
+  "auditMode": "READ_ONLY_SOURCE_CONTRACT_EXTRACTION",
+  "databaseAccess": false,
+  "permissionSemantics": {
+    "evaluator": "lib/security/rbac-permissions.ts:hasRbacPermission",
+    "allOf": "Every permission passes actual evaluator.",
+    "anyOf": "If nonempty, at least one passes. Empty imposes no alternative requirement.",
+    "wildcard": "* excludes high/critical permissions; unknown required permissions fail closed.",
+    "aliases": "Legacy stored grants can expand to canonical. Dotted canonical grants do not manufacture broader legacy grants. Role controls additionally require actually stored explicit control authority.",
+    "roles": "Intended role codes are navigation hints, not allowlists or claims that all preserved roles grant the operation.",
+    "sources": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "line": 482,
+        "symbol": "export function hasRbacPermission"
+      },
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "line": 465,
+        "symbol": "export function expandPermissions"
+      },
+      {
+        "path": "services/roles/role-permission-policy.ts",
+        "line": 8,
+        "symbol": "function hasStoredControl"
+      }
+    ]
+  },
+  "roleCanonicalNotes": [
+    {
+      "codes": [
+        "admin",
+        "administrator",
+        "super_admin",
+        "owner"
+      ],
+      "note": "Not universal aliases. Operating scope explicitly recognizes admin/administrator/super_admin or runtime isSuperUser; owner name alone is not a code in that set.",
+      "source": {
+        "path": "services/operating-access/operating-access-scope-contracts.ts",
+        "line": 22,
+        "symbol": "TENANT_WIDE_OPERATING_ROLE_CODES"
+      }
+    },
+    {
+      "codes": [
+        "cashier",
+        "cashier_pos_user",
+        "pos_user"
+      ],
+      "note": "Related intended POS responsibilities; verify actual start/use/end grants."
+    },
+    {
+      "codes": [
+        "inventory_manager",
+        "inventory_controller",
+        "inventory_adjustment_checker"
+      ],
+      "note": "stock.adjust required for current posting action; adjust.approve alone insufficient."
+    },
+    {
+      "codes": [
+        "qualified_accounting_reviewer",
+        "qualified_cameroon_country_pack_reviewer"
+      ],
+      "note": "Role label is no professional qualification evidence."
+    },
+    {
+      "codes": [
+        "hris_user",
+        "employee_self_service",
+        "employee",
+        "user"
+      ],
+      "note": "Own scope requires same-tenant PayrollEmployee.userId link."
+    }
+  ],
+  "minimumDistinctResponsibilities": [
+    {
+      "workflow": "Stock adjustment/manual journal",
+      "minimumActors": 2,
+      "reason": "Preparer and poster differ for each record."
+    },
+    {
+      "workflow": "Supplier payment",
+      "minimumActors": 3,
+      "reason": "Requester, approver and execution recorder differ."
+    },
+    {
+      "workflow": "Payroll prepare/review/approve/post",
+      "minimumActors": 3,
+      "reason": "Three actors through approval. Reviewer can technically post if separately permitted; not an appointment recommendation."
+    },
+    {
+      "workflow": "Payroll payment",
+      "minimumActors": 3,
+      "reason": "Requester, approver and releaser differ."
+    },
+    {
+      "workflow": "Branch close",
+      "minimumActors": 2,
+      "reason": "Review starter and signer differ; both need actual scope."
+    },
+    {
+      "workflow": "Certified close",
+      "minimumActors": 2,
+      "reason": "Runner and certifier differ; evidence/review requirements can require additional people."
+    },
+    {
+      "workflow": "AI approvals",
+      "minimumActors": 2,
+      "reason": "Product/security approvers differ; owner/backup coverage is an additional requirement."
+    }
+  ],
+  "knowledgeGraph": {
+    "path": "graphify-out/GRAPH_REPORT_actions.md",
+    "reportDate": "2026-08-09",
+    "freshness": "Older than audit, navigation only. Current source anchors authoritative."
+  },
+  "exclusions": [
+    "No DB access/mutation, migration, seed, role assignment or application changes.",
+    "No professional, statutory, country-pack or production certification established.",
+    "25 operational contracts are not an exhaustive endpoint/permission inventory."
+  ],
+  "contracts": [
+    {
+      "id": "CAP-ACCESS-001",
+      "domain": "access",
+      "label": "Maintain roles and assign reviewed member access",
+      "intendedRoleCodes": [
+        "owner",
+        "super_admin",
+        "administrator",
+        "admin"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "users.read",
+          "roles.read",
+          "roles.create",
+          "roles.update",
+          "roles.permissions.assign",
+          "roles.permissions.remove",
+          "users.roles.assign",
+          "users.roles.remove"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "settings",
+        "enforcement": "OBSERVE_ONLY_MEMBER_ACCESS_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Member changes require auth within 300 seconds, expectedRevision and an idempotent command.",
+        "Assignment/removal control requires explicit stored permission or an actually stored legacy alias. Wildcard is not stored control authority. Every added role permission must be grantable; a role containing * cannot be assigned by this service.",
+        "Preserve another usable role custodian when removing the last custodian authority."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "Role",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 239
+          }
+        },
+        {
+          "model": "Role",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 248
+          }
+        },
+        {
+          "model": "Role",
+          "field": "permissions",
+          "type": "String[]",
+          "schemaAttributes": "// Array of permission strings",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 247
+          }
+        },
+        {
+          "model": "User",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 132
+          }
+        },
+        {
+          "model": "User",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 172
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/users/memberAccess.ts",
+          "line": 21,
+          "symbol": "const verified = await requireFreshAuth(300)"
+        },
+        {
+          "path": "services/users/member-access-policy.ts",
+          "line": 11,
+          "symbol": "export function hasMemberControl"
+        },
+        {
+          "path": "services/users/member-access-policy.ts",
+          "line": 16,
+          "symbol": "export function canGrantMemberRole"
+        },
+        {
+          "path": "services/roles/role-permission-policy.ts",
+          "line": 18,
+          "symbol": "export function canChangeRolePermissions"
+        },
+        {
+          "path": "services/users/member-access.service.ts",
+          "line": 57,
+          "symbol": "Keep another active administrator"
+        },
+        {
+          "path": "actions/roles/createRole.ts",
+          "line": 16,
+          "symbol": "requirePermission(\"roles.create\""
+        },
+        {
+          "path": "actions/roles/updateRole.ts",
+          "line": 16,
+          "symbol": "requirePermission(\"roles.update\""
+        }
+      ],
+      "servicePermissionPredicates": [
+        "hasMemberControl(storedPermissions, assign/remove)",
+        "canGrantMemberRole(storedPermissions, everyAddedRole)",
+        "canChangeRolePermissions(storedPermissions, assign/remove)"
+      ],
+      "note": "Combined responsibility: allOf is the union for the named lifecycle, not one action guard."
+    },
+    {
+      "id": "CAP-MODULE-001",
+      "domain": "module_setup",
+      "label": "Review and apply entitled module composition",
+      "intendedRoleCodes": [
+        "owner",
+        "super_admin",
+        "administrator",
+        "admin"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "MANAGE_SYSTEM_SETTINGS"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "settings",
+        "enforcement": "MODULE_CONFIGURATION_CONTROL_PLANE",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Action requires fresh auth within 600 seconds and a recognized commercial module slug.",
+        "Durable configuration establishes managed-grant authority even with zero grants. Role permission does not purchase/create entitlement. selectedModules/requestedModules alone is not current activated write authority.",
+        "Managed tenants must use module-composition preview/apply, expectedRevision, previewHash and idempotency key. Legacy activateTenantModule explicitly rejects an existing managed configuration. Selected payroll/compliance setup scope additionally requires corresponding preparation permission and domain readiness."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "TenantModuleConfiguration",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "@id",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9148
+          }
+        },
+        {
+          "model": "TenantModuleConfiguration",
+          "field": "revision",
+          "type": "Int",
+          "schemaAttributes": "@default(0)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9150
+          }
+        },
+        {
+          "model": "TenantModuleConfiguration",
+          "field": "activeModules",
+          "type": "String[]",
+          "schemaAttributes": "@default([])",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9155
+          }
+        },
+        {
+          "model": "TenantModuleGrant",
+          "field": "moduleSlug",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9172
+          }
+        },
+        {
+          "model": "TenantModuleGrant",
+          "field": "status",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9173
+          }
+        },
+        {
+          "model": "TenantModuleGrant",
+          "field": "endsAt",
+          "type": "DateTime?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9176
+          }
+        },
+        {
+          "model": "TenantModuleGrant",
+          "field": "readOnly",
+          "type": "Boolean",
+          "schemaAttributes": "@default(false)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9177
+          }
+        },
+        {
+          "model": "TenantModuleConfigurationCommand",
+          "field": "expectedRevision",
+          "type": "Int",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9203
+          }
+        },
+        {
+          "model": "TenantModuleConfigurationCommand",
+          "field": "previewHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9208
+          }
+        },
+        {
+          "model": "TenantModuleConfigurationCommand",
+          "field": "actorId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9211
+          }
+        },
+        {
+          "model": "TenantModuleConfigurationCommand",
+          "field": "state",
+          "type": "TenantModuleConfigurationCommandState",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9205
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/modules/module-control.actions.ts",
+          "line": 63,
+          "symbol": "const activateModule ="
+        },
+        {
+          "path": "services/modules/module-entitlement.service.ts",
+          "line": 24,
+          "symbol": "A configuration row establishes managed-grant authority"
+        },
+        {
+          "path": "services/modules/module-entitlement.service.ts",
+          "line": 258,
+          "symbol": "export async function activateTenantModule"
+        },
+        {
+          "path": "actions/modules/module-composition.actions.ts",
+          "line": 17,
+          "symbol": "const readOptions ="
+        },
+        {
+          "path": "actions/modules/module-composition.actions.ts",
+          "line": 18,
+          "symbol": "const writeOptions ="
+        },
+        {
+          "path": "services/modules/module-composition.service.ts",
+          "line": 278,
+          "symbol": "export async function applyModuleComposition"
+        }
+      ]
+    },
+    {
+      "id": "CAP-INVENTORY-001",
+      "domain": "inventory",
+      "label": "Prepare stock adjustment",
+      "intendedRoleCodes": [
+        "inventory_adjustment_maker",
+        "inventory_manager"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "inventory.stock.adjust"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "inventory",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Active tenant location/items, quantity/batch/expiry, valuation and period evidence must satisfy the service.",
+        "Retain measured stock, reason and evidence through the owning service."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "StockAdjustment",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4518
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "locationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4515
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "createdById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4521
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4524
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4528
+          }
+        },
+        {
+          "model": "StockAdjustmentLine",
+          "field": "itemId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4591
+          }
+        },
+        {
+          "model": "StockAdjustmentLine",
+          "field": "actualQuantity",
+          "type": "Decimal",
+          "schemaAttributes": "@db.Decimal(12, 3)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4595
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/inventory/inventoryLossControlActions.ts",
+          "line": 67,
+          "symbol": "requirePermission(\"inventory.stock.adjust\""
+        },
+        {
+          "path": "actions/inventory/inventoryLossControlActions.ts",
+          "line": 85,
+          "symbol": "mode: \"enforce\""
+        },
+        {
+          "path": "services/inventory/inventory-adjustment.service.ts",
+          "line": 334,
+          "symbol": "function assertAdjustmentCanPost"
+        },
+        {
+          "path": "services/inventory/inventory-adjustment.service.ts",
+          "line": 355,
+          "symbol": "adjustment.createdById === approvedById"
+        }
+      ],
+      "note": "Both actions require stock.adjust. Service actor separation remains essential; checker role label alone is insufficient."
+    },
+    {
+      "id": "CAP-INVENTORY-002",
+      "domain": "inventory",
+      "label": "Independently post stock adjustment",
+      "intendedRoleCodes": [
+        "inventory_adjustment_checker",
+        "inventory_manager",
+        "inventory_controller"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "inventory.stock.adjust"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "inventory",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Active tenant location/items, quantity/batch/expiry, valuation and period evidence must satisfy the service.",
+        "Adjustment status DRAFT, SUBMITTED or APPROVED; evidence hash mandatory for sensitive stock-count/damage/expiry/theft/write-off types; coherent current inventory/valuation. inventory.adjust.approve alone cannot pass this action."
+      ],
+      "distinctActorRules": [
+        "If StockAdjustment.createdById is recorded, service forbids the same approver ID. A null creator does not prove independent preparation; require traceable human responsibility before real use."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "StockAdjustment",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4518
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "locationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4515
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "createdById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4521
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4524
+          }
+        },
+        {
+          "model": "StockAdjustment",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4528
+          }
+        },
+        {
+          "model": "StockAdjustmentLine",
+          "field": "itemId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4591
+          }
+        },
+        {
+          "model": "StockAdjustmentLine",
+          "field": "actualQuantity",
+          "type": "Decimal",
+          "schemaAttributes": "@db.Decimal(12, 3)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4595
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/inventory/inventoryLossControlActions.ts",
+          "line": 67,
+          "symbol": "requirePermission(\"inventory.stock.adjust\""
+        },
+        {
+          "path": "actions/inventory/inventoryLossControlActions.ts",
+          "line": 85,
+          "symbol": "mode: \"enforce\""
+        },
+        {
+          "path": "services/inventory/inventory-adjustment.service.ts",
+          "line": 334,
+          "symbol": "function assertAdjustmentCanPost"
+        },
+        {
+          "path": "services/inventory/inventory-adjustment.service.ts",
+          "line": 355,
+          "symbol": "adjustment.createdById === approvedById"
+        }
+      ],
+      "note": "Both actions require stock.adjust. Service actor separation remains essential; checker role label alone is insufficient."
+    },
+    {
+      "id": "CAP-AP-001",
+      "domain": "purchasing_ap",
+      "label": "request supplier payment",
+      "intendedRoleCodes": [
+        "purchaser",
+        "buyer",
+        "maker"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "purchasing.ap.payment.request"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "purchasing",
+        "enforcement": "ENFORCED_SERVICE_TRANSACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Current purchasing entitlement, stored tenant-role grants and the real session are reloaded under locks. Confirmation requires password assurance within 300 seconds.",
+        "Supplier/bank/invoice allocations, reviewed revision and document hash must match request."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "SupplierPayment",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2220
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2222
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "supplierId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2225
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "bankAccountId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2228
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2242
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2243
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "documentHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2239
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2240
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "services/purchasing/payment-request-authority.ts",
+          "line": 9,
+          "symbol": "export async function paymentRequestAuthority"
+        },
+        {
+          "path": "services/purchasing/payment-request.service.ts",
+          "line": 49,
+          "symbol": "await tx.supplierPayment.create"
+        }
+      ]
+    },
+    {
+      "id": "CAP-AP-002",
+      "domain": "purchasing_ap",
+      "label": "approve supplier payment",
+      "intendedRoleCodes": [
+        "checker",
+        "controller_approver"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "purchasing.ap.payment.approve"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "purchasing",
+        "enforcement": "ENFORCED_SERVICE_TRANSACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Current purchasing entitlement, stored tenant-role grants and the real session are reloaded under locks. Confirmation requires password assurance within 300 seconds.",
+        "Supplier/bank/invoice allocations, reviewed revision and document hash must match request."
+      ],
+      "distinctActorRules": [
+        "SupplierPayment.approvedById differs from requestedById."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "SupplierPayment",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2220
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2222
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "supplierId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2225
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "bankAccountId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2228
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2242
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2243
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "documentHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2239
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2240
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "services/purchasing/payment-request-authority.ts",
+          "line": 9,
+          "symbol": "export async function paymentRequestAuthority"
+        },
+        {
+          "path": "services/purchasing/payment-request.service.ts",
+          "line": 61,
+          "symbol": "An independent approver must review"
+        }
+      ]
+    },
+    {
+      "id": "CAP-AP-003",
+      "domain": "purchasing_ap",
+      "label": "release supplier payment",
+      "intendedRoleCodes": [
+        "treasury_owner"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "purchasing.ap.payment.release"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "purchasing",
+        "enforcement": "ENFORCED_SERVICE_TRANSACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Current purchasing entitlement, stored tenant-role grants and the real session are reloaded under locks. Confirmation requires password assurance within 300 seconds.",
+        "Supplier/bank/invoice allocations, reviewed revision and document hash must match request.",
+        "Execution evidence must follow approval, not be future-dated, and use one OPEN period and supported currency. Recording execution does not prove external settlement."
+      ],
+      "distinctActorRules": [
+        "Execution recorder/releaser differs from both requester and approver."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "SupplierPayment",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2220
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2222
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "supplierId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2225
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "bankAccountId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2228
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2242
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2243
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "documentHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2239
+          }
+        },
+        {
+          "model": "SupplierPayment",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2240
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "services/purchasing/payment-request-authority.ts",
+          "line": 9,
+          "symbol": "export async function paymentRequestAuthority"
+        },
+        {
+          "path": "services/purchasing/payment-release.service.ts",
+          "line": 25,
+          "symbol": "Recording execution requires a user other than"
+        }
+      ]
+    },
+    {
+      "id": "CAP-JOURNAL-001",
+      "domain": "accounting",
+      "label": "Create draft manual journal",
+      "intendedRoleCodes": [
+        "accountant",
+        "inventory_adjustment_maker"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "accounting.journal.create"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "accounting",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Tenant journal/accounts, balanced debit/credit lines and correct OPEN period."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "JournalEntry",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7718
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "journalId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7723
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "periodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7726
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "createdById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7751
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "accountId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7786
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "debit",
+          "type": "Decimal",
+          "schemaAttributes": "@default(0) @db.Decimal(18, 2)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7791
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "credit",
+          "type": "Decimal",
+          "schemaAttributes": "@default(0) @db.Decimal(18, 2)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7792
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/accounting/journals.actions.ts",
+          "line": 89,
+          "symbol": "permission: \"accounting.journal.create\""
+        },
+        {
+          "path": "services/accounting/posting.service.ts",
+          "line": 247,
+          "symbol": "export async function postJournalEntry"
+        },
+        {
+          "path": "services/controls/sensitive-action.service.ts",
+          "line": 487,
+          "symbol": "\"accounting.journal.post\": {"
+        }
+      ]
+    },
+    {
+      "id": "CAP-JOURNAL-002",
+      "domain": "accounting",
+      "label": "Independently post manual journal",
+      "intendedRoleCodes": [
+        "accountant",
+        "inventory_adjustment_checker"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "accounting.journal.post"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "accounting",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Tenant journal/accounts, balanced debit/credit lines and correct OPEN period.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Only DRAFT entry can post; sensitive-action fresh auth is 300 seconds."
+      ],
+      "distinctActorRules": [
+        "Sensitive-action control forbids actorId equal to recorded JournalEntry.createdById. A missing optional creator cannot prove maker/checker separation."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "JournalEntry",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7718
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "journalId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7723
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "periodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7726
+          }
+        },
+        {
+          "model": "JournalEntry",
+          "field": "createdById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7751
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "accountId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7786
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "debit",
+          "type": "Decimal",
+          "schemaAttributes": "@default(0) @db.Decimal(18, 2)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7791
+          }
+        },
+        {
+          "model": "JournalEntryLine",
+          "field": "credit",
+          "type": "Decimal",
+          "schemaAttributes": "@default(0) @db.Decimal(18, 2)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7792
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/accounting/journals.actions.ts",
+          "line": 103,
+          "symbol": "permission: \"accounting.journal.post\""
+        },
+        {
+          "path": "services/accounting/posting.service.ts",
+          "line": 247,
+          "symbol": "export async function postJournalEntry"
+        },
+        {
+          "path": "services/controls/sensitive-action.service.ts",
+          "line": 487,
+          "symbol": "\"accounting.journal.post\": {"
+        }
+      ]
+    },
+    {
+      "id": "CAP-CLOSE-001",
+      "domain": "close_assurance",
+      "label": "Certify independently assessed close pack",
+      "intendedRoleCodes": [
+        "accountant",
+        "financial_controller",
+        "qualified_accounting_reviewer"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "accounting.close.certify"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "close_assurance",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Tenant-bound fresh auth within 300 seconds, current close evidence, no certification blockers and matching pilot certification evidence.",
+        "Dashboard/evidence-graph reads separately enforce close_assurance. No module gate found in audited certify action/service; report these separately."
+      ],
+      "distinctActorRules": [
+        "Certifier differs from CloseRun.runById. Waiver approval separately requires a different requester/approver."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "CloseRun",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7296
+          }
+        },
+        {
+          "model": "CloseRun",
+          "field": "runById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7313
+          }
+        },
+        {
+          "model": "ClosePackExport",
+          "field": "closeRunId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7487
+          }
+        },
+        {
+          "model": "ClosePackExport",
+          "field": "contentHash",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7492
+          }
+        },
+        {
+          "model": "ClosePackExport",
+          "field": "isCertified",
+          "type": "Boolean",
+          "schemaAttributes": "@default(false)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7494
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed accounting reviewer with competence/qualification appropriate to the scope must review real evidence. qualified_accounting_reviewer role and synthetic documents do not prove professional or statutory approval."
+      },
+      "sources": [
+        {
+          "path": "actions/accounting/close-assurance.actions.ts",
+          "line": 301,
+          "symbol": "const exportCertifiedPack ="
+        },
+        {
+          "path": "services/accounting/close-assurance-pack.service.ts",
+          "line": 1935,
+          "symbol": "export async function exportClosePack"
+        },
+        {
+          "path": "services/accounting/close-assurance-pack.service.ts",
+          "line": 1958,
+          "symbol": "The close runner cannot certify"
+        },
+        {
+          "path": "services/accounting/close-assurance-pack.service.ts",
+          "line": 2000,
+          "symbol": "Certified close pack is blocked:"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-001",
+      "domain": "payroll",
+      "label": "Calculate payroll",
+      "intendedRoleCodes": [
+        "payroll_processor"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.runs.calculate"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Supported country-pack provenance, effective employee/contracts, frozen input readiness and expected run version govern transitions."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "PayrollRun",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3529
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "payrollPeriodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3534
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "version",
+          "type": "Int",
+          "schemaAttributes": "@default(1)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3544
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "preparedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3570
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "reviewedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3571
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3572
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2676
+          }
+        },
+        {
+          "model": "PayrollContract",
+          "field": "employeeId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2945
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed payroll/finance responsibility plus verified local payroll rules, employment inputs and evidence. Synthetic payroll is development evidence only."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 120,
+          "symbol": "permission: \"payroll.runs.calculate\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 5349,
+          "symbol": "export async function calculatePayrollRun"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-002",
+      "domain": "payroll",
+      "label": "Review calculated payroll",
+      "intendedRoleCodes": [
+        "payroll_approver",
+        "financial_controller"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.runs.review"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Action fresh authentication within 300 seconds.",
+        "Supported country-pack provenance, effective employee/contracts, frozen input readiness and expected run version govern transitions."
+      ],
+      "distinctActorRules": [
+        "Reviewer differs from PayrollRun.preparedById."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "PayrollRun",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3529
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "payrollPeriodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3534
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "version",
+          "type": "Int",
+          "schemaAttributes": "@default(1)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3544
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "preparedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3570
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "reviewedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3571
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3572
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2676
+          }
+        },
+        {
+          "model": "PayrollContract",
+          "field": "employeeId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2945
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed payroll/finance responsibility plus verified local payroll rules, employment inputs and evidence. Synthetic payroll is development evidence only."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 151,
+          "symbol": "permission: \"payroll.runs.review\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 6844,
+          "symbol": "assertPayrollTransitionSource(run, parsed, PayrollRunStatus.CALCULATED)"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-003",
+      "domain": "payroll",
+      "label": "Approve reviewed payroll",
+      "intendedRoleCodes": [
+        "payroll_approver",
+        "controller_approver"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.runs.approve"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Action fresh authentication within 300 seconds.",
+        "Supported country-pack provenance, effective employee/contracts, frozen input readiness and expected run version govern transitions."
+      ],
+      "distinctActorRules": [
+        "Approver differs from both preparedById and reviewedById."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "PayrollRun",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3529
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "payrollPeriodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3534
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "version",
+          "type": "Int",
+          "schemaAttributes": "@default(1)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3544
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "preparedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3570
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "reviewedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3571
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3572
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2676
+          }
+        },
+        {
+          "model": "PayrollContract",
+          "field": "employeeId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2945
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed payroll/finance responsibility plus verified local payroll rules, employment inputs and evidence. Synthetic payroll is development evidence only."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 187,
+          "symbol": "permission: \"payroll.runs.approve\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 6995,
+          "symbol": "assertPayrollTransitionSource(run, parsed, PayrollRunStatus.REVIEWED)"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-004",
+      "domain": "payroll",
+      "label": "Post emitted payroll",
+      "intendedRoleCodes": [
+        "accountant"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.runs.post"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Action fresh authentication within 300 seconds.",
+        "Supported country-pack provenance, effective employee/contracts, frozen input readiness and expected run version govern transitions.",
+        "EMITTED state and exactly one matching emitted payslip per run line. Emission is a separate prerequisite guarded by payroll.payslips.emit."
+      ],
+      "distinctActorRules": [
+        "Poster differs from preparedById and approvedById; reviewer is not separately excluded."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "PayrollRun",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3529
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "payrollPeriodId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3534
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "version",
+          "type": "Int",
+          "schemaAttributes": "@default(1)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3544
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "preparedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3570
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "reviewedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3571
+          }
+        },
+        {
+          "model": "PayrollRun",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3572
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2676
+          }
+        },
+        {
+          "model": "PayrollContract",
+          "field": "employeeId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2945
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed payroll/finance responsibility plus verified local payroll rules, employment inputs and evidence. Synthetic payroll is development evidence only."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 256,
+          "symbol": "permission: \"payroll.runs.post\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 7513,
+          "symbol": "assertPayrollTransitionSource(run, parsed, PayrollRunStatus.EMITTED)"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-005",
+      "domain": "payroll_payments",
+      "label": "request payroll payment batch",
+      "intendedRoleCodes": [
+        "payroll_processor"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.payments.request"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Eligible payroll source, approved payment destinations, allocations, payment evidence and workflow state remain required. Technical authority is not actual disbursement proof."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3870
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "payrollRunId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3875
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3890
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3891
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "releasedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3892
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3888
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "bankFileHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3886
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 292,
+          "symbol": "permission: \"payroll.payments.request\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 8221,
+          "symbol": "export async function requestPayrollPaymentBatch"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-006",
+      "domain": "payroll_payments",
+      "label": "approve payroll payment batch",
+      "intendedRoleCodes": [
+        "payroll_approver"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.payments.approve"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Eligible payroll source, approved payment destinations, allocations, payment evidence and workflow state remain required. Technical authority is not actual disbursement proof."
+      ],
+      "distinctActorRules": [
+        "Approver differs from PayrollPaymentBatch.requestedById."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3870
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "payrollRunId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3875
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3890
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3891
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "releasedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3892
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3888
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "bankFileHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3886
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 326,
+          "symbol": "permission: \"payroll.payments.approve\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 8612,
+          "symbol": "export async function approvePayrollPaymentBatch"
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 8662,
+          "symbol": "paymentBatch.requestedById === parsed.approvedById"
+        }
+      ]
+    },
+    {
+      "id": "CAP-PAYROLL-007",
+      "domain": "payroll_payments",
+      "label": "release payroll payment batch",
+      "intendedRoleCodes": [
+        "treasury_owner"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "payroll.payments.release"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Eligible payroll source, approved payment destinations, allocations, payment evidence and workflow state remain required. Technical authority is not actual disbursement proof."
+      ],
+      "distinctActorRules": [
+        "Releaser differs from requester and approver; requester and approver must also differ."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3870
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "payrollRunId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3875
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "requestedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3890
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "approvedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3891
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "releasedById",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3892
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "evidenceHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3888
+          }
+        },
+        {
+          "model": "PayrollPaymentBatch",
+          "field": "bankFileHash",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3886
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/payroll/payroll-control.actions.ts",
+          "line": 360,
+          "symbol": "permission: \"payroll.payments.release\""
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 8790,
+          "symbol": "export async function releasePayrollPaymentBatch"
+        },
+        {
+          "path": "services/payroll/payroll-control.service.ts",
+          "line": 8864,
+          "symbol": "Payroll payment requester, approver, and releaser must be separate authenticated actors."
+        }
+      ]
+    },
+    {
+      "id": "CAP-HRIS-001",
+      "domain": "hr_self_service",
+      "label": "Read own HR profile and payslips",
+      "intendedRoleCodes": [
+        "employee_self_service",
+        "employee",
+        "hris_user",
+        "user"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "hris.self_service.read",
+          "payroll.payslips.self.read"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "payroll",
+        "enforcement": "ENFORCED_ACTION_FOR_PAYSLIPS; PROFILE_HAS_NO_GUARD",
+        "accessIntent": "read",
+        "note": "Combined profile+payslip responsibility needs payroll read entitlement for the payslip action. Own HR profile action has no audited module guard."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Exactly one nondeleted same-tenant PayrollEmployee.userId must link to authenticated actor. Another employee ID cannot substitute.",
+        "DRAFT profile is truthful identity linkage, not ACTIVE employment/payroll eligibility. Payslip viewing additionally requires an eligible emitted payslip.",
+        "Profile maintenance is a separate prerequisite guarded by hris.people.manage and fresh authentication."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "PayrollEmployee",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2676
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "userId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2681
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2678
+          }
+        },
+        {
+          "model": "PayrollEmployee",
+          "field": "status",
+          "type": "PayrollEmployeeStatus",
+          "schemaAttributes": "@default(DRAFT)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 2685
+          }
+        },
+        {
+          "model": "PayrollPayslip",
+          "field": "employeeId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 3714
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/hris/employee.actions.ts",
+          "line": 87,
+          "symbol": "const readOwnHrisEmployeeProfile ="
+        },
+        {
+          "path": "actions/payroll/payroll-payslip-self-service.actions.ts",
+          "line": 31,
+          "symbol": "permission: \"payroll.payslips.self.read\""
+        },
+        {
+          "path": "services/payroll/payslip-self-service.service.ts",
+          "line": 397,
+          "symbol": "async function loadLinkedEmployee"
+        },
+        {
+          "path": "actions/hris/employee.actions.ts",
+          "line": 109,
+          "symbol": "permission: \"hris.people.manage\""
+        },
+        {
+          "path": "actions/payroll/payroll-payslip-self-service.actions.ts",
+          "line": 36,
+          "symbol": "moduleSlug: \"payroll\""
+        }
+      ]
+    },
+    {
+      "id": "CAP-POS-001",
+      "domain": "cash_pos",
+      "label": "Open, sell through and close own POS shift",
+      "intendedRoleCodes": [
+        "cashier",
+        "cashier_pos_user",
+        "pos_user"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "pos.session.start",
+          "pos.use",
+          "pos.session.end"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "pos",
+        "enforcement": "ENFORCED_OPEN_SERVICE_AND_COMMIT_ACTION; CLOSE_OBSERVE_ONLY",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Active tenant terminal/location, no already-open station session/drawer at opening, station claim and session binding to actor.",
+        "Sale requires ACTIVE own session, current cart revision/checkout lease, stock and validated tender. Closing requires cash count and closing policy.",
+        "pos.use alone does not confer start/end. Physical drawer does not itself prove a separate cash_drawer module is enforced."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "POSStation",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4770
+          }
+        },
+        {
+          "model": "POSStation",
+          "field": "currentSessionId",
+          "type": "String?",
+          "schemaAttributes": "@unique",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4783
+          }
+        },
+        {
+          "model": "POSStation",
+          "field": "locationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4777
+          }
+        },
+        {
+          "model": "POSSession",
+          "field": "userId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4818
+          }
+        },
+        {
+          "model": "POSSession",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4837
+          }
+        },
+        {
+          "model": "POSSession",
+          "field": "status",
+          "type": "POSSessionStatus",
+          "schemaAttributes": "@default(ACTIVE)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4806
+          }
+        },
+        {
+          "model": "POSCheckoutWorkspace",
+          "field": "leaseId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 4864
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/pos/session.actions.ts",
+          "line": 34,
+          "symbol": "requirePermission(\"pos.session.start\""
+        },
+        {
+          "path": "actions/pos/session.actions.ts",
+          "line": 58,
+          "symbol": "requirePermission(\"pos.session.end\""
+        },
+        {
+          "path": "actions/pos/tender.actions.ts",
+          "line": 37,
+          "symbol": "permission: \"pos.use\""
+        },
+        {
+          "path": "services/pos/pos.service.ts",
+          "line": 1204,
+          "symbol": "export async function openPOSShift"
+        },
+        {
+          "path": "services/pos/pos.service.ts",
+          "line": 2210,
+          "symbol": "export async function commitPOSSale"
+        },
+        {
+          "path": "services/pos/shift-opening-access.ts",
+          "line": 5,
+          "symbol": "evaluateModuleAccessInTx"
+        }
+      ],
+      "note": "Combined lifecycle contract intentionally unions three separately guarded operations."
+    },
+    {
+      "id": "CAP-BRANCH-001",
+      "domain": "branch_close",
+      "label": "Start branch daily-close review",
+      "intendedRoleCodes": [
+        "branch_manager",
+        "retail_operations_owner",
+        "manager"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "branch.daily-close.review",
+          "dashboard.read"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "dashboard",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Operating scope requires dashboard.read plus accepted tenant-wide authority or active same-tenant Location.managerId assignment to this actor. Manager role label alone is insufficient.",
+        "Date/location, evidence hashes and readiness must agree."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "Location",
+          "field": "managerId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 524
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "locationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 585
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "startedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 604
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "evidenceHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 601
+          }
+        },
+        {
+          "model": "BranchDailyCloseSignOff",
+          "field": "signedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 649
+          }
+        },
+        {
+          "model": "BranchDailyCloseSignOff",
+          "field": "freshAuthAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 654
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/end-of-day-close/branch-daily-close-review.actions.ts",
+          "line": 43,
+          "symbol": "permission: \"branch.daily-close.review\""
+        },
+        {
+          "path": "services/operating-access/operating-access-scope.service.ts",
+          "line": 61,
+          "symbol": "export async function resolveOperatingAccessScope"
+        },
+        {
+          "path": "services/operating-access/operating-access-scope-contracts.ts",
+          "line": 22,
+          "symbol": "TENANT_WIDE_OPERATING_ROLE_CODES"
+        },
+        {
+          "path": "services/end-of-day-close/branch-daily-close-sign-off-state.service.ts",
+          "line": 519,
+          "symbol": "signOff.signedById === run.startedById"
+        }
+      ]
+    },
+    {
+      "id": "CAP-BRANCH-002",
+      "domain": "branch_close",
+      "label": "Independently sign branch close",
+      "intendedRoleCodes": [
+        "branch_manager",
+        "retail_operations_owner",
+        "manager"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "branch.daily-close.sign",
+          "dashboard.read"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "dashboard",
+        "enforcement": "ENFORCED_ACTION",
+        "accessIntent": "write"
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Operating scope requires dashboard.read plus accepted tenant-wide authority or active same-tenant Location.managerId assignment to this actor. Manager role label alone is insufficient.",
+        "Date/location, evidence hashes and readiness must agree.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Fresh auth within 300 seconds; no blocking readiness/evidence drift."
+      ],
+      "distinctActorRules": [
+        "Signer differs from BranchDailyCloseRun.startedById."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "Location",
+          "field": "managerId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 524
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "locationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 585
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "startedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 604
+          }
+        },
+        {
+          "model": "BranchDailyCloseRun",
+          "field": "evidenceHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 601
+          }
+        },
+        {
+          "model": "BranchDailyCloseSignOff",
+          "field": "signedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 649
+          }
+        },
+        {
+          "model": "BranchDailyCloseSignOff",
+          "field": "freshAuthAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 654
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/end-of-day-close/branch-daily-close-sign-off.actions.ts",
+          "line": 55,
+          "symbol": "permission: \"branch.daily-close.sign\""
+        },
+        {
+          "path": "services/operating-access/operating-access-scope.service.ts",
+          "line": 61,
+          "symbol": "export async function resolveOperatingAccessScope"
+        },
+        {
+          "path": "services/operating-access/operating-access-scope-contracts.ts",
+          "line": 22,
+          "symbol": "TENANT_WIDE_OPERATING_ROLE_CODES"
+        },
+        {
+          "path": "services/end-of-day-close/branch-daily-close-sign-off-state.service.ts",
+          "line": 519,
+          "symbol": "signOff.signedById === run.startedById"
+        }
+      ]
+    },
+    {
+      "id": "CAP-ACCOUNTANT-001",
+      "domain": "external_accountant",
+      "label": "Read client accountant portal within consent",
+      "intendedRoleCodes": [
+        "external_accountant",
+        "accountant",
+        "auditor",
+        "qualified_accounting_reviewer"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "accounting.audit.read"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "accounting",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "read",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Home tenant uses TENANT_MEMBER authority. Cross-tenant read needs ACTIVE AccountantAccessGrant, exact accountant/target org/activeScopeKey, effectiveFrom<=now, expiresAt>now, active nondeleted client organization.",
+        "READ_ONLY grant can read. Export additionally requires accounting.exports.create, fresh auth and non-READ_ONLY grant; REVIEW separately rejects READ_ONLY. external_accountant label gives no blanket client authority."
+      ],
+      "distinctActorRules": [],
+      "requiredDataFields": [
+        {
+          "model": "AccountantAccessGrant",
+          "field": "accountantUserId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7588
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7585
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "activeScopeKey",
+          "type": "String?",
+          "schemaAttributes": "@unique",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7593
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "role",
+          "type": "AccountantAccessRole",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7591
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "consentGrantedById",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7595
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "consentEvidenceHash",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7597
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "effectiveFrom",
+          "type": "DateTime",
+          "schemaAttributes": "@default(now())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7598
+          }
+        },
+        {
+          "model": "AccountantAccessGrant",
+          "field": "expiresAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 7599
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Real client consent/engagement and appropriate professional qualification if required. Firm name, registration string, seeded grant and qualified role label do not prove this."
+      },
+      "sources": [
+        {
+          "path": "actions/accounting/data-trust.actions.ts",
+          "line": 26,
+          "symbol": "const getPortal ="
+        },
+        {
+          "path": "services/accounting/accountant-access.service.ts",
+          "line": 410,
+          "symbol": "export async function resolveAccountantClientAccess"
+        },
+        {
+          "path": "services/accounting/accountant-access.service.ts",
+          "line": 445,
+          "symbol": "No active client consent grants access"
+        },
+        {
+          "path": "services/accounting/accountant-access.service.ts",
+          "line": 454,
+          "symbol": "input.capability === \"REVIEW\""
+        }
+      ]
+    },
+    {
+      "id": "CAP-AI-001",
+      "domain": "ai_release",
+      "label": "Approve AI product scope",
+      "intendedRoleCodes": [
+        "product_approver"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "agent.release.product.approve"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "agents",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Active tenant user; REVIEWED/APPROVED exact release package/manifest, approval evidence hash, decision/expiry and idempotency receipt. Approval action fresh auth within 300 seconds."
+      ],
+      "distinctActorRules": [
+        "Latest approved PRODUCT and SECURITY decisions must have different approver IDs. This check does not separately forbid requester from being one approver."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "AgentActivationPackage",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9828
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9829
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "manifestHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9835
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "approverId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9878
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "approvalType",
+          "type": "AgentApprovalType",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9876
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "evidenceHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9879
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "expiresAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9882
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed product approver reviews real scope, behavior and residual risk."
+      },
+      "sources": [
+        {
+          "path": "actions/agents/agent-release-control.actions.ts",
+          "line": 130,
+          "symbol": "\"agent.release.product.approve\""
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 117,
+          "symbol": "export async function recordCommandAgentActivationApproval"
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 172,
+          "symbol": "Product and security approvals must be recorded by different people."
+        }
+      ]
+    },
+    {
+      "id": "CAP-AI-002",
+      "domain": "ai_release",
+      "label": "Approve AI security release independently",
+      "intendedRoleCodes": [
+        "security_owner"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "agent.release.security.approve"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "agents",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Active tenant user; REVIEWED/APPROVED exact release package/manifest, approval evidence hash, decision/expiry and idempotency receipt. Approval action fresh auth within 300 seconds."
+      ],
+      "distinctActorRules": [
+        "Latest approved PRODUCT and SECURITY decisions must have different approver IDs. This check does not separately forbid requester from being one approver."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "AgentActivationPackage",
+          "field": "id",
+          "type": "String",
+          "schemaAttributes": "@id @default(cuid())",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9828
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "organizationId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9829
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "manifestHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9835
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "approverId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9878
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "approvalType",
+          "type": "AgentApprovalType",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9876
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "evidenceHash",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(71)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9879
+          }
+        },
+        {
+          "model": "AgentActivationApproval",
+          "field": "expiresAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9882
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot",
+        "production"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Appointed competent security approver independently reviews real release evidence and residual risks."
+      },
+      "sources": [
+        {
+          "path": "actions/agents/agent-release-control.actions.ts",
+          "line": 134,
+          "symbol": "\"agent.release.security.approve\""
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 117,
+          "symbol": "export async function recordCommandAgentActivationApproval"
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 172,
+          "symbol": "Product and security approvals must be recorded by different people."
+        }
+      ]
+    },
+    {
+      "id": "CAP-AI-003",
+      "domain": "ai_release",
+      "label": "Provision shadow release and activate internal pilot",
+      "intendedRoleCodes": [
+        "owner",
+        "super_admin",
+        "administrator",
+        "admin"
+      ],
+      "intendedRolesAreNotAnAllowlist": true,
+      "permissions": {
+        "allOf": [
+          "agent.release.provision",
+          "agent.release.activate"
+        ],
+        "anyOf": []
+      },
+      "permissionEvaluation": "Use actual hasRbacPermission for every allOf; nonempty anyOf requires at least one. Extra service predicates remain independently required.",
+      "module": {
+        "slug": "agents",
+        "enforcement": "NO_MODULE_GUARD_FOUND_IN_AUDITED_OPERATION",
+        "accessIntent": "write",
+        "note": "Logical domain only; do not infer an enforced gate from this module name."
+      },
+      "scopeConstraints": [
+        "Tenant-bound actor, target records and valid session; actual account usability remains a separate runtime condition.",
+        "Fresh authentication must be the current tenant-bound verified session fact, not a seed flag or invented timestamp.",
+        "Provision requires current manifest, separated approvals and all accepted owner/backup coverage. Activation requires expected version, PILOT_CERTIFIED, current commit/manifest-matched certification, activation window and matching definition records.",
+        "Owner assignment/acceptance are separate permissions agent.release.owner.manage and agent.release.owner.accept. Operator cannot fabricate owner acceptance.",
+        "ACTIVE_INTERNAL is the implemented target; unrestricted production rollout is not established.",
+        "Provision/activation transition action requires fresh authentication within 300 seconds."
+      ],
+      "distinctActorRules": [
+        "Product/security approvers differ. Every required owner responsibility has distinct primary/backup IDs and coverage spanning activation window."
+      ],
+      "requiredDataFields": [
+        {
+          "model": "AgentActivationPackage",
+          "field": "version",
+          "type": "Int",
+          "schemaAttributes": "@default(1)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9843
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "commitSha",
+          "type": "String",
+          "schemaAttributes": "@db.VarChar(64)",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9834
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "activationStartsAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9839
+          }
+        },
+        {
+          "model": "AgentActivationPackage",
+          "field": "activationEndsAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9840
+          }
+        },
+        {
+          "model": "AgentActivationOwner",
+          "field": "primaryUserId",
+          "type": "String",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9897
+          }
+        },
+        {
+          "model": "AgentActivationOwner",
+          "field": "backupUserId",
+          "type": "String?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9898
+          }
+        },
+        {
+          "model": "AgentActivationOwner",
+          "field": "acceptedAt",
+          "type": "DateTime?",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9901
+          }
+        },
+        {
+          "model": "AgentActivationOwner",
+          "field": "coverageEndsAt",
+          "type": "DateTime",
+          "schemaAttributes": "",
+          "source": {
+            "path": "prisma/schema.prisma",
+            "line": 9904
+          }
+        }
+      ],
+      "stages": [
+        "development",
+        "demo",
+        "pilot"
+      ],
+      "stageConditions": {
+        "development": "Label synthetic actors/evidence and use isolated workflows.",
+        "demo": "Demonstration is not real appointment, professional qualification or certification.",
+        "pilot": "Named appointment, current scope, valid evidence and workflow readiness independently required.",
+        "production": "Real authorized people and operational evidence required; this source audit authorizes no production use."
+      },
+      "qualifiedHumanRequirement": {
+        "status": "NOT_ESTABLISHED_BY_RBAC_OR_HRIS",
+        "developmentSimulationAllowed": true,
+        "operationalRequirement": "Named human appointment by the organization is required for real operations. A role, supplied name, HRIS profile or synthetic login is not appointment evidence."
+      },
+      "sources": [
+        {
+          "path": "actions/agents/agent-release-control.actions.ts",
+          "line": 177,
+          "symbol": "const provisionAction ="
+        },
+        {
+          "path": "actions/agents/agent-release-control.actions.ts",
+          "line": 181,
+          "symbol": "const activateAction ="
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 514,
+          "symbol": "export async function activateCommandAgentInternal"
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 826,
+          "symbol": "function ownersReady("
+        },
+        {
+          "path": "services/agents/agent-release-control.service.ts",
+          "line": 846,
+          "symbol": "function certificationReady("
+        }
+      ],
+      "productionLimitation": "Audited operation activates ACTIVE_INTERNAL only; no production authorization inferred."
+    }
+  ]
+}

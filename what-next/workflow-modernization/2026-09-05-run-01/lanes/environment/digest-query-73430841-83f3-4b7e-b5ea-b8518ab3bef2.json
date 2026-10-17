@@ -1,0 +1,63 @@
+{
+  "at": "2026-09-27T12:19:56.601Z",
+  "sourceBefore": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs": "79b62535eaa6adf252a331a55547b0359ac1891dd5a94558bdc90067378d0088"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [
+        "digest-query-73430841-83f3-4b7e-b5ea-b8518ab3bef2-en-error.png",
+        "digest-query-73430841-83f3-4b7e-b5ea-b8518ab3bef2-en-recovered.png"
+      ],
+      "failedQueryEvents": 2,
+      "failedRetryRemainsError": true,
+      "recoveredViewAndBlockers": true
+    },
+    {
+      "locale": "fr",
+      "errors": [],
+      "screenshots": [
+        "digest-query-73430841-83f3-4b7e-b5ea-b8518ab3bef2-fr-error.png",
+        "digest-query-73430841-83f3-4b7e-b5ea-b8518ab3bef2-fr-recovered.png"
+      ],
+      "failedQueryEvents": 2,
+      "failedRetryRemainsError": true,
+      "recoveredViewAndBlockers": true
+    }
+  ],
+  "serverPid": 8400,
+  "serverDiagnostics": " ⨯ Error: OWNED_DIGEST_QUERY_UNAVAILABLE\n    at Array.groupBy (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\digest-query-fault-preload.cjs:21:19) {\n  digest: '2786530109'\n}\n",
+  "noBusinessMutations": true,
+  "passed": true,
+  "testServerStopped": true,
+  "sourceAfter": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs": "79b62535eaa6adf252a331a55547b0359ac1891dd5a94558bdc90067378d0088"
+  },
+  "sourceStable": true
+}

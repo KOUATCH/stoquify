@@ -1,0 +1,15 @@
+# Relocated compiled-candidate packaging check
+
+**Blocked before execution.** `relocated-readiness.json` records that packaging recovery failed full trace validation: one Next server runtime trace file was missing. The runner's `standalone-resolution-preflight.json` also confirmed that both `@next/env` and `styled-jsx` resolve to the original workspace from the package entry and actual Next importer. No package was relocated, no temporary copy was created, and no application, browser or login was started for this qualification. The prepared helpers remain unexecuted. Existing workspace-backed browser receipts are preserved and do not establish package independence.
+
+Prepared for a future qualified recovery of the **recorded compiled candidate**, build `GqRaF9F_RTehAxrqSBlS2`. It does not qualify subsequent unclaimed purchasing/inventory edits or the latest checkout. Execution requires successful trace and containment evidence plus the runner's explicit candidate release. Hoisting, workspace dependency fallback and global resolver workarounds are not acceptable substitutes.
+
+The helper copies only the recovered standalone directory to a fresh task-owned OS temporary directory outside repository ancestry. It rejects source symlinks escaping the package, excludes every `.env`/`.env.*` file without reading its contents, and compares sorted path/content fingerprints before and after relocation. Test guards are added separately under `.smoke-tools`; application/package files are not rewritten.
+
+The application process receives an explicit environment allowlist. All supported database URL aliases point to unreachable loopback port 1; provider credentials and inherited environment/preloads are absent. A disposable generated auth secret and loopback base URLs serve the unauthenticated page only. `NODE_PATH` and inherited `NODE_OPTIONS` are unset. CJS filename resolution and ESM resolve/load hooks reject files outside the relocated package; a separate probe proves both guards refuse an existing outside module. The existing socket guard blocks non-loopback network access.
+
+The generated standalone `server.js` is the application entry. The driver and Playwright may use the workspace's test tooling, but the application child cannot resolve workspace dependencies. Browser requests are origin-restricted; every non-GET/HEAD request and scheduler path is blocked. No database login, credential submission, seed, migration, financial route or business action is attempted.
+
+Checks cover server boot, `/en/login`, visible email/password controls, and requested static-asset statuses. A local screenshot hides all text/media. Reports contain counts, hashes and allowlisted error markers only. The browser and owned server stop in `finally`; removal of the task-created temporary package is guarded by its resolved OS-temp boundary and unique prefix.
+
+A pass qualifies only this candidate's bounded relocated boot/login/assets path. It does not turn the original build exit 1 into a pass, qualify database-backed behavior, establish all routes/dependencies, certify deployment, or describe the changed current source tree.

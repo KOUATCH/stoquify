@@ -3,6 +3,8 @@ import { getLocale } from "next-intl/server"
 import { createPurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
 import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 import { ModernCreatePurchaseOrderForm } from "@/components/purchase-orders/ModernCreatePurchaseOrderForm"
+import { DurableCreatePurchaseOrderForm } from "@/components/purchase-orders/DurableCreatePurchaseOrderForm"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import { localizedRedirect } from "@/i18n/server-routing"
@@ -50,6 +52,15 @@ export default async function CreatePurchaseOrderPage() {
     surface,
     onAllowed: async (_ctx, _ctxLocale) => {
       const options = await getPurchaseOrderFormOptions(_ctx.orgId)
+
+      // Explicit opt-in after migration and recovery verification. Default keeps
+      // the existing creation path available. During rollback, disable authoring
+      // writes but keep this UI on so prepared requests can still be resolved.
+      if (process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED === "true") {
+        return <DurableCreatePurchaseOrderForm actorId={_ctx.userId} locale={locale}
+          canReadOrders={hasRbacPermission(_ctx.permissions, "purchases.orders.read")}
+          organizationId={_ctx.orgId} suppliers={options.suppliers} locations={options.locations} items={options.items} />
+      }
 
       return (
         <ModernCreatePurchaseOrderForm

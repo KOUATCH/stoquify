@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-30T17:21:06.894Z",
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "805a573a4887b7769e99655da94291777f697888f6dde1b089155d47041db202",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71"
+  },
+  "checks": [
+    {
+      "name": "observation-time-changes-without-source-change",
+      "passed": true,
+      "firstReportHash": "sha256:b16e6c14ade28efec2b2767f48cd4491cef71aa05fe7b10fc91cb2ae2c0e06a9",
+      "secondReportHash": "sha256:66c317f90ede1edb5e69717495bc9681851ca4388c116649778fb8c46b2816ad",
+      "evidenceHash": "sha256:c21abda61cdf4c1cc6168c14b45678c7e66426f12557e9ba00c725b755be5adc"
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'sha256:5f55ae89274a7ae3347606d17791a645e5b8831212a2657dd4a8b5f35f84c4ed'\n- 'sha256:c21abda61cdf4c1cc6168c14b45678c7e66426f12557e9ba00c725b755be5adc'\n",
+  "sourceAfter": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "805a573a4887b7769e99655da94291777f697888f6dde1b089155d47041db202",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71"
+  },
+  "sourceStable": true
+}

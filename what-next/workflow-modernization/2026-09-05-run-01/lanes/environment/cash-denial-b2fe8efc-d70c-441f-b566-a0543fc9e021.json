@@ -1,0 +1,1158 @@
+{
+  "run": "b2fe8efc-d70c-441f-b566-a0543fc9e021",
+  "at": "2026-10-01T00:08:51.443Z",
+  "sourceBefore": {
+    "components/dashboard/DashboardRouteState.tsx": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx": "06ad301501f6191188b565b0e49e86096e9146828c035739748bead23e23184b",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "87d473b922b0c93f81a986fd807ff45f9fc874c5ef46ecd997ff7a0a7859cdc6",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-cash-denial-2026-10-01.cjs": "b4ff9388454ff41d14aabaa75721eec7b01eea20336e1807c043c08e42d0825e"
+  },
+  "views": [
+    {
+      "kind": "route",
+      "locale": "en",
+      "width": 320,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-320-text1.png",
+          "sha256": "163194d3aeaf01b0e81804260c96186aa3d5fe841fd45d05b778dcf39deb2157"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-320-text2.png",
+          "sha256": "10881760a5ab7f0c1b925ad7c371a993c4d44a39c693f799d6953905c9b9230a"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 3139,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command Intelligence is not available for this role</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">This finance surface is read-only, but it still requires the matching finance permission. The denial was recorded by the RBAC guard.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "route",
+      "locale": "en",
+      "width": 768,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-768-text1.png",
+          "sha256": "ab1a7cd3d51f36fe66e4f73f912653a5db3faa27f0f4b056075243560500bc28"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-768-text2.png",
+          "sha256": "87bdc80b178e15eb47232d6c94c05b8d8eb37baa09ac9ec2aac6f78ba6d6cd63"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 3845,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command Intelligence is not available for this role</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">This finance surface is read-only, but it still requires the matching finance permission. The denial was recorded by the RBAC guard.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "route",
+      "locale": "en",
+      "width": 1440,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-1440-text1.png",
+          "sha256": "e050600d78d0ffea39cc4a388b7ce620793559195559b1f7faad6941fccdc3b6"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-en-1440-text2.png",
+          "sha256": "eee9b446c9cf67985e36b2fb199726d97b4e7bcce46166a2443cffac1a3ddf03"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2213,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command Intelligence is not available for this role</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">This finance surface is read-only, but it still requires the matching finance permission. The denial was recorded by the RBAC guard.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "route",
+      "locale": "fr",
+      "width": 320,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-320-text1.png",
+          "sha256": "769b1b8fb7b6a5d6430894984a16b273f29fec109fbcda4497a1a78bd82a0c47"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-320-text2.png",
+          "sha256": "909b585169c9f6841547145a9be59ecb0c6f0abd66bbfcad825d19fc5c8ec6d3"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2391,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie n’est pas accessible à votre rôle</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Cette surface financière est en lecture seule, mais elle exige toujours l’autorisation financière correspondante. Le refus a été enregistré par le contrôle RBAC.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "route",
+      "locale": "fr",
+      "width": 768,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-768-text1.png",
+          "sha256": "44b0b7446d06b34a6aa5880414e8a28e639c064367bb25a8c51c19ed51f2d2f4"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-768-text2.png",
+          "sha256": "81eaf4b30bf68fca0d8ecc254fa848d8b2315ee76073a1be3561949872fba7ed"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2128,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie n’est pas accessible à votre rôle</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Cette surface financière est en lecture seule, mais elle exige toujours l’autorisation financière correspondante. Le refus a été enregistré par le contrôle RBAC.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "route",
+      "locale": "fr",
+      "width": 1440,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-1440-text1.png",
+          "sha256": "76ca73c6ec9a28d3c64b4584a5b36a975cdc7562ee206230fb556fbbdc2539c8"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-route-fr-1440-text2.png",
+          "sha256": "b0d19bd78abeabbf1c5e4c0bb7ab48d1412bfcbf15b0aea52e94fce28bb90d9f"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 3375,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].text-xs"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie n’est pas accessible à votre rôle</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Cette surface financière est en lecture seule, mais elle exige toujours l’autorisation financière correspondante. Le refus a été enregistré par le contrôle RBAC.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "en",
+      "width": 320,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-320-text1.png",
+          "sha256": "1191f0fd705b89a7aa80db244724136276eb54bf2113eb6e213acdd4c7d63149"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-320-text2.png",
+          "sha256": "b86df4912d19f15493b6eeda2bf7030fe0d6b18b10c7ca1526b67d2ac34f4325"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2394,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command requires organization-wide authority</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Your current role cannot view cash across the organization. Ask your organization administrator to review your access, or return to your dashboard for the work available to you.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "en",
+      "width": 768,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-768-text1.png",
+          "sha256": "2d26aa77ae0894e9cd0c601baf133b1493d92408e04dca0459554c0ec45ac8d1"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-768-text2.png",
+          "sha256": "febeea80cf512023dd8077bcfa6826174f37fe1ba45429362f3297269dda74b8"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 9873,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command requires organization-wide authority</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Your current role cannot view cash across the organization. Ask your organization administrator to review your access, or return to your dashboard for the work available to you.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "en",
+      "width": 1440,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-1440-text1.png",
+          "sha256": "5320a295254f390cdca3fafb79de5b898e14e8d45a2ffc1fa6c1f7efd474758f"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-en-1440-text2.png",
+          "sha256": "71afe080a0d87a3c09335c3765562ad365f598fe46371b5f7837b2f9d0bb26aa"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2451,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Permission required</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Cash Command requires organization-wide authority</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Your current role cannot view cash across the organization. Ask your organization administrator to review your access, or return to your dashboard for the work available to you.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/en/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/en/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "fr",
+      "width": 320,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-320-text1.png",
+          "sha256": "fb6abc7dcb6c4478a8cd675109a62f4622631409fb62ef9d7b4f9a80c5e327b6"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-320-text2.png",
+          "sha256": "cb515ee5ce22dbac83630b2781df7f60dc8d8dee99f8bc43100387adf25a79d1"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 320,
+          "documentWidth": 320,
+          "contentWidth": 320,
+          "contentScrollWidth": 320,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2286,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie exige une autorisation pour toute l’organisation</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Votre rôle actuel ne permet pas de consulter la trésorerie de toute l’organisation. Demandez à votre administrateur de vérifier vos droits ou revenez au tableau de bord pour accéder à vos activités autorisées.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "fr",
+      "width": 768,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-768-text1.png",
+          "sha256": "263c4e97245c9dbe020da988cdf54d3415b55d89135b4d0c3198628ab92e2c2f"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-768-text2.png",
+          "sha256": "a060394a4e0fed2ade4f258af689cd1d11ff54b30b67388c09d99c95010d2614"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 768,
+          "documentWidth": 768,
+          "contentWidth": 548,
+          "contentScrollWidth": 548,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2143,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie exige une autorisation pour toute l’organisation</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Votre rôle actuel ne permet pas de consulter la trésorerie de toute l’organisation. Demandez à votre administrateur de vérifier vos droits ou revenez au tableau de bord pour accéder à vos activités autorisées.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    },
+    {
+      "kind": "authority",
+      "locale": "fr",
+      "width": 1440,
+      "screenshots": [
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-1440-text1.png",
+          "sha256": "9e4202b8b05df13ec51eb63c9b7271970d4c9f2d9cc5db13431114de3894a30c"
+        },
+        {
+          "file": "cash-denial-b2fe8efc-d70c-441f-b566-a0543fc9e021-authority-fr-1440-text2.png",
+          "sha256": "12ca338eef308a52d52142cbc25e85b46ef62ac365049086b2cdb1de5e3959dc"
+        }
+      ],
+      "pageErrors": [],
+      "states": [
+        {
+          "textScale": 1,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        },
+        {
+          "textScale": 2,
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "contentWidth": 1160,
+          "contentScrollWidth": 1160,
+          "reducedMotion": true,
+          "clippedText": [],
+          "keyboardFocusVisible": true
+        }
+      ],
+      "observedRouteMs": 2266,
+      "serializedCashMarkers": [],
+      "oneMainAndHeading": true,
+      "noCashReadModel": true,
+      "scan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "nodes": [
+              {
+                "target": [
+                  ".mt-4.text-\\[var\\(--dash-text-soft\\)\\].tracking-normal"
+                ],
+                "html": "<p class=\"mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\">Autorisation requise</p>"
+              },
+              {
+                "target": [
+                  ".mt-2"
+                ],
+                "html": "<h1 class=\"mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)] break-words\">Le pilotage de la trésorerie exige une autorisation pour toute l’organisation</h1>"
+              },
+              {
+                "target": [
+                  ".mt-3"
+                ],
+                "html": "<p class=\"mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]\">Votre rôle actuel ne permet pas de consulter la trésorerie de toute l’organisation. Demandez à votre administrateur de vérifier vos droits ou revenez au tableau de bord pour accéder à vos activités autorisées.</p>"
+              },
+              {
+                "target": [
+                  ".min-h-10"
+                ],
+                "html": "<a class=\"inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]\" href=\"/fr/dashboard\">"
+              }
+            ]
+          }
+        ]
+      },
+      "keyboardReturnPath": "/fr/dashboard",
+      "passed": true
+    }
+  ],
+  "scope": "Actual authenticated local EN/FR Cash route-permission and organization-authority denial. Synthetic users and organizations only. No financial writes, external messages, migration or production action.",
+  "browserZoom": {
+    "status": "not_run",
+    "reason": "CSS text enlargement is separately reported; no verified native browser zoom mechanism is assumed."
+  },
+  "nativeScreenReader": {
+    "status": "not_run"
+  },
+  "serverBefore": {
+    "address": "127.0.0.1",
+    "pid": 28380,
+    "parentPid": 12740,
+    "workspaceMatches": true,
+    "nextDevelopmentCommand": true
+  },
+  "database": "stoquify_local_registration_20260906_01",
+  "outsideBefore": {
+    "payment": {
+      "hash": "c80e3ac5a567ff33ce3eef34d4c37565be36e540824a83e15af61f51cefda717"
+    },
+    "journalEntry": {
+      "hash": "b8b2969cb005b8d8dc6138e2458b8e9cc7459f048bd8480cd52db52a098e2997"
+    },
+    "ledgerPostingBatch": {
+      "hash": "e01e42f25566c1802293df7da0b55399988d7bcec0fc55f1e88346712d83e9d8"
+    },
+    "accountingSourceLink": {
+      "hash": "02d97cbb2084850e314a5d3ac640bf721f05ef838596b205a2656ad76a86c502"
+    },
+    "inventoryTransaction": {
+      "hash": "5af745c4f0ab6e5e8b467e6dd037659804f220731a650b5c53994ed6145bdf1b"
+    },
+    "purchaseOrder": {
+      "hash": "1496729d14e79712a9f4a5299b42bd7ea200d54e0bd7c7e69ab8b47e7f7138db"
+    },
+    "supplierInvoice": {
+      "hash": "9b55a765d2bc47afe8088f3c9c73918d71fd1e9f4d008913bbd716f9cbfbf5e7"
+    },
+    "supplierPayment": {
+      "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+    },
+    "payrollEmployeeBalanceCase": {
+      "hash": "365443bc87876f9f66a5b9ccdbc863988553c4d021480d91caebb47d4103d2b7"
+    },
+    "closeRun": {
+      "hash": "76b6da5a0924c6ad3d1dcb12dcb0c3c2d7c514268cb3a86c11bd6f4df76ba377"
+    },
+    "organizations": {
+      "hash": "eda5f5f829711ce9953cda89c130f35dcf6b8cda8d301c671d9b72f14d9be5c1"
+    },
+    "user": {
+      "hash": "a52d0c71ab40e354fb2f44e1925d9b123d0a9792cd4e87faacff51e8fd21bdc9"
+    },
+    "role": {
+      "hash": "e82bea694a15ae27082ab92ca71dcac0984f6b8c7797b6c9115c8649f6af5a9c"
+    }
+  },
+  "organizationId": "workflow_cash_denial_b2fe8efc-d70c-441f-b566-a0543fc9e021",
+  "financialBefore": {
+    "payment": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "journalEntry": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "ledgerPostingBatch": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "accountingSourceLink": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "inventoryTransaction": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "purchaseOrder": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "supplierInvoice": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "supplierPayment": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "payrollEmployeeBalanceCase": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "closeRun": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "serverAfter": {
+    "address": "127.0.0.1",
+    "pid": 28380,
+    "parentPid": 12740,
+    "workspaceMatches": true,
+    "nextDevelopmentCommand": true
+  },
+  "passed": true,
+  "financialAfter": {
+    "payment": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "journalEntry": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "ledgerPostingBatch": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "accountingSourceLink": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "inventoryTransaction": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "purchaseOrder": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "supplierInvoice": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "supplierPayment": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "payrollEmployeeBalanceCase": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "closeRun": {
+      "hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "noFinancialMutations": true,
+  "outsideAfter": {
+    "payment": {
+      "hash": "c80e3ac5a567ff33ce3eef34d4c37565be36e540824a83e15af61f51cefda717"
+    },
+    "journalEntry": {
+      "hash": "b8b2969cb005b8d8dc6138e2458b8e9cc7459f048bd8480cd52db52a098e2997"
+    },
+    "ledgerPostingBatch": {
+      "hash": "e01e42f25566c1802293df7da0b55399988d7bcec0fc55f1e88346712d83e9d8"
+    },
+    "accountingSourceLink": {
+      "hash": "02d97cbb2084850e314a5d3ac640bf721f05ef838596b205a2656ad76a86c502"
+    },
+    "inventoryTransaction": {
+      "hash": "5af745c4f0ab6e5e8b467e6dd037659804f220731a650b5c53994ed6145bdf1b"
+    },
+    "purchaseOrder": {
+      "hash": "1496729d14e79712a9f4a5299b42bd7ea200d54e0bd7c7e69ab8b47e7f7138db"
+    },
+    "supplierInvoice": {
+      "hash": "9b55a765d2bc47afe8088f3c9c73918d71fd1e9f4d008913bbd716f9cbfbf5e7"
+    },
+    "supplierPayment": {
+      "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+    },
+    "payrollEmployeeBalanceCase": {
+      "hash": "365443bc87876f9f66a5b9ccdbc863988553c4d021480d91caebb47d4103d2b7"
+    },
+    "closeRun": {
+      "hash": "76b6da5a0924c6ad3d1dcb12dcb0c3c2d7c514268cb3a86c11bd6f4df76ba377"
+    },
+    "organizations": {
+      "hash": "eda5f5f829711ce9953cda89c130f35dcf6b8cda8d301c671d9b72f14d9be5c1"
+    },
+    "user": {
+      "hash": "a52d0c71ab40e354fb2f44e1925d9b123d0a9792cd4e87faacff51e8fd21bdc9"
+    },
+    "role": {
+      "hash": "e82bea694a15ae27082ab92ca71dcac0984f6b8c7797b6c9115c8649f6af5a9c"
+    }
+  },
+  "outsideFixtureUnchanged": true,
+  "sourceAfter": {
+    "components/dashboard/DashboardRouteState.tsx": "b2c69d73283f42828b20469596572d0b48666f676f8989c92ed0a7597497c9b3",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx": "06ad301501f6191188b565b0e49e86096e9146828c035739748bead23e23184b",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "87d473b922b0c93f81a986fd807ff45f9fc874c5ef46ecd997ff7a0a7859cdc6",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-cash-denial-2026-10-01.cjs": "b4ff9388454ff41d14aabaa75721eec7b01eea20336e1807c043c08e42d0825e"
+  },
+  "sourceStable": true
+}

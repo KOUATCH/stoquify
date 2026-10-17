@@ -1,0 +1,1993 @@
+{
+  "schemaVersion": 1,
+  "lane": "finance-accounting",
+  "evidenceDate": "2026-09-15T11:02:51.352Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 35,
+    "runtimeVisited": 0,
+    "completeWorkflowVerified": 0,
+    "denominatorStatus": "provisional bounded semantic discovery; not complete platform or finance denominator",
+    "historicalReportingDefectsCorrected": 1
+  },
+  "overlaps": [
+    {
+      "ids": [
+        "CS-STATEMENT-SNAPSHOT",
+        "CS-STATEMENT-DELIVERY-QUEUE",
+        "CS-STATEMENT-DELIVERY-WORKER",
+        "CS-STATEMENT-PUBLIC-VIEW",
+        "CS-STATEMENT-DISPUTE",
+        "CS-STATEMENT-PROMISE",
+        "CS-STATEMENT-REVOKE"
+      ],
+      "owner": "customer-supplier",
+      "reason": "Statement/recipient workflows already registered; FA AR reads their underlying immutable obligations."
+    },
+    {
+      "ids": [
+        "OTC-01",
+        "OTC-02",
+        "OTC-03",
+        "OTC-04",
+        "OTC-05"
+      ],
+      "owner": "parent order-to-cash",
+      "reason": "Delivery order -> reservation -> goods issue -> billing outcome + receivable + ledger; FA report inclusion must preserve posted effects."
+    },
+    {
+      "ids": [
+        "SALES-DAILY-01"
+      ],
+      "owner": "parent",
+      "reason": "Actual daily sales report separately owned; finance/sales analytic route is distinct."
+    },
+    {
+      "ids": [
+        "NTF-ACCOUNTANT-INVITE",
+        "NTF-ACCOUNTANT-DELIVER"
+      ],
+      "owner": "notifications",
+      "reason": "Communication queue/delivery separate from accountant grant/portfolio controls."
+    }
+  ],
+  "graphs": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "nodes": [
+        {
+          "id": "accounting_accountantportal_tsx",
+          "source": "accounting\\AccountantPortal.tsx",
+          "community": 17
+        },
+        {
+          "id": "accounting_accountingcontrolcenter_tsx",
+          "source": "accounting\\AccountingControlCenter.tsx",
+          "community": 18
+        },
+        {
+          "id": "accounting_closeassurancecenter_tsx",
+          "source": "accounting\\CloseAssuranceCenter.tsx",
+          "community": 4
+        },
+        {
+          "id": "accounting_tests_accountingcontrolcenter_test_tsx",
+          "source": "accounting\\__tests__\\AccountingControlCenter.test.tsx",
+          "community": 71
+        },
+        {
+          "id": "accounting_tests_closeassurancecenter_test_tsx",
+          "source": "accounting\\__tests__\\CloseAssuranceCenter.test.tsx",
+          "community": 27
+        },
+        {
+          "id": "finance_finance_dashboard_theme_ts",
+          "source": "finance\\finance-dashboard-theme.ts",
+          "community": 33
+        },
+        {
+          "id": "finance_financespecializedledgersurfaces_tsx",
+          "source": "finance\\FinanceSpecializedLedgerSurfaces.tsx",
+          "community": 3
+        }
+      ]
+    },
+    {
+      "file": "graphify-out/graph_actions.json",
+      "nodes": [
+        {
+          "id": "accounting_journals_actions_ts",
+          "source": "accounting\\journals.actions.ts",
+          "community": 38
+        },
+        {
+          "id": "accounting_reports_actions_ts",
+          "source": "accounting\\reports.actions.ts",
+          "community": 12
+        },
+        {
+          "id": "finance_finance_dashboard_actions_ts",
+          "source": "finance\\finance-dashboard.actions.ts",
+          "community": 127
+        },
+        {
+          "id": "finance_tests_finance_dashboard_actions_test_ts",
+          "source": "finance\\__tests__\\finance-dashboard.actions.test.ts",
+          "community": 158
+        }
+      ]
+    },
+    {
+      "file": "graphify-out/graph_hooks.json",
+      "nodes": [
+        {
+          "id": "useaccountantportal_ts",
+          "source": "useAccountantPortal.ts",
+          "community": 30
+        },
+        {
+          "id": "useaccountingcontrolcenter_ts",
+          "source": "useAccountingControlCenter.ts",
+          "community": 16
+        },
+        {
+          "id": "accounting_usecloseassurance_ts",
+          "source": "accounting\\useCloseAssurance.ts",
+          "community": 5
+        }
+      ]
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "nodes": [
+        {
+          "id": "locale_dashboard_dashboard_accounting_reports_financial_statements_page_tsx",
+          "source": "[locale]\\(dashboard)\\dashboard\\accounting\\reports\\financial-statements\\page.tsx",
+          "community": 4
+        },
+        {
+          "id": "locale_dashboard_dashboard_accounting_reports_financial_statements_tests_page_test_tsx",
+          "source": "[locale]\\(dashboard)\\dashboard\\accounting\\reports\\financial-statements\\__tests__\\page.test.tsx",
+          "community": 5
+        }
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "FA-OVERVIEW",
+      "name": "Finance overview and analytic views",
+      "purpose": "Review period/location cash, revenue, cost and management indicators.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "view-specific finance read permission"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx",
+        "components/finance/FinanceCommandCenterDashboard.tsx",
+        "actions/finance/finance-dashboard.actions.ts"
+      ],
+      "services": [
+        "services/finance/finance-dashboard.service.ts",
+        "hooks/finance/useFinanceDashboard.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "filters -> scoped query -> result/failure -> refresh"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/finance/finance-dashboard.service.ts"
+        },
+        {
+          "kind": "source",
+          "source": "hooks/finance/useFinanceDashboard.ts"
+        }
+      ],
+      "remaining": [
+        "Validate metric source/time/location scope and retained obligations; do not duplicate SALES-DAILY-01."
+      ]
+    },
+    {
+      "id": "FA-RECEIVABLES",
+      "name": "Finance receivables overview",
+      "purpose": "Prioritize open customer balances and aging.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.receivables.read or finance.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx",
+        "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+        "actions/finance/finance-dashboard.actions.ts"
+      ],
+      "services": [
+        "services/finance/finance-dashboard.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "filter -> totals and top counterparties -> customer/source links"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/finance/finance-dashboard.service.ts"
+        }
+      ],
+      "remaining": [
+        "Active-only first-100 totals omit retained obligations; current action panel has no AR history link."
+      ]
+    },
+    {
+      "id": "FA-PAYABLES",
+      "name": "Finance payables overview",
+      "purpose": "Review supplier balances and payable aging.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.payables.read or finance.read (route also AP view)"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx",
+        "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+        "actions/finance/finance-dashboard.actions.ts"
+      ],
+      "services": [
+        "services/finance/finance-dashboard.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "filter -> balances -> AP workbench/history"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/finance/finance-dashboard.service.ts"
+        }
+      ],
+      "remaining": [
+        "Cross-reference purchasing-ap lane; verify supported AP invoices versus PO-derived aging and first-100 active supplier balances."
+      ]
+    },
+    {
+      "id": "FA-PAYMENTS",
+      "name": "Finance payment overview",
+      "purpose": "Inspect payment direction, method and recent records.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.payments.read or finance.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx",
+        "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+        "actions/finance/finance-dashboard.actions.ts"
+      ],
+      "services": [
+        "services/finance/finance-dashboard.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "load -> table/filter -> source links/export"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/finance/finance-dashboard.service.ts"
+        }
+      ],
+      "remaining": [
+        "Compare recent-row bounds to advertised totals/export scope."
+      ]
+    },
+    {
+      "id": "FA-AR-HISTORY",
+      "name": "Retained customer AR history and export",
+      "purpose": "Read immutable receivable, lifecycle and allocation evidence as of a date.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.receivables.read/finance.read; export finance.reports.export/reports.export + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
+        "components/finance/AROpenItemsHistoryWorkbench.tsx",
+        "actions/finance/ar-history.actions.ts"
+      ],
+      "services": [
+        "services/accounting/ar-open-item.service.ts",
+        "services/accounting/ar-open-item-export.service.ts"
+      ],
+      "records": [
+        "CustomerReceivableDocument",
+        "CustomerReceivableLifecycleState",
+        "CustomerLedgerEntry"
+      ],
+      "transitions": [
+        "asOf/recordedThrough -> posted documents -> lifecycle and allocation -> controlled export"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/ar-open-item.service.ts"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/ar-open-item-export.service.ts"
+        }
+      ],
+      "remaining": [
+        "Cross-reference CS-STATEMENT-SNAPSHOT and OTC-04; no active-customer filter here, unlike overview."
+      ]
+    },
+    {
+      "id": "FA-SETTLEMENT",
+      "name": "Collect existing customer settlement",
+      "purpose": "Apply cash/payment to existing receivable obligations.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "service control context; no production collection action located"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "services/accounting/customer-settlement.service.ts"
+      ],
+      "services": [
+        "services/accounting/customer-settlement.service.ts"
+      ],
+      "records": [
+        "CustomerSettlement",
+        "CustomerLedgerEntry",
+        "CustomerReceivableLifecycleState"
+      ],
+      "transitions": [
+        "existing obligation -> allocation -> immutable settlement and ledger"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "service_only_entry_not_found",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/customer-settlement.service.ts"
+        }
+      ],
+      "remaining": [
+        "CS retention plan owns inactive-customer settlement gap; entry handoff missing."
+      ]
+    },
+    {
+      "id": "FA-SETTLEMENT-REVERSE",
+      "name": "Reverse customer settlement",
+      "purpose": "Undo a posted settlement through controlled compensating records.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.receivables.reverse + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/finance/customer-settlement.actions.ts"
+      ],
+      "services": [
+        "services/accounting/customer-settlement-reversal.service.ts"
+      ],
+      "records": [
+        "CustomerSettlementReversal",
+        "CustomerLedgerEntry"
+      ],
+      "transitions": [
+        "request with source settlement -> checked reversal -> retained source evidence"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/customer-settlement-reversal.service.ts"
+        }
+      ],
+      "remaining": [
+        "Trace UI consumer and execute replay/tenant/financial invariants."
+      ]
+    },
+    {
+      "id": "FA-ACCOUNTS",
+      "name": "Maintain and archive chart accounts",
+      "purpose": "Maintain postable account structure without losing posted evidence.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.accounts.read; manage + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+        "actions/accounting/accounts.actions.ts"
+      ],
+      "services": [
+        "services/accounting/accounts.service.ts"
+      ],
+      "records": [
+        "ChartOfAccount",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "create -> update restricted after activity -> archive"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/accounts.service.ts"
+        },
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "FA-F01 archive/report omission; FA-F02 load failure zeros; update action has no located UI consumer."
+      ],
+      "verificationNotes": [
+        "Actual create/post/reverse/archive services retained identical nonzero reports and ledger after archiving four accounts. Draft777 excluded; cumulative730/730, assets590, net income90. Maker-checker, foreign/missing draft accounts and foreign period scope checked. Direct synthetic service proof only; UI/export/full lifecycle remain open."
+      ]
+    },
+    {
+      "id": "FA-SETUP",
+      "name": "Configure and lock accounting readiness",
+      "purpose": "Configure base settings and verify mappings, journals, period and posting rules.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.setup.manage; mutations fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx",
+        "components/accounting/AccountingControlCenter.tsx",
+        "actions/accounting/settings.actions.ts"
+      ],
+      "services": [
+        "services/accounting/accounting-settings.service.ts",
+        "services/accounting/control-center.service.ts"
+      ],
+      "records": [
+        "OrganizationAccountingSettings",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "incomplete -> real readiness issues -> READY/locked"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/accounting-settings.service.ts"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/control-center.service.ts"
+        }
+      ],
+      "remaining": [
+        "Verify password challenge/recovery; readiness is not professional certification; default-journal creation separate from verified balanced rule setup."
+      ]
+    },
+    {
+      "id": "FA-PERIOD-CREATE",
+      "name": "Create fiscal year and periods",
+      "purpose": "Establish accounting periods.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.setup.manage + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+        "actions/accounting/settings.actions.ts"
+      ],
+      "services": [
+        "services/accounting/periods.service.ts#createFiscalYearWithPeriods"
+      ],
+      "records": [
+        "FiscalYear",
+        "AccountingPeriod",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "date/name input -> transactional year/monthly periods"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/periods.service.ts#createFiscalYearWithPeriods"
+        }
+      ],
+      "remaining": [
+        "Check non-month-start first period boundary and overlap handling; no runtime reproduction yet."
+      ]
+    },
+    {
+      "id": "FA-PERIOD-CLOSE",
+      "name": "Close an accounting period",
+      "purpose": "Close only when posting/reconciliation/ledger preflight allows.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.period.close + fresh auth and sensitive-action policy"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+        "actions/accounting/settings.actions.ts"
+      ],
+      "services": [
+        "services/accounting/periods.service.ts#closeAccountingPeriod"
+      ],
+      "records": [
+        "AccountingPeriod",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "OPEN -> preflight -> sensitive control -> CLOSED"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "source_unit_owned_database_review_full_lifecycle_open",
+      "runtimeStatus": "partial_owned_domain_concurrency_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/periods.service.ts#closeAccountingPeriod"
+        },
+        {
+          "kind": "owned_database_and_unit",
+          "source": "../../evidence/period-concurrency-v86.json"
+        },
+        {
+          "kind": "owned_database_and_unit",
+          "source": "../../evidence/reconciliation-period-v87.json"
+        }
+      ],
+      "remaining": [
+        "Shared helper/close protocol verified in v86; v87 joins suspense/sign-off to it. Other readers, standalone suspense obligations and full lifecycle still require review.",
+        "Full action/session/role and EN/FR setup journeys remain incomplete.",
+        "Period overlaps and low-level/null-period batches require classification.",
+        "Period closure is distinct from close-pack certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "FA-JOURNAL-READ",
+      "name": "Browse drafts and posted journal evidence",
+      "purpose": "Inspect manual and posted entries.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.journal.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx",
+        "actions/accounting/journals.actions.ts"
+      ],
+      "services": [
+        "services/accounting/journals.service.ts#listJournalEntries"
+      ],
+      "records": [
+        "Journal",
+        "JournalEntry",
+        "JournalEntryLine"
+      ],
+      "transitions": [
+        "load latest 100 -> split drafts/posted -> post/reverse"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/journals.service.ts#listJournalEntries"
+        }
+      ],
+      "remaining": [
+        "Failed reads become zero/empty despite error metadata; no paging to older than latest100 on this page."
+      ]
+    },
+    {
+      "id": "FA-JOURNAL-CREATE",
+      "name": "Create a balanced manual draft",
+      "purpose": "Record new manual work with domain and module admission controls.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.journal.create; journal read and account lookup permissions"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+        "actions/accounting/journals.actions.ts"
+      ],
+      "services": [
+        "services/accounting/journals.service.ts#createManualJournalEntry"
+      ],
+      "records": [
+        "JournalEntry",
+        "JournalEntryLine",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "edit -> submit -> admitted balanced draft or retained fields/error"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/journals.service.ts#createManualJournalEntry"
+        }
+      ],
+      "remaining": [
+        "Prior module run02 has isolated EN/FR stopped-submit evidence; do not count it as new whole-workflow proof here."
+      ]
+    },
+    {
+      "id": "FA-JOURNAL-POST",
+      "name": "Post an existing draft",
+      "purpose": "Post balanced, same-tenant, open-period journal evidence.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.journal.post + fresh auth and sensitive-action policy"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx",
+        "actions/accounting/journals.actions.ts"
+      ],
+      "services": [
+        "services/accounting/posting.service.ts#postJournalEntry"
+      ],
+      "records": [
+        "JournalEntry",
+        "LedgerPostingBatch",
+        "LedgerAuditEvent",
+        "AccountingSourceLink"
+      ],
+      "transitions": [
+        "DRAFT -> validated controlled POSTED"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/posting.service.ts#postJournalEntry"
+        }
+      ],
+      "remaining": [
+        "Actual UI fresh-auth recovery and duplicate/close-race proof pending."
+      ]
+    },
+    {
+      "id": "FA-JOURNAL-REVERSE",
+      "name": "Reverse a posted entry",
+      "purpose": "Preserve original posting and add compensating evidence.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.journal.reverse + fresh auth and sensitive-action policy"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx",
+        "actions/accounting/journals.actions.ts"
+      ],
+      "services": [
+        "services/accounting/posting.service.ts#reverseJournalEntry"
+      ],
+      "records": [
+        "JournalEntry",
+        "JournalEntryLine",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "POSTED -> reversal with source retained"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/posting.service.ts#reverseJournalEntry"
+        }
+      ],
+      "remaining": [
+        "Current UI supplies fixed reason Manual reversal; confirm/reason/step-up journey incomplete."
+      ]
+    },
+    {
+      "id": "FA-TRIAL-BALANCE",
+      "name": "Read and export trial balance",
+      "purpose": "Aggregate posted/reversed entries by account.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.reports.read; exports.create + fresh auth for export"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx",
+        "actions/accounting/reports.actions.ts"
+      ],
+      "services": [
+        "services/accounting/reports.service.ts#getTrialBalance"
+      ],
+      "records": [],
+      "transitions": [
+        "filter -> account activity/balances -> controlled export"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "historical_account_read_inclusion_corrected",
+      "reviewStatus": "focused_service_regression_passed",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/reports.service.ts#getTrialBalance"
+        },
+        {
+          "kind": "mocked_service_tests",
+          "source": "RETAINED_REPORT_VERIFICATION.json",
+          "result": "30 passed across 6 suites; runtime not visited"
+        },
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "Archived account inclusion corrected; real runtime report proof remains."
+      ],
+      "verificationNotes": [
+        "Actual create/post/reverse/archive services retained identical nonzero reports and ledger after archiving four accounts. Draft777 excluded; cumulative730/730, assets590, net income90. Maker-checker, foreign/missing draft accounts and foreign period scope checked. Direct synthetic service proof only; UI/export/full lifecycle remain open."
+      ]
+    },
+    {
+      "id": "FA-FINANCIAL-STATEMENTS",
+      "name": "Read financial statements",
+      "purpose": "Read scoped internal balance sheet, P&L and management measures.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.reports.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx",
+        "actions/accounting/reports.actions.ts"
+      ],
+      "services": [
+        "services/accounting/financial-statements.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "period -> posted account amounts -> classified statements"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "historical_account_read_inclusion_corrected",
+      "reviewStatus": "focused_service_regression_passed",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/financial-statements.service.ts"
+        },
+        {
+          "kind": "mocked_service_tests",
+          "source": "RETAINED_REPORT_VERIFICATION.json",
+          "result": "30 passed across 6 suites; runtime not visited"
+        },
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "Archived account inclusion corrected; internal reporting/classification limitations remain, not statutory certification."
+      ],
+      "verificationNotes": [
+        "Actual create/post/reverse/archive services retained identical nonzero reports and ledger after archiving four accounts. Draft777 excluded; cumulative730/730, assets590, net income90. Maker-checker, foreign/missing draft accounts and foreign period scope checked. Direct synthetic service proof only; UI/export/full lifecycle remain open."
+      ]
+    },
+    {
+      "id": "FA-GENERAL-LEDGER",
+      "name": "Read and export account ledger",
+      "purpose": "Trace detailed account postings.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.reports.read; exports.create + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/accounting/reports.actions.ts"
+      ],
+      "services": [
+        "services/accounting/reports.service.ts#getGeneralLedger",
+        "services/accounting/reports.service.ts#exportAccountingReport"
+      ],
+      "records": [],
+      "transitions": [
+        "account/date -> posted/reversed detail -> audit-bound export"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "action_service_without_located_ui",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/reports.service.ts#getGeneralLedger"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/reports.service.ts#exportAccountingReport"
+        },
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "No production UI caller found for getGeneralLedgerAction; do not claim employee journey complete."
+      ],
+      "verificationNotes": [
+        "Actual create/post/reverse/archive services retained identical nonzero reports and ledger after archiving four accounts. Draft777 excluded; cumulative730/730, assets590, net income90. Maker-checker, foreign/missing draft accounts and foreign period scope checked. Direct synthetic service proof only; UI/export/full lifecycle remain open."
+      ]
+    },
+    {
+      "id": "FA-ASYNC-EXPORT",
+      "name": "Request, poll and complete statement exports",
+      "purpose": "Persist requested export manifest and artifact receipt.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "exports.create + fresh auth + enforced accounting export; status reports.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/accounting/finance-statement-export.actions.ts",
+        "services/accounting/finance-statement-export.service.ts"
+      ],
+      "services": [
+        "services/accounting/finance-statement-export.service.ts",
+        "services/accounting/finance-statement-export-operations.service.ts"
+      ],
+      "records": [
+        "BusinessEvent",
+        "OutboxMessage",
+        "AuditLog"
+      ],
+      "transitions": [
+        "accepted -> worker lease -> artifact built -> completed/failed"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "contract_and_service_missing_runtime_handoff",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/finance-statement-export.service.ts"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/finance-statement-export-operations.service.ts"
+        },
+        {
+          "kind": "verification",
+          "source": "../../EVENT_SOURCE_CONTRACT_V151.md"
+        },
+        {
+          "kind": "verification",
+          "source": "../../evidence/event-source-contract-v151.json"
+        }
+      ],
+      "remaining": [
+        "Generic worker requires injected artifact builder; no production caller, concrete storage/download route, or scheduler found in bounded search; configuration readiness is not runtime delivery.",
+        "v151 corrects event source contract; complete affected domain/browser and indirect producer verification remains open."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-READ",
+      "name": "Review close readiness and evidence graph",
+      "purpose": "Understand current/retained close assessment findings.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/close/[periodId]/page.tsx",
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#getCloseAssuranceDashboard",
+        "services/accounting/close-assurance.service.ts#getCloseEvidenceGraph"
+      ],
+      "records": [
+        "CloseRun",
+        "CloseChecklistItem",
+        "CloseEvidenceItem",
+        "CloseAssuranceFinding"
+      ],
+      "transitions": [
+        "select period -> persisted latest assessment or live nonpersisted draft -> evidence"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "close_page_and_read_action_module_admission_and_utc_timestamp_display_corrected",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "en_fr_direct_retained_module_reads_and_cash_queue_handoff_utc_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#getCloseAssuranceDashboard"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#getCloseEvidenceGraph"
+        },
+        {
+          "kind": "verification",
+          "source": "DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md",
+          "scope": "Close Assurance source and direct-read boundaries — 2026-09-19; partial workflow evidence"
+        },
+        "CASH_COMMAND_QUEUE_HANDOFFS_2026-09-30.md",
+        "evidence/cash-queue-review-2026-09-30.json"
+      ],
+      "remaining": [
+        "Source collectors distinguish UNAVAILABLE; actual freshness/retry/runtime scope pending.",
+        "Named Digest/Close Centre/period module read cases verified; full evidence-graph runtime, freshness/retry, object scope, source-history and accessibility closure remain. No full workflow closure claimed."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-RUN",
+      "name": "Run close assessment",
+      "purpose": "Capture ledger/reconciliation/inventory/payroll/data-trust evidence into a run.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.run"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#runCloseAssurance"
+      ],
+      "records": [
+        "CloseRun",
+        "CloseChecklistItem",
+        "CloseEvidenceItem",
+        "CloseAssuranceFinding",
+        "AuditLog"
+      ],
+      "transitions": [
+        "request -> collect real sources -> persist blocked/ready assessment"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#runCloseAssurance"
+        }
+      ],
+      "remaining": [
+        "Assessment is synchronous; response-loss/retry and post-commit revalidation ambiguity require proof.",
+        "Source review: runAssessment transport has no module declaration. Verify domain/write admission for suspended, read-only and stopped-new-work states before closure; the new page and read-action gates do not establish write enforcement."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-FINDING",
+      "name": "Assign and discuss close findings",
+      "purpose": "Coordinate accountable remediation.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "close.finding.assign/comment"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#assignCloseFinding",
+        "services/accounting/close-assurance.service.ts#commentOnCloseFinding"
+      ],
+      "records": [
+        "CloseAssuranceFinding",
+        "AccountantComment",
+        "AuditLog"
+      ],
+      "transitions": [
+        "OPEN -> ASSIGNED -> comment/audit"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#assignCloseFinding"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#commentOnCloseFinding"
+        }
+      ],
+      "remaining": [
+        "UI assignment currently no assignee input; server actor/scope validation must be exercised."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-EVIDENCE-REQUEST",
+      "name": "Request missing close evidence",
+      "purpose": "Create a bounded accountable evidence request.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.evidence.request"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#requestMissingCloseEvidence"
+      ],
+      "records": [
+        "AccountantComment",
+        "CloseAssuranceFinding",
+        "BusinessEvent"
+      ],
+      "transitions": [
+        "request -> idempotent OPEN with assignee/scope"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "action_service_without_located_ui",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#requestMissingCloseEvidence"
+        }
+      ],
+      "remaining": [
+        "No UI/action consumer found beyond export; wire existing service without inventing evidence."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-EVIDENCE-RESPOND",
+      "name": "Respond with missing close evidence",
+      "purpose": "Attach source evidence to an existing request.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.finding.comment"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#respondToMissingCloseEvidence"
+      ],
+      "records": [
+        "AccountantComment",
+        "CloseAssuranceFinding",
+        "BusinessEvent"
+      ],
+      "transitions": [
+        "OPEN request -> validated SUBMITTED response/IN_REVIEW"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "action_service_without_located_ui",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#respondToMissingCloseEvidence"
+        }
+      ],
+      "remaining": [
+        "No located UI handoff; preserve request identity/hash on retries."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-EVIDENCE-ACCEPT",
+      "name": "Review submitted evidence",
+      "purpose": "Apply authenticated accountant acceptance and resolve only verified response.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.accountant.review + fresh auth"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#acceptMissingCloseEvidenceResponse"
+      ],
+      "records": [
+        "CloseAssuranceFinding",
+        "AccountantComment",
+        "BusinessEvent"
+      ],
+      "transitions": [
+        "SUBMITTED -> serializable verified acceptance -> RESOLVED"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "action_service_without_located_ui",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#acceptMissingCloseEvidenceResponse"
+        }
+      ],
+      "remaining": [
+        "No located UI handoff; actual separation-of-duty/privacy/replay check pending."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-WAIVER",
+      "name": "Request and approve waiver",
+      "purpose": "Record compensating-control request and distinct approver decision.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "waiver.request; waiver.approve + fresh auth; requester cannot approve"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "hooks/accounting/useCloseAssurance.ts",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#requestCloseWaiver",
+        "services/accounting/close-assurance.service.ts#approveCloseWaiver"
+      ],
+      "records": [
+        "CloseAssuranceFinding",
+        "AuditLog"
+      ],
+      "transitions": [
+        "request -> IN_REVIEW -> distinct approval -> WAIVED_WITH_APPROVAL"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "request_ui_approval_handoff_missing",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#requestCloseWaiver"
+        },
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#approveCloseWaiver"
+        }
+      ],
+      "remaining": [
+        "Request UI located, approve hook exists but no UI invocation found; do not call waiver journey complete."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-REVIEW",
+      "name": "Record accountant close review",
+      "purpose": "Capture accountable disposition of close run.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.accountant.review"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance.service.ts#updateAccountantReview"
+      ],
+      "records": [
+        "AccountantReview",
+        "AuditLog"
+      ],
+      "transitions": [
+        "OPEN -> CHANGES_REQUESTED/READY_TO_CLOSE/APPROVED_FOR_CLOSE/REJECTED/CANCELLED"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance.service.ts#updateAccountantReview"
+        }
+      ],
+      "remaining": [
+        "Review notes preserved on thrown errors; actual domain state/SOD/retry verification pending."
+      ]
+    },
+    {
+      "id": "FA-CLOSE-PACK",
+      "name": "Export draft or controlled certified close pack",
+      "purpose": "Produce evidence-bound close artifact under current blockers.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "close.export for draft; close.certify + fresh auth and non-runner for certified"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "actions/accounting/close-assurance.actions.ts"
+      ],
+      "services": [
+        "services/accounting/close-assurance-pack.service.ts#exportClosePack"
+      ],
+      "records": [
+        "ClosePackExport",
+        "CloseRun",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "draft or certification request -> freshness/control blockers -> artifact hash/watermark and retained export"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/close-assurance-pack.service.ts#exportClosePack"
+        }
+      ],
+      "remaining": [
+        "No professional certification claim. Investigate invalidation evidence written then thrown inside same transaction; it may roll back with denied export."
+      ]
+    },
+    {
+      "id": "FA-ACCOUNTANT-PORTAL",
+      "name": "Read accountant trust portal and export",
+      "purpose": "Review source coverage, control weaknesses and limited trust pack.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.audit.read; exports.create + fresh auth and control policy"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/AccountantPortal.tsx",
+        "actions/accounting/data-trust.actions.ts"
+      ],
+      "services": [
+        "services/accounting/data-trust.service.ts"
+      ],
+      "records": [
+        "AuditLog",
+        "AccountingExport"
+      ],
+      "transitions": [
+        "read trust conditions -> constrained export"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "implemented_source_trace_only",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/data-trust.service.ts"
+        },
+        {
+          "kind": "verification",
+          "source": "../../EVENT_SOURCE_CONTRACT_V151.md"
+        },
+        {
+          "kind": "verification",
+          "source": "../../evidence/event-source-contract-v151.json"
+        }
+      ],
+      "remaining": [
+        "Cross-reference NTF accountant invitation/delivery; actual read redaction and export authority pending.",
+        "v151 corrects event source contract; complete affected domain/browser and indirect producer verification remains open."
+      ]
+    },
+    {
+      "id": "FA-ACCOUNTANT-ACCESS",
+      "name": "Grant/revoke scoped accountant client access",
+      "purpose": "Maintain read/review scope for external accountant users.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.accountant.invite + fresh auth; portfolio accounting.audit.read"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "components/accounting/AccountantAccessManager.tsx",
+        "components/accounting/AccountantPortfolio.tsx",
+        "actions/accounting/accountant-access.actions.ts"
+      ],
+      "services": [
+        "services/accounting/accountant-access.service.ts"
+      ],
+      "records": [
+        "AccountantAccessGrant",
+        "AuditLog"
+      ],
+      "transitions": [
+        "grant/invite -> scoped portfolio -> revoke"
+      ],
+      "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+      "implementationStatus": "invalid_accounting_source_enum_in_grant_revocation_expiry_events_corrected",
+      "reviewStatus": "current_source_and_owned_database_boundary_review",
+      "runtimeStatus": "partial_owned_service_database_grant_acceptance_revocation_expiry_renewal_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/accounting/accountant-access.service.ts"
+        },
+        {
+          "kind": "verification",
+          "source": "../../REFERRAL_FUNNEL_V150.md"
+        },
+        {
+          "kind": "verification",
+          "source": "../../evidence/referral-funnel-v150.json"
+        },
+        {
+          "kind": "verification",
+          "source": "../../EVENT_SOURCE_CONTRACT_V151.md"
+        },
+        {
+          "kind": "verification",
+          "source": "../../evidence/event-source-contract-v151.json"
+        }
+      ],
+      "remaining": [
+        "Invitation/delivery NTF-ACCOUNTANT-INVITE/DELIVER overlap; distinguish portfolio client authority from tenant admin wildcard.",
+        "Complete administration UI, role/fresh-auth and portfolio lifecycle verification remain open.",
+        "v151 corrects event source contract; complete affected domain/browser and indirect producer verification remains open."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "FA-CASH-HISTORY",
+      "name": "Cash and payment history",
+      "purpose": "Inspect recorded cashier/drawer/payment evidence.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "any route permission: finance cash/payments/read, reconciliation.read, pos.read, OPERATE_POS"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
+        "components/finance/CashPaymentHistoryWorkbench.tsx"
+      ],
+      "services": [],
+      "records": [],
+      "transitions": [
+        "load -> filter -> drawer/details/export"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "entry_only_pending_trace",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [],
+      "remaining": [
+        "Entry traced only; owner/actions/worker semantics not yet inspected."
+      ]
+    },
+    {
+      "id": "FA-CASH-DRAWER",
+      "name": "Cash drawer management entry",
+      "purpose": "Reach drawer operations from finance.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.cash-drawer.read or finance.read at route"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx",
+        "components/pos/CashDrawerManagementDashboard.tsx"
+      ],
+      "services": [],
+      "records": [],
+      "transitions": [
+        "finance route -> existing POS drawer component"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "entry_only_pending_trace",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "owned_en_fr_empty_drawer_entry_back_and_permission_revocation_verified",
+      "evidence": [
+        "CASH_COMMAND_TIMEZONE_AND_DRAWER_2026-09-30.md"
+      ],
+      "remaining": [
+        "POS owner overlap; do not duplicate operational drawer workflow or touch rejected offline scope.",
+        "Empty drawer scope displayed cash under control and 100% confidence in the actual FR browser; source confidence starts at 100 and subtracts observed exceptions. Review empty-evidence semantics. Destination date range uses machine-local boundaries/formatting; reconcile source and browser timezone labels. Handoff evidence does not establish drawer operations or reconciliation."
+      ]
+    },
+    {
+      "id": "FA-CASH-COMMAND",
+      "name": "Cash command intelligence",
+      "purpose": "Review read-only cash risks and evidence-linked work.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.read/dashboard.read and passed actor roles/permissions"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+        "components/cash-command/CashCommandDashboard.tsx"
+      ],
+      "services": [
+        "services/cash-command/cash-command.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "read -> freshness/risk -> authorized source links"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "atomic_payroll_emission_and_cumulative_settlement_forecast_corrected",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "owned_cash_handoffs_blocked_proofs_and_actual_payroll_journal_proof_en_fr_verified",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/cash-command/cash-command.service.ts"
+        },
+        "DAILY_DIGEST_SIGNAL_AUDIT_2026-09-27.md",
+        "PAYROLL_CURRENCY_READ_VERIFICATION_2026-09-27.md",
+        "FORECAST_CURRENCY_VERIFICATION_2026-09-27.md",
+        "CASH_COMMAND_PROOF_BOUNDARY_2026-09-27.md",
+        "CASH_COMMAND_VISIBILITY_2026-09-28.md",
+        "evidence/cash-visibility-review-2026-09-28.json",
+        "CASH_COMMAND_PROOF_STATE_2026-09-28.md",
+        "evidence/cash-proof-state-review-2026-09-28.json",
+        "evidence/cash-proof-portal-finding-2026-09-28.json",
+        "CASH_COMMAND_PROOF_PORTAL_2026-09-28.md",
+        "evidence/proof-portal-review-2026-09-28.json",
+        "CASH_COMMAND_RELATED_SOURCES_2026-09-28.md",
+        "evidence/cash-related-review-2026-09-28.json",
+        "CASH_COMMAND_PRIVATE_SOURCES_2026-09-28.md",
+        "evidence/cash-private-review-2026-09-28.json",
+        "CASH_COMMAND_PAYROLL_SOURCE_EXTRACTION_2026-09-28.md",
+        "evidence/payroll-extraction-review-2026-09-28.json",
+        "CASH_COMMAND_SOURCE_ADMISSION_2026-09-28.md",
+        "evidence/cash-sources-review-2026-09-28.json",
+        "CASH_COMMAND_NAVIGATION_2026-09-28.md",
+        "evidence/cash-navigation-review-2026-09-28.json",
+        "CASH_COMMAND_TIMEZONE_AND_DRAWER_2026-09-30.md",
+        "evidence/cash-timezone-review-2026-09-30.json",
+        "CASH_COMMAND_OBSERVATIONS_AND_FORECAST_2026-09-30.md",
+        "evidence/cash-observation-review-2026-09-30.json",
+        "CASH_COMMAND_FINANCE_HANDOFFS_2026-09-30.md",
+        "evidence/cash-finance-handoff-review-2026-09-30.json",
+        "CASH_COMMAND_QUEUE_HANDOFFS_2026-09-30.md",
+        "evidence/cash-queue-review-2026-09-30.json",
+        "CASH_COMMAND_PRESENTATION_2026-09-30.md",
+        "evidence/cash-presentation-review-2026-09-30.json",
+        "CASH_COMMAND_SOURCE_COPY_2026-09-30.md",
+        "evidence/cash-source-copy-review-2026-09-30.json",
+        "CASH_PROOF_COMPLETENESS_2026-09-30.md",
+        "evidence/cash-proof-completeness-review-2026-09-30.json",
+        "CASH_PROOF_PRESENTATION_2026-09-30.md",
+        "evidence/cash-proof-presentation-review-2026-09-30.json",
+        "CASH_PAYROLL_POSTING_AND_SETTLEMENT_2026-09-30.md",
+        "evidence/cash-payroll-posting-review-2026-09-30.json",
+        "CASH_PAYROLL_SETTLEMENT_BALANCE_2026-09-30.md",
+        "evidence/cash-settlement-balance-review-2026-09-30.json"
+      ],
+      "remaining": [
+        "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+        "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Actual posting from synthetic calculated inputs and settlement writer from synthetic release fixtures are verified, not statutory/provider approval. Complete the settlement workbench remainder/defaults and EN/FR errors; implement controlled legacy partial-history reconstruction from authentic evidence. Canonical new settlement balances, serializable concurrency and forecast remainders are now verified.",
+        "Finish the Cash accessibility checklist: tablet coverage, keyboard/contrast/reflow, enlarged text and the identified payroll nested-main boundary. Native screen-reader speech and browser zoom remain unverified limits.",
+        "Complete route-latency investigation against a recorded baseline or approved budget. The original truncated shell hydration trace remains unattributed; investigate any recurrence. The reproduced date mismatch is corrected.",
+        "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+      ],
+      "status": "In progress",
+      "closureReview": {
+        "checklist": "CASH_COMMAND_CLOSURE_2026-09-27.md",
+        "completeWorkflowVerified": false,
+        "verifiedCriteria": [
+          "unit_proof_identifiers_authorized_before_discovery",
+          "unit_module_admission_ordering_and_request_revocation",
+          "unit_tenant_period_and_posted_journal_query_contract",
+          "unit_read_intent_and_propagated_query_failures",
+          "unit_domain_projection_and_hidden_source_invariance",
+          "unit_independent_payroll_subdomain_permissions",
+          "owned_en_fr_payroll_permission_module_revocation_retained_read",
+          "owned_foreign_payroll_balance_absent_from_dto_and_route_payload",
+          "owned_cash_read_preserves_business_records",
+          "unit_single_proof_drawer_and_reverse_response_order",
+          "unit_scope_withdrawal_and_subject_tenant_response_match",
+          "owned_en_fr_proof_transport_retry_escape_focus_return",
+          "owned_current_proof_permission_revocation_and_no_payment_mutation",
+          "owned_en_fr_proof_portal_tokens_opaque_background_and_text_contrast",
+          "owned_proof_desktop_tablet_mobile_keyboard_containment_and_reduced_motion",
+          "owned_proof_controlled_text_enlargement_reflow",
+          "unit_all_four_proof_action_current_module_admission_before_data",
+          "owned_cached_payment_proof_module_suspension_expiry_and_retained_read",
+          "related_snapshot_reads_reused_with_identical_real_aggregate",
+          "related_source_failure_rejects_before_aggregate_and_fresh_retry_succeeds",
+          "drawer_permission_and_current_module_admission_before_domain_query",
+          "withheld_drawer_source_remains_null_without_risk_or_health_claim",
+          "module_diagnostics_permission_before_query",
+          "owned_en_fr_drawer_dependency_revocation_retention_and_tenant_isolation",
+          "payroll_forecast_independent_source_preserves_exact_proof_algorithm",
+          "owned_forecast_incomplete_proof_and_empty_source_equivalent",
+          "seven_source_permission_and_current_module_admission_before_domain_queries",
+          "denied_sources_null_without_mixed_tenant_reads",
+          "domain_specific_cash_balance_and_forecast_provenance",
+          "owned_35_source_grant_cases_and_en_fr_eight_views",
+          "source_query_failure_retry_and_nullable_provider_proof",
+          "cash_stock_canonical_items_destination",
+          "payroll_and_inventory_aggregate_and_destination_authority_separated",
+          "every_card_change_risk_and_primary_action_uses_admitted_destination",
+          "six_en_fr_keyboard_handoffs_back_and_rendered_link_revocation",
+          "visible_localized_destination_denial_guidance",
+          "cash_source_utc_period_and_generation_display",
+          "en_fr_cross_timezone_hydration_and_drawer_handoff",
+          "legacy_and_canonical_drawer_permission_alias_current_revocation",
+          "cash_observations_do_not_claim_unmeasured_change",
+          "empty_cash_observation_scope_does_not_claim_no_risk_en_fr",
+          "empty_payroll_horizon_operational_not_posted",
+          "payroll_observation_blocker_count_not_currency",
+          "owned_empty_incomplete_out_of_horizon_and_denied_forecast_en_fr",
+          "cash_payroll_source_empty_operational_and_incomplete_blocked",
+          "cash_payroll_source_posted_requires_unblocked_source_linked_basis",
+          "cash_finance_payment_reconciliation_en_fr_keyboard_handoffs_and_permission_revocation",
+          "cash_purchasing_close_inventory_loss_actual_record_handoffs_en_fr",
+          "cash_queue_keyboard_back_permission_withdrawal_and_fresh_denial",
+          "cash_queue_handoffs_preserve_business_records",
+          "close_handoff_utc_evidence_and_period_dates_without_hydration_mismatch",
+          "cash_risk_amount_uses_tenant_currency_en_fr_eur_usd",
+          "cash_shared_action_status_freshness_and_legend_localization",
+          "cash_owned_eur_populated_denied_desktop_mobile_read_invariants",
+          "cash_authorized_read_model_en_fr_prose_without_identity_or_control_changes",
+          "cash_action_and_forecast_dates_explicit_utc",
+          "cash_full_partial_denied_and_stale_source_presentation_en_fr",
+          "cash_watch_urgency_localization_preserves_assessment",
+          "proof_grading_checks_complete_tenant_subject_blockers_beyond_display_caps",
+          "proof_aggregate_failures_propagate_and_missing_subject_denies",
+          "proof_owned_database_hidden_blockers_and_unchanged_read_records",
+          "proof_canonical_en_fr_presentation_preserves_server_identity_and_custom_source_text",
+          "four_blocked_proof_subjects_actual_browser_en_desktop_fr_tablet_mobile",
+          "proof_transport_retry_keyboard_containment_return_and_current_revocation",
+          "no_blockers_message_uses_informational_treatment",
+          "settled_payroll_not_upcoming_cash_and_partial_balance_withheld",
+          "payroll_review_approve_emit_post_real_services_balanced_source_linked_journal",
+          "payslip_seal_failure_atomic_rollback_retry_and_emitted_line_immutability",
+          "actual_posted_payroll_proof_en_desktop_fr_tablet_mobile_permission_revocation",
+          "settlement_increment_amount_status_and_applied_event_chain",
+          "serializable_settlement_concurrency_replay_conflict_and_tenant_denial",
+          "forecast_verified_remaining_amount_and_query_failure_propagation",
+          "legacy_partial_warning_en_fr_keyboard_revocation_browser"
+        ],
+        "note": "Actual payroll journal posting/proof, rollback, retry and emitted immutability are verified from synthetic calculated inputs. Full payroll upstream/payment/declaration, other successful proof lifecycles and complete accessibility/latency remain open.",
+        "proofSourceBindingCurrent": false,
+        "aggregateSourceBindingCurrent": true,
+        "proofStateSourceBindingCurrent": true,
+        "relatedSourceBindingCurrent": true,
+        "privateSourceBindingCurrent": true,
+        "payrollExtractionBindingCurrent": true,
+        "sourceAdmissionBindingCurrent": true,
+        "navigationBindingCurrent": true,
+        "timezoneAndDrawerBindingCurrent": true,
+        "observationAndForecastBindingCurrent": true,
+        "financeHandoffBindingCurrent": true,
+        "queueHandoffBindingCurrent": true,
+        "presentationBindingCurrent": true,
+        "sourceCopyBindingCurrent": true,
+        "settlementBalanceBindingCurrent": true,
+        "payrollPostingBindingCurrent": true,
+        "proofPresentationBindingCurrent": true,
+        "proofCompletenessBindingCurrent": true
+      }
+    },
+    {
+      "id": "FA-STOCK-TO-CASH",
+      "name": "Stock-to-cash intelligence",
+      "purpose": "Trace purchasing, inventory, sales and ledger flow.",
+      "personas": [
+        "authorized finance/accounting operator or reviewer"
+      ],
+      "authority": {
+        "permissions": [
+          "finance.read/dashboard.read/inventory.read at route"
+        ],
+        "tenant": "server-derived organization; exact transport and domain controls require runtime verification"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx",
+        "components/stock-to-cash/StockToCashFlowDashboard.tsx"
+      ],
+      "services": [
+        "services/stock-to-cash/stock-to-cash-flow.service.ts"
+      ],
+      "records": [],
+      "transitions": [
+        "read org flow -> evidence links"
+      ],
+      "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+      "implementationStatus": "entry_only_pending_trace",
+      "reviewStatus": "provisional_source_trace",
+      "runtimeStatus": "not_visited_in_this_lane",
+      "evidence": [
+        {
+          "kind": "source",
+          "source": "services/stock-to-cash/stock-to-cash-flow.service.ts"
+        }
+      ],
+      "remaining": [
+        "Route passes literal XAF; verify multicurrency source semantics before asserting metric correctness."
+      ]
+    },
+    {
+      "id": "FA-ANALYTICS-LEGACY-01",
+      "name": "Read legacy financial metrics and payroll evidence",
+      "purpose": "Expose sourced operational figures and explicit unavailable financial metrics without inventing balances or forecasts",
+      "domain": "finance_analytics",
+      "personas": [
+        "Authorized reporting reader; no current production UI caller found"
+      ],
+      "authority": "reports.read, server tenant guard; existing payroll redaction/module decision",
+      "entryPoints": [
+        "actions/analytics/financial-analytics.ts#getFinancialMetrics"
+      ],
+      "services": [
+        "services/analytics/financial-analytics.service.ts#getFinancialMetricsReadModel",
+        "services/analytics/financial-order-activity.service.ts#getFinancialOrderActivity"
+      ],
+      "records": [
+        "Organization/Location",
+        "SalesOrder aggregate",
+        "Payroll register/transition/source links and forecast snapshot under existing evidence controls"
+      ],
+      "prerequisites": [
+        "Valid active tenant and actual/all-location scope; ordered Date instants interpreted in organization timezone"
+      ],
+      "transitions": [
+        "Validate authority and scope",
+        "Aggregate adjacent exact order periods in repeatable snapshot",
+        "Read separately scoped payroll evidence",
+        "Return versioned partial contract with unavailable financial fields"
+      ],
+      "sideEffects": [
+        "Read-only service; existing payroll module observation from action"
+      ],
+      "implementationStatus": "unsupported_financial_estimates_removed_exact_order_activity_added",
+      "reviewStatus": "current_sources_and_affected_contracts_reviewed",
+      "runtimeStatus": "partial_real_postgres_verified_no_production_ui_caller",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/finance-accounting/FINANCIAL_METRICS_SOURCE_TRUTH.md",
+        "evidence/financial-metrics-receipt.json",
+        "lanes/environment/financial-order-activity-c024e2cd-4f5.json",
+        "graphify-out/GRAPH_REPORT_actions.md#community-70"
+      ],
+      "remaining": [
+        "Connect authoritative financial source owners and version-aware consumers; complete payroll scope/precision/lifecycle review and authenticated transport visit if exposed. Full build still fails at Windows standalone symlink packaging. All other registered workflows and217 unmapped source entries remain in the assignment. No X1/release/professional certification."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "FA-F01",
+      "severity": "high",
+      "status": "report_read_models_corrected_focused_tests_passed; archive_list_followup_open",
+      "title": "Archiving posted-history chart account hides its balances from reports",
+      "sources": [
+        "services/accounting/accounts.service.ts:246",
+        "services/accounting/reports.service.ts:77",
+        "services/accounting/reports.service.ts:118",
+        "services/accounting/financial-statements.service.ts:503",
+        "services/accounting/financial-statements.service.ts:260"
+      ],
+      "detail": "Archive sets deletedAt even with journal lines. Trial balance builds its map only from nondeleted accounts, then continues past every posted line whose account is absent. Financial statement aggregation classifies only nondeleted accounts. Stored financial evidence survives but reported amounts disappear. Archive UI also promises archived nodes while listChartAccounts excludes deleted rows.",
+      "next": "Real runtime evidence and archive-register presentation remain pending; posted report inclusion corrected without archive mutation.",
+      "remediation": "RETAINED_REPORT_REMEDIATION.md",
+      "verification": "RETAINED_REPORT_VERIFICATION.json"
+    },
+    {
+      "id": "FA-F02",
+      "severity": "high",
+      "status": "source_confirmed_unexecuted",
+      "title": "Failed accounting list queries still display zero totals and successful empty tables",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:59",
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:168"
+      ],
+      "detail": "Accounts error is exposed as panel description, but totals are 0 and body says No accounts yet. Journals flag outer result-state error yet CanonicalTableBoundary remains ready; posted panel says No posted journal entries yet and never carries failed entries description. Actual successful empty state must remain distinct.",
+      "next": "Test both lookup failures, withhold numerical/empty-success presentation, provide localized retry. New journal create page already has separate failure path from prior module work."
+    },
+    {
+      "id": "FA-F03",
+      "severity": "high",
+      "status": "source_confirmed_unexecuted",
+      "title": "Overview receivable/payable totals omit inactive retained counterparties and rows after100",
+      "sources": [
+        "services/finance/finance-dashboard.service.ts:693",
+        "services/finance/finance-dashboard.service.ts:708",
+        "services/finance/finance-dashboard.service.ts:766",
+        "services/accounting/ar-open-item.service.ts:182"
+      ],
+      "detail": "Totals and top balances derive from first100 active nondeleted Customer/Supplier rows. Their retained obligations can persist after permitted deactivation. AR history instead reads immutable receivable docs regardless customer activity; older legacy-only balances need explicit scope rather than silently dropped. Aging derives orders, so totals and aging are not the same basis.",
+      "next": "Compare authoritative receivable/payable owners and keep retained obligations in aggregate; bound only previews, not totals; label basis/time/location."
+    },
+    {
+      "id": "FA-F04",
+      "severity": "medium",
+      "status": "source_confirmed_unexecuted",
+      "title": "Journal UI cannot reach evidence older than newest100 entries",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:164",
+        "services/accounting/journals.service.ts:284"
+      ],
+      "detail": "One take100 query is split into drafts and posted entries after loading. No server cursor/page control in this page; many drafts can hide older posted evidence.",
+      "next": "Add actual server-owned history query/paging separately for evidence and new work, preserving scope and permissions."
+    },
+    {
+      "id": "FA-F05",
+      "severity": "medium",
+      "status": "source_confirmed_unexecuted",
+      "title": "Missing UI handoffs for existing evidence and approval controls",
+      "sources": [
+        "actions/accounting/close-assurance.actions.ts",
+        "hooks/accounting/useCloseAssurance.ts",
+        "components/accounting/CloseAssuranceCenter.tsx"
+      ],
+      "detail": "Request/respond/accept missing evidence actions have no located UI caller. Waiver request button and approval hook exist, but approve mutation is not invoked by component. Control text announces fresh-auth requirement without an in-flow password challenge. General ledger and chart update actions likewise have no located UI entry.",
+      "next": "Trace all consumers before building; extend existing close center with authorized evidence/approval and retry controls; do not manufacture approvals."
+    },
+    {
+      "id": "FA-F06",
+      "severity": "medium",
+      "status": "source_confirmed_risk_not_runtime_reproduced",
+      "title": "Post-commit revalidation can obscure completed accounting/close mutations",
+      "sources": [
+        "actions/accounting/close-assurance.actions.ts",
+        "actions/accounting/settings.actions.ts",
+        "actions/accounting/journals.actions.ts"
+      ],
+      "detail": "Actions await durable service mutation then revalidate paths inside protected error scope. Cache failure may return failed response after commit; UI retries lack durable request key for several legacy mutations.",
+      "next": "Reuse committed-result/cache-status pattern where relevant and exercise response-loss/reload failures without weakening idempotency or controls."
+    },
+    {
+      "id": "FA-F07",
+      "severity": "medium",
+      "status": "handoff_not_found",
+      "title": "Async export worker contract lacks located production artifact/dispatch handoff",
+      "sources": [
+        "services/accounting/finance-statement-export.service.ts:401",
+        "services/accounting/finance-statement-export-operations.service.ts"
+      ],
+      "detail": "Queue/lease/completion/service contracts exist; worker requires injected buildArtifact. Bounded source search found no production invocation or concrete storage/download-grant/scheduler handoff. Runtime configuration flags do not prove delivery.",
+      "next": "Discover intended deployment adapter; do not simulate completed exports or publish private artifacts."
+    },
+    {
+      "id": "FA-F08",
+      "severity": "medium",
+      "status": "source_risk_requires_reproduction",
+      "title": "Denied certified export invalidation audit appears inside rolled-back transaction",
+      "sources": [
+        "services/accounting/close-assurance-pack.service.ts:1927",
+        "services/accounting/close-assurance-pack.service.ts:1956"
+      ],
+      "detail": "In blocked CERTIFIED branch, recordInvalidationEvidenceInTx is awaited then BusinessRuleError thrown inside same db.$transaction. This specific attempt evidence may roll back, even though other source-invalidation owners can persist evidence separately.",
+      "next": "Focused failed-certification test asserting durable denial/invalidation effects; distinguish existing external source invalidation from this transaction."
+    },
+    {
+      "id": "FA-F09",
+      "severity": "medium",
+      "status": "source_risk_requires_reproduction",
+      "title": "Fiscal-year monthly periods can start before explicit fiscal-year start",
+      "sources": [
+        "services/accounting/periods.service.ts:119"
+      ],
+      "detail": "Monthly cursor initializes first day of startDate month, not supplied startDate. For mid-month year start first period begins earlier. Overlap/close/post races not investigated fully.",
+      "next": "Meaningful non-month-start and overlapping-year boundary tests before change."
+    },
+    {
+      "id": "FA-F10",
+      "severity": "medium",
+      "status": "source_risk_requires_reproduction",
+      "title": "Finance query cache has no tenant or actor component",
+      "sources": [
+        "hooks/finance/useFinanceDashboard.ts:8"
+      ],
+      "detail": "Key uses view/location/period/date only. Global provider lifetime plus session replacement needs actual reproduction before claiming cross-user exposure; server identity remains current on each request.",
+      "next": "Coordinate parent identity/cache lifecycle trace; verify old tenant data clears at logout/session change."
+    }
+  ],
+  "notYetTraced": [
+    "Reconciliation provider ingestion/matching/manual suspense/signoff (existing source; not a workflow-completion claim)",
+    "Detailed cash-history/drawer transactional owners and background runners",
+    "End-to-end accounting-source automatic posting consumers and close-invalidation matrix",
+    "Precise finance metric arithmetic/budgets and authorization-filtered destinations",
+    "Actual EN/FR/mobile/keyboard/accessibility/performance journeys"
+  ],
+  "updatedAt": "2026-09-06T04:40:01.260Z"
+}

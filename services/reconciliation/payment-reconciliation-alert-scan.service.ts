@@ -29,6 +29,54 @@ function payload(scan: ReconciliationAlertScan) { return { worker: scan } as Pri
 function hash(scan: ReconciliationAlertScan) { return createHash("sha256").update(JSON.stringify(payload(scan))).digest("hex") }
 function parse(value: unknown) { return scanSchema.parse((value as { worker?: unknown } | null)?.worker) }
 const key = (scanId: string) => `operational-alert-scan:${scanId}`
+export { scanSchema as reconciliationAlertScanSchema, hash as hashReconciliationAlertScan, key as reconciliationAlertScanKey }
+
+// Internal composition boundary. The caller must lock organization before scan.
+// Operator recovery and the host worker use the same page and deduplication rules.
+export async function advanceReconciliationAlertScanPageInTx(tx: Prisma.TransactionClient, args: { organizationId: string; workerId: string }, record: { id: string; payloadSummary: unknown }) {
+  const scan = parse(record.payloadSummary)
+  if (scan.state === "COMPLETE") return scan
+  scan.workerId = args.workerId; scan.state = "RUNNING"; scan.errorCode = null
+  const observedAt = new Date(), startedAt = new Date(scan.startedAt), cutoff = new Date(startedAt.getTime() + 86_400_000)
+  const dayKey = observedAt.toISOString().slice(0, 10)
+  if (scan.phase === "SUSPENSE") {
+    const items = await tx.suspenseItem.findMany({
+      where: { organizationId: args.organizationId, createdAt: { lte: startedAt }, status: { in: unresolvedSuspenseStatuses }, slaDeadline: { lte: cutoff }, ...(scan.cursor ? { id: { gt: scan.cursor } } : {}) },
+      orderBy: { id: "asc" }, take: pageSize,
+      select: { id: true, providerAccountId: true, reconciliationRunId: true, severity: true, amount: true, currencyCode: true, ownerId: true, slaDeadline: true, correlationId: true },
+    })
+    for (const item of items) {
+      const breached = item.slaDeadline! <= observedAt, event = breached ? "sla-breached" : "sla-warning"
+      const result = await publishPaymentReconciliationNotification({ type: `payment-reconciliation.suspense.${event}`, organizationId: args.organizationId, providerAccountId: item.providerAccountId, severity: item.severity, amount: item.amount.toFixed(2), currency: item.currencyCode, ownerId: item.ownerId, dueAt: item.slaDeadline, evidenceRef: { reconciliationRunId: item.reconciliationRunId, suspenseItemId: item.id }, correlationId: item.correlationId ?? scan.scanId, dedupeKey: `${item.id}:${event}:${dayKey}` }, tx)
+      scan.created += Number(result.created)
+    }
+    scan.examined += items.length
+    scan.cursor = items.at(-1)?.id ?? scan.cursor
+    if (items.length < pageSize) { scan.phase = "READY_RUNS"; scan.cursor = null }
+  } else if (scan.phase === "READY_RUNS") {
+    const runs = await tx.reconciliationRun.findMany({ where: { organizationId: args.organizationId, createdAt: { lte: startedAt }, status: "READY_FOR_SIGNOFF", ...(scan.cursor ? { id: { gt: scan.cursor } } : {}) }, orderBy: { id: "asc" }, take: pageSize, select: { id: true, providerAccountId: true, paymentRailId: true, correlationId: true } })
+    for (const run of runs) {
+      const result = await publishPaymentReconciliationNotification({ type: "payment-reconciliation.run.ready-for-signoff", organizationId: args.organizationId, providerAccountId: run.providerAccountId, paymentRailId: run.paymentRailId, evidenceRef: { reconciliationRunId: run.id }, correlationId: run.correlationId ?? scan.scanId, dedupeKey: run.id }, tx)
+      scan.created += Number(result.created)
+    }
+    scan.examined += runs.length; scan.cursor = runs.at(-1)?.id ?? scan.cursor
+    if (runs.length < pageSize) { scan.phase = "REVIEW"; scan.cursor = null }
+  } else if (scan.phase === "REVIEW") {
+    const [exceptions, suspense, runs] = await Promise.all([
+      tx.paymentException.count({ where: { organizationId: args.organizationId, status: { in: ["OPEN", "ASSIGNED", "ACKNOWLEDGED", "ESCALATED", "RESOLUTION_PROPOSED", "REOPENED"] } } }),
+      tx.suspenseItem.count({ where: { organizationId: args.organizationId, status: { in: unresolvedSuspenseStatuses } } }),
+      tx.reconciliationRun.count({ where: { organizationId: args.organizationId, status: { notIn: ["SIGNED", "VOIDED"] } } }),
+    ])
+    if (exceptions + suspense + runs > 0) {
+      const result = await publishPaymentReconciliationNotification({ type: "payment-reconciliation.period-close.blocked", organizationId: args.organizationId, severity: exceptions + suspense > 0 ? "HIGH" : "MEDIUM", correlationId: scan.scanId, dedupeKey: `period-close-blocker:${dayKey}` }, tx)
+      scan.created += Number(result.created)
+    }
+    scan.phase = "COMPLETE"; scan.state = "COMPLETE"; scan.completedAt = observedAt.toISOString()
+  }
+  scan.version++; scan.updatedAt = observedAt.toISOString()
+  await tx.paymentReconciliationInboxItem.update({ where: { id: record.id }, data: { payloadSummary: payload(scan), payloadHash: hash(scan), lastError: null, attempts: { increment: 1 }, processedAt: scan.state === "COMPLETE" ? observedAt : null } })
+  return scan
+}
 
 export async function readLatestReconciliationAlertScan(organizationId: string): Promise<ReconciliationAlertScan | null> {
   if (!organizationId.trim()) throw new BusinessRuleError("Organization is required.", "TENANT_SCOPE_VIOLATION")
@@ -55,57 +103,22 @@ export async function runReconciliationAlertScan(input: Input): Promise<Reconcil
     let version: number | undefined
     try {
       last = await db.$transaction(async tx => {
+        // Match organization-before-scan locking used by operator recovery.
+        await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${args.organizationId} FOR SHARE`
         await tx.$queryRaw`SELECT id FROM payment_reconciliation_inbox_items WHERE "organizationId" = ${args.organizationId} AND source = 'RECONCILIATION_RUN' AND "idempotencyKey" = ${key(args.scanId)} FOR UPDATE`
         const record = await tx.paymentReconciliationInboxItem.findUniqueOrThrow({ where: { organizationId_source_idempotencyKey: { organizationId: args.organizationId, source: "RECONCILIATION_RUN", idempotencyKey: key(args.scanId) } } })
         const scan = parse(record.payloadSummary)
         if (scan.state === "COMPLETE") return scan
         version = scan.version
-        scan.workerId = args.workerId; scan.state = "RUNNING"; scan.errorCode = null
-        const observedAt = new Date(), startedAt = new Date(scan.startedAt), cutoff = new Date(startedAt.getTime() + 86_400_000)
-        const dayKey = observedAt.toISOString().slice(0, 10)
-        if (scan.phase === "SUSPENSE") {
-          const items = await tx.suspenseItem.findMany({
-            where: { organizationId: args.organizationId, createdAt: { lte: startedAt }, status: { in: unresolvedSuspenseStatuses }, slaDeadline: { lte: cutoff }, ...(scan.cursor ? { id: { gt: scan.cursor } } : {}) },
-            orderBy: { id: "asc" }, take: pageSize,
-            select: { id: true, providerAccountId: true, reconciliationRunId: true, severity: true, amount: true, currencyCode: true, ownerId: true, slaDeadline: true, correlationId: true },
-          })
-          for (const item of items) {
-            const breached = item.slaDeadline! <= observedAt, event = breached ? "sla-breached" : "sla-warning"
-            const result = await publishPaymentReconciliationNotification({ type: `payment-reconciliation.suspense.${event}`, organizationId: args.organizationId, providerAccountId: item.providerAccountId, severity: item.severity, amount: item.amount.toFixed(2), currency: item.currencyCode, ownerId: item.ownerId, dueAt: item.slaDeadline, evidenceRef: { reconciliationRunId: item.reconciliationRunId, suspenseItemId: item.id }, correlationId: item.correlationId ?? args.scanId, dedupeKey: `${item.id}:${event}:${dayKey}` }, tx)
-            scan.created += Number(result.created)
-          }
-          scan.examined += items.length
-          scan.cursor = items.at(-1)?.id ?? scan.cursor
-          if (items.length < pageSize) { scan.phase = "READY_RUNS"; scan.cursor = null }
-        } else if (scan.phase === "READY_RUNS") {
-          const runs = await tx.reconciliationRun.findMany({ where: { organizationId: args.organizationId, createdAt: { lte: startedAt }, status: "READY_FOR_SIGNOFF", ...(scan.cursor ? { id: { gt: scan.cursor } } : {}) }, orderBy: { id: "asc" }, take: pageSize, select: { id: true, providerAccountId: true, paymentRailId: true, correlationId: true } })
-          for (const run of runs) {
-            const result = await publishPaymentReconciliationNotification({ type: "payment-reconciliation.run.ready-for-signoff", organizationId: args.organizationId, providerAccountId: run.providerAccountId, paymentRailId: run.paymentRailId, evidenceRef: { reconciliationRunId: run.id }, correlationId: run.correlationId ?? args.scanId, dedupeKey: run.id }, tx)
-            scan.created += Number(result.created)
-          }
-          scan.examined += runs.length; scan.cursor = runs.at(-1)?.id ?? scan.cursor
-          if (runs.length < pageSize) { scan.phase = "REVIEW"; scan.cursor = null }
-        } else if (scan.phase === "REVIEW") {
-          const [exceptions, suspense, runs] = await Promise.all([
-            tx.paymentException.count({ where: { organizationId: args.organizationId, status: { in: ["OPEN", "ASSIGNED", "ACKNOWLEDGED", "ESCALATED", "RESOLUTION_PROPOSED", "REOPENED"] } } }),
-            tx.suspenseItem.count({ where: { organizationId: args.organizationId, status: { in: unresolvedSuspenseStatuses } } }),
-            tx.reconciliationRun.count({ where: { organizationId: args.organizationId, status: { notIn: ["SIGNED", "VOIDED"] } } }),
-          ])
-          if (exceptions + suspense + runs > 0) {
-            const result = await publishPaymentReconciliationNotification({ type: "payment-reconciliation.period-close.blocked", organizationId: args.organizationId, severity: exceptions + suspense > 0 ? "HIGH" : "MEDIUM", correlationId: args.scanId, dedupeKey: `period-close-blocker:${dayKey}` }, tx)
-            scan.created += Number(result.created)
-          }
-          scan.phase = "COMPLETE"; scan.state = "COMPLETE"; scan.completedAt = observedAt.toISOString()
-        }
-        scan.version++; scan.updatedAt = observedAt.toISOString()
-        await tx.paymentReconciliationInboxItem.update({ where: { id: record.id }, data: { payloadSummary: payload(scan), payloadHash: hash(scan), lastError: null, attempts: { increment: 1 }, processedAt: scan.state === "COMPLETE" ? observedAt : null } })
-        return scan
+        return advanceReconciliationAlertScanPageInTx(tx, args, record)
       }, { timeout: 30_000 })
       if (last.state === "COMPLETE") break
     } catch (error) {
       // Do not overwrite a checkpoint advanced by another worker after our failed
       // transaction. Only a matching version may be marked failed.
       if (version !== undefined) await db.$transaction(async tx => {
+        // Match organization-before-scan locking used by operator recovery.
+        await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${args.organizationId} FOR SHARE`
         await tx.$queryRaw`SELECT id FROM payment_reconciliation_inbox_items WHERE "organizationId" = ${args.organizationId} AND source = 'RECONCILIATION_RUN' AND "idempotencyKey" = ${key(args.scanId)} FOR UPDATE`
         const record = await tx.paymentReconciliationInboxItem.findUniqueOrThrow({ where: { organizationId_source_idempotencyKey: { organizationId: args.organizationId, source: "RECONCILIATION_RUN", idempotencyKey: key(args.scanId) } } })
         const scan = parse(record.payloadSummary)

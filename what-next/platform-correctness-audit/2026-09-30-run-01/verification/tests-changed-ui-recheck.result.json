@@ -1,0 +1,25 @@
+{
+  "name": "tests-changed-ui-recheck",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--config",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\platform-correctness-audit\\2026-09-30-run-01\\jest-supplement.config.cjs",
+    "--runInBand",
+    "--watch=false",
+    "--no-cache",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\platform-correctness-audit\\2026-09-30-run-01\\verification\\tests-changed-ui-recheck.jest.json",
+    "--runTestsByPath",
+    "components/accounting/__tests__/AccountantWorkDesk.test.tsx"
+  ],
+  "startedAt": "2026-09-30T14:46:27.372Z",
+  "endedAt": "2026-09-30T14:46:43.719Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live data target",
+  "stdoutBytes": 0,
+  "stderrBytes": 329
+}

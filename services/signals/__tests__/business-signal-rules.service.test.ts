@@ -449,7 +449,7 @@ describe("Kontava business signal rules", () => {
       severityScore: 50,
       assignedRole: "manager",
       requiredPermission: "inventory.levels.read",
-      actionPath: "/dashboard/inventory/losses",
+      actionPath: "/dashboard/inventory/loss-control",
       evidenceGrade: "operational",
       payload: {
         lossLineCount: 2,
@@ -766,6 +766,14 @@ function payrollForecastMetrics(
     ...overrides,
   };
 }
+
+it.each([1, 20])("does not infer payroll exposure from %i approved or completed runs alone", count => {
+  const source = tenantOperatingSnapshot({ approvedOrPaidPayrollRunCount: count })
+  const before = JSON.stringify(source)
+  expect(buildBusinessSignalsFromSnapshots({ organizationId: source.organizationId, snapshots: [source], now: source.generatedAt })).toEqual([])
+  expect(source.metrics.approvedOrPaidPayrollRunCount).toBe(count)
+  expect(JSON.stringify(source)).toBe(before)
+})
 
 
 it.each([

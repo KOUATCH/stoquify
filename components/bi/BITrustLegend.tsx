@@ -1,4 +1,5 @@
 import { CheckCircle2, CircleDot, Clock3, EyeOff, LockKeyhole, ShieldCheck } from "lucide-react"
+import { biLocale, biCopy, biGradeCopy, biStateCopy } from "@/lib/dashboard/bi-presentation"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils"
 import type { BIFreshnessState, BIKpiState, BITrustState } from "@/services/bi/bi-contracts"
 
 type BITrustLegendProps = {
+  locale?: string
   title?: string
   detail?: string
   compact?: boolean
@@ -70,17 +72,28 @@ const safeStateItems: Array<{ state: BIKpiState; label: string; icon: typeof Cir
   { state: "safe_error", label: "Safe error", icon: ShieldCheck },
 ]
 
+const frenchTrustDetails: Record<BITrustState, string> = {
+  operational: "Signal métier utile, sans certification comptable à ce stade.",
+  posted: "Rattaché à une preuve de comptabilisation.",
+  reconciled: "Rapproché des preuves de paiement ou de solde.",
+  certified: "Examiné selon les contrôles de certification applicables.",
+  blocked: "Des blocages doivent être résolus avant de se fier à cette donnée.",
+}
+
 export function BITrustLegend({
-  title = "Trust legend",
-  detail = "How Kontava labels business intelligence before users act on it.",
+  title,
+  detail,
+  locale = "en",
   compact = false,
   className,
 }: BITrustLegendProps) {
+  const language = biLocale(locale)
+  const french = language === "fr"
   return (
     <section className={cn(dashboardPanelClass, "p-4", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold text-[var(--dash-text)]">{title}</h2>
-        <p className={cn("text-sm", dashboardMutedTextClass)}>{detail}</p>
+        <h2 className="text-base font-semibold text-[var(--dash-text)]">{title ?? (french ? "Légende des niveaux de preuve" : "Trust legend")}</h2>
+        <p className={cn("text-sm", dashboardMutedTextClass)}>{detail ?? (french ? "Comprendre le niveau de preuve des indicateurs avant d’agir." : "Understand the evidence behind Stoquify indicators before taking action.")}</p>
       </div>
 
       <div className={cn("mt-4 grid gap-3", compact ? "md:grid-cols-2" : "lg:grid-cols-5")}>
@@ -88,9 +101,9 @@ export function BITrustLegend({
           <div key={item.state} className={cn(dashboardRowClass, "p-3")}>
             <Badge variant="outline" className={cn("border", dashboardToneClass(item.tone))}>
               <CheckCircle2 className="mr-1 h-3 w-3" aria-hidden="true" />
-              {item.label}
+              {french ? biGradeCopy[language][item.state] : item.label}
             </Badge>
-            {!compact ? <p className={cn("mt-2 text-xs leading-5", dashboardMutedTextClass)}>{item.detail}</p> : null}
+            {!compact ? <p className={cn("mt-2 text-xs leading-5", dashboardMutedTextClass)}>{french ? frenchTrustDetails[item.state] : item.detail}</p> : null}
           </div>
         ))}
       </div>
@@ -99,7 +112,7 @@ export function BITrustLegend({
         {freshnessItems.map((item) => (
           <Badge key={item.state} variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
             <Clock3 className="mr-1 h-3 w-3" aria-hidden="true" />
-            {item.label}
+            {french ? biCopy[language][item.state] : item.label}
           </Badge>
         ))}
         {safeStateItems.map((item) => {
@@ -107,7 +120,7 @@ export function BITrustLegend({
           return (
             <Badge key={item.state} variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
               <Icon className="mr-1 h-3 w-3" aria-hidden="true" />
-              {item.label}
+              {french ? biStateCopy[language][item.state] : item.label}
             </Badge>
           )
         })}

@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-27T16:38:07.515Z",
+  "workflow": "PR-10",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "components/finance/ReconciliationSignReview.tsx": "1847f7fb5df0272ab8d948a81d1deebce6e69d6bc15e9a57dc61447ee80e14e4",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "90c7bf57311a2c3b0991814b89729b4b86e31cdf4e38fdf2f7e06b83b5883140",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "messages/en.json": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+    "messages/fr.json": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc"
+  },
+  "passed": [
+    {
+      "file": "evidence/sign-module-checks-ec515a6e-74f6-4e6a-aac9-d4b469c6fa4f.json",
+      "sha256": "d66aa4bc1b494da13069662f60d541f0a18bf4089ef2e0ed955b9875ca920ce3"
+    },
+    {
+      "file": "lanes/environment/sign-module-boundary-b7f296a3-c567-4e7c-a8c1-45d0dd41d3db.json",
+      "sha256": "bee4dca0bb5f9ea23164c02b78a59cf3c034ae828f7d15cb122b56bed0d2d364"
+    },
+    {
+      "file": "lanes/environment/sign-module-ordering-9f711f29-9cc2-44fe-aeb5-e8ac0b99553f.json",
+      "sha256": "33600da677c23d5deb37e5e7344084a2ef9fe03c6a9125ba458cdc4573a2e451"
+    },
+    {
+      "file": "lanes/environment/signoff-request-order-20cdb246-bf04-42de-aecb-a48cb3ad94bd.json",
+      "sha256": "140de414639989ba06fec0c3be81c83ae2b29bb29ba1421cf6a6fcf5d7149f54"
+    },
+    {
+      "file": "lanes/environment/sign-module-browser-5b024f4d-92fc-4ea7-a6b5-2734cdee56e5.json",
+      "sha256": "294c1bf871d81c470d799791085f26c5c76e5095fd6b567f2fe7638eb1c0a769"
+    }
+  ],
+  "note": "Current transaction/module milestone only. Earlier amount/certificate calculations and ready/signed layout evidence reused through bounded unchanged-code review; full parent closure is pending."
+}

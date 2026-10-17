@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "noEmit": true },
+  "files": [
+    "next-env.d.ts",
+    "services/pos/checkout.service.ts",
+    "actions/pos/checkout.actions.ts",
+    "hooks/posHooks/usePOSCheckoutLifecycle.ts",
+    "services/pos/__tests__/checkout-lifecycle.service.test.ts",
+    "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+    "hooks/posHooks/__tests__/checkout-lifecycle-races.test.tsx",
+    "tests/s10-s11/renew-action.test.ts",
+    "tests/s10-s11/lease-benchmark.postgres.test.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

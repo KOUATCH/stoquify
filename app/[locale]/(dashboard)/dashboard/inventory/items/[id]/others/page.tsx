@@ -1,15 +1,21 @@
 
 import { checkPermission } from "@/config/useAuth"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import { routeByKey, withInventorySurfaceAccess } from "../../../inventory-route-access"
 
-const pageImpl = async ({ params }: { params: Promise<{ id: string }> }) => {
+const pageImpl = async ({ params }: { params: Promise<{ id: string; locale: string }> }) => {
   await checkPermission("inventory.items.read")
 
 
-  const id = (await params)?.id
+  const { id, locale: rawLocale } = await params
+  const locale = pickLocale(rawLocale)
   return (
-
-    <div> These are the suppliers for the item - {id}</div>
+    <DashboardRouteState kind="empty" locale={locale} embedded
+      title={locale === "fr" ? "Détails complémentaires" : "Additional item details"}
+      message={locale === "fr" ? "Cette rubrique ne propose pas encore de détails complémentaires. Consultez la fiche article pour les informations disponibles." : "Additional details are not available in this section yet. Open the item overview for the available information."}
+      primaryLabel={locale === "fr" ? "Retour à l’article" : "Back to item"}
+      primaryHref={localizePath(`/dashboard/inventory/items/${encodeURIComponent(id)}`, locale)} />
   )
 }
 

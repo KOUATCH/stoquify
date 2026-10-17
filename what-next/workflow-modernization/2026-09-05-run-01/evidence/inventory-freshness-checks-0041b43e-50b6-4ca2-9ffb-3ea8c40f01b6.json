@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-30T17:17:28.434Z",
+  "sourceBefore": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "805a573a4887b7769e99655da94291777f697888f6dde1b089155d47041db202",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71",
+    "services/inventory/__tests__/inventory-reconciliation.service.test.ts": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012",
+    "services/accounting/__tests__/close-assurance.service.test.ts": "1dc71b6b25518c4a6f541d9c3b5a8b6c9c4bddb0120142d095d3b4d66fde3aed",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "ab892a73a0268819f2c1cdbc526705838062951d6007aa139137135dd0d13c6d",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "2694b41c8e16a57e77de81c464485b9deda0c2b49955f291f42d50aad0052941",
+    "actions/accounting/__tests__/close-assurance.actions.test.ts": "1feb0a9024b4fd66eaa047d06049f6a5df022c6bdd0fd84582be1cbcaf0c4ad1"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/inventory/__tests__/inventory-reconciliation.service.test.ts",
+        "services/accounting/__tests__/close-assurance.service.test.ts",
+        "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+        "services/evidence/__tests__/close-proof-invalidation.service.test.ts",
+        "actions/accounting/__tests__/close-assurance.actions.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       144 passed, 144 total\nSnapshots:   0 total\nTime:        27.324 s\nRan all test suites within paths \"services/inventory/__tests__/inventory-reconciliation.service.test.ts\", \"services/accounting/__tests__/close-assurance.service.test.ts\", \"services/accounting/__tests__/close-assurance-pack.service.test.ts\", \"services/evidence/__tests__/close-proof-invalidation.service.test.ts\", \"actions/accounting/__tests__/close-assurance.actions.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/inventory/inventory-reconciliation.service.ts",
+        "services/accounting/close-assurance.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/inventory/__tests__/inventory-reconciliation.service.test.ts",
+        "services/accounting/__tests__/close-assurance.service.test.ts",
+        "services/accounting/__tests__/close-assurance-pack.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "805a573a4887b7769e99655da94291777f697888f6dde1b089155d47041db202",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71",
+    "services/inventory/__tests__/inventory-reconciliation.service.test.ts": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012",
+    "services/accounting/__tests__/close-assurance.service.test.ts": "1dc71b6b25518c4a6f541d9c3b5a8b6c9c4bddb0120142d095d3b4d66fde3aed",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "ab892a73a0268819f2c1cdbc526705838062951d6007aa139137135dd0d13c6d",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "2694b41c8e16a57e77de81c464485b9deda0c2b49955f291f42d50aad0052941",
+    "actions/accounting/__tests__/close-assurance.actions.test.ts": "1feb0a9024b4fd66eaa047d06049f6a5df022c6bdd0fd84582be1cbcaf0c4ad1"
+  },
+  "sourceStable": true,
+  "passed": true
+}

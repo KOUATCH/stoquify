@@ -1,0 +1,21 @@
+{
+  "name": "payroll-gate-after",
+  "command": [
+    "node",
+    "scripts/payroll-trust-spine-readiness-gate.js",
+    "--mode",
+    "fail",
+    "--out",
+    "what-next/platform-remediation/2026-09-30-run-01/payroll-gate-after.md",
+    "--json-out",
+    "what-next/platform-remediation/2026-09-30-run-01/payroll-gate-after.json"
+  ],
+  "startedAt": "2026-09-30T20:46:33.300Z",
+  "endedAt": "2026-09-30T20:46:33.656Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 741,
+  "stderrBytes": 0
+}

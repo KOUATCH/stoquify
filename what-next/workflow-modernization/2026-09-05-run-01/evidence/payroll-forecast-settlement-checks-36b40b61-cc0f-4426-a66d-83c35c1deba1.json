@@ -1,0 +1,74 @@
+{
+  "at": "2026-09-30T10:56:16.733Z",
+  "sourceBefore": {
+    "services/payroll/payroll-finance-forecast.service.ts": "510d4be5fcc563a5ef0f07c8ea0161ec2e8f9748784e99bdbf340b5a03d39708",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "3e0e7b0c5864a39d9e62778d22edd8636a83492e22f97f8ff8a0c5ad65f5798b",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "d1d3e8a51103c314cfdb2c511e50eeec9732a5d6cddc73ce35a40b99fe99431c",
+    "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts": "9241f766b9b7036fed094b980fe94d009a9973ba21721060ea1939daf405163a",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "services/payroll/payment-reconciliation.service.ts": "3ab59273bedf397541d9db3adc104a49c0c85f4daa774afb0375c97538febe0f",
+    "services/cash-command/cash-command-presentation.ts": "7edea618b3e695eca69f9f663e1199fed8eca39f58910ea4327db049ac5e40fd",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       112 passed, 112 total\nSnapshots:   0 total\nTime:        5.915 s\nRan all test suites within paths \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/payroll/payroll-finance-forecast.service.ts",
+        "lib/dashboard/snapshot-source-blocker-presentation.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/payroll/payroll-finance-forecast.service.ts": "510d4be5fcc563a5ef0f07c8ea0161ec2e8f9748784e99bdbf340b5a03d39708",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "3e0e7b0c5864a39d9e62778d22edd8636a83492e22f97f8ff8a0c5ad65f5798b",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "d1d3e8a51103c314cfdb2c511e50eeec9732a5d6cddc73ce35a40b99fe99431c",
+    "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts": "9241f766b9b7036fed094b980fe94d009a9973ba21721060ea1939daf405163a",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "services/payroll/payment-reconciliation.service.ts": "3ab59273bedf397541d9db3adc104a49c0c85f4daa774afb0375c97538febe0f",
+    "services/cash-command/cash-command-presentation.ts": "7edea618b3e695eca69f9f663e1199fed8eca39f58910ea4327db049ac5e40fd",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "sourceStable": true,
+  "passed": true
+}

@@ -1,4 +1,5 @@
 import "server-only"
+import { authorizeCashCommandData } from "./cash-command-visibility.service"
 
 import {
   createSnapshotKpi,
@@ -40,10 +41,7 @@ import {
   buildBusinessSignalsFromSnapshots,
   createBusinessSignalFromFact,
 } from "@/services/signals/business-signal-rules.service"
-import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
-import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
-import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import type {
   InventoryLossMetrics,
   PaymentTruthMetrics,
@@ -53,10 +51,11 @@ import type {
   SnapshotResult,
   SnapshotSourceModule,
 } from "@/services/snapshots/snapshot-contracts"
-import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { getCashCommandSources } from "./cash-command-sources.service"
 import { db } from "@/prisma/db"
 
 import type {
+  AuthorizedCashCommandData,
   CashCommandActionItem,
   CashCommandData,
   CashCommandDrawerState,
@@ -92,7 +91,8 @@ const ACTION_MODULE_BY_SIGNAL_TYPE: Record<ActionItem["signalType"], CommercialM
   close_blocker: "close_assurance",
 }
 
-export async function getCashCommandData(input: CashCommandInput): Promise<CashCommandData> {
+export async function getCashCommandData(input: CashCommandInput): Promise<AuthorizedCashCommandData> {
+  input = { ...input, now: normalizeNow(input.now).toISOString() }
   await requireCashCommandTenantAuthority(input)
 
   const scope = {
@@ -102,46 +102,53 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
     maxAgeMinutes: input.maxAgeMinutes ?? null,
     now: input.now ?? null,
   }
+  const organization = await db.organization.findFirst({
+    where: { id: input.organizationId, isActive: true, deletedAt: null },
+    select: { name: true, currency: true },
+  })
+  if (!organization) throw new Error("Organization is unavailable for Cash Command")
+  const drawerPermission = hasRbacPermission(input.actorPermissions, "CASH_DRAWER_READ")
+  const drawerAllowed = drawerPermission && (await observeModuleAccess({
+    organizationId: input.organizationId, userId: input.actorId!, actorPermissions: input.actorPermissions,
+    moduleSlug: "cash_drawer", surfaceType: "report", surface: "cash-command.drawer-source",
+    accessIntent: "read", mode: "enforce", audit: true, now: input.now,
+  })).allowed
   const drawerScope = drawerScopeFromInput(input)
 
   const [
-    tenantOperating,
-    paymentTruth,
-    inventoryCash,
-    closeReadiness,
+    sources,
     drawerDashboard,
     moduleControl,
     inventoryLoss,
   ] = await Promise.all([
-    getTenantOperatingSnapshot(scope),
-    getPaymentTruthSnapshot(scope),
-    getInventoryCashSnapshot(scope),
-    getCloseReadinessSnapshot(scope),
-    getCashDrawerDashboard({
+    getCashCommandSources({ ...scope, actorId: input.actorId!, actorPermissions: input.actorPermissions, currency: organization.currency }),
+    drawerAllowed ? getCashDrawerDashboard({
       organizationId: input.organizationId,
       ...drawerScope,
-    }),
-    getModuleControlCenterData({
+    }) : null,
+    hasRbacPermission(input.actorPermissions, "MANAGE_SYSTEM_SETTINGS") ? getModuleControlCenterData({
       organizationId: input.organizationId,
       actorId: input.actorId,
       actorPermissions: input.actorPermissions,
       now: input.now ?? null,
-    }),
+    }) : null,
     loadCashCommandInventoryLoss(input),
   ])
+
+  const { operating: tenantOperating, paymentTruth, inventoryCash, closeReadiness } = sources
 
   const signals = [
     ...buildBusinessSignalsFromSnapshots({
       organizationId: input.organizationId,
       snapshots: [
-        tenantOperating,
-        paymentTruth,
-        inventoryCash,
-        closeReadiness,
+        ...(paymentTruth ? [paymentTruth] : []),
+        ...(inventoryCash ? [inventoryCash] : []),
+        ...(closeReadiness ? [closeReadiness] : []),
         ...(inventoryLoss ? [inventoryLoss] : []),
       ],
       now: input.now ?? null,
     }),
+    ...sources.signals,
     ...buildCashDrawerSignals({
       organizationId: input.organizationId,
       drawerDashboard,
@@ -154,17 +161,17 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
     actorPermissions: input.actorPermissions,
     now: input.now ?? null,
   })
-  const proofSubjectIds = await getLatestProofSubjectIds({
-    organizationId: input.organizationId,
+  const proofDiscovery = await getLatestProofSubjectIds({
+    ...input,
     periodStart: tenantOperating.periodStart,
     periodEnd: tenantOperating.periodEnd,
   })
 
-  return composeCashCommandData({
+  const composed = composeCashCommandData({
     organizationId: input.organizationId,
-    organizationName: moduleControl.organizationName,
+    organizationName: organization.name,
     generatedAt: normalizeNow(input.now).toISOString(),
-    currency: drawerDashboard.organization.currency || "XAF",
+    currency: organization.currency,
     snapshots: {
       tenantOperating,
       paymentTruth,
@@ -172,9 +179,19 @@ export async function getCashCommandData(input: CashCommandInput): Promise<CashC
       closeReadiness,
     },
     drawerDashboard,
+    cardSources: {
+      ...(sources.cashCollected ? { cash_collected: sources.cashCollected } : {}),
+      ...(sources.payrollBalance ? { employee_balance_recovery: sources.payrollBalance } : {}),
+      ...(sources.payrollForecast ? { upcoming_payroll_net_pay: sources.payrollForecast, upcoming_statutory_liability: sources.payrollForecast } : {}),
+    },
+    sourceRestrictions: [...sources.restrictions, ...(drawerAllowed ? [] : [{ id: "drawer_risk", title: "Drawer risk", reason: drawerPermission ? "module_unavailable" as const : "permission_denied" as const }])],
     actionQueue,
     moduleControl,
-    proofSubjectIds,
+    proofSubjectIds: proofDiscovery.ids,
+    proofSubjectUnavailableReasons: proofDiscovery.unavailableReasons,
+  })
+  return authorizeCashCommandData(composed, {
+    actorId: input.actorId!.trim(), actorPermissions: input.actorPermissions, now: input.now!,
   })
 }
 
@@ -269,7 +286,7 @@ async function loadCashCommandInventoryLoss(
 export function composeCashCommandData(input: ComposeCashCommandInput): CashCommandData {
   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
   const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
-  const drawerState = buildDrawerState(input.drawerDashboard)
+  const drawerState = input.drawerDashboard ? buildDrawerState(input.drawerDashboard) : null
   const proofSubjects = buildProofSubjects(input)
   const paymentTransactionProofSubject = proofSubject(proofSubjects, "payment.transaction")
   const reconciliationProofSubject = proofSubject(proofSubjects, "reconciliation.run")
@@ -299,20 +316,21 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
   const inventoryAction = actionLink({
     id: "cash-command-open-stock",
     label: "Open stock",
-    href: "/dashboard/inventory/stock",
-    requiredPermission: "inventory.read",
+    href: "/dashboard/inventory/items",
+    requiredPermission: "inventory.items.read",
     moduleSlug: "inventory",
   })
   const payrollAction = actionLink({
     id: "cash-command-open-payroll-balances",
     label: "Open payroll payments",
     href: "/dashboard/payroll/payments",
-    requiredPermission: "payroll.payments.reconcile",
+    requiredPermission: "payments.reconciliation.read",
+    additionalRequiredPermissions: ["payroll.payments.reconcile", "payroll.command.read"],
     moduleSlug: "payroll",
   })
 
   const cards: BIKpiCard[] = [
-    createSnapshotKpi({
+    ...(tenantOperating.metrics.cashCollected !== null ? [createSnapshotKpi({
       id: "cash_collected",
       title: "Cash collected",
       detail: "Collected payment value in the selected operating period.",
@@ -321,13 +339,13 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       format: "currency",
       moduleSlug: "finance",
       requiredPermission: "finance.read",
-      snapshot: tenantOperating,
+      snapshot: input.cardSources?.cash_collected ?? tenantOperating,
       href: "/dashboard/finance/payments",
       actionLink: cashAction,
       proofSubject: availableProof(journalProofSubject),
       drillThroughLabel: "Open cash collection proof",
-    }),
-    createSnapshotKpi({
+    })] : []),
+    ...(paymentTruth ? [createSnapshotKpi({
       id: "unreconciled_cash",
       title: "Unreconciled cash",
       detail: "Unresolved suspense value that should be explained before daily cash is trusted.",
@@ -341,8 +359,8 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       actionLink: reconciliationAction,
       proofSubject: availableProof(reconciliationProofSubject),
       drillThroughLabel: "Open reconciliation proof",
-    }),
-    createSnapshotKpi({
+    })] : []),
+    ...(paymentTruth ? [createSnapshotKpi({
       id: "open_suspense",
       title: "Open suspense",
       detail: "Suspense items still waiting for classification, match, posting, or resolution.",
@@ -356,13 +374,13 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       actionLink: reconciliationAction,
       proofSubject: availableProof(reconciliationProofSubject),
       drillThroughLabel: "Open suspense proof",
-    }),
-    drawerRiskCard({
-      input,
+    })] : []),
+    ...(input.drawerDashboard && drawerState ? [drawerRiskCard({
+      input: { ...input, drawerDashboard: input.drawerDashboard },
       drawerState,
       drawerAction,
-    }),
-    createSnapshotKpi({
+    })] : []),
+    ...(paymentTruth ? [createSnapshotKpi({
       id: "provider_risk",
       title: "Provider risk",
       detail:
@@ -377,8 +395,8 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       actionLink: reconciliationAction,
       proofSubject: availableProof(paymentTransactionProofSubject) ?? availableProof(reconciliationProofSubject),
       drillThroughLabel: "Open provider proof",
-    }),
-    createSnapshotKpi({
+    })] : []),
+    ...(tenantOperating.metrics.activeEmployeeBalanceCaseCount !== null ? [createSnapshotKpi({
       id: "employee_balance_recovery",
       title: "Employee balance recovery",
       detail: "Open payroll recovery or refund cases that affect net-pay clearing and cash planning.",
@@ -387,11 +405,12 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       format: "currency",
       moduleSlug: "payroll",
       requiredPermission: "payroll.payments.reconcile",
-      snapshot: tenantOperating,
+      snapshot: input.cardSources?.employee_balance_recovery ?? tenantOperating,
       href: "/dashboard/payroll/payments",
       actionLink: payrollAction,
       drillThroughLabel: "Open employee balance proof",
-    }),
+    })] : []),
+    ...(payrollForecast ? [
     payrollForecastCard(
       createSnapshotKpi({
         id: "upcoming_payroll_net_pay",
@@ -404,7 +423,7 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
         format: "currency",
         moduleSlug: "payroll",
         requiredPermission: "payroll.payments.reconcile",
-        snapshot: tenantOperating,
+        snapshot: input.cardSources?.upcoming_payroll_net_pay ?? tenantOperating,
         href: "/dashboard/payroll/payments",
         actionLink: payrollAction,
         drillThroughLabel: "Open payroll payment forecast proof",
@@ -423,20 +442,22 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
         format: "currency",
         moduleSlug: "payroll",
         requiredPermission: "payroll.declarations.manage",
-        snapshot: tenantOperating,
+        snapshot: input.cardSources?.upcoming_statutory_liability ?? tenantOperating,
         href: "/dashboard/payroll/declarations",
         actionLink: actionLink({
           id: "cash-command-open-payroll-declarations",
           label: "Open declarations",
           href: "/dashboard/payroll/declarations",
-          requiredPermission: "payroll.declarations.manage",
+          requiredPermission: "payroll.command.read",
+          additionalRequiredPermissions: ["payroll.declarations.manage"],
           moduleSlug: "payroll",
         }),
         drillThroughLabel: "Open payroll declaration forecast proof",
       }),
       payrollForecast,
     ),
-    createSnapshotKpi({
+    ] : []),
+    ...(inventoryCash ? [createSnapshotKpi({
       id: "stock_cash_buffer",
       title: "Stock cash buffer",
       detail: "Inventory value currently tying cash to stock, including zero or negative-stock pressure.",
@@ -446,10 +467,10 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       moduleSlug: "inventory",
       requiredPermission: "inventory.read",
       snapshot: inventoryCash,
-      href: "/dashboard/inventory/stock",
+      href: "/dashboard/inventory/items",
       actionLink: inventoryAction,
       drillThroughLabel: "Open stock-to-cash view",
-    }),
+    })] : []),
   ]
 
   const summary = buildSummary(input, cards, drawerState)
@@ -457,11 +478,11 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
   const evidenceGrade = strongestVisibleGrade(cards.map((card) => card.evidenceGrade))
   const state = commandState(cards, input.actionQueue.summary.total)
   const primaryAction =
-    summary.unreconciledCash === null || summary.unreconciledCash > 0 || summary.openSuspenseCount > 0
+    summary.unreconciledCash === null || summary.unreconciledCash > 0 || (summary.openSuspenseCount ?? 0) > 0
       ? reconciliationAction
-      : drawerState.highRiskAlertCount > 0
+      : drawerState && drawerState.highRiskAlertCount > 0
         ? drawerAction
-        : summary.employeeBalanceOutstandingAmount > 0
+        : (summary.activeEmployeeBalanceCaseCount ?? 0) > 0
           ? payrollAction
           : cashAction
   const changes = buildChanges({ input, cards, drawerState, reconciliationAction, drawerAction, payrollAction })
@@ -528,13 +549,14 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
       summary: input.actionQueue.summary,
       filteredOutCount: input.actionQueue.filteredOutCount,
     },
-    moduleControl: {
+    sourceRestrictions: input.sourceRestrictions,
+    moduleControl: input.moduleControl ? {
       mode: input.moduleControl.mode,
       hardEnforcementEnabled: input.moduleControl.hardEnforcementEnabled,
       summary: input.moduleControl.summary,
       generatedAt: input.moduleControl.generatedAt,
       unknownRequestedModules: input.moduleControl.unknownRequestedModules,
-    },
+    } : null,
     summary,
   }
 }
@@ -542,13 +564,15 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
 function payrollForecastCard(card: BIKpiCard, forecast: PayrollFinanceForecastMetrics): BIKpiCard {
   const blockers = payrollForecastBlockers(card)
   const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0
+  const empty = forecast.reasonCode === "PAYROLL_FORECAST_NO_UPCOMING_PERIODS"
+  const evidenceGrade = blocked ? "blocked" : forecast.reasonCode === "PAYROLL_FORECAST_SOURCE_LINKED" ? "posted" : "operational"
   const nextAction = blockers.find((blocker) => blocker.nextAction)?.nextAction
 
   return {
     ...card,
-    state: blocked ? "blocked" : card.freshness.stale ? "stale" : "ready",
-    evidenceGrade: blocked ? "blocked" : "posted",
-    trustState: blocked ? "blocked" : "posted",
+    state: blocked ? "blocked" : card.freshness.stale ? "stale" : empty ? "empty" : "ready",
+    evidenceGrade,
+    trustState: evidenceGradeToBITrustState(evidenceGrade),
     detail: blocked ? `${forecast.message}${nextAction ? ` ${nextAction}` : ""}` : card.detail,
     blockers,
     redactions: uniqueById([
@@ -571,6 +595,7 @@ function buildCashDrawerSignals(input: {
   drawerDashboard: ComposeCashCommandInput["drawerDashboard"]
   now?: Date | string | null
 }): BusinessSignal[] {
+  if (!input.drawerDashboard) return []
   const summary = input.drawerDashboard.summary
   const highAlertCount = input.drawerDashboard.alerts.filter((item) => item.severity === "critical").length
   const activeAlertCount = input.drawerDashboard.alerts.filter((item) => item.code !== "READY").length
@@ -616,7 +641,7 @@ function buildCashDrawerSignals(input: {
 }
 
 function drawerRiskCard(input: {
-  input: ComposeCashCommandInput
+  input: ComposeCashCommandInput & { drawerDashboard: NonNullable<ComposeCashCommandInput["drawerDashboard"]> }
   drawerState: CashCommandDrawerState
   drawerAction: BIActionLink
 }): BIKpiCard {
@@ -668,7 +693,7 @@ function drawerRiskCard(input: {
 function buildChanges(input: {
   input: ComposeCashCommandInput
   cards: BIKpiCard[]
-  drawerState: CashCommandDrawerState
+  drawerState: CashCommandDrawerState | null
   reconciliationAction: BIActionLink
   drawerAction: BIActionLink
   payrollAction: BIActionLink
@@ -685,78 +710,76 @@ function buildChanges(input: {
     cashCollected
       ? changeFromCard({
           card: cashCollected,
-          title: "Cash collected moved today",
+          title: "Cash collected in this period",
           detail: `${formatAmount(tenantOperating.metrics.cashCollected, input.input.currency)} is visible in collected cash.`,
-          businessImpact: "Owners can see today's collected cash before checking unresolved exceptions.",
-          direction: "changed",
-          severity: tenantOperating.metrics.cashCollected > 0 ? "info" : "low",
+          businessImpact: "Owners can review collected cash for this period before checking unresolved exceptions.",
+          severity: (tenantOperating.metrics.cashCollected ?? 0) > 0 ? "info" : "low",
           currentValue: tenantOperating.metrics.cashCollected,
         })
       : null,
-    suspense && paymentTruth.metrics.openSuspenseCount > 0
+    suspense && paymentTruth && paymentTruth.metrics.openSuspenseCount > 0
       ? changeFromCard({
           card: suspense,
           title: "Unreconciled cash remains open",
           detail: paymentTruth.metrics.openSuspenseAmount === null ? "Open suspense spans currencies without a verified converted total. Review the currency breakdown." : `${formatAmount(paymentTruth.metrics.openSuspenseAmount, input.input.currency)} remains in suspense.`,
           businessImpact: "Cash cannot be treated as fully trusted until suspense is cleared or explained.",
-          direction: "worsened",
           severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
           currentValue: paymentTruth.metrics.openSuspenseAmount,
           actionLink: input.reconciliationAction,
         })
       : null,
-    drawer && input.drawerState.alertCount > 0
+    drawer && input.drawerState && input.drawerState.alertCount > 0
       ? changeFromCard({
           card: drawer,
           title: "Drawer risk needs review",
           detail: `${input.drawerState.alertCount} drawer alert(s) are visible today.`,
           businessImpact: "Drawer variance or stale sessions can hide leakage before cash is deposited or posted.",
-          direction: "new",
           severity: input.drawerState.highRiskAlertCount > 0 ? "critical" : "high",
           currentValue: Math.abs(input.drawerState.liveVariance) + Math.abs(input.drawerState.sessionVariance),
           actionLink: input.drawerAction,
         })
       : null,
-    provider && providerRiskCount(paymentTruth) > 0
+    provider && paymentTruth && providerRiskCount(paymentTruth) > 0
       ? changeFromCard({
           card: provider,
           title: "Provider risk is visible",
           detail: `${providerRiskCount(paymentTruth)} provider issue(s) are affecting payment confidence.`,
           businessImpact: "Provider evidence should be reviewed before daily cash or close reporting is trusted.",
-          direction: "changed",
           severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "medium",
           currentValue: providerRiskCount(paymentTruth),
           actionLink: input.reconciliationAction,
         })
       : null,
-    payrollRecovery && tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0
+    payrollRecovery && (tenantOperating.metrics.activeEmployeeBalanceCaseCount ?? 0) > 0
       ? changeFromCard({
           card: payrollRecovery,
           title: "Employee balance recovery is open",
-          detail: `${formatAmount(
+          detail: tenantOperating.metrics.employeeBalanceOutstandingAmount === null
+            ? `${tenantOperating.metrics.activeEmployeeBalanceCaseCount} recovery case(s) remain open; a combined currency total is unavailable.`
+            : `${formatAmount(
             tenantOperating.metrics.employeeBalanceOutstandingAmount,
             input.input.currency,
           )} remains outstanding across ${tenantOperating.metrics.activeEmployeeBalanceCaseCount} case(s).`,
           businessImpact: "Net-pay clearing and cash planning remain incomplete until recovery cases are settled or reviewed.",
-          direction: "new",
           severity:
-            tenantOperating.metrics.employeeBalanceOutstandingAmount >= 500_000 ||
-            tenantOperating.metrics.activeEmployeeBalanceCaseCount >= 3
+            (tenantOperating.metrics.employeeBalanceOutstandingAmount !== null && tenantOperating.metrics.employeeBalanceOutstandingAmount >= 500_000) ||
+            (tenantOperating.metrics.activeEmployeeBalanceCaseCount ?? 0) >= 3
               ? "high"
               : "medium",
           currentValue: tenantOperating.metrics.employeeBalanceOutstandingAmount,
           actionLink: input.payrollAction,
         })
       : null,
-    payrollNetPay && payrollForecast.blockerCodes.length > 0
+    payrollNetPay && payrollForecast && payrollForecast.blockerCodes.length > 0
       ? changeFromCard({
           card: payrollNetPay,
           title: "Payroll forecast proof is blocked",
           detail: `${payrollForecast.blockerCodes.length} payroll forecast blocker(s) are withholding aggregate payroll cash obligations.`,
           businessImpact: "Cash planning and profitability views must not rely on payroll obligations until payroll proof is complete.",
-          direction: "new",
           severity: "high",
           currentValue: payrollForecast.blockerCodes.length,
+          unit: "blockers",
+          format: "number",
           actionLink: input.payrollAction,
         })
       : null,
@@ -792,7 +815,7 @@ function buildActionsToday(actionQueue: ComposeCashCommandInput["actionQueue"], 
 function buildRisks(input: {
   input: ComposeCashCommandInput
   cards: BIKpiCard[]
-  drawerState: CashCommandDrawerState
+  drawerState: CashCommandDrawerState | null
   reconciliationAction: BIActionLink
   drawerAction: BIActionLink
   payrollAction: BIActionLink
@@ -801,7 +824,7 @@ function buildRisks(input: {
   const tenantOperating = input.input.snapshots.tenantOperating
   const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
   const risks = [
-    riskFromCard({
+    paymentTruth ? riskFromCard({
       rank: 1,
       card: cardById(input.cards, "unreconciled_cash"),
       title: "Unreconciled cash",
@@ -812,8 +835,8 @@ function buildRisks(input: {
       moneyImpact: paymentTruth.metrics.openSuspenseAmount,
       urgency: paymentTruth.metrics.openSuspenseCount > 0 ? "today" : "watch",
       actionLink: input.reconciliationAction,
-    }),
-    riskFromCard({
+    }) : null,
+    input.drawerState ? riskFromCard({
       rank: 2,
       card: cardById(input.cards, "drawer_risk"),
       title: "Drawer risk",
@@ -824,8 +847,8 @@ function buildRisks(input: {
       moneyImpact: Math.abs(input.drawerState.liveVariance) + Math.abs(input.drawerState.sessionVariance),
       urgency: input.drawerState.alertCount > 0 ? "today" : "watch",
       actionLink: input.drawerAction,
-    }),
-    riskFromCard({
+    }) : null,
+    paymentTruth ? riskFromCard({
       rank: 3,
       card: cardById(input.cards, "provider_risk"),
       title: "Provider risk",
@@ -836,20 +859,20 @@ function buildRisks(input: {
       moneyImpact: null,
       urgency: providerRiskCount(paymentTruth) > 0 ? "today" : "watch",
       actionLink: input.reconciliationAction,
-    }),
+    }) : null,
     riskFromCard({
       rank: 4,
       card: cardById(input.cards, "employee_balance_recovery"),
       title: "Employee balance recovery",
       detail: "Open payroll recovery or refund balances affect net-pay clearing and cash planning.",
       businessImpact: "Unsettled employee balances can leave payroll clearing, cash forecasts, and close readiness incomplete.",
-      severity: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? "high" : "info",
-      severityScore: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? 74 : 10,
+      severity: (tenantOperating.metrics.activeEmployeeBalanceCaseCount ?? 0) > 0 ? "high" : "info",
+      severityScore: (tenantOperating.metrics.activeEmployeeBalanceCaseCount ?? 0) > 0 ? 74 : 10,
       moneyImpact: tenantOperating.metrics.employeeBalanceOutstandingAmount,
-      urgency: tenantOperating.metrics.activeEmployeeBalanceCaseCount > 0 ? "today" : "watch",
+      urgency: (tenantOperating.metrics.activeEmployeeBalanceCaseCount ?? 0) > 0 ? "today" : "watch",
       actionLink: input.payrollAction,
     }),
-    payrollForecast.blockerCodes.length > 0
+    payrollForecast && payrollForecast.blockerCodes.length > 0
       ? riskFromCard({
           rank: 5,
           card: cardById(input.cards, "upcoming_payroll_net_pay"),
@@ -873,23 +896,24 @@ function buildRisks(input: {
 
 function buildTrustSignals(input: {
   input: ComposeCashCommandInput
-  drawerState: CashCommandDrawerState
+  drawerState: CashCommandDrawerState | null
   freshness: BIFreshness
 }): CashCommandTrustSignal[] {
   const { paymentTruth, closeReadiness } = input.input.snapshots
-  const paymentFreshness = normalizeSnapshotFreshness(paymentTruth.freshness, paymentTruth.status)
-  const closeFreshness = normalizeSnapshotFreshness(closeReadiness.freshness, closeReadiness.status)
-  const paymentBlockers = paymentTruth.blockers.map(toBIBlocker)
-  const paymentRedactions = paymentTruth.redactions.map(toBIRedaction)
-  const activeProviders = paymentTruth.metrics.activeProviderAccountCount
-  const inactiveProviders = Math.max(paymentTruth.metrics.providerAccountCount - activeProviders, 0)
-  const closeBlockers =
+  const paymentFreshness = paymentTruth ? normalizeSnapshotFreshness(paymentTruth.freshness, paymentTruth.status) : fallbackFreshness(input.input.generatedAt)
+  const closeFreshness = closeReadiness ? normalizeSnapshotFreshness(closeReadiness.freshness, closeReadiness.status) : fallbackFreshness(input.input.generatedAt)
+  const paymentBlockers = paymentTruth?.blockers.map(toBIBlocker) ?? []
+  const paymentRedactions = paymentTruth?.redactions.map(toBIRedaction) ?? []
+  const activeProviders = paymentTruth?.metrics.activeProviderAccountCount ?? 0
+  const inactiveProviders = Math.max((paymentTruth?.metrics.providerAccountCount ?? 0) - activeProviders, 0)
+  const closeBlockers = closeReadiness ?
     closeReadiness.metrics.blockedCloseRunCount +
     closeReadiness.metrics.criticalOpenFindingCount +
-    closeReadiness.metrics.unavailableEvidenceCount
+    closeReadiness.metrics.unavailableEvidenceCount : 0
+  const closeNeedsReview = closeReadiness && (closeReadiness.evidenceGrade === "blocked" || closeReadiness.blockers.length > 0)
 
   return [
-    {
+    ...(paymentTruth ? [{
       id: "provider_evidence",
       label: "Provider evidence",
       value: `${activeProviders}/${paymentTruth.metrics.providerAccountCount}`,
@@ -931,7 +955,8 @@ function buildTrustSignals(input: {
       blockers: paymentBlockers,
       redactions: paymentRedactions,
     },
-    {
+    ] satisfies CashCommandTrustSignal[] : []),
+    ...(input.drawerState && input.input.drawerDashboard ? [{
       id: "drawer_confidence",
       label: "Drawer confidence",
       value: `${input.drawerState.confidenceScore}%`,
@@ -943,20 +968,23 @@ function buildTrustSignals(input: {
       freshness: drawerFreshness(input.input.drawerDashboard.generatedAt),
       blockers: drawerBlockers(input.input.drawerDashboard),
       redactions: [],
-    },
-    {
+    } satisfies CashCommandTrustSignal] : []),
+    ...(closeReadiness ? [{
       id: "close_readiness",
       label: "Close blockers",
-      value: String(closeBlockers),
+      // Evidence defects do not always have a corresponding legacy counter.
+      value: closeNeedsReview ? "Review required" : String(closeBlockers),
       detail: closeReadiness.metrics.averageReadinessScore === null ? null : `${closeReadiness.metrics.averageReadinessScore}% readiness.`,
-      tone: closeBlockers > 0 ? "danger" : "success",
+      tone: closeReadiness.evidenceGrade === "blocked" || closeBlockers > 0 ? "danger"
+        : closeNeedsReview || closeFreshness.stale ? "gold"
+        : closeReadiness.evidenceGrade === "certified" ? "success" : "info",
       requiredPermission: "accounting.close.read",
       evidenceGrade: closeReadiness.evidenceGrade,
       trustState: evidenceGradeToBITrustState(closeReadiness.evidenceGrade),
       freshness: closeFreshness,
       blockers: closeReadiness.blockers.map(toBIBlocker),
       redactions: closeReadiness.redactions.map(toBIRedaction),
-    },
+    }] satisfies CashCommandTrustSignal[] : []),
     {
       id: "freshness",
       label: "Freshness",
@@ -973,20 +1001,20 @@ function buildTrustSignals(input: {
   ]
 }
 
-function buildSummary(input: ComposeCashCommandInput, cards: BIKpiCard[], drawerState: CashCommandDrawerState): CashCommandSummary {
+function buildSummary(input: ComposeCashCommandInput, cards: BIKpiCard[], drawerState: CashCommandDrawerState | null): CashCommandSummary {
   const paymentTruth = input.snapshots.paymentTruth
   return {
     cashCollected: input.snapshots.tenantOperating.metrics.cashCollected,
-    unreconciledCash: paymentTruth.metrics.openSuspenseAmount,
-    openSuspenseCount: paymentTruth.metrics.openSuspenseCount,
-    drawerVariance: drawerState.liveVariance + drawerState.sessionVariance,
-    drawerAlertCount: drawerState.alertCount,
-    providerRiskCount: providerRiskCount(paymentTruth),
+    unreconciledCash: paymentTruth?.metrics.openSuspenseAmount ?? null,
+    openSuspenseCount: paymentTruth?.metrics.openSuspenseCount ?? null,
+    drawerVariance: drawerState ? drawerState.liveVariance + drawerState.sessionVariance : null,
+    drawerAlertCount: drawerState?.alertCount ?? null,
+    providerRiskCount: paymentTruth ? providerRiskCount(paymentTruth) : null,
     activeEmployeeBalanceCaseCount: input.snapshots.tenantOperating.metrics.activeEmployeeBalanceCaseCount,
     employeeBalanceOutstandingAmount: input.snapshots.tenantOperating.metrics.employeeBalanceOutstandingAmount,
-    upcomingPayrollNetPayAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount,
-    upcomingStatutoryLiabilityAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount,
-    payrollForecastTotalAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
+    upcomingPayrollNetPayAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast?.upcomingNetPayAmount ?? null,
+    upcomingStatutoryLiabilityAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast?.upcomingStatutoryLiabilityAmount ?? null,
+    payrollForecastTotalAmount: input.snapshots.tenantOperating.metrics.payrollFinanceForecast?.totalUpcomingAmount ?? null,
     actionCountToday: input.actionQueue.summary.total,
     staleCount: cards.filter((card) => card.freshness.stale || card.state === "stale").length,
     blockedCount: cards.filter((card) => card.state === "blocked" || card.blockers.length > 0).length,
@@ -994,7 +1022,7 @@ function buildSummary(input: ComposeCashCommandInput, cards: BIKpiCard[], drawer
   }
 }
 
-function buildDrawerState(drawerDashboard: ComposeCashCommandInput["drawerDashboard"]): CashCommandDrawerState {
+function buildDrawerState(drawerDashboard: NonNullable<ComposeCashCommandInput["drawerDashboard"]>): CashCommandDrawerState {
   const activeAlerts = drawerDashboard.alerts.filter((item) => item.code !== "READY")
   return {
     drawerCount: drawerDashboard.summary.drawerCount,
@@ -1016,7 +1044,7 @@ function providerRiskCount(paymentTruth: SnapshotResult<PaymentTruthMetrics>) {
   )
 }
 
-function drawerBlockers(drawerDashboard: ComposeCashCommandInput["drawerDashboard"]): BIBlocker[] {
+function drawerBlockers(drawerDashboard: NonNullable<ComposeCashCommandInput["drawerDashboard"]>): BIBlocker[] {
   return drawerDashboard.alerts
     .filter((alert) => alert.code !== "READY")
     .map((alert) => ({
@@ -1048,7 +1076,7 @@ function buildProofSubjects(input: ComposeCashCommandInput): BIProofDrawerSubjec
       label: "Payment transaction proof",
       requiredPermission: SUBJECT_PERMISSION_MAP["payment.transaction"],
       sourceModules: ["payments", "finance"],
-      unavailableReason: "No payment transaction is visible in this cash-command period.",
+      unavailableReason: input.proofSubjectUnavailableReasons?.["payment.transaction"] ?? "No payment transaction is visible in this cash-command period.",
     }),
     proofSubjectFromId({
       organizationId: input.organizationId,
@@ -1058,7 +1086,7 @@ function buildProofSubjects(input: ComposeCashCommandInput): BIProofDrawerSubjec
       label: "Reconciliation proof",
       requiredPermission: SUBJECT_PERMISSION_MAP["reconciliation.run"],
       sourceModules: ["payments", "finance", "accounting"],
-      unavailableReason: "No reconciliation run is visible in this cash-command period.",
+      unavailableReason: input.proofSubjectUnavailableReasons?.["reconciliation.run"] ?? "No reconciliation run is visible in this cash-command period.",
     }),
     proofSubjectFromId({
       organizationId: input.organizationId,
@@ -1068,7 +1096,7 @@ function buildProofSubjects(input: ComposeCashCommandInput): BIProofDrawerSubjec
       label: "Close proof",
       requiredPermission: SUBJECT_PERMISSION_MAP["close.run"],
       sourceModules: ["close", "accounting"],
-      unavailableReason: "No close run is visible in this cash-command period.",
+      unavailableReason: input.proofSubjectUnavailableReasons?.["close.run"] ?? "No close run is visible in this cash-command period.",
     }),
     proofSubjectFromId({
       organizationId: input.organizationId,
@@ -1078,7 +1106,7 @@ function buildProofSubjects(input: ComposeCashCommandInput): BIProofDrawerSubjec
       label: "Ledger proof",
       requiredPermission: SUBJECT_PERMISSION_MAP["journal.entry"],
       sourceModules: ["accounting"],
-      unavailableReason: "No posted journal entry is visible in this cash-command period.",
+      unavailableReason: input.proofSubjectUnavailableReasons?.["journal.entry"] ?? "No posted journal entry is visible in this cash-command period.",
     }),
   ]
 }
@@ -1134,9 +1162,10 @@ function changeFromCard(input: {
   title: string
   detail: string
   businessImpact: string
-  direction: BIChangeEvent["direction"]
   severity: BISeverity
   currentValue: number | string | null
+  unit?: string
+  format?: BIChangeEvent["format"]
   actionLink?: BIActionLink | null
 }): BIChangeEvent {
   return {
@@ -1147,7 +1176,8 @@ function changeFromCard(input: {
     title: input.title,
     detail: input.detail,
     businessImpact: input.businessImpact,
-    direction: input.direction,
+    // This read model has no previous snapshot from which to establish change.
+    direction: "observed",
     severity: input.severity,
     state: input.card.state,
     evidenceGrade: input.card.evidenceGrade,
@@ -1157,8 +1187,8 @@ function changeFromCard(input: {
     changedAt: input.card.freshness.sourceMaxUpdatedAt ?? input.card.freshness.generatedAt,
     previousValue: null,
     currentValue: input.currentValue,
-    unit: input.card.unit,
-    format: input.card.format,
+    unit: input.unit ?? input.card.unit,
+    format: input.format ?? input.card.format,
     provenance: input.card.provenance,
     blockers: input.card.blockers,
     redactions: input.card.redactions,
@@ -1219,6 +1249,7 @@ function actionLinkFromItem(item: ActionItem, signal: BusinessSignal | null): BI
     label: disabled ? "Unavailable" : "Open",
     href: item.actionPath,
     requiredPermission: item.requiredPermission,
+    ...(item.additionalRequiredPermissions ? { additionalRequiredPermissions: item.additionalRequiredPermissions } : {}),
     moduleSlug: signal?.moduleSlug ?? ACTION_MODULE_BY_SIGNAL_TYPE[item.signalType],
     disabled,
     disabledReason: disabled ? `Action is ${item.status}.` : null,
@@ -1293,23 +1324,23 @@ function strongestVisibleGrade(grades: EvidenceGrade[]): EvidenceGrade {
 }
 
 function buildBriefSummary(summary: CashCommandSummary, currency: string) {
-  return `${formatAmount(summary.cashCollected, currency)} collected, ${formatAmount(summary.unreconciledCash, currency)} unreconciled, ${formatAmount(summary.payrollForecastTotalAmount, currency)} upcoming payroll obligations, ${formatAmount(summary.employeeBalanceOutstandingAmount, currency)} payroll balance outstanding, ${summary.openSuspenseCount} suspense item(s), ${summary.drawerAlertCount} drawer alert(s), and ${summary.providerRiskCount} provider issue(s).`
+  return `${formatAmount(summary.cashCollected, currency)} collected, ${formatAmount(summary.unreconciledCash, currency)} unreconciled, ${formatAmount(summary.payrollForecastTotalAmount, currency)} upcoming payroll obligations, ${formatAmount(summary.employeeBalanceOutstandingAmount, currency)} payroll balance outstanding, ${summary.openSuspenseCount} suspense item(s), ${summary.drawerAlertCount ?? "unavailable"} drawer alert(s), and ${summary.providerRiskCount} provider issue(s).`
 }
 
 function buildBriefConclusion(summary: CashCommandSummary) {
-  if (summary.unreconciledCash === null || summary.unreconciledCash > 0 || summary.openSuspenseCount > 0) {
+  if (summary.unreconciledCash === null || summary.unreconciledCash > 0 || (summary.openSuspenseCount ?? 0) > 0) {
     return "Start with suspense: unreconciled cash must be explained before today can be trusted."
   }
-  if (summary.drawerAlertCount > 0) {
+  if (summary.drawerAlertCount !== null && summary.drawerAlertCount > 0) {
     return "Review drawer evidence before deposit or posting claims rely on the day."
   }
-  if (summary.providerRiskCount > 0) {
+  if (summary.providerRiskCount !== null && summary.providerRiskCount > 0) {
     return "Review provider evidence before treating collected cash as settled."
   }
-  if (summary.employeeBalanceOutstandingAmount > 0 || summary.activeEmployeeBalanceCaseCount > 0) {
+  if ((summary.employeeBalanceOutstandingAmount !== null && summary.employeeBalanceOutstandingAmount > 0) || (summary.activeEmployeeBalanceCaseCount ?? 0) > 0) {
     return "Review employee balance recovery before treating payroll clearing and cash planning as complete."
   }
-  if (summary.payrollForecastTotalAmount > 0) {
+  if (summary.payrollForecastTotalAmount !== null && summary.payrollForecastTotalAmount > 0) {
     return "Review upcoming payroll and statutory obligations before finalizing the cash plan."
   }
   return "No suspense, drawer, provider, payroll recovery, or upcoming payroll cash blocker is visible in the current command view."
@@ -1319,7 +1350,7 @@ function dateLabel(value: string | null) {
   if (!value) return "the forecast horizon"
   const parsed = new Date(value)
   if (Number.isNaN(parsed.getTime())) return "the forecast horizon"
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)
+  return `${new Intl.DateTimeFormat("en", { timeZone: "UTC", month: "short", day: "numeric" }).format(parsed)} (UTC)`
 }
 function formatAmount(value: number | null, currency: string) {
   if (value === null) return "total unavailable"
@@ -1329,7 +1360,7 @@ function formatAmount(value: number | null, currency: string) {
 function dueLabel(value: string) {
   const parsed = new Date(value)
   if (Number.isNaN(parsed.getTime())) return null
-  return `Due ${new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)}`
+  return `Due ${new Intl.DateTimeFormat("en", { timeZone: "UTC", month: "short", day: "numeric" }).format(parsed)} (UTC)`
 }
 
 function sortActionItems(left: ActionItem, right: ActionItem) {
@@ -1401,8 +1432,7 @@ function drawerScopeFromInput(input: CashCommandInput) {
   return { period: "today" as const }
 }
 
-async function getLatestProofSubjectIds(input: {
-  organizationId: string
+async function getLatestProofSubjectIds(input: CashCommandInput & {
   periodStart: string
   periodEnd: string
 }) {
@@ -1413,9 +1443,44 @@ async function getLatestProofSubjectIds(input: {
     startDate: { lte: periodEnd },
     endDate: { gte: periodStart },
   }
+  const unavailableReasons: NonNullable<ComposeCashCommandInput["proofSubjectUnavailableReasons"]> = {}
+  const moduleReads = new Map<CommercialModuleSlug, Promise<boolean>>()
+
+  async function discover(
+    subjectType: keyof typeof unavailableReasons,
+    moduleSlug: CommercialModuleSlug,
+    read: () => Promise<{ id: string } | null>,
+  ) {
+    // Identifiers are protected evidence too: authorize before querying existence.
+    if (!hasRbacPermission(input.actorPermissions, SUBJECT_PERMISSION_MAP[subjectType])) {
+      unavailableReasons[subjectType] = "You do not have permission to read this proof."
+      return null
+    }
+    let moduleRead = moduleReads.get(moduleSlug)
+    if (!moduleRead) {
+      moduleRead = observeModuleAccess({
+        organizationId: input.organizationId,
+        userId: input.actorId!,
+        actorPermissions: input.actorPermissions,
+        moduleSlug,
+        surfaceType: "report",
+        surface: "cash-command.proof-discovery",
+        accessIntent: "read",
+        mode: "enforce",
+        audit: true,
+        now: input.now ?? null,
+      }).then(result => result.allowed)
+      moduleReads.set(moduleSlug, moduleRead)
+    }
+    if (!(await moduleRead)) {
+      unavailableReasons[subjectType] = "This workspace does not currently allow reading this proof."
+      return null
+    }
+    return read()
+  }
 
   const [paymentTransaction, journalEntry, reconciliationRun, closeRun] = await Promise.all([
-    db.paymentTransaction.findFirst({
+    discover("payment.transaction", "payment_reconciliation", () => db.paymentTransaction.findFirst({
       where: {
         organizationId: input.organizationId,
         OR: [
@@ -1426,16 +1491,17 @@ async function getLatestProofSubjectIds(input: {
       },
       orderBy: { updatedAt: "desc" },
       select: { id: true },
-    }),
-    db.journalEntry.findFirst({
+    })),
+    discover("journal.entry", "accounting", () => db.journalEntry.findFirst({
       where: {
         organizationId: input.organizationId,
+        status: "POSTED",
         entryDate: periodWhere,
       },
       orderBy: { updatedAt: "desc" },
       select: { id: true },
-    }),
-    db.reconciliationRun.findFirst({
+    })),
+    discover("reconciliation.run", "payment_reconciliation", () => db.reconciliationRun.findFirst({
       where: {
         organizationId: input.organizationId,
         voidedAt: null,
@@ -1443,22 +1509,26 @@ async function getLatestProofSubjectIds(input: {
       },
       orderBy: { updatedAt: "desc" },
       select: { id: true },
-    }),
-    db.closeRun.findFirst({
+    })),
+    discover("close.run", "close_assurance", () => db.closeRun.findFirst({
       where: {
         organizationId: input.organizationId,
-        voidedAt: null,
-        period: periodOverlap,
+        period: { organizationId: input.organizationId, ...periodOverlap },
       },
-      orderBy: { updatedAt: "desc" },
+      // History updates must not replace the latest assessment. Include adverse
+      // states; tied IDs stabilize display without claiming temporal precedence.
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: { id: true },
-    }),
+    })),
   ])
 
   return {
-    paymentTransactionId: paymentTransaction?.id ?? null,
-    journalEntryId: journalEntry?.id ?? null,
-    reconciliationRunId: reconciliationRun?.id ?? null,
-    closeRunId: closeRun?.id ?? null,
+    ids: {
+      paymentTransactionId: paymentTransaction?.id ?? null,
+      journalEntryId: journalEntry?.id ?? null,
+      reconciliationRunId: reconciliationRun?.id ?? null,
+      closeRunId: closeRun?.id ?? null,
+    },
+    unavailableReasons,
   }
 }

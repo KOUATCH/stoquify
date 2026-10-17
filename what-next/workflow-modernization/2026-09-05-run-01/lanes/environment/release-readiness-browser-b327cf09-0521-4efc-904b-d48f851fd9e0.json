@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-30T14:40:53.351Z",
+  "sourceBefore": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "localizedExplanation": true,
+      "paymentActionDisabled": true,
+      "declarationActionDisabled": true,
+      "noBlockerOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "release-readiness-b327cf09-0521-4efc-904b-d48f851fd9e0-en.png"
+    },
+    {
+      "locale": "fr",
+      "localizedExplanation": true,
+      "paymentActionDisabled": true,
+      "declarationActionDisabled": true,
+      "noBlockerOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "release-readiness-b327cf09-0521-4efc-904b-d48f851fd9e0-fr.png"
+    }
+  ],
+  "server": {
+    "missingProofActionsBlocked": true,
+    "destinationStillValid": true,
+    "writeGateDeniedWithoutPaymentEffects": true
+  },
+  "passed": true,
+  "sourceAfter": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true
+}

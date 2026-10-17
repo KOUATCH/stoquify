@@ -1,0 +1,81 @@
+--- a/app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
+@@ -51,6 +51,9 @@
+     date: "Date de l’écriture", currency: "Devise", reference: "Référence", memo: "Libellé",
+     lines: "Lignes de l’écriture", account: "Compte", descriptionColumn: "Description",
+     debit: "Débit", credit: "Crédit", selectAccount: "Sélectionner un compte",
++    accessTitle: "Accès à la configuration comptable requis",
++    accessDescription: "Votre session ne permet pas de consulter les comptes ou les journaux nécessaires à cette saisie. Demandez à un administrateur de l’organisation de vérifier vos droits avant de créer un brouillon.",
++    returnQueue: "Retour aux journaux",
+   } : {
+     eyebrow: "Manual journal", title: "New Journal Entry",
+     description: "Enter a balanced debit and credit draft before posting it to the ledger.",
+@@ -60,6 +63,9 @@
+     date: "Entry date", currency: "Currency", reference: "Reference", memo: "Memo",
+     lines: "Journal entry lines", account: "Account", descriptionColumn: "Description",
+     debit: "Debit", credit: "Credit", selectAccount: "Select account",
++    accessTitle: "Accounting setup access required",
++    accessDescription: "Your session cannot read the accounts or journals needed for this entry. Ask an organization administrator to review your permissions before creating a draft.",
++    returnQueue: "Back to journals",
+   }
+   const t = await getTranslations({ locale, namespace: "moduleComposition.accountingCreate" })
+   const resolvedSearchParams = searchParams ? await searchParams : {}
+@@ -69,6 +75,8 @@
+   ])
+   const postableAccounts = accountsResponse.success ? (accountsResponse.data as AccountRow[]).filter((account) => account.isActive && account.allowManualPost && account._count.children === 0) : null
+   const manualJournals = journalsResponse.success ? (journalsResponse.data as JournalRow[]).filter((journal) => journal.isActive && journal.allowManualEntries) : null
++  const setupAccessDenied = (!accountsResponse.success && accountsResponse.code === "FORBIDDEN") ||
++    (!journalsResponse.success && journalsResponse.code === "FORBIDDEN")
+   const today = new Date().toISOString().slice(0, 10)
+ 
+   async function createEntry(formData: FormData) {
+@@ -115,12 +123,12 @@
+         description={
+           accountsResponse.success && journalsResponse.success
+             ? copy.eligibility
+-            : t("loadFailedDescription")
++            : setupAccessDenied ? copy.accessDescription : t("loadFailedDescription")
+         }
+       >
+         {!postableAccounts || !manualJournals ? <div className="space-y-4 p-5">
+-          <AccountingMessage error={t("loadFailedTitle")} />
+-          <AccountingLinkButton href="/dashboard/accounting/journals/new" variant="outline">{t("retryLoad")}</AccountingLinkButton>
++          <AccountingMessage error={setupAccessDenied ? copy.accessTitle : t("loadFailedTitle")} />
++          <AccountingLinkButton href={setupAccessDenied ? "/dashboard/accounting/journals" : "/dashboard/accounting/journals/new"} variant="outline">{setupAccessDenied ? copy.returnQueue : t("retryLoad")}</AccountingLinkButton>
+         </div> : postableAccounts.length === 0 || manualJournals.length === 0 ? <div className="p-5">
+           <AccountingMessage notice={t("emptySetup")} />
+         </div> : <ManualJournalDraftForm submitAction={createEntry}
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**16 October — Delivery 21:** actual Accountant overview ArrowLeft and Tab/Shift+Tab exit checks passed at 320px. Live French journal verification exposed denied chart-account access being shown as a retryable load failure. EN/FR recovery now explains the access requirement and returns to journals; all 20 mocked tests, scoped TypeScript and lint passed. French phone recovery and focus verified. Full journal-form acceptance still needs a session permitted to read chart accounts; no access was granted. See [Delivery 21](EXECUTION-21.md).
++
+ **16 October — Delivery 20:** native ArrowRight scrolling on the French Accountant overview reached its full 808px range at a 320px viewport while retaining focus. Reverse scrolling remains unverified after browser detachment. Continued source review found and fixed the manual journal form's unnamed scroll container and remaining French interface labels; business controls remain intact. Post-change journal browser acceptance is open. See [Delivery 20](EXECUTION-20.md).
+ 
+ **16 October — Delivery 19:** viewport recovery and live French portfolio refresh-focus checks passed in the Accountant session. French accounting overview now localizes headings/actions, setup and journal states, dates and shared table controls. Six mocked tests, scoped TypeScript and lint passed. EN/FR overview and journals navigation/pagination checked; narrow document containment passed. Horizontal table arrow scrolling remains unconfirmed; Owner/Cashier and broader accessibility acceptance remain open. See [Delivery 19](EXECUTION-19.md).
+--- a/app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx
+@@ -236,6 +236,20 @@
+     expect(createManualJournalEntryAction).not.toHaveBeenCalled()
+   })
+ 
++  it.each([
++    ["accounts", "en"], ["accounts", "fr"], ["journals", "en"], ["journals", "fr"],
++  ])("explains denied %s setup access in %s without suggesting a retry", async (source, locale) => {
++    const lookup = source === "accounts" ? mockListChartAccountsAction : mockListJournalsAction
++    lookup.mockResolvedValue({ success: false, code: "FORBIDDEN", error: "Private access detail" })
++    render(await NewJournalEntryPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
++    expect(screen.getByText(locale === "fr" ? "Accès à la configuration comptable requis" : "Accounting setup access required")).toBeInTheDocument()
++    expect(screen.getByRole("link", { name: locale === "fr" ? "Retour aux journaux" : "Back to journals" })).toHaveAttribute("href", "/dashboard/accounting/journals")
++    expect(screen.queryByRole("link", { name: locale === "fr" ? "Réessayer le chargement" : "Retry setup loading" })).not.toBeInTheDocument()
++    expect(screen.queryByText("Private access detail")).not.toBeInTheDocument()
++    expect(document.querySelector("form")).toBeNull()
++    expect(createManualJournalEntryAction).not.toHaveBeenCalled()
++  })
++
+   it.each(["accounts", "journals"])("shows successful empty %s as missing setup, distinct from failed lookup", async source => {
+     const lookup = source === "accounts" ? mockListChartAccountsAction : mockListJournalsAction
+     lookup.mockResolvedValue({ success: true, data: [] })

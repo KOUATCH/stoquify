@@ -5,6 +5,8 @@ import { z } from "zod"
 import { boundedArray, MAX_MANUAL_JOURNAL_LINES } from "@/lib/validation/bounded-array"
 
 import { protect } from "@/services/_shared/protect"
+import { requireFreshAuth } from "@/lib/security/auth-session"
+import { RbacError, requirePermission } from "@/lib/security/rbac"
 import {
   createManualJournalEntry,
   listJournalEntries,
@@ -101,12 +103,28 @@ export async function createManualJournalEntryAction(input: unknown) {
 }
 
 const postJournalProtected = protect<unknown, unknown>(
-  { permission: "accounting.journal.post", auditResource: "JournalEntry", freshAuth: true },
+  {
+    permission: "accounting.journal.post", auditResource: "JournalEntry", freshAuth: true,
+    module: { moduleSlug: "accounting", accessIntent: "write", mode: "enforce" },
+  },
   async (input, ctx) => {
     const parsed = journalEntryIdSchema.parse(input)
+    if (ctx.freshAuth?.claims.userId !== ctx.userId || ctx.freshAuth.claims.tenantId !== ctx.orgId) {
+      throw new RbacError("Session identity mismatch", "UNAUTHENTICATED", 401)
+    }
     const entry = await postJournalEntry(ctx.orgId, parsed.journalEntryId, ctx.userId, {
       actorPermissions: ctx.permissions,
-      lastAuthAt: Date.now(),
+      lastAuthAt: ctx.freshAuth.lastAuthAt,
+      async assertCurrentAuthority() {
+        const verified = await requireFreshAuth(300)
+        const current = await requirePermission("accounting.journal.post", {
+          resource: "JournalEntry", resourceId: parsed.journalEntryId, auditAllowed: false,
+        })
+        if (verified.claims.userId !== ctx.userId || verified.claims.tenantId !== ctx.orgId ||
+            current.userId !== ctx.userId || current.orgId !== ctx.orgId) {
+          throw new RbacError("Session identity changed; refresh before posting.", "UNAUTHENTICATED", 401)
+        }
+      },
     })
     revalidateAccountingPaths()
     return entry
@@ -118,9 +136,15 @@ export async function postJournalEntryAction(input: unknown) {
 }
 
 const reverseJournalProtected = protect<unknown, unknown>(
-  { permission: "accounting.journal.reverse", auditResource: "JournalEntry", freshAuth: true },
+  {
+    permission: "accounting.journal.reverse", auditResource: "JournalEntry", freshAuth: true,
+    module: { moduleSlug: "accounting", accessIntent: "write", mode: "enforce" },
+  },
   async (input, ctx) => {
     const parsed = reverseJournalSchema.parse(input)
+    if (ctx.freshAuth?.claims.userId !== ctx.userId || ctx.freshAuth.claims.tenantId !== ctx.orgId) {
+      throw new RbacError("Session identity mismatch", "UNAUTHENTICATED", 401)
+    }
     const entry = await reverseJournalEntry(
       ctx.orgId,
       parsed.journalEntryId,
@@ -129,7 +153,17 @@ const reverseJournalProtected = protect<unknown, unknown>(
       parsed.reversalDate,
       {
         actorPermissions: ctx.permissions,
-        lastAuthAt: Date.now(),
+        lastAuthAt: ctx.freshAuth.lastAuthAt,
+        async assertCurrentAuthority() {
+          const verified = await requireFreshAuth(300)
+          const current = await requirePermission("accounting.journal.reverse", {
+            resource: "JournalEntry", resourceId: parsed.journalEntryId, auditAllowed: false,
+          })
+          if (verified.claims.userId !== ctx.userId || verified.claims.tenantId !== ctx.orgId ||
+              current.userId !== ctx.userId || current.orgId !== ctx.orgId) {
+            throw new RbacError("Session identity changed; refresh before reversing.", "UNAUTHENTICATED", 401)
+          }
+        },
       },
     )
     revalidateAccountingPaths()

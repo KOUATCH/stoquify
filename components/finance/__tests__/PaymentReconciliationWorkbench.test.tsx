@@ -1,9 +1,17 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { fireEvent, render as renderWithTestingLibrary, screen, waitFor, within } from "@testing-library/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+const render = (ui: React.ReactNode) => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  return renderWithTestingLibrary(ui, { wrapper: ({ children }) => <QueryClientProvider client={client}>{children}</QueryClientProvider> })
+}
 import { usePermissions } from "@/hooks/usePermissions"
+import { useLocale } from "next-intl"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 
+jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
 jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn(() => ({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })) }))
 jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
+jest.mock("@/actions/payments/alert-scan-recovery.actions", () => ({ readAlertScanRecoveryAction: jest.fn().mockResolvedValue({ ok: false, code: "UNAVAILABLE" }), recoverAlertScanPageAction: jest.fn() }))
 
 jest.mock("lucide-react", () => {
   const React = require("react")
@@ -26,8 +34,15 @@ jest.mock("lucide-react", () => {
 })
 
 jest.mock("next-intl", () => ({
-  useLocale: () => "en-US",
+  useLocale: jest.fn(() => "en-US"),
   useTranslations: () => (key: string, values?: Record<string, string | number>) => {
+    if (/^(certification\.(providerStatuses|runStatuses)\.|statementImport\.statuses\.|rails\.|filters\.)/.test(key)) {
+      const locale = require("next-intl").useLocale()
+      const copy = require(locale === "fr" ? "@/messages/fr.json" : "@/messages/en.json").paymentReconciliationWorkbench
+      const value = key.split(".").reduce((item: any, part: string) => item?.[part], copy)
+      if (typeof value !== "string") throw new Error(`Missing reconciliation translation: ${locale}/${key}`)
+      return value
+    }
     const messages: Record<string, string> = {
       title: "Payment reconciliation workbench",
       subtitle: "Rail-level payment assurance, duplicate provider-reference alerts, and suspense-ready exception queues.",
@@ -389,12 +404,118 @@ function rowForPayment(paymentNumber: string) {
   return row
 }
 
+describe("reconciliation read recovery", () => {
+  it.each(["en", "fr"])("names filters and translates recorded status codes without changing allowed actions in %s", locale => {
+    jest.mocked(useLocale).mockReturnValue(locale)
+    setupWorkbench(workbenchData(), {
+      ...dashboard,
+      providerAccounts: [{ id: "account-1", displayName: "Provider name", providerCode: "CODE-1", status: "DRAFT", currencyCode: "XAF", railName: "Mobile money", railType: "MOBILE_MONEY" }],
+      statementFiles: [{ id: "file-1", providerAccountId: "account-1", providerAccountName: "Provider name", fileName: "statement.csv", sourceType: "CSV", status: "IMPORTED", periodStart: "2026-06-01", periodEnd: "2026-06-30", importedAt: "2026-06-23", lineCount: 1 }],
+      recentRuns: [{ id: "run-1", providerAccountId: "account-1", businessDate: "2026-06-23", status: "BLOCKED", matchCount: 0, exceptionCount: 1, suspenseAmount: 10, signedAt: null, certificateHash: null }],
+    })
+    expect(screen.getByRole("combobox", { name: locale === "fr" ? "Lieu" : "Location" })).toBeInTheDocument()
+    expect(screen.getByRole("combobox", { name: locale === "fr" ? "Période" : "Period" })).toBeInTheDocument()
+    expect(screen.getByText(locale === "fr" ? "Brouillon" : "Draft")).toBeInTheDocument()
+    expect(screen.getByText(locale === "fr" ? "Bloqué" : "Blocked")).toBeInTheDocument()
+    expect(screen.getByText(locale === "fr" ? "Importé" : "Imported")).toBeInTheDocument()
+    expect(within(screen.getByText("CODE-1 / XAF").parentElement!).getByText("Mobile money")).toBeInTheDocument()
+    for (const code of ["DRAFT", "BLOCKED", "IMPORTED", "MOBILE_MONEY"]) expect(screen.queryByText(code, { exact: true })).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "certification.actions.run" })).toBeDisabled()
+    expect(screen.queryByRole("button", { name: "signReview.open" })).not.toBeInTheDocument()
+  })
+
+  it("keeps an unknown provider status inspectable without treating it as active", () => {
+    setupWorkbench(workbenchData(), { ...dashboard, providerAccounts: [{ id: "account-unknown", displayName: "Provider name", providerCode: "CODE-1", status: "NEW_PROVIDER_STATE", currencyCode: "XAF", railName: "New rail", railType: "NEW_RAIL" }] })
+    expect(screen.getByText("NEW_PROVIDER_STATE")).toBeInTheDocument()
+    expect(screen.getByText("NEW_RAIL")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "certification.actions.run" })).toBeDisabled()
+  })
+
+  it.each(["en", "fr"])("preserves the shell main landmark across result, loading, denial and failure states in %s", locale => {
+    jest.mocked(useLocale).mockReturnValue(locale)
+    const log = jest.spyOn(console, "error").mockImplementation(() => {})
+    try {
+      const page = setupWorkbench()
+      page.rerender(<main aria-label="Dashboard workspace"><PaymentReconciliationWorkbench /></main>)
+      const main = screen.getByRole("main", { name: "Dashboard workspace" })
+      expect(screen.getAllByRole("main")).toHaveLength(1)
+      expect(within(main).getByRole("heading", { name: "Payment reconciliation workbench" })).toBeInTheDocument()
+      for (const state of [
+        { isLoading: true, error: null },
+        { isLoading: false, error: Object.assign(new Error("PRIVATE_DIAGNOSTIC"), { code: "FORBIDDEN" }) },
+        { isLoading: false, error: new Error("PRIVATE_DIAGNOSTIC") },
+      ]) {
+        mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, refetch: jest.fn(), ...state })
+        page.rerender(<main aria-label="Dashboard workspace"><PaymentReconciliationWorkbench /></main>)
+        expect(screen.getAllByRole("main")).toEqual([main])
+        expect(within(main).getByRole("heading", { level: 1 })).toBeInTheDocument()
+        expect(screen.queryByText("PRIVATE_DIAGNOSTIC")).not.toBeInTheDocument()
+        expect(screen.queryByRole("table")).not.toBeInTheDocument()
+      }
+      expect(page.importStatement.mutateAsync).not.toHaveBeenCalled()
+      expect(page.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
+    } finally { log.mockRestore() }
+  })
+
+  afterEach(() => {
+    jest.mocked(useLocale).mockReturnValue("en-US")
+    ;(usePermissions as jest.Mock).mockReturnValue({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })
+  })
+
+  it.each(["en", "fr"])("announces pending reads and keeps a safe exit without duplicating main in %s", locale => {
+    jest.mocked(useLocale).mockReturnValue(locale)
+    const page = setupWorkbench()
+    mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: true, error: null, refetch: jest.fn() })
+    page.rerender(<main><PaymentReconciliationWorkbench /></main>)
+    expect(screen.getAllByRole("main")).toHaveLength(1)
+    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Chargement du rapprochement" : "Loading reconciliation")
+    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Aucun résultat n’est encore disponible" : "Results are not available yet")
+    expect(screen.getByRole("link", { name: locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard" })).toHaveAttribute("href", `/${locale}/dashboard`)
+    expect(screen.queryByRole("table")).not.toBeInTheDocument()
+    expect(page.importStatement.mutateAsync).not.toHaveBeenCalled()
+    expect(page.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it.each(["en", "fr"])("offers a scoped access review and permission refresh in %s", locale => {
+    jest.mocked(useLocale).mockReturnValue(locale)
+    const refreshPermissions = jest.fn()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions, hasPermission: () => false, user: { id: "checker-1" } })
+    const page = setupWorkbench()
+    const readAgain = jest.fn()
+    mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: false, error: Object.assign(new Error("PRIVATE_DIAGNOSTIC"), { code: "FORBIDDEN" }), refetch: readAgain })
+    page.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByRole("heading", { name: locale === "fr" ? "L’accès au rapprochement doit être vérifié" : "Reconciliation access needs review" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: locale === "fr" ? "Vérifier mes autorisations" : "Review my access" })).toHaveAttribute("href", `/${locale}/dashboard/access-requests`)
+    fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Actualiser les autorisations" : "Refresh access check" }))
+    expect(refreshPermissions).toHaveBeenCalledTimes(1)
+    expect(readAgain).not.toHaveBeenCalled()
+    expect(screen.queryByText("PRIVATE_DIAGNOSTIC")).not.toBeInTheDocument()
+    expect(screen.queryByRole("heading", { name: "Payment reconciliation workbench" })).not.toBeInTheDocument()
+    expect(page.container.querySelector("main")).toBeNull()
+  })
+
+  it("retries the read for a service failure without misclassifying it as denied access", () => {
+    const log = jest.spyOn(console, "error").mockImplementation(() => {})
+    try {
+      const page = setupWorkbench()
+      const readAgain = jest.fn()
+      mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: false, error: new Error("PRIVATE_DIAGNOSTIC"), refetch: readAgain })
+      page.rerender(<PaymentReconciliationWorkbench />)
+      expect(screen.queryByRole("link", { name: "Review my access" })).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole("button"))
+      expect(readAgain).toHaveBeenCalledTimes(1)
+      expect(screen.queryByText("PRIVATE_DIAGNOSTIC")).not.toBeInTheDocument()
+    } finally { log.mockRestore() }
+  })
+})
+
 describe("PaymentTrustBanner", () => {
-  it.each(["REQUESTED", "RUNNING", "FAILED", "COMPLETE"] as const)("shows authoritative %s scan progress without treating it as issue resolution", state => {
+  it.each(["REQUESTED", "RUNNING", "FAILED", "COMPLETE"] as const)("shows authoritative %s scan progress without treating it as issue resolution", async state => {
     setupWorkbench(workbenchData(), { ...dashboard, alertScan: { kind: "RECONCILIATION_ALERT_SCAN_V1", scanId: "c781b497-8491-46b9-bc94-e626b2c28816", workerId: "worker-1", startedAt: "2026-09-09T10:00:00Z", updatedAt: "2026-09-09T10:01:00Z", completedAt: null, state, phase: "SUSPENSE", cursor: null, version: 1, examined: 100, created: 90, errorCode: state === "FAILED" ? "ALERT_SCAN_PAGE_FAILED" : null } })
     const inbox = within(screen.getByRole("region", { name: "inbox.title" }))
     expect(inbox.getByRole("status")).toHaveTextContent(`inbox.scan.states.${state}`)
     expect(inbox.getByRole("status")).toHaveTextContent("inbox.scan.description")
+    await waitFor(() => expect(screen.getByRole("button", { name: "Check recovery status" })).toBeEnabled())
   })
   it("shows all returned observations with exact recorded currency and honest status", () => {
     setupWorkbench(workbenchData(), { ...dashboard, notificationQueue: Array.from({ length: 25 }, (_, i) => ({ id: `notice-${i}`, type: "payment-reconciliation.exception.created", severity: "HIGH", ownerId: null, dueAt: null, amount: i === 0 ? "9007199254740993.25" : i === 1 ? "5.50" : "1.00", currency: i === 0 ? "XAF" : i === 1 ? "USD" : null, status: "UNREAD", source: "RECONCILIATION_RUN", createdAt: "2026-09-09T10:00:00Z", evidenceRef: {} })) })

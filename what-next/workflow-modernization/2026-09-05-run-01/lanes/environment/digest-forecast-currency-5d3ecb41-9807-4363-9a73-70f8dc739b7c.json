@@ -1,0 +1,110 @@
+{
+  "at": "2026-09-27T11:56:48.814Z",
+  "sourceBefore": {
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62"
+  },
+  "checks": [
+    {
+      "state": "mixed",
+      "locale": "en",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_CURRENCY_MISMATCH",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-en-mixed.png"
+    },
+    {
+      "state": "mixed",
+      "locale": "fr",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_CURRENCY_MISMATCH",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-fr-mixed.png"
+    },
+    {
+      "state": "permission-revoked",
+      "locale": "en",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_CURRENCY_MISMATCH",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-en-permission-revoked.png"
+    },
+    {
+      "state": "permission-revoked",
+      "locale": "fr",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_CURRENCY_MISMATCH",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-fr-permission-revoked.png"
+    },
+    {
+      "state": "currency-corrected-proof-missing",
+      "locale": "en",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-en-currency-corrected-proof-missing.png"
+    },
+    {
+      "state": "currency-corrected-proof-missing",
+      "locale": "fr",
+      "amount": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ],
+      "screenshot": "digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c-fr-currency-corrected-proof-missing.png"
+    }
+  ],
+  "noBusinessMutationsDuringReads": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62"
+  },
+  "sourceStable": true
+}

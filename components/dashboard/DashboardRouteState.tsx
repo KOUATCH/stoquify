@@ -73,6 +73,7 @@ export function DashboardRouteState({
   secondaryHref,
   secondaryLabel,
   actions,
+  embedded = false,
 }: {
   kind: DashboardRouteStateKind
   eyebrow?: string
@@ -84,15 +85,18 @@ export function DashboardRouteState({
   secondaryHref?: string
   secondaryLabel?: string
   actions?: ReactNode
+  /** The authenticated dashboard shell already owns the main landmark. */
+  embedded?: boolean
 }) {
   const state = stateCopy[kind]
   const resolvedLocale = locale ?? dashboardLocale(primaryHref)
   const copy = dashboardSharedCopy[resolvedLocale].states[kind]
   const Icon = state.icon
   const isLoading = kind === "loading"
+  const Container = embedded ? "div" : "main"
 
   return (
-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)] text-[var(--dash-text)]">
+    <Container className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)] text-[var(--dash-text)]">
       <div className="dashboard-landing-content mx-auto flex min-h-screen w-full max-w-[1920px] items-center justify-center px-4 py-8 md:px-6 lg:px-8">
         <section
           aria-busy={isLoading || undefined}
@@ -110,7 +114,7 @@ export function DashboardRouteState({
           <p className="mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]">
             {eyebrow ?? copy.eyebrow}
           </p>
-          <h1 className="mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)]">
+          <h1 className={cn("mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)]", embedded && "break-words")}>
             {title ?? copy.defaultTitle}
           </h1>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]">
@@ -135,6 +139,6 @@ export function DashboardRouteState({
           </div>
         </section>
       </div>
-    </main>
+    </Container>
   )
 }

@@ -19,7 +19,7 @@ jest.mock("lucide-react", () => {
     CheckCircle2: Icon,
     ChevronDown: Icon,
     ChevronUp: Icon,
-    CircleDollarSign: Icon,
+    Coins: Icon,
     ImageIcon: Icon,
     Loader2: Icon,
     PackageCheck: Icon,

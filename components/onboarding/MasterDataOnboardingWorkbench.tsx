@@ -2,7 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
-import { useMemo, useState, type FormEvent } from "react"
+import { useMemo, useState, useTransition, type FormEvent } from "react"
+import { OpeningReadinessPanel } from "./OpeningReadinessPanel"
 
 import {
   approveMasterDataImportAction,
@@ -49,6 +50,7 @@ export function MasterDataOnboardingWorkbench({
   const t = useTranslations("masterDataOnboarding")
   const locale = useLocale() === "fr" ? "fr" : "en"
   const router = useRouter()
+  const [refreshing, startRefresh] = useTransition()
   const availableTargets = initialData.milestones.map((milestone) => milestone.target)
   const [target, setTarget] = useState<MasterDataImportTarget>(availableTargets[0] ?? "CUSTOMER")
   const [file, setFile] = useState<File | null>(null)
@@ -213,7 +215,7 @@ export function MasterDataOnboardingWorkbench({
           <Card key={milestone.target} className="dashboard-stat-card rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]">
             <CardHeader className="pb-3">
               <CardTitle className="text-base text-[var(--dash-text)]">{targetLabel(milestone.target)}</CardTitle>
-              <CardDescription className="text-[var(--dash-text-soft)]">{t("readiness.milestone")}</CardDescription>
+              <CardDescription className="text-[var(--dash-text-soft)]">{locale === "fr" ? "Preuves des données de base uniquement" : "Master-data evidence only"}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold ${stateClasses[milestone.state]}`}>
@@ -240,6 +242,7 @@ export function MasterDataOnboardingWorkbench({
               {t("fields.target")}
               <select
                 id="master-data-target"
+                aria-label={t("fields.target")}
                 className="dashboard-control h-10 rounded-lg"
                 value={target}
                 onChange={(event) => {
@@ -256,6 +259,7 @@ export function MasterDataOnboardingWorkbench({
               {t("fields.csvFile")}
               <input
                 id="master-data-file"
+                aria-label={t("fields.csvFile")}
                 aria-describedby="master-data-file-help"
                 className="dashboard-control h-10 rounded-lg px-3 py-2 text-sm"
                 type="file"
@@ -386,6 +390,12 @@ export function MasterDataOnboardingWorkbench({
           <p className="mt-1 text-sm text-[var(--dash-text-soft)]">{t("states.noBatch.message")}</p>
         </section>
       )}
+
+      <OpeningReadinessPanel data={initialData.openingReadiness} refreshing={busy || refreshing} onRefresh={() => {
+        setBatch(null)
+        setApprovalChecked(false)
+        startRefresh(() => router.refresh())
+      }} />
 
       <section aria-labelledby="adoption-heading" className="dashboard-glass-panel rounded-lg p-5">
         <h2 id="adoption-heading" className="font-semibold">{t("adoption.title")}</h2>

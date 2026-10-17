@@ -1,0 +1,27 @@
+{
+  "capturedAt": "2026-09-30T14:11:58.738Z",
+  "source": "lib/pos/offline-local-queue.ts",
+  "scope": "actual queue implementation transpiled in Node, in-memory Storage; not browser or server replay evidence",
+  "concurrentEnqueue": {
+    "returnedEvents": 2,
+    "sequences": [
+      1,
+      1
+    ],
+    "persistedCount": 1,
+    "nextSequence": 2,
+    "storedSales": [
+      "B"
+    ]
+  },
+  "restartDuringSync": {
+    "persistedStatus": "SYNCING",
+    "pendingCount": 0,
+    "batch": null
+  },
+  "damagedQueue": {
+    "entries": 0,
+    "nextSequence": 1,
+    "throws": false
+  }
+}

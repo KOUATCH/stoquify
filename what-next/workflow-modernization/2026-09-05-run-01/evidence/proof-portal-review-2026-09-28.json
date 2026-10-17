@@ -1,0 +1,130 @@
+{
+  "at": "2026-09-28T09:33:32.597Z",
+  "workflow": "FA-CASH-COMMAND",
+  "report": "CASH_COMMAND_PROOF_PORTAL_2026-09-28.md",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/_shared/__tests__/protect.test.ts": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035"
+  },
+  "priorImpact": [
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "b80f0615c1bd2fc64f6acc03fe0a19570ed6097b7afab029e6e72abf78f8b5f8",
+      "after": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659"
+    }
+  ],
+  "receipts": [
+    {
+      "file": "evidence/proof-portal-checks-54966775-b83b-4038-a5ad-e6385376676f.json",
+      "sha256": "c0bfddd74d1841659b3843367010e9e824b7a0d6a2a4627708095d6329efc80e"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc.json",
+      "sha256": "e26b8732d8ab1d36eaa958a714c2eb8e66d543b501a3e6e4af6fc52af7ce0768"
+    },
+    {
+      "file": "lanes/environment/proof-module-8f759c2c-13c9-4d56-94ea-92a60f5743ff.json",
+      "sha256": "f57fb62c1ea49bc3824432de65556711bd5590a67a35ff3e6cada1b778e33d6a"
+    },
+    {
+      "file": "lanes/environment/proof-module-26e65938-cee9-4942-aa3f-1942c545601d.json",
+      "sha256": "88f2d7b383c434080efff3d31c0a93879ca7a5d42d46e5239130992656507e7f"
+    },
+    {
+      "file": "evidence/proof-portal-checks-a1703e12-1dd7-4a8f-914f-9b4be35bddda.json",
+      "sha256": "4565f651160db47b225f8610b07a25b295e1e09075548b7bd56e752cf5481dbd"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-1440.png",
+      "sha256": "de168912feecfecdc0e29413a3f94bbb6aa96d6d6ee616dde4e254641c6f673f"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-1440-enlarged.png",
+      "sha256": "88466408322a518e03f43aa5899940c4a707bd2e3c7571b485e9ce328a2b7200"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-1440.png",
+      "sha256": "089d0d99d949a621b3dce418056bdcbd537ad56bc3b947e7dadf1788cb83dab2"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-1440-enlarged.png",
+      "sha256": "cf3de467e04f817f90e8262acdb7b259f01bf38a680a717a932bcc37d56758e6"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-768.png",
+      "sha256": "b3707b2f374ec2e6a58503dd5fef0108d01eacdc0ad62cb859d7cbc5901c8766"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-768-enlarged.png",
+      "sha256": "a43cd58430efe9986258b3be50643386b9aa69dedc9032bd6932bc681c6a7137"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-768.png",
+      "sha256": "0b332734efebf39b2556feea1eb54a03d0e42fb98096299cac1a63179425fe44"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-768-enlarged.png",
+      "sha256": "6acbcbb143de400f67d38bda1222f01d43317884b40711de28697188be9efa2e"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-320.png",
+      "sha256": "7ed25d4905a6873794a1ae7011fb7a966a3cf107e413c75a003815456f9fccaa"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-320-enlarged.png",
+      "sha256": "450f954f66ebe7c2a2d7f5b391af71e9f7fa937d9106fa0b070e9724c609c303"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-320.png",
+      "sha256": "d2b5ef6badbd73b7818f7e7b17aab1ba011951633d4ed6c607def883ff65317b"
+    },
+    {
+      "file": "lanes/environment/proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-320-enlarged.png",
+      "sha256": "07d4f34efa4e88bae6479bfbe165de19af189500308c211dace6e11da7e22b87"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "owned_en_fr_proof_portal_tokens_opaque_background_and_text_contrast",
+    "owned_proof_desktop_tablet_mobile_keyboard_containment_and_reduced_motion",
+    "owned_proof_controlled_text_enlargement_reflow",
+    "unit_all_four_proof_action_current_module_admission_before_data",
+    "owned_cached_payment_proof_module_suspension_expiry_and_retained_read"
+  ],
+  "remaining": "Proof portal tokens and its own EN/FR controls are corrected. Server-authored proof reasons/nodes remain English, other proof subjects need actual browser lifecycle evidence, and native screen-reader/browser zoom remain unverified. Source read scoping and finance/payroll/inventory handoffs remain open.",
+  "contrast": {
+    "samples": 96,
+    "minRatio": 6.778941297752202,
+    "threshold": 4.5
+  },
+  "sharedImpact": "ProofTrailDrawer uses the existing product aliases in its own portal; all consumers receive an opaque background. BIProofDrawerHost adds an optional locale with unchanged English default. SheetContent adds an optional overlay class with unchanged default behavior. Cash Command passes its existing locale. Four existing proof actions now enforce their owning module read contract; RBAC and server tenant derivation remain unchanged. No evidence-grade semantics, financial records or domain service operations were changed.",
+  "limits": [
+    "Native assistive-technology speech and browser-chrome zoom not certified. Doubled root text size is controlled reflow evidence.",
+    "Contrast covers all 96 text samples in the real synthetic payment proof across six views; it does not certify all possible proof contents.",
+    "Payment subject module access exercised against the real database; all four subject/action dispatch boundaries covered by unit tests.",
+    "Earlier aggregate runtime reused: service projection unchanged; focused Cash UI tests rerun and current real page paths exercised."
+  ]
+}

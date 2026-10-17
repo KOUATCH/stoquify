@@ -1,13 +1,22 @@
 jest.mock("@/lib/security/auth-session", () => ({ FreshAuthRequiredError: class extends Error {} }))
 import { exceptionClosureManifestEvidenceInTx } from "../payment-exception-closure-evidence.service"
 jest.mock("server-only", () => ({}))
+jest.mock("../reconciliation-close-order.service", () => ({
+  ...jest.requireActual("../reconciliation-close-order.service"),
+  lockReconciliationCloseCatalogInTx: jest.fn(), lockReconciliationClosePeriodsInTx: jest.fn(),
+}))
 jest.mock("@/prisma/db", () => ({ db: { $transaction: jest.fn() } }))
 jest.mock("../payment-exception-source-evidence", () => ({ loadReconciliationExceptionLinkSourceInTx: jest.fn() }))
 jest.mock("../payment-suspense-resolution-evidence.service", () => ({ suspenseResolutionManifestEvidenceInTx: jest.fn() }))
 jest.mock("@/services/accounting/close-assurance-pack.service", () => ({ recordCloseCertificationInvalidationsForSourceInTx: jest.fn() }))
 jest.mock("../payment-reconciliation-notifications", () => ({ publishPaymentReconciliationNotification: jest.fn() }))
+jest.mock("@/services/purchasing/payment-reconciliation-evidence", () => ({ readCurrentPaymentReconciliationEvidenceInTx: jest.fn() }))
+import { readCurrentPaymentReconciliationEvidenceInTx } from "@/services/purchasing/payment-reconciliation-evidence"
 
 import { db } from "@/prisma/db"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "../reconciliation-close-order.service"
+import { JournalReversalSnapshotChangedError } from "@/services/accounting/journal-reversal-order.service"
+import { FreshAuthRequiredError } from "@/lib/security/auth-session"
 import { loadReconciliationExceptionLinkSourceInTx } from "../payment-exception-source-evidence"
 import { suspenseResolutionManifestEvidenceInTx } from "../payment-suspense-resolution-evidence.service"
 import { suspenseEvidenceHash } from "../payment-suspense-evidence"
@@ -23,6 +32,7 @@ const control = { organizationId: "org", actorId: "proposer", actorPermissions: 
 const checker = { ...control, actorId: "checker" }
 beforeEach(() => {
   jest.resetAllMocks(); rows = []; audits = []
+  ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockResolvedValue(["prior-period", "current-period"])
   exception = { id: "exception", organizationId: "org", type: "MISSING_PROVIDER_EVENT", status: "OPEN", suspenseItemId: "item", updatedAt: now, resolvedAt: null, resolutionNotes: null, metadata: { retained: true } }
   item = { id: "item", status: "RESOLVED", metadata: {}, amount: "10.00" }; run = { id: "run", runById: "maker", status: "NEEDS_REVIEW", metadata: {}, signedAt: null, signedById: null, certificateHash: null, certificatePayload: null }
   ;(db.$transaction as jest.Mock).mockImplementation(work => work(tx)); tx.user.findFirst.mockResolvedValue({ id: "active" })
@@ -51,6 +61,16 @@ it("paginates scoped cases with complete counts and honest investigation availab
   expect(tx.paymentException.count).toHaveBeenCalledWith({ where: { organizationId: "org", status: { notIn: ["RESOLVED", "DISMISSED"] }, suspenseItemId: "item" } })
   expect(db.$transaction).toHaveBeenLastCalledWith(expect.any(Function), { isolationLevel: "RepeatableRead" })
   expect(tx.paymentException.updateMany).not.toHaveBeenCalled()
+})
+
+it("uses source-owned AP proof without inventing a suspense or reconciliation run", async () => {
+  exception = { ...exception, sourceType: "SUPPLIER_PAYMENT", sourceId: "supplier-payment", type: "MISSING_STATEMENT_LINE", suspenseItemId: null, status: "RESOLVED" }
+  const proof = { paymentRequestId: "supplier-payment", exceptionId: exception.id, decisionId: "ap-decision", decisionHash: "ap-hash", proposalId: "ap-proposal", proposalHash: "ap-proposal-hash", kind: "CASH_VOUCHER" }
+  jest.mocked(readCurrentPaymentReconciliationEvidenceInTx).mockResolvedValue(proof as never)
+  await expect(exceptionClosureManifestEvidenceInTx(tx as never, "org", exception)).resolves.toMatchObject({ receiptId: "ap-decision", supplierPaymentReview: proof, suspenseItemId: null, financialDecisionId: null })
+  expect(loadReconciliationExceptionLinkSourceInTx).not.toHaveBeenCalled()
+  jest.mocked(readCurrentPaymentReconciliationEvidenceInTx).mockResolvedValue(null)
+  await expect(exceptionClosureManifestEvidenceInTx(tx as never, "org", exception)).rejects.toThrow(/missing or changed/)
 })
 it("reads all-case history without converting a failed case query into empty results", async () => {
   tx.paymentException.findMany.mockResolvedValue([]); tx.paymentException.count.mockResolvedValue(0)
@@ -100,7 +120,10 @@ it("retains a proposal without closing the exception, then records an independen
   const p = await proposal(); expect(exception.status).toBe("OPEN"); expect((await reviewExceptionClosure("exception", p.proposed.proposalId, checker)).reason).toBe(p.command.reason)
   const result = await decideExceptionClosure(p.decision, checker)
   expect(exception).toMatchObject({ status: "RESOLVED", metadata: { retained: true, closureReceiptId: result.receiptId } }); expect(run.status).toBe("NEEDS_REVIEW")
-  expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(tx, "org", expect.objectContaining({ sourceCode: "PAYMENT_RECONCILIATION_EXCEPTION_DECIDED" }), expect.anything())
+  expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(tx, "org", expect.objectContaining({ sourceCode: "PAYMENT_RECONCILIATION_EXCEPTION_DECIDED", periodIds: ["prior-period", "current-period"] }), expect.anything())
+  expect((lockReconciliationCloseCatalogInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0])
+  expect((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(tx.$queryRaw.mock.invocationCallOrder[0])
+  expect(tx.$queryRaw.mock.invocationCallOrder[0]).toBeLessThan(tx.paymentException.updateMany.mock.invocationCallOrder[0])
   expect(await exceptionClosureManifestEvidenceInTx(tx as never, "org", exception)).toMatchObject({ receiptId: result.receiptId, financialDecisionId: "financial-decision" })
   expect(JSON.stringify(await previewExceptionClosure({ exceptionId: "exception" }, checker))).not.toContain("retained")
 })
@@ -108,6 +131,8 @@ it("replays the exact proposal and decision without duplicate writes and rejects
   const p = await proposal(); expect(await proposeExceptionClosure(p.command, control)).toEqual({ ...p.proposed, replayed: true })
   const first = await decideExceptionClosure(p.decision, checker), size = rows.length
   expect(await decideExceptionClosure(p.decision, checker)).toEqual({ ...first, replayed: true }); expect(rows).toHaveLength(size)
+  expect(lockReconciliationClosePeriodsInTx).toHaveBeenCalledTimes(1)
+  expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledTimes(1)
   await expect(decideExceptionClosure({ ...p.decision, reason: "Different reason" }, checker)).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" })
 })
 it.each(["proposer", "maker"])("rejects approval by %s", async actorId => {
@@ -115,6 +140,34 @@ it.each(["proposer", "maker"])("rejects approval by %s", async actorId => {
 })
 it("records rejection without closing the exception or changing run evidence", async () => {
   const p = await proposal(); expect(await decideExceptionClosure({ ...p.decision, decision: "REJECT" }, checker)).toMatchObject({ outcome: "REJECTED" }); expect(exception.status).toBe("OPEN"); expect(tx.reconciliationRun.update).not.toHaveBeenCalled()
+  expect(lockReconciliationCloseCatalogInTx).not.toHaveBeenCalled()
+  expect(lockReconciliationClosePeriodsInTx).not.toHaveBeenCalled()
+  expect(recordCloseCertificationInvalidationsForSourceInTx).not.toHaveBeenCalled()
+})
+it("restarts a stale Close snapshot as a new transaction before any exception effect", async () => {
+  const p = await proposal(), calls = (db.$transaction as jest.Mock).mock.calls.length
+  ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockRejectedValueOnce(new JournalReversalSnapshotChangedError())
+  await expect(decideExceptionClosure(p.decision, checker)).resolves.toMatchObject({ outcome: "RESOLVED", replayed: false })
+  expect((db.$transaction as jest.Mock).mock.calls.length - calls).toBe(2)
+  expect(tx.paymentException.updateMany).toHaveBeenCalledTimes(1)
+})
+it("bounds repeated membership changes without exception writes", async () => {
+  const p = await proposal()
+  ;(lockReconciliationCloseCatalogInTx as jest.Mock).mockRejectedValue(new JournalReversalSnapshotChangedError())
+  await expect(decideExceptionClosure(p.decision, checker)).rejects.toMatchObject({ code: "CONFLICT" })
+  expect(lockReconciliationCloseCatalogInTx).toHaveBeenCalledTimes(3)
+  expect(tx.paymentException.updateMany).not.toHaveBeenCalled()
+  expect(rows).toHaveLength(1)
+})
+it("refuses authentication that expires while waiting before committing a decision", async () => {
+  const p = await proposal(), clock = jest.spyOn(Date, "now").mockReturnValue(1000)
+  ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockImplementation(async () => { clock.mockReturnValue(301001); return ["period"] })
+  try {
+    await expect(decideExceptionClosure(p.decision, checker)).rejects.toBeInstanceOf(FreshAuthRequiredError)
+    expect(tx.paymentException.updateMany).not.toHaveBeenCalled()
+    expect(recordCloseCertificationInvalidationsForSourceInTx).not.toHaveBeenCalled()
+    expect(rows).toHaveLength(1)
+  } finally { clock.mockRestore() }
 })
 it.each(["TAMPER_SIGNAL", "SIGNATURE_FAILURE", "REPLAY_SPIKE", "DUPLICATE_PROVIDER_REFERENCE", "OTHER"])("does not let financial clearing close %s", async type => {
   exception.type = type; await expect(previewExceptionClosure({ exceptionId: "exception" }, checker)).rejects.toMatchObject({ code: "REVIEW_REQUIRED" })

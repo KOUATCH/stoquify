@@ -1,0 +1,1184 @@
+{
+  "phase": "before",
+  "at": "2026-09-27T17:10:14.386Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmuk2qvc50000maywi64poqb3",
+      "runId": "cmuk2qvve001amaywzkbhg1h9",
+      "scans": [],
+      "screenshots": [],
+      "errors": [],
+      "samples": [
+        {
+          "iteration": 0,
+          "kind": "initial",
+          "requests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 42,
+              "elapsedMs": 82460,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 85983,
+              "elapsedMs": 1376,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/_next/static/webpack/7fa51988e12c810d.webpack.hot-update.json",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 96046,
+              "elapsedMs": 209,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 87389,
+              "elapsedMs": 11152,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 102964,
+              "elapsedMs": 1273,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 105134,
+              "elapsedMs": 908,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 98567,
+              "elapsedMs": 4709,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 102273,
+              "elapsedMs": 3001,
+              "reviewArgument": false,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 106511,
+              "elapsedMs": 1475,
+              "reviewArgument": true,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 108433,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/en/dashboard/finance/reconciliation?reviewRun=cmuk2qvve001amaywzkbhg1h9",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 84816.19999998808,
+              "navigationId": 1982,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 1.5999999940395355,
+              "domainLookupStart": 50.599999994039536,
+              "domainLookupEnd": 57.599999994039536,
+              "connectStart": 57.599999994039536,
+              "secureConnectionStart": 0,
+              "connectEnd": 62.69999998807907,
+              "requestStart": 64.89999997615814,
+              "responseStart": 79768.79999998212,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 79768.79999998212,
+              "responseEnd": 82441,
+              "transferSize": 126066,
+              "encodedBodySize": 125766,
+              "decodedBodySize": 468343,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 0,
+              "unloadEventEnd": 0,
+              "domInteractive": 82489.09999999404,
+              "domContentLoadedEventStart": 82489.19999998808,
+              "domContentLoadedEventEnd": 82489.19999998808,
+              "domComplete": 84816,
+              "loadEventStart": 84816.19999998808,
+              "loadEventEnd": 84816.19999998808,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "low"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 85908.39999997616,
+              "duration": 1393.7000000178814,
+              "responseStart": 87298.5,
+              "responseEnd": 87302.09999999404
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 87351.5,
+              "duration": 11166.59999999404,
+              "responseStart": 98516.29999998212,
+              "responseEnd": 98518.09999999404
+            },
+            {
+              "path": "/_next/static/webpack/7fa51988e12c810d.webpack.hot-update.json",
+              "start": 96019.69999998808,
+              "duration": 206.69999998807907,
+              "responseStart": 96225.5,
+              "responseEnd": 96226.39999997616
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 98542.69999998808,
+              "duration": 4048.800000011921,
+              "responseStart": 101872.09999999404,
+              "responseEnd": 102591.5
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 102249.29999998212,
+              "duration": 2220.4000000059605,
+              "responseStart": 103765.29999998212,
+              "responseEnd": 104469.69999998808
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 102548.59999999404,
+              "duration": 1665,
+              "responseStart": 104211.69999998808,
+              "responseEnd": 104213.59999999404
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 104846.89999997616,
+              "duration": 671.6000000238419,
+              "responseStart": 105516.89999997616,
+              "responseEnd": 105518.5
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 106487.29999998212,
+              "duration": 1427.9000000059605,
+              "responseStart": 107468.09999999404,
+              "responseEnd": 107915.19999998808
+            }
+          ],
+          "permissionRequestCount": 3
+        },
+        {
+          "iteration": 1,
+          "kind": "warm",
+          "requests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 36,
+              "elapsedMs": 4231,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 6677,
+              "elapsedMs": 464,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 7155,
+              "elapsedMs": 447,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 9676,
+              "elapsedMs": 1961,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 12447,
+              "elapsedMs": 984,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 7626,
+              "elapsedMs": 2101,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 9091,
+              "elapsedMs": 2756,
+              "reviewArgument": false,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 13872,
+              "elapsedMs": 1549,
+              "reviewArgument": true,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 15750,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/en/dashboard/finance/reconciliation?reviewRun=cmuk2qvve001amaywzkbhg1h9",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 5839.0999999940395,
+              "navigationId": 3280,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 0.30000001192092896,
+              "domainLookupStart": 0.30000001192092896,
+              "domainLookupEnd": 0.30000001192092896,
+              "connectStart": 0.30000001192092896,
+              "secureConnectionStart": 0,
+              "connectEnd": 0.30000001192092896,
+              "requestStart": 19.400000005960464,
+              "responseStart": 1638.199999988079,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 1638.199999988079,
+              "responseEnd": 4230.300000011921,
+              "transferSize": 126566,
+              "encodedBodySize": 126266,
+              "decodedBodySize": 468738,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 1653.9000000059605,
+              "unloadEventEnd": 1653.9000000059605,
+              "domInteractive": 4237.9000000059605,
+              "domContentLoadedEventStart": 4237.9000000059605,
+              "domContentLoadedEventEnd": 4238,
+              "domComplete": 5838.800000011921,
+              "loadEventStart": 5839.0999999940395,
+              "loadEventEnd": 5839.0999999940395,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "low"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 6650.5,
+              "duration": 460.40000000596046,
+              "responseStart": 7109.300000011921,
+              "responseEnd": 7110.9000000059605
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 7125.5,
+              "duration": 443.19999998807907,
+              "responseStart": 7566.800000011921,
+              "responseEnd": 7568.699999988079
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 7596,
+              "duration": 2007.5999999940395,
+              "responseStart": 8639.699999988079,
+              "responseEnd": 9603.59999999404
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 9062.699999988079,
+              "duration": 2698.300000011921,
+              "responseStart": 10704.5,
+              "responseEnd": 11761
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 9275.300000011921,
+              "duration": 2335.2999999821186,
+              "responseStart": 11606,
+              "responseEnd": 11610.59999999404
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 12156.199999988079,
+              "duration": 945.3000000119209,
+              "responseStart": 13100.09999999404,
+              "responseEnd": 13101.5
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 13843.800000011921,
+              "duration": 1544.699999988079,
+              "responseStart": 14957.199999988079,
+              "responseEnd": 15388.5
+            }
+          ],
+          "permissionRequestCount": 3
+        },
+        {
+          "iteration": 2,
+          "kind": "warm",
+          "requests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 39,
+              "elapsedMs": 5622,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 8027,
+              "elapsedMs": 463,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 8511,
+              "elapsedMs": 390,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 10689,
+              "elapsedMs": 1968,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 10037,
+              "elapsedMs": 3522,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 13426,
+              "elapsedMs": 1155,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 8929,
+              "elapsedMs": 1805,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 16731,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/en/dashboard/finance/reconciliation?reviewRun=cmuk2qvve001amaywzkbhg1h9",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 7996.0999999940395,
+              "navigationId": 8983,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 0.29999998211860657,
+              "domainLookupStart": 0.29999998211860657,
+              "domainLookupEnd": 0.29999998211860657,
+              "connectStart": 0.29999998211860657,
+              "secureConnectionStart": 0,
+              "connectEnd": 0.29999998211860657,
+              "requestStart": 33.69999998807907,
+              "responseStart": 1310.4000000059605,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 1310.4000000059605,
+              "responseEnd": 3541.199999988079,
+              "transferSize": 126568,
+              "encodedBodySize": 126268,
+              "decodedBodySize": 468727,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 1323.5,
+              "unloadEventEnd": 1323.5,
+              "domInteractive": 6449.5,
+              "domContentLoadedEventStart": 6449.5,
+              "domContentLoadedEventEnd": 6450,
+              "domComplete": 7995.5999999940395,
+              "loadEventStart": 7996.0999999940395,
+              "loadEventEnd": 7996.0999999940395,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "low"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 8004.0999999940395,
+              "duration": 460.19999998807907,
+              "responseStart": 8462.5,
+              "responseEnd": 8464.299999982119
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 8483.5,
+              "duration": 394.90000000596046,
+              "responseStart": 8877.199999988079,
+              "responseEnd": 8878.40000000596
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 8908.199999988079,
+              "duration": 1755,
+              "responseStart": 9630.799999982119,
+              "responseEnd": 10663.199999988079
+            },
+            {
+              "path": "/en/dashboard/finance/reconciliation",
+              "start": 10014.09999999404,
+              "duration": 2932.800000011921,
+              "responseStart": 11906.699999988079,
+              "responseEnd": 12946.90000000596
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 10289.59999999404,
+              "duration": 2340.5,
+              "responseStart": 12628.699999988079,
+              "responseEnd": 12630.09999999404
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 13145.59999999404,
+              "duration": 1395.800000011921,
+              "responseStart": 14540.09999999404,
+              "responseEnd": 14541.40000000596
+            }
+          ],
+          "permissionRequestCount": 3
+        }
+      ],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "organizationId": "cmuk2uc260021mayw69rbpzvr",
+      "runId": "cmuk2ucay003bmaywe7o8dhr8",
+      "scans": [],
+      "screenshots": [],
+      "errors": [],
+      "samples": [
+        {
+          "iteration": 0,
+          "kind": "initial",
+          "requests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 52,
+              "elapsedMs": 17525,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 22353,
+              "elapsedMs": 907,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 23280,
+              "elapsedMs": 1183,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 27116,
+              "elapsedMs": 2057,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 29928,
+              "elapsedMs": 583,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 24487,
+              "elapsedMs": 3415,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 26178,
+              "elapsedMs": 3755,
+              "reviewArgument": false,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 30823,
+              "elapsedMs": 1508,
+              "reviewArgument": true,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 32663,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/fr/dashboard/finance/reconciliation?reviewRun=cmuk2ucay003bmaywe7o8dhr8",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 22295.29999998212,
+              "navigationId": 1573,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 0.5,
+              "domainLookupStart": 27.599999994039536,
+              "domainLookupEnd": 28.69999998807907,
+              "connectStart": 28.69999998807907,
+              "secureConnectionStart": 0,
+              "connectEnd": 30.400000005960464,
+              "requestStart": 30.599999994039536,
+              "responseStart": 4842,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 4842,
+              "responseEnd": 17353.5,
+              "transferSize": 137019,
+              "encodedBodySize": 136719,
+              "decodedBodySize": 516758,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 0,
+              "unloadEventEnd": 0,
+              "domInteractive": 17543.29999998212,
+              "domContentLoadedEventStart": 17543.29999998212,
+              "domContentLoadedEventEnd": 17543.40000000596,
+              "domComplete": 22294.79999998212,
+              "loadEventStart": 22295.29999998212,
+              "loadEventEnd": 22295.29999998212,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "low"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 22305.19999998808,
+              "duration": 915.7000000178814,
+              "responseStart": 23219.29999998212,
+              "responseEnd": 23220.90000000596
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 23242.5,
+              "duration": 1184.9000000059605,
+              "responseStart": 24425.69999998808,
+              "responseEnd": 24427.40000000596
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 24452.29999998212,
+              "duration": 2896.9000000059605,
+              "responseStart": 25631.19999998808,
+              "responseEnd": 27349.19999998808
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 26144.29999998212,
+              "duration": 3236.9000000059605,
+              "responseStart": 28162.09999999404,
+              "responseEnd": 29381.19999998808
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 26428.5,
+              "duration": 2707.9000000059605,
+              "responseStart": 29135.09999999404,
+              "responseEnd": 29136.40000000596
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 29650.19999998808,
+              "duration": 752.9000000059605,
+              "responseStart": 30398.5,
+              "responseEnd": 30403.09999999404
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 30776.29999998212,
+              "duration": 1517.5,
+              "responseStart": 31651.79999998212,
+              "responseEnd": 32293.79999998212
+            }
+          ],
+          "permissionRequestCount": 3
+        },
+        {
+          "iteration": 1,
+          "kind": "warm",
+          "requests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 18,
+              "elapsedMs": 6725,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 11214,
+              "elapsedMs": 1181,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 12409,
+              "elapsedMs": 1949,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 18975,
+              "elapsedMs": 1526,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 22729,
+              "elapsedMs": 1036,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 24393,
+              "elapsedMs": 2407,
+              "reviewArgument": true,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 14384,
+              "elapsedMs": 5715,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 18375,
+              "elapsedMs": 4419,
+              "reviewArgument": false,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 26927,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/fr/dashboard/finance/reconciliation?reviewRun=cmuk2ucay003bmaywe7o8dhr8",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 10145.199999988079,
+              "navigationId": 3285,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 0.29999998211860657,
+              "domainLookupStart": 0.29999998211860657,
+              "domainLookupEnd": 0.29999998211860657,
+              "connectStart": 0.29999998211860657,
+              "secureConnectionStart": 0,
+              "connectEnd": 0.29999998211860657,
+              "requestStart": 14.599999994039536,
+              "responseStart": 1140.4000000059605,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 1140.4000000059605,
+              "responseEnd": 2425.0999999940395,
+              "transferSize": 137485,
+              "encodedBodySize": 137185,
+              "decodedBodySize": 516966,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 5926.299999982119,
+              "unloadEventEnd": 5926.299999982119,
+              "domInteractive": 7680.199999988079,
+              "domContentLoadedEventStart": 7680.199999988079,
+              "domContentLoadedEventEnd": 7680.299999982119,
+              "domComplete": 10144.699999988079,
+              "loadEventStart": 10145.199999988079,
+              "loadEventEnd": 10145.199999988079,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "high"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 11200.199999988079,
+              "duration": 1175,
+              "responseStart": 12373.59999999404,
+              "responseEnd": 12375.199999988079
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 12393,
+              "duration": 1951.4000000059605,
+              "responseStart": 14338.299999982119,
+              "responseEnd": 14344.40000000596
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 14367.09999999404,
+              "duration": 5582.699999988079,
+              "responseStart": 17413.69999998808,
+              "responseEnd": 19949.79999998212
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 18362.40000000596,
+              "duration": 3977.7999999821186,
+              "responseStart": 20888.19999998808,
+              "responseEnd": 22340.19999998808
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 18578.69999998808,
+              "duration": 1906.800000011921,
+              "responseStart": 20483.59999999404,
+              "responseEnd": 20485.5
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 22358.40000000596,
+              "duration": 1261,
+              "responseStart": 23618.09999999404,
+              "responseEnd": 23619.40000000596
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 24377.79999998212,
+              "duration": 2382.100000023842,
+              "responseStart": 25956.69999998808,
+              "responseEnd": 26759.90000000596
+            }
+          ],
+          "permissionRequestCount": 3
+        },
+        {
+          "iteration": 2,
+          "kind": "warm",
+          "requests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "GET",
+              "kind": "document",
+              "startMs": 35,
+              "elapsedMs": 12335,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/auth/get-session",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 14606,
+              "elapsedMs": 458,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 15080,
+              "elapsedMs": 350,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 16982,
+              "elapsedMs": 2778,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            },
+            {
+              "path": "/api/me/permissions",
+              "method": "GET",
+              "kind": "fetch",
+              "startMs": 20585,
+              "elapsedMs": 1686,
+              "reviewArgument": false,
+              "workbenchArgument": false
+            }
+          ],
+          "failedRequests": [
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 15449,
+              "elapsedMs": 1607,
+              "reviewArgument": false,
+              "workbenchArgument": true,
+              "error": "net::ERR_ABORTED"
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "method": "POST",
+              "kind": "fetch",
+              "startMs": 16391,
+              "elapsedMs": 5203,
+              "reviewArgument": false,
+              "workbenchArgument": false,
+              "error": "net::ERR_ABORTED"
+            }
+          ],
+          "readyMs": 25877,
+          "navigation": [
+            {
+              "name": "http://127.0.0.1:3110/fr/dashboard/finance/reconciliation?reviewRun=cmuk2ucay003bmaywe7o8dhr8",
+              "entryType": "navigation",
+              "startTime": 0,
+              "duration": 14363.399999976158,
+              "navigationId": 5649,
+              "initiatorType": "navigation",
+              "deliveryType": "",
+              "nextHopProtocol": "http/1.1",
+              "renderBlockingStatus": "non-blocking",
+              "contentType": "text/html",
+              "contentEncoding": "gzip",
+              "workerStart": 0,
+              "workerRouterEvaluationStart": 0,
+              "workerCacheLookupStart": 0,
+              "workerMatchedSourceType": "",
+              "workerFinalSourceType": "",
+              "redirectStart": 0,
+              "redirectEnd": 0,
+              "fetchStart": 0.29999998211860657,
+              "domainLookupStart": 0.29999998211860657,
+              "domainLookupEnd": 0.29999998211860657,
+              "connectStart": 0.29999998211860657,
+              "secureConnectionStart": 0,
+              "connectEnd": 0.29999998211860657,
+              "requestStart": 31.799999982118607,
+              "responseStart": 1903.699999988079,
+              "firstInterimResponseStart": 0,
+              "finalResponseHeadersStart": 1903.699999988079,
+              "responseEnd": 4400.799999982119,
+              "transferSize": 137482,
+              "encodedBodySize": 137182,
+              "decodedBodySize": 516968,
+              "responseStatus": 200,
+              "serverTiming": [],
+              "unloadEventStart": 1917.199999988079,
+              "unloadEventEnd": 1917.199999988079,
+              "domInteractive": 13084.399999976158,
+              "domContentLoadedEventStart": 13084.5,
+              "domContentLoadedEventEnd": 13085,
+              "domComplete": 14363.09999999404,
+              "loadEventStart": 14363.399999976158,
+              "loadEventEnd": 14363.399999976158,
+              "type": "navigate",
+              "redirectCount": 0,
+              "activationStart": 0,
+              "criticalCHRestart": 0,
+              "notRestoredReasons": null,
+              "confidence": {
+                "randomizedTriggerRate": 0.4994798,
+                "value": "high"
+              }
+            }
+          ],
+          "resources": [
+            {
+              "path": "/api/auth/get-session",
+              "start": 14595.399999976158,
+              "duration": 454.10000002384186,
+              "responseStart": 15047.799999982119,
+              "responseEnd": 15049.5
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 15065.399999976158,
+              "duration": 351.60000002384186,
+              "responseStart": 15415.59999999404,
+              "responseEnd": 15417
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 15438.199999988079,
+              "duration": 1539.199999988079,
+              "responseStart": 16045.299999982119,
+              "responseEnd": 16977.399999976158
+            },
+            {
+              "path": "/fr/dashboard/finance/reconciliation",
+              "start": 16379.199999988079,
+              "duration": 4399.199999988079,
+              "responseStart": 18777.899999976158,
+              "responseEnd": 20778.399999976158
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 16638.79999998212,
+              "duration": 3106.7000000178814,
+              "responseStart": 19744.09999999404,
+              "responseEnd": 19745.5
+            },
+            {
+              "path": "/api/me/permissions",
+              "start": 20324.59999999404,
+              "duration": 1891.4000000059605,
+              "responseStart": 22214.899999976158,
+              "responseEnd": 22216
+            }
+          ],
+          "permissionRequestCount": 3
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+  },
+  "sourceStable": true
+}

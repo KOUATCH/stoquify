@@ -6,6 +6,7 @@ import {
 } from "@/services/bi/bi-contracts"
 import type {
   BIActionLink,
+  BIDrillThrough,
   BIChangeEvent,
   BICommandZone,
   BIFreshness,
@@ -19,6 +20,7 @@ import type { EvidenceGrade, ProofTrailSubjectType } from "@/services/evidence/e
 import { SUBJECT_PERMISSION_MAP } from "@/services/evidence/evidence-contracts"
 import { auditRbacDecision, RbacError } from "@/lib/security/rbac"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
 import {
   getModuleControlCenterData,
@@ -56,7 +58,11 @@ import type {
   OwnerWarRoomTone,
 } from "./owner-war-room-contracts"
 
+import { ownerText, type OwnerLocale } from "./owner-war-room-copy"
+import { presentOwnerActionQueue, presentOwnerForecastMessage } from "./owner-signal-copy"
+
 type OwnerWarRoomInput = {
+  locale?: OwnerLocale
   organizationId: string
   actorId?: string | null
   actorPermissions: readonly string[]
@@ -78,6 +84,7 @@ const DEFAULT_FRESHNESS: SnapshotFreshness = {
 
 const OWNER_BRIEF_MAX_ACTIONS = 3
 const ONE_DAY_MS = 24 * 60 * 60 * 1000
+const OWNER_STOCK_WORKSPACE = "/dashboard/inventory/items"
 
 export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<OwnerWarRoomData> {
   await requireOwnerWarRoomTenantAuthority(input)
@@ -133,6 +140,8 @@ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<Own
   return composeOwnerWarRoomData({
     organizationId: input.organizationId,
     organizationName: moduleControl.organizationName,
+    locale: input.locale,
+    actorPermissions: input.actorPermissions,
     generatedAt: normalizeNow(input.now).toISOString(),
     snapshots: {
       tenantOperating,
@@ -226,6 +235,20 @@ async function loadOwnerWarRoomInventoryLoss(
 }
 
 export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerWarRoomData {
+  const displaySnapshot = <T,>(snapshot: SnapshotResult<T>): SnapshotResult<T> => ({
+    ...snapshot,
+    blockers: snapshot.blockers.map(blocker => presentSnapshotBlocker(blocker, input.locale ?? "en")),
+  })
+  input = {
+    ...input,
+    actionQueue: presentOwnerActionQueue(input.actionQueue, input.locale),
+    snapshots: {
+      tenantOperating: displaySnapshot(input.snapshots.tenantOperating),
+      paymentTruth: displaySnapshot(input.snapshots.paymentTruth),
+      inventoryCash: displaySnapshot(input.snapshots.inventoryCash),
+      closeReadiness: displaySnapshot(input.snapshots.closeReadiness),
+    },
+  }
   const { tenantOperating, paymentTruth, inventoryCash, closeReadiness } = input.snapshots
   const payrollForecast = tenantOperating.metrics.payrollFinanceForecast
   const payrollBalanceCaseCount = tenantOperating.metrics.activeEmployeeBalanceCaseCount
@@ -236,18 +259,20 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
   const payrollExposureHref = "/dashboard/payroll/payments"
   const payrollExposureDetail =
     payrollBalanceCaseCount > 0
-      ? "Open employee balance recovery cases are counted without exposing person-level amounts."
+      ? ownerText("Open employee balance recovery cases are counted without exposing person-level amounts.", input.locale)
       : payrollForecast.authoritative
-        ? `Upcoming aggregate net pay and statutory liability total ${formatBriefAmount(payrollForecast.totalUpcomingAmount)}; person-level amounts stay inside payroll.`
-        : payrollForecast.message
+        ? input.locale === "fr"
+          ? `Le total prévisionnel des salaires nets et obligations légales atteint ${formatBriefAmount(payrollForecast.totalUpcomingAmount, input.locale)} ; les montants individuels restent dans le module de paie.`
+          : `Upcoming aggregate net pay and statutory liability total ${formatBriefAmount(payrollForecast.totalUpcomingAmount)}; person-level amounts stay inside payroll.`
+        : presentOwnerForecastMessage(payrollForecast, input.locale)
   const payrollExposureTone =
-    payrollBalanceCaseCount > 0 ? "danger" : payrollForecastBlocked ? "danger" : payrollForecast.totalUpcomingAmount > 0 ? "gold" : "muted"
-  const payrollExposureState = payrollForecastBlocked ? "blocked" : payrollExposureValue > 0 ? "redacted" : undefined
+    payrollBalanceCaseCount > 0 ? "danger" : payrollForecastBlocked ? "danger" : payrollForecast.totalUpcomingAmount !== null && payrollForecast.totalUpcomingAmount > 0 ? "gold" : "muted"
+  const payrollExposureState = payrollForecastBlocked ? "blocked" : payrollExposureValue !== null && payrollExposureValue > 0 ? "redacted" : undefined
   const cards: OwnerWarRoomMetricCard[] = [
     card({
       id: "cash_at_risk",
-      title: "Cash at risk",
-      detail: "Unresolved payment suspense value that should be explained before owners trust cash.",
+      title: ownerText("Cash at risk", input.locale),
+      detail: ownerText("Unresolved payment suspense value that should be explained before owners trust cash.", input.locale),
       value: paymentTruth.metrics.openSuspenseAmount,
       unit: "value",
       tone: paymentTruth.metrics.openSuspenseCount > 0 ? "danger" : paymentTruth.metrics.openSuspenseAmount === null ? "muted" : "success",
@@ -257,8 +282,8 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     }),
     card({
       id: "reconciliation_exceptions",
-      title: "Reconciliation exceptions",
-      detail: "Open payment exceptions, critical issues, suspense items, and pending provider transactions.",
+      title: ownerText("Reconciliation exceptions", input.locale),
+      detail: ownerText("Open payment exceptions, critical issues, suspense items, and pending provider transactions.", input.locale),
       value:
         paymentTruth.metrics.openExceptionCount +
         paymentTruth.metrics.openSuspenseCount +
@@ -266,13 +291,13 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
       unit: "items",
       tone: paymentTruth.metrics.criticalExceptionCount > 0 ? "danger" : "gold",
       requiredPermission: "payments.reconciliation.read",
-      href: "/dashboard/finance/payments",
+      href: "/dashboard/finance/reconciliation",
       snapshot: paymentTruth,
     }),
     card({
       id: "stock_cash_exposure",
-      title: "Stock cash exposure",
-      detail: "Inventory value tied up in stock, with zero or negative-stock pressure highlighted.",
+      title: ownerText("Stock cash exposure", input.locale),
+      detail: ownerText("Inventory value tied up in stock, with zero or negative-stock pressure highlighted.", input.locale),
       value: inventoryCash.metrics.inventoryValue,
       unit: "value",
       tone:
@@ -280,13 +305,13 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
           ? "gold"
           : "spruce",
       requiredPermission: "inventory.read",
-      href: "/dashboard/inventory/stock",
+      href: OWNER_STOCK_WORKSPACE,
       snapshot: inventoryCash,
     }),
     card({
       id: "supplier_commitments",
-      title: "Supplier commitments",
-      detail: "Pending purchase orders that may soon become cash obligations or receiving blockers.",
+      title: ownerText("Supplier commitments", input.locale),
+      detail: ownerText("Pending purchase orders that may soon become cash obligations or receiving blockers.", input.locale),
       value: tenantOperating.metrics.pendingPurchaseOrderCount,
       unit: "orders",
       tone: tenantOperating.metrics.pendingPurchaseOrderCount > 0 ? "info" : "success",
@@ -297,12 +322,12 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     }),
     card({
       id: "payroll_exposure",
-      title: "Payroll exposure",
+      title: ownerText("Payroll exposure", input.locale),
       detail: payrollExposureDetail,
       value: payrollExposureValue,
       unit: payrollExposureUnit,
       tone: payrollExposureTone,
-      requiredPermission: "payroll.read",
+      requiredPermission: "payments.reconciliation.read",
       href: payrollExposureHref,
       snapshot: tenantOperating,
       redactions: [
@@ -310,7 +335,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
         {
           id: "owner-war-room-payroll-person-values-redacted",
           field: "payroll.personLevelAmounts",
-          reason: "The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.",
+          reason: ownerText("The Owner War Room shows aggregate payroll forecast and exposure only; employee-level values stay inside payroll.", input.locale),
           policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
         },
       ],
@@ -320,8 +345,8 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     }),
     card({
       id: "close_readiness",
-      title: "Close readiness",
-      detail: "Open findings, unavailable evidence, readiness score, and close blockers for the active period.",
+      title: ownerText("Close readiness", input.locale),
+      detail: ownerText("Open findings, unavailable evidence, readiness score, and close blockers for the active period.", input.locale),
       value: closeReadiness.metrics.averageReadinessScore ?? 0,
       unit: "score",
       tone:
@@ -334,8 +359,8 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     }),
     {
       id: "action_queue",
-      title: "Action queue",
-      detail: "Permission-filtered owner actions generated from the current business signals.",
+      title: ownerText("Action queue", input.locale),
+      detail: ownerText("Permission-filtered owner actions generated from the current business signals.", input.locale),
       value: input.actionQueue.summary.total,
       unit: "actions",
       tone: input.actionQueue.summary.bySeverity.critical > 0 ? "danger" : "info",
@@ -350,8 +375,8 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     },
     {
       id: "module_observe",
-      title: "Module observe",
-      detail: "Modules that would be blocked under entitlement enforcement, shown only as controlled upgrade pressure.",
+      title: ownerText("Module observe", input.locale),
+      detail: ownerText("Modules that would be blocked under entitlement enforcement, shown only as controlled upgrade pressure.", input.locale),
       value: input.moduleControl.summary.wouldBlockCount,
       unit: "modules",
       tone: input.moduleControl.summary.wouldBlockCount > 0 ? "gold" : "success",
@@ -365,7 +390,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
       sourceModules: ["dashboard"],
       blockers: [],
       redactions: [],
-      requiredPermission: "system.settings.read",
+      requiredPermission: "system.settings.update",
       href: "/dashboard/settings/modules",
     },
   ]
@@ -373,11 +398,11 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
   const strips: OwnerWarRoomStrip[] = [
     {
       id: "cash_leakage_radar",
-      title: "Cash Leakage Radar MVP",
+      title: ownerText("Cash Leakage Radar MVP", input.locale),
       detail:
         paymentTruth.metrics.openSuspenseCount > 0 || paymentTruth.metrics.criticalExceptionCount > 0
-          ? "Cash truth has unresolved suspense or critical exceptions. Owners should clear these before trusting daily cash."
-          : "No critical cash leakage signal is visible from the current payment snapshot.",
+          ? ownerText("Cash truth has unresolved suspense or critical exceptions. Owners should clear these before trusting daily cash.", input.locale)
+          : ownerText("No critical cash leakage signal is visible from the current payment snapshot.", input.locale),
       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : paymentTruth.metrics.openSuspenseCount > 0 ? "high" : "info",
       evidenceGrade: paymentTruth.evidenceGrade,
       state: stateFromSnapshot(paymentTruth),
@@ -386,11 +411,11 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     },
     {
       id: "close_autopilot",
-      title: "Close Autopilot strip",
+      title: ownerText("Close Autopilot strip", input.locale),
       detail:
         closeReadiness.metrics.openFindingCount > 0
-          ? "The close still has findings or unavailable evidence. Work the blockers before signoff."
-          : "Close readiness has no open blocker surfaced by the current snapshot.",
+          ? ownerText("The close still has findings or unavailable evidence. Work the blockers before signoff.", input.locale)
+          : ownerText("Close readiness has no open blocker surfaced by the current snapshot.", input.locale),
       severity: closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : closeReadiness.metrics.openFindingCount > 0 ? "high" : "info",
       evidenceGrade: closeReadiness.evidenceGrade,
       state: stateFromSnapshot(closeReadiness),
@@ -399,11 +424,11 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     },
     {
       id: "module_control",
-      title: "Module Control observe strip",
+      title: ownerText("Module Control observe strip", input.locale),
       detail:
         input.moduleControl.summary.wouldBlockCount > 0
-          ? "Observe mode is showing modules that would be hidden after enforcement. Owners can request an upgrade from controlled surfaces."
-          : "Module observe mode is clean for the current tenant entitlement set.",
+          ? ownerText("Observe mode is showing modules that would be hidden after enforcement. Owners can request an upgrade from controlled surfaces.", input.locale)
+          : ownerText("Module observe mode is clean for the current tenant entitlement set.", input.locale),
       severity: input.moduleControl.summary.wouldBlockCount > 0 ? "medium" : "info",
       evidenceGrade: "operational",
       state: input.moduleControl.summary.wouldBlockCount > 0 ? "upgrade_request" : "ready",
@@ -412,7 +437,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
     },
   ]
 
-  const proofSubjects = buildOwnerProofSubjects(input.proofSubjectIds)
+  const proofSubjects = buildOwnerProofSubjects(input.proofSubjectIds, input.locale)
   const summary = {
     criticalCount: input.actionQueue.summary.bySeverity.critical,
     highCount: input.actionQueue.summary.bySeverity.high,
@@ -453,40 +478,41 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
 
 function buildOwnerProofSubjects(
   proofSubjectIds: ComposeOwnerWarRoomInput["proofSubjectIds"],
+  locale: OwnerLocale = "en",
 ): OwnerWarRoomProofSubject[] {
   return [
     {
       subjectType: "journal.entry",
       subjectId: proofSubjectIds?.["journal.entry"] ?? "",
-      label: "Ledger proof",
-      detail: "Inspect ledger evidence when a posted journal entry is selected from accounting.",
+      label: ownerText("Ledger proof", locale),
+      detail: ownerText("Inspect ledger evidence when a posted journal entry is selected from accounting.", locale),
       requiredPermission: SUBJECT_PERMISSION_MAP["journal.entry"],
       enabled: Boolean(proofSubjectIds?.["journal.entry"]),
       unavailableReason: proofSubjectIds?.["journal.entry"]
         ? null
-        : "No posted journal entry is visible in this period.",
+        : ownerText("No posted journal entry is visible in this period.", locale),
     },
     {
       subjectType: "reconciliation.run",
       subjectId: proofSubjectIds?.["reconciliation.run"] ?? "",
-      label: "Reconciliation proof",
-      detail: "Inspect payment reconciliation evidence and blockers for the selected run.",
+      label: ownerText("Reconciliation proof", locale),
+      detail: ownerText("Inspect payment reconciliation evidence and blockers for the selected run.", locale),
       requiredPermission: SUBJECT_PERMISSION_MAP["reconciliation.run"],
       enabled: Boolean(proofSubjectIds?.["reconciliation.run"]),
       unavailableReason: proofSubjectIds?.["reconciliation.run"]
         ? null
-        : "No reconciliation run is visible in this period.",
+        : ownerText("No reconciliation run is visible in this period.", locale),
     },
     {
       subjectType: "close.run",
       subjectId: proofSubjectIds?.["close.run"] ?? "",
-      label: "Close proof",
-      detail: "Inspect close evidence, findings, redactions, and readiness blockers.",
+      label: ownerText("Close proof", locale),
+      detail: ownerText("Inspect close evidence, findings, redactions, and readiness blockers.", locale),
       requiredPermission: SUBJECT_PERMISSION_MAP["close.run"],
       enabled: Boolean(proofSubjectIds?.["close.run"]),
       unavailableReason: proofSubjectIds?.["close.run"]
         ? null
-        : "No close run is visible in this period.",
+        : ownerText("No close run is visible in this period.", locale),
     },
   ]
 }
@@ -536,9 +562,8 @@ function buildOwnerMorningBrief({
     })
     .sort(sortActionItems)
     .slice(0, OWNER_BRIEF_MAX_ACTIONS)
-  const topVisibleAction = [...input.actionQueue.actionItems].sort(sortActionItems)[0] ?? null
   const priorityActions = proofLinkedActionItems.map((item) =>
-    priorityActionFromItem({ item, signal: signalById.get(item.signalId) ?? null, generatedAt: input.generatedAt }),
+    priorityActionFromItem({ locale: input.locale, item, signal: signalById.get(item.signalId) ?? null, generatedAt: input.generatedAt }),
   )
   const headlineMetrics = {
     cashAtRisk: paymentTruth.metrics.openSuspenseAmount,
@@ -570,10 +595,8 @@ function buildOwnerMorningBrief({
     ...strips.flatMap((item) => item.redactions),
     ...priorityActions.flatMap((item) => item.redactions),
   ])
-  const primaryAction =
-    priorityActions[0]?.actionLink ??
-    (topVisibleAction ? actionLinkFromItem(topVisibleAction, signalById.get(topVisibleAction.signalId) ?? null) : null)
-  const proofDrawerSubjects = proofSubjects.map((subject) => proofSubjectToBI(input.organizationId, subject))
+  const recommendation = buildMorningBriefRecommendation(headlineMetrics, input.actorPermissions, input.locale)
+  const proofDrawerSubjects = proofSubjects.map((subject) => proofSubjectToBI(input.organizationId, subject, input.locale))
   const zones = buildOwnerMorningBriefZones(input)
 
   return {
@@ -587,9 +610,9 @@ function buildOwnerMorningBrief({
     commandBrief: {
       id: `owner-command-brief:${input.organizationId}`,
       organizationId: input.organizationId,
-      title: "Owner morning brief",
-      summary: buildMorningBriefSummary(headlineMetrics),
-      conclusion: buildMorningBriefConclusion(headlineMetrics),
+      title: ownerText("Owner morning brief", input.locale),
+      summary: buildMorningBriefSummary(headlineMetrics, input.locale),
+      conclusion: recommendation.conclusion,
       mode: "brief",
       generatedAt: input.generatedAt,
       periodStart: tenantOperating.periodStart,
@@ -602,7 +625,7 @@ function buildOwnerMorningBrief({
       sourceModules: uniqueModules(cards.flatMap((item) => item.sourceModules)),
       blockers,
       redactions,
-      primaryAction,
+      primaryAction: recommendation.action,
       drillThrough: null,
       reviewState: {
         organizationId: input.organizationId,
@@ -629,7 +652,7 @@ function buildOwnerMorningBrief({
       state: "not_started",
       acknowledgedAt: null,
       detail:
-        "Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.",
+        ownerText("Acknowledgement is held in the current browser session; no accounting, close, cash, inventory, payroll, or evidence record is mutated.", input.locale),
     },
     headlineMetrics,
   }
@@ -651,9 +674,9 @@ function buildOwnerMorningBriefChanges(input: {
       organizationId: input.input.organizationId,
       moduleSlug: "payment_reconciliation",
       requiredPermission: "payments.reconciliation.read",
-      title: "Cash at risk is visible since yesterday",
-      detail: "Open suspense value is still present in the payment truth snapshot.",
-      businessImpact: "Daily cash remains ambiguous until suspense is explained with reconciliation evidence.",
+      title: ownerText("Cash at risk is visible since yesterday", input.input.locale),
+      detail: ownerText("Open suspense value is still present in the payment truth snapshot.", input.input.locale),
+      businessImpact: ownerText("Daily cash remains ambiguous until suspense is explained with reconciliation evidence.", input.input.locale),
       direction: "new",
       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
       state: ownerStateToBIState(stateFromSnapshot(paymentTruth)),
@@ -669,10 +692,10 @@ function buildOwnerMorningBriefChanges(input: {
       provenance: provenanceFromSnapshot(paymentTruth),
       blockers: paymentTruth.blockers,
       redactions: paymentTruth.redactions,
-      drillThrough: routeDrillThrough("Open reconciliation", "/dashboard/finance/payments/reconciliation", "payments.reconciliation.read"),
+      drillThrough: routeDrillThrough(ownerText("Open reconciliation", input.input.locale), "/dashboard/finance/reconciliation", "payments.reconciliation.read"),
       actionLink: actionLink({
         id: "owner-morning-brief-open-cash-risk",
-        label: "Review cash risk",
+        label: ownerText("Review cash risk", input.input.locale),
         href: "/dashboard/finance/reconciliation",
         requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payment_reconciliation",
@@ -687,9 +710,9 @@ function buildOwnerMorningBriefChanges(input: {
       organizationId: input.input.organizationId,
       moduleSlug: "close_assurance",
       requiredPermission: "accounting.close.read",
-      title: "Close blockers need owner attention",
-      detail: "The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.",
-      businessImpact: "Reporting confidence stays limited until close evidence is cleared.",
+      title: ownerText("Close blockers need owner attention", input.input.locale),
+      detail: ownerText("The close readiness snapshot still has blocked runs, critical findings, or unavailable evidence.", input.input.locale),
+      businessImpact: ownerText("Reporting confidence stays limited until close evidence is cleared.", input.input.locale),
       direction: "new",
       severity: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : "high",
       state: ownerStateToBIState(stateFromSnapshot(closeReadiness)),
@@ -705,10 +728,10 @@ function buildOwnerMorningBriefChanges(input: {
       provenance: provenanceFromSnapshot(closeReadiness),
       blockers: closeReadiness.blockers,
       redactions: closeReadiness.redactions,
-      drillThrough: routeDrillThrough("Open close readiness", "/dashboard/accounting/close", "accounting.close.read"),
+      drillThrough: routeDrillThrough(ownerText("Open close readiness", input.input.locale), "/dashboard/accounting/close", "accounting.close.read"),
       actionLink: actionLink({
         id: "owner-morning-brief-open-close-risk",
-        label: "Review close",
+        label: ownerText("Review close", input.input.locale),
         href: "/dashboard/accounting/close",
         requiredPermission: "accounting.close.read",
         moduleSlug: "close_assurance",
@@ -725,9 +748,9 @@ function buildOwnerMorningBriefChanges(input: {
       organizationId: input.input.organizationId,
       moduleSlug: "dashboard",
       requiredPermission: "dashboard.read",
-      title: "Evidence freshness needs review",
-      detail: "One or more owner-war-room evidence surfaces are stale or signal-stale.",
-      businessImpact: "The owner should refresh the underlying workflow before trusting the morning view.",
+      title: ownerText("Evidence freshness needs review", input.input.locale),
+      detail: ownerText("One or more owner-war-room evidence surfaces are stale or signal-stale.", input.input.locale),
+      businessImpact: ownerText("The owner should refresh the underlying workflow before trusting the morning view.", input.input.locale),
       direction: "changed",
       severity: "medium",
       state: "stale",
@@ -743,10 +766,10 @@ function buildOwnerMorningBriefChanges(input: {
       provenance: null,
       blockers: [],
       redactions: [],
-      drillThrough: routeDrillThrough("Open owner war room", "/dashboard/owner-war-room", "dashboard.read"),
+      drillThrough: routeDrillThrough(ownerText("Open owner war room", input.input.locale), "/dashboard/owner-war-room", "dashboard.read"),
       actionLink: actionLink({
         id: "owner-morning-brief-open-stale-evidence",
-        label: "Review evidence",
+        label: ownerText("Review evidence", input.input.locale),
         href: "/dashboard/owner-war-room",
         requiredPermission: "dashboard.read",
         moduleSlug: "dashboard",
@@ -763,15 +786,16 @@ function buildOwnerMorningBriefChanges(input: {
       organizationId: input.input.organizationId,
       moduleSlug: moduleSlugForAction(item, signal),
       requiredPermission: item.requiredPermission,
+
       title: item.title,
       detail: item.nextStep,
-      businessImpact: signal?.businessImpact ?? "A proof-linked action is open for owner review.",
+      businessImpact: signal?.businessImpact ?? ownerText("A proof-linked action is open for owner review.", input.input.locale),
       direction: "new",
       severity: item.severity,
       state: actionItemState(item),
       evidenceGrade: item.evidenceGrade,
       trustState: evidenceGradeToBITrustState(item.evidenceGrade),
-      freshness: freshnessFromSignal(signal, item.createdAt),
+      freshness: freshnessFromSignal(signal, item.createdAt, input.input.locale),
       sourceModules: signal ? [signal.sourceModule] : ["dashboard"],
       changedAt: item.createdAt,
       previousValue: null,
@@ -781,8 +805,8 @@ function buildOwnerMorningBriefChanges(input: {
       provenance: signal ? provenanceFromSignal(signal) : null,
       blockers: item.blockers,
       redactions: item.redactions,
-      drillThrough: signal ? proofDrillThrough(signal) : null,
-      actionLink: actionLinkFromItem(item, signal),
+      drillThrough: signal ? proofDrillThrough(signal, input.input.locale) : null,
+      actionLink: actionLinkFromItem(item, signal, input.input.locale),
     })
   }
 
@@ -803,9 +827,9 @@ function buildOwnerMorningBriefRisks(input: {
       id: "owner-risk-cash-at-risk",
       organizationId: input.input.organizationId,
       moduleSlug: "payment_reconciliation",
-      title: "Cash at risk",
-      detail: "Payment suspense value is still open.",
-      businessImpact: "Unresolved suspense weakens the owner's trust in daily cash.",
+      title: ownerText("Cash at risk", input.input.locale),
+      detail: ownerText("Payment suspense value is still open.", input.input.locale),
+      businessImpact: ownerText("Unresolved suspense weakens the owner's trust in daily cash.", input.input.locale),
       severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
       severityScore: paymentTruth.metrics.criticalExceptionCount > 0 ? 96 : 82,
       moneyImpact: input.headlineMetrics.cashAtRisk,
@@ -817,10 +841,10 @@ function buildOwnerMorningBriefRisks(input: {
       sourceModules: paymentTruth.sourceModules,
       blockers: paymentTruth.blockers,
       redactions: paymentTruth.redactions,
-      drillThrough: routeDrillThrough("Open reconciliation", "/dashboard/finance/payments/reconciliation", "payments.reconciliation.read"),
+      drillThrough: routeDrillThrough(ownerText("Open reconciliation", input.input.locale), "/dashboard/finance/reconciliation", "payments.reconciliation.read"),
       actionLink: actionLink({
         id: "owner-risk-open-cash-at-risk",
-        label: "Open cash risk",
+        label: ownerText("Open cash risk", input.input.locale),
         href: "/dashboard/finance/reconciliation",
         requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payment_reconciliation",
@@ -835,9 +859,9 @@ function buildOwnerMorningBriefRisks(input: {
       id: "owner-risk-close-blockers",
       organizationId: input.input.organizationId,
       moduleSlug: "close_assurance",
-      title: "Blocked close items",
-      detail: "Close readiness still has blocked runs, critical findings, or unavailable evidence.",
-      businessImpact: "The period cannot become owner-trustworthy until close blockers are cleared.",
+      title: ownerText("Blocked close items", input.input.locale),
+      detail: ownerText("Close readiness still has blocked runs, critical findings, or unavailable evidence.", input.input.locale),
+      businessImpact: ownerText("The period cannot become owner-trustworthy until close blockers are cleared.", input.input.locale),
       severity: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? "critical" : "high",
       severityScore: closeReadiness.metrics.blockedCloseRunCount > 0 || closeReadiness.metrics.criticalOpenFindingCount > 0 ? 94 : 78,
       moneyImpact: null,
@@ -849,10 +873,10 @@ function buildOwnerMorningBriefRisks(input: {
       sourceModules: closeReadiness.sourceModules,
       blockers: closeReadiness.blockers,
       redactions: closeReadiness.redactions,
-      drillThrough: routeDrillThrough("Open close", "/dashboard/accounting/close", "accounting.close.read"),
+      drillThrough: routeDrillThrough(ownerText("Open close", input.input.locale), "/dashboard/accounting/close", "accounting.close.read"),
       actionLink: actionLink({
         id: "owner-risk-open-close-blockers",
-        label: "Open close",
+        label: ownerText("Open close", input.input.locale),
         href: "/dashboard/accounting/close",
         requiredPermission: "accounting.close.read",
         moduleSlug: "close_assurance",
@@ -868,9 +892,9 @@ function buildOwnerMorningBriefRisks(input: {
       id: "owner-risk-payroll-forecast-proof",
       organizationId: input.input.organizationId,
       moduleSlug: "payroll",
-      title: "Payroll forecast proof",
-      detail: "Payroll cash obligations are withheld because payroll forecast proof is incomplete.",
-      businessImpact: "Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.",
+      title: ownerText("Payroll forecast proof", input.input.locale),
+      detail: ownerText("Payroll cash obligations are withheld because payroll forecast proof is incomplete.", input.input.locale),
+      businessImpact: ownerText("Owner cash planning and profitability should not use payroll estimates until register, ledger, payment, and declaration proof are repaired.", input.input.locale),
       severity: "high",
       severityScore: 88,
       moneyImpact: null,
@@ -882,12 +906,12 @@ function buildOwnerMorningBriefRisks(input: {
       sourceModules: ["payroll", "accounting", "finance"],
       blockers: payrollForecastBlockers,
       redactions: tenantOperating.redactions,
-      drillThrough: routeDrillThrough("Open payroll", "/dashboard/payroll/payments", "payroll.payments.reconcile"),
+      drillThrough: routeDrillThrough(ownerText("Open payroll", input.input.locale), "/dashboard/payroll/payments", "payments.reconciliation.read"),
       actionLink: actionLink({
         id: "owner-risk-open-payroll-forecast-proof",
-        label: "Open payroll",
+        label: ownerText("Open payroll", input.input.locale),
         href: "/dashboard/payroll/payments",
-        requiredPermission: "payroll.payments.reconcile",
+        requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payroll",
         disabled: false,
         disabledReason: null,
@@ -900,9 +924,9 @@ function buildOwnerMorningBriefRisks(input: {
       id: "owner-risk-stale-evidence",
       organizationId: input.input.organizationId,
       moduleSlug: "dashboard",
-      title: "Stale evidence",
-      detail: "At least one evidence-backed owner metric is stale.",
-      businessImpact: "Refresh or investigate before using the brief as today's truth.",
+      title: ownerText("Stale evidence", input.input.locale),
+      detail: ownerText("At least one evidence-backed owner metric is stale.", input.input.locale),
+      businessImpact: ownerText("Refresh or investigate before using the brief as today's truth.", input.input.locale),
       severity: "medium",
       severityScore: 62,
       moneyImpact: null,
@@ -914,10 +938,10 @@ function buildOwnerMorningBriefRisks(input: {
       sourceModules: ["dashboard"],
       blockers: [],
       redactions: [],
-      drillThrough: routeDrillThrough("Open owner war room", "/dashboard/owner-war-room", "dashboard.read"),
+      drillThrough: routeDrillThrough(ownerText("Open owner war room", input.input.locale), "/dashboard/owner-war-room", "dashboard.read"),
       actionLink: actionLink({
         id: "owner-risk-open-stale-evidence",
-        label: "Review evidence",
+        label: ownerText("Review evidence", input.input.locale),
         href: "/dashboard/owner-war-room",
         requiredPermission: "dashboard.read",
         moduleSlug: "dashboard",
@@ -927,13 +951,14 @@ function buildOwnerMorningBriefRisks(input: {
     })
   }
   if (inventoryCash.metrics.zeroStockLevelCount > 0 || inventoryCash.metrics.negativeStockLevelCount > 0) {
+    const stockAction = ownerStockAction("owner-risk-open-stock-cash-exposure", input.input.actorPermissions, input.input.locale)
     risks.push({
       id: "owner-risk-stock-cash-exposure",
       organizationId: input.input.organizationId,
       moduleSlug: "inventory",
-      title: "Stock-to-cash exposure",
-      detail: "Zero or negative stock levels can turn working capital into missed sales.",
-      businessImpact: "Resolve stock pressure before it becomes a cash leakage story.",
+      title: ownerText("Stock-to-cash exposure", input.input.locale),
+      detail: ownerText("Zero or negative stock levels can turn working capital into missed sales.", input.input.locale),
+      businessImpact: ownerText("Resolve stock pressure before it becomes a cash leakage story.", input.input.locale),
       severity: inventoryCash.metrics.negativeStockLevelCount > 0 ? "high" : "medium",
       severityScore: inventoryCash.metrics.negativeStockLevelCount > 0 ? 74 : 58,
       moneyImpact: inventoryCash.metrics.inventoryValue,
@@ -945,16 +970,8 @@ function buildOwnerMorningBriefRisks(input: {
       sourceModules: inventoryCash.sourceModules,
       blockers: inventoryCash.blockers,
       redactions: inventoryCash.redactions,
-      drillThrough: routeDrillThrough("Open stock", "/dashboard/inventory/stock", "inventory.read"),
-      actionLink: actionLink({
-        id: "owner-risk-open-stock-cash-exposure",
-        label: "Open stock",
-        href: "/dashboard/inventory/stock",
-        requiredPermission: "inventory.read",
-        moduleSlug: "inventory",
-        disabled: false,
-        disabledReason: null,
-      }),
+      drillThrough: actionDrillThrough(stockAction),
+      actionLink: stockAction,
     })
   }
 
@@ -971,26 +988,28 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       id: "owner-zone-cash-truth",
       organizationId: input.organizationId,
       moduleSlug: "finance",
-      title: "Cash truth",
-      businessQuestion: "How much cash is at risk before the owner trusts the day?",
+      title: ownerText("Cash truth", input.locale),
+      businessQuestion: ownerText("How much cash is at risk before the owner trusts the day?", input.locale),
       summary:
         paymentTruth.metrics.openSuspenseAmount === null
-          ? "A combined suspense value is unavailable. Review the source currency breakdown."
+          ? ownerText("A combined suspense value is unavailable. Review the source currency breakdown.", input.locale)
           : paymentTruth.metrics.openSuspenseAmount > 0
-          ? `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount)} remains in suspense.`
-          : "No suspense value is visible in the current payment truth snapshot.",
+          ? input.locale === "fr"
+            ? `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount, input.locale)} restent en suspens.`
+            : `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount)} remains in suspense.`
+          : ownerText("No suspense value is visible in the current payment truth snapshot.", input.locale),
       snapshot: paymentTruth,
       metric: {
         id: "owner-zone-cash-at-risk",
-        title: "Cash at risk",
-        detail: "Open suspense amount from payment truth.",
+        title: ownerText("Cash at risk", input.locale),
+        detail: ownerText("Open suspense amount from payment truth.", input.locale),
         value: paymentTruth.metrics.openSuspenseAmount,
         unit: paymentTruth.metrics.suspenseCurrencyCode ?? "",
         format: "currency",
       },
       action: actionLink({
         id: "owner-zone-open-cash-truth",
-        label: "Open cash",
+        label: ownerText("Open cash", input.locale),
         href: "/dashboard/finance/reconciliation",
         requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payment_reconciliation",
@@ -1002,25 +1021,27 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       id: "owner-zone-payroll-finance-forecast",
       organizationId: input.organizationId,
       moduleSlug: "payroll",
-      title: "Payroll finance forecast",
-      businessQuestion: "What payroll and statutory cash obligations are coming next?",
+      title: ownerText("Payroll finance forecast", input.locale),
+      businessQuestion: ownerText("What payroll and statutory cash obligations are coming next?", input.locale),
       summary: tenantOperating.metrics.payrollFinanceForecast.authoritative
-        ? `${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount)} net pay and ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount)} statutory liability are forecast from payroll evidence.`
-        : tenantOperating.metrics.payrollFinanceForecast.message,
+        ? input.locale === "fr"
+          ? `Les preuves de paie prévoient ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount, input.locale)} de salaires nets et ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount, input.locale)} d’obligations légales.`
+          : `${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingNetPayAmount)} net pay and ${formatBriefAmount(tenantOperating.metrics.payrollFinanceForecast.upcomingStatutoryLiabilityAmount)} statutory liability are forecast from payroll evidence.`
+        : presentOwnerForecastMessage(tenantOperating.metrics.payrollFinanceForecast, input.locale),
       snapshot: tenantOperating,
       metric: {
         id: "owner-zone-payroll-forecast-total",
-        title: "Upcoming payroll obligations",
-        detail: "Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.",
+        title: ownerText("Upcoming payroll obligations", input.locale),
+        detail: ownerText("Aggregate net-pay plus statutory-liability forecast; person-level payroll amounts are redacted.", input.locale),
         value: tenantOperating.metrics.payrollFinanceForecast.totalUpcomingAmount,
         unit: "XAF",
         format: "currency",
       },
       action: actionLink({
         id: "owner-zone-open-payroll-forecast",
-        label: "Open payroll",
+        label: ownerText("Open payroll", input.locale),
         href: "/dashboard/payroll/payments",
-        requiredPermission: "payroll.payments.reconcile",
+        requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payroll",
         disabled: false,
         disabledReason: null,
@@ -1030,47 +1051,43 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       id: "owner-zone-stock-to-cash",
       organizationId: input.organizationId,
       moduleSlug: "inventory",
-      title: "Stock-to-cash truth",
-      businessQuestion: "Is working capital trapped in stock pressure?",
-      summary: `${formatBriefAmount(inventoryCash.metrics.inventoryValue)} is tied up in inventory, with ${inventoryCash.metrics.zeroStockLevelCount} zero-stock levels and ${inventoryCash.metrics.negativeStockLevelCount} negative levels.`,
+      title: ownerText("Stock-to-cash truth", input.locale),
+      businessQuestion: ownerText("Is working capital trapped in stock pressure?", input.locale),
+      summary: input.locale === "fr"
+        ? `${formatBriefAmount(inventoryCash.metrics.inventoryValue, input.locale)} sont immobilisés en stock ; niveaux de stock nuls : ${inventoryCash.metrics.zeroStockLevelCount}, négatifs : ${inventoryCash.metrics.negativeStockLevelCount}.`
+        : `${formatBriefAmount(inventoryCash.metrics.inventoryValue)} is tied up in inventory, with ${inventoryCash.metrics.zeroStockLevelCount} zero-stock levels and ${inventoryCash.metrics.negativeStockLevelCount} negative levels.`,
       snapshot: inventoryCash,
       metric: {
         id: "owner-zone-inventory-value",
-        title: "Inventory value",
-        detail: "Current inventory value from the inventory cash snapshot.",
+        title: ownerText("Inventory value", input.locale),
+        detail: ownerText("Current inventory value from the inventory cash snapshot.", input.locale),
         value: inventoryCash.metrics.inventoryValue,
         unit: "XAF",
         format: "currency",
       },
-      action: actionLink({
-        id: "owner-zone-open-stock-to-cash",
-        label: "Open stock",
-        href: "/dashboard/inventory/stock",
-        requiredPermission: "inventory.read",
-        moduleSlug: "inventory",
-        disabled: false,
-        disabledReason: null,
-      }),
+      action: ownerStockAction("owner-zone-open-stock-to-cash", input.actorPermissions, input.locale),
     }),
     zoneFromSnapshot({
       id: "owner-zone-close-readiness",
       organizationId: input.organizationId,
       moduleSlug: "close_assurance",
-      title: "Close readiness",
-      businessQuestion: "Can this period be trusted for owner reporting?",
-      summary: `${closeReadiness.metrics.openFindingCount} open findings and ${closeReadiness.metrics.unavailableEvidenceCount} unavailable evidence items remain.`,
+      title: ownerText("Close readiness", input.locale),
+      businessQuestion: ownerText("Can this period be trusted for owner reporting?", input.locale),
+      summary: input.locale === "fr"
+        ? `Constats encore ouverts : ${closeReadiness.metrics.openFindingCount} ; preuves indisponibles : ${closeReadiness.metrics.unavailableEvidenceCount}.`
+        : `${closeReadiness.metrics.openFindingCount} open findings and ${closeReadiness.metrics.unavailableEvidenceCount} unavailable evidence items remain.`,
       snapshot: closeReadiness,
       metric: {
         id: "owner-zone-close-score",
-        title: "Readiness score",
-        detail: "Average close readiness score for the active period.",
+        title: ownerText("Readiness score", input.locale),
+        detail: ownerText("Average close readiness score for the active period.", input.locale),
         value: closeReadiness.metrics.averageReadinessScore ?? 0,
         unit: "%",
         format: "score",
       },
       action: actionLink({
         id: "owner-zone-open-close-readiness",
-        label: "Open close",
+        label: ownerText("Open close", input.locale),
         href: "/dashboard/accounting/close",
         requiredPermission: "accounting.close.read",
         moduleSlug: "close_assurance",
@@ -1082,14 +1099,16 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       id: "owner-zone-payment-reconciliation",
       organizationId: input.organizationId,
       moduleSlug: "payment_reconciliation",
-      title: "Payment and reconciliation truth",
-      businessQuestion: "Are payment exceptions blocking cash confidence?",
-      summary: `${paymentTruth.metrics.openExceptionCount} open exceptions, ${paymentTruth.metrics.openSuspenseCount} suspense items, and ${paymentTruth.metrics.pendingTransactionCount} pending transactions are visible.`,
+      title: ownerText("Payment and reconciliation truth", input.locale),
+      businessQuestion: ownerText("Are payment exceptions blocking cash confidence?", input.locale),
+      summary: input.locale === "fr"
+        ? `Anomalies ouvertes : ${paymentTruth.metrics.openExceptionCount} ; éléments en suspens : ${paymentTruth.metrics.openSuspenseCount} ; transactions en attente : ${paymentTruth.metrics.pendingTransactionCount}.`
+        : `${paymentTruth.metrics.openExceptionCount} open exceptions, ${paymentTruth.metrics.openSuspenseCount} suspense items, and ${paymentTruth.metrics.pendingTransactionCount} pending transactions are visible.`,
       snapshot: paymentTruth,
       metric: {
         id: "owner-zone-payment-exceptions",
-        title: "Open payment issues",
-        detail: "Exceptions, suspense items, and pending provider transactions.",
+        title: ownerText("Open payment issues", input.locale),
+        detail: ownerText("Exceptions, suspense items, and pending provider transactions.", input.locale),
         value:
           paymentTruth.metrics.openExceptionCount +
           paymentTruth.metrics.openSuspenseCount +
@@ -1099,8 +1118,8 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       },
       action: actionLink({
         id: "owner-zone-open-payment-reconciliation",
-        label: "Open payments",
-        href: "/dashboard/finance/payments",
+        label: ownerText("Open reconciliation", input.locale),
+        href: "/dashboard/finance/reconciliation",
         requiredPermission: "payments.reconciliation.read",
         moduleSlug: "payment_reconciliation",
         disabled: false,
@@ -1142,7 +1161,7 @@ function zoneFromSnapshot(input: {
     provenance,
     blockers: input.snapshot.blockers,
     redactions: input.snapshot.redactions,
-    drillThrough: routeDrillThrough(input.action.label, input.action.href, input.action.requiredPermission),
+    drillThrough: actionDrillThrough(input.action),
     actionLink: input.action,
   }
 
@@ -1172,6 +1191,7 @@ function zoneFromSnapshot(input: {
 }
 
 function priorityActionFromItem(input: {
+  locale?: OwnerLocale
   item: ActionItem
   signal: BusinessSignal | null
   generatedAt: string
@@ -1182,32 +1202,67 @@ function priorityActionFromItem(input: {
     nextStep: input.item.nextStep,
     severity: input.item.severity,
     state: actionItemState(input.item),
-    actionLink: actionLinkFromItem(input.item, input.signal),
+    actionLink: actionLinkFromItem(input.item, input.signal, input.locale),
     evidenceGrade: input.item.evidenceGrade,
     trustState: evidenceGradeToBITrustState(input.item.evidenceGrade),
-    freshness: freshnessFromSignal(input.signal, input.generatedAt),
-    dueLabel: dueLabel(input.item.dueAt),
-    ownerLabel: input.item.assignedRole,
+    freshness: freshnessFromSignal(input.signal, input.generatedAt, input.locale),
+    dueLabel: dueLabel(input.item.dueAt, input.locale),
+    ownerLabel: input.locale === "fr" ? {
+      owner: "Dirigeant", accountant: "Comptable", finance: "Finance", stockkeeper: "Gestionnaire de stock",
+      purchasing: "Achats", payroll: "Paie", manager: "Responsable",
+    }[input.item.assignedRole] : input.item.assignedRole,
     blockers: input.item.blockers,
     redactions: input.item.redactions,
   }
 }
 
-function actionLinkFromItem(item: ActionItem, signal: BusinessSignal | null): BIActionLink {
+function actionLinkFromItem(item: ActionItem, signal: BusinessSignal | null, locale: OwnerLocale = "en"): BIActionLink {
   const disabled = item.status === "expired" || item.status === "resolved" || item.status === "dismissed"
   return actionLink({
     id: `owner-action-link:${item.id}`,
-    label: disabled ? "Unavailable" : "Open",
+    label: disabled ? ownerText("Unavailable", locale) : ownerText("Open", locale),
     href: item.actionPath,
     requiredPermission: item.requiredPermission,
+    additionalRequiredPermissions: item.additionalRequiredPermissions,
     moduleSlug: moduleSlugForAction(item, signal),
     disabled,
-    disabledReason: disabled ? `Action is ${item.status}.` : null,
+    disabledReason: disabled
+      ? locale === "fr"
+        ? item.status === "expired" ? "Cette action a expiré." : item.status === "resolved" ? "Cette action est résolue." : "Cette action est écartée."
+        : `Action is ${item.status}.`
+      : null,
   })
 }
 
 function actionLink(input: BIActionLink): BIActionLink {
   return input
+}
+
+function ownerStockAction(id: string, actorPermissions: readonly string[] = [], locale: OwnerLocale = "en"): BIActionLink {
+  const disabled = !["inventory.read", "inventory.items.read"].every(permission =>
+    hasRbacPermission(actorPermissions, permission),
+  )
+  return {
+    id,
+    label: ownerText("Open stock items", locale),
+    href: OWNER_STOCK_WORKSPACE,
+    requiredPermission: "inventory.read",
+    additionalRequiredPermissions: ["inventory.items.read"],
+    moduleSlug: "inventory",
+    disabled,
+    disabledReason: disabled ? ownerText("Inventory item access is required to open this workspace.", locale) : null,
+  }
+}
+
+function actionDrillThrough(action: BIActionLink, locale: OwnerLocale = "en"): BIDrillThrough {
+  const permissions = {
+    requiredPermission: action.requiredPermission,
+    ...(action.additionalRequiredPermissions ? { additionalRequiredPermissions: action.additionalRequiredPermissions } : {}),
+  }
+  if (action.disabled) {
+    return { available: false, type: "route", label: action.label, ...permissions, unavailableReason: action.disabledReason ?? ownerText("This workspace is unavailable.", locale) }
+  }
+  return { available: true, type: "route", label: action.label, href: action.href, ...permissions }
 }
 
 function routeDrillThrough(label: string, href: string, requiredPermission: string) {
@@ -1220,14 +1275,14 @@ function routeDrillThrough(label: string, href: string, requiredPermission: stri
   }
 }
 
-function proofDrillThrough(signal: BusinessSignal) {
+function proofDrillThrough(signal: BusinessSignal, locale: OwnerLocale = "en") {
   if (!signal.proofLink) {
-    return routeDrillThrough("Open action", signal.actionPath, signal.requiredPermission)
+    return routeDrillThrough(ownerText("Open action", locale), signal.actionPath, signal.requiredPermission)
   }
   return {
     available: true as const,
     type: "route_and_proof" as const,
-    label: "Open proof-linked action",
+    label: ownerText("Open proof-linked action", locale),
     href: signal.actionPath,
     subjectType: signal.proofLink.subjectType,
     subjectId: signal.proofLink.subjectId,
@@ -1235,7 +1290,7 @@ function proofDrillThrough(signal: BusinessSignal) {
   }
 }
 
-function proofSubjectToBI(organizationId: string, subject: OwnerWarRoomProofSubject): BIProofDrawerSubject {
+function proofSubjectToBI(organizationId: string, subject: OwnerWarRoomProofSubject, locale: OwnerLocale = "en"): BIProofDrawerSubject {
   const moduleSlug = PROOF_MODULE_BY_SUBJECT[subject.subjectType]
   const sourceModules: SnapshotSourceModule[] = [
     moduleSlug === "payment_reconciliation" ? "payments" : moduleSlug === "close_assurance" ? "close" : "accounting",
@@ -1259,7 +1314,7 @@ function proofSubjectToBI(organizationId: string, subject: OwnerWarRoomProofSubj
     moduleSlug,
     label: subject.label,
     requiredPermission: subject.requiredPermission,
-    unavailableReason: subject.unavailableReason ?? "No authorized proof subject is available.",
+    unavailableReason: subject.unavailableReason ?? ownerText("No authorized proof subject is available.", locale),
     sourceModules,
   }
 }
@@ -1291,24 +1346,54 @@ function morningBriefState(input: {
   return "ready"
 }
 
-function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
+function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"], locale: OwnerLocale = "en") {
+  if (locale === "fr") {
+    return `Trésorerie à risque : ${formatBriefAmount(input.cashAtRisk, locale)} ; engagements de paie à venir : ${formatBriefAmount(input.payrollForecastTotal, locale)} ; éléments de clôture bloqués : ${input.blockedCloseItems} ; preuves non à jour : ${input.staleEvidenceItems} ; actions liées à des preuves ouvertes depuis hier : ${input.proofLinkedActionCount}.`
+  }
   return `${formatBriefAmount(input.cashAtRisk)} cash at risk, ${formatBriefAmount(input.payrollForecastTotal)} upcoming payroll obligations, ${input.blockedCloseItems} blocked close item${input.blockedCloseItems === 1 ? "" : "s"}, ${input.staleEvidenceItems} stale evidence item${input.staleEvidenceItems === 1 ? "" : "s"}, and ${input.proofLinkedActionCount} proof-linked action${input.proofLinkedActionCount === 1 ? "" : "s"} opened since yesterday.`
 }
 
-function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
+function buildMorningBriefRecommendation(
+  input: OwnerWarRoomData["morningBrief"]["headlineMetrics"],
+  actorPermissions: readonly string[] = [],
+  locale: OwnerLocale = "en",
+): { conclusion: string; action: BIActionLink | null } {
+  const review = (label: string, frenchLabel: string, href: string, permission: string, moduleSlug: BIActionLink["moduleSlug"]) => {
+    const allowed = hasRbacPermission(actorPermissions, permission)
+    return actionLink({
+      id: "owner-brief-recommended-action",
+      label: locale === "fr" ? frenchLabel : label,
+      href,
+      requiredPermission: permission,
+      moduleSlug,
+      disabled: !allowed,
+      disabledReason: allowed ? null : locale === "fr"
+        ? "Vous n’avez pas les droits requis pour consulter cette source. Demandez à un responsable autorisé de l’examiner."
+        : "You do not have permission to review this source. Ask an authorized colleague to review it.",
+    })
+  }
   if (input.cashAtRisk === null || input.cashAtRisk > 0) {
-    return "Start with cash risk: suspense must be explained before the owner can trust daily cash."
+    return {
+      conclusion: ownerText("Start with cash risk: suspense must be explained before the owner can trust daily cash.", locale),
+      action: review("Review cash suspense", "Examiner les suspens de trésorerie", "/dashboard/finance/reconciliation", "payments.reconciliation.read", "payment_reconciliation"),
+    }
   }
   if (input.blockedCloseItems > 0) {
-    return "Close evidence is the first blocker: clear missing or critical close items before signoff."
+    return {
+      conclusion: ownerText("Close evidence is the first blocker: clear missing or critical close items before signoff.", locale),
+      action: review("Review close blockers", "Examiner les blocages de clôture", "/dashboard/accounting/close", "accounting.close.read", "close_assurance"),
+    }
   }
-  if (input.payrollForecastTotal > 0) {
-    return "Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan."
+  if (input.payrollForecastTotal !== null && input.payrollForecastTotal > 0) {
+    return {
+      conclusion: ownerText("Payroll and statutory obligations are visible: confirm evidence before relying on the owner cash plan.", locale),
+      action: review("Review payroll evidence", "Examiner les preuves de paie", "/dashboard/payroll", "payroll.command.read", "payroll"),
+    }
   }
   if (input.staleEvidenceItems > 0) {
-    return "Refresh stale evidence before using this view as today's owner truth."
+    return { conclusion: ownerText("Refresh stale evidence before using this view as today's owner truth.", locale), action: null }
   }
-  return "No cash, close, or freshness blocker is visible in the current owner brief."
+  return { conclusion: ownerText("No cash, close, or freshness blocker is visible in the current owner brief.", locale), action: null }
 }
 
 function aggregateBriefFreshness(generatedAt: string, snapshots: Array<SnapshotResult<unknown>>): BIFreshness {
@@ -1340,7 +1425,7 @@ function freshnessFromSnapshot(snapshot: SnapshotResult<unknown>): BIFreshness {
   }
 }
 
-function freshnessFromSignal(signal: BusinessSignal | null, fallbackGeneratedAt: string): BIFreshness {
+function freshnessFromSignal(signal: BusinessSignal | null, fallbackGeneratedAt: string, locale: OwnerLocale = "en"): BIFreshness {
   if (!signal) {
     return { state: "unknown", generatedAt: fallbackGeneratedAt, sourceMaxUpdatedAt: null, maxAgeMinutes: null, stale: false, staleReason: null }
   }
@@ -1350,7 +1435,7 @@ function freshnessFromSignal(signal: BusinessSignal | null, fallbackGeneratedAt:
     sourceMaxUpdatedAt: signal.freshness.sourceMaxUpdatedAt,
     maxAgeMinutes: signal.freshness.maxAgeMinutes,
     stale: signal.status === "expired" || signal.freshness.stale,
-    staleReason: signal.status === "expired" ? "Signal is expired." : signal.freshness.staleReason,
+    staleReason: signal.status === "expired" ? ownerText("Signal is expired.", locale) : signal.freshness.staleReason,
   }
 }
 
@@ -1412,15 +1497,15 @@ function isOnOrAfter(value: string, cutoff: Date) {
   return !Number.isNaN(parsed.getTime()) && parsed.getTime() >= cutoff.getTime()
 }
 
-function dueLabel(value: string) {
+function dueLabel(value: string, locale: OwnerLocale = "en") {
   const parsed = new Date(value)
   if (Number.isNaN(parsed.getTime())) return null
-  return `Due ${new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)}`
+  return `${locale === "fr" ? "Échéance :" : "Due"} ${new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(parsed)}`
 }
 
-function formatBriefAmount(value: number | null) {
-  if (value === null) return "total unavailable"
-  return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} XAF`
+function formatBriefAmount(value: number | null, locale: OwnerLocale = "en") {
+  if (value === null) return locale === "fr" ? "total indisponible" : "total unavailable"
+  return `${new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", { maximumFractionDigits: 0 }).format(value)} XAF`
 }
 
 function card(input: {

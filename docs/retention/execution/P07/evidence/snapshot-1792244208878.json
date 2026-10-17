@@ -1,0 +1,42 @@
+[
+  {
+    "id": "cmvcft7rl004jma1szomhxncb",
+    "target": "CUSTOMER",
+    "status": "BLOCKED",
+    "sourceFilename": "p03-incomplete.csv",
+    "approvedById": null,
+    "committedRecordCount": 0,
+    "lastSafeErrorCode": null,
+    "riskLevel": "STANDARD"
+  },
+  {
+    "id": "cmvcfthgn0050ma1sl68aj8vs",
+    "target": "CUSTOMER",
+    "status": "COMMITTED",
+    "sourceFilename": "p03-CUSTOMER.csv",
+    "approvedById": "p07-maker-97ee2d2e0f76",
+    "committedRecordCount": 1,
+    "lastSafeErrorCode": null,
+    "riskLevel": "STANDARD"
+  },
+  {
+    "id": "cmvcfu1ew005ima1sa70fum9r",
+    "target": "SUPPLIER",
+    "status": "COMMITTED",
+    "sourceFilename": "p03-SUPPLIER.csv",
+    "approvedById": "p07-checker-97ee2d2e0f76",
+    "committedRecordCount": 1,
+    "lastSafeErrorCode": null,
+    "riskLevel": "HIGH"
+  },
+  {
+    "id": "cmvcfuuok0064ma1s09zfex2u",
+    "target": "ITEM",
+    "status": "APPROVED",
+    "sourceFilename": "p03-ITEM.csv",
+    "approvedById": "p07-checker-97ee2d2e0f76",
+    "committedRecordCount": 0,
+    "lastSafeErrorCode": "DOMAIN_WRITE_RETRY_REQUIRED",
+    "riskLevel": "HIGH"
+  }
+]

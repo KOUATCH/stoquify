@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-27T16:49:46.928Z",
+  "previousBinding": "evidence/sign-module-current-bindings.json",
+  "unchangedSources": [
+    "services/reconciliation/payment-reconciliation-certification.service.ts",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+    "actions/payments/reconciliation.actions.ts",
+    "actions/payments/reconciliation-sign-review.actions.ts",
+    "components/finance/ReconciliationSignReview.module.css",
+    "services/modules/module-entitlement.service.ts",
+    "services/modules/module-catalog.service.ts",
+    "messages/en.json",
+    "messages/fr.json",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+    "services/reconciliation/payment-reconciliation-run.service.ts",
+    "components/finance/ReconciliationCertificateExportPanel.tsx",
+    "components/finance/PaymentReconciliationWorkbench.tsx"
+  ],
+  "changes": [
+    {
+      "file": "components/finance/ReconciliationSignReview.tsx",
+      "previous": "1847f7fb5df0272ab8d948a81d1deebce6e69d6bc15e9a57dc61447ee80e14e4",
+      "current": "8fa0bcceb9c6582e5f88ad8c63f35c85bf80c57707ef64b83026880cb70c3da8",
+      "normalizedMatches": true
+    },
+    {
+      "file": "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+      "previous": "90c7bf57311a2c3b0991814b89729b4b86e31cdf4e38fdf2f7e06b83b5883140",
+      "current": "8b69d4d09296e36b74036d6055115b010f0beae579dd647b6207138c1044cad4",
+      "normalizedMatches": true
+    }
+  ],
+  "reuse": "Previous database module/lock/signer receipts remain applicable: all service/action dependencies are byte-identical. Ready/signed/module-state presentation is unchanged except for explicit post-authentication focus; new browser proof covers that changed boundary."
+}

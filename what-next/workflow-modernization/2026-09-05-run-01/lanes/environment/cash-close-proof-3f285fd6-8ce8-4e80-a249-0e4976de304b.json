@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-30T17:06:33.857Z",
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "1241ab49fb3a2d8378c16a580e1a555d6b09ed79249b1c214a310abbbc608dbf",
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238"
+  },
+  "fixtureReceipt": "close-proof-corrected-8488c6c5-37d5-4448-9050-b6f5272e2251.json",
+  "cases": [
+    {
+      "state": "draft",
+      "locale": "en",
+      "width": 1440,
+      "subjectId": "cmuocsssc000smab4zk9mnks8",
+      "actualResponse": true,
+      "localizedBlockers": true,
+      "keyboardContainmentAndReturn": true,
+      "noHorizontalOverflow": true,
+      "screenshot": "cash-close-proof-3f285fd6-8ce8-4e80-a249-0e4976de304b-draft-en1440.png"
+    },
+    {
+      "state": "draft",
+      "locale": "fr",
+      "width": 320,
+      "subjectId": "cmuocsssc000smab4zk9mnks8",
+      "actualResponse": true,
+      "localizedBlockers": true,
+      "keyboardContainmentAndReturn": true,
+      "noHorizontalOverflow": true,
+      "screenshot": "cash-close-proof-3f285fd6-8ce8-4e80-a249-0e4976de304b-draft-fr320.png"
+    },
+    {
+      "state": "invalidated",
+      "locale": "en",
+      "width": 1440,
+      "subjectId": "cmuocsrul000cmab4gznqo0hq",
+      "actualResponse": true,
+      "localizedBlockers": true,
+      "keyboardContainmentAndReturn": true,
+      "noHorizontalOverflow": true,
+      "screenshot": "cash-close-proof-3f285fd6-8ce8-4e80-a249-0e4976de304b-invalidated-en1440.png"
+    },
+    {
+      "state": "invalidated",
+      "locale": "fr",
+      "width": 320,
+      "subjectId": "cmuocsrul000cmab4gznqo0hq",
+      "actualResponse": true,
+      "localizedBlockers": true,
+      "keyboardContainmentAndReturn": true,
+      "noHorizontalOverflow": true,
+      "screenshot": "cash-close-proof-3f285fd6-8ce8-4e80-a249-0e4976de304b-invalidated-fr320.png"
+    }
+  ],
+  "stage": "invalidated fr320",
+  "passed": true,
+  "readsPreservedBusinessRecords": true,
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "1241ab49fb3a2d8378c16a580e1a555d6b09ed79249b1c214a310abbbc608dbf",
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238"
+  },
+  "sourceStable": true
+}

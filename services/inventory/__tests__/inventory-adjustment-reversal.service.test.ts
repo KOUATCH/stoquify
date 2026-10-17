@@ -6,11 +6,15 @@ import {
   BusinessRuleError,
   ConflictError,
 } from "@/services/_shared/action-errors"
-import { recordReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import {
+  lockJournalReversalCatalogInTx,
+  lockJournalReversalClosePeriodsInTx,
+} from "@/services/accounting/journal-reversal-order.service"
 
 import { reverseStockAdjustment } from "../inventory-adjustment-reversal.service"
 import { recordInventoryValuationCloseInvalidationInTx } from "../inventory-close-invalidation.service"
-import { InsufficientStockError } from "../inventory-errors"
+import { ConcurrentStockUpdateError, InsufficientStockError } from "../inventory-errors"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -34,7 +38,12 @@ jest.mock("../inventory-close-invalidation.service", () => ({
 }))
 
 jest.mock("@/services/accounting/journal-close-invalidation.service", () => ({
-  recordReversedJournalCloseInvalidationsInTx: jest.fn(),
+  recordOrderedReversedJournalCloseInvalidationsInTx: jest.fn(),
+}))
+
+jest.mock("@/services/accounting/journal-reversal-order.service", () => ({
+  lockJournalReversalCatalogInTx: jest.fn(),
+  lockJournalReversalClosePeriodsInTx: jest.fn(),
 }))
 
 const mockedDb = db as unknown as {
@@ -55,11 +64,15 @@ const mockedDb = db as unknown as {
 const mockedInventoryInvalidation = recordInventoryValuationCloseInvalidationInTx as jest.MockedFunction<
   typeof recordInventoryValuationCloseInvalidationInTx
 >
-const mockedJournalInvalidation = recordReversedJournalCloseInvalidationsInTx as jest.MockedFunction<
-  typeof recordReversedJournalCloseInvalidationsInTx
+const mockedJournalInvalidation = recordOrderedReversedJournalCloseInvalidationsInTx as jest.MockedFunction<
+  typeof recordOrderedReversedJournalCloseInvalidationsInTx
 >
+const mockedCatalogLock = jest.mocked(lockJournalReversalCatalogInTx)
+const mockedPeriodLocks = jest.mocked(lockJournalReversalClosePeriodsInTx)
 
 const effectiveAt = new Date("2026-07-15T09:00:00.000Z")
+const originalAt = new Date("2026-07-14T09:00:00.000Z")
+const affectedPeriodIds = ["period-future", "period-original", "period-reversal"]
 
 function decimal(value: string | number) {
   return new Prisma.Decimal(value)
@@ -73,6 +86,7 @@ function originalAdjustment(overrides: Record<string, unknown> = {}) {
     locationId: "location-1",
     organizationId: "org-1",
     documentHash: "sha256:original",
+    adjustmentDate: originalAt,
     ledgerPostingBatchId: "batch-original",
     reversalOfAdjustmentId: null,
     correctionKind: null,
@@ -90,6 +104,7 @@ function originalMovement(overrides: Record<string, unknown> = {}) {
     quantity: decimal("5.000"),
     unitCost: decimal("100.00"),
     totalCost: decimal("500.00"),
+    effectiveAt: originalAt,
     item: { id: "item-1", organizationId: "org-1" },
     location: { id: "location-1", organizationId: "org-1" },
     reversedByTransaction: null,
@@ -139,12 +154,14 @@ function originalPostingBatch() {
     sourceType: "STOCK_ADJUSTMENT",
     sourceId: "adjustment-original",
     postingPurpose: "INVENTORY_ADJUSTMENT",
+    periodId: "period-original",
     journalEntries: [
       {
         id: "journal-original",
         status: "POSTED",
         journalId: "journal-inventory",
         periodId: "period-original",
+        entryDate: originalAt,
         entryNumber: "INVADJ-20260714-0001",
         currency: "XAF",
         reversalOfEntryId: null,
@@ -187,7 +204,9 @@ function reversalInput(overrides: Record<string, unknown> = {}) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  jest.resetAllMocks()
+  mockedCatalogLock.mockResolvedValue(undefined)
+  mockedPeriodLocks.mockResolvedValue(affectedPeriodIds)
   mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
   mockedDb.businessEvent.findUnique.mockResolvedValue(null)
   mockedDb.stockAdjustment.findFirst.mockResolvedValue(originalAdjustment())
@@ -356,6 +375,10 @@ describe("reverseStockAdjustment", () => {
     expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
     expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
     expect(mockedDb.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockedCatalogLock).not.toHaveBeenCalled()
+    expect(mockedPeriodLocks).not.toHaveBeenCalled()
+    expect(mockedInventoryInvalidation).not.toHaveBeenCalled()
+    expect(mockedJournalInvalidation).not.toHaveBeenCalled()
   })
 
   it("rejects maker-checker reuse before opening a database transaction", async () => {
@@ -391,5 +414,134 @@ describe("reverseStockAdjustment", () => {
 
     expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
     expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("holds the complete period boundary before compensation and invalidates that same union inventory first", async () => {
+    await reverseStockAdjustment(reversalInput())
+
+    expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+      isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted,
+    })
+    expect(mockedCatalogLock).toHaveBeenCalledWith(mockedDb, "org-1")
+    expect(mockedCatalogLock.mock.invocationCallOrder[0]).toBeLessThan(mockedDb.accountingPeriod.findFirst.mock.invocationCallOrder[0])
+    expect(mockedDb.accountingPeriod.findFirst.mock.invocationCallOrder[0]).toBeLessThan(mockedPeriodLocks.mock.invocationCallOrder[0])
+    expect(mockedPeriodLocks).toHaveBeenCalledWith(mockedDb, "org-1", {
+      originalPeriodId: "period-original", reversalPeriodId: "period-reversal",
+      originalEntryDate: originalAt, reversalDate: effectiveAt, includeLaterPeriods: true,
+      additionalEvidenceDates: [originalAt, originalAt], additionalPeriodIds: ["period-original"],
+    })
+    expect(mockedPeriodLocks.mock.invocationCallOrder[0]).toBeLessThan(mockedDb.stockAdjustment.create.mock.invocationCallOrder[0])
+    expect(mockedInventoryInvalidation).toHaveBeenCalledWith(mockedDb, expect.objectContaining({ affectedPeriodIds }))
+    expect(mockedJournalInvalidation).toHaveBeenCalledWith(mockedDb, "org-1", expect.objectContaining({ affectedPeriodIds }), expect.any(Object))
+    expect(mockedDb.businessEvent.update.mock.invocationCallOrder[0]).toBeLessThan(mockedInventoryInvalidation.mock.invocationCallOrder[0])
+    expect(mockedInventoryInvalidation.mock.invocationCallOrder[0]).toBeLessThan(mockedJournalInvalidation.mock.invocationCallOrder[0])
+  })
+
+  it("includes distinct historical source dates even when journals have no account classification", async () => {
+    const adjustmentDate = new Date("2026-05-15T09:00:00.000Z")
+    const movementDate = new Date("2026-06-15T09:00:00.000Z")
+    mockedDb.stockAdjustment.findFirst.mockResolvedValue(originalAdjustment({ adjustmentDate }))
+    mockedDb.inventoryTransaction.findMany.mockResolvedValue([originalMovement({ effectiveAt: movementDate })])
+
+    await reverseStockAdjustment(reversalInput())
+
+    expect(mockedPeriodLocks).toHaveBeenCalledWith(mockedDb, "org-1", expect.objectContaining({
+      includeLaterPeriods: true, additionalEvidenceDates: [adjustmentDate, movementDate],
+    }))
+  })
+
+  it("includes a distinct retained batch period alongside the required original journal period", async () => {
+    const batch = originalPostingBatch()
+    const completePeriodIds = ["period-batch", ...affectedPeriodIds]
+    mockedPeriodLocks.mockResolvedValueOnce(completePeriodIds)
+    mockedDb.ledgerPostingBatch.findFirst.mockReset()
+    mockedDb.ledgerPostingBatch.findFirst.mockResolvedValueOnce({
+      ...batch, periodId: "period-batch",
+    }).mockResolvedValueOnce(null)
+
+    await reverseStockAdjustment(reversalInput())
+
+    expect(mockedPeriodLocks).toHaveBeenCalledWith(mockedDb, "org-1", expect.objectContaining({
+      originalPeriodId: "period-original", additionalPeriodIds: ["period-batch"],
+    }))
+    expect(mockedInventoryInvalidation).toHaveBeenCalledWith(mockedDb, expect.objectContaining({
+      affectedPeriodIds: completePeriodIds,
+    }))
+    expect(mockedJournalInvalidation).toHaveBeenCalledWith(mockedDb, "org-1", expect.objectContaining({
+      originalPeriodId: "period-original", affectedPeriodIds: completePeriodIds,
+    }), expect.any(Object))
+  })
+
+  it("does not begin compensation while the complete period lock is waiting", async () => {
+    let entered!: () => void
+    let release!: () => void
+    const reached = new Promise<void>(resolve => { entered = resolve })
+    const held = new Promise<void>(resolve => { release = resolve })
+    mockedPeriodLocks.mockImplementationOnce(async () => { entered(); await held; return affectedPeriodIds })
+
+    const reversal = reverseStockAdjustment(reversalInput())
+    await reached
+    expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+    release()
+    await expect(reversal).resolves.toMatchObject({ replayed: false })
+  })
+
+  it.each(["catalog", "period"])("refuses a failed %s boundary without stock, ledger or evidence writes", async boundary => {
+    const refusal = new ConflictError("Close evidence boundary is unavailable.")
+    if (boundary === "catalog") mockedCatalogLock.mockRejectedValueOnce(refusal)
+    else mockedPeriodLocks.mockRejectedValueOnce(refusal)
+
+    await expect(reverseStockAdjustment(reversalInput())).rejects.toBe(refusal)
+
+    expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockedDb.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockedDb.auditLog.create).not.toHaveBeenCalled()
+    expect(mockedInventoryInvalidation).not.toHaveBeenCalled()
+    expect(mockedJournalInvalidation).not.toHaveBeenCalled()
+  })
+
+  it("propagates unsupported inherited isolation before any period read or write and never opens a replacement transaction", async () => {
+    const { $transaction: _transaction, ...suppliedTx } = mockedDb
+    const refusal = new ConflictError("Journal reversal requires Read Committed or a Serializable transaction with a fresh evidence reader.")
+    mockedCatalogLock.mockRejectedValueOnce(refusal)
+
+    await expect(reverseStockAdjustment(reversalInput(), suppliedTx as unknown as Prisma.TransactionClient)).rejects.toBe(refusal)
+
+    expect(mockedCatalogLock).toHaveBeenCalledWith(suppliedTx, "org-1")
+    expect(mockedDb.$transaction).not.toHaveBeenCalled()
+    expect(mockedDb.accountingPeriod.findFirst).not.toHaveBeenCalled()
+    expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("preserves stock CAS refusal after a boundary wait without emitting compensation evidence", async () => {
+    mockedDb.inventoryLevel.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(reverseStockAdjustment(reversalInput())).rejects.toBeInstanceOf(ConcurrentStockUpdateError)
+
+    expect(mockedPeriodLocks).toHaveBeenCalledTimes(1)
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockedDb.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockedInventoryInvalidation).not.toHaveBeenCalled()
+    expect(mockedJournalInvalidation).not.toHaveBeenCalled()
+  })
+
+  it("lets an invalidation failure abort the owning transaction instead of reporting a completed reversal", async () => {
+    const failure = new Error("Synthetic invalidation storage failure")
+    mockedInventoryInvalidation.mockRejectedValueOnce(failure)
+
+    await expect(reverseStockAdjustment(reversalInput())).rejects.toMatchObject({
+      message: "Stock adjustment reversal could not be completed.",
+    })
+
+    expect(mockedDb.$transaction).toHaveBeenCalledTimes(1)
+    expect(mockedInventoryInvalidation).toHaveBeenCalledTimes(1)
+    expect(mockedJournalInvalidation).not.toHaveBeenCalled()
   })
 })

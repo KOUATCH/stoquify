@@ -1,0 +1,740 @@
+===================================================================
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -381,8 +381,19 @@
+       linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 22%, rgba(255, 255, 255, 0.018) 72%, transparent),
+       linear-gradient(to bottom, rgba(21, 32, 39, 0), rgba(21, 32, 39, 0.34));
+   }
+ 
++  /* Authenticated operating surfaces use the existing solid product canvas.
++     Keep the explicitly separate bee-eater variant and public/auth themes intact. */
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) {
++    background: var(--dash-canvas);
++  }
++
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme)::before,
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme)::after {
++    content: none;
++  }
++
+   .bee-eater-dashboard-theme {
+     --dash-canvas: #0d1517;
+     --dash-chrome: #142326;
+     --dash-surface: #173035;
+@@ -525,8 +536,16 @@
+       inset 0 1px 0 rgba(255, 255, 255, 0.075);
+     transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+   }
+ 
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-glass-panel,
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-stat-card,
++  .dashboard-landing-theme:not(.bee-eater-dashboard-theme) .dashboard-table-shell {
++    background: var(--dash-surface);
++    box-shadow: none;
++    backdrop-filter: none;
++  }
++
+   .dashboard-stat-card::after {
+     content: "";
+     position: absolute;
+     inset: auto 0 0 0;
+@@ -895,17 +914,15 @@
+     --sidebar-panel: #142129;
+     --sidebar-border: rgba(170, 199, 207, 0.16);
+     position: relative;
+     isolation: isolate;
+-    background:
+-      linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0)),
+-      linear-gradient(180deg, var(--sidebar-panel), var(--sidebar-canvas));
++    background: var(--dash-chrome);
+     border-color: var(--sidebar-border);
+-    box-shadow: 18px 0 60px rgba(5, 12, 16, 0.28);
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar::before {
+-    content: "";
++    content: none;
+     position: absolute;
+     inset: 0;
+     z-index: 0;
+     pointer-events: none;
+@@ -916,9 +933,9 @@
+     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.88), transparent 92%);
+   }
+ 
+   .dashboard-enterprise-sidebar::after {
+-    content: "";
++    content: none;
+     position: absolute;
+     inset: 0;
+     z-index: 0;
+     pointer-events: none;
+@@ -942,10 +959,9 @@
+     top: 0.62rem;
+     bottom: 0.62rem;
+     width: 3px;
+     border-radius: 999px;
+-    background: linear-gradient(180deg, var(--dash-brand-strong), var(--dash-spruce), var(--dash-gold));
+-    box-shadow: 0 0 18px rgba(45, 212, 191, 0.24);
++    background: var(--dash-brand-strong);
+     opacity: 0;
+     transform: scaleY(0.64);
+     transition: opacity 160ms ease, transform 160ms ease;
+   }
+@@ -958,15 +974,11 @@
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"],
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-child-active="true"] {
+     border-color: color-mix(in srgb, var(--dash-brand) 46%, var(--dash-border-subtle));
+-    background:
+-      linear-gradient(135deg, var(--dash-brand-soft), var(--dash-spruce-soft) 58%, var(--dash-gold-soft)),
+-      rgba(37, 57, 67, 0.84);
++    background: var(--dash-brand-soft);
+     color: var(--dash-text);
+-    box-shadow:
+-      inset 0 1px 0 rgba(255, 255, 255, 0.09),
+-      0 14px 34px rgba(5, 14, 19, 0.2);
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"]::before,
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-child-active="true"]::before {
+@@ -974,24 +986,20 @@
+     transform: scaleY(1);
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module-icon {
+-    border: 1px solid rgba(170, 199, 207, 0.08);
+-    background: rgba(255, 255, 255, 0.055);
++    border: 1px solid transparent;
++    background: transparent;
+     color: var(--dash-brand-strong);
+-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-active="true"] .dashboard-sidebar-module-icon,
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module[data-child-active="true"] .dashboard-sidebar-module-icon {
+-    border-color: color-mix(in srgb, var(--dash-spruce) 44%, var(--dash-border-subtle));
+-    background:
+-      linear-gradient(135deg, rgba(47, 125, 246, 0.24), rgba(45, 212, 191, 0.2)),
+-      rgba(255, 255, 255, 0.06);
+-    color: #eaffff;
+-    box-shadow:
+-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+-      0 8px 20px rgba(45, 212, 191, 0.14);
++    border-color: transparent;
++    background: transparent;
++    color: var(--dash-brand-strong);
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-module-description {
+     color: var(--dash-text-faint);
+@@ -1022,13 +1030,11 @@
+     color: var(--dash-spruce);
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu {
+-    border-color: var(--dash-border-subtle);
+-    background:
+-      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
+-      rgba(14, 26, 32, 0.66);
+-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
++    border-color: transparent;
++    background: transparent;
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-item {
+     border: 1px solid transparent;
+@@ -1043,16 +1049,12 @@
+     color: var(--dash-text);
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-item[data-active="true"] {
+-    border-color: color-mix(in srgb, var(--dash-spruce) 50%, var(--dash-border-subtle));
+-    background:
+-      linear-gradient(90deg, var(--dash-spruce-soft), var(--dash-brand-soft) 64%, rgba(215, 168, 79, 0.1)),
+-      rgba(37, 57, 67, 0.82);
++    border-color: var(--dash-border-subtle);
++    background: var(--dash-surface-raised);
+     color: var(--dash-text);
+-    box-shadow:
+-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+-      0 10px 24px rgba(5, 14, 19, 0.14);
++    box-shadow: none;
+   }
+ 
+   .dashboard-enterprise-sidebar .dashboard-sidebar-submenu-dot {
+     background: var(--dash-border);
+===================================================================
+--- a/components/dashboard/Navbar.tsx
++++ b/components/dashboard/Navbar.tsx
+@@ -7,20 +7,19 @@
+ import {
+   Activity,
+   Bell,
+   Building2,
+-  ChevronRight,
+   ExternalLink,
+-  Globe2,
+   Menu,
+   Moon,
+   Search,
+-  ShieldCheck,
+   Sun,
+ } from "lucide-react"
+ 
+ import { useShellPermissions } from "@/components/dashboard/useShellPermissions"
+ import { BusinessRecordSearch } from "@/components/dashboard/BusinessRecordSearch"
++import { DashboardLanguageLink } from "@/components/dashboard/DashboardLanguageLink"
++import { DashboardMobileNavigation } from "@/components/dashboard/DashboardMobileNavigation"
+ import { useNotifications } from "@/components/notifications/NotificationProvider"
+ import { Button } from "@/components/ui/button"
+ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+ import UserDropdownMenu from "@/components/UserDropdownMenu"
+@@ -107,11 +106,8 @@
+     }
+ 
+     return localizePath(href, locale)
+   }
+-  const targetLocale = localePrefix === "fr" ? "en" : "fr"
+-  const pathWithoutLocale = pathname.replace(/^\/(en|fr)(?=\/)/, "") || "/dashboard"
+-  const targetLocaleHref = `/${targetLocale}${pathWithoutLocale}`
+   const isDarkTheme = themeReady && resolvedTheme === "dark"
+ 
+   useEffect(() => {
+     setThemeReady(true)
+@@ -198,10 +194,9 @@
+     }
+   }
+ 
+   return (
+-    <header className="sticky top-0 z-20 isolate flex min-h-16 w-full max-w-full flex-wrap items-center gap-2 border-b border-white/10 bg-[#142129]/90 px-2 py-2 shadow-[0_20px_45px_rgba(5,12,16,0.22)] backdrop-blur-xl sm:px-4 lg:min-h-[68px] lg:px-5">
+-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.055),transparent)]" />
++    <header className="sticky top-0 z-20 isolate flex min-h-16 w-full max-w-full flex-wrap items-center gap-2 border-b border-[var(--product-border-subtle)] bg-[var(--product-chrome)] px-2 py-2 text-[var(--product-text)] sm:px-4 lg:px-5">
+       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+         <SheetTrigger asChild>
+           <Button variant="outline" size="icon" className="relative z-10 shrink-0 rounded-xl md:hidden">
+             <Menu className="h-5 w-5" aria-hidden="true" />
+@@ -229,60 +224,11 @@
+                 className="h-11 w-full rounded-xl border border-white/10 bg-[#102027]/70 pl-9 pr-3 text-sm text-white outline-none placeholder:text-[#7f969f] focus:border-[#5796ff]/70 focus:ring-2 focus:ring-[#2f7df6]/20"
+               />
+             </label>
+ 
+-            <nav aria-label={locale === "fr" ? "Navigation mobile du tableau de bord" : "Mobile dashboard navigation"} className="dashboard-sidebar-scroll grid min-h-0 gap-4 overflow-y-auto text-sm font-medium">
+-              {mobileSections.map((section) => (
+-                <section key={section.key} className="grid gap-1" aria-labelledby={`mobile-sidebar-section-${section.key}`}>
+-                  <div className="flex items-center justify-between px-1">
+-                    <span id={`mobile-sidebar-section-${section.key}`} className="text-[0.64rem] font-bold uppercase tracking-[0.16em] text-[#7f969f]">
+-                      {label(section.title)}
+-                    </span>
+-                    <span className="text-[0.66rem] font-semibold text-[#647a83]" aria-hidden="true">
+-                      {section.links.length}
+-                    </span>
+-                  </div>
+-                  {section.links.map((link) => {
+-                    const Icon = link.icon
+-                    const destinations = link.dropdown && link.dropdownMenu?.length
+-                      ? link.dropdownMenu.map((item) => ({ title: item.title, href: item.href, permission: item.permission }))
+-                      : link.href
+-                        ? [{ title: link.title, href: link.href, permission: link.permission }]
+-                        : []
++            <DashboardMobileNavigation sections={mobileSections} locale={locale} activeHref={activeHref}
++              pathname={normalizedPath} searching={isMobileSearching} onNavigate={() => setMobileOpen(false)} />
+ 
+-                    return destinations.map((item) => {
+-                      const isActive = item.href === activeHref
+-
+-                      return (
+-                        <Link
+-                          key={`${link.title}-${item.href}`}
+-                          href={localizedHref(item.href)}
+-                          onClick={() => setMobileOpen(false)}
+-                          data-active={isActive ? "true" : "false"}
+-                          aria-current={isActive ? (normalizedPath === item.href ? "page" : "location") : undefined}
+-                          title={link.dropdown ? `${link.title}: ${item.title}` : item.title}
+-                          className={cn(
+-                            "dashboard-sidebar-module relative flex items-center gap-3 rounded-xl px-3 py-2.5 outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
+-                          )}
+-                        >
+-                          <span className="dashboard-sidebar-module-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+-                            <Icon className="h-4 w-4" aria-hidden="true" />
+-                          </span>
+-                          <span className="min-w-0 flex-1 truncate">{item.title}</span>
+-                          <ChevronRight className="dashboard-sidebar-module-chevron h-4 w-4 shrink-0" aria-hidden="true" />
+-                        </Link>
+-                      )
+-                    })
+-                  })}
+-                </section>
+-              ))}
+-              {mobileSections.length === 0 ? (
+-                <div role="status" className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-4 text-center text-xs text-[#9fb4bb]">
+-                  {locale === "fr" ? "Aucun module ne correspond à votre recherche." : "No modules match your search."}
+-                </div>
+-              ) : null}
+-            </nav>
+-
+             <div className="mt-auto shrink-0 pt-4">
+               <Button onClick={handleLogout} disabled={signingOut} size="sm" className="h-auto min-h-11 w-full whitespace-normal rounded-xl py-2">
+                 {signingOut ? signOutText.pending : signOutText.label}
+               </Button>
+@@ -292,14 +238,11 @@
+         </SheetContent>
+       </Sheet>
+       <div className="relative z-10 hidden min-w-0 sm:block sm:max-w-[15rem] xl:max-w-[20rem]">
+         <div className="flex items-center gap-2">
+-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff] ring-1 ring-white/10">
+-            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+-          </span>
+-          <h1 className="truncate text-lg font-bold text-white">{pageTitle}</h1>
++          <p className="truncate text-sm font-semibold text-[var(--product-text)]" title={pageTitle}>{pageTitle}</p>
+         </div>
+-        <p className="mt-0.5 truncate text-xs font-medium text-[#8fa4ab]">{breadcrumb}</p>
++        <p className="mt-0.5 truncate text-xs text-[var(--product-text-soft)]" title={breadcrumb}>{breadcrumb}</p>
+       </div>
+       <OrganizationBanner locale={locale} organizationName={session?.user?.organizationName ?? ""} organizationId={session.user?.organizationId ?? ""} userRole={userRole} />
+       <div className="relative z-10 order-last w-full min-w-0 lg:order-none lg:w-auto lg:flex-1 xl:max-w-md 2xl:max-w-xl">
+         <BusinessRecordSearch query={commandSearchTerm} onQueryChange={setCommandSearchTerm}
+@@ -317,18 +260,9 @@
+           aria-label={copy.website}
+         >
+           <ExternalLink className="h-4 w-4 text-[#8fb7ff]" aria-hidden="true" />
+         </Link>
+-        <Link
+-          href={targetLocaleHref}
+-          className="dashboard-top-button flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl px-0 text-sm font-semibold uppercase transition-all sm:w-auto sm:px-3"
+-          aria-label={copy.switchLanguage}
+-          title={copy.switchLanguage}
+-          hrefLang={targetLocale}
+-        >
+-          <Globe2 className="h-4 w-4 text-[#8fb7ff]" aria-hidden="true" />
+-          <span className="hidden sm:inline">{targetLocale}</span>
+-        </Link>
++        <DashboardLanguageLink locale={locale} />
+         <button
+           type="button"
+           onClick={() => setTheme(isDarkTheme ? "light" : "dark")}
+           className="dashboard-top-button flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-xl px-0 text-sm font-semibold transition-all 2xl:w-auto 2xl:px-3"
+===================================================================
+--- a/components/dashboard/Sidebar.tsx
++++ b/components/dashboard/Sidebar.tsx
+@@ -147,9 +147,9 @@
+               <NotificationMenu notifications={notifications} />
+             </div>
+           </div>
+ 
+-          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.055] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
++          <div className="mt-3 border-t border-[var(--dash-border-subtle)] pt-3">
+             <div className="flex items-center gap-3">
+               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
+                 <Crown className="h-4 w-4" aria-hidden="true" />
+               </div>
+@@ -168,9 +168,9 @@
+             </div>
+           </div>
+         </div>
+ 
+-        <div className="px-4 py-4 lg:px-5">
++        <div className="px-4 py-3 lg:px-5">
+           <label className="relative block">
+             <Search
+               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7f969f]"
+               aria-hidden="true"
+@@ -190,17 +190,17 @@
+             <span className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#7f969f]">
+               {isSearching ? copy.search : copy.modules}
+             </span>
+             <span
+-              className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[0.66rem] font-semibold text-[#a9b8b2]"
++              className="text-xs tabular-nums text-[var(--dash-text-soft)]"
+               aria-label={`${isSearching ? visibleLinks.length : filteredLinks.length} ${copy.modules}`}
+             >
+               {isSearching ? visibleLinks.length : filteredLinks.length}
+             </span>
+           </div>
+ 
+           <nav
+-            aria-label="Primary dashboard modules"
++            aria-label={locale === "fr" ? "Modules du tableau de bord" : "Primary dashboard modules"}
+             className="dashboard-sidebar-scroll grid min-h-0 min-w-0 max-w-full flex-1 items-start gap-4 overflow-y-auto overflow-x-hidden pr-1 text-sm font-medium"
+           >
+             {visibleSections.map((section) => (
+               <section key={section.key} aria-labelledby={`sidebar-section-${section.key}`} className="grid min-w-0 gap-1">
+@@ -246,9 +246,9 @@
+                             </span>
+                             <span className="min-w-0 flex-1" title={item.title}>
+                               <span className="block truncate">{item.title}</span>
+                               {item.description ? (
+-                                <span className="dashboard-sidebar-module-description hidden truncate text-[0.66rem] font-medium lg:block">
++                                <span className="sr-only">
+                                   {item.description}
+                                 </span>
+                               ) : null}
+                             </span>
+@@ -326,9 +326,9 @@
+                           </span>
+                           <span className="min-w-0 flex-1">
+                             <span className="block truncate">{item.title}</span>
+                             {item.description ? (
+-                              <span className="hidden truncate text-[0.66rem] font-medium text-[#7f969f] lg:block">
++                              <span className="sr-only">
+                                 {item.description}
+                               </span>
+                             ) : null}
+                           </span>
+===================================================================
+--- a/components/bi/BITrustLegend.tsx
++++ b/components/bi/BITrustLegend.tsx
+@@ -92,9 +92,9 @@
+   return (
+     <section className={cn(dashboardPanelClass, "p-4", className)}>
+       <div className="flex flex-col gap-1">
+         <h2 className="text-base font-semibold text-[var(--dash-text)]">{title ?? (french ? "Légende des niveaux de preuve" : "Trust legend")}</h2>
+-        <p className={cn("text-sm", dashboardMutedTextClass)}>{detail ?? (french ? "Comprendre le niveau de preuve des indicateurs avant d’agir." : "How Kontava labels business intelligence before users act on it.")}</p>
++        <p className={cn("text-sm", dashboardMutedTextClass)}>{detail ?? (french ? "Comprendre le niveau de preuve des indicateurs avant d’agir." : "Understand the evidence behind Stoquify indicators before taking action.")}</p>
+       </div>
+ 
+       <div className={cn("mt-4 grid gap-3", compact ? "md:grid-cols-2" : "lg:grid-cols-5")}>
+         {trustItems.map((item) => (
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx
+@@ -5,9 +5,9 @@
+ 
+ import { routeByKey, withAssuranceSurfaceAccess } from "../assurance-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Workflow Assurance Control Tower | Kontava",
++  title: "Workflow Assurance Control Tower | Stoquify",
+   description: "Proof-linked workflow assurance incident routing and engine health.",
+ }
+ 
+ function pickLocale(locale: string) {
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx
+@@ -5,9 +5,9 @@
+ import { routeByKey, withAssuranceSurfaceAccess } from "../../../assurance-route-access"
+ import { getAssuranceIncidentDetailData } from "@/services/assurance/assurance-control-tower.service"
+ 
+ export const metadata: Metadata = {
+-  title: "Workflow Assurance Incident | Kontava",
++  title: "Workflow Assurance Incident | Stoquify",
+   description: "Proof-linked workflow assurance incident detail.",
+ }
+ 
+ export default async function WorkflowAssuranceIncidentDetailPage({
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx
+@@ -4,9 +4,9 @@
+ import { getStockToCashFlowData } from "@/services/stock-to-cash/stock-to-cash-flow.service"
+ import { withFinanceSurfaceAccess, routeByKey } from "../finance-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Stock-to-Cash Flow | Kontava",
++  title: "Stock-to-Cash Flow | Stoquify",
+   description: "Read-only stock-to-cash flow from purchasing, inventory, POS, payments, ledger, and close readiness.",
+ }
+ 
+ export default async function StockToCashFlowPage({
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
+@@ -6,9 +6,9 @@
+ import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
+ import { routeByKey, withOwnerWarRoomSurfaceAccess } from "./owner-war-room-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Owner War Room | Kontava",
++  title: "Owner War Room | Stoquify",
+   description: "Evidence-backed owner command center for cash, stock, close, module, and action risk.",
+ }
+ 
+ const copy = {
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx
+@@ -8,9 +8,9 @@
+ import { getManagerActionCenterQuery } from "@/services/manager-action-center/manager-action-center-query.service"
+ import { routeByKey, withManagerActionSurfaceAccess } from "./manager-action-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Manager Action Center | Kontava",
++  title: "Manager Action Center | Stoquify",
+   description: "Permission-filtered, evidence-backed manager action center for daily operating control.",
+ }
+ 
+ const copy = {
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx
+@@ -9,9 +9,9 @@
+ import { getCashCommandData } from "@/services/cash-command/cash-command.service"
+ import { withFinanceSurfaceAccess, routeByKey } from "../finance-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Cash Command | Kontava",
++  title: "Cash Command | Stoquify",
+   description: "Read-only cash command intelligence for collected cash, suspense, drawer risk, and provider risk.",
+ }
+ 
+ const copy = {
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx
+@@ -9,9 +9,9 @@
+ import { localizePath } from "@/i18n/routing"
+ import { routeByKey, withManagerActionSurfaceAccess } from "../manager-action-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Branch Daily Close | Kontava",
++  title: "Branch Daily Close | Stoquify",
+   description: "Read-only, branch-scoped daily-close evidence for an explicitly selected business date.",
+ }
+ 
+ type SearchParams = {
+===================================================================
+--- a/app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
+@@ -6,9 +6,9 @@
+ import { isCopilotProposalReleaseAvailable } from "@/services/ai/copilot-proposal-release.service"
+ import { routeByKey, withDailyDigestSurfaceAccess } from "./daily-digest-route-access"
+ 
+ export const metadata: Metadata = {
+-  title: "Daily Habit Digest | Kontava",
++  title: "Daily Habit Digest | Stoquify",
+   description: "Read-only role-specific daily and weekly digest surfaces from existing command signals.",
+ }
+ 
+ export default async function DailyHabitDigestPage({
+===================================================================
+--- a/components/dashboard/DashboardLanguageLink.tsx
++++ b/components/dashboard/DashboardLanguageLink.tsx
+@@ -1,0 +1,41 @@
+\ No newline at end of file
++"use client"
++
++import { useEffect, useState } from "react"
++import Link from "next/link"
++import { usePathname, useSearchParams } from "next/navigation"
++import { Globe2 } from "lucide-react"
++
++/** Changes only the locale; the destination remains responsible for validating its scope. */
++export function DashboardLanguageLink({ locale }: { locale: "en" | "fr" }) {
++  const pathname = usePathname()
++  const searchParams = useSearchParams()
++  const query = searchParams.toString()
++  const [hash, setHash] = useState("")
++  const targetLocale = locale === "fr" ? "en" : "fr"
++  const label = locale === "fr" ? "Switch to English" : "Passer en français"
++  const path = pathname.replace(/^\/(en|fr)(?=\/|$)/, "") || "/dashboard"
++
++  useEffect(() => {
++    const syncHash = () => setHash(window.location.hash)
++    syncHash()
++    window.addEventListener("hashchange", syncHash)
++    window.addEventListener("popstate", syncHash)
++    return () => {
++      window.removeEventListener("hashchange", syncHash)
++      window.removeEventListener("popstate", syncHash)
++    }
++  }, [pathname, query])
++
++  return (
++    <Link
++      href={`/${targetLocale}${path}${query ? `?${query}` : ""}${hash}`}
++      className="dashboard-top-button flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-lg px-0 text-sm font-semibold uppercase transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--product-brand-strong)] sm:w-auto sm:px-3"
++      aria-label={label}
++      title={label}
++      hrefLang={targetLocale}
++    >
++      <Globe2 className="h-4 w-4 text-[var(--product-brand-strong)]" aria-hidden="true" />
++      <span className="hidden sm:inline">{targetLocale}</span>
++    </Link>
++  )
++}
+===================================================================
+--- a/components/dashboard/DashboardMobileNavigation.tsx
++++ b/components/dashboard/DashboardMobileNavigation.tsx
+@@ -1,0 +1,69 @@
+\ No newline at end of file
++"use client"
++
++import Link from "next/link"
++import { ChevronRight } from "lucide-react"
++import type { getSidebarSections } from "@/config/sidebar"
++import { localizePath } from "@/i18n/routing"
++import { navigationLabel } from "@/lib/dashboard/presentation"
++
++type Props = {
++  sections: ReturnType<typeof getSidebarSections>
++  locale: "en" | "fr"
++  activeHref?: string
++  pathname: string
++  searching: boolean
++  onNavigate: () => void
++}
++
++/** Receives only the shell's already permission/module-filtered navigation. */
++export function DashboardMobileNavigation({ sections, locale, activeHref, pathname, searching, onNavigate }: Props) {
++  const focus = "outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand-strong)] focus-visible:ring-inset"
++  return (
++    <nav aria-label={locale === "fr" ? "Navigation mobile du tableau de bord" : "Mobile dashboard navigation"} className="dashboard-sidebar-scroll grid min-h-0 gap-4 overflow-y-auto text-sm font-medium">
++      {sections.map(section => (
++        <section key={section.key} className="grid gap-1" aria-labelledby={`mobile-sidebar-section-${section.key}`}>
++          <p id={`mobile-sidebar-section-${section.key}`} className="px-3 text-xs font-semibold text-[var(--dash-text-soft)]">
++            {navigationLabel(section.title, locale)}
++          </p>
++          {section.links.map(link => {
++            const Icon = link.icon
++            const destinations = link.dropdown ? link.dropdownMenu ?? [] : []
++            const containsActive = destinations.some(item => item.href === activeHref)
++            if (!link.dropdown) return link.href ? (
++              <Link key={link.href} href={localizePath(link.href, locale)} onClick={onNavigate}
++                data-active={link.href === activeHref ? "true" : "false"}
++                aria-current={link.href === activeHref ? (pathname === link.href ? "page" : "location") : undefined}
++                className={`dashboard-sidebar-module flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 ${focus}`}>
++                <Icon className="h-4 w-4 shrink-0 text-[var(--dash-brand-strong)]" aria-hidden="true" />
++                <span className="min-w-0 break-words">{link.title}</span>
++              </Link>
++            ) : null
++
++            return (
++              <details key={`${link.title}:${activeHref}:${searching}`} open={searching || containsActive} className="group min-w-0">
++                <summary className={`dashboard-sidebar-module flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-lg px-3 py-2 [&::-webkit-details-marker]:hidden ${focus}`} data-child-active={containsActive ? "true" : "false"}>
++                  <Icon className="h-4 w-4 shrink-0 text-[var(--dash-brand-strong)]" aria-hidden="true" />
++                  <span className="min-w-0 flex-1 break-words">{link.title}</span>
++                  <ChevronRight className="h-4 w-4 shrink-0 group-open:rotate-90" aria-hidden="true" />
++                </summary>
++                <div className="ml-5 border-l border-[var(--dash-border-subtle)] pl-2">
++                  {destinations.map(item => (
++                    <Link key={item.href} href={localizePath(item.href, locale)} onClick={onNavigate}
++                      data-active={item.href === activeHref ? "true" : "false"}
++                      aria-current={item.href === activeHref ? (pathname === item.href ? "page" : "location") : undefined}
++                      className={`dashboard-sidebar-submenu-item flex min-h-11 items-center rounded-lg px-3 py-2 ${focus}`}>
++                      <span className="min-w-0 break-words">{item.title}</span>
++                    </Link>
++                  ))}
++                </div>
++              </details>
++            )
++          })}
++        </section>
++      ))}
++      {sections.length === 0 ? <p role="status" className="px-3 py-4 text-sm text-[var(--dash-text-soft)]">
++        {locale === "fr" ? "Aucun module ne correspond à votre recherche." : "No modules match your search."}
++      </p> : null}
++    </nav>
++  )
++}
+===================================================================
+--- a/components/dashboard/__tests__/DashboardLanguageLink.test.tsx
++++ b/components/dashboard/__tests__/DashboardLanguageLink.test.tsx
+@@ -1,0 +1,55 @@
+\ No newline at end of file
++import { act, render, screen } from "@testing-library/react"
++import { DashboardLanguageLink } from "../DashboardLanguageLink"
++
++let mockPathname = "/en/dashboard/sales"
++let mockQuery = ""
++jest.mock("next/navigation", () => ({
++  usePathname: () => mockPathname,
++  useSearchParams: () => new URLSearchParams(mockQuery),
++}))
++jest.mock("lucide-react", () => ({ Globe2: () => <svg aria-hidden="true" /> }))
++
++beforeEach(() => {
++  mockPathname = "/en/dashboard/sales"
++  mockQuery = ""
++  window.history.replaceState({}, "", mockPathname)
++})
++
++it("preserves repeated filters, encoded values and fragment when changing language", () => {
++  mockQuery = "locationId=branch-1&status=open&status=partial&q=caf%C3%A9+%26+tea"
++  window.history.replaceState({}, "", `${mockPathname}?${mockQuery}#results`)
++  render(<DashboardLanguageLink locale="en" />)
++  expect(screen.getByRole("link", { name: "Passer en français" }))
++    .toHaveAttribute("href", `/fr/dashboard/sales?${mockQuery}#results`)
++})
++
++it("updates after query-only navigation and clears the old anchor on a new route", () => {
++  mockQuery = "period=today"
++  window.history.replaceState({}, "", `${mockPathname}?${mockQuery}#results`)
++  const { rerender } = render(<DashboardLanguageLink locale="en" />)
++  mockQuery = "period=week"
++  rerender(<DashboardLanguageLink locale="en" />)
++  expect(screen.getByRole("link")).toHaveAttribute("href", "/fr/dashboard/sales?period=week#results")
++  mockPathname = "/fr/dashboard/inventory/items"
++  mockQuery = ""
++  window.history.replaceState({}, "", mockPathname)
++  rerender(<DashboardLanguageLink locale="fr" />)
++  expect(screen.getByRole("link", { name: "Switch to English" }))
++    .toHaveAttribute("href", "/en/dashboard/inventory/items")
++})
++
++it("tracks same-page anchor and history navigation without duplicating the locale", () => {
++  mockPathname = "/fr/dashboard/owner-war-room"
++  const { unmount } = render(<DashboardLanguageLink locale="fr" />)
++  act(() => {
++    window.history.replaceState({}, "", `${mockPathname}#evidence`)
++    window.dispatchEvent(new HashChangeEvent("hashchange"))
++  })
++  expect(screen.getByRole("link")).toHaveAttribute("href", "/en/dashboard/owner-war-room#evidence")
++  act(() => {
++    window.history.replaceState({}, "", mockPathname)
++    window.dispatchEvent(new PopStateEvent("popstate"))
++  })
++  expect(screen.getByRole("link")).toHaveAttribute("href", "/en/dashboard/owner-war-room")
++  unmount()
++})
+===================================================================
+--- a/components/dashboard/__tests__/DashboardMobileNavigation.test.tsx
++++ b/components/dashboard/__tests__/DashboardMobileNavigation.test.tsx
+@@ -1,0 +1,41 @@
+\ No newline at end of file
++import { fireEvent, render, screen } from "@testing-library/react"
++import type { SVGProps } from "react"
++import { DashboardMobileNavigation } from "../DashboardMobileNavigation"
++import { filterSidebarLinksByPermission, getSidebarSections, searchSidebarLinks, sidebarLinks } from "@/config/sidebar"
++import { localizeSidebarLinks } from "@/lib/dashboard/presentation"
++
++jest.mock("@/i18n/routing", () => ({ localizePath: (href: string, locale: string) => `/${locale}${href}` }))
++jest.mock("lucide-react", () => new Proxy({ __esModule: true }, {
++  get: (_target, key) => key === "__esModule" ? true : (props: SVGProps<SVGSVGElement>) => <svg {...props} />,
++}))
++
++const permitted = () => filterSidebarLinksByPermission(sidebarLinks, p => p === "finance.payables.read")
++
++it("starts with the active module expanded and keeps other modules keyboard-disclosable", () => {
++  const onNavigate = jest.fn()
++  const { container } = render(<DashboardMobileNavigation sections={getSidebarSections(permitted())} locale="en"
++    activeHref="/dashboard/purchases/payables" pathname="/dashboard/purchases/payables" searching={false} onNavigate={onNavigate} />)
++  const purchases = screen.getByText("Purchases").closest("details")!
++  const finance = screen.getByText("Finance").closest("details")!
++  expect(purchases.open).toBe(true)
++  expect(finance.open).toBe(false)
++  expect(container.querySelectorAll('a[aria-current="page"]')).toHaveLength(1)
++  fireEvent.click(screen.getByText("Finance"))
++  expect(finance.open).toBe(true)
++  fireEvent.click(screen.getByRole("link", { name: "Payables", exact: true }))
++  expect(onNavigate).toHaveBeenCalledTimes(1)
++  expect(screen.queryByText("Inventory")).not.toBeInTheDocument()
++})
++
++it("opens French search results and removes destinations when authority changes", () => {
++  const links = localizeSidebarLinks(permitted(), "fr")
++  const sections = getSidebarSections(searchSidebarLinks(links, "dettes"))
++  const { container, rerender } = render(<DashboardMobileNavigation sections={sections} locale="fr" pathname="/dashboard"
++    searching onNavigate={jest.fn()} />)
++  expect([...container.querySelectorAll("details")].every(d => d.open)).toBe(true)
++  expect([...container.querySelectorAll("a")].every(a => a.getAttribute("href")?.startsWith("/fr/"))).toBe(true)
++  expect(screen.getByRole("navigation", { name: "Navigation mobile du tableau de bord" })).toBeVisible()
++  rerender(<DashboardMobileNavigation sections={[]} locale="fr" pathname="/dashboard" searching onNavigate={jest.fn()} />)
++  expect(container.querySelectorAll("a")).toHaveLength(0)
++  expect(screen.getByRole("status")).toHaveTextContent("Aucun module")
++})

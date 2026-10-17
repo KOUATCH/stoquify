@@ -22,9 +22,12 @@ import { db } from "@/prisma/db"
 import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import { loadProviderOperationIntent } from "@/services/payments/provider-operation-evidence"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx, withReconciliationCloseRetry } from "./reconciliation-close-order.service"
 
 import { assertProviderAccountReconciliationReady } from "./payment-reconciliation-evidence.service"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+import { lockReconciliationProviderInTx, lockReconciliationPaymentSourcesInTx } from "./reconciliation-source-locks"
 
 export type RunPaymentReconciliationInput = {
   organizationId: string
@@ -244,6 +247,267 @@ async function createExceptionAndSuspense(
   return { exceptionId: exception.id, suspenseItemId: suspense.id }
 }
 
+// Shared matcher for a new run and explicitly reviewed additions. Existing allocations
+// are checked before any new disposition is created; callers own the transaction.
+export async function reconcileUnallocatedSourcesInTx(tx: Prisma.TransactionClient, input: {
+  organizationId: string
+  providerAccount: { id: string }
+  run: { id: string }
+  transactions: Prisma.PaymentTransactionGetPayload<{}>[]
+  providerEvents: Prisma.ProviderEventGetPayload<{}>[]
+  statementLines: Prisma.StatementLineGetPayload<{}>[]
+  correlationId: string
+  now: Date
+  reservedReferences?: readonly string[]
+}) {
+  const { providerAccount, run, transactions, providerEvents, statementLines, correlationId, now } = input
+  const reserved = new Set(input.reservedReferences ?? [])
+  const touchesRetained = (source: { providerTransactionId: string | null; providerReference: string | null }) =>
+    [key(source.providerTransactionId), key(source.providerReference)].some(value => value !== null && reserved.has(value))
+  const eventByTransactionId = mapByKey(providerEvents, (event) => event.providerTransactionId)
+  const eventByReference = mapByKey(providerEvents, (event) => event.providerReference)
+  const lineByTransactionId = mapByKey(statementLines, (line) => line.providerTransactionId)
+  const lineByReference = mapByKey(statementLines, (line) => line.providerReference)
+  const matchedEventIds = new Set<string>()
+  const matchedLineIds = new Set<string>()
+  const matchedTransactionIds = new Set<string>()
+  // Resolve all claims before choosing a match: query order must not decide
+  // which internal payment receives shared external evidence.
+  const candidates = transactions.map(transaction => ({
+    transaction,
+    events: candidatesFor(eventByTransactionId, eventByReference, transaction),
+    lines: candidatesFor(lineByTransactionId, lineByReference, transaction),
+  }))
+  const eventClaims = new Map<string, number>()
+  const lineClaims = new Map<string, number>()
+  for (const candidate of candidates) {
+    for (const event of candidate.events) eventClaims.set(event.id, (eventClaims.get(event.id) ?? 0) + 1)
+    for (const line of candidate.lines) lineClaims.set(line.id, (lineClaims.get(line.id) ?? 0) + 1)
+  }
+  const priorMatches = await tx.matchRecord.findMany({
+    where: {
+      organizationId: input.organizationId,
+      providerAccountId: providerAccount.id,
+      status: { in: [MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED, MatchStatus.CORRECTED] },
+      OR: [
+        { paymentTransactionId: { in: transactions.map(transaction => transaction.id) } },
+        { providerEventId: { in: providerEvents.map(event => event.id) } },
+        { statementLineId: { in: statementLines.map(line => line.id) } },
+      ],
+    },
+    select: { id: true, paymentTransactionId: true, providerEventId: true, statementLineId: true },
+  })
+  if (priorMatches.length > 0) {
+    // A new suspense row would itself duplicate an existing allocation.
+    // Roll back this run and require review of the retained match instead.
+    throw new ConflictError("Payment evidence is already allocated to an existing match. Review the existing reconciliation before starting another run.")
+  }
+
+  let matchCount = 0
+  let exceptionCount = 0
+  let suspenseCount = 0
+  let suspenseAmount = new Prisma.Decimal(0)
+
+  for (const { transaction, events, lines } of candidates) {
+    const event = events.length === 1 ? events[0] : undefined
+    const line = lines.length === 1 ? lines[0] : undefined
+    const ambiguous = touchesRetained(transaction) || events.some(touchesRetained) || lines.some(touchesRetained)
+      || events.length > 1 || lines.length > 1
+      || events.some(candidate => eventClaims.get(candidate.id)! > 1)
+      || lines.some(candidate => lineClaims.get(candidate.id)! > 1)
+
+    const externalAmount = event?.amount ?? line?.amount
+    const externalCurrency = event?.currencyCode ?? line?.currencyCode ?? transaction.currencyCode
+    const mismatchReasons = [
+      ambiguous ? "AMBIGUOUS_EXTERNAL_EVIDENCE" : null,
+      event?.amount !== null && event?.amount !== undefined && !sameAmount(transaction.amount, event.amount)
+        ? "PROVIDER_EVENT_AMOUNT"
+        : null,
+      line && !sameAmount(transaction.amount, line.amount)
+        ? "STATEMENT_LINE_AMOUNT"
+        : null,
+      event && event.currencyCode !== transaction.currencyCode
+        ? "PROVIDER_EVENT_CURRENCY"
+        : null,
+      line && line.currencyCode !== transaction.currencyCode
+        ? "STATEMENT_LINE_CURRENCY"
+        : null,
+      event && (event.amount === null || event.amount === undefined)
+        ? "PROVIDER_EVENT_AMOUNT_MISSING"
+        : null,
+      event && event.direction !== transaction.direction ? "PROVIDER_EVENT_DIRECTION" : null,
+      line && !(
+        (transaction.direction === PaymentDirection.INBOUND && line.direction === StatementLineDirection.CREDIT)
+        || (transaction.direction === PaymentDirection.OUTBOUND && line.direction === StatementLineDirection.DEBIT)
+      ) ? "STATEMENT_LINE_DIRECTION" : null,
+      event && event.signatureValid !== true ? "PROVIDER_EVENT_SIGNATURE" : null,
+    ].filter((reason): reason is string => reason !== null)
+
+    if (mismatchReasons.length > 0) {
+      const exceptionType = ambiguous ? PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE
+        : mismatchReasons.includes("PROVIDER_EVENT_SIGNATURE") ? PaymentExceptionType.SIGNATURE_FAILURE
+        : mismatchReasons.some(reason => reason.endsWith("_DIRECTION"))
+          ? PaymentExceptionType.MANUAL_REVIEW_REQUIRED : PaymentExceptionType.AMOUNT_MISMATCH
+      await createExceptionAndSuspense(tx, {
+        organizationId: input.organizationId,
+        providerAccountId: providerAccount.id,
+        reconciliationRunId: run.id,
+        paymentTransactionId: transaction.id,
+        providerEventId: event?.id,
+        statementLineId: line?.id,
+        type: exceptionType,
+        severity: ExceptionSeverity.HIGH,
+        amount: transaction.amount,
+        currencyCode: transaction.currencyCode,
+        direction: transaction.direction,
+        evidence: {
+          transactionAmount: money(transaction.amount).toFixed(2),
+          transactionCurrency: transaction.currencyCode,
+          providerAmount: event?.amount === null || event?.amount === undefined
+            ? null
+            : money(event.amount).toFixed(2),
+          providerCurrency: event?.currencyCode ?? null,
+          statementAmount: line ? money(line.amount).toFixed(2) : null,
+          statementCurrency: line?.currencyCode ?? null,
+          transactionDirection: transaction.direction,
+          providerDirection: event?.direction ?? null,
+          statementDirection: line?.direction ?? null,
+          providerEventIds: events.map(candidate => candidate.id),
+          statementLineIds: lines.map(candidate => candidate.id),
+          mismatchReasons,
+          rule: "EXTERNAL_EVIDENCE_MISMATCH",
+        },
+        correlationId,
+        now,
+      })
+      exceptionCount += 1
+      suspenseCount += 1
+      suspenseAmount = suspenseAmount.plus(transaction.amount)
+      // These rows are explained by the exception, not successful matches.
+      // Do not count the same candidates again as orphan suspense below.
+      for (const candidate of events) matchedEventIds.add(candidate.id)
+      for (const candidate of lines) matchedLineIds.add(candidate.id)
+      continue
+    }
+
+    if (event || line) {
+      await tx.matchRecord.create({
+        data: {
+          organizationId: input.organizationId,
+          providerAccountId: providerAccount.id,
+          paymentTransactionId: transaction.id,
+          providerEventId: event?.id,
+          statementLineId: line?.id,
+          reconciliationRunId: run.id,
+          rule: key(transaction.providerTransactionId) && (
+            key(transaction.providerTransactionId) === key(event?.providerTransactionId)
+            || key(transaction.providerTransactionId) === key(line?.providerTransactionId)
+          )
+            ? MatchRule.EXACT_PROVIDER_TRANSACTION_ID
+            : MatchRule.EXACT_PROVIDER_REFERENCE,
+          status: MatchStatus.AUTO_MATCHED,
+          confidence: new Prisma.Decimal(100),
+          amountMatched: externalAmount ? money(externalAmount) : money(transaction.amount),
+          currencyCode: externalCurrency,
+          matchedAt: now,
+          correlationId,
+          metadata: {
+            matchedBy: "SYSTEM",
+            cascade: event ? "PROVIDER_EVENT" : "STATEMENT_LINE",
+          },
+        },
+      })
+
+      matchCount += 1
+      matchedTransactionIds.add(transaction.id)
+      if (event) matchedEventIds.add(event.id)
+      if (line) matchedLineIds.add(line.id)
+      continue
+    }
+
+    await createExceptionAndSuspense(tx, {
+      organizationId: input.organizationId,
+      providerAccountId: providerAccount.id,
+      reconciliationRunId: run.id,
+      paymentTransactionId: transaction.id,
+      type: PaymentExceptionType.MISSING_PROVIDER_EVENT,
+      severity: ExceptionSeverity.HIGH,
+      amount: transaction.amount,
+      currencyCode: transaction.currencyCode,
+      direction: transaction.direction,
+      evidence: {
+        providerTransactionId: transaction.providerTransactionId,
+        providerReference: transaction.providerReference,
+        rule: "MISSING_EXTERNAL_EVIDENCE",
+      },
+      correlationId,
+      now,
+    })
+    exceptionCount += 1
+    suspenseCount += 1
+    suspenseAmount = suspenseAmount.plus(transaction.amount)
+  }
+
+  for (const event of providerEvents) {
+    if (matchedEventIds.has(event.id)) continue
+
+    await createExceptionAndSuspense(tx, {
+      organizationId: input.organizationId,
+      providerAccountId: providerAccount.id,
+      reconciliationRunId: run.id,
+      providerEventId: event.id,
+      type: touchesRetained(event) ? PaymentExceptionType.MANUAL_REVIEW_REQUIRED : PaymentExceptionType.MISSING_INTERNAL_PAYMENT,
+      severity: ExceptionSeverity.HIGH,
+      amount: event.amount ?? 0,
+      currencyCode: event.currencyCode,
+      direction: event.direction ?? PaymentDirection.INBOUND,
+      evidence: {
+        providerEventId: event.providerEventId,
+        providerTransactionId: event.providerTransactionId,
+        providerReference: event.providerReference,
+        rule: touchesRetained(event) ? "ADDITIONAL_EVIDENCE_FOR_RETAINED_SOURCE" : "ORPHAN_PROVIDER_EVENT",
+      },
+      correlationId,
+      now,
+    })
+    exceptionCount += 1
+    suspenseCount += 1
+    suspenseAmount = suspenseAmount.plus(event.amount ?? 0)
+  }
+
+  for (const line of statementLines) {
+    if (matchedLineIds.has(line.id)) continue
+
+    await createExceptionAndSuspense(tx, {
+      organizationId: input.organizationId,
+      providerAccountId: providerAccount.id,
+      reconciliationRunId: run.id,
+      statementLineId: line.id,
+      type: touchesRetained(line) ? PaymentExceptionType.MANUAL_REVIEW_REQUIRED : PaymentExceptionType.MISSING_INTERNAL_PAYMENT,
+      severity: ExceptionSeverity.HIGH,
+      amount: line.amount,
+      currencyCode: line.currencyCode,
+      direction: line.direction === "DEBIT" ? PaymentDirection.OUTBOUND : PaymentDirection.INBOUND,
+      evidence: {
+        statementLineId: line.id,
+        providerTransactionId: line.providerTransactionId,
+        providerReference: line.providerReference,
+        fingerprint: line.fingerprint,
+        rule: touchesRetained(line) ? "ADDITIONAL_EVIDENCE_FOR_RETAINED_SOURCE" : "ORPHAN_STATEMENT_LINE",
+      },
+      correlationId,
+      now,
+    })
+    exceptionCount += 1
+    suspenseCount += 1
+    suspenseAmount = suspenseAmount.plus(line.amount)
+  }
+
+  return { matchCount, exceptionCount, suspenseCount, suspenseAmount,
+    matchedAmount: transactions.filter(transaction => matchedTransactionIds.has(transaction.id))
+      .reduce((sum, transaction) => sum.plus(transaction.amount), new Prisma.Decimal(0)) }
+}
+
 export async function runPaymentReconciliation(
   input: RunPaymentReconciliationInput,
 ): Promise<RunPaymentReconciliationResult> {
@@ -264,8 +528,16 @@ export async function runPaymentReconciliation(
     correlationId,
   })
 
-  return db.$transaction(
+  return withReconciliationCloseRetry(() => db.$transaction(
     async (tx) => {
+      await assertModuleNewWorkInTx(tx, {
+        organizationId: input.organizationId,
+        moduleSlug: "payment_reconciliation",
+        operation: "payment.reconciliation.run.create",
+      })
+      await lockReconciliationCloseCatalogInTx(tx, input.organizationId)
+      const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, input.organizationId)
+      await lockReconciliationProviderInTx(tx, input.organizationId, input.providerAccountId)
       const providerAccount = await tx.providerAccount.findFirst({
         where: { id: input.providerAccountId, organizationId: input.organizationId },
         select: {
@@ -315,12 +587,6 @@ export async function runPaymentReconciliation(
         throw new ConflictError(duplicateRunMessage(existingRun.status))
       }
 
-      await assertModuleNewWorkInTx(tx, {
-        organizationId: input.organizationId,
-        moduleSlug: "payment_reconciliation",
-        operation: "payment.reconciliation.run.create",
-      })
-
       let run: { id: string }
       try {
         run = await tx.reconciliationRun.create({
@@ -349,6 +615,9 @@ export async function runPaymentReconciliation(
         throw new ConflictError("Payment reconciliation run could not be started safely.")
       }
 
+      await lockReconciliationPaymentSourcesInTx(tx, {
+        organizationId: input.organizationId, providerAccountId: providerAccount.id, periodStart, periodEnd,
+      })
       const [transactions, providerEvents, statementLines] = await Promise.all([
         tx.paymentTransaction.findMany({
           where: {
@@ -376,243 +645,9 @@ export async function runPaymentReconciliation(
         }),
       ])
 
-      const eventByTransactionId = mapByKey(providerEvents, (event) => event.providerTransactionId)
-      const eventByReference = mapByKey(providerEvents, (event) => event.providerReference)
-      const lineByTransactionId = mapByKey(statementLines, (line) => line.providerTransactionId)
-      const lineByReference = mapByKey(statementLines, (line) => line.providerReference)
-      const matchedEventIds = new Set<string>()
-      const matchedLineIds = new Set<string>()
-      const matchedTransactionIds = new Set<string>()
-      // Resolve all claims before choosing a match: query order must not decide
-      // which internal payment receives shared external evidence.
-      const candidates = transactions.map(transaction => ({
-        transaction,
-        events: candidatesFor(eventByTransactionId, eventByReference, transaction),
-        lines: candidatesFor(lineByTransactionId, lineByReference, transaction),
-      }))
-      const eventClaims = new Map<string, number>()
-      const lineClaims = new Map<string, number>()
-      for (const candidate of candidates) {
-        for (const event of candidate.events) eventClaims.set(event.id, (eventClaims.get(event.id) ?? 0) + 1)
-        for (const line of candidate.lines) lineClaims.set(line.id, (lineClaims.get(line.id) ?? 0) + 1)
-      }
-      const priorMatches = await tx.matchRecord.findMany({
-        where: {
-          organizationId: input.organizationId,
-          providerAccountId: providerAccount.id,
-          status: { in: [MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED, MatchStatus.CORRECTED] },
-          OR: [
-            { paymentTransactionId: { in: transactions.map(transaction => transaction.id) } },
-            { providerEventId: { in: providerEvents.map(event => event.id) } },
-            { statementLineId: { in: statementLines.map(line => line.id) } },
-          ],
-        },
-        select: { id: true, paymentTransactionId: true, providerEventId: true, statementLineId: true },
+      const { matchCount, exceptionCount, suspenseCount, suspenseAmount, matchedAmount } = await reconcileUnallocatedSourcesInTx(tx, {
+        organizationId: input.organizationId, providerAccount, run, transactions, providerEvents, statementLines, correlationId, now,
       })
-      if (priorMatches.length > 0) {
-        // A new suspense row would itself duplicate an existing allocation.
-        // Roll back this run and require review of the retained match instead.
-        throw new ConflictError("Payment evidence is already allocated to an existing match. Review the existing reconciliation before starting another run.")
-      }
-
-      let matchCount = 0
-      let exceptionCount = 0
-      let suspenseCount = 0
-      let suspenseAmount = new Prisma.Decimal(0)
-
-      for (const { transaction, events, lines } of candidates) {
-        const event = events.length === 1 ? events[0] : undefined
-        const line = lines.length === 1 ? lines[0] : undefined
-        const ambiguous = events.length > 1 || lines.length > 1
-          || events.some(candidate => eventClaims.get(candidate.id)! > 1)
-          || lines.some(candidate => lineClaims.get(candidate.id)! > 1)
-
-        const externalAmount = event?.amount ?? line?.amount
-        const externalCurrency = event?.currencyCode ?? line?.currencyCode ?? transaction.currencyCode
-        const mismatchReasons = [
-          ambiguous ? "AMBIGUOUS_EXTERNAL_EVIDENCE" : null,
-          event?.amount !== null && event?.amount !== undefined && !sameAmount(transaction.amount, event.amount)
-            ? "PROVIDER_EVENT_AMOUNT"
-            : null,
-          line && !sameAmount(transaction.amount, line.amount)
-            ? "STATEMENT_LINE_AMOUNT"
-            : null,
-          event && event.currencyCode !== transaction.currencyCode
-            ? "PROVIDER_EVENT_CURRENCY"
-            : null,
-          line && line.currencyCode !== transaction.currencyCode
-            ? "STATEMENT_LINE_CURRENCY"
-            : null,
-          event && (event.amount === null || event.amount === undefined)
-            ? "PROVIDER_EVENT_AMOUNT_MISSING"
-            : null,
-          event && event.direction !== transaction.direction ? "PROVIDER_EVENT_DIRECTION" : null,
-          line && !(
-            (transaction.direction === PaymentDirection.INBOUND && line.direction === StatementLineDirection.CREDIT)
-            || (transaction.direction === PaymentDirection.OUTBOUND && line.direction === StatementLineDirection.DEBIT)
-          ) ? "STATEMENT_LINE_DIRECTION" : null,
-          event && event.signatureValid !== true ? "PROVIDER_EVENT_SIGNATURE" : null,
-        ].filter((reason): reason is string => reason !== null)
-
-        if (mismatchReasons.length > 0) {
-          const exceptionType = ambiguous ? PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE
-            : mismatchReasons.includes("PROVIDER_EVENT_SIGNATURE") ? PaymentExceptionType.SIGNATURE_FAILURE
-            : mismatchReasons.some(reason => reason.endsWith("_DIRECTION"))
-              ? PaymentExceptionType.MANUAL_REVIEW_REQUIRED : PaymentExceptionType.AMOUNT_MISMATCH
-          await createExceptionAndSuspense(tx, {
-            organizationId: input.organizationId,
-            providerAccountId: providerAccount.id,
-            reconciliationRunId: run.id,
-            paymentTransactionId: transaction.id,
-            providerEventId: event?.id,
-            statementLineId: line?.id,
-            type: exceptionType,
-            severity: ExceptionSeverity.HIGH,
-            amount: transaction.amount,
-            currencyCode: transaction.currencyCode,
-            direction: transaction.direction,
-            evidence: {
-              transactionAmount: money(transaction.amount).toFixed(2),
-              transactionCurrency: transaction.currencyCode,
-              providerAmount: event?.amount === null || event?.amount === undefined
-                ? null
-                : money(event.amount).toFixed(2),
-              providerCurrency: event?.currencyCode ?? null,
-              statementAmount: line ? money(line.amount).toFixed(2) : null,
-              statementCurrency: line?.currencyCode ?? null,
-              transactionDirection: transaction.direction,
-              providerDirection: event?.direction ?? null,
-              statementDirection: line?.direction ?? null,
-              providerEventIds: events.map(candidate => candidate.id),
-              statementLineIds: lines.map(candidate => candidate.id),
-              mismatchReasons,
-              rule: "EXTERNAL_EVIDENCE_MISMATCH",
-            },
-            correlationId,
-            now,
-          })
-          exceptionCount += 1
-          suspenseCount += 1
-          suspenseAmount = suspenseAmount.plus(transaction.amount)
-          // These rows are explained by the exception, not successful matches.
-          // Do not count the same candidates again as orphan suspense below.
-          for (const candidate of events) matchedEventIds.add(candidate.id)
-          for (const candidate of lines) matchedLineIds.add(candidate.id)
-          continue
-        }
-
-        if (event || line) {
-          await tx.matchRecord.create({
-            data: {
-              organizationId: input.organizationId,
-              providerAccountId: providerAccount.id,
-              paymentTransactionId: transaction.id,
-              providerEventId: event?.id,
-              statementLineId: line?.id,
-              reconciliationRunId: run.id,
-              rule: key(transaction.providerTransactionId) && (
-                key(transaction.providerTransactionId) === key(event?.providerTransactionId)
-                || key(transaction.providerTransactionId) === key(line?.providerTransactionId)
-              )
-                ? MatchRule.EXACT_PROVIDER_TRANSACTION_ID
-                : MatchRule.EXACT_PROVIDER_REFERENCE,
-              status: MatchStatus.AUTO_MATCHED,
-              confidence: new Prisma.Decimal(100),
-              amountMatched: externalAmount ? money(externalAmount) : money(transaction.amount),
-              currencyCode: externalCurrency,
-              matchedAt: now,
-              correlationId,
-              metadata: {
-                matchedBy: "SYSTEM",
-                cascade: event ? "PROVIDER_EVENT" : "STATEMENT_LINE",
-              },
-            },
-          })
-
-          matchCount += 1
-          matchedTransactionIds.add(transaction.id)
-          if (event) matchedEventIds.add(event.id)
-          if (line) matchedLineIds.add(line.id)
-          continue
-        }
-
-        await createExceptionAndSuspense(tx, {
-          organizationId: input.organizationId,
-          providerAccountId: providerAccount.id,
-          reconciliationRunId: run.id,
-          paymentTransactionId: transaction.id,
-          type: PaymentExceptionType.MISSING_PROVIDER_EVENT,
-          severity: ExceptionSeverity.HIGH,
-          amount: transaction.amount,
-          currencyCode: transaction.currencyCode,
-          direction: transaction.direction,
-          evidence: {
-            providerTransactionId: transaction.providerTransactionId,
-            providerReference: transaction.providerReference,
-            rule: "MISSING_EXTERNAL_EVIDENCE",
-          },
-          correlationId,
-          now,
-        })
-        exceptionCount += 1
-        suspenseCount += 1
-        suspenseAmount = suspenseAmount.plus(transaction.amount)
-      }
-
-      for (const event of providerEvents) {
-        if (matchedEventIds.has(event.id)) continue
-
-        await createExceptionAndSuspense(tx, {
-          organizationId: input.organizationId,
-          providerAccountId: providerAccount.id,
-          reconciliationRunId: run.id,
-          providerEventId: event.id,
-          type: PaymentExceptionType.MISSING_INTERNAL_PAYMENT,
-          severity: ExceptionSeverity.HIGH,
-          amount: event.amount ?? 0,
-          currencyCode: event.currencyCode,
-          direction: event.direction ?? PaymentDirection.INBOUND,
-          evidence: {
-            providerEventId: event.providerEventId,
-            providerTransactionId: event.providerTransactionId,
-            providerReference: event.providerReference,
-            rule: "ORPHAN_PROVIDER_EVENT",
-          },
-          correlationId,
-          now,
-        })
-        exceptionCount += 1
-        suspenseCount += 1
-        suspenseAmount = suspenseAmount.plus(event.amount ?? 0)
-      }
-
-      for (const line of statementLines) {
-        if (matchedLineIds.has(line.id)) continue
-
-        await createExceptionAndSuspense(tx, {
-          organizationId: input.organizationId,
-          providerAccountId: providerAccount.id,
-          reconciliationRunId: run.id,
-          statementLineId: line.id,
-          type: PaymentExceptionType.MISSING_INTERNAL_PAYMENT,
-          severity: ExceptionSeverity.HIGH,
-          amount: line.amount,
-          currencyCode: line.currencyCode,
-          direction: line.direction === "DEBIT" ? PaymentDirection.OUTBOUND : PaymentDirection.INBOUND,
-          evidence: {
-            statementLineId: line.id,
-            providerTransactionId: line.providerTransactionId,
-            providerReference: line.providerReference,
-            fingerprint: line.fingerprint,
-            rule: "ORPHAN_STATEMENT_LINE",
-          },
-          correlationId,
-          now,
-        })
-        exceptionCount += 1
-        suspenseCount += 1
-        suspenseAmount = suspenseAmount.plus(line.amount)
-      }
 
       const status = exceptionCount > 0 ? ReconciliationRunStatus.NEEDS_REVIEW : ReconciliationRunStatus.READY_FOR_SIGNOFF
       await tx.reconciliationRun.update({
@@ -623,9 +658,7 @@ export async function runPaymentReconciliation(
           totalExternalAmount: providerEvents
             .reduce((sum, event) => sum.plus(event.amount ?? 0), new Prisma.Decimal(0))
             .plus(statementLines.reduce((sum, line) => sum.plus(line.amount), new Prisma.Decimal(0))),
-          matchedAmount: transactions
-            .filter((transaction) => matchedTransactionIds.has(transaction.id))
-            .reduce((sum, transaction) => sum.plus(transaction.amount), new Prisma.Decimal(0)),
+          matchedAmount,
           suspenseAmount,
           exceptionCount,
           matchCount,
@@ -638,6 +671,11 @@ export async function runPaymentReconciliation(
           },
         },
       })
+
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
+        sourceCode: "PAYMENT_RECONCILIATION_CREATED", sourceId: run.id, periodIds: affectedPeriodIds, correlationId,
+        staleReason: "A reconciliation run was created; assess its source evidence and review status again.",
+      }, { actorId: input.runById, now })
 
       if (status === ReconciliationRunStatus.READY_FOR_SIGNOFF) {
         await publishPaymentReconciliationNotification({
@@ -672,7 +710,13 @@ export async function runPaymentReconciliation(
       }
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
-  )
+  )).catch(error => {
+    const sqlState = error && typeof error === "object" && "meta" in error ? error.meta?.code : null
+    if (error && typeof error === "object" && (error.code === "P2034" || (error.code === "P2010" && ["40001", "40P01"].includes(String(sqlState))))) {
+      throw new ConflictError("Payment sources changed while matching. Refresh the sources and retry the reconciliation run.")
+    }
+    throw error
+  })
 }
 
 export { proposeManualMatch, approveManualMatch } from "./payment-reconciliation-manual-match.service"

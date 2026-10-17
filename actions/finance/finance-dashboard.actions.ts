@@ -6,6 +6,7 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 import { getFinanceDashboardViewPermissions } from "@/services/finance/finance-dashboard-access"
 import { financeDashboardInputSchema } from "@/services/finance/finance-dashboard.schemas"
 import { getFinanceDashboard } from "@/services/finance/finance-dashboard.service"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 export async function getFinanceDashboardAction(input: unknown) {
   try {
@@ -14,6 +15,9 @@ export async function getFinanceDashboardAction(input: unknown) {
       resource: "FinanceDashboard",
       resourceId: parsed.view,
     })
+    if (parsed.view === "receivables" || parsed.view === "payables") {
+      throw new BusinessRuleError("Use the scoped open-items dashboard for receivables and payables.")
+    }
     const payrollModuleDecision = await observeModuleAccess({
       organizationId: ctx.orgId,
       userId: ctx.userId,

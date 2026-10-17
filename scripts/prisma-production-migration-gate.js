@@ -558,7 +558,6 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
     packageJson.scripts?.["prisma:migration:history:health"] || "",
   );
   const preflightIndex = buildSource.indexOf("release:secrets:preflight");
-  const migrationIndex = buildSource.indexOf("prisma:migrate:deploy:safe");
   const appBuildIndex = buildSource.indexOf("build:linted");
 
   const checks = [
@@ -589,11 +588,13 @@ function buildPrismaMigrationReadiness(root = process.cwd(), options = {}) {
       ready: deployment.blockers.length === 0,
     },
     {
-      id: "production_build_orders_secret_migration_and_app_gates",
+      id: "build_and_schema_promotion_are_separate",
       ready:
-        preflightIndex >= 0 &&
-        migrationIndex > preflightIndex &&
-        appBuildIndex > migrationIndex,
+        buildSource === "npm run release:secrets:preflight && npm run build:linted" &&
+        preflightIndex >= 0 && appBuildIndex > preflightIndex &&
+        packageJson.scripts?.["release:artifact"] === "node scripts/release-artifact.cjs prepare" &&
+        packageJson.scripts?.["release:schema:promote"] === "node scripts/promote-release-schema.cjs" &&
+        !packageJson.scripts?.prebuild && !packageJson.scripts?.postbuild,
     },
     {
       id: "migration_safety_gate_is_in_policy_chain",
@@ -752,16 +753,22 @@ async function preparePrismaMigrationReadiness(
 function executeMigration(report, options = {}) {
   if (report.blockers.length || !report.deployment.shouldDeploy) return report;
   const runner = options.runner || spawnSync;
-  const command = process.platform === "win32" ? "npm.cmd" : "npm";
+  // Windows .cmd files cannot be spawned with shell:false (EINVAL). Keep the
+  // shell disabled and invoke npm's JavaScript entry with this Node runtime.
+  const environmentValues = options.environmentValues || process.env;
+  const npmCli = environmentValues.npm_execpath || path.join(path.dirname(process.execPath), "node_modules/npm/bin/npm-cli.js");
+  const command = process.platform === "win32" ? process.execPath : "npm";
+  const commandPrefix = process.platform === "win32" ? [npmCli] : [];
+  if (process.platform === "win32" && !fs.existsSync(npmCli)) throw new Error("npm CLI entry unavailable; invoke the named npm promotion script");
   const runnerOptions = {
     cwd: options.root || process.cwd(),
-    env: options.environmentValues || process.env,
+    env: environmentValues,
     stdio: "inherit",
     shell: false,
   };
   const deployResult = runner(
     command,
-    ["run", "prisma:migrate:deploy"],
+    [...commandPrefix, "run", "prisma:migrate:deploy"],
     runnerOptions,
   );
   const deploySucceeded = !deployResult.error && deployResult.status === 0;
@@ -780,7 +787,7 @@ function executeMigration(report, options = {}) {
   if (deploySucceeded) {
     const historyResult = runner(
       command,
-      ["run", "prisma:migration:history:health"],
+      [...commandPrefix, "run", "prisma:migration:history:health"],
       runnerOptions,
     );
     const historySucceeded = !historyResult.error && historyResult.status === 0;

@@ -41,7 +41,7 @@ jest.mock("@/services/owner-war-room/owner-war-room.service", () => ({
 
 import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
-import OwnerWarRoomPage from "../page"
+import OwnerWarRoomPage, { generateMetadata } from "../page"
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockGetOwnerWarRoomData = getOwnerWarRoomData as jest.Mock
@@ -67,6 +67,7 @@ describe("OwnerWarRoomPage", () => {
       auditAllowed: true,
     })
     expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith({
+      locale: "en",
       organizationId: "org-session",
       actorId: "user-session",
       actorPermissions: ["dashboard.read", "inventory.levels.read"],
@@ -90,4 +91,14 @@ describe("OwnerWarRoomPage", () => {
     expect(screen.getByText("route:permission_denied")).toBeInTheDocument()
     expect(screen.queryByText("org-session:en")).not.toBeInTheDocument()
   })
+
+  it("passes the French route locale into generated narratives", async () => {
+    render(await OwnerWarRoomPage({ params: Promise.resolve({ locale: "fr" }) }))
+    expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith(expect.objectContaining({ locale: "fr", organizationId: "org-session" }))
+    expect(screen.getByText("org-session:fr")).toBeInTheDocument()
+  })
+})
+
+it.each([["fr","Tableau du dirigeant | Stoquify"],["en","Owner War Room | Stoquify"]])("localizes owner metadata for %s", async (locale,title) => {
+  expect(await generateMetadata({params:Promise.resolve({locale})})).toMatchObject({title})
 })

@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-30T21:01:34.336Z",
+  "passed": false,
+  "command": "node reconcile-current-progress.cjs",
+  "exitCode": 1,
+  "error": "Setup rule selection source changed: services/accounting/accounting-settings.service.ts",
+  "firstSourceMismatch": {
+    "source": "services/accounting/accounting-settings.service.ts",
+    "expected": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+    "actual": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+  },
+  "limitation": "The reconciler stopped at this mismatch; this record does not establish that all other historical source bindings remain current.",
+  "correctionReview": {
+    "file": "evidence/invoice-receipt-handoff-review-2026-09-30.json",
+    "sha256": "dd5a58884f005a7b76680bfbb424e3b404f2aa4328601bc4e0626fda351487d8",
+    "sourceBindingsCurrent": true
+  },
+  "previousReconciliation": {
+    "file": "evidence/current-reconciliation.json",
+    "sha256": "6826bed9e00c402903171c56fbb3254b9598b4801aa984c8d21d3e6570879653",
+    "at": "2026-09-30T20:00:57.694Z",
+    "registerSha256": "6be9daddaed9b635654e5685205e1d2bea96c24cc8b2f8b8509b17250da9bd0b"
+  },
+  "nextAction": "Review the concurrent accounting-settings change and obtain affected evidence before refreshing the full register. Preserve historical receipts and source hashes.",
+  "recordedStatusCounts": {
+    "Queued": 265,
+    "Complete—verified": 4,
+    "In progress": 1
+  },
+  "updatedRegisterSha256": "82ce6fe23706d92822bc59bbb92fabd957144f8aea0477db61743509b34bac09"
+}

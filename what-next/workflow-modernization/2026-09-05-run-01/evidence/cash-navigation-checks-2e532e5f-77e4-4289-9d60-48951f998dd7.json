@@ -1,0 +1,104 @@
+{
+  "at": "2026-09-30T09:25:22.425Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "services/cash-command/cash-command.service.ts": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "components/cash-command/CashCommandDashboard.tsx": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "df859b20aa127159d80e7fb1e015fa0598a2c75b14cf904e3ff3a795e7cf0251",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "services/daily-habit/__tests__/daily-habit-digest.service.test.ts",
+        "services/bi/__tests__/bi-evidence-adapter.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 7 passed, 7 total\nTests:       214 passed, 214 total\nSnapshots:   0 total\nTime:        18.637 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\", \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\", \"services/bi/__tests__/bi-evidence-adapter.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/cash-command-navigation.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+        "services/cash-command/cash-command-sources.service.ts",
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "services/cash-command/cash-command-visibility.service.ts",
+        "services/payroll/payroll-finance-forecast.service.ts",
+        "services/bi/bi-evidence-adapter.service.ts",
+        "components/cash-command/CashCommandDashboard.tsx",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "\nE:\\ohada saas\\Focused projects\\stoquify\\components\\cash-command\\CashCommandDashboard.tsx\n  294:53  warning  The ref value 'request.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'request.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps\n\n✖ 1 problem (0 errors, 1 warning)\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "services/cash-command/cash-command.service.ts": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "components/cash-command/CashCommandDashboard.tsx": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "df859b20aa127159d80e7fb1e015fa0598a2c75b14cf904e3ff3a795e7cf0251",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true,
+  "passed": true
+}

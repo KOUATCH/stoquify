@@ -1,0 +1,43 @@
+{
+  "at": "2026-09-27T18:28:26.318Z",
+  "organizationId": "workflow_run_discovery_7bb2b8fb-bc3e-4055-9508-b25216f13b77",
+  "sourcesBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "4bf8378118bf8fc637519440cdc8e2d408789fdbace7d55b53d2dcfbe29c682a",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "messages/en.json": "4a9b6ea9c1553f92e8d5de7a732a52c33bb86372177cfcabc664b7d4c312dadc",
+    "messages/fr.json": "b75d829b739370f9d7ea7e43d7ec1c54b8a5214e6e538bc91ed11ada33154dd7"
+  },
+  "checks": [
+    {
+      "name": "22 real runs, stable two-page discovery/search/empty and private evidence/authority/tenant denial",
+      "passed": true
+    }
+  ],
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": [],
+      "consoleIssues": [],
+      "routeReadyMs": 16763,
+      "scope": "Run-discovery last-page focus reproduction only",
+      "focusAfterLastPage": "BODY",
+      "defectReproduced": true
+    }
+  ],
+  "scope": "Owned actual run creation and tenant-scoped discovery with synthetic empty-date provider setup. No signatures, readiness certification or financial postings. Actual EN/FR browser with explicit limited permissions.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "4bf8378118bf8fc637519440cdc8e2d408789fdbace7d55b53d2dcfbe29c682a",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "messages/en.json": "4a9b6ea9c1553f92e8d5de7a732a52c33bb86372177cfcabc664b7d4c312dadc",
+    "messages/fr.json": "b75d829b739370f9d7ea7e43d7ec1c54b8a5214e6e538bc91ed11ada33154dd7"
+  },
+  "sourceStable": true
+}

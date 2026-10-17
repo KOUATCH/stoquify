@@ -2,9 +2,10 @@ import getItemWithSuppliersById from "@/actions/item-suppliers/getItemWithSuppli
 import getBriefItemById from "@/actions/itemsShow/getBriefItemById"
 import getOrgSuppliers from "@/actions/suppliers/getOrgSuppliers"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { TableLoading } from "@/components/ui/data-table"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Truck } from 'lucide-react'
 import { Link } from "@/i18n/navigation"
 import { pickLocale } from "@/i18n/routing"
 import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
@@ -53,34 +54,30 @@ const pageImpl = async ({ params }: ItemDetailspageProps) => {
   const existingSupplierIdsForTheItem = supplierRelations?.map(
     (itemSupplier) => itemSupplier?.supplierItems.supplierId,
   ) || []
+  const itemPath = `/dashboard/inventory/items/${encodeURIComponent(id)}`
+  const updatedAt = new Date(item.updatedAt)
 
   return (
-    <div className="container py-8">
+    <div className="dashboard-landing-theme dark min-h-full text-[var(--dash-text)]">
       <Suspense fallback={<TableLoading title="Item data" />}>
-        <div className="container">
-          <div className="mb-9 space-y-4">
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard/inventory/items">
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="sr-only">Back to item</span>
-                </Button>
-              </Link>
-              <div className="text-muted-foreground text-sm">
-                <Link href="/dashboard/inventory/items" className="hover:underline">
-                  Items
-                </Link>
-                <span>Suppliers</span>
+        <div className="dashboard-landing-content mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+          <Button asChild variant="ghost" className="h-10 gap-2 px-0 text-[var(--dash-brand-strong)] hover:bg-transparent hover:text-[var(--dash-brand-strong)] hover:underline">
+            <Link href={itemPath}><ArrowLeft aria-hidden="true" />Back to item</Link>
+          </Button>
+          <header className="dashboard-glass-panel overflow-hidden rounded-lg">
+            <div className="flex flex-col justify-between gap-5 p-5 sm:p-6 lg:flex-row lg:items-start">
+              <div className="flex min-w-0 items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]"><Truck className="h-6 w-6" aria-hidden="true" /></div>
+                <div className="min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--dash-text-soft)]">Item suppliers</p>
+                    <Badge variant="outline" className="dashboard-filter-chip">{supplierRelations?.length ?? 0} linked</Badge>
+                  </div>
+                  <h1 className="break-words text-2xl font-semibold tracking-tight sm:text-3xl">{item.name}</h1>
+                  <p className="max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)]">Manage supplier relationships, purchase terms, and preferred suppliers for this item.</p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">{item?.name}</h1>
-                <p>
-                  SKU: {item?.sku} . Last Updated: {item?.updatedAt.toString()}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
+              <div className="shrink-0">
                 <AddSuppliersToItemModal
                   itemId={id}
                   suppliers={suppliers?.map(supplier => ({ ...supplier, email: supplier.email ?? undefined }))}
@@ -88,7 +85,12 @@ const pageImpl = async ({ params }: ItemDetailspageProps) => {
                 />
               </div>
             </div>
-          </div>
+            <dl className="grid gap-4 border-t border-[var(--dash-border-subtle)] px-5 py-4 text-sm sm:grid-cols-3 sm:px-6">
+              <div className="min-w-0 space-y-1"><dt className="text-xs text-[var(--dash-text-soft)]">SKU</dt><dd className="break-all font-mono font-medium">{item.sku}</dd></div>
+              <div className="space-y-1"><dt className="text-xs text-[var(--dash-text-soft)]">Purchase currency</dt><dd className="font-medium">{currency}</dd></div>
+              <div className="space-y-1"><dt className="text-xs text-[var(--dash-text-soft)]">Item updated</dt><dd><time dateTime={updatedAt.toISOString()}>{new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(updatedAt)} UTC</time></dd></div>
+            </dl>
+          </header>
           <LayoutItemSuppliers
             itemId={id}
             organizationId={organizationId}

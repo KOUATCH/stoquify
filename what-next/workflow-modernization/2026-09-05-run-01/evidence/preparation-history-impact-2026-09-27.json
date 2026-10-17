@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-27T18:18:59.824Z",
+  "passed": true,
+  "workflow": "PR-19",
+  "parent": {
+    "file": "evidence/preparation-module-impact-2026-09-27.json",
+    "sha256": "19bc435f2298208dfc59679e6e17798417ffa91f9eb11808bf7b781007360b11"
+  },
+  "source": {
+    "file": "components/finance/ReconciliationPreparationWorkbench.tsx",
+    "before": "e6824d861835ed34cc2335ffa2bc054ed0d5ec38b95eb978a7703a4758beb5f7",
+    "after": "bda5c7db5ba33ed55023ae33842bc0bc3610f5bb474ea24db92231dc5ff5fa2d",
+    "reconstructedBefore": "e6824d861835ed34cc2335ffa2bc054ed0d5ec38b95eb978a7703a4758beb5f7"
+  },
+  "receipts": [
+    {
+      "file": "evidence/preparation-module-checks-adab195d-ec4d-4933-bdde-ba8d123077a7.json",
+      "sha256": "cf85fcb30ff218643739c188ffea351b749db84c8f25fac8f1612a5f42411800"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691.json",
+      "sha256": "97ebb653a7a9b076a24174970e456de829cd15e31d9c6bbcae6296654b48b40f"
+    },
+    {
+      "file": "lanes/environment/preparation-legacy-evidence-d87fb8e5-d96b-48d5-8241-0739681963c1.json",
+      "sha256": "3bcdff88392c28de24f5fc6016fc74915205d1cfbed5508132d3faffd771182f"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json",
+      "sha256": "7a97cd891aee1abce3a3df6b1a1ef9f0270bc0a1f0abfc9916f716f3f6196ee8"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-320.png",
+      "sha256": "fe8815332edd43c215b512339279e5786e903136a946ce4ae2cd46e45760e124"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-768.png",
+      "sha256": "b4be40ce2f762bf9ca81783c534a72d7589c64b51e0167a1159fc44922d1e49a"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-1440.png",
+      "sha256": "4e1e3027f7e889daba204890bb39bfb90fce06130fa6caba3bd700702964843a"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-enlarged-history.png",
+      "sha256": "af5c3a4f4c09e592fdeabdc075857e978d17e8f526107927ef66fcfc95e6c059"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-320.png",
+      "sha256": "2d998b25eb2791be3d60d1c313924c15d679a42981ac7109c9a333cff9ed8e75"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-768.png",
+      "sha256": "91e120c69beb294661290589c5aa2448cf1a45898ca4add8f7196abefe9ffca1"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-1440.png",
+      "sha256": "da66fb4a03e04e9a034d4236e883de3091bb3959c56b0d02f506179e1b41131e"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-enlarged-history.png",
+      "sha256": "eef5c5543411baf12e36ffaf64603eaffa8cc0336d7921dba03dc1e3d445e46a"
+    }
+  ],
+  "impact": "Only adds a labeled, focusable history region and moves focus there after explicit page navigation succeeds or fails. Exact reconstruction reproduces the prior verified UI hash. Preparation submission, preview, authentication, pending drafts, signing handoff, server contracts and translations are unchanged. Current focused tests and EN/FR history failure/recovery revalidate the changed interaction; prior module/committed-response recovery and PR-10 closure remain applicable.",
+  "limitations": [
+    "Original PR-10 closure limits remain.",
+    "This is a preparation milestone; final PR-19 criterion audit remains required."
+  ]
+}

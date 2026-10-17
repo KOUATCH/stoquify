@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "stoquify.r01-execution-status.v1",
+  "date": "2026-10-01",
+  "roadmapPackage": "R01",
+  "status": "PARTIAL",
+  "executionState": "PREPARATION_VERIFIED_LINUX_ACCESS_PENDING",
+  "candidateId": "fad60d274131a4bf50f13b78bbb351358254033e1dde19a4e0bda8f82727afba",
+  "sourceFiles": 6314,
+  "sourceBytes": 111629348,
+  "migrationFilesIncluded": 90,
+  "archiveBytes": 33758550,
+  "archiveSha256": "b4b4f26934aaf4f13a730e09d2a0186f2ad9489731a0a0ef6d58aecf69ae1cde",
+  "manifestSha256": "0f14ca22b351470ed93ee4a9e02c5073b13616ea9717b43ec4b4fc7c75f35f16",
+  "helperTests": {
+    "capture": 7,
+    "linuxRunnerGuards": 10,
+    "standaloneStructuralFixtures": 30,
+    "scope": "Windows preparation-helper tests only; not application or Linux runtime verification"
+  },
+  "blockers": [
+    "No usable Linux runtime discovered locally",
+    "GitHub CLI unauthenticated; repository and Actions permissions unverified",
+    "Pending user execution-route response: GitHub authentication or existing Linux host"
+  ],
+  "notRun": [
+    "dependency installation",
+    "Linux Prisma generation and schema validation",
+    "current-candidate application typecheck and Jest",
+    "Linux Next build and wrapper qualification",
+    "complete repository policy gates",
+    "actual standalone structural preflight and isolated runtime",
+    "current migration rehearsal",
+    "authenticated business workflow smoke",
+    "remote upload, push or CI dispatch",
+    "deployment"
+  ],
+  "report": "R01_LINUX_QUALIFICATION_2026-10-01.md",
+  "evidence": [
+    "candidate/r01-source-candidate.json",
+    "candidate/archive-validation.json",
+    "candidate/capture-review.md",
+    "runner/linux-capabilities.json",
+    "runner/preparation-validation.json",
+    "runtime/fixture-verification-2026-10-01T08-40-55-445Z.json",
+    "runtime/next-packager-trace-review.md"
+  ]
+}

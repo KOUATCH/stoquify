@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle2, ClipboardCheck, Download, FileSearch, GitB
 import type { CloseAssuranceDashboardData } from "@/actions/accounting/close-assurance.actions"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
 import type { Locale } from "@/types/bilingual"
 
 type CloseReadinessJourneyPanelProps = {
@@ -27,6 +28,7 @@ type JourneyBlocker = {
   title: string
   detail: string
   source: string
+  nextAction?: string
 }
 
 const copy = {
@@ -37,6 +39,13 @@ const copy = {
     systemOnly: "System evidence only. Statutory filings still require qualified expert validation.",
     blockers: "Journey blockers",
     noBlockers: "No high-risk journey blockers are visible.",
+    current: "Current proof",
+    recordedStatus: "Recorded status",
+    recordedReadiness: "Recorded readiness",
+    proofUnverified: "Current certification is unverified",
+    review: "Review required",
+    certified: "Current certification evidence",
+    operational: "Operational evidence",
   },
   fr: {
     title: "Parcours de readiness cloture",
@@ -45,6 +54,13 @@ const copy = {
     systemOnly: "Preuve systeme uniquement. Les declarations legales exigent une validation experte qualifiee.",
     blockers: "Blocages du parcours",
     noBlockers: "Aucun blocage critique visible dans le parcours.",
+    current: "Preuves actuelles",
+    recordedStatus: "Statut enregistré",
+    recordedReadiness: "Préparation enregistrée",
+    proofUnverified: "La certification actuelle n’est pas vérifiée",
+    review: "Examen requis",
+    certified: "Preuves de certification à jour",
+    operational: "Preuves opérationnelles",
   },
 } as const
 
@@ -66,18 +82,21 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
   }
 
   const checkpoints = buildJourney(data, locale)
-  const blockers = buildBlockers(data)
+  const blockers = buildBlockers(data, locale)
+  const proof = data.currentProof
+  const currentTone: JourneyTone = proof?.grade === "blocked" ? "danger" : proof?.grade === "certified" && !proof.blockers.length ? "success" : "warning"
+  const currentLabel = proof?.grade === "blocked" ? t.review : proof?.grade === "certified" ? t.certified : proof?.grade === "operational" ? t.operational : t.proofUnverified
 
   return (
     <section className="dashboard-glass-panel rounded-lg p-4 text-[var(--dash-text)]">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className={cn("border", toneClass(data.run.criticalBlockerCount ? "danger" : statusTone(data.run.status)))}>
-              {data.run.status}
+            <Badge variant="outline" className={cn("max-w-full whitespace-normal break-words border", toneClass(currentTone))}>
+              {currentLabel}
             </Badge>
             <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
-              {data.source.persisted ? "Persisted" : "Live preview"}
+              {t.recordedStatus}{locale === "fr" ? " :" : ":"} {data.run.status}
             </Badge>
             <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
               {data.source.trustLevel}
@@ -87,7 +106,7 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
           <p className="mt-1 max-w-4xl text-sm leading-6 text-[var(--dash-text-soft)]">{t.detail}</p>
         </div>
         <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-3 text-sm">
-          <p className="text-xs text-[var(--dash-text-soft)]">Readiness</p>
+          <p className="text-xs text-[var(--dash-text-soft)]">{t.recordedReadiness}</p>
           <p className="mt-1 text-2xl font-semibold">{data.run.readinessScore}%</p>
           <p className="mt-1 text-xs text-[var(--dash-text-soft)]">
             {data.run.evidenceCoveragePct === null ? "No coverage" : `${data.run.evidenceCoveragePct}% evidence coverage`}
@@ -100,11 +119,11 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
           const Icon = checkpoint.icon
           return (
             <article key={checkpoint.id} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-3">
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex flex-wrap items-start justify-between gap-2">
                 <span className={cn("flex h-8 w-8 items-center justify-center rounded-lg", toneClass(checkpoint.tone))}>
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </span>
-                <Badge variant="outline" className={cn("border", toneClass(checkpoint.tone))}>{checkpoint.value}</Badge>
+                <Badge variant="outline" className={cn("max-w-full whitespace-normal break-words border", toneClass(checkpoint.tone))}>{checkpoint.value}</Badge>
               </div>
               <h3 className="mt-3 text-sm font-semibold">{checkpoint.label}</h3>
               <p className="mt-1 line-clamp-3 text-xs leading-5 text-[var(--dash-text-soft)]">{checkpoint.detail}</p>
@@ -122,9 +141,10 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
               <div key={item.id} className="rounded-md border border-[var(--dash-border-subtle)] p-2 text-xs">
                 <p className="font-medium text-[var(--dash-text)]">{item.title}</p>
                 <p className="mt-1 text-[var(--dash-text-soft)]">{item.detail}</p>
+                {item.nextAction ? <p className="mt-1 text-[var(--dash-text-soft)]">{item.nextAction}</p> : null}
               </div>
             )) : (
-              <p className="text-sm text-[var(--dash-text-soft)]">{t.noBlockers}</p>
+              <p className="text-sm text-[var(--dash-text-soft)]">{proof ? t.noBlockers : t.proofUnverified}</p>
             )}
           </div>
         </div>
@@ -139,7 +159,11 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
   )
 }
 
-function buildBlockers(data: CloseAssuranceDashboardData): JourneyBlocker[] {
+function buildBlockers(data: CloseAssuranceDashboardData, locale: Locale): JourneyBlocker[] {
+  if (data.currentProof) return data.currentProof.blockers.map(item => {
+    const translated = presentSnapshotBlocker(item, locale)
+    return { id: translated.id, title: translated.title, detail: translated.detail, source: translated.sourceTables.join(", "), nextAction: translated.nextAction }
+  })
   return [
     ...data.findings
       .filter((finding) => ["CRITICAL", "HIGH"].includes(String(finding.severity)))
@@ -207,18 +231,20 @@ function buildJourney(data: CloseAssuranceDashboardData, locale: Locale): Journe
     {
       id: "certification",
       label: locale === "fr" ? "Certification" : "Certification",
-      detail: data.controls.certificationDisabledReason ?? "Certification controls are available for this close run.",
-      value: data.controls.certificationAvailable ? "READY" : "BLOCKED",
-      tone: data.controls.certificationAvailable ? "success" : "danger",
+      detail: data.currentProof?.grade === "blocked" ? (locale === "fr" ? "Examinez les conditions actuelles de preuve ci-dessous." : "Review the current evidence conditions below.")
+        : data.currentProof?.grade === "certified" ? (locale === "fr" ? "Un export certifié à jour est conservé pour cette clôture." : "A current certified export is retained for this close run.")
+          : (locale === "fr" ? "La certification actuelle n’est pas établie par les preuves conservées." : "Current certification is not established by retained evidence."),
+      value: data.currentProof?.grade === "blocked" ? (locale === "fr" ? "BLOQUÉE" : "BLOCKED") : data.currentProof?.grade === "certified" ? (locale === "fr" ? "VÉRIFIÉE" : "VERIFIED") : (locale === "fr" ? "NON VÉRIFIÉE" : "UNVERIFIED"),
+      tone: data.currentProof?.grade === "blocked" ? "danger" : data.currentProof?.grade === "certified" ? "success" : "warning",
       source: "close_runs",
       icon: CheckCircle2,
     },
     {
       id: "export-readiness",
-      label: locale === "fr" ? "Export" : "Export readiness",
+      label: locale === "fr" ? "Export brouillon" : "Draft export",
       detail: data.controls.packExportDisabledReason,
-      value: data.controls.packExportAvailable ? "READY" : "BLOCKED",
-      tone: data.controls.packExportAvailable ? "success" : "warning",
+      value: data.controls.packExportAvailable ? (locale === "fr" ? "BROUILLON" : "DRAFT") : "BLOCKED",
+      tone: data.controls.packExportAvailable ? "info" : "warning",
       source: "close_pack_exports",
       icon: Download,
     },

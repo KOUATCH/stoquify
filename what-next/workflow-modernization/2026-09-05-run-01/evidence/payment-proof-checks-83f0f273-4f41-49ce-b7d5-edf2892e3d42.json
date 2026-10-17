@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-30T16:42:57.283Z",
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "8944d9b026ffe5647f272e3c410ac085227ed810ed25511ed62eb9208733f831",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "5cd3c92c8ca93074dbb8139a69d6bb6e48ef8d99383ce1c8f531a052f6f17ebc",
+    "services/evidence/__tests__/payment-proof-coverage.service.test.ts": "fe58e5a60ac1cfee6b19c3c676dbf2210d20512ae232265a67bbeeab6cc06635",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/payment-proof-coverage.service.test.ts",
+        "services/evidence/__tests__/evidence-grade.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "actions/evidence/__tests__/proof-trail.module-boundary.test.ts",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 6 passed, 6 total\nTests:       62 passed, 62 total\nSnapshots:   0 total\nTime:        10.543 s, estimated 21 s\nRan all test suites within paths \"services/evidence/__tests__/proof-trail.service.test.ts\", \"services/evidence/__tests__/payment-proof-coverage.service.test.ts\", \"services/evidence/__tests__/evidence-grade.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"actions/evidence/__tests__/proof-trail.module-boundary.test.ts\", \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/evidence/proof-trail.service.ts",
+        "services/evidence/evidence-grade.service.ts",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/payment-proof-coverage.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "8944d9b026ffe5647f272e3c410ac085227ed810ed25511ed62eb9208733f831",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "5cd3c92c8ca93074dbb8139a69d6bb6e48ef8d99383ce1c8f531a052f6f17ebc",
+    "services/evidence/__tests__/payment-proof-coverage.service.test.ts": "fe58e5a60ac1cfee6b19c3c676dbf2210d20512ae232265a67bbeeab6cc06635",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a"
+  },
+  "sourceStable": true,
+  "passed": true
+}

@@ -1,0 +1,94 @@
+{
+  "at": "2026-09-27T15:05:51.559Z",
+  "reusedChecks": "source-withdrawal-checks-8848b033-e69d-4a03-9d57-5fbbc149ac9e.json",
+  "files": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": {
+      "previousHash": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+      "currentHash": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-exception-closure.contracts.ts": {
+      "previousHash": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+      "currentHash": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-reconciliation-certification.service.ts": {
+      "previousHash": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+      "currentHash": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-reconciliation-notifications.ts": {
+      "previousHash": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7",
+      "currentHash": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts": {
+      "previousHash": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+      "currentHash": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-corroborating-source-evidence.ts": {
+      "previousHash": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+      "currentHash": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": {
+      "previousHash": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+      "currentHash": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-exception-closure.service.ts": {
+      "previousHash": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+      "currentHash": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": {
+      "previousHash": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+      "currentHash": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+      "onlySpecifiedPresentationChange": false
+    },
+    "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts": {
+      "previousHash": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+      "currentHash": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+      "onlySpecifiedPresentationChange": false
+    },
+    "components/finance/PaymentExceptionClosurePanel.tsx": {
+      "previousHash": "5e4001b694b20edfd944538be1016af05bcf8b944262c35b73c4f391f786f958",
+      "currentHash": "3d4cdb89367ff45f32947c424b4121e3b80aa5c63dfdf768d83c9c7d5cdd36eb",
+      "onlySpecifiedPresentationChange": true
+    },
+    "messages/en.json": {
+      "previousHash": "ea88588f42c405c9131352b67a54ec2f429052d33f27790f542a1306eda9d327",
+      "currentHash": "56a99d328c1946b7020471d4160491c9c9132a378a9ff5984653a6fa60e9a21c",
+      "onlySpecifiedPresentationChange": true
+    },
+    "messages/fr.json": {
+      "previousHash": "5b3b86b5d2a245daa68e389b74408e8434574c322623049e7bd29830992128bc",
+      "currentHash": "4f196a1206c7ff7030323d2d1bee110bd0d878f53a8334bbf4ce1f85ec957e26",
+      "onlySpecifiedPresentationChange": true
+    }
+  },
+  "lint": {
+    "args": [
+      "node_modules/eslint/bin/eslint.js",
+      "components/finance/PaymentExceptionClosurePanel.tsx"
+    ],
+    "status": 0,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  "typecheck": {
+    "args": [
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "status": 0,
+    "error": null,
+    "stdout": "",
+    "stderr": ""
+  },
+  "passed": true
+}

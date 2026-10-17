@@ -6,7 +6,7 @@ import { getAssuranceControlTowerData } from "@/services/assurance/assurance-con
 import { routeByKey, withAssuranceSurfaceAccess } from "../assurance-route-access"
 
 export const metadata: Metadata = {
-  title: "Workflow Assurance Control Tower | Kontava",
+  title: "Workflow Assurance Control Tower | Stoquify",
   description: "Proof-linked workflow assurance incident routing and engine health.",
 }
 

@@ -1,0 +1,26 @@
+{
+  "name": "hris-inbox-red-20261007",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runTestsByPath",
+    "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+    "actions/hris/__tests__/approval-inbox.actions.test.ts",
+    "--runInBand",
+    "--watch=false",
+    "--json",
+    "--outputFile",
+    "what-next/platform-remediation/2026-09-30-run-01/runner/hris-inbox-red-20261007.jest.json"
+  ],
+  "startedAt": "2026-10-07T05:11:09.936Z",
+  "endedAt": "2026-10-07T05:12:18.645Z",
+  "code": 1,
+  "signal": null,
+  "timedOut": false,
+  "fingerprints": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+  },
+  "databaseTarget": "disabled localhost:1; no live data target"
+}

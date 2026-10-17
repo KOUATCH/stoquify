@@ -10,7 +10,7 @@ import { localizePath } from "@/i18n/routing"
 import { routeByKey, withManagerActionSurfaceAccess } from "../manager-action-route-access"
 
 export const metadata: Metadata = {
-  title: "Branch Daily Close | Kontava",
+  title: "Branch Daily Close | Stoquify",
   description: "Read-only, branch-scoped daily-close evidence for an explicitly selected business date.",
 }
 

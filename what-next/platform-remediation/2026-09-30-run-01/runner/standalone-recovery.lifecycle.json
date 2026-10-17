@@ -1,0 +1,45 @@
+{
+  "capturedAt": "2026-09-30 22:29:31 UTC",
+  "status": "BLOCKED_STANDALONE_PACKAGING",
+  "buildId": "GqRaF9F_RTehAxrqSBlS2",
+  "candidateScope": "Recorded compiled candidate only; concurrent checkout edits are not qualified",
+  "ordinaryBuild": {
+    "status": "failed",
+    "exitCode": 1,
+    "receipt": "app-build-final.result.json",
+    "completedPhases": [
+      "compilation",
+      "normal lint and type validation",
+      "static generation"
+    ],
+    "failure": "Windows EPERM creating pnpm dependency symlinks during standalone packaging"
+  },
+  "packagingReplay": {
+    "status": "failed-validation",
+    "receipt": "standalone-recovery.result.json",
+    "linksFound": 0,
+    "compiledChanges": 0,
+    "changedPackagingInputs": 0,
+    "missingPlannedFiles": 1
+  },
+  "resolutionPreflight": {
+    "status": "blocked",
+    "receipt": "standalone-resolution-preflight.json",
+    "reason": "@next/env and styled-jsx resolve outside the package from actual Next importer origins"
+  },
+  "staticPublicAssembly": "NOT_RUN: failed recovery receipt prohibits assembly",
+  "relocatedRuntime": "NOT_RUN: dependency preflight already fails; no workspace fallback or resolver workaround",
+  "disposition": {
+    "compiledCandidate": ".next-remediation-r01-20260930 retained locally",
+    "originalPartialStandalone": ".next-remediation-r01-20260930/standalone.failed-20260930 retained locally",
+    "rejectedMaterializedStandalone": ".next-remediation-r01-20260930/standalone retained locally; do not deploy",
+    "disposableProbeCopies": "Three probe directories removed after exact containment/no-link verification; hashes retained in packaging-probe-cleanup.json",
+    "publishedOrDeployed": false
+  },
+  "limitations": [
+    "The original normal build remains exit 1; no recovered-build success is claimed.",
+    "Unfingerprinted dependency/public/messages inputs have preflight hashes and modification-time corroboration, not retrospective build-start hashes.",
+    "Workspace-backed browser smoke is separate from standalone package qualification.",
+    "No full-repository Jest or newest-checkout build pass is claimed."
+  ]
+}

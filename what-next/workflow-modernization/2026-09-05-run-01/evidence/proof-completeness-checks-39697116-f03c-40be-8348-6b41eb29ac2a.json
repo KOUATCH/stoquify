@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-30T10:38:01.464Z",
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "1fc3ee908e7048810439e21223a77c5804b4bdaf650a555d5c18489c8dac0f07",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/evidence-grade.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "actions/evidence/__tests__/proof-trail.module-boundary.test.ts",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/evidence/__tests__/proof-trail.service.test.ts (11.304 s)\n  ● proof trail service › blocks payment.transaction for failed events outside the displayed sample\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: \"blocked\"\n    Received: \"reconciled\"\n\n      555 |     mockDb.businessEvent.findMany.mockResolvedValue([{ id: \"recent\", status: BusinessEventStatus.APPLIED, eventType: \"owned.event\", failureMessage: null }])\n      556 |     const result = await getProofTrail({ organizationId: \"org-1\", subjectType, subjectId: subjectType === \"journal.entry\" ? \"je-1\" : \"pt-1\" })\n    > 557 |     expect(result.evidenceGrade).toBe(\"blocked\")\n          |                                  ^\n      558 |     expect(result.blockers).toEqual(expect.arrayContaining([expect.objectContaining({ id: \"business-events-outside-display\", detail: \"2 failed or rejected business event(s) are outside the displayed evidence sample.\" })]))\n      559 |     expect(mockDb.businessEvent.count).toHaveBeenCalledWith({ where: {\n      560 |       organizationId: \"org-1\", sourceType: subjectType === \"journal.entry\" ? \"POS_SALE\" : \"MOBILE_MONEY_STATEMENT\",\n\n      at toBe (services/evidence/__tests__/proof-trail.service.test.ts:557:34)\n\n\nTest Suites: 1 failed, 4 passed, 5 total\nTests:       1 failed, 39 passed, 40 total\nSnapshots:   0 total\nTime:        33.861 s\nRan all test suites within paths \"services/evidence/__tests__/proof-trail.service.test.ts\", \"services/evidence/__tests__/evidence-grade.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"actions/evidence/__tests__/proof-trail.module-boundary.test.ts\", \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "1fc3ee908e7048810439e21223a77c5804b4bdaf650a555d5c18489c8dac0f07",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43"
+  },
+  "sourceStable": true,
+  "passed": false
+}

@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: complete synthetic package passes structure without executing throwing entry modules
+ok 1 - complete synthetic package passes structure without executing throwing entry modules
+  ---
+  duration_ms: 394.6818
+  type: 'test'
+  ...
+# Subtest: missing copied server blocks
+ok 2 - missing copied server blocks
+  ---
+  duration_ms: 218.1237
+  type: 'test'
+  ...
+# Subtest: different generated server blocks
+ok 3 - different generated server blocks
+  ---
+  duration_ms: 196.0148
+  type: 'test'
+  ...
+# Subtest: copied configuration mismatch blocks
+ok 4 - copied configuration mismatch blocks
+  ---
+  duration_ms: 164.4943
+  type: 'test'
+  ...
+# Subtest: unsafe config dist cannot escape candidate
+ok 5 - unsafe config dist cannot escape candidate
+  ---
+  duration_ms: 213.6589
+  type: 'test'
+  ...
+# Subtest: copied build id mismatch blocks
+ok 6 - copied build id mismatch blocks
+  ---
+  duration_ms: 205.4206
+  type: 'test'
+  ...
+# Subtest: required-files traversal fails closed
+ok 7 - required-files traversal fails closed
+  ---
+  duration_ms: 172.3187
+  type: 'test'
+  ...
+# Subtest: changed and extra static assets block exact inventory match
+ok 8 - changed and extra static assets block exact inventory match
+  ---
+  duration_ms: 318.5049
+  type: 'test'
+  ...
+# Subtest: missing public asset blocks
+ok 9 - missing public asset blocks
+  ---
+  duration_ms: 206.557
+  type: 'test'
+  ...
+# Subtest: extra minimal-server trace missing from copied package blocks
+ok 10 - extra minimal-server trace missing from copied package blocks
+  ---
+  duration_ms: 321.5733
+  type: 'test'
+  ...
+# Subtest: trace traversal beyond candidate blocks before reading external input
+ok 11 - trace traversal beyond candidate blocks before reading external input
+  ---
+  duration_ms: 281.9027
+  type: 'test'
+  ...
+# Subtest: missing required module cannot use ancestor dependencies
+ok 12 - missing required module cannot use ancestor dependencies
+  ---
+  duration_ms: 741.3476
+  type: 'test'
+  ...
+# Subtest: unresolved required dependency fails even when package metadata exists
+ok 13 - unresolved required dependency fails even when package metadata exists
+  ---
+  duration_ms: 373.0456
+  type: 'test'
+  ...
+# Subtest: unavailable optional module is recorded separately
+ok 14 - unavailable optional module is recorded separately
+  ---
+  duration_ms: 751.7603
+  type: 'test'
+  ...
+# Subtest: optional dependency resolving to an ancestor still fails containment
+ok 15 - optional dependency resolving to an ancestor still fails containment
+  ---
+  duration_ms: 633.7186
+  type: 'test'
+  ...
+# Subtest: environment files are rejected without reading or retaining content
+ok 16 - environment files are rejected without reading or retaining content
+  ---
+  duration_ms: 165.8804
+  type: 'test'
+  ...
+# Subtest: environment aliases and private-directory case variants are rejected before read
+ok 17 - environment aliases and private-directory case variants are rejected before read
+  ---
+  duration_ms: 1250.7712
+  type: 'test'
+  ...
+# Subtest: candidate trace alias cannot read a physically sensitive directory
+ok 18 - candidate trace alias cannot read a physically sensitive directory
+  ---
+  duration_ms: 505.6169
+  type: 'test'
+  ...
+# Subtest: escaping directory junction/symlink blocks before contents are traversed
+ok 19 - escaping directory junction/symlink blocks before contents are traversed
+  ---
+  duration_ms: 288.3385
+  type: 'test'
+  ...
+# Subtest: contained directory junction/symlink preserves structural acceptance
+ok 20 - contained directory junction/symlink preserves structural acceptance
+  ---
+  duration_ms: 727.5043
+  type: 'test'
+  ...
+# Subtest: cyclic directory junction/symlink terminates with failure
+ok 21 - cyclic directory junction/symlink terminates with failure
+  ---
+  duration_ms: 288.0673
+  type: 'test'
+  ...
+# Subtest: dangling directory junction/symlink blocks
+ok 22 - dangling directory junction/symlink blocks
+  ---
+  duration_ms: 282.7891
+  type: 'test'
+  ...
+# Subtest: candidate configuration changed after comparison invalidates pass
+ok 23 - candidate configuration changed after comparison invalidates pass
+  ---
+  duration_ms: 587.6167
+  type: 'test'
+  ...
+# Subtest: candidate public asset changed after comparison invalidates pass
+ok 24 - candidate public asset changed after comparison invalidates pass
+  ---
+  duration_ms: 558.8902
+  type: 'test'
+  ...
+# Subtest: new candidate NFT trace appearing during comparison invalidates pass
+ok 25 - new candidate NFT trace appearing during comparison invalidates pass
+  ---
+  duration_ms: 452.4861
+  type: 'test'
+  ...
+# Subtest: CLI writes owned receipt and exits nonzero for missing input
+ok 26 - CLI writes owned receipt and exits nonzero for missing input
+  ---
+  duration_ms: 416.6632
+  type: 'test'
+  ...
+# Subtest: CLI structural success exits zero but explicitly keeps runtime pending
+ok 27 - CLI structural success exits zero but explicitly keeps runtime pending
+  ---
+  duration_ms: 778.4067
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11774.5836

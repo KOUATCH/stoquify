@@ -1,0 +1,66 @@
+[
+  {
+    "name": "planning",
+    "pattern": "13.week|cash.?forecast|forecast.?scenario|scenario.?version|forecast.?actual|cash.?budget|cash.?aware",
+    "scopes": [
+      "app",
+      "actions",
+      "services",
+      "components",
+      "hooks",
+      "lib",
+      "config",
+      "prisma/schema.prisma"
+    ],
+    "exitCode": 0,
+    "matchingLines": 7
+  },
+  {
+    "name": "network",
+    "pattern": "cross.?tenant.?benchmark|CounterpartyRelationship|shared.?supplier.?identity|supplier.?invoice.?portal|network.?identity",
+    "scopes": [
+      "app",
+      "actions",
+      "services",
+      "components",
+      "hooks",
+      "lib",
+      "config",
+      "prisma/schema.prisma"
+    ],
+    "exitCode": 1,
+    "matchingLines": 0
+  },
+  {
+    "name": "adoption",
+    "pattern": "retained.?activation|retention.?cohort|first.?trusted.?value|financial.?cutover",
+    "scopes": [
+      "app",
+      "actions",
+      "services",
+      "components",
+      "hooks",
+      "lib",
+      "config",
+      "prisma/schema.prisma"
+    ],
+    "exitCode": 1,
+    "matchingLines": 0
+  },
+  {
+    "name": "portfolios",
+    "pattern": "getAccountantPortfolio|AWAITING_ACCOUNTANT_REVIEW|outboxMessages: \\[\\]",
+    "scopes": [
+      "app",
+      "actions",
+      "services",
+      "components",
+      "hooks",
+      "lib",
+      "config",
+      "prisma/schema.prisma"
+    ],
+    "exitCode": 0,
+    "matchingLines": 25
+  }
+]

@@ -55,9 +55,9 @@ export default function SuppliersList({
 
   if (!itemSuppliers || itemSuppliers.length === 0) {
     return (
-      <div className="p-6">
+      <div className="min-h-[320px] p-5 sm:p-6">
         <h2 className="text-lg font-semibold mb-4">Item Suppliers</h2>
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-[var(--dash-text-soft)]">
           <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p>No suppliers found for this item.</p>
           <p className="text-sm">Add suppliers using the button above.</p>
@@ -68,17 +68,19 @@ export default function SuppliersList({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b space-y-4">
-        <h2 className="font-semibold text-xl text-blue-950">Item Suppliers ({itemSuppliers.length})</h2>
+      <div className="space-y-4 border-b border-[var(--dash-border-subtle)] p-5">
+        <h2 className="text-lg font-semibold text-[var(--dash-text)]">Item Suppliers <span className="text-sm font-normal text-[var(--dash-text-soft)]">({itemSuppliers.length})</span></h2>
+        <p className="text-sm leading-6 text-[var(--dash-text-soft)]">Select a supplier to review pricing and purchase terms.</p>
 
         {/* Search Input */}
         <div className="relative">
-          <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--dash-text-soft)]" aria-hidden="true" />
           <Input
-            placeholder="Search suppliers by name, SKU, or email..."
+            aria-label="Search item suppliers"
+            placeholder="Search by name, SKU, or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="ps-10 pe-10"
+            className="dashboard-control h-10 rounded-lg ps-10 pe-10"
           />
           {searchQuery && (
             <Button
@@ -86,6 +88,7 @@ export default function SuppliersList({
               size="sm"
               className="absolute end-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
               onClick={clearSearch}
+              aria-label="Clear supplier search"
             >
               <X className="h-3 w-3" />
             </Button>
@@ -94,7 +97,7 @@ export default function SuppliersList({
 
         {/* Search Results Info */}
         {searchQuery && (
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-[var(--dash-text-soft)]" role="status">
             {filteredSuppliers?.length === 0 ? (
               <span>No suppliers found matching "{searchQuery}"</span>
             ) : (
@@ -106,7 +109,7 @@ export default function SuppliersList({
         )}
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="max-h-[600px] overflow-y-auto">
         <div className="p-2 space-y-2">
           {filteredSuppliers && filteredSuppliers.length > 0 ? (
             filteredSuppliers.map((itemSupplier) => (
@@ -114,24 +117,27 @@ export default function SuppliersList({
                 key={itemSupplier.id}
                 variant="ghost"
                 className={cn(
-                  "w-full justify-start p-4 h-auto text-start hover:bg-accent/50",
-                  selectedSupplier?.id === itemSupplier.id && "bg-accent",
+                  "h-auto w-full min-w-0 justify-start whitespace-normal rounded-lg border p-4 text-start transition-colors focus-visible:ring-[var(--dash-focus)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]",
+                  selectedSupplier?.id === itemSupplier.id
+                    ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]"
+                    : "border-[var(--dash-border-subtle)] bg-transparent",
                 )}
+                aria-pressed={selectedSupplier?.id === itemSupplier.id}
                 onClick={() => onSelectSupplier(itemSupplier)}
               >
-                <div className="flex-1 space-y-2 w-full">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-foreground text-base">
+                <div className="min-w-0 flex-1 space-y-3 w-full">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <h3 className="min-w-0 break-words text-base font-semibold text-[var(--dash-text)]">
                       {itemSupplier.supplier?.name || itemSupplier.supplierSku || "Unknown Supplier"}
                     </h3>
                     {itemSupplier.isPreferred && (
-                      <Badge variant="default" className="ms-2 shrink-0">
+                      <Badge variant="outline" className="shrink-0 border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]">
                         <Star className="h-3 w-3 me-1" />
                         Preferred
                       </Badge>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                  <div className="grid grid-cols-1 gap-2 text-sm text-[var(--dash-text-soft)] min-[440px]:grid-cols-2">
                     {itemSupplier.supplierSku && (
                       <div className="flex items-center gap-1">
                         <Package className="h-3 w-3 shrink-0" />
@@ -158,16 +164,16 @@ export default function SuppliersList({
                     )}
                   </div>
                   {itemSupplier.supplier?.email && (
-                    <div className="text-sm text-muted-foreground truncate">{itemSupplier.supplier.email}</div>
+                    <div className="text-sm text-[var(--dash-text-soft)] truncate">{itemSupplier.supplier.email}</div>
                   )}
                 </div>
               </Button>
             ))
           ) : searchQuery ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="text-center py-8 text-[var(--dash-text-soft)]">
               <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No suppliers found matching "{searchQuery}"</p>
-              <Button variant="link" onClick={clearSearch} className="mt-2">
+              <Button variant="link" onClick={clearSearch} className="mt-2 text-[var(--dash-brand-strong)]">
                 Clear search
               </Button>
             </div>

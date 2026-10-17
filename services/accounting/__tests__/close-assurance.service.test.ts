@@ -1,8 +1,12 @@
 jest.mock("server-only", () => ({}))
+jest.mock("../close-source-revision.service", () => ({ ...jest.requireActual("../close-source-revision.service"), lockCloseSourceRevisionInTx: jest.fn().mockResolvedValue({ version: 1, revision: "0" }), guardCloseAssessmentPublicationInTx: jest.fn().mockResolvedValue(true) }))
+import { lockCloseSourceRevisionInTx, guardCloseAssessmentPublicationInTx } from "../close-source-revision.service"
+let createdAssessment: any = null
 
 jest.mock("@/prisma/db", () => {
   const dbMock = {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     user: {
       findFirst: jest.fn(),
     },
@@ -12,10 +16,13 @@ jest.mock("@/prisma/db", () => {
     },
     closeRun: {
       create: jest.fn(),
+      findMany: jest.fn(),
+      updateMany: jest.fn(),
       findFirst: jest.fn(),
     },
     closeChecklistItem: {
       create: jest.fn(),
+      update: jest.fn(),
     },
     closeAssuranceFinding: {
       create: jest.fn(),
@@ -32,10 +39,12 @@ jest.mock("@/prisma/db", () => {
       findFirst: jest.fn(),
     },
     accountantComment: {
+      findMany: jest.fn(),
       findFirst: jest.fn(),
       create: jest.fn(),
     },
     ledgerAuditEvent: {
+      findMany: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       findFirst: jest.fn(),
     },
@@ -61,10 +70,21 @@ jest.mock("../accountant-access.service", () => ({
   resolveAccountantClientAccess: jest.fn(),
 }))
 
+jest.mock("../close-evidence-acceptance-authority.service", () => ({
+  lockCloseEvidenceAcceptanceAuthorityInTx: jest.fn(),
+  lockCloseEvidenceWorkAuthorityInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
+  lockCloseEvidenceRecipientInTx: jest.fn(async () => ({ revalidate: jest.fn() })),
+}))
+
+jest.mock("../close-evidence-replacement.service", () => ({
+  ...jest.requireActual("../close-evidence-replacement.service"),
+  getCloseEvidenceReplacementInTx: jest.fn(),
+}))
+
 jest.mock(
-  "@/services/reconciliation/payment-reconciliation-dashboard.service",
+  "@/services/reconciliation/payment-close-evidence.service",
   () => ({
-    getPaymentReconciliationDashboardData: jest.fn(),
+    getPaymentCloseEvidence: jest.fn(),
   }),
 )
 
@@ -83,6 +103,9 @@ jest.mock("@/services/events/business-event.service", () => ({
 import { db } from "@/prisma/db"
 import { ForbiddenError } from "@/services/_shared/action-errors"
 import { resolveAccountantClientAccess } from "../accountant-access.service"
+import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceRecipientInTx, lockCloseEvidenceWorkAuthorityInTx } from "../close-evidence-acceptance-authority.service"
+import { closeEvidenceReplacementSelection, getCloseEvidenceReplacementInTx, type CloseEvidenceReplacementBinding } from "../close-evidence-replacement.service"
+import { verifyCloseEvidenceCollectionReceipt } from "../close-evidence-collection"
 import { getAccountantPortalData } from "../data-trust.service"
 import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuation.service"
 import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
@@ -92,12 +115,13 @@ import {
   getPeriodClosePreflightFailures,
 } from "../periods.service"
 import { reconcileLedger } from "../reconciliations.service"
-import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
+import { getPaymentCloseEvidence } from "@/services/reconciliation/payment-close-evidence.service"
 import {
   acceptMissingCloseEvidenceResponse,
   approveCloseWaiver,
   assignCloseFinding,
   requestMissingCloseEvidence,
+  replaceMissingCloseEvidenceRecipient,
   respondToMissingCloseEvidence,
   commentOnCloseFinding,
   getCloseAssuranceDashboard,
@@ -108,6 +132,7 @@ import {
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
   user: {
     findFirst: jest.Mock
   }
@@ -117,10 +142,13 @@ const mockDb = db as unknown as {
   }
   closeRun: {
     create: jest.Mock
+    findMany: jest.Mock
+    updateMany: jest.Mock
     findFirst: jest.Mock
   }
   closeChecklistItem: {
     create: jest.Mock
+    update: jest.Mock
   }
   closeAssuranceFinding: {
     create: jest.Mock
@@ -137,10 +165,13 @@ const mockDb = db as unknown as {
     findFirst: jest.Mock
   }
   accountantComment: {
+    findMany: jest.Mock
     findFirst: jest.Mock
     create: jest.Mock
   }
   ledgerAuditEvent: {
+    findFirst: jest.Mock
+    findMany: jest.Mock
     create: jest.Mock
   }
 }
@@ -152,11 +183,14 @@ const mockReconcileLedger = reconcileLedger as jest.Mock
 const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock
 const mockResolveAccountantClientAccess =
   resolveAccountantClientAccess as jest.Mock
-const mockGetPaymentReconciliationDashboardData =
-  getPaymentReconciliationDashboardData as jest.Mock
+const mockGetPaymentCloseEvidence =
+  getPaymentCloseEvidence as jest.Mock
 const mockReconcileInventoryClass3 = reconcileInventoryClass3 as jest.Mock
 const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
 const mockRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
+const mockGetCloseEvidenceReplacementInTx = getCloseEvidenceReplacementInTx as jest.Mock
+const mockLockCloseEvidenceAcceptanceAuthorityInTx = lockCloseEvidenceAcceptanceAuthorityInTx as jest.Mock
+const mockRevalidateCloseEvidenceAcceptanceAuthority = jest.fn()
 
 const period = {
   id: "period-1",
@@ -175,6 +209,8 @@ function cleanPreflight() {
     openReconciliationSuspenseCount: 0,
     unsignedReconciliationRunCount: 0,
     trialBalanceIssues: [],
+    missingFunctionalAmountCount: 0,
+    functionalBalanceIssue: null,
   }
 }
 
@@ -206,6 +242,7 @@ function cleanPaymentDashboard() {
       statementEvidenceAvailable: true,
     },
     summary: {
+      pendingRunCount: 0,
       providerAccountCount: 1,
       activeProviderAccountCount: 1,
       recentRunCount: 1,
@@ -355,7 +392,10 @@ function cleanInventoryValuation() {
     inventoryValue: "700.00",
     ledgerClass3Value: "700.00",
     driftAmount: "0.00",
-    reportHash: "sha256:inventory-valuation",
+    reportHash: "sha256:inventory-observation",
+    evidenceHash: "sha256:inventory-valuation",
+    evidenceHashVersion: 1,
+    recordedThrough: "2026-06-15T12:00:00.000Z",
     sourceCounts: {
       inventoryLevelCount: 1,
       inventoryTransactionCount: 2,
@@ -432,6 +472,7 @@ function tenantOperatingSnapshot(overrides: Record<string, unknown> = {}) {
 
 function persistedRun(overrides: Record<string, unknown> = {}) {
   return {
+    packExports: [],
     id: "close-run-1",
     organizationId: "org-1",
     periodId: period.id,
@@ -563,6 +604,16 @@ function missingEvidenceResponse(overrides: Record<string, unknown> = {}) {
   }
 }
 
+function replacementBinding(): CloseEvidenceReplacementBinding {
+  return {
+    kind: "CLOSE_EVIDENCE_REPLACEMENT", version: 1, organizationId: "client-org", periodId: period.id,
+    findingId: "finding-1", originalRunId: "close-run-1", originalChecklistId: "old-checklist-1",
+    originalFindingHash: "a".repeat(64), originalChecklistHash: "b".repeat(64),
+    originalEvidence: [{ id: "unavailable-evidence-1", hash: "c".repeat(64) }],
+    replacementRunId: "new-run-1", replacementChecklistId: "new-checklist-1", replacementReceiptHash: "d".repeat(64),
+  }
+}
+
 function missingEvidenceAcceptance(overrides: Record<string, unknown> = {}) {
   return {
     id: "acceptance-1",
@@ -576,6 +627,7 @@ function missingEvidenceAcceptance(overrides: Record<string, unknown> = {}) {
     correlationId: "missing-proof-acceptance-corr-1",
     metadata: {
       acceptanceType: "MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+      replacementBinding: replacementBinding(),
       requestId: "request-1",
       responseId: "response-1",
       requestCorrelationId: "missing-proof-corr-1",
@@ -598,9 +650,11 @@ function missingEvidenceAcceptance(overrides: Record<string, unknown> = {}) {
 function missingEvidenceAcceptanceControl(
   overrides: Record<string, unknown> = {},
 ) {
+  mockDb.$queryRaw.mockResolvedValue([{ id: "finding-1", createdAt: new Date("2026-08-02T11:00:00.000Z") }])
   return {
     actorId: "accountant-1",
     actorPermissions: ["accounting.close.accountant.review"],
+    session: { id: "accountant-session-1", token: "synthetic-service-session-token" },
     freshAuth: {
       actorId: "accountant-1",
       organizationId: "accounting-firm",
@@ -617,17 +671,36 @@ function acceptanceInput(overrides: Record<string, unknown> = {}) {
     responseId: "response-1",
     resolutionNotes: "Response evidence reviewed and accepted for this finding.",
     correlationId: "missing-proof-acceptance-corr-1",
+    replacement: closeEvidenceReplacementSelection(replacementBinding()),
     ...overrides,
   }
 }
 
 function seedCleanSources() {
+  mockDb.accountantComment.findMany.mockReset().mockImplementation(async () => {
+    const reads = await Promise.all(mockDb.accountantComment.findFirst.mock.results.map(result => result.value))
+    return [...new Map(reads.filter(row => row && ["CLIENT_ACTION_REQUIRED", "CLIENT_RESPONSE_SUBMITTED", "ACCOUNTANT_RESPONSE_ACCEPTED"].includes(row.visibility)).map(row => [row.id, { id: row.id }])).values()]
+  })
+  mockDb.ledgerAuditEvent.findMany.mockReset().mockResolvedValue([])
+  mockDb.ledgerAuditEvent.findFirst.mockReset().mockResolvedValue(null)
+  mockRevalidateCloseEvidenceAcceptanceAuthority.mockReset().mockResolvedValue(undefined)
+  mockLockCloseEvidenceAcceptanceAuthorityInTx.mockReset().mockResolvedValue({ revalidate: mockRevalidateCloseEvidenceAcceptanceAuthority })
   mockDb.$transaction.mockImplementation((callback) => callback(mockDb))
+  createdAssessment = null
+  jest.mocked(lockCloseSourceRevisionInTx).mockReset().mockResolvedValue({ version: 1, revision: "0" })
+  jest.mocked(guardCloseAssessmentPublicationInTx).mockReset().mockResolvedValue(true)
+  mockDb.$queryRaw.mockResolvedValue([{ createdAt: new Date("2026-06-15T14:00:00.000Z") }])
+  mockDb.closeRun.findMany.mockImplementation(async () => {
+    const result = await mockDb.closeRun.findFirst.mock.results.at(-1)?.value
+    return result ? [result] : createdAssessment ? [createdAssessment] : []
+  })
   mockDb.accountingPeriod.findFirst.mockResolvedValue(period)
   mockDb.accountingPeriod.findMany.mockResolvedValue([period])
   mockDb.closeRun.findFirst.mockResolvedValue(null)
+  mockDb.closeRun.updateMany.mockResolvedValue({ count: 1 })
   mockDb.closeRun.create.mockImplementation(({ data }) =>
-    Promise.resolve({
+    Promise.resolve(createdAssessment = {
+      ...data,
       id: "close-run-1",
       periodId: data.periodId,
       status: data.status,
@@ -639,9 +712,13 @@ function seedCleanSources() {
   mockDb.closeChecklistItem.create.mockImplementation(({ data }) =>
     Promise.resolve({
       id: `check-${data.key}`,
+      metadata: null,
+      createdAt: new Date("2026-06-15T14:00:00.000Z"),
+      updatedAt: new Date("2026-06-15T14:00:00.000Z"),
       ...data,
     }),
   )
+  mockDb.closeChecklistItem.update.mockImplementation(({ where, data }) => Promise.resolve({ ...where, ...data }))
   mockDb.closeAssuranceFinding.create.mockImplementation(({ data }) =>
     Promise.resolve({
       id: `finding-${data.title}`,
@@ -649,7 +726,19 @@ function seedCleanSources() {
       ...data,
     }),
   )
-  mockDb.closeEvidenceItem.create.mockResolvedValue({ id: "evidence-created" })
+  let evidenceSequence = 0
+  mockDb.closeEvidenceItem.create.mockImplementation(({ data }) => Promise.resolve({
+    id: `evidence-created-${++evidenceSequence}`,
+    createdAt: new Date("2026-06-15T14:00:00.000Z"),
+    updatedAt: new Date("2026-06-15T14:00:00.000Z"),
+    ...data,
+    metadata: data.metadata ?? null,
+  }))
+  mockGetCloseEvidenceReplacementInTx.mockReset().mockResolvedValue({
+    status: "AVAILABLE", reason: "VERIFIED_COLLECTION", binding: replacementBinding(),
+    selection: closeEvidenceReplacementSelection(replacementBinding()), checklistKey: "ledger-reconciliation",
+    domain: "LEDGER", observedAt: "2026-08-02T10:59:00.000Z", recoveredEvidenceCount: 1,
+  })
   mockDb.closeAssuranceFinding.updateMany.mockResolvedValue({ count: 1 })
   mockDb.accountantComment.findFirst.mockResolvedValue(null)
   mockDb.user.findFirst.mockResolvedValue({ id: "client-user-1" })
@@ -668,7 +757,7 @@ function seedCleanSources() {
   mockGetPeriodClosePreflight.mockResolvedValue(cleanPreflight())
   mockGetPeriodClosePreflightFailures.mockReturnValue([])
   mockReconcileLedger.mockResolvedValue(cleanLedger())
-  mockGetPaymentReconciliationDashboardData.mockResolvedValue(
+  mockGetPaymentCloseEvidence.mockResolvedValue(
     cleanPaymentDashboard(),
   )
   mockGetAccountantPortalData.mockResolvedValue(cleanDataTrust())
@@ -741,6 +830,46 @@ describe("close assurance service", () => {
         }),
       ]),
     )
+  })
+
+  it("retains normal unpaid AP as classification evidence without creating a close finding", async () => {
+    const payableBalances = { version: 1 as const, organizationId: "org-1", economicThrough: period.endDate.toISOString(), recordedThrough: new Date().toISOString(),
+      evidenceHash: "ap-classification-hash", normalUnpaidCount: 1, exceptionCount: 0, settledCount: 0, balances: [], currencies: [] }
+    jest.mocked(getAccountantPortalData).mockResolvedValue({ ...cleanDataTrust(), payableBalances })
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.run.status).toBe("READY")
+    expect(result.findings.some(row => row.sourceType === "purchasing.ap.reconciliation")).toBe(false)
+    expect(result.evidenceItems).toContainEqual(expect.objectContaining({ sourceType: "ClosePayableBalanceClassification", sourceHash: "ap-classification-hash", provenance: "OPERATIONAL" }))
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ payableBalances }) }) }))
+  })
+
+  it("fails payment readiness and retains bank balance evidence when bank approval is missing", async () => {
+    const bankBalanceReconciliation = { version: 1 as const, scopeHash: "scope", requiredAccountCount: 1, reconciledAccountCount: 0, blockedAccountCount: 1,
+      accounts: [{ providerAccountId: "bank", accountName: "Bank", currency: "XAF", status: "BLOCKED" as const, reason: "Bank balance evidence is missing.", evidenceId: null, evidenceHash: null, approvedById: null, approvedAt: null, snapshot: null }] }
+    mockGetAccountantPortalData.mockResolvedValue({ ...cleanDataTrust(), bankBalanceReconciliation })
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.checklist.find(row => row.key === "payment-reconciliation")?.status).toBe("FAILED")
+    expect(result.run.status).not.toBe("READY")
+    expect(result.evidenceItems).toContainEqual(expect.objectContaining({ sourceType: "BankBalanceReconciliation", available: false }))
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ bankBalanceReconciliation }) }) }))
+  })
+
+  it("fails balance-sheet readiness and retains findings and metadata independently of portal blockers", async () => {
+    const balanceSheetReconciliation = { version: 1 as const, scopeHash: "scope", requiredAccountCount: 1, reconciledAccountCount: 0, blockedAccountCount: 1,
+      accounts: [{ ledgerAccountId: "ap", accountCode: "401", accountName: "Payables", currency: "XAF", status: "BLOCKED" as const, reason: "Supporting schedule is missing.", evidenceId: null, evidenceHash: null, approvedById: null, approvedAt: null, snapshot: null }] }
+    mockGetAccountantPortalData.mockResolvedValue({ ...cleanDataTrust(), balanceSheetReconciliation })
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.checklist.find(row => row.key === "balance-sheet-reconciliation")?.status).toBe("FAILED")
+    expect(result.run.status).not.toBe("READY")
+    expect(result.findings).toContainEqual(expect.objectContaining({ sourceType: "BalanceSheetReconciliation", sourceId: "ap:XAF", severity: "HIGH" }))
+    expect(result.evidenceItems).toContainEqual(expect.objectContaining({ sourceType: "BalanceSheetReconciliation", available: false }))
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ balanceSheetReconciliation }) }) }))
   })
 
   it("projects missing payroll transition proof as a critical close blocker", async () => {
@@ -883,6 +1012,31 @@ describe("close assurance service", () => {
     )
   })
 
+  it("retains account coverage evidence and blocks missing accounts despite global signed evidence", async () => {
+    const account = { providerAccountId: "bank-b", accountName: "Bank B", currencyCode: "XAF", status: "BLOCKED", reasons: ["MISSING_STATEMENT"], noActivityEvidence: null, scopeHash: "sha256:scope" };
+    mockGetPaymentCloseEvidence.mockResolvedValue({ ...cleanPaymentDashboard(), accountCoverage: { version: 1, requiredAccountCount: 2, coveredAccountCount: 1, blockedAccountCount: 1, accounts: [account] } });
+    const result = await getCloseAssuranceDashboard("org-1", period.id);
+    expect(result.checklist).toEqual(expect.arrayContaining([expect.objectContaining({ key: "payment-reconciliation", status: "FAILED" })]));
+    expect(result.findings).toEqual(expect.arrayContaining([expect.objectContaining({ sourceType: "ProviderAccountCloseCoverage", sourceId: "bank-b", severity: "HIGH" })]));
+    expect(result.evidenceItems).toEqual(expect.arrayContaining([expect.objectContaining({ sourceType: "ProviderAccountCloseCoverage", evidenceType: "AUDIT_LOG", available: false, metadata: account })]));
+  })
+
+  it("uses the tenant currency consistently with close-pack inventory refresh", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValue({ ...period, organization: { currency: "XOF" } })
+    await getCloseAssuranceDashboard("org-1", period.id)
+    expect(mockReconcileInventoryClass3).toHaveBeenCalledWith({ organizationId: "org-1", periodId: period.id, currency: "XOF", recordedThrough: expect.any(Date) })
+  })
+
+  it("does not let a zero live preflight count hide scoped suspense or unsigned evidence", async () => {
+    mockGetPaymentCloseEvidence.mockResolvedValue({ ...cleanPaymentDashboard(), summary: {
+      ...cleanPaymentDashboard().summary, openSuspenseCount: 1, pendingRunCount: 1,
+    }, organizationControls: { unassignedSuspense: 1, unassignedExceptions: 0 } })
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.checklist.find(row => row.key === "suspense-exceptions")?.status).toBe("FAILED")
+    expect(result.checklist.find(row => row.key === "payment-reconciliation")?.status).toBe("FAILED")
+    expect(result.provenance.find(row => row.label === "Payment reconciliation")?.reason).toContain("organization-wide controls: 1 suspense")
+  })
+
   it("classifies inventory valuation mismatches as close blockers", async () => {
     mockReconcileInventoryClass3.mockResolvedValue({
       ...cleanInventoryValuation(),
@@ -951,6 +1105,137 @@ describe("close assurance service", () => {
     )
   })
 
+  it("keeps stored certification and readiness historical while reporting missing current proof", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun({ status: "CERTIFIED", readinessScore: 100 }))
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.run).toMatchObject({ status: "CERTIFIED", readinessScore: 100 })
+    expect(result.currentProof).toMatchObject({ grade: "blocked", blockers: [expect.objectContaining({ id: "close-certified-export-missing" })] })
+    expect(result.controls).toMatchObject({ certificationAvailable: false, certificationDisabledReason: "Current close evidence requires review." })
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "RepeatableRead" })
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organizationId: "org-1", periodId: period.id },
+      include: expect.objectContaining({
+        checklistItems: expect.objectContaining({ where: { organizationId: "org-1" } }),
+        findings: expect.objectContaining({ where: { organizationId: "org-1" } }),
+        evidenceItems: expect.objectContaining({ where: { organizationId: "org-1" } }),
+        packExports: { where: { organizationId: "org-1", isCertified: true }, select: { metadata: true } },
+      }),
+    }))
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("retains the chosen run's current proof while withholding private invalidation details", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun({ status: "EXPORTED", metadata: { staleState: { status: "EVIDENCE_STALE", sourceId: "private-source" } }, packExports: [{ metadata: null }] }))
+    const result = await getCloseAssuranceDashboard("org-1", period.id, "close-run-1")
+    expect(result.currentProof).toMatchObject({ grade: "blocked", blockers: [expect.objectContaining({ id: "close-evidence-stale" })] })
+    expect(JSON.stringify(result.currentProof)).not.toContain("private-source")
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organizationId: "org-1", periodId: period.id, id: "close-run-1" },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    }))
+  })
+
+  it.each([
+    { status: "RUNNING", grade: "raw" },
+    { status: "DRAFT", grade: "raw" },
+    { status: "BLOCKED", grade: "blocked", metadata: { assessmentFailure: "ASSESSMENT_FAILED" } },
+    { status: "VOIDED", grade: "blocked" },
+    { status: "CERTIFIED", grade: "blocked", voidedAt: new Date("2026-06-15T13:00:00Z") },
+  ])("keeps the latest $status assessment without falling back to earlier certification", async ({ grade, ...latest }) => {
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun({
+      ...latest, id: "latest-assessment", packExports: [{ metadata: null }],
+    }))
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    expect(result.run).toMatchObject({ id: "latest-assessment", status: latest.status })
+    expect(result.currentProof?.grade).toBe(grade)
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(1)
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organizationId: "org-1", periodId: period.id },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    }))
+    expect(mockDb.accountingPeriod.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organizationId: "org-1", id: period.id },
+    }))
+  })
+
+  it("does not substitute a preview or successful zero when current proof cannot be read", async () => {
+    mockDb.closeRun.findFirst.mockRejectedValue(new Error("owned current-proof read failed"))
+    await expect(getCloseAssuranceDashboard("org-1", period.id)).rejects.toThrow("owned current-proof read failed")
+    expect(mockGetPeriodClosePreflight).not.toHaveBeenCalled()
+  })
+
+  it.each(["READY", "CERTIFIED"])("keeps explicit %s history while a newer adverse assessment prevents certification", async status => {
+    const retained = persistedRun({ status, packExports: [{ metadata: null }] })
+    const newer = persistedRun({ id: "newer-private", status: "BLOCKED", createdAt: new Date("2026-06-15T15:00:00Z") })
+    mockDb.closeRun.findFirst.mockResolvedValue(retained)
+    mockDb.closeRun.findMany.mockResolvedValue([newer, retained])
+    const before = JSON.stringify(retained)
+    const result = await getCloseAssuranceDashboard("org-1", period.id, retained.id)
+    expect(result.run).toMatchObject({ id: retained.id, status })
+    expect(result.currentProof).toMatchObject({ grade: "blocked", assessmentState: "HISTORICAL", latestAssessmentCreatedAt: newer.createdAt.toISOString(), blockers: expect.arrayContaining([expect.objectContaining({ id: "close-assessment-not-current" })]) })
+    expect(result.controls.certificationAvailable).toBe(false)
+    expect(result.controls.packExportAvailable).toBe(true)
+    expect(JSON.stringify(result.currentProof)).not.toContain("newer-private")
+    expect(JSON.stringify(retained)).toBe(before)
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "RepeatableRead" })
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { organizationId: "org-1", periodId: period.id }, take: 2 }))
+  })
+
+  it.each([
+    { state: "AMBIGUOUS", blocker: "close-assessment-order-ambiguous", voidedAt: null },
+    { state: "VOIDED", blocker: "close-assessment-voided", voidedAt: new Date("2026-06-15T14:00:00Z") },
+  ])("blocks $state current assessment in the dashboard without hiding retained data", async ({ state, blocker, voidedAt }) => {
+    const retained = persistedRun({ status: "CERTIFIED", voidedAt, packExports: [{ metadata: null }] })
+    mockDb.closeRun.findFirst.mockResolvedValue(retained)
+    mockDb.closeRun.findMany.mockResolvedValue([retained, { ...retained, id: "tied-private" }])
+    const result = await getCloseAssuranceDashboard("org-1", period.id, retained.id)
+    expect(result.run.status).toBe("CERTIFIED")
+    expect(result.currentProof).toMatchObject({ grade: "blocked", assessmentState: state, blockers: expect.arrayContaining([expect.objectContaining({ id: blocker })]) })
+    expect(result.controls.certificationAvailable).toBe(false)
+  })
+
+  it("propagates same-snapshot order read failure without reporting current certification", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    mockDb.closeRun.findMany.mockRejectedValue(new Error("owned assessment-order failure"))
+    await expect(getCloseAssuranceDashboard("org-1", period.id)).rejects.toThrow("owned assessment-order failure")
+    expect(mockGetPeriodClosePreflight).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("waits for publication locking and uses the post-lock database time independently of asOf", async () => {
+    let release!: () => void, entered!: () => void
+    const acquired = new Promise<void>(resolve => { entered = resolve })
+    const wait = new Promise(resolve => { release = () => resolve([]) })
+    mockDb.$queryRaw.mockImplementationOnce(() => { entered(); return wait })
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    const work = runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller", now: "2025-01-01T00:00:00Z" })
+    await acquired
+    expect(mockDb.closeRun.create).not.toHaveBeenCalled()
+    expect(mockReconcileLedger).not.toHaveBeenCalled()
+    release()
+    await work
+    expect(mockDb.closeRun.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ createdAt: new Date("2026-06-15T14:00:00Z"), asOf: new Date("2025-01-01T00:00:00Z"), startedAt: new Date("2025-01-01T00:00:00Z") }) }))
+    expect(mockDb.$transaction.mock.calls[0][1]).toEqual({ isolationLevel: "ReadCommitted" })
+    expect(mockDb.accountingPeriod.findFirst).toHaveBeenCalledWith({ where: { id: period.id, organizationId: "org-1" }, select: { id: true } })
+  })
+
+  it.each(["2026-06-15T14:00:00Z", "2027-01-01T00:00:00Z"])("rejects publication before writes when latest timestamp %s is not earlier than database time", async latest => {
+    mockDb.closeRun.findMany.mockResolvedValue([persistedRun({ createdAt: new Date(latest) })])
+    await expect(runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.closeRun.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockReconcileLedger).not.toHaveBeenCalled()
+  })
+
+  it("does not publish when the tenant-scoped period disappeared while waiting", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValueOnce(period).mockResolvedValueOnce(null)
+    await expect(runCloseAssurance("org-1", { periodId: period.id })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockDb.closeRun.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.findMany).not.toHaveBeenCalled()
+  })
+
   it("persists close runs with checklist evidence and ledger audit evidence", async () => {
     mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
 
@@ -972,11 +1257,27 @@ describe("close assurance service", () => {
           periodId: period.id,
           runById: "user-1",
           correlationId: "corr-1",
+          status: "RUNNING",
         }),
       }),
     )
     expect(mockDb.closeChecklistItem.create).toHaveBeenCalled()
+    for (const collector of [mockGetPeriodClosePreflight, mockReconcileLedger, mockGetPaymentCloseEvidence, mockGetAccountantPortalData, mockReconcileInventoryClass3, mockGetTenantOperatingSnapshot]) {
+      expect(mockDb.closeRun.create.mock.invocationCallOrder[0]).toBeLessThan(collector.mock.invocationCallOrder[0])
+    }
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "close-run-1", organizationId: "org-1", periodId: period.id, status: "RUNNING" },
+      data: expect.objectContaining({ status: "READY" }),
+    }))
     expect(mockDb.closeEvidenceItem.create).toHaveBeenCalled()
+    const savedScope = mockDb.closeRun.updateMany.mock.calls[0][0].data.metadata.closeScope
+    expect(savedScope).toMatchObject({ version: 1, organizationId: "org-1", periodId: period.id, scopeHash: expect.stringMatching(/^sha256:/) })
+    expect(mockGetPaymentCloseEvidence).toHaveBeenCalledWith(savedScope)
+    expect(mockGetAccountantPortalData).toHaveBeenCalledWith(
+      { organizationId: "org-1", periodId: period.id, startDate: period.startDate, endDate: period.endDate, limit: 12 },
+      db, new Date(savedScope.recordedThrough),
+    )
+    expect(mockReconcileLedger).toHaveBeenCalledWith("org-1", { periodId: period.id, recordedThrough: new Date(savedScope.recordedThrough) })
     expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -985,6 +1286,137 @@ describe("close assurance service", () => {
         }),
       }),
     )
+  })
+
+  it("does not publish evidence when the source or assessment publication guard rejects it", async () => {
+    jest.mocked(guardCloseAssessmentPublicationInTx).mockResolvedValue(false)
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    expect(guardCloseAssessmentPublicationInTx).toHaveBeenCalledWith(expect.anything(), { organizationId: "org-1", periodId: period.id, runId: "close-run-1", sourceRevision: { version: 1, revision: "0" } })
+    expect(mockDb.closeEvidenceItem.create).not.toHaveBeenCalled()
+    expect(mockDb.closeChecklistItem.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "READY" }) }))
+  })
+
+  it("persists verifiable collector receipts after evidence writes without inflating coverage", async () => {
+    const baseline = await getCloseAssuranceDashboard("org-1", period.id)
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    const rows = await Promise.all(mockDb.closeEvidenceItem.create.mock.results.map(result => result.value))
+    const checklists = await Promise.all(mockDb.closeChecklistItem.create.mock.results.map(result => result.value))
+    expect(mockDb.closeChecklistItem.update).toHaveBeenCalledTimes(8)
+    for (const [update] of mockDb.closeChecklistItem.update.mock.calls) {
+      const checklist = checklists.find(item => item.id === update.where.id)
+      expect(checklist.key).not.toBe("period-state")
+      expect(verifyCloseEvidenceCollectionReceipt(checklist, rows.filter(row => row.checklistItemId === checklist.id), update.data.metadata.collectionReceipt)).toBe(true)
+    }
+    expect(mockDb.closeEvidenceItem.create).toHaveBeenCalledTimes(baseline.evidenceItems.length)
+    expect(rows.some(row => row.sourceType === "CloseCollectorSnapshot")).toBe(false)
+    expect(mockDb.closeRun.updateMany.mock.calls[0][0].data.evidenceCoveragePct.toString()).toBe(String(baseline.run.evidenceCoveragePct))
+    expect(mockDb.closeChecklistItem.update.mock.invocationCallOrder[0]).toBeGreaterThan(Math.max(...mockDb.closeEvidenceItem.create.mock.invocationCallOrder))
+    expect(Math.max(...mockDb.closeChecklistItem.update.mock.invocationCallOrder)).toBeLessThan(mockDb.ledgerAuditEvent.create.mock.invocationCallOrder[0])
+  })
+
+  it("records a successful empty collector independently of unavailable evidence and source hashes", async () => {
+    mockReconcileLedger.mockResolvedValue({ ...cleanLedger(), totalsByCurrency: [] })
+    mockGetPaymentCloseEvidence.mockResolvedValue({
+      ...cleanPaymentDashboard(), recentRuns: [], suspenseQueue: [],
+      source: { ...cleanPaymentDashboard().source, providerEvidenceAvailable: false, statementEvidenceAvailable: false },
+      summary: { ...cleanPaymentDashboard().summary, recentRunCount: 0, signedRunCount: 0 },
+    })
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun())
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    for (const key of ["ledger-reconciliation", "payment-reconciliation", "suspense-exceptions"]) {
+      const update = mockDb.closeChecklistItem.update.mock.calls.map(call => call[0]).find(update => update.where.id === `check-${key}`)
+      expect(update.data.metadata.collectionReceipt).toMatchObject({ version: 1, collectionSucceeded: true, hash: expect.stringMatching(/^[a-f0-9]{64}$/), evidence: [] })
+      expect(mockDb.closeEvidenceItem.create.mock.calls.some(([input]) => input.data.checklistItemId === `check-${key}`)).toBe(false)
+    }
+  })
+
+  it("retains cash review hashes as internal evidence without claiming provider signoff", async () => {
+    const cashProof = { paymentRequestId: "cash-payment", exceptionId: "original-ap-exception", status: "CASH_REVIEWED", kind: "CASH_VOUCHER",
+      decisionId: "cash-decision", decisionHash: "cash-decision-hash", proposalId: "cash-proposal", proposalHash: "proposal-hash", recordedAt: "2026-06-16T09:00:00.000Z" }
+    mockGetAccountantPortalData.mockResolvedValue({ ...cleanDataTrust(), supplierPaymentReconciliationProofs: [cashProof] })
+    mockGetPaymentCloseEvidence.mockResolvedValue({
+      ...cleanPaymentDashboard(), recentRuns: [], suspenseQueue: [],
+      source: { ...cleanPaymentDashboard().source, providerEvidenceAvailable: false, statementEvidenceAvailable: false },
+      summary: { ...cleanPaymentDashboard().summary, recentRunCount: 0, signedRunCount: 0, readyForSignoffCount: 0 },
+    })
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+    const checklist = result.checklist.find(row => row.key === "payment-reconciliation")
+    expect(checklist).toMatchObject({ status: "PASSED", evidenceCount: 1 })
+    expect(checklist?.detail).toContain("internal evidence")
+    expect(result.evidenceItems).toContainEqual(expect.objectContaining({ evidenceType: "AUDIT_LOG", sourceType: "SupplierCashReceiptReview",
+      sourceId: cashProof.decisionId, sourceHash: cashProof.decisionHash, sourceDate: cashProof.recordedAt, provenance: "OPERATIONAL" }))
+    expect(result.evidenceItems.some(row => row.sourceType === "ReconciliationRun")).toBe(false)
+  })
+
+  it.each([
+    ["ledger", () => mockReconcileLedger, ["ledger-reconciliation"]],
+    ["payment", () => mockGetPaymentCloseEvidence, ["payment-reconciliation", "suspense-exceptions"]],
+    ["data trust", () => mockGetAccountantPortalData, ["data-trust-provenance", "tax-payroll-ap-readiness"]],
+    ["inventory", () => mockReconcileInventoryClass3, ["inventory-valuation"]],
+    ["payroll", () => mockGetTenantOperatingSnapshot, ["payroll-finance-forecast-proof"]],
+    ["preflight", () => mockGetPeriodClosePreflight, ["period-close-preflight"]],
+  ] as const)("does not issue a collection receipt after the %s query fails", async (_name, getCollector, affectedKeys) => {
+    getCollector().mockRejectedValue(new Error("owned collector failure"))
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun({ status: "BLOCKED" }))
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    const updatedIds = mockDb.closeChecklistItem.update.mock.calls.map(([input]) => input.where.id)
+    for (const key of affectedKeys) expect(updatedIds).not.toContain(`check-${key}`)
+    expect(updatedIds.length).toBeGreaterThan(0)
+    for (const key of affectedKeys) {
+      const created = mockDb.closeChecklistItem.create.mock.calls.find(([input]) => input.data.key === key)
+      expect(created?.[0].data.status).toBe("UNAVAILABLE")
+    }
+  })
+
+  it("keeps a successfully observed failed control failed when recording its receipt", async () => {
+    mockReconcileLedger.mockResolvedValue({ ...cleanLedger(), isClean: false, failures: [{ severity: "critical", type: "UNBALANCED", message: "Ledger does not balance." }] })
+    mockDb.closeRun.findFirst.mockResolvedValue(persistedRun({ status: "BLOCKED" }))
+    await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    const control = mockDb.closeChecklistItem.create.mock.calls.find(([input]) => input.data.key === "ledger-reconciliation")?.[0].data
+    expect(control.status).toBe("FAILED")
+    expect(mockDb.closeChecklistItem.update.mock.calls.find(([input]) => input.where.id === "check-ledger-reconciliation")?.[0].data).toEqual({ metadata: { collectionReceipt: expect.objectContaining({ collectionSucceeded: true }) } })
+    expect(mockDb.closeRun.updateMany.mock.calls[0][0].data.status).toBe("BLOCKED")
+  })
+
+  it("does not overwrite an in-flight source invalidation with an older READY assessment", async () => {
+    let status = "RUNNING"
+    mockDb.closeRun.findFirst.mockImplementation(async () => persistedRun({ status, metadata: { staleState: { status: "EVIDENCE_STALE", sourceId: "new-event" } } }))
+    mockReconcileLedger.mockImplementationOnce(async () => {
+      expect(mockDb.closeRun.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "RUNNING" }) }))
+      status = "BLOCKED"
+      return cleanLedger()
+    })
+    mockDb.closeRun.updateMany.mockImplementation(async ({ where, data }) => {
+      if (status !== where.status) return { count: 0 }
+      status = data.status
+      return { count: 1 }
+    })
+    const result = await runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })
+    expect(result.run.status).toBe("BLOCKED")
+    expect(status).toBe("BLOCKED")
+    expect(mockDb.closeChecklistItem.create).not.toHaveBeenCalled()
+    expect(mockDb.closeEvidenceItem.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "CLOSE_ASSURANCE_RUN_COMPLETED" }) }))
+  })
+
+  it("retains a blocked failure state when collection fails before finalization", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValueOnce(period).mockResolvedValueOnce(period).mockRejectedValueOnce(new Error("assessment source unavailable"))
+    await expect(runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })).rejects.toThrow("assessment source unavailable")
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith({
+      where: { id: "close-run-1", organizationId: "org-1", status: "RUNNING" },
+      data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ assessmentFailure: "ASSESSMENT_FAILED" }) }),
+    })
+    expect(mockDb.closeChecklistItem.create).not.toHaveBeenCalled()
+  })
+
+  it("retains a blocked failure state when assessment persistence rolls back", async () => {
+    mockDb.$transaction.mockImplementationOnce(callback => callback(mockDb)).mockRejectedValueOnce(new Error("transaction rolled back"))
+    await expect(runCloseAssurance("org-1", { periodId: period.id }, { actorId: "controller" })).rejects.toThrow("transaction rolled back")
+    expect(mockDb.closeRun.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: "close-run-1", organizationId: "org-1", status: "RUNNING" }, data: expect.objectContaining({ status: "BLOCKED" }),
+    }))
   })
 
   it("defaults finding assignment to the current actor and audits the action", async () => {
@@ -1039,6 +1471,60 @@ describe("close assurance service", () => {
         }),
       }),
     )
+  })
+
+  it.each(["ASSIGNED", "IN_REVIEW", "REOPENED"])("preserves retained evidence requests when ordinary assignment targets a %s finding", async (status) => {
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue({ id: "finding-1", organizationId: "org-1", periodId: period.id, closeRunId: "close-run-1", status, ownerId: "recipient-1", closeRun: { id: "close-run-1" } })
+    // Admission fails closed even if this old request's metadata is malformed.
+    mockDb.accountantComment.findFirst.mockResolvedValue({ id: "retained-request" })
+    await expect(assignCloseFinding("org-1", { findingId: "finding-1", assignedToId: "recipient-1" }, { actorId: "user-1" })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.accountantComment.findFirst).toHaveBeenCalledWith({ where: { organizationId: "org-1", findingId: "finding-1", visibility: "CLIENT_ACTION_REQUIRED" }, select: { id: true } })
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "Serializable" })
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  describe("controlled evidence recipient replacement", () => {
+    const command = { requestId: "request-1", expectedRevision: "request-1", requestedFromId: "new-recipient", reason: "The original recipient has left the organization.", correlationId: "change-correlation" }
+    const control = { actorId: "accountant-1", session: { id: "session", token: "local-test-token" } }
+    beforeEach(() => {
+      mockDb.accountantComment.findFirst.mockResolvedValue(missingEvidenceComment())
+      mockDb.accountantComment.findMany.mockResolvedValue([{ id: "request-1" }])
+      mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ status: "ASSIGNED", ownerId: "client-user-1" }))
+      mockDb.closeAssuranceFinding.update.mockResolvedValue({ dueAt: new Date("2026-08-05T12:00:00Z") })
+      mockDb.$queryRaw.mockResolvedValue([{ createdAt: new Date("2026-08-03T12:00:00Z") }])
+      mockDb.ledgerAuditEvent.create.mockImplementation(async ({ data }) => ({ id: "change-1", ...data }))
+    })
+    it("retains the original request and atomically records the replacement without resetting status", async () => {
+      const result = await replaceMissingCloseEvidenceRecipient("client-org", command, control)
+      expect(result).toMatchObject({ requestId: "request-1", revision: "change-1", recipientId: "new-recipient" })
+      expect(lockCloseEvidenceWorkAuthorityInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({ operation: "request", requireFindingAssignment: true, session: control.session }))
+      expect(lockCloseEvidenceRecipientInTx).toHaveBeenCalledWith(mockDb, { organizationId: "client-org", recipientId: "new-recipient" })
+      expect(mockDb.closeAssuranceFinding.update).toHaveBeenCalledWith({ where: { id: "finding-1" }, data: { ownerId: "new-recipient", assignedById: "accountant-1", assignedAt: new Date("2026-08-03T12:00:00Z"), correlationId: "change-correlation" } })
+      expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+      expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "CLOSE_MISSING_EVIDENCE_RECIPIENT_REPLACED", resourceId: "request-1", metadata: expect.objectContaining({ originalRecipientId: "client-user-1", fromId: "client-user-1", toId: "new-recipient", previousRevision: "request-1", sequence: 1, reason: command.reason }) }) }))
+      expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
+    })
+    it.each(["stale", "same-owner", "submitted", "response", "ambiguous", "clock"])("refuses %s replacement before any effects", async failure => {
+      const input = { ...command }
+      if (failure === "stale") input.expectedRevision = "obsolete"
+      if (failure === "same-owner") input.requestedFromId = "client-user-1"
+      if (failure === "submitted") mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "client-user-1" }))
+      if (failure === "response" || failure === "ambiguous") mockDb.accountantComment.findMany.mockResolvedValue([{ id: "request-1" }, { id: failure }])
+      if (failure === "clock") mockDb.$queryRaw.mockResolvedValue([{ createdAt: missingEvidenceComment().createdAt }])
+      await expect(replaceMissingCloseEvidenceRecipient("client-org", input, control)).rejects.toMatchObject({ code: "CONFLICT" })
+      expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+      expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+      expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+    })
+    it("replays only an identical recorded command without changing current ownership", async () => {
+      const prior = { id: "change-1", actorId: "accountant-1", createdAt: new Date("2026-08-03T12:00:00Z"), metadata: { version: 1, requestId: "request-1", findingId: "finding-1", periodId: period.id, closeRunId: "close-run-1", previousRevision: command.expectedRevision, toId: command.requestedFromId, reason: command.reason } }
+      mockDb.ledgerAuditEvent.findFirst.mockResolvedValue(prior)
+      expect((await replaceMissingCloseEvidenceRecipient("client-org", command, control)).revision).toBe("change-1")
+      expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+      await expect(replaceMissingCloseEvidenceRecipient("client-org", { ...command, reason: "Different reason for the same retry." }, control)).rejects.toMatchObject({ code: "CONFLICT" })
+    })
   })
 
   it("adds source-linked accountant comments to persisted close findings", async () => {
@@ -1205,9 +1691,9 @@ describe("close assurance service", () => {
   it.each([
     ["missing actor", {}, new Date("2026-08-05T12:00:00.000Z")],
     [
-      "non-future due date",
+      "invalid due date",
       { actorId: "accountant-1" },
-      new Date("2026-08-02T09:00:00.000Z"),
+      new Date(NaN),
     ],
   ])("rejects missing-proof request %s before access or transaction work", async (
     _name,
@@ -1314,8 +1800,24 @@ describe("close assurance service", () => {
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it("returns an exact correlation replay without duplicate side effects", async () => {
+  it.each(["OPEN", "ASSIGNED", "IN_REVIEW", "REOPENED"])("rejects a second distinct missing-proof request for a %s finding without replacing its assignment", async status => {
     jest.useFakeTimers().setSystemTime(new Date("2026-08-02T09:00:00.000Z"))
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "original-request" })
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ status }))
+    mockDb.accountantComment.create.mockResolvedValue(missingEvidenceComment())
+    await expect(requestMissingCloseEvidence("firm-org", {
+      clientOrganizationId: "client-org", findingId: "finding-1", requestedFromId: "client-user-1",
+      requestText: "Please attach the missing signed bank statement.", dueAt: new Date("2026-08-05T12:00:00.000Z"), correlationId: "different-request-key",
+    }, { actorId: "accountant-1" })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.accountantComment.findFirst).toHaveBeenCalledWith({ where: { organizationId: "client-org", findingId: "finding-1", visibility: "CLIENT_ACTION_REQUIRED" }, select: { id: true } })
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it.each(["2026-08-02T09:00:00.000Z", "2026-08-05T12:00:00.000Z", "2026-08-06T09:00:00.000Z"])("returns an exact correlation replay without duplicate side effects at %s", async (now) => {
+    jest.useFakeTimers().setSystemTime(new Date(now))
     mockDb.accountantComment.findFirst.mockResolvedValue(
       missingEvidenceComment(),
     )
@@ -1348,14 +1850,27 @@ describe("close assurance service", () => {
     })
     expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
     expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+    expect(lockCloseEvidenceRecipientInTx).not.toHaveBeenCalled()
     expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
     expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
     expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it("rejects correlation reuse for a different missing-proof request", async () => {
-    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T09:00:00.000Z"))
+  it.each(["2026-08-05T12:00:00.000Z", "2026-08-06T09:00:00.000Z"])("rejects a new expired missing-proof request at %s without side effects", async (now) => {
+    jest.useFakeTimers().setSystemTime(new Date(now))
+    await expect(requestMissingCloseEvidence("firm-org", {
+      clientOrganizationId: "client-org", findingId: "finding-1", requestedFromId: "client-user-1",
+      requestText: "Please attach the missing signed bank statement.", dueAt: new Date("2026-08-05T12:00:00.000Z"), correlationId: "new-expired-request",
+    }, { actorId: "accountant-1" })).rejects.toThrow(/due date must be in the future/i)
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it.each(["2026-08-02T09:00:00.000Z", "2026-08-06T09:00:00.000Z"])("rejects correlation reuse for a different missing-proof request at %s", async (now) => {
+    jest.useFakeTimers().setSystemTime(new Date(now))
     mockDb.accountantComment.findFirst.mockResolvedValue(
       missingEvidenceComment(),
     )
@@ -1380,14 +1895,14 @@ describe("close assurance service", () => {
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it.each(["P2034", "P2002"])(
+  it.each([["P2034", undefined], ["P2002", undefined], ["P2010", "40001"], ["P2010", "40P01"]])(
     "retries serializable missing-proof transaction after %s",
-    async (code) => {
+    async (code, sqlState) => {
       jest.useFakeTimers().setSystemTime(
         new Date("2026-08-02T09:00:00.000Z"),
       )
       mockDb.$transaction
-        .mockRejectedValueOnce(Object.assign(new Error("retry"), { code }))
+        .mockRejectedValueOnce(Object.assign(new Error("retry"), { code, meta: { code: sqlState } }))
         .mockImplementationOnce((callback) => callback(mockDb))
       mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(
         missingEvidenceFinding(),
@@ -1912,6 +2427,7 @@ describe("close assurance service", () => {
       decision: "ACCEPTED",
       findingStatus: "RESOLVED",
       resolutionNotes,
+      replacement: closeEvidenceReplacementSelection(replacementBinding()),
       resolvedAt: "2026-08-02T11:00:00.000Z",
       correlationId: "missing-proof-acceptance-corr-1",
       controls: {
@@ -1925,24 +2441,16 @@ describe("close assurance service", () => {
       },
     })
     expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
-      isolationLevel: "Serializable",
+      isolationLevel: "ReadCommitted",
     })
-    expect(mockDb.user.findFirst).toHaveBeenCalledWith({
-      where: {
-        id: "accountant-1",
-        organizationId: "accounting-firm",
-        isActive: true,
-      },
-      select: { id: true },
-    })
-    expect(mockResolveAccountantClientAccess).toHaveBeenCalledWith({
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({
       homeOrganizationId: "accounting-firm",
-      clientOrganizationId: "client-org",
-      accountantUserId: "accountant-1",
-      capability: "REVIEW",
-      now: new Date("2026-08-02T11:00:00.000Z"),
-      client: mockDb,
-    })
+      organizationId: "client-org",
+      actorId: "accountant-1",
+      session: { id: "accountant-session-1", token: "synthetic-service-session-token" },
+    }))
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(2)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenLastCalledWith(new Date("2026-08-02T11:00:00.000Z"))
     expect(mockDb.closeAssuranceFinding.updateMany).toHaveBeenCalledWith({
       where: {
         id: "finding-1",
@@ -1968,8 +2476,10 @@ describe("close assurance service", () => {
         body: resolutionNotes,
         visibility: "ACCOUNTANT_RESPONSE_ACCEPTED",
         correlationId: "missing-proof-acceptance-corr-1",
+        createdAt: new Date("2026-08-02T11:00:00.000Z"),
         metadata: {
           acceptanceType: "MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE",
+          replacementBinding: replacementBinding(),
           requestId: "request-1",
           responseId: "response-1",
           requestCorrelationId: "missing-proof-corr-1",
@@ -1994,6 +2504,7 @@ describe("close assurance service", () => {
           resourceType: "AccountantComment",
           resourceId: "acceptance-1",
           metadata: expect.objectContaining({
+            replacement: closeEvidenceReplacementSelection(replacementBinding()),
             requestId: "request-1",
             responseId: "response-1",
             findingId: "finding-1",
@@ -2012,6 +2523,7 @@ describe("close assurance service", () => {
         sourceId: "finding-1",
         payload: expect.objectContaining({
           acceptanceId: "acceptance-1",
+          replacement: closeEvidenceReplacementSelection(replacementBinding()),
           requestId: "request-1",
           responseId: "response-1",
           respondedById: "client-user-1",
@@ -2029,7 +2541,231 @@ describe("close assurance service", () => {
       expect(serialized).not.toContain(requestText)
       expect(serialized).not.toContain(responseText)
       expect(serialized).not.toContain(resolutionNotes)
+      expect(serialized).not.toContain("synthetic-service-session-token")
     }
+  })
+
+  function seedNewAcceptance() {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(null)
+      .mockResolvedValueOnce(missingEvidenceComment()).mockResolvedValueOnce(missingEvidenceResponse())
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "client-user-1" }))
+    mockDb.accountantComment.create.mockImplementation(({ data }) => Promise.resolve({ id: "acceptance-1", ...data }))
+  }
+
+  it.each(["duplicate request", "unexpected response", "existing acceptance"])("refuses missing-proof response with %s history", async kind => {
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(missingEvidenceComment()).mockResolvedValueOnce(null)
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValue(missingEvidenceFinding({ status: "ASSIGNED", ownerId: "client-user-1" }))
+    mockDb.accountantComment.create.mockResolvedValue(missingEvidenceResponse())
+    mockDb.accountantComment.findMany.mockResolvedValue([{ id: "request-1" }, { id: kind }])
+    await expect(respondToMissingCloseEvidence("client-org", { requestId: "request-1", responseText: "Provide the retained source evidence", correlationId: "new-response" }, { actorId: "client-user-1" })).rejects.toMatchObject({ code: "REVIEW_REQUIRED" })
+    expect(mockDb.closeAssuranceFinding.update).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it.each(["duplicate request", "duplicate response", "existing acceptance"])("refuses missing-proof acceptance with %s history after locking the finding", async kind => {
+    seedNewAcceptance()
+    mockDb.accountantComment.findMany.mockResolvedValue([{ id: "request-1" }, { id: "response-1" }, { id: kind }])
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "REVIEW_REQUIRED" })
+    expectNoAcceptanceEffects()
+  })
+
+  function expectNoAcceptanceEffects() {
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+    expect(mockDb.closeEvidenceItem.create).not.toHaveBeenCalled()
+    expect(mockDb.closeChecklistItem.update).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalled()
+  }
+
+  it("reports a concurrently completed acceptance as stale state rather than ambiguous evidence", async () => {
+    seedNewAcceptance()
+    mockDb.closeAssuranceFinding.findFirst.mockResolvedValueOnce(missingEvidenceFinding({ status: "IN_REVIEW", ownerId: "client-user-1" }))
+      .mockResolvedValueOnce(missingEvidenceFinding({ status: "RESOLVED", ownerId: "client-user-1" }))
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.accountantComment.findMany).not.toHaveBeenCalled()
+    expectNoAcceptanceEffects()
+  })
+
+  it("checks persisted authority before correlation locking and after all decision locks", async () => {
+    seedNewAcceptance()
+    const control = missingEvidenceAcceptanceControl({ requireWorkDeskAccess: true })
+    await acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), control)
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledTimes(1)
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({ homeOrganizationId: "accounting-firm", organizationId: "client-org", actorId: "accountant-1", session: control.session, requireWorkDeskAccess: true }))
+    const initial = mockLockCloseEvidenceAcceptanceAuthorityInTx.mock.invocationCallOrder[0]
+    const [afterCorrelation, final] = mockRevalidateCloseEvidenceAcceptanceAuthority.mock.invocationCallOrder
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(2)
+    expect(initial).toBeLessThan(mockDb.$queryRaw.mock.invocationCallOrder[0])
+    expect(afterCorrelation).toBeGreaterThan(mockDb.$queryRaw.mock.invocationCallOrder[0])
+    expect(afterCorrelation).toBeLessThan(mockDb.accountantComment.findFirst.mock.invocationCallOrder[0])
+    expect(final).toBeGreaterThan(mockGetCloseEvidenceReplacementInTx.mock.invocationCallOrder[0])
+    expect(final).toBeGreaterThan(mockDb.$queryRaw.mock.invocationCallOrder.at(-1)!)
+    expect(final).toBeLessThan(mockDb.closeAssuranceFinding.updateMany.mock.invocationCallOrder[0])
+    expect(mockDb.$queryRaw.mock.calls.some(([query]) => query.text.includes('FOR UPDATE'))).toBe(true)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenLastCalledWith(new Date("2026-08-02T11:00:00.000Z"))
+  })
+
+  it.each(["bound", "legacy"])("denies %s replay when authority is lost during correlation wait", async kind => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    const control = missingEvidenceAcceptanceControl()
+    const saved = missingEvidenceAcceptance()
+    const { replacementBinding: _binding, ...legacyMetadata } = saved.metadata
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(kind === "legacy" ? { ...saved, metadata: legacyMetadata } : saved)
+    let release!: () => void, entered!: () => void
+    const waiting = new Promise<void>(resolve => { entered = resolve })
+    const lock = new Promise(resolve => { release = () => resolve([]) })
+    mockDb.$queryRaw.mockImplementationOnce(() => { entered(); return lock })
+    mockRevalidateCloseEvidenceAcceptanceAuthority.mockRejectedValueOnce(new ForbiddenError("Review authority was revoked while waiting."))
+    const work = acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(kind === "legacy" ? { replacement: undefined } : {}), control)
+    await waiting
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledTimes(1)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+    expectNoAcceptanceEffects()
+    release()
+    await expect(work).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(1)
+    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+    expect(mockGetCloseEvidenceReplacementInTx).not.toHaveBeenCalled()
+    expectNoAcceptanceEffects()
+  })
+
+  it.each([
+    ["authority revoked", new ForbiddenError("Review authority is no longer available.")],
+    ["authority query failure", new Error("Authority storage unavailable")],
+  ])("denies acceptance after replacement lock wait when final check reports %s", async (_label, failure) => {
+    seedNewAcceptance()
+    const control = missingEvidenceAcceptanceControl()
+    let release!: () => void, entered!: () => void
+    const waiting = new Promise<void>(resolve => { entered = resolve })
+    const lockedReplacement = new Promise<void>(resolve => { release = resolve })
+    mockGetCloseEvidenceReplacementInTx.mockImplementationOnce(async () => {
+      entered(); await lockedReplacement
+      return { status: "AVAILABLE", selection: closeEvidenceReplacementSelection(replacementBinding()), binding: replacementBinding(), observedAt: "2026-08-02T10:59:00.000Z" }
+    })
+    mockRevalidateCloseEvidenceAcceptanceAuthority.mockResolvedValueOnce(undefined).mockRejectedValueOnce(failure)
+    const work = acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), control)
+    await waiting
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(1)
+    expectNoAcceptanceEffects()
+    release()
+    if (failure instanceof ForbiddenError) await expect(work).rejects.toBe(failure)
+    else await expect(work).rejects.toMatchObject({ code: "INTERNAL_ERROR", status: 500, expose: false, message: "Missing-proof workflow transaction failed." })
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(2)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority.mock.invocationCallOrder[1]).toBeGreaterThan(mockDb.$queryRaw.mock.invocationCallOrder.at(-1)!)
+    expectNoAcceptanceEffects()
+  })
+
+  it("waits for final persisted authority validation before any acceptance effect", async () => {
+    seedNewAcceptance()
+    const control = missingEvidenceAcceptanceControl()
+    let release!: () => void, entered!: () => void
+    const waiting = new Promise<void>(resolve => { entered = resolve })
+    const validation = new Promise<void>(resolve => { release = resolve })
+    mockRevalidateCloseEvidenceAcceptanceAuthority.mockResolvedValueOnce(undefined).mockImplementationOnce(() => { entered(); return validation })
+    const work = acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), control)
+    await waiting
+    expect(mockGetCloseEvidenceReplacementInTx).toHaveBeenCalledWith(mockDb, "client-org", "finding-1", { lock: true })
+    expectNoAcceptanceEffects()
+    release()
+    await expect(work).resolves.toMatchObject({ id: "acceptance-1", decision: "ACCEPTED" })
+    expect(mockDb.closeAssuranceFinding.updateMany).toHaveBeenCalledTimes(1)
+    expect(mockDb.accountantComment.create).toHaveBeenCalledTimes(1)
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
+  })
+  it.each([
+    ["missing selection", undefined],
+    ["changed checklist", { ...closeEvidenceReplacementSelection(replacementBinding()), checklistItemId: "other-checklist" }],
+    ["changed digest", { ...closeEvidenceReplacementSelection(replacementBinding()), bindingHash: `sha256:${"f".repeat(64)}` }],
+  ] as const)("rejects %s before resolution, audit or events", async (_label, replacement) => {
+    seedNewAcceptance()
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput({ replacement }), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockGetCloseEvidenceReplacementInTx).toHaveBeenCalledWith(mockDb, "client-org", "finding-1", { lock: true })
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("rejects an unavailable locked replacement even when the client retains a formerly valid selection", async () => {
+    seedNewAcceptance()
+    mockGetCloseEvidenceReplacementInTx.mockResolvedValue({ status: "UNAVAILABLE", reason: "ASSESSMENT_STALE" })
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("records the database time after replacement locking and binds every durable acceptance effect", async () => {
+    seedNewAcceptance()
+    const control = missingEvidenceAcceptanceControl()
+    const acceptedAt = new Date("2026-08-02T11:02:00.000Z")
+    mockDb.$queryRaw.mockResolvedValue([{ id: "finding-1", createdAt: acceptedAt }])
+    const result = await acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), control)
+    expect(result).toMatchObject({ replacement: closeEvidenceReplacementSelection(replacementBinding()), resolvedAt: acceptedAt.toISOString(), createdAt: acceptedAt.toISOString() })
+    expect(mockDb.$queryRaw.mock.calls[0][0]).toMatchObject({ text: expect.stringContaining("pg_advisory_xact_lock"), values: [JSON.stringify(["close-evidence-acceptance", "client-org", "missing-proof-acceptance-corr-1"])] })
+    expect(mockDb.$queryRaw.mock.invocationCallOrder.at(-1)).toBeGreaterThan(mockGetCloseEvidenceReplacementInTx.mock.invocationCallOrder[0])
+    expect(mockDb.closeAssuranceFinding.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ resolvedAt: acceptedAt }) }))
+    expect(mockDb.accountantComment.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ createdAt: acceptedAt, metadata: expect.objectContaining({ replacementBinding: replacementBinding(), resolvedAt: acceptedAt.toISOString() }) }) }))
+    expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ replacement: result.replacement }) }) }))
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({ payload: expect.objectContaining({ replacement: result.replacement }) }))
+    expect(mockDb.closeEvidenceItem.create).not.toHaveBeenCalled()
+    expect(mockDb.closeChecklistItem.update).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("rejects a database clock before the verified replacement observation", async () => {
+    seedNewAcceptance()
+    const control = missingEvidenceAcceptanceControl()
+    mockDb.$queryRaw.mockResolvedValue([{ id: "finding-1", createdAt: new Date("2026-08-02T10:58:59.999Z") }])
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), control)).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("revalidates fresh authentication after waiting for replacement locks", async () => {
+    seedNewAcceptance()
+    mockGetCloseEvidenceReplacementInTx.mockImplementationOnce(async () => {
+      const afterWait = new Date("2026-08-02T11:04:00.000Z")
+      jest.setSystemTime(afterWait)
+      mockDb.$queryRaw.mockResolvedValue([{ id: "finding-1", createdAt: afterWait }])
+      return { status: "AVAILABLE", selection: closeEvidenceReplacementSelection(replacementBinding()), binding: replacementBinding(), observedAt: "2026-08-02T10:59:00.000Z" }
+    })
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED", status: 403, message: expect.stringMatching(/fresh authentication/i) })
+    expectNoAcceptanceEffects()
+  })
+
+  it.each([
+    undefined,
+    { ...closeEvidenceReplacementSelection(replacementBinding()), checklistItemId: "other-checklist" },
+    { ...closeEvidenceReplacementSelection(replacementBinding()), bindingHash: `sha256:${"f".repeat(64)}` },
+  ])("rejects reuse of a bound acceptance correlation with a different replacement %j", async replacement => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce(missingEvidenceAcceptance())
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput({ replacement }), missingEvidenceAcceptanceControl())).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockGetCloseEvidenceReplacementInTx).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+  })
+
+  it("replays a historical text-only acceptance as unbound history without manufacturing current replacement proof", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
+    const existing = missingEvidenceAcceptance()
+    const { replacementBinding: _binding, ...metadata } = existing.metadata
+    mockDb.accountantComment.findFirst.mockResolvedValueOnce({ ...existing, metadata })
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput({ replacement: undefined }), missingEvidenceAcceptanceControl())).resolves.toMatchObject({ id: "acceptance-1", replacement: null })
+    expect(mockGetCloseEvidenceReplacementInTx).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledTimes(1)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(1)
   })
 
   it("rejects acceptance without service-level review permission before database work", async () => {
@@ -2093,47 +2829,30 @@ describe("close assurance service", () => {
         acceptanceInput(),
         missingEvidenceAcceptanceControl({ freshAuth }),
       ),
-    ).rejects.toThrow(/fresh authentication/i)
+    ).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED", status: 403, message: expect.stringMatching(/fresh authentication/i) })
 
     expect(mockDb.$transaction).not.toHaveBeenCalled()
   })
 
-  it("rejects an inactive home-tenant accountant before delegated access or client reads", async () => {
+  it.each([
+    ["inactive accountant", "Missing-proof response acceptance requires an active home-tenant accountant."],
+    ["revoked review grant", "Read-only grant cannot request client work"],
+  ])("propagates initial persisted authority refusal for %s before correlation or client reads", async (_label, message) => {
     jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
-    mockDb.user.findFirst.mockResolvedValue(null)
+    mockLockCloseEvidenceAcceptanceAuthorityInTx.mockRejectedValue(new ForbiddenError(message))
 
-    await expect(
-      acceptMissingCloseEvidenceResponse(
-        "accounting-firm",
-        acceptanceInput(),
-        missingEvidenceAcceptanceControl(),
-      ),
-    ).rejects.toThrow(/active home-tenant accountant/i)
+    await expect(acceptMissingCloseEvidenceResponse("accounting-firm", acceptanceInput(), missingEvidenceAcceptanceControl())).rejects.toThrow(message)
 
-    expect(mockResolveAccountantClientAccess).not.toHaveBeenCalled()
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledWith(mockDb, expect.objectContaining({ homeOrganizationId: "accounting-firm", organizationId: "client-org", actorId: "accountant-1" }))
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).not.toHaveBeenCalled()
+    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
     expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
+    expect(mockGetCloseEvidenceReplacementInTx).not.toHaveBeenCalled()
+    expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
-
-  it("fails closed when delegated REVIEW access is denied", async () => {
-    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
-    mockResolveAccountantClientAccess.mockRejectedValue(
-      new ForbiddenError("Read-only grant cannot request client work"),
-    )
-
-    await expect(
-      acceptMissingCloseEvidenceResponse(
-        "accounting-firm",
-        acceptanceInput(),
-        missingEvidenceAcceptanceControl(),
-      ),
-    ).rejects.toThrow(/read-only grant/i)
-
-    expect(mockResolveAccountantClientAccess).toHaveBeenCalledWith(
-      expect.objectContaining({ capability: "REVIEW" }),
-    )
-    expect(mockDb.accountantComment.findFirst).not.toHaveBeenCalled()
-  })
-
   it.each([
     ["missing request", null, missingEvidenceResponse(), /request not found/i],
     [
@@ -2269,6 +2988,8 @@ describe("close assurance service", () => {
     expect(mockDb.closeAssuranceFinding.findFirst).not.toHaveBeenCalled()
     expect(mockDb.closeAssuranceFinding.updateMany).not.toHaveBeenCalled()
     expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockLockCloseEvidenceAcceptanceAuthorityInTx).toHaveBeenCalledTimes(1)
+    expect(mockRevalidateCloseEvidenceAcceptanceAuthority).toHaveBeenCalledTimes(1)
     expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
@@ -2317,7 +3038,7 @@ describe("close assurance service", () => {
     expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it("retries acceptance after a serializable transaction conflict", async () => {
+  it("retries acceptance after a retryable transaction conflict without duplicating effects", async () => {
     jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
     mockDb.$transaction
       .mockRejectedValueOnce(Object.assign(new Error("retry"), { code: "P2034" }))
@@ -2623,7 +3344,7 @@ describe("close assurance service", () => {
 
   it("marks missing domain evidence unavailable without leaking dependency internals", async () => {
     mockReconcileLedger.mockRejectedValue(new Error("database://ledger-secret host failed"))
-    mockGetPaymentReconciliationDashboardData.mockRejectedValue(
+    mockGetPaymentCloseEvidence.mockRejectedValue(
       new Error("redis://payment-secret timeout"),
     )
     mockGetAccountantPortalData.mockRejectedValue(new Error("sql://trust-secret failed"))

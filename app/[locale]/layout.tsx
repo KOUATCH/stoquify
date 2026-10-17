@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { notFound } from "next/navigation"
 import { setRequestLocale } from "next-intl/server"
 import type { Locale } from "@/types/bilingual"
+import { DocumentLanguage } from "@/components/i18n/DocumentLanguage"
 
 export const dynamic = "force-dynamic"
 
@@ -28,5 +29,5 @@ export default async function LocaleLayout({
   const paymentRequest = (await import(`@/messages/payment-request/${locale}.json`)).default
   const paymentExecution = (await import(`@/messages/payment-execution/${locale}.json`)).default
   const paymentPostingRecovery = (await import(`@/messages/payment-posting-recovery/${locale}.json`)).default
-  return <NextIntlClientProvider locale={locale} messages={{ ...messages, paymentRequest, paymentExecution, paymentPostingRecovery }}>{children}</NextIntlClientProvider>
+  return <NextIntlClientProvider locale={locale} messages={{ ...messages, paymentRequest, paymentExecution, paymentPostingRecovery }}><DocumentLanguage locale={locale as Locale} />{children}</NextIntlClientProvider>
 }

@@ -1,0 +1,43 @@
+[
+  {
+    "path": "config/permissions.ts",
+    "sha256": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "functions": "pure module",
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  },
+  {
+    "path": "lib/security/rbac-permissions.ts",
+    "sha256": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "functions": "pure module",
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  },
+  {
+    "path": "services/modules/module-control-contracts.ts",
+    "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "functions": "pure module",
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  },
+  {
+    "path": "services/modules/module-catalog.service.ts",
+    "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "functions": "pure module",
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  },
+  {
+    "path": "services/modules/module-entitlement.service.ts",
+    "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "functions": [
+      "deriveLegacyEntitlements",
+      "evaluateModuleEntitlement",
+      "entitlementBlockReason",
+      "normalizeNow"
+    ],
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  },
+  {
+    "path": "services/operating-access/operating-access-scope-contracts.ts",
+    "sha256": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "functions": "pure module",
+    "method": "TypeScript transpile + isolated VM; imports allowlisted; no DB service imports"
+  }
+]

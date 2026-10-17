@@ -19,6 +19,7 @@ export type ReconciliationFailure = {
 
 export type LedgerReconciliationInput = {
   periodId?: string
+  recordedThrough?: Date
 }
 
 export type LedgerReconciliationResult = {
@@ -71,8 +72,12 @@ export async function reconcileLedger(
   tx: Prisma.TransactionClient | typeof db = db,
 ): Promise<LedgerReconciliationResult> {
   await assertPeriodBelongsToOrg(organizationId, input.periodId, tx)
+  if (input.recordedThrough && !Number.isFinite(input.recordedThrough.getTime())) throw new BusinessRuleError("Invalid close evidence cutoff")
+  const recorded = input.recordedThrough ? { createdAt: { lte: input.recordedThrough } } : {}
 
   const journalEntryWhere: Prisma.JournalEntryWhereInput = {
+    ...recorded,
+    ...(input.recordedThrough ? { postedAt: { lte: input.recordedThrough } } : {}),
     organizationId,
     ...(input.periodId ? { periodId: input.periodId } : {}),
     status: { in: [...postedStatuses] },
@@ -101,6 +106,7 @@ export async function reconcileLedger(
     }),
     tx.ledgerPostingBatch.findMany({
       where: {
+        ...recorded,
         organizationId,
         ...(input.periodId ? { periodId: input.periodId } : {}),
         status: LedgerPostingBatchStatus.POSTED,
@@ -115,6 +121,7 @@ export async function reconcileLedger(
     }),
     tx.accountingSourceLink.findMany({
       where: {
+        ...recorded,
         organizationId,
         ...(input.periodId ? { postingBatch: { periodId: input.periodId } } : {}),
       },

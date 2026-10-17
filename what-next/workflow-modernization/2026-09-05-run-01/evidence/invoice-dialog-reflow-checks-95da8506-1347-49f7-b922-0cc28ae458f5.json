@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-30T21:56:41.977Z",
+  "sourceBefore": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf"
+  },
+  "results": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx",
+        "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 154998,
+      "log": "what-next/workflow-modernization/2026-09-05-run-01/evidence/invoice-dialog-reflow-checks-95da8506-1347-49f7-b922-0cc28ae458f5-jest.log",
+      "logSha256": "898ffe1563ce06f2d10ace2a45205678937ba8232f07b19b2466a22f422438f2",
+      "tail": "\nTest Suites: 2 passed, 2 total\nTests:       17 passed, 17 total\nSnapshots:   0 total\nTime:        79.043 s\nRan all test suites within paths \"components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx\", \"components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx\".\n"
+    },
+    {
+      "name": "eslint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/purchasing/InvoicePreparationWorkbench.tsx",
+        "components/purchasing/InvoiceCorrectionWorkbench.tsx"
+      ],
+      "exitCode": 0,
+      "elapsedMs": 14202,
+      "log": "what-next/workflow-modernization/2026-09-05-run-01/evidence/invoice-dialog-reflow-checks-95da8506-1347-49f7-b922-0cc28ae458f5-eslint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "tail": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf"
+  },
+  "sourceStable": true,
+  "passed": true
+}

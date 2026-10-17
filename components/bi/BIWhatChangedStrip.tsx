@@ -71,7 +71,7 @@ export function BIWhatChangedStrip({
                 <div className="shrink-0 text-left text-xs text-[var(--dash-text-soft)] lg:text-right">
                   {change.direction === "observed" ? (
                     <>
-                      <p className="font-medium text-[var(--dash-text)]">{change.unit === "risk" ? observedCopy.score : observedCopy.value}: {change.currentValue ?? t.none}{change.unit && change.unit !== "risk" ? ` ${change.unit}` : ""}</p>
+                      <p className="font-medium text-[var(--dash-text)]">{change.unit === "risk" ? observedCopy.score : observedCopy.value}: {change.currentValue ?? t.none}{change.unit && change.unit !== "risk" ? ` ${displayUnit(change.unit, locale)}` : ""}</p>
                       <p>{observedCopy.unavailable}</p>
                     </>
                   ) : <p className="font-medium text-[var(--dash-text)]">{formatChangeValue(change.previousValue, change.currentValue, change.unit, locale)}</p>}
@@ -112,7 +112,14 @@ function DirectionIcon({ direction }: { direction: BIChangeDirection }) {
 function formatChangeValue(previousValue: number | string | null, currentValue: number | string | null, unit: string | null, locale: string) {
   const previous = previousValue ?? biCopy[biLocale(locale)].none
   const current = currentValue ?? biCopy[biLocale(locale)].none
-  return `${previous} -> ${current}${unit ? ` ${unit}` : ""}`
+  return `${previous} -> ${current}${unit ? ` ${displayUnit(unit, locale)}` : ""}`
+}
+
+function displayUnit(unit: string, locale: string) {
+  const labels: Record<string, string> = biLocale(locale) === "fr"
+    ? { items: "éléments", orders: "commandes", score: "points" }
+    : { score: "points" }
+  return Object.prototype.hasOwnProperty.call(labels, unit) ? labels[unit] : unit
 }
 
 function formatDateTime(value: string, locale: string, timeZone: string) {

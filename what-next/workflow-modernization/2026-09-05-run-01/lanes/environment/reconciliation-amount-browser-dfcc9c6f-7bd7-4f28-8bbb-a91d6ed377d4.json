@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-27T15:37:20.946Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "7b9b299dc295ae8d8fe93b75f6f0551ca8b35b6db9d5e1cbbe208a8f134e7601",
+    "components/finance/ReconciliationSignReview.tsx": "7d547d9df874ded20721d7191f0dcf5cb74003074f577d51d1d08408461bab30",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmujzfdoq0000ma1wk7r0abed",
+      "runId": "cmujzfdu1001ama1wi7e858nt",
+      "screenshots": [
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-en-review-320.png",
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-en-review-768.png",
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-en-review-1440.png",
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-en-text-enlargement.png",
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-en-signed.png"
+      ],
+      "errors": [],
+      "entryMs": 39021,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "organizationId": "cmujzgjqv002cma1wuniisu1q",
+      "runId": "cmujzgju0003mma1wgcgzka1g",
+      "screenshots": [
+        "reconciliation-amount-browser-dfcc9c6f-7bd7-4f28-8bbb-a91d6ed377d4-fr-failure.png"
+      ],
+      "errors": [],
+      "entryMs": 9145,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('region', { name: 'Signature indépendante du rapprochement', exact: true }).locator('div').filter({ has: getByText('Paiements internes', { exact: true }) }).filter({ has: locator('dd') }).last().locator('dd')\nExpected: \"100.25 XAF\"\nReceived: \"1\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Signature indépendante du rapprochement', exact: true }).locator('div').filter({ has: getByText('Paiements internes', { exact: true }) }).filter({ has: locator('dd') }).last().locator('dd')\n    119 × locator resolved to <dd>1</dd>\n        - unexpected value \"1\"\n",
+      "stack": [
+        "Error: expect(locator).toHaveText(expected) failed",
+        "",
+        "Locator:  getByRole('region', { name: 'Signature indépendante du rapprochement', exact: true }).locator('div').filter({ has: getByText('Paiements internes', { exact: true }) }).filter({ has: locator('dd') }).last().locator('dd')",
+        "Expected: \"100.25 XAF\"",
+        "Received: \"1\""
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('region', { name: 'Signature indépendante du rapprochement', exact: true }).locator('div').filter({ has: getByText('Paiements internes', { exact: true }) }).filter({ has: locator('dd') }).last().locator('dd')\nExpected: \"100.25 XAF\"\nReceived: \"1\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Signature indépendante du rapprochement', exact: true }).locator('div').filter({ has: getByText('Paiements internes', { exact: true }) }).filter({ has: locator('dd') }).last().locator('dd')\n    119 × locator resolved to <dd>1</dd>\n        - unexpected value \"1\"\n",
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "7b9b299dc295ae8d8fe93b75f6f0551ca8b35b6db9d5e1cbbe208a8f134e7601",
+    "components/finance/ReconciliationSignReview.tsx": "7d547d9df874ded20721d7191f0dcf5cb74003074f577d51d1d08408461bab30",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408"
+  },
+  "sourceStable": true
+}

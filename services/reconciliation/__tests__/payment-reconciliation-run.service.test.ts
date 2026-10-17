@@ -13,6 +13,14 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { lockReconciliationClosePeriodsInTx } from "../reconciliation-close-order.service"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+jest.mock("server-only", () => ({}))
+jest.mock("../reconciliation-close-order.service", () => ({
+  ...jest.requireActual("../reconciliation-close-order.service"),
+  lockReconciliationCloseCatalogInTx: jest.fn(), lockReconciliationClosePeriodsInTx: jest.fn(),
+}))
+jest.mock("@/services/accounting/close-assurance-pack.service", () => ({ recordCloseCertificationInvalidationsForSourceInTx: jest.fn() }))
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
@@ -64,6 +72,7 @@ function amount(value: number | string) {
 describe("durable payment reconciliation run service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockResolvedValue(["prior-period", "current-period"])
     mockedDb.$queryRaw.mockImplementation(async query => query.sql.includes('"organizations"') ? [{ id: "org-1", requestedModules: [] }] : [{ id: "provider-account-1" }])
     ;(assertModuleNewWorkInTx as jest.Mock).mockReset().mockResolvedValue(undefined)
     mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
@@ -127,7 +136,7 @@ describe("durable payment reconciliation run service", () => {
     mockedDb.providerEvent.findMany.mockResolvedValue([{ id: "provider-event-1", providerEventId: "evt-1", providerTransactionId: "txn-1", providerReference: "ref-1", amount: amount(10000), currencyCode: "XAF", direction: PaymentDirection.INBOUND, status: ProviderEventStatus.VERIFIED, signatureValid: true }])
     mockedDb.statementLine.findMany.mockResolvedValue([])
     await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", businessDate: new Date("2026-09-05"), runById: "maker-1" })).resolves.toMatchObject({ runId: "run-1", status: ReconciliationRunStatus.READY_FOR_SIGNOFF, matchCount: 1, exceptionCount: 0 })
-    expect(mockedDb.$queryRaw).toHaveBeenCalledTimes(2)
+    expect(mockedDb.$queryRaw).toHaveBeenCalledTimes(4)
     expect(mockedDb.matchRecord.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ paymentTransactionId: "payment-transaction-1", providerEventId: "provider-event-1", reconciliationRunId: "run-1" }) }))
   })
 
@@ -185,6 +194,10 @@ describe("durable payment reconciliation run service", () => {
       suspenseAmount: "5000.00",
       correlationId: "corr-1",
     })
+    expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(mockedDb, "org-1", expect.objectContaining({
+      sourceCode: "PAYMENT_RECONCILIATION_CREATED", sourceId: "run-1", periodIds: ["prior-period", "current-period"],
+    }), expect.any(Object))
+    expect((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(mockedDb.reconciliationRun.create.mock.invocationCallOrder[0])
     expect(mockedDb.matchRecord.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

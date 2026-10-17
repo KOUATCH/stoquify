@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-27T14:42:24.878Z",
+  "input": "source-withdrawal-426b3f37-d90e-48a1-b103-2137df67b2d3.json",
+  "cases": [
+    {
+      "kind": "statement",
+      "organizationId": "cmujx7npe0000maw8s5cdd7vo",
+      "distinctCertificateEvents": 2,
+      "durableInboxObservations": 2,
+      "duplicateWorkerRetry": true
+    },
+    {
+      "kind": "event",
+      "organizationId": "cmujx7tf7003nmaw85n2q27kj",
+      "distinctCertificateEvents": 2,
+      "durableInboxObservations": 2,
+      "duplicateWorkerRetry": true
+    }
+  ],
+  "inputHash": "49563fd81e1249926d24df08d69f0efc2b4c816d57a0c0dba48f333945d89403",
+  "sourcesBefore": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7"
+  },
+  "passed": true,
+  "sourcesAfter": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7"
+  },
+  "sourceStable": true
+}

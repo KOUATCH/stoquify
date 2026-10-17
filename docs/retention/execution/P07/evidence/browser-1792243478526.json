@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-17T13:24:38.526Z",
+  "fixture": "p07-org-0c693256c666",
+  "steps": [
+    {
+      "name": "Authenticated empty guidance; five outstanding opening requirements"
+    },
+    {
+      "name": "Rejected incomplete mapping retained; zero domain writes"
+    },
+    {
+      "name": "CUSTOMER proposed/reviewed/imported through actual actions; opening stays unverified",
+      "batchId": "cmvcfj0yx000qma1s3r0uv9jh"
+    }
+  ],
+  "origin": "http://127.0.0.1:3188",
+  "browser": "149.0.7827.55",
+  "before": {
+    "customers": 0,
+    "suppliers": 0,
+    "items": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0
+  },
+  "status": "FAIL",
+  "error": "page.waitForEvent: Timeout 90000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\browser.cjs:36:31)"
+}

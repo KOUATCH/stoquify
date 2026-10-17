@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-04T08:16:06.971Z",
+  "report": "CLOSE_DELEGATED_HISTORY_2026-10-04.md",
+  "registerBefore": "4316314878375b5ead4106ccac90441215cb501c062085ecbf11d7955d946902",
+  "registerAfter": "85354e3f16c56da18353a887daca305159fd0cda931a0a39ae52abcba6577419",
+  "progressBefore": "4f0adbac07353b7c7d20b92a7b3143aecdfefccf96b4a09a20fb1d32ba798e51",
+  "progressAfter": "179e89bce57bc793463fa1e3d5710037de653e6e6e0d67506d2d540e48e90648",
+  "counts": {
+    "Queued": 264,
+    "Complete—verified": 4,
+    "In progress": 2
+  },
+  "bindings": {
+    "evidence/close-evidence-recovery-jest-a0c352a2-fa21-4063-b940-4a0e959f4e47.json": "f24fbbd084bee5b828c9c4b0c408ebf80d0abb588f2609505e600fb1e2ca0348",
+    "evidence/close-evidence-recovery-typecheck-64e1e598-7198-4489-8852-0a00bc2feac1.json": "bb6df059c943f9bbd9b4ff70e31aae17a97ae963a538a93edfe528ac3f649f00",
+    "evidence/close-evidence-recovery-lint-f1b1cd8e-3146-4ce2-9fbb-16f0013b2c50.json": "50e6f81ce413ef2309168030b92261268b5fcf83e753000c82088c4a4d3d0daa",
+    "lanes/environment/close-delegated-history-ae7171f7-3af3-435b-bbcd-d54c877a4a89.json": "b1c8292d7bf16c5f164be33c4eb36bfc0d9cf9076bbfec8fda7aa5764fe0d215",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1.json": "c64917a698c6911a2606ea1cadbcc14f9a66ead89b06c7cf963ffb8e7769f04d",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-en-1440.png": "e5811185fd2d7120815591262a212e5e0c173f28faba90b29a49e7fe63e9d5f3",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-en-768.png": "0b8bba4ca99fb43478f16d4eee1cc893ac0896b30e0bc1ddfbb82130d3247b29",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-en-320.png": "53033367f37fe6d1fba1f306d879f7ce7dbb559f489991413a19ec01efae3382",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-fr-1440.png": "652a2cadb46c5e37e6cc3436338ebef39e7a1227ff4aef1b3fa1ed7f6a5586ee",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-fr-768.png": "7f01dc948a92521802e03abe8ce2cf36c95f46f1332da785dcea611d96aa7963",
+    "lanes/environment/close-delegated-history-browser-b6648be5-abea-4566-852a-0a80987a25a1-fr-320.png": "8c6f8db74ef51c72bf6aa55944257f4fd6a20692ef54cf8b0978800c901c78fa",
+    "CLOSE_DELEGATED_HISTORY_2026-10-04.md": "a0d75abb2426e127ef85137c34ed5489ea639e32f61ce6b32848c2eb56ae096d"
+  },
+  "workflowClosures": 0,
+  "goalComplete": false,
+  "passed": true,
+  "writeRecovery": "Initial publisher completed the register and wrote the new progress text but Windows ftruncate failed, retaining an old suffix. Surgical apply_patch removed only the suffix; this finalizer validates the saved files, original backups, all current evidence and build. No domain or database writes."
+}

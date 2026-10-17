@@ -14,6 +14,8 @@ jest.mock("@/actions/payments/exception-link.actions", () => ({ readReconciliati
 
 jest.mock("@/hooks/payments/usePaymentReconciliationDashboard", () => ({ useResolveSuspenseItem: jest.fn() }))
 jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn() }))
+jest.mock("@/actions/payments/exception-closure.actions", () => ({}))
+
 jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
 jest.mock("next-intl", () => ({ useLocale: jest.fn(() => "en"), useTranslations: jest.fn(() => translator("en")) }))
 jest.mock("lucide-react", () => {
@@ -39,9 +41,12 @@ function translator(locale: "en" | "fr") {
   const messages = (locale === "en" ? en : fr).paymentReconciliationWorkbench
   return ((key: string) => key.split(".").reduce<unknown>((value, part) => (value as Record<string, unknown>)[part], messages)) as ReturnType<typeof useTranslations>
 }
+function PermissionBoundQueue(props: Omit<React.ComponentProps<typeof PaymentSuspenseQueue>, "authority">) {
+  return <PaymentSuspenseQueue {...props} authority={usePermissions()} />
+}
 function view(items = [item], locale: "en" | "fr" = "en") {
   jest.mocked(useLocale).mockReturnValue(locale)
-  return <PaymentSuspenseQueue scope={scope} items={items} money={value => String(value)} formatDateTime={value => String(value)} t={translator(locale)} typeOptions={["UNKNOWN_CREDIT", "OTHER"]} />
+  return <PermissionBoundQueue scope={scope} items={items} money={value => String(value)} formatDateTime={value => String(value)} t={translator(locale)} typeOptions={["UNKNOWN_CREDIT", "OTHER"]} />
 }
 const labels = en.paymentReconciliationWorkbench.suspenseWorkflow
 beforeEach(() => {

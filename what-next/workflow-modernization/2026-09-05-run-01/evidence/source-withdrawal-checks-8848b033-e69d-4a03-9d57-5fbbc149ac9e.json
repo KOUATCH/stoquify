@@ -1,0 +1,99 @@
+{
+  "startedAt": "2026-09-27T14:36:16.096Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7",
+    "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5e4001b694b20edfd944538be1016af05bcf8b944262c35b73c4f391f786f958",
+    "messages/en.json": "ea88588f42c405c9131352b67a54ec2f429052d33f27790f542a1306eda9d327",
+    "messages/fr.json": "5b3b86b5d2a245daa68e389b74408e8434574c322623049e7bd29830992128bc"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts",
+        "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts",
+        "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts",
+        "services/reconciliation/__tests__/payment-exception-closure.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts",
+        "actions/payments/__tests__/exception-closure.actions.test.ts",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+      ],
+      "startedAt": "2026-09-27T14:36:16.126Z",
+      "endedAt": "2026-09-27T14:40:11.012Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 9 passed, 9 total\nTests:       208 passed, 208 total\nSnapshots:   0 total\nTime:        184.046 s\nRan all test suites within paths \"services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts\", \"services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts\", \"services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts\", \"services/reconciliation/__tests__/payment-exception-closure.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts\", \"actions/payments/__tests__/exception-closure.actions.test.ts\", \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/reconciliation/payment-source-decision-withdrawal.ts",
+        "services/reconciliation/payment-exception-closure.contracts.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts",
+        "services/reconciliation/payment-corroborating-source-evidence.ts",
+        "services/reconciliation/payment-exception-closure-evidence.service.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts",
+        "components/finance/PaymentExceptionClosurePanel.tsx"
+      ],
+      "startedAt": "2026-09-27T14:40:11.024Z",
+      "endedAt": "2026-09-27T14:42:08.857Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-09-27T14:42:08.857Z",
+      "endedAt": "2026-09-27T14:42:47.799Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3664559e532392a8a452d56b2a116e28044ec30d8f093105335f761bd0db9ed7",
+    "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5e4001b694b20edfd944538be1016af05bcf8b944262c35b73c4f391f786f958",
+    "messages/en.json": "ea88588f42c405c9131352b67a54ec2f429052d33f27790f542a1306eda9d327",
+    "messages/fr.json": "5b3b86b5d2a245daa68e389b74408e8434574c322623049e7bd29830992128bc"
+  },
+  "sourceStable": true,
+  "passed": true,
+  "endedAt": "2026-09-27T14:42:47.805Z"
+}

@@ -1,0 +1,89 @@
+{
+  "purpose": "Synthetic proof read and transport recovery; no financial processing",
+  "at": "2026-09-28T09:29:30.453Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "state": "active",
+      "cachedButton": true,
+      "currentModuleReadAllowed": true,
+      "responseContainsSubject": true
+    },
+    {
+      "locale": "en",
+      "state": "suspended",
+      "cachedButton": true,
+      "currentModuleReadAllowed": false,
+      "responseContainsSubject": false
+    },
+    {
+      "locale": "en",
+      "state": "expired",
+      "cachedButton": true,
+      "currentModuleReadAllowed": false,
+      "responseContainsSubject": false
+    },
+    {
+      "locale": "en",
+      "state": "read_only",
+      "cachedButton": true,
+      "currentModuleReadAllowed": true,
+      "responseContainsSubject": true
+    },
+    {
+      "locale": "fr",
+      "state": "active",
+      "cachedButton": true,
+      "currentModuleReadAllowed": true,
+      "responseContainsSubject": true
+    },
+    {
+      "locale": "fr",
+      "state": "suspended",
+      "cachedButton": true,
+      "currentModuleReadAllowed": false,
+      "responseContainsSubject": false
+    },
+    {
+      "locale": "fr",
+      "state": "expired",
+      "cachedButton": true,
+      "currentModuleReadAllowed": false,
+      "responseContainsSubject": false
+    },
+    {
+      "locale": "fr",
+      "state": "read_only",
+      "cachedButton": true,
+      "currentModuleReadAllowed": true,
+      "responseContainsSubject": true
+    }
+  ],
+  "stage": "fr read_only",
+  "responseContainsSubject": true,
+  "noPaymentMutation": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035"
+  },
+  "sourceStable": true
+}

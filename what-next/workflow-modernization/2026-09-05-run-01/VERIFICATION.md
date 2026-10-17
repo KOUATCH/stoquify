@@ -1,4 +1,14 @@
+Current signing closure: [criterion/source audit](RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md), [operating and recovery guide](RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md). [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md) identifies the active workflow and current totals; earlier checkpoints below retain their original scope.
+
+Current PR-10 authority and contrast verification: [2026-09-27 milestone](RECONCILIATION_SIGN_AUTHORITY_2026-09-27.md), with [13-file source binding](evidence/sign-authority-current-bindings.json). Parent workflow remains In progress.
+
 # Verification — current progress
+
+Current PR-10 milestone: [current amount review, version 3 certificates, operator guidance and evidence](RECONCILIATION_AMOUNT_REVIEW_2026-09-27.md). PR-10 remains In progress; authority/accessibility reconciliation and warm-entry latency remain.
+
+Current PR-10 checkpoint: [independent source withdrawal, retained certificate, repeat signing and EN/FR verification](RECONCILIATION_SOURCE_WITHDRAWAL_2026-09-27.md). This is partial workflow verification, not another closure.
+
+Current 2026-09-27 Digest closure: [single final verification record](DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md), [source-bound receipt](evidence/digest-closure-2026-09-27.json). Historical checkpoints below remain unchanged. Current counts and next primary are in [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md).
 
 | Check | Result and boundary |
 | --- | --- |
@@ -1281,3 +1291,7 @@ Missing close scores remain null; each KPI retains its own source availability, 
 41 tests/four suites, three-file lint, typecheck and EN/FR actual missing-score/contained-badge verification at 1440/768/320 passed. No selected business effects. Next: actual receiving-delay semantics, urgency/freshness, remaining localization and full lifecycle verification.
 
 Coverage: 270 provisional workflows / 0 fully verified / 191 unmapped sources. Whole-platform completion remains false.
+
+Current PR-10 module-authority milestone: [transaction grant matrix, real lock orderings and EN/FR retained retry/export](RECONCILIATION_SIGN_MODULE_BOUNDARY_2026-09-27.md). Five passed receipts bind to 16 current sources; PR-10 remains In progress.
+
+PR-10 authentication recovery: [focus correction, accurate identity-failure copy, EN/FR recovery and final 100-test result](RECONCILIATION_SIGN_AUTH_RECOVERY_2026-09-27.md). Independent catalogue dictionary edits are preserved and precisely excluded from reconciliation evidence comparison; full closure remains pending.

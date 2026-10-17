@@ -31,6 +31,7 @@ import {
   postStockAdjustment,
   type PostStockAdjustmentResult,
 } from "./inventory-adjustment.service"
+import { lockPhysicalCountPeriodCatalogInTx, lockPhysicalCountCloseAssessmentPeriodsInTx, recordInventoryValuationCloseInvalidationInTx } from "./inventory-close-invalidation.service"
 
 type DbClient = Prisma.TransactionClient | typeof db
 
@@ -630,12 +631,22 @@ export async function postStockCount(
     const countSheetHash = parsed.countSheetHash ?? session.countSheetHash
     assertCountCanPost(session, parsed.approvedById, countSheetHash)
     const occurredAt = parsed.occurredAt ?? session.countDate
-    await getOpenPeriodForDate(parsed.organizationId, occurredAt, tx)
 
     const varianceLines = session.lines.filter((line) => !decimal3(line.varianceQuantity ?? 0).eq(0))
     const totalVarianceValue = varianceLines
       .reduce((total, line) => total.plus(line.varianceValue ?? 0), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
+    if (varianceLines.length === 0) {
+      await lockPhysicalCountPeriodCatalogInTx(tx, parsed.organizationId)
+    }
+    const period = await getOpenPeriodForDate(parsed.organizationId, occurredAt, tx)
+    if (varianceLines.length === 0) {
+      await lockPhysicalCountCloseAssessmentPeriodsInTx(tx, {
+        organizationId: parsed.organizationId,
+        periodId: period.id,
+        occurredAt: session.countDate < occurredAt ? session.countDate : occurredAt,
+      })
+    }
     let adjustmentResult: PostStockAdjustmentResult | undefined
 
     if (varianceLines.length > 0) {
@@ -787,6 +798,23 @@ export async function postStockCount(
 
     await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
 
+    if (varianceLines.length === 0) {
+      // A completed count changes close evidence even when no stock moves.
+      // The count fingerprint uses countDate, and its event remains in every
+      // later period's fingerprint. Cover both dates conservatively in one pass.
+      await recordInventoryValuationCloseInvalidationInTx(tx, {
+        organizationId: parsed.organizationId,
+        sourceCode: "INVENTORY_PHYSICAL_COUNT_VALIDATED",
+        sourceId: session.id,
+        periodId: period.id,
+        occurredAt: session.countDate < occurredAt ? session.countDate : occurredAt,
+        includeLaterPeriods: true,
+        actorId: parsed.approvedById,
+        documentHash: countSheetHash!,
+        correlationId: parsed.correlationId ?? null,
+      })
+    }
+
     return {
       countSession: postedSession,
       eventId: eventResult.event.id,
@@ -802,6 +830,6 @@ export async function postStockCount(
     }
   }
 
-  if (hasTransaction(client)) return client.$transaction(run)
+  if (hasTransaction(client)) return client.$transaction(run, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
   return run(client)
 }

@@ -7,7 +7,8 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -16,8 +17,16 @@ import {
 } from "@/services/controls/sensitive-action.service"
 import {
   recordPostedJournalCloseInvalidationInTx,
-  recordReversedJournalCloseInvalidationsInTx,
+  recordOrderedReversedJournalCloseInvalidationsInTx,
 } from "./journal-close-invalidation.service"
+import {
+  lockJournalReversalCatalogInTx,
+  lockJournalReversalClosePeriodsInTx,
+} from "./journal-reversal-order.service"
+import {
+  lockJournalPostingCatalogInTx,
+  lockJournalPostingClosePeriodsInTx,
+} from "./journal-posting-order.service"
 import {
   assertBalancedJournalEntry,
   assertSameOrganizationAccounts,
@@ -41,6 +50,8 @@ export type AccountingControlContext = {
   actorPermissions: readonly string[]
   lastAuthAt?: Date | number | string | null
   now?: Date | number | string | null
+  /** Manual posting and reversal revalidate server-derived authority after waits. */
+  assertCurrentAuthority?: () => Promise<void>
 }
 
 type ControlledResult<T> =
@@ -250,7 +261,33 @@ export async function postJournalEntry(
   actorId?: string | null,
   control?: AccountingControlContext,
 ) {
+  const startedAt = Date.now()
+  const suppliedNow = control?.now == null ? startedAt : new Date(control.now).getTime()
+  const controlStartedAt = Number.isFinite(suppliedNow) ? suppliedNow : startedAt
   const result = await db.$transaction(async (tx) => {
+    const moduleWriteAllowed = async () => {
+      const decision = await evaluateModuleAccessInTx(tx, {
+        organizationId, userId: actorId, actorPermissions: control?.actorPermissions ?? [],
+        moduleSlug: "accounting", surfaceType: "action",
+        surface: "services/accounting/posting.service.ts:postJournalEntry", accessIntent: "write", mode: "enforce",
+      })
+      if (!decision.allowed) await tx.auditLog.create({ data: {
+        organizationId, userId: actorId, entityType: "ModuleEntitlementDecision", entityId: "accounting:manual-journal-post",
+        action: "MODULE_ENTITLEMENT_ENFORCED", changes: {
+          moduleSlug: decision.moduleSlug, surface: decision.surface, accessIntent: decision.accessIntent,
+          result: decision.result, allowed: false, reason: decision.reason, entitlementStatus: decision.entitlement?.status ?? null,
+          missingDependencies: decision.missingDependencies.map(item => item.dependsOnSlug),
+          rbacWildcardPresent: decision.rbacWildcardPresent, rbacWildcardBypassedEntitlement: false,
+        },
+      } })
+      return decision.allowed
+    }
+    // Completion ignores stop-new-work policy, but still needs writable grants.
+    // Hold authority locks before accounting locks so configuration cannot race.
+    if (!await moduleWriteAllowed()) return { moduleDenied: true }
+    await lockJournalPostingCatalogInTx(tx, organizationId)
+    await tx.$queryRaw`SELECT id FROM journal_entries WHERE id = ${journalEntryId} AND "organizationId" = ${organizationId} FOR UPDATE`
+    // Read Committed sees a competing post that completed while this row waited.
     const entry = await tx.journalEntry.findFirst({
       where: { id: journalEntryId, organizationId },
       include: {
@@ -263,9 +300,25 @@ export async function postJournalEntry(
     if (entry.status !== JournalEntryStatus.DRAFT) {
       throw new BusinessRuleError("Only draft journal entries can be posted")
     }
-
     const period = await getOpenPeriodForDate(organizationId, entry.entryDate, tx)
     if (period.id !== entry.periodId) throw new BusinessRuleError("Journal accounting period changed. Review the entry before posting.")
+    if (entry.sourceType !== AccountingSourceType.MANUAL) {
+      throw new BusinessRuleError("Source-owned journals must be posted through their source workflow")
+    }
+
+    // Revalidate persisted drafts, including drafts created before the FX fix.
+    // An invalid historical draft needs an explicit correction; posting must
+    // not silently rewrite its economic evidence.
+    for (const line of entry.lines) {
+      const rate = line.exchangeRate
+      if (!rate?.isFinite() || rate.lte(0) ||
+        !line.baseDebit?.eq(line.debit.times(rate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP)) ||
+        !line.baseCredit?.eq(line.credit.times(rate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP))) {
+        throw new BusinessRuleError("Journal base amounts do not match the recorded exchange rate. Correct the draft before posting.")
+      }
+    }
+    assertBalancedJournalEntry(entry.lines.map((line) => ({ debit: line.baseDebit, credit: line.baseCredit, currency: entry.currency })))
+
     assertBalancedJournalEntry(entry.lines)
     await assertEntryAccountsPostable(
       organizationId,
@@ -273,13 +326,13 @@ export async function postJournalEntry(
       tx,
     )
 
-    const controlDecision = evaluateSensitiveAction({
+    const evaluatePostingControl = () => evaluateSensitiveAction({
       action: "accounting.journal.post",
       actorId,
       organizationId,
       actorPermissions: control?.actorPermissions ?? [],
       lastAuthAt: control?.lastAuthAt,
-      now: control?.now,
+      now: controlStartedAt + Math.max(0, Date.now() - startedAt),
       resourceType: "JournalEntry",
       resourceId: entry.id,
       subjectActorId: entry.createdById,
@@ -287,6 +340,26 @@ export async function postJournalEntry(
       currency: entry.currency,
       metadata: { entryNumber: entry.entryNumber, periodId: entry.periodId },
     })
+    const admission = evaluatePostingControl()
+    if (!admission.allowed) {
+      await auditSensitiveActionDecision(tx, admission)
+      return { denied: admission }
+    }
+
+    const affectedPeriodIds = await lockJournalPostingClosePeriodsInTx(tx, organizationId, {
+      periodId: entry.periodId,
+      entryDate: entry.entryDate,
+      includeLaterPeriods: entry.lines.some((line) => line.account?.syscohadaClass?.startsWith("3")),
+    })
+    const afterWait = evaluatePostingControl()
+    if (!afterWait.allowed) {
+      await auditSensitiveActionDecision(tx, afterWait)
+      return { denied: afterWait }
+    }
+    await control?.assertCurrentAuthority?.()
+    // Grant validity can expire while accounting locks or authority checks wait.
+    if (!await moduleWriteAllowed()) return { moduleDenied: true }
+    const controlDecision = evaluatePostingControl()
     await auditSensitiveActionDecision(tx, controlDecision)
     if (!controlDecision.allowed) return { denied: controlDecision }
 
@@ -354,6 +427,7 @@ export async function postJournalEntry(
     await recordPostedJournalCloseInvalidationInTx(tx, organizationId, {
       journalEntryId: posted.id,
       periodId: entry.periodId,
+      affectedPeriodIds,
       entryDate: posted.entryDate,
       correlationId: postedBatch.id,
     }, {
@@ -362,8 +436,11 @@ export async function postJournalEntry(
     })
 
     return { value: posted }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 
+  if (result.moduleDenied) {
+    throw new ForbiddenError("Accounting write access is unavailable. Ask your module administrator to review the current grants.")
+  }
   if (result.denied) {
     assertSensitiveActionAllowed(result.denied)
   }
@@ -379,7 +456,29 @@ export async function reverseJournalEntry(
   reversalDate: Date = new Date(),
   control?: AccountingControlContext,
 ) {
+  const startedAt = Date.now()
+  const suppliedNow = control?.now == null ? startedAt : new Date(control.now).getTime()
+  const controlStartedAt = Number.isFinite(suppliedNow) ? suppliedNow : startedAt
   const result = await db.$transaction(async (tx) => {
+    const moduleWriteAllowed = async () => {
+      const decision = await evaluateModuleAccessInTx(tx, {
+        organizationId, userId: actorId, actorPermissions: control?.actorPermissions ?? [],
+        moduleSlug: "accounting", surfaceType: "action",
+        surface: "services/accounting/posting.service.ts:reverseJournalEntry", accessIntent: "write", mode: "enforce",
+      })
+      if (!decision.allowed) await tx.auditLog.create({ data: {
+        organizationId, userId: actorId, entityType: "ModuleEntitlementDecision", entityId: "accounting:manual-journal-reverse",
+        action: "MODULE_ENTITLEMENT_ENFORCED", changes: {
+          moduleSlug: decision.moduleSlug, surface: decision.surface, accessIntent: decision.accessIntent,
+          result: decision.result, allowed: false, reason: decision.reason, entitlementStatus: decision.entitlement?.status ?? null,
+          missingDependencies: decision.missingDependencies.map(item => item.dependsOnSlug),
+          rbacWildcardPresent: decision.rbacWildcardPresent, rbacWildcardBypassedEntitlement: false,
+        },
+      } })
+      return decision.allowed
+    }
+    if (!await moduleWriteAllowed()) return { moduleDenied: true }
+    await lockJournalReversalCatalogInTx(tx, organizationId)
     // Resolution takes the same row lock before reserving a clearing journal.
     // A reversal and final resolution cannot commit against opposite snapshots.
     await tx.$queryRaw`SELECT id FROM journal_entries WHERE id = ${journalEntryId} AND "organizationId" = ${organizationId} FOR UPDATE`
@@ -396,13 +495,13 @@ export async function reverseJournalEntry(
 
     if (!original) throw new NotFoundError("Journal entry not found")
 
-    const controlDecision = evaluateSensitiveAction({
+    const evaluateReversalControl = () => evaluateSensitiveAction({
       action: "accounting.journal.reverse",
       actorId,
       organizationId,
       actorPermissions: control?.actorPermissions ?? [],
       lastAuthAt: control?.lastAuthAt,
-      now: control?.now,
+      now: controlStartedAt + Math.max(0, Date.now() - startedAt),
       resourceType: "JournalEntry",
       resourceId: original.id,
       subjectActorId: original.postedById || original.createdById,
@@ -414,10 +513,15 @@ export async function reverseJournalEntry(
         reasonProvided: Boolean(reason?.trim()),
       },
     })
-    await auditSensitiveActionDecision(tx, controlDecision)
-    if (!controlDecision.allowed) return { denied: controlDecision }
+    const admission = evaluateReversalControl()
+    if (!admission.allowed) {
+      await auditSensitiveActionDecision(tx, admission)
+      return { denied: admission }
+    }
 
-    if (original.sourceType === AccountingSourceType.CUSTOMER_SETTLEMENT || original.sourceType === AccountingSourceType.PAYMENT_SUSPENSE) {
+    // Only manual journals belong to this correction command. Domain-owned
+    // entries must compensate their source effects (stock, cash and obligations).
+    if (original.sourceType !== AccountingSourceType.MANUAL) {
       await tx.auditLog.create({
         data: {
           organizationId,
@@ -449,8 +553,34 @@ export async function reverseJournalEntry(
       throw new BusinessRuleError("Journal entry has already been reversed")
     }
 
+    const originalLines = original.lines.map((line) => {
+      if (line.baseDebit === null || line.baseCredit === null) {
+        throw new BusinessRuleError("Functional-currency evidence is missing from the original journal. Review the historical entry before reversing it.")
+      }
+      return { ...line, baseDebit: line.baseDebit, baseCredit: line.baseCredit }
+    })
     const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)
-    assertBalancedJournalEntry(original.lines)
+    assertBalancedJournalEntry(originalLines)
+    const affectedPeriodIds = await lockJournalReversalClosePeriodsInTx(tx, organizationId, {
+      originalPeriodId: original.periodId,
+      reversalPeriodId: period.id,
+      originalEntryDate: original.entryDate,
+      reversalDate,
+      includeLaterPeriods: original.lines.some((line) => line.account?.syscohadaClass?.startsWith("3")),
+    })
+
+    // Catalog, source and assessment waits must not extend the authentication
+    // window. Advance an injected control clock by elapsed time as well.
+    const afterWait = evaluateReversalControl()
+    if (!afterWait.allowed) {
+      await auditSensitiveActionDecision(tx, afterWait)
+      return { denied: afterWait }
+    }
+    await control?.assertCurrentAuthority?.()
+    if (!await moduleWriteAllowed()) return { moduleDenied: true }
+    const controlDecision = evaluateReversalControl()
+    await auditSensitiveActionDecision(tx, controlDecision)
+    if (!controlDecision.allowed) return { denied: controlDecision }
 
     const batch = await createLedgerPostingBatch(
       {
@@ -493,7 +623,7 @@ export async function reverseJournalEntry(
         postedById: actorId,
         createdById: actorId,
         lines: {
-          create: original.lines.map((line, index) => {
+          create: originalLines.map((line, index) => {
             const debit = toDecimal(line.debit)
             const credit = toDecimal(line.credit)
 
@@ -506,8 +636,8 @@ export async function reverseJournalEntry(
               credit: debit,
               currency: normalizeCurrency(line.currency),
               exchangeRate: line.exchangeRate,
-              baseDebit: toDecimal(line.baseCredit ?? line.credit),
-              baseCredit: toDecimal(line.baseDebit ?? line.debit),
+              baseDebit: toDecimal(line.baseCredit),
+              baseCredit: toDecimal(line.baseDebit),
               locationId: line.locationId,
               customerId: line.customerId,
               supplierId: line.supplierId,
@@ -554,11 +684,12 @@ export async function reverseJournalEntry(
       metadata: { originalEntryId: original.id, reversalEntryId: reversal.id, reason: reason || null },
     })
 
-    await recordReversedJournalCloseInvalidationsInTx(tx, organizationId, {
+    await recordOrderedReversedJournalCloseInvalidationsInTx(tx, organizationId, {
       originalJournalEntryId: original.id,
       reversalJournalEntryId: reversal.id,
       originalPeriodId: original.periodId,
       reversalPeriodId: period.id,
+      affectedPeriodIds,
       reversalDate,
       correlationId: postedBatch.id,
     }, {
@@ -567,13 +698,18 @@ export async function reverseJournalEntry(
     })
 
     return { value: reversal }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 
-  if ("sourceOwnedBlocked" in result && result.sourceOwnedBlocked) {
+  if (result.moduleDenied) {
+    throw new ForbiddenError("Accounting write access is unavailable. Ask your module administrator to review the current grants.")
+  }
+  if ("sourceOwnedBlocked" in result) {
     throw new BusinessRuleError(
       result.sourceOwnedBlocked === AccountingSourceType.PAYMENT_SUSPENSE
         ? "Payment suspense correction requires a linked source workflow, which is not yet available. No journal was reversed."
-        : "Customer settlement journals must be reversed through the customer settlement source command",
+        : result.sourceOwnedBlocked === AccountingSourceType.CUSTOMER_SETTLEMENT
+          ? "Customer settlement journals must be reversed through the customer settlement source command"
+          : `${result.sourceOwnedBlocked ?? "Unattributed"} journals require a source-owned correction workflow. No journal was reversed.`,
     )
   }
 

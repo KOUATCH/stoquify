@@ -190,6 +190,46 @@ function composeDailyHabitDigestData(input: Parameters<typeof composeWithExplici
   return composeWithExplicitAccess({ dashboardModuleAccess: true, analyticsModuleAccess: true, operatingHandoffs: { owner: true, manager: true }, ...input })
 }
 
+it.each(["en", "fr"] as const)("does not present completed payroll activity as a risk (%s)", locale => {
+  const tenant = { ...tenantOperating, metrics: { ...tenantMetrics, approvedOrPaidPayrollRunCount: 20 } }
+  const input = { organizationId: "org-1", organizationName: "Owned", actorPermissions: ["dashboard.read", "payroll.command.read"], actorRoleCodes: ["owner"], payrollModuleAccess: true, currency: "XAF", locale, tenantOperating: tenant, paymentTruth, inventoryCash, closeReadiness, now: generatedAt }
+  const before = JSON.stringify(input)
+  const data = composeDailyHabitDigestData(input)
+  expect(data.digests.length).toBeGreaterThan(0)
+  expect(data.summary.visibleActionCount).toBe(0)
+  for (const digest of data.digests) {
+    expect(digest.actions).toEqual([])
+    expect(digest.risks).toEqual([])
+    expect(digest.changes).toEqual([])
+  }
+  expect(JSON.stringify(input)).toBe(before)
+})
+
+it.each(["en", "fr"] as const)("preserves source meaning, localized labels and units for all six generated signal families (%s)", locale => {
+  const cases = [
+    { family: "payment", id: "finance-cash", role: "finance", permissions: ["finance.read", "payments.reconciliation.read"], titles: { en: "Open Payment Suspense", fr: "Suspens de paiement ouverts" }, metric: 123.45, units: { en: "EUR", fr: "EUR" }, patch: { paymentTruth: snapshot("payment.truth", { ...paymentMetrics, openSuspenseCount: 1, openSuspenseAmount: 123.45, suspenseCurrencyCode: "EUR" }) } },
+    { family: "stockout", id: "stockkeeper-stock", role: "stockkeeper", permissions: ["inventory.read", "inventory.items.read"], titles: { en: "Stockout Risk", fr: "Risque de rupture de stock" }, metric: 98765.43, units: { en: "EUR", fr: "EUR" }, patch: { inventoryCash: snapshot("inventory.cash", { ...inventoryMetrics, zeroStockLevelCount: 1, inventoryValue: 98765.43 }) } },
+    { family: "loss", id: "owner-morning", role: "owner", permissions: ["dashboard.read", "inventory.levels.read"], titles: { en: "Recorded inventory loss needs review", fr: "Des pertes de stock enregistrées doivent être examinées" }, metric: 0, units: { en: "EUR", fr: "EUR" }, patch: { inventoryLoss } },
+    { family: "purchasing", id: "manager-run-sheet", role: "manager", permissions: ["dashboard.read", "purchases.orders.read"], titles: { en: "Purchase Order Receiving Delay", fr: "Commandes au-delà de la date de livraison prévue" }, metric: 9, units: { en: "POs", fr: "commandes" }, patch: { tenantOperating: snapshot("tenant.operating", { ...tenantMetrics, pendingPurchaseOrderCount: 9, overduePurchaseOrderCount: 1 }) } },
+    { family: "close", id: "accountant-close", role: "accountant", permissions: ["accounting.close.read"], titles: { en: "Close Blocker", fr: "Blocage de clôture" }, metric: 37, units: { en: "%", fr: "%" }, patch: { closeReadiness: snapshot("close.readiness", { ...closeMetrics, openFindingCount: 1, criticalOpenFindingCount: 1, averageReadinessScore: 37 }) } },
+    { family: "payroll", id: "owner-morning", role: "owner", permissions: ["dashboard.read", "payroll.command.read", "payments.reconciliation.read"], titles: { en: "Payroll Exposure", fr: "Exposition liée à la paie" }, metric: 0, units: { en: "EUR", fr: "EUR" }, patch: { tenantOperating: snapshot("tenant.operating", { ...tenantMetrics, activeEmployeeBalanceCaseCount: 1, openEmployeeBalanceCaseCount: 1, employeeBalanceOutstandingAmount: 123.45 }) } },
+  ]
+  for (const example of cases) {
+    const input = { organizationId: "org-1", organizationName: "Source audit", actorPermissions: example.permissions, actorRoleCodes: [example.role], currency: "EUR", locale, tenantOperating, paymentTruth, inventoryCash, closeReadiness, payrollModuleAccess: true, inventoryModuleAccess: true, purchasingModuleAccess: true, financeModuleAccess: true, reconciliationModuleAccess: true, closeModuleAccess: true, now: generatedAt, ...example.patch }
+    const before = JSON.stringify(input)
+    const digest = composeDailyHabitDigestData(input).digests.find(d => d.id === example.id)!
+    expect({ family: example.family, titles: digest.changes.map(c => c.title) }).toEqual({ family: example.family, titles: [example.titles[locale]] })
+    expect(digest.risks[0]).toMatchObject({ title: example.titles[locale], moneyImpact: null, urgency: null })
+    expect(digest.zones[0].primaryMetric).toMatchObject({ value: example.metric, unit: example.units[locale] })
+    expect(digest.changes[0]).toMatchObject({ direction: "observed", previousValue: null, unit: "risk", provenance: { organizationId: "org-1" } })
+    expect(digest.changes[0].provenance.sourceHash).toBeTruthy()
+    expect(digest.actions[0].href).toMatch(new RegExp(`^/${locale}/dashboard/`))
+    if (example.family === "loss") expect(digest.changes[0].detail).toContain("XAF")
+    if (example.family === "payroll") expect(digest.actions[0].additionalRequiredPermissions).toContain("payroll.command.read")
+    expect(JSON.stringify(input)).toBe(before)
+  }
+})
+
 describe("Operating destination authority", () => {
   afterEach(() => jest.resetAllMocks())
   const input = { organizationId: "org-1", organizationName: "Owned", dashboardModuleAccess: true, actorPermissions: ["dashboard.read"], actorRoleCodes: ["owner", "manager"], currency: "XAF", tenantOperating, paymentTruth, inventoryCash, closeReadiness, now: generatedAt }
@@ -418,7 +458,7 @@ describe("Finance and reconciliation source access", () => {
 
 it.each(["en", "fr"] as const)("withholds payroll blocker details in every Digest representation without payroll read authority (%s)", locale => {
   const privateDetail = "3 active employee balance cases have 983421.78 outstanding."
-  const payrollSource = { ...tenantOperating, status: "partial" as const, uiState: "partial" as const, blockers: [{ id: "tenant-payroll-employee-balance-open", gate: "payroll_employee_balance", severity: "high" as const, title: "Employee balance recovery cases are open", detail: privateDetail, sourceTables: ["payroll_employee_balance_cases"], nextAction: "Review payroll payments" }] }
+  const payrollSource = { ...tenantOperating, metrics: { ...tenantOperating.metrics, employeeBalanceOutstandingAmount: null, employeeBalanceOutstandingByCurrency: [{ currencyCode: "USD", amount: 983421.78, count: 3 }] }, status: "partial" as const, uiState: "partial" as const, blockers: [{ id: "tenant-payroll-employee-balance-open", gate: "payroll_employee_balance", severity: "high" as const, title: "Employee balance recovery cases are open", detail: privateDetail, sourceTables: ["payroll_employee_balance_cases"], nextAction: "Review payroll payments" }, { id: "tenant-payroll-balance-currency-mismatch", gate: "payroll_employee_balance", severity: "high" as const, title: "Employee balance currencies cannot be combined", detail: "Amounts by currency: 983421.78 USD. No conversion evidence establishes a total in XAF.", sourceTables: ["payroll_employee_balance_cases"] }] }
   const input = { organizationId: "org-1", organizationName: "Owned", inventoryModuleAccess: true, actorPermissions: ["dashboard.read", "inventory.read"], actorRoleCodes: ["owner"], currency: "XAF", locale, tenantOperating: payrollSource, paymentTruth, inventoryCash, closeReadiness, now: generatedAt }
   const original = JSON.stringify(payrollSource)
   const denied = composeDailyHabitDigestData(input)
@@ -903,7 +943,7 @@ describe("Daily Habit Digest role cockpit", () => {
       result.digests.find((digest) => digest.id === "owner-morning")?.actions,
     ).toEqual([
       expect.objectContaining({
-        href: "/en/dashboard/inventory/losses",
+        href: "/en/dashboard/inventory/loss-control",
         requiredPermission: "inventory.levels.read",
       }),
     ])

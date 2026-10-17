@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-28T09:17:01.095Z",
+  "workflow": "FA-CASH-COMMAND",
+  "finding": "Actual proof screenshot shows nearly unreadable dark text on a transparent portal over the page. ProofTrailDrawer uses an undefined --dash-bg and portal content lacks the local dashboard token scope. Correct inherited portal tokens/background and verify actual EN/FR readability, focus and reflow; prior interaction passes are not visual accessibility passes.",
+  "status": "open_engineering",
+  "evidence": [
+    {
+      "file": "lanes/environment/cash-proof-state-839a6d9d-9f7d-48c6-ba36-dcd123a78aeb-fr.png",
+      "sha256": "5f006c3283615ac841729e5b16def14b557b267fb682fa78ae02e07a9be62cfe"
+    },
+    {
+      "file": "lanes/environment/cash-proof-state-839a6d9d-9f7d-48c6-ba36-dcd123a78aeb-fr-proof-crop.png",
+      "sha256": "18775fbdd83672746e777d1d4b7f2053ad72089d95e3a1c3815edaea235b7624"
+    }
+  ],
+  "sourceHashes": {
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "components/evidence/ProofTrailDrawer.tsx": "f3a97f413617c457d792f31773e3fc37cb1b9f2cec9ab596ceae18001a479b72",
+    "components/ui/sheet.tsx": "70dd8f7b659383ae1015830f05955286d971a4f38afe41cdabd9e8da0f48d5e0",
+    "components/bi/BIProofDrawerHost.tsx": "b5701e124e0c43ef5d98ff7c10cf764ef4e5244e216f3bf85ae7cf46ae542205"
+  },
+  "limits": "Crop is a derived inspection copy. Source explains the observed failure; computed CSS and contrast measurements remain required."
+}

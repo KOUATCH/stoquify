@@ -91,6 +91,14 @@ export const inventoryRouteCatalog: InventoryRouteSurface[] = [
     module: { moduleSlug: "inventory", surface: "/dashboard/inventory/items", accessIntent: "read", mode: "enforce" },
   },
   {
+    key: "inventory-items-detail",
+    route: "/dashboard/inventory/items/[id]",
+    resource: "InventoryItemOverview",
+    title: "Item overview",
+    permissions: ["inventory.items.read"],
+    module: { moduleSlug: "inventory", surface: "/dashboard/inventory/items/[id]", accessIntent: "read", mode: "enforce" },
+  },
+  {
     key: "inventory-items-create",
     route: "/dashboard/inventory/items/create",
     resource: "InventoryItems",

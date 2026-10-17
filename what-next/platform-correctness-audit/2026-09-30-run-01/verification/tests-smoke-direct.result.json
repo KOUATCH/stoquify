@@ -1,0 +1,22 @@
+{
+  "name": "tests-smoke-direct",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--config",
+    "what-next/platform-correctness-audit/2026-09-30-run-01/jest-direct.config.cjs",
+    "--runInBand",
+    "--watch=false",
+    "--no-cache",
+    "--runTestsByPath",
+    "lib/pos/__tests__/offline-local-queue.test.ts"
+  ],
+  "startedAt": "2026-09-30T14:27:19.136Z",
+  "endedAt": "2026-09-30T14:27:26.906Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live data target",
+  "stdoutBytes": 0,
+  "stderrBytes": 186
+}

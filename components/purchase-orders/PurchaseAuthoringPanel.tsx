@@ -1,0 +1,35 @@
+"use client"
+import { useEffect, useRef } from "react"
+import type { usePurchaseAuthoring } from "./use-purchase-authoring"
+import Link from "next/link"
+
+export const purchaseAuthoringCopy = {
+  en: { heading: "Saved authoring work", explanation: "Save incomplete work before leaving. Only confirmed saves survive closing this page. A purchase-order number is assigned when the order is created.", title: "Draft title", save: "Save work", refresh: "Refresh saved work", resume: "Resume", more: "Next saved work", first: "First page", check: "Check request status", retrySave: "Retry the same save", retryCreate: "Create saved order / retry", discard: "Discard saved work", replace: "Replace the current form with this saved work? Unsaved changes will be lost.", discardConfirm: "Discard this saved work? A completed purchase order will be preserved.", unsaved: "Changes since the last confirmed save are not saved automatically.", uncertain: "The result is unknown. Check request status before continuing; keep this reference.", unavailable: "Saved work is unavailable. No creation outcome can be inferred from this message.", invalid: "Check required fields, dates and numeric values before preparing the order.", stale: "This work changed elsewhere. Check request status to load the current revision.", restricted: "Your current access or session is unavailable. Sign in again or ask your administrator.", missing: "Saved work was not found. You can retry the exact same save.", disabled: "Saving and creation are currently unavailable.", saved: "Last confirmed save", reference: "Request reference", created: "Order created", order: "Order number", empty: "No saved work on this page.", pending: "Assigned on creation", state: { ACTIVE: "Editing", PREPARED: "Prepared — contents frozen", CREATED: "Created", DISCARDED: "Discarded" } },
+  fr: { heading: "Travail de rédaction enregistré", explanation: "Enregistrez le travail incomplet avant de quitter. Seuls les enregistrements confirmés sont conservés après fermeture. Le numéro du bon est attribué lors de sa création.", title: "Titre du brouillon", save: "Enregistrer le travail", refresh: "Actualiser les brouillons", resume: "Reprendre", more: "Brouillons suivants", first: "Première page", check: "Vérifier la demande", retrySave: "Réessayer le même enregistrement", retryCreate: "Créer le bon enregistré / réessayer", discard: "Abandonner le brouillon", replace: "Remplacer le formulaire par ce brouillon ? Les modifications non enregistrées seront perdues.", discardConfirm: "Abandonner ce brouillon ? Un bon déjà créé sera conservé.", unsaved: "Les modifications depuis le dernier enregistrement confirmé ne sont pas enregistrées automatiquement.", uncertain: "Le résultat est inconnu. Vérifiez la demande avant de continuer et conservez cette référence.", unavailable: "Le travail enregistré est indisponible. Ce message ne permet pas de conclure si un bon a été créé.", invalid: "Vérifiez les champs obligatoires, les dates et les valeurs numériques avant de préparer le bon.", stale: "Ce travail a été modifié ailleurs. Vérifiez la demande pour charger la révision actuelle.", restricted: "Votre accès ou session est indisponible. Reconnectez-vous ou contactez votre administrateur.", missing: "Aucun brouillon trouvé. Vous pouvez réessayer exactement le même enregistrement.", disabled: "L’enregistrement et la création sont actuellement indisponibles.", saved: "Dernier enregistrement confirmé", reference: "Référence de demande", created: "Bon créé", order: "Numéro du bon", empty: "Aucun brouillon sur cette page.", pending: "Attribué à la création", state: { ACTIVE: "En rédaction", PREPARED: "Préparé — contenu figé", CREATED: "Créé", DISCARDED: "Abandonné" } },
+} as const
+
+export function PurchaseAuthoringPanel({ controller: c, locale, canReadOrders }: { controller: ReturnType<typeof usePurchaseAuthoring>; locale: string; canReadOrders: boolean }) {
+  const t = purchaseAuthoringCopy[locale === "fr" ? "fr" : "en"], result = useRef<HTMLHeadingElement>(null)
+  const receipt = c.current?.receipt
+  useEffect(() => { if (receipt) result.current?.focus() }, [receipt])
+  const button = "rounded border px-3 py-2 text-sm disabled:opacity-50"
+  return <section aria-label={t.heading} aria-busy={c.busy} className="mb-6 space-y-3 rounded-lg border p-4">
+    <h2 className="font-semibold">{t.heading}</h2><p>{t.explanation}</p>
+    <label className="block">{t.title}<input className="ml-2 rounded border bg-transparent p-2" maxLength={100} value={c.title} disabled={c.locked} onChange={e => c.setTitle(e.target.value)} /></label>
+    <p className="text-sm">{t.unsaved}</p>
+    {c.current && <p>{t.state[c.current.status]} · {t.saved}: <time dateTime={c.current.savedAt}>{c.current.savedAt}</time> · v{c.current.revision}</p>}
+    {c.requestReference && <p className="break-all">{t.reference}: {c.requestReference}</p>}
+    <div role="status" aria-live="polite">{c.uncertain && <p>{t.uncertain}</p>}{c.code && <p>{c.code === "INVALID_INPUT" ? t.invalid : c.code === "STALE" ? t.stale : c.code === "RESTRICTED" ? t.restricted : c.code === "SAVE_NOT_FOUND" ? t.missing : t.unavailable}</p>}{c.list && !c.list.writesEnabled && <p>{t.disabled}</p>}</div>
+    {c.current?.receipt && <div><h3 ref={result} tabIndex={-1}>{t.created}</h3><p>{t.order}: {c.current.receipt.orderNumber}</p>{canReadOrders && <Link href={`/${locale === "fr" ? "fr" : "en"}/dashboard/purchase-orders/${encodeURIComponent(c.current.receipt.orderId)}`}>{c.current.receipt.orderNumber}</Link>}</div>}
+    <div className="flex flex-wrap gap-2">
+      <button className={button} type="button" disabled={!c.canSave || c.uncertain && c.code !== "SAVE_NOT_FOUND"} onClick={c.save}>{c.uncertain ? t.retrySave : t.save}</button>
+      {c.requestReference && <button className={button} type="button" disabled={c.busy} onClick={c.check}>{t.check}</button>}
+      {c.current?.status === "PREPARED" && <button className={button} type="button" disabled={c.busy || c.uncertain || !c.list?.writesEnabled} onClick={c.create}>{t.retryCreate}</button>}
+      {c.current && ["ACTIVE", "PREPARED"].includes(c.current.status) && <button className={button} type="button" disabled={c.busy || c.uncertain || !c.list?.writesEnabled} onClick={() => { if (window.confirm(t.discardConfirm)) void c.discard() }}>{t.discard}</button>}
+      <button className={button} type="button" disabled={c.busy} onClick={() => c.refresh()}>{t.refresh}</button>
+    </div>
+    {c.list?.entries.length === 0 && <p>{t.empty}</p>}
+    <ul>{c.list?.entries.map(row => <li key={row.id} className="my-2 flex flex-wrap items-center gap-2"><span>{row.title || row.id} · {t.state[row.status]} · {row.savedAt}</span><button className={button} type="button" disabled={c.busy || c.uncertain} onClick={() => { if (window.confirm(t.replace)) void c.resume(row.id) }}>{t.resume}</button></li>)}</ul>
+    {c.list?.nextCursor && <button className={button} type="button" disabled={c.busy} onClick={() => c.refresh(c.list!.nextCursor!)}>{t.more}</button>}
+  </section>
+}

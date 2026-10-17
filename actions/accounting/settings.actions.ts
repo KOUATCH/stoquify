@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 import { protect } from "@/services/_shared/protect"
+import { ForbiddenError } from "@/services/_shared/action-errors"
+import { SESSION_ASSURANCE_LEVEL } from "@/lib/security/auth-session"
+import { closePeriodInputSchema, reopenPeriodInputSchema, reopenAccountingPeriod } from "@/services/accounting/period-control.service"
 import {
   ensureAccountingSettings,
   markAccountingSetupReady,
@@ -49,9 +52,7 @@ const fiscalYearCreateSchema = z.object({
   createMonthlyPeriods: z.boolean().optional(),
 })
 
-const closePeriodSchema = z.object({
-  periodId: z.string().min(1),
-})
+const closePeriodSchema = closePeriodInputSchema
 
 function revalidateAccountingPaths() {
   revalidatePath("/dashboard/accounting", "page")
@@ -143,12 +144,15 @@ export async function createFiscalYearAction(input: unknown) {
 }
 
 const closePeriod = protect<unknown, unknown>(
-  { permission: "accounting.period.close", auditResource: "AccountingPeriod", freshAuth: true },
+  { permission: "accounting.period.close", auditResource: "AccountingPeriod", freshAuth: { maxAgeSeconds: 300 } },
   async (input, ctx) => {
+    const assurance = ctx.freshAuth
+    if (!assurance || assurance.claims.userId !== ctx.userId || assurance.claims.tenantId !== ctx.orgId || assurance.claims.assuranceOrganizationId !== ctx.orgId || assurance.claims.assuranceLevel < SESSION_ASSURANCE_LEVEL.PASSWORD || assurance.claims.lastAuthAt !== assurance.lastAuthAt.getTime()) throw new ForbiddenError("Fresh authentication is required.")
     const parsed = closePeriodSchema.parse(input)
     const period = await closeAccountingPeriod(ctx.orgId, parsed.periodId, ctx.userId, {
       actorPermissions: ctx.permissions,
-      lastAuthAt: Date.now(),
+      lastAuthAt: assurance.lastAuthAt,
+      expectedVersion: parsed.expectedVersion,
     })
     revalidateAccountingPaths()
     return period
@@ -158,6 +162,19 @@ const closePeriod = protect<unknown, unknown>(
 export async function closeAccountingPeriodAction(input: unknown) {
   return closePeriod(input)
 }
+
+const reopenPeriod = protect<unknown, unknown>(
+  { permission: "accounting.period.reopen", auditResource: "AccountingPeriod", freshAuth: { maxAgeSeconds: 300 } },
+  async (input, ctx) => {
+    const assurance = ctx.freshAuth
+    if (!assurance || assurance.claims.userId !== ctx.userId || assurance.claims.tenantId !== ctx.orgId || assurance.claims.assuranceOrganizationId !== ctx.orgId || assurance.claims.assuranceLevel < SESSION_ASSURANCE_LEVEL.PASSWORD || assurance.claims.lastAuthAt !== assurance.lastAuthAt.getTime()) throw new ForbiddenError("Fresh authentication is required.")
+    const result = await reopenAccountingPeriod(reopenPeriodInputSchema.parse(input), { organizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions, lastAuthAt: assurance.lastAuthAt })
+    revalidateAccountingPaths()
+    revalidatePath("/dashboard/accounting/close", "page")
+    return result
+  },
+)
+export async function reopenAccountingPeriodAction(input: unknown) { return reopenPeriod(input) }
 
 const markSetupReady = protect<unknown, unknown>(
   { permission: "accounting.setup.manage", auditResource: "AccountingSetup", freshAuth: true },

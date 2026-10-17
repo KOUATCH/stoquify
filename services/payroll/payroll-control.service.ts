@@ -69,7 +69,7 @@ import {
   type HrisPayrollReadinessExport,
 } from "@/services/hris/payroll-readiness-contract";
 import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract";
-import { assertPayrollCertifiedInputProofMetadata } from "@/services/payroll/certified-input-proof";
+import { assertPayrollCertifiedInputProofMetadata, payrollCertifiedInputProofFromMetadata } from "@/services/payroll/certified-input-proof";
 import {
   getCountryPack,
   resolveRegulatoryParameter,
@@ -86,6 +86,7 @@ import {
   type PayrollRunLifecycleReadModel,
 } from "./payroll-run-lifecycle-read-model";
 import { evaluatePayrollTaxRule } from "./payroll-tax-rule-evaluator";
+import { assertPayrollProductionAdmission } from "./payroll-production-admission";
 import { resolvePayrollPaymentProviderAdapterContract } from "./payroll-adapter-registry.service";
 import {
   buildPayrollStatutoryScenarioCoverageSummary,
@@ -630,6 +631,7 @@ type PayrollCountryPackStatus = {
   occupationalRiskRates: RegulatoryResolutionResult<CnpsOccupationalRiskRates>;
   employerRules: RegulatoryResolutionResult<Record<string, unknown>>;
   incomeTaxRules: RegulatoryResolutionResult<PayrollIncomeTaxRules>;
+  productionAdmission: RegulatoryResolutionResult<Record<string, unknown>> | null;
 };
 
 type PayrollStatutoryScenarioCoverageSnapshot = {
@@ -4003,6 +4005,17 @@ async function resolvePayrollCountryPackStatus(
     },
   );
 
+  // Missing release approval permits review-only preparation, never production.
+  let productionAdmission: RegulatoryResolutionResult<Record<string, unknown>> | null = null;
+  try {
+    productionAdmission = resolveRegulatoryParameter<Record<string, unknown>>(
+      "payroll.productionAdmission",
+      { ...context, purpose: "PAYROLL_PRODUCTION_ADMISSION" },
+    );
+  } catch {
+    // A draft/unavailable/invalid approval cannot authorize financial effects.
+  }
+
   assertRegulatorReviewedPayrollResolution(pensionRates, "CNPS pension rates");
   assertRegulatorReviewedPayrollResolution(
     familyAllowanceRates,
@@ -4049,6 +4062,7 @@ async function resolvePayrollCountryPackStatus(
       occupationalRiskRates: occupationalRiskRates.resolutionHash,
       employerRules: employerRules.resolutionHash,
       incomeTaxRules: incomeTaxRules.resolutionHash,
+      productionAdmission: productionAdmission?.resolutionHash ?? null,
       roundingPolicyHash: roundingPolicy.roundingPolicyHash,
       yearToDatePolicyHash: yearToDatePolicy.ytdPolicyHash,
       cnpsFamilyAllowanceSector,
@@ -4067,6 +4081,7 @@ async function resolvePayrollCountryPackStatus(
     occupationalRiskRates,
     employerRules,
     incomeTaxRules,
+    productionAdmission,
   };
 }
 
@@ -7228,6 +7243,7 @@ export async function emitPayrollPayslips(
       "payroll.payslips.emit",
       run,
     );
+    assertPayrollProductionAdmission(run);
 
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
     const legalProvenanceHash = prefixedHash(legalProvenance);
@@ -7322,14 +7338,16 @@ export async function emitPayrollPayslips(
     );
 
     for (const plan of payslipPlans) {
-      await tx.payrollPayslip.create({
+      // Assemble before sealing: emitted payslips reject new lines at the DB.
+      // Both writes remain inside the transition's serializable transaction.
+      const payslip = await tx.payrollPayslip.create({
         data: {
           organizationId: parsed.organizationId,
           payrollRunId: run.id,
           runLineId: plan.line.id,
           employeeId: plan.line.employeeId,
           payslipNumber: plan.payslipNumber,
-          status: PayrollPayslipStatus.EMITTED,
+          status: PayrollPayslipStatus.DRAFT,
           issuedAt: emittedAt,
           countryCode: run.countryCode,
           countryPackVersion: run.countryPackVersion,
@@ -7369,6 +7387,10 @@ export async function emitPayrollPayslips(
             }),
           },
         },
+      });
+      await tx.payrollPayslip.update({
+        where: { id: payslip.id, organizationId: parsed.organizationId },
+        data: { status: PayrollPayslipStatus.EMITTED },
       });
     }
 
@@ -7539,6 +7561,7 @@ export async function postPayrollRun(
       run,
       run.approvedById,
     );
+    assertPayrollProductionAdmission(run);
 
     const accountingPeriod = await getOpenPeriodForDate(
       parsed.organizationId,
@@ -7878,6 +7901,7 @@ export async function approveAndPostPayrollRun(
     });
     await auditSensitiveActionDecision(tx, controlDecision);
     assertSensitiveActionAllowed(controlDecision);
+    assertPayrollProductionAdmission(run);
 
     const accountingPeriod = await getOpenPeriodForDate(
       parsed.organizationId,
@@ -8277,6 +8301,7 @@ export async function requestPayrollPaymentBatch(
       },
       include: {
         payrollPeriod: true,
+        lines: true,
         payslips: {
           include: { employee: true },
           orderBy: { createdAt: "asc" },
@@ -8302,6 +8327,7 @@ export async function requestPayrollPaymentBatch(
         "Payroll payment release requires emitted payslips.",
       );
     }
+    assertPayrollProductionAdmission(run);
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
     const legalProvenanceHash = prefixedHash(legalProvenance);
     const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
@@ -8811,6 +8837,7 @@ export async function releasePayrollPaymentBatch(
         payrollRun: {
           include: {
             payrollPeriod: true,
+            lines: true,
             payslips: {
               include: { employee: true },
               orderBy: { createdAt: "asc" },
@@ -8866,6 +8893,7 @@ export async function releasePayrollPaymentBatch(
     }
 
     const run = paymentBatch.payrollRun;
+    assertPayrollProductionAdmission(run);
     const paymentDate = paymentBatch.paymentDate;
     const method = paymentBatch.method;
     assertSupportedPayrollPaymentMethod(method);
@@ -9323,6 +9351,7 @@ export async function preparePayrollDeclarations(
         "Payroll declarations can only be prepared for posted payroll runs.",
       );
     }
+    assertPayrollProductionAdmission(run);
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
     const legalProvenanceHash = prefixedHash(legalProvenance);
     const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
@@ -9753,6 +9782,7 @@ async function writePayrollRunWorkbenchReadAudit(
 function payrollRunNextActions(
   run: {
     id: string;
+    metadata: unknown;
     status: PayrollRunStatus;
     runType: PayrollRunType;
     _count: { declarations: number; paymentBatches: number };
@@ -9777,6 +9807,8 @@ function payrollRunNextActions(
     });
   }
 
+  const inputProofBlockers = payrollCertifiedInputProofFromMetadata(run.metadata) ? [] : ["PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING"];
+
   if (run.status === PayrollRunStatus.POSTED && run._count.declarations === 0) {
     const requiredPermission = "payroll.declarations.prepare";
     actions.push({
@@ -9786,8 +9818,8 @@ function payrollRunNextActions(
       requiresFreshAuth: false,
       requiresSeparateApprover: false,
       href: "/dashboard/payroll/declarations",
-      allowed: actionAvailable(requiredPermission),
-      blockedBy: [],
+      allowed: actionAvailable(requiredPermission, inputProofBlockers),
+      blockedBy: inputProofBlockers,
     });
   }
 
@@ -9806,8 +9838,8 @@ function payrollRunNextActions(
         requiresFreshAuth: true,
         requiresSeparateApprover: false,
         href: "/dashboard/payroll/payments",
-        allowed: actionAvailable(requiredPermission),
-        blockedBy: [],
+        allowed: actionAvailable(requiredPermission, inputProofBlockers),
+        blockedBy: inputProofBlockers,
       });
     } else if (activePaymentBatch.status === PayrollPaymentBatchStatus.DRAFT) {
       const requiredPermission = "payroll.payments.approve";
@@ -9832,8 +9864,8 @@ function payrollRunNextActions(
         requiresFreshAuth: true,
         requiresSeparateApprover: true,
         href: "/dashboard/payroll/payments",
-        allowed: actionAvailable(requiredPermission),
-        blockedBy: [],
+        allowed: actionAvailable(requiredPermission, inputProofBlockers),
+        blockedBy: inputProofBlockers,
       });
     }
   }
@@ -9944,6 +9976,16 @@ function payrollRunBlockers(input: {
   const correctionEvidenceHash =
     metadataString(input.run.metadata, "correctionEvidenceHash") ??
     metadataString(correctionMetadata, "correctionEvidenceHash");
+
+  if (lockedStatus && !payrollCertifiedInputProofFromMetadata(input.run.metadata)) {
+    blockers.push({
+      id: "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING",
+      severity: "critical",
+      title: "Certified payroll input proof is missing",
+      detail: "Payment requests, release and declarations require the HRIS readiness and payroll engine input proof produced by calculation.",
+      nextAction: "Review employee identity, approved contract documents, compensation, payment destination and certified attendance in HRIS. Use the controlled calculation or correction workflow; do not edit a posted run or insert approval hashes manually.",
+    });
+  }
 
   if (!input.run.calculationHash || !input.run.attendanceSnapshotHash) {
     blockers.push({

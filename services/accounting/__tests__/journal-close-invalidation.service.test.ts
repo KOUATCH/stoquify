@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "../close-assurance-pack.service"
 import {
   recordPostedJournalCloseInvalidationInTx,
+  recordOrderedReversedJournalCloseInvalidationsInTx,
   recordReversedJournalCloseInvalidationsInTx,
 } from "../journal-close-invalidation.service"
 
@@ -47,42 +48,83 @@ describe("journal close invalidation service", () => {
     })
   })
 
-  it("invalidates both periods for a cross-period manual reversal", async () => {
+  it("invalidates a complete overlapping period union in one globally ordered discovery pass", async () => {
     const reversalDate = new Date("2026-07-01T10:00:00.000Z")
 
-    const result = await recordReversedJournalCloseInvalidationsInTx(tx, "org-1", {
+    const result = await recordOrderedReversedJournalCloseInvalidationsInTx(tx, "org-1", {
       originalJournalEntryId: "journal-original",
       reversalJournalEntryId: "journal-reversal",
       originalPeriodId: "period-june",
       reversalPeriodId: "period-july",
+      affectedPeriodIds: ["period-june", "overlap", "period-july", "period-june", "later"],
       reversalDate,
       correlationId: "batch-reversal",
     })
 
-    expect(mockRecordInvalidations).toHaveBeenCalledTimes(2)
-    expect(mockRecordInvalidations.mock.calls.map((call) => call[2].periodId)).toEqual([
-      "period-june",
-      "period-july",
-    ])
-    expect(mockRecordInvalidations.mock.calls[1][2]).toMatchObject({
+    expect(mockRecordInvalidations).toHaveBeenCalledTimes(1)
+    expect(mockRecordInvalidations.mock.calls[0][2]).toMatchObject({
+      periodIds: ["later", "overlap", "period-july", "period-june"],
       sourceCode: "LEDGER_JOURNAL_REVERSED",
       sourceId: "journal-original",
       newEvidenceHash: "journal-reversal",
-      periodStart: reversalDate,
-      periodEnd: reversalDate,
       correlationId: "batch-reversal",
     })
-    expect(result.invalidatedCount).toBe(2)
+    expect(result.invalidatedCount).toBe(1)
+  })
+
+  it("uses only the prepared posting scope without expanding it through date predicates", async () => {
+    await recordPostedJournalCloseInvalidationInTx(tx, "org-1", {
+      journalEntryId: "journal-1", periodId: "current", entryDate: new Date("2026-10-01"),
+      affectedPeriodIds: ["later", "current", "earlier", "current"],
+    })
+    const input = mockRecordInvalidations.mock.calls[0][2]
+    expect(input.periodIds).toEqual(["current", "earlier", "later"])
+    expect(input).not.toHaveProperty("periodId")
+    expect(input).not.toHaveProperty("periodStart")
+    expect(input).not.toHaveProperty("periodEnd")
+    expect(input.sourceCode).toBe("LEDGER_JOURNAL_POSTED")
+    expect(input.sourceId).toBe("journal-1")
+    expect(input.newEvidenceHash).toBe("journal-1")
+  })
+
+  it.each([{ scope: [] }, { scope: ["other"] }])("rejects incomplete prepared posting scope $scope", async ({ scope }) => {
+    await expect(recordPostedJournalCloseInvalidationInTx(tx, "org-1", {
+      journalEntryId: "journal-1", periodId: "current", affectedPeriodIds: scope,
+    })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockRecordInvalidations).not.toHaveBeenCalled()
   })
 
   it("deduplicates same-period manual reversal targets", async () => {
-    await recordReversedJournalCloseInvalidationsInTx(tx, "org-1", {
+    await recordOrderedReversedJournalCloseInvalidationsInTx(tx, "org-1", {
       originalJournalEntryId: "journal-original",
       reversalJournalEntryId: "journal-reversal",
       originalPeriodId: "period-1",
       reversalPeriodId: "period-1",
+      affectedPeriodIds: ["period-1", "period-1"],
     })
 
     expect(mockRecordInvalidations).toHaveBeenCalledTimes(1)
+  })
+
+  it("refuses incomplete scope instead of silently skipping an explicit period", async () => {
+    await expect(recordOrderedReversedJournalCloseInvalidationsInTx(tx, "org-1", {
+      originalJournalEntryId: "original", reversalJournalEntryId: "reversal",
+      originalPeriodId: "period-1", reversalPeriodId: "period-2", affectedPeriodIds: ["period-2"],
+    })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockRecordInvalidations).not.toHaveBeenCalled()
+  })
+
+  it("preserves the existing source-writer contract until each owner adopts pre-write ordering", async () => {
+    const reversalDate = new Date("2026-07-01T10:00:00.000Z")
+    const result = await recordReversedJournalCloseInvalidationsInTx(tx, "org-1", {
+      originalJournalEntryId: "original", reversalJournalEntryId: "reversal",
+      originalPeriodId: "original-period", reversalPeriodId: "reversal-period", reversalDate,
+    })
+    expect(mockRecordInvalidations).toHaveBeenCalledTimes(2)
+    expect(mockRecordInvalidations.mock.calls.map(call => call[2])).toEqual([
+      expect.objectContaining({ periodId: "original-period", periodStart: null, periodEnd: null }),
+      expect.objectContaining({ periodId: "reversal-period", periodStart: reversalDate, periodEnd: reversalDate }),
+    ])
+    expect(result.invalidatedCount).toBe(2)
   })
 })

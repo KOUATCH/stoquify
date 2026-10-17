@@ -1,0 +1,22 @@
+{
+  "task": "S06 bounded traffic fallback and S07 opt-in login CSP pilot",
+  "baseHead": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "ownedFiles": [
+    "middleware.ts",
+    "app/layout.tsx",
+    "components/Providers.tsx",
+    "components/security/UploadThingBootstrap.tsx",
+    "lib/security/traffic-limiter.ts",
+    "lib/security/csp-pilot.ts",
+    "jest.s06-s07.config.cjs",
+    "tsconfig.s06-s07.json",
+    "tests/s06-s07/boundaries.test.ts",
+    "tests/s06-s07/middleware-pilot.test.ts",
+    "scripts/verify-s06-s07-browser.cjs",
+    "docs/prompt-execution/S06-S07_SCOPE_2026-10-15.json",
+    "docs/prompt-execution/S06-S07_EXECUTION_2026-10-15.md"
+  ],
+  "productionAccess": false,
+  "committedOrStaged": false,
+  "rollout": "CSP defaults off. No hosted or shared traffic control activated. Deployment ingress verification and complete application browser journeys remain release gates."
+}

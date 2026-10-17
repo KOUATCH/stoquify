@@ -1,0 +1,317 @@
+{
+  "at": "2026-09-30T21:46:38.757Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "RECEIPT_REPLAY_AND_INVOICE_CAPACITY_2026-09-30.md",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/__tests__/receipt-invoice-capacity.test.ts": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/inventory/__tests__/inventory-stock-event.service.test.ts": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/journal-currency-regression.service.test.ts": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-invoice-capacity.cjs": "0b7d54a6a7b9745564259dcf0c4afc73060ec7530a6a76f07609ebe0c5955eb0",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs": "08278ab5a6c7737337867632af984446e4baad839f7f618e02b93f76c20c422c"
+  },
+  "priorImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "before": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad",
+      "after": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+      "baseline": "evidence/receipt-capacity-before-02e7f18d-6032-43ea-b9e3-895e16d35939.json"
+    },
+    {
+      "file": "services/purchasing/invoice-preparation.service.ts",
+      "before": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+      "after": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+      "baseline": "evidence/receipt-capacity-before-02e7f18d-6032-43ea-b9e3-895e16d35939.json"
+    },
+    {
+      "file": "services/purchasing/invoice-correction.service.ts",
+      "before": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+      "after": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+      "baseline": "evidence/receipt-capacity-before-02e7f18d-6032-43ea-b9e3-895e16d35939.json"
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "before": "11b8fa982a826031028d76dbcf563ebedff6846c78bb8cc59950a30fea8009fe",
+      "after": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+      "baseline": "evidence/receipt-capacity-before-02e7f18d-6032-43ea-b9e3-895e16d35939.json"
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "before": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "after": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+      "baseline": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json"
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "before": "d0a69a7b17dc7e07f68f85dfcb3ab34a5b0a433234134e4c844b9410e10a867a",
+      "after": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f",
+      "baseline": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json"
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "before": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+      "after": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+      "baseline": "evidence/accounting-settings-currency-before-2026-09-30.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "changed": [
+        "buildInvoiceLinePlans"
+      ],
+      "added": [
+        "import:./receipt-invoice-capacity"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/purchasing/invoice-preparation.service.ts",
+      "changed": [
+        "loadInvoicePreparationSources"
+      ],
+      "added": [
+        "import:./receipt-invoice-capacity"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/purchasing/invoice-correction.service.ts",
+      "changed": [
+        "loadInvoiceCorrectionSource"
+      ],
+      "added": [
+        "import:./receipt-invoice-capacity"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "changed": [
+        "createLedgerBlocker",
+        "import:@/services/_shared/action-errors",
+        "postInventoryStockEvent"
+      ],
+      "added": [],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "changed": [
+        "ensureAccountingSettings",
+        "import:@/services/_shared/action-errors",
+        "updateAccountingSettings"
+      ],
+      "added": [],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Receipt stock replay now preserves finalized accounting; invoice preparation/correction/approval subtract net uninvoiced returns with exact reversal checks. Complete the versioned whole-receipt recognition source/date contract and source-owned return cost/accrual release, including removal of the unverified hardcoded XAF return-posting assumption, before enabling receipt accounting. Legacy cutover, non-stock lines, CASH_DRAWER_CLOSE/EXPENSE_APPROVAL setup, eligible close certification, payroll obligations, native accessibility and representative latency remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows.",
+    "Visual inspection of the EN desktop preparation review found the long supplier reference overflowing its dialog. Correct local text wrapping and verify long references at supported widths; document-wide overflow checks alone do not establish this."
+  ],
+  "verifiedSubcriteria": [
+    "receipt_posted_replay_preserves_accounting",
+    "receipt_finalized_source_rejects_novel_stock",
+    "invoice_net_uninvoiced_return_capacity",
+    "invoice_return_reversal_capacity_once",
+    "invoice_return_concurrency_and_stale_approval",
+    "invoice_return_en_fr_preparation_correction",
+    "accounting_settings_currency_dependency_review"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/receipt-capacity-checks-fb8a1e10-de71-4d02-a032-7d3015f0df27.json",
+      "sha256": "cbac0d99414b4cb5638601e3d4790e494c12dfcfb57ef372cbc3cc18edfdd4a0"
+    },
+    {
+      "file": "lanes/environment/receipt-invoice-capacity-8fb85d0e-91ec-4a30-b1fe-76179361628e.json",
+      "sha256": "df1cc030774b4f68bbce3f298b7e39a187824e69e3aba8acd8c241ab93697201"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f.json",
+      "sha256": "8c3108c743a738068586139ad8169aa54f719ee4ef0c83468b026c1fb5817589"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "RECEIPT_REPLAY_AND_INVOICE_CAPACITY_2026-09-30.md",
+      "sha256": "65c4b4c66dbec68c56c71ee69eb42dbe2a259ce4f776a0795a0a34d965fac161"
+    },
+    {
+      "file": "evidence/receipt-capacity-before-02e7f18d-6032-43ea-b9e3-895e16d35939.json",
+      "sha256": "cea160b150825e871368686ba56ce0b225da672fa8a06ce142f730a39b96580b"
+    },
+    {
+      "file": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json",
+      "sha256": "87be09269ebe4b2babd246008a509dacecfab3bfc3112345197701ed8d7f0660"
+    },
+    {
+      "file": "evidence/accounting-settings-currency-before-2026-09-30.json",
+      "sha256": "0ef70c1ab0d33275869ed09192cab1e10ab24485be1f33fe1f87241628ab44b1"
+    },
+    {
+      "file": "evidence/accounting-settings-currency-declaration-impact-2026-09-30.json",
+      "sha256": "2e44e3c9984e84f1cff8039a546cf5c711b017666eea41ab2076d3fb9dcf9cb9"
+    },
+    {
+      "file": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json",
+      "sha256": "ce5c09a41626ad56879d07401b0cbba10cbbce5364b025d2f1d892a73d0dfa22"
+    },
+    {
+      "file": "apply-setup-rule-readiness.cjs",
+      "sha256": "15d244c258016598b7f30b71fbf58f52c280292a2e91c37cf7702a25d48744e2"
+    },
+    {
+      "file": "evidence/review-accounting-settings-currency-drift.cjs",
+      "sha256": "67b67ae96af04bca0023d8df8c239c34bfcf3aa22698968a06058ddf79c75c62"
+    },
+    {
+      "file": "run-receipt-capacity-checks.cjs",
+      "sha256": "8d62d809fc5f7546976ff35ee3bf51afd1068a6f67a9134d00f410e6b4258456"
+    },
+    {
+      "file": "lanes/environment/verify-receipt-invoice-capacity.cjs",
+      "sha256": "0b7d54a6a7b9745564259dcf0c4afc73060ec7530a6a76f07609ebe0c5955eb0"
+    },
+    {
+      "file": "lanes/environment/verify-receipt-capacity-browser.cjs",
+      "sha256": "08278ab5a6c7737337867632af984446e4baad839f7f618e02b93f76c20c422c"
+    },
+    {
+      "file": "evidence/receipt-replay-before-tests-2026-10-01.json",
+      "sha256": "2455a0a8b497da95e1cbf7a23b732481caf71ec27db9be8ec96080ad1a241bc7"
+    },
+    {
+      "file": "evidence/receipt-capacity-checks-ca223c24-31d7-4233-808f-78509a7d075f.json",
+      "sha256": "634eab353e5517cd15accb7a7165e10526e6285b05140b364b96d0384db115e5"
+    },
+    {
+      "file": "evidence/receipt-capacity-checks-d2269423-89e1-4394-9bea-f052c4c050b5.json",
+      "sha256": "1ba9350fd43abc0fb589deb6606f59a7f613e65002ab19af4721d06b6e5553f5"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-attempt-55ba415d-4f5c-4c51-8cd0-c1d3c5355ad2.json",
+      "sha256": "08a63f958516b873f1eba0b6e85b2835708bb56fac07318e10f7eebc32f39388"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7.json",
+      "sha256": "500ecbe78a9d0c06a719d286181ab62c666af2ff5f72fe5ad2f67bc6626361ce"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-available-seven.png",
+      "sha256": "adabf789b8af3d2c55fd9635088557ef87c925889c35a9263e755d20e6181315"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-eight-denied-draft-retained.png",
+      "sha256": "04902f4fd05378c76469a558e480cd8e7c268c1edda71ee5a076ffa1d1c64670"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-seven-review.png",
+      "sha256": "3070b09314e881e283b8a483b36c6764f78166d94fd0f69cc269f99ab6032083"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-preparation-seven-saved.png",
+      "sha256": "19e115baaf6e1ed66909a492774c4e5ddface5f6f25751f91742c35de0fa0000"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-available-seven.png",
+      "sha256": "231d3acc4013743b30273b80420429ef145edde8d08a3f61e0637db6de137f98"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-eight-denied-draft-retained.png",
+      "sha256": "6e97330655da362ee2af4667de1118a83d7b9be11ee7c5f5a9a13f9137d1c906"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-seven-review.png",
+      "sha256": "1b8b1f67fc6586abcedc35ed77256447f0874f712d382a990a89a5f0a1b07241"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-en1440-correction-seven-saved.png",
+      "sha256": "82a9d86303cbbd53e98a1a83cd05b97423aecb12610068b0ce8d969f8b696acd"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-available-seven.png",
+      "sha256": "ff1d832acc0f6697b6ea1cf4851d7349cc8e75ea5f739a2f2c24a61a000387b3"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-eight-denied-draft-retained.png",
+      "sha256": "1a587cfc1ec70e4250f36a02662da7565977a40ff480fa5d197ad34e5f4bc7d9"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-seven-review.png",
+      "sha256": "2234d15883c81cb4817843df5f4791013332e1ecf1c3390623ad154a0ee379f7"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-preparation-seven-saved.png",
+      "sha256": "c73b07d48a22e806997cda846884359e58b21bf10786beae0c7346a4f7a68aa8"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-available-seven.png",
+      "sha256": "2ceb5fd6db437bf26c1e36c4d4e0b3fc5806abf1142ccf2499d3baba6d07f9d3"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-eight-denied-draft-retained.png",
+      "sha256": "ff6497b04d2f449497b075141fbb6f58b0763965ff3bbbe690ceb973d2295e15"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-seven-review.png",
+      "sha256": "d83e631d74ace4ba13fa17212c40f0b478b953f67ca476bdc4bc8ca53c51ba16"
+    },
+    {
+      "file": "lanes/environment/receipt-capacity-browser-c71ea2e8-44fa-491d-87c0-fc2ac5485b7f-fr320-correction-seven-saved.png",
+      "sha256": "ef5da54ee4b97826c54a74a0d57d4523572e0c13692da540b7540bfd03af96b3"
+    }
+  ]
+}

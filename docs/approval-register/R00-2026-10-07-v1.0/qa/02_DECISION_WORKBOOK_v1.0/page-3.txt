@@ -1,0 +1,26 @@
+STOQUIFY | R00 | DRAFT - AWAITING HUMAN VALIDATION
+R00 WORKBOOK | v1.0 | 7 October 2026 | 3
+D02 Accounting policy choices
+Canonical definition: Functional currency, rate/rounding, partial-year, close and year-end policies. [S1]
+Agree the accounting rules against which the implementation and reports will be assessed. A green test is not an
+accountant approving the underlying policy.
+Already confirmed
+Cameroon is the first jurisdiction. No functional-currency policy, rate source, rounding method, fiscal calendar or
+close policy has been approved in this pack. [S3, S4]
+Proposal for your review
+Proposed: have the accounting owner and qualified accountant document the policy for the selected entity and
+reporting framework, using explicit examples. Keep unsupported currency/reporting cases unavailable until
+mappings and source amounts are verified.
+Alternatives and consequences
+Single-currency scope reduces conversion cases. Multi-currency scope requires approved rate authority, dates,
+missing-rate handling and reproducible conversion/rounding. Close-only locking and professionally qualified close
+have different evidence requirements.
+Evidence to inspect
+Entity/framework applicability; rate-source evidence; calculation examples; fiscal-year setup; journal/report tie-
+outs; close, reopening and correction controls. [S1, S2, S4]
+Decision timing and deferral
+The detailed policy may remain pending during development, with a named reviewer and due gate. Affected
+financial outputs cannot be represented as qualified.
+Accountable roles: Accounting owner + qualified accountant. Review: Qualified accountant; engineering verifies
+the implementation against approved examples.
+Due gate: R02, R06, R07 and R20 before financial implementation acceptance.

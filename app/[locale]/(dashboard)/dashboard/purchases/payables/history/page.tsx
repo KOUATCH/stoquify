@@ -1,9 +1,12 @@
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { getTranslations } from "next-intl/server"
 import { APHistoryWorkbench } from "@/components/purchasing/APHistoryWorkbench"
 import { routeByKey, withPurchasesSurfaceAccess } from "../../purchases-route-access"
 
-export const metadata = {
-  title: "Supplier AP history | Stoquify",
-  description: "Supplier invoice, payment, payable movement, and AP proof history.",
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "apHistory" })
+  return { title: `${t("title")} | Stoquify`, description: t("summary") }
 }
 
 export default async function SupplierAPHistoryPage({
@@ -24,7 +27,7 @@ export default async function SupplierAPHistoryPage({
     onAllowed: context => (
       <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
         <div className="dashboard-landing-content min-w-0">
-          <APHistoryWorkbench organizationId={context.orgId} actorId={context.userId} />
+          <APHistoryWorkbench organizationId={context.orgId} actorId={context.userId} canExport={hasRbacPermission(context.permissions, "reports.export")} />
         </div>
       </div>
     ),

@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-30T21:21:30.906Z",
+  "sourceBefore": {
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/__tests__/receipt-invoice-capacity.test.ts": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/inventory/__tests__/inventory-stock-event.service.test.ts": "57301c5ba327256b556fb6cbe1a065a60b1007f41f7d08001eb3ced623600053",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/journal-currency-regression.service.test.ts": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+        "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+        "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx",
+        "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx",
+        "services/accounting/__tests__/accounting-settings.service.test.ts",
+        "services/accounting/__tests__/journal-currency-regression.service.test.ts"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/inventory/__tests__/inventory-stock-event.service.test.ts\n  ● retains the posted batch before rejecting a replay payload conflict inside an existing transaction\n\n    expect(jest.fn()).not.toHaveBeenCalled()\n\n    Expected number of calls: 0\n    Received number of calls: 1\n\n    1: [Function anonymous]\n\n      306 |     lines: [{ ...receiptInput.lines[0], quantity: 4 }],\n      307 |   }, transaction as unknown as Prisma.TransactionClient)).rejects.toThrow(\"idempotency key\")\n    > 308 |   expect(mockedDb.$transaction).not.toHaveBeenCalled()\n          |                                     ^\n      309 |\n      310 |   expect(JSON.stringify(batch)).toBe(before)\n      311 |   expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()\n\n      at Object.toHaveBeenCalled (services/inventory/__tests__/inventory-stock-event.service.test.ts:308:37)\n\n\nTest Suites: 1 failed, 9 passed, 10 total\nTests:       1 failed, 191 passed, 192 total\nSnapshots:   0 total\nTime:        15.171 s, estimated 40 s\nRan all test suites within paths \"services/purchasing/__tests__/ap-control.service.test.ts\", \"services/purchasing/__tests__/receipt-invoice-capacity.test.ts\", \"services/inventory/__tests__/inventory-stock-event.service.test.ts\", \"services/purchasing/__tests__/invoice-receipt-recognition.test.ts\", \"services/purchasing/__tests__/purchase-return-credit.service.test.ts\", \"services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts\", \"components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx\", \"components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx\", \"services/accounting/__tests__/accounting-settings.service.test.ts\", \"services/accounting/__tests__/journal-currency-regression.service.test.ts\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/__tests__/receipt-invoice-capacity.test.ts": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/inventory/__tests__/inventory-stock-event.service.test.ts": "57301c5ba327256b556fb6cbe1a065a60b1007f41f7d08001eb3ced623600053",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/journal-currency-regression.service.test.ts": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+  },
+  "sourceStable": true,
+  "passed": false
+}

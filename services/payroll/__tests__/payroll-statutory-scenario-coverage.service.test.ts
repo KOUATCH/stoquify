@@ -113,6 +113,8 @@ function supportedIrppPack() {
       ...cameroonCountryPack.header,
       capabilityMatrix: {
         ...cameroonCountryPack.header.capabilityMatrix,
+        // This synthetic fully reviewed pack is distinct from the active draft pack.
+        "payroll.cnps": "SUPPORTED" as const,
         "payroll.irpp": "SUPPORTED" as const,
         "payroll.compensation": "SUPPORTED" as const,
         "payroll.attendance": "SUPPORTED" as const,
@@ -144,7 +146,7 @@ function family(
 }
 
 describe("payroll statutory scenario coverage service", () => {
-  it("keeps the active Cameroon pack blocked for full production while CNPS coverage is executable", () => {
+  it("keeps the active Cameroon pack blocked for production even when CNPS fixtures execute", () => {
     const validation =
       validatePayrollCountryPackCalculationFixtures(cameroonCountryPack);
 
@@ -154,7 +156,7 @@ describe("payroll statutory scenario coverage service", () => {
     );
 
     expect(summary.status).toBe("BLOCKED");
-    expect(summary.readyFamilyCount).toBe(3);
+    expect(summary.readyFamilyCount).toBe(0);
     expect(summary.requiredFamilyCount).toBe(9);
     expect(summary.requiredReviewTopicCount).toBe(6);
     expect(summary.requiredReviewTopics).toEqual([
@@ -166,15 +168,21 @@ describe("payroll statutory scenario coverage service", () => {
       "withholdingRounding",
     ]);
     expect(family(summary, "CNPS_PENSION")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
+      blockerCode: "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
       passedScenarioCount: 1,
     });
     expect(family(summary, "CNPS_FAMILY_ALLOWANCE")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
+      blockerCode: "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
       passedScenarioCount: 3,
     });
     expect(family(summary, "CNPS_OCCUPATIONAL_RISK")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
+      blockerCode: "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
       passedScenarioCount: 3,
     });
     expect(family(summary, "IRPP_PERIOD")).toMatchObject({

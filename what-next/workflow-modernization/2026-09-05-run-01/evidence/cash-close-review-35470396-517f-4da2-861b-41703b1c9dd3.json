@@ -1,0 +1,92 @@
+{
+  "at": "2026-10-01T00:47:25.645Z",
+  "passed": true,
+  "status": "verified_correction_parent_workflow_open",
+  "evidence": [
+    {
+      "kind": "jest",
+      "file": "evidence/cash-close-jest-ff05e9d1-d3a4-4176-94a1-32c42a17bac3.json",
+      "sha256": "eb3a070cc69dbea7ffc9b9067a8ca2d96da617ba4a78926ae29451de064d6cb2"
+    },
+    {
+      "kind": "lint",
+      "file": "evidence/cash-close-lint-18b4a159-16f6-4c5a-a4db-79fd43d8f754.json",
+      "sha256": "8719e0be7505fe31ddd423a81f4c607742ecc287bd59eff45edda351f35b6911"
+    },
+    {
+      "kind": "typecheck",
+      "file": "evidence/cash-close-typecheck-09eb19b8-cb69-4250-9344-00d6ac97ea84.json",
+      "sha256": "c5d58faed41d98d92803bfa5f8a83eeaa73acc8932a539e000ad576e78c680e3"
+    },
+    {
+      "kind": "database",
+      "file": "lanes/environment/close-readiness-runtime-4bcf68fc-3e88-4865-9a60-f9726791062c.json",
+      "sha256": "ed45d53a66d6fa1902bd2a9e23bb80356120a3876e0661663d3e9331c42f9f62"
+    },
+    {
+      "kind": "browser",
+      "file": "lanes/environment/close-readiness-browser-b97afcf1-f169-40e9-8e02-c6005133ec1f.json",
+      "sha256": "3510d508ada20aa94666ec366f5adb8313b0f6e42d3b8ed3d3266a81d965a2a9"
+    }
+  ],
+  "bindings": {
+    "services/snapshots/close-readiness-snapshot.service.ts": "64a1683f6b7b51f768694390c2c1269e8e4f3290ce73e8c3cc63081b6f9cf010",
+    "services/snapshots/__tests__/close-readiness-snapshot.service.test.ts": "0a97eb7b317bfc5f818da2e456d2f7ebb22a710ef0900db62c648cbed2857a10",
+    "services/cash-command/cash-command.service.ts": "89c1f4e3dce7ebbfc6e9b7f0cf4c943b74c30dcd01c43aa9dd4f76a135f12b4d",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "3ab138923c9c6aaa9b83d102b41731445050737e1a0a4741ba02c5ae841ac015",
+    "services/cash-command/cash-command-presentation.ts": "3ef3688c2bb512c3f1b540076b2152cb84ef018fab311e4189d1d8aeeac2fe8f",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts": "7a039b564b54ebaaec0050dbeb7a42f179381b989729ea1a84dfee4caa59af56",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "63b3af0c1ad8fd1059bfcc38552fee9e9fce15827b84ff0427aa6820480d582a",
+    "services/evidence/proof-trail.service.ts": "9d03e5a0846da801cc5c2cd16e4ec53b51fb31e93e6943d0c7cb8e00500cd546",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "e7f1c3fbd522745f07a653c22cc87727b33cb08077195eabb4cf8d63d525ac03",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "fe1af82671c3db8677a683e7fe8479372b035d3a9d10b418d363ce26afd13aa3",
+    "components/cash-command/CashCommandDashboard.tsx": "ca88ed98aa6f59a54c9e9a6807a191cd49cd27bc91caa28c13764c6a00f9c1db",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "589cffcb0a1eb0f7611d970b805326b2c1dcb2cb6df2e097f5a10961638ddbe6",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "0e5ddfba4d99a4c7cd0516a1f0b3e5e5ddbc405cef32f743fead59e6a1bdf09b",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "1b61e86a0a2d5ef65846bac6244a820f5730d21ffa3827184bc126952310d499",
+    "services/snapshots/__tests__/snapshot-rebuild.service.test.ts": "f3e20fe2c51448beb27ee45a7d271606260d611531a0cc4b1433bef610c4491d",
+    "services/signals/__tests__/business-signal-rules.service.test.ts": "814fc045cd668f91f22acfe34e25b2fb32bcbf5eb5c051e39a36491701c5756f",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-readiness-runtime.cjs": "7e7088490e1b2d9560f47b1550c9d16128e6f6766ae3ee2bbcabc76f56802192",
+    "components/cash-command/cash-command.module.css": "d98dc31d5e95fab331464b1a1096fc2ab7ed126ae069bf59fe42628a7bdcf761",
+    "components/finance/finance-dashboard-theme.ts": "2bfa00818a1520ec5683c1ca43152cc95da03edf7b11c44fb845504f5bc8208d",
+    "components/bi/BIActionPriorityBoard.tsx": "1a9841d5a4517e81de97afb78a232944fe89211c0fe07c91652b309f311fc916",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "87d473b922b0c93f81a986fd807ff45f9fc874c5ef46ecd997ff7a0a7859cdc6",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx": "06ad301501f6191188b565b0e49e86096e9146828c035739748bead23e23184b",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-readiness-browser.cjs": "c0c57d1f4dc055c290e0a451289c8c1eaa6bbf8687ab128eeb98b58eaa976df1"
+  },
+  "scope": "Close snapshot/current retained proof/Cash trust condition read contract; no full workflow, professional, release or whole-page consistency claim.",
+  "summary": {
+    "focusedTests": 250,
+    "suites": 11,
+    "databaseCases": 7,
+    "browserJourneys": 2
+  },
+  "remaining": [
+    "Actual Close destination still presents persisted CERTIFIED/100% and no high-risk blockers for missing-export fixture",
+    "Certification versus invalidation writer race is source-traced, not repaired or runtime reproduced",
+    "Whole Cash source/authority concurrent-change consistency",
+    "Native assistive technology, true browser zoom, comprehensive contrast and production performance",
+    "Full-register reconciliation and every original workflow family remain required"
+  ]
+}

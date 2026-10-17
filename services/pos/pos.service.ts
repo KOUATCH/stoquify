@@ -1,3 +1,5 @@
+import { buildPOSCommitResult, POS_SALE_COMMIT_RESULT_SCHEMA_VERSION, type CommitPOSSaleResult } from "./commit-result"
+export type { CommitPOSSaleResult } from "./commit-result"
 import {
   AccountingSourceType,
   ComplianceAdapterEnvironment,
@@ -49,7 +51,7 @@ import {
   type POSElectronicTenderAuthorityEvidence,
 } from "@/services/payments/pos-electronic-tender-authority.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
-import { getPOSSaleCommitReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
+import { getPOSSaleCommitReceipt, type SalesReceiptPayload } from "./receipt.service"
 import { requirePOSCustomerAtLocation } from "./pos-customer.service"
 import {
   activeCartSchema,
@@ -95,7 +97,6 @@ const STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE =
   "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented"
 const DEVELOPMENT_RECEIPT_ONLY_MESSAGE =
   "This development POS pilot supports an on-screen non-statutory receipt only; delivery channels are disabled"
-const POS_SALE_COMMIT_RESULT_SCHEMA_VERSION = 1
 
 function assertSupportedSaleTenders(tenders: POSTenderInput[]) {
   if (tenders.some((tender) => tender.method === "STORE_CREDIT")) {
@@ -1933,51 +1934,6 @@ export async function removePOSCartLine(rawInput: UserScoped) {
   return mapCart(input.salesOrderId, rawInput.organizationId)
 }
 
-export type CommitPOSSaleResult = {
-  clientCommitId: string
-  resultSchemaVersion: 1
-  replayed: boolean
-  saleId: string
-  orderNumber: string
-  status: string
-  paymentStatus: string
-  total: number
-  amountPaid: number
-  onAccountAmount: number
-  changeDue: number
-  accountingMovements: {
-    saleJournalEntry: {
-      id: string
-      entryNumber: string
-      postingBatchId?: string | null
-    }
-    paymentJournalEntries: Array<{
-      id: string
-      entryNumber: string
-    }>
-    entries: Array<{
-      account: string
-      debit: number
-      credit: number
-    }>
-    totalDebits: number
-    totalCredits: number
-  }
-  fiscalDocument?: {
-    id: string
-    status: string
-    authorityChannel: string | null
-  } | null
-  fiscalization?: {
-    requestId: string
-    status: "PENDING"
-    authoritative: false
-    watermark: "NOT FOR STATUTORY USE"
-  }
-  receipt: SalesReceiptPayload | null
-  receiptStatus: "READY" | "RETRY_REQUIRED"
-  delivery: ReceiptDeliveryResult | null
-}
 
 type POSCommitResultRecord = {
   id: string
@@ -2237,7 +2193,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
     if (typeof rawInput.checkoutLeaseId === "string") {
       const workspace = await assertCheckoutLeaseInTx(tx, { ...rawInput, sessionId: input.sessionId }, rawInput.checkoutLeaseId, true)
       const retained = retainedCheckoutRequest(workspace.pendingRequest)
-      if (!retained || posSaleCommitRequestHash(rawInput, retained) !== requestHash) throw new ConflictError("POS_CHECKOUT_RECOVERY_REQUIRED")
+      // The payload hash excludes the operation key; both must match retained intent.
+      if (!retained || retained.clientCommitId !== input.clientCommitId || posSaleCommitRequestHash(rawInput, retained) !== requestHash) throw new ConflictError("POS_CHECKOUT_RECOVERY_REQUIRED")
     }
     await assertPOSTenderWriteAccessInTx(tx, writeScope)
     await assertModuleNewWorkInTx(tx, {
@@ -2853,47 +2810,11 @@ export async function commitPOSSale(rawInput: UserScoped) {
       ],
     })
 
-    const result = {
-      clientCommitId: input.clientCommitId,
-      resultSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
-      replayed: false,
-      saleId: sale.id,
-      orderNumber: sale.orderNumber,
-      status: updatedSale.status,
-      paymentStatus: updatedSale.paymentStatus,
-      total: moneyToNumber(total),
-      amountPaid: moneyToNumber(amountPaid),
-      onAccountAmount: moneyToNumber(onAccountAmount),
-      changeDue: moneyToNumber(changeDue),
-      accountingMovements: {
-        saleJournalEntry: {
-          id: saleJournalEntry.id,
-          entryNumber: saleJournalEntry.entryNumber,
-          postingBatchId: saleJournalEntry.postingBatchId ?? null,
-        },
-        paymentJournalEntries: paymentJournalEntries.map((entry) => ({
-          id: entry.id,
-          entryNumber: entry.entryNumber,
-        })),
-        entries: journalEntries.map((entry) => ({
-          account: entry.account,
-          debit: moneyToNumber(entry.debit),
-          credit: moneyToNumber(entry.credit),
-        })),
-        totalDebits: moneyToNumber(totalDebits),
-        totalCredits: moneyToNumber(totalCredits),
-      },
-      fiscalDocument: null,
-      fiscalization: {
-        requestId: fiscalizationRequestId,
-        status: "PENDING" as const,
-        authoritative: false as const,
-        watermark: "NOT FOR STATUTORY USE" as const,
-      },
-      receipt: null,
-      receiptStatus: "RETRY_REQUIRED" as const,
-      delivery: null,
-    } satisfies CommitPOSSaleResult
+    const result = buildPOSCommitResult({
+      clientCommitId: input.clientCommitId, sale, updatedSale, total, amountPaid,
+      onAccountAmount, changeDue, saleJournalEntry, paymentJournalEntries,
+      journalEntries, totalDebits, totalCredits, fiscalizationRequestId,
+    })
     const resultEnvelope = commitResultEnvelope(result)
     const resultHash = hashBusinessPayload(resultEnvelope)
     const commitTransition = await tx.pOSCommitResult.updateMany({
@@ -3057,7 +2978,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
     // Receipt completion is repairable; losing it must never report a failed sale.
     return { ...outcome.result, replayed: outcome.callerReplayed, receipt: null, receiptStatus: "RETRY_REQUIRED" as const }
   }
-  return readStoredPOSCommitResult(racedCompletion)
+  return readStoredPOSCommitResult(racedCompletion, outcome.callerReplayed)
 }
 
 const correctionSaleInclude = {

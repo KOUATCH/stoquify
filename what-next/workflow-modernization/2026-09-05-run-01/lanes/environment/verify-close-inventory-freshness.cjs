@@ -1,0 +1,13 @@
+const f=require('./statement-recipient-fixtures.cjs'),{db,fs,path,crypto,assert,root,helper}=f;
+const {reconcileInventoryClass3}=require(path.join(root,'services/inventory/inventory-reconciliation.service.ts'));
+const receipt=process.argv[2];assert.match(receipt,/^close-proof-corrected-[a-f0-9-]+\.json$/);const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,receipt)));assert.ok(fixture.passed&&fixture.sourceStable);
+const files=['services/inventory/inventory-reconciliation.service.ts','services/accounting/close-assurance.service.ts','services/accounting/close-assurance-pack.service.ts'];const hashes=()=>Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));const result={at:new Date().toISOString(),fixtureReceipt:receipt,sourceBefore:hashes(),syntheticOnly:true};
+async function main(){
+ await helper.withClient(f.target,helper.assertOwned);const x=fixture.fixture,input={organizationId:x.organizationId,periodId:x.periodId,currency:'XAF'};
+ const first=await reconcileInventoryClass3(input,db),second=await reconcileInventoryClass3(input,db),fixed=await reconcileInventoryClass3({...input,recordedThrough:new Date(first.recordedThrough)},db);
+ const substantive=({reportHash,recordedThrough,...rest})=>rest;
+ assert.deepEqual(substantive(first),substantive(second));assert.notEqual(first.recordedThrough,second.recordedThrough);assert.notEqual(first.reportHash,second.reportHash);assert.equal(first.reportHash,fixed.reportHash);
+ result.passed=true;result.observation={first:{recordedThrough:first.recordedThrough,hash:first.reportHash,status:first.status},second:{recordedThrough:second.recordedThrough,hash:second.reportHash,status:second.status},identicalReturnedBusinessEvidence:true,fixedCutoffReproducesFirstHash:true,noWritesByVerifier:true};
+ result.finding='Close assessment and export call inventory reconciliation with a new default cutoff. On this unchanged owned fixture, time alone changes reportHash and therefore invalidates the stored annex. Fix the comparison contract while preserving detection of later/backdated financial changes; do not merely reuse an old cutoff to hide them.';
+}
+main().catch(error=>{result.passed=false;result.error=f.safe(error)}).finally(async()=>{result.sourceAfter=hashes();result.sourceStable=JSON.stringify(result.sourceBefore)===JSON.stringify(result.sourceAfter);result.passed=!!result.passed&&result.sourceStable;const file='close-inventory-freshness-'+crypto.randomUUID()+'.json';fs.writeFileSync(path.join(__dirname,file),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,...result}));await db.$disconnect();process.exit(result.passed?0:1)});

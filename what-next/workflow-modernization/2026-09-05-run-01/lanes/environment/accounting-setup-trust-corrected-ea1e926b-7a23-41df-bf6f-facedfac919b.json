@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-30T18:12:40.384Z",
+  "mode": "corrected",
+  "sourceBefore": {
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/accounting-settings.service.ts": "1be92b5855539232f9ddcc971d6e8c1449500d340b964d87535012173771650f",
+    "services/accounting/close-assurance.service.ts": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f"
+  },
+  "syntheticNegativeFixture": true,
+  "checks": [
+    {
+      "setupStatus": "IN_PROGRESS",
+      "missingSetupItems": 29,
+      "setupLockDenied": true,
+      "setupBlocker": true,
+      "trustLevel": "T2",
+      "canExportCertifiedPack": false,
+      "closeStatus": "BLOCKED",
+      "blockers": [
+        {
+          "gate": "accounting.setup.ready",
+          "severity": "high"
+        }
+      ]
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuofaor80000mao43pex830h",
+    "actorId": "cmuofaoro0002mao4mf6j0u79",
+    "periodId": "cmuofaosc0006mao4zrp2dy9i",
+    "runId": "cmuofaq74001hmao46w7ixtud",
+    "journalEntryId": "cmuofap1y0010mao4quiwh5f2"
+  },
+  "onlySyntheticJournalNoExportOrPayment": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/accounting-settings.service.ts": "1be92b5855539232f9ddcc971d6e8c1449500d340b964d87535012173771650f",
+    "services/accounting/close-assurance.service.ts": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f"
+  },
+  "sourceStable": true
+}

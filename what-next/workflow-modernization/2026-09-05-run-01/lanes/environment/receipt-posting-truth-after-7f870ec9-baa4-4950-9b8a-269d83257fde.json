@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-30T19:53:19.948Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+  },
+  "expectedDefect": false,
+  "syntheticNegativeFixture": true,
+  "organizationId": "workflow_supplier_ack_en_receipt-posting-truth-7f870ec9-baa4-4950-9b8a-269d83257fde",
+  "orderId": "cmuoiw5080009ma7oyuwkl2xo",
+  "receiptId": "cmuoiw5n8000zma7o9n1esvol",
+  "stockStatus": "recorded",
+  "accountingStatus": "unverified",
+  "noReadTimeMutation": true,
+  "negativeProbeHadNoJournalLinkOrPayment": true,
+  "readMs": 139,
+  "positiveKernelEvidence": {
+    "accountingStatus": "posted",
+    "oneJournalLinkAndStockMovement": true,
+    "identicalKernelReplay": true,
+    "noPayment": true,
+    "productionReceiptProducerImplemented": false
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+  },
+  "sourceStable": true
+}

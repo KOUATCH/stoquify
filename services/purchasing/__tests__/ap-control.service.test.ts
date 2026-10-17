@@ -21,7 +21,8 @@ import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accou
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
 import { BusinessRuleError, ConflictError } from "@/services/_shared/action-errors"
-import { markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { resolveInvoiceReceiptRecognition, type InvoiceReceiptRecognitionInput } from "../invoice-receipt-recognition"
 
 import {
   approveSupplierBankChange,
@@ -29,6 +30,9 @@ import {
   approveSupplierInvoice,
   approveSupplierPayment,
   approveSupplierPaymentWithControls,
+  buildInvoiceLinePlans,
+  createAPLedgerPosting,
+  postPurchaseCorrectionLedgerInTx,
   postSupplierInvoice,
   prepareSupplierInvoice,
   releaseSupplierPayment,
@@ -60,6 +64,8 @@ jest.mock("@/services/accounting/posting-rules.service", () => ({
   getActivePostingRule: jest.fn(),
 }))
 
+jest.mock("../invoice-receipt-recognition", () => ({ resolveInvoiceReceiptRecognition: jest.fn() }))
+
 jest.mock("@/services/events/business-event.service", () => ({
   hashBusinessPayload: jest.fn((value: unknown) => `hash-${JSON.stringify(value).length}`),
   markBusinessEventAppliedInTx: jest.fn(),
@@ -74,6 +80,16 @@ const mockedGetOpenPeriodForDate = getOpenPeriodForDate as jest.Mock
 const mockedGetActivePostingRule = getActivePostingRule as jest.Mock
 const mockedRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
 const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.Mock
+const mockedReceiptRecognition = resolveInvoiceReceiptRecognition as jest.Mock
+
+function legacyRecognition(input: InvoiceReceiptRecognitionInput) {
+  return { amounts: { sourceAmount: new Prisma.Decimal(input.total), netAmount: new Prisma.Decimal(input.subtotal), grossAmount: new Prisma.Decimal(input.total), taxAmount: new Prisma.Decimal(input.taxAmount), costAmount: new Prisma.Decimal(input.subtotal) } }
+}
+
+function accruedRecognition(input: InvoiceReceiptRecognitionInput) {
+  const recognition = { version: 1 as const, organizationId: input.organizationId, supplierId: input.supplierId, invoiceId: input.invoiceId, currency: input.currency, invoiceSourceHash: "a".repeat(64), allocations: [{ receiptLineId: "gr-line-1", receiptId: "gr-1", quantity: "2.000", invoiceNet: "200.00", receiptCost: "200.00", priorQuantity: "0.000", priorCost: "0.00", receiptBatchId: "receipt-batch", receiptJournalId: "receipt-journal", receiptEvidenceHash: "b".repeat(64) }] }
+  return { amounts: { ...legacyRecognition(input).amounts, sourceAmount: new Prisma.Decimal(0), varianceAmount: new Prisma.Decimal(0) }, conditionContext: { receiptRecognition: "ACCRUAL", receiptVarianceDirection: "NONE", receiptRecognitionHash: hashBusinessPayload(recognition) }, recognition }
+}
 
 function buildTx() {
   return {
@@ -91,6 +107,7 @@ function buildTx() {
     goodsReceiptLine: {
       findFirst: jest.fn(),
     },
+    purchaseReturn: { findMany: jest.fn().mockResolvedValue([]) },
     supplierInvoiceLine: {
       aggregate: jest.fn(),
     },
@@ -307,8 +324,192 @@ function invoicePostingRule() {
   }
 }
 
+describe("return inventory recognition kernel", () => {
+  it("retains an accounting blocker without consulting rules when the source is unproven", async () => {
+    const tx = buildTx()
+    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.FAILED })
+    const result = await postPurchaseCorrectionLedgerInTx(tx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", sourceType: AccountingSourceType.PURCHASE_RETURN, sourceId: "return-1",
+      sourceNumber: "RET-001", sourceDate: new Date("2026-06-15T12:00:00Z"), supplierId: "supplier-1",
+      currency: "USD", actorId: "receiver-1", documentHash: "sha256:return", sourceAmount: 100,
+      costAmount: 100, netAmount: 0, grossAmount: 100, taxAmount: 0, varianceAmount: 100,
+      metadata: { sourceReceiptId: "gr-1" },
+    })
+    expect(result).toMatchObject({ ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode: "PURCHASE_RETURN_SOURCE_REVIEW" })
+    expect(mockedGetOpenPeriodForDate).toHaveBeenCalledWith("org-1", new Date("2026-06-15T12:00:00Z"), tx)
+    expect(mockedGetActivePostingRule).not.toHaveBeenCalled()
+    expect(tx.journalEntry.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["valid", "unverified", "payable", "claim-account", "double", "tax"])("validates actual return allocation effects: %s", async (kind) => {
+    const tx = buildTx(), cost = new Prisma.Decimal(100), claim = new Prisma.Decimal(40), grni = new Prisma.Decimal(60)
+    const template = invoicePostingRule().lines[0]
+    const lines: Array<Record<string, unknown>> = [
+      { ...template, lineNumber: 1, mappingKey: "INVENTORY", side: PostingRuleLineSide.CREDIT, amountSource: PostingRuleAmountSource.COST_AMOUNT },
+      { ...template, lineNumber: 2, mappingKey: "SUPPLIER_RETURN_CLAIM", amountSource: PostingRuleAmountSource.NET_AMOUNT },
+      { ...template, lineNumber: 3, mappingKey: "GRNI", amountSource: PostingRuleAmountSource.VARIANCE_AMOUNT },
+    ]
+    if (kind === "payable") lines[2].mappingKey = "ACCOUNTS_PAYABLE"
+    if (kind === "claim-account") lines[1].account = apMappedAccounts[2]
+    if (kind === "double") for (const line of lines) line.multiplier = "2"
+    mockedGetActivePostingRule.mockResolvedValue({ id: "return-rule", code: "RETURN", lines })
+    tx.chartOfAccount.findMany.mockResolvedValue([...apMappedAccounts, ...["GRNI", "SUPPLIER_RETURN_CLAIM"].map(mappingKey => ({ ...apMappedAccounts[0], id: `acct-${mappingKey.toLowerCase()}`, mappingKey }))])
+    tx.journal.findFirst.mockResolvedValue({ id: "purchase-journal", code: "AC" })
+    tx.ledgerPostingBatch.update.mockImplementation(async ({ data }) => ({ id: "batch-1", ...data }))
+    tx.journalEntry.create.mockImplementation(async ({ data }) => ({ ...data, id: "entry-1", lines: data.lines.create.map((line: Record<string, unknown>, index: number) => ({ ...line, id: `line-${index}` })) }))
+    const result = await createAPLedgerPosting(tx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", periodId: "period-1", sourceType: AccountingSourceType.PURCHASE_RETURN,
+      sourceId: "return-1", sourceNumber: "RET-001", sourceDate: new Date("2026-06-15T12:00:00Z"),
+      postingPurpose: AccountingPostingPurpose.PURCHASE_RETURN, journalType: JournalType.PURCHASE,
+      journalPrefix: "APRET", actorId: "receiver-1", supplierId: "supplier-1", currency: "USD",
+      memo: "Return allocation", documentHash: "sha256:return-source", blockerCode: "RETURN_RULE_MISSING", blockerMessage: "Configure return rules",
+      conditionContext: kind === "unverified" ? {} : { receiptReturnRecognition: "VERIFIED", receiptReturnRecognitionHash: "sha256:recognition" },
+      amounts: { sourceAmount: cost, costAmount: cost, netAmount: claim, varianceAmount: grni, grossAmount: cost, taxAmount: new Prisma.Decimal(kind === "tax" ? 10 : 0) },
+    })
+    if (kind === "valid") {
+      expect(result.ledgerStatus).toBe("POSTED")
+      const entry = tx.journalEntry.create.mock.calls[0][0].data
+      expect(entry.lines.create.map((line: { accountId: string; debit: Prisma.Decimal; credit: Prisma.Decimal }) => [line.accountId, line.debit.toString(), line.credit.toString()])).toEqual([["acct-inventory", "0", "100"], ["acct-supplier_return_claim", "40", "0"], ["acct-grni", "60", "0"]])
+    } else {
+      expect(result).toMatchObject({ ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode: "PURCHASE_RETURN_RECOGNITION_RULE_REVIEW" })
+      expect(tx.journalEntry.create).not.toHaveBeenCalled()
+    }
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+  })
+})
+
+describe("explicit non-stock invoice treatment", () => {
+  it.each(["mixed", "pure", "direct-unmapped", "normalized-currency", "wrong-currency", "receivables", "implicit", "inventory", "control", "control-flag", "liability", "settlement", "foreign", "non-leaf", "missing-account", "double", "wrong-source"])("checks actual residual accounts and source amounts: %s", async kind => {
+    const tx = buildTx(), template = invoicePostingRule().lines[0], zero = new Prisma.Decimal(0)
+    const stock = new Prisma.Decimal(kind === "pure" ? 0 : 25), residual = new Prisma.Decimal(5)
+    const expense = { ...apMappedAccounts[0], id: "acct-treatment", mappingKey: kind === "direct-unmapped" ? null : "TENANT_NON_STOCK", organizationId: "org-1", type: kind === "liability" ? "LIABILITY" : "EXPENSE", normalBalance: "DEBIT", isControlAccount: kind === "control-flag" }
+    const lines: Array<Record<string, unknown>> = [
+      { ...template, mappingKey: expense.mappingKey, account: kind === "direct-unmapped" ? expense : undefined,
+        amountSource: kind === "wrong-source" ? PostingRuleAmountSource.NET_AMOUNT : PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: kind === "implicit" ? null : { receiptResidualTreatment: "NON_STOCK" } },
+      { ...template, lineNumber: 2, mappingKey: "GRNI", amountSource: PostingRuleAmountSource.COST_AMOUNT },
+      { ...template, lineNumber: 3, mappingKey: "ACCOUNTS_PAYABLE", side: PostingRuleLineSide.CREDIT, amountSource: PostingRuleAmountSource.GROSS_AMOUNT },
+    ]
+    if (kind === "inventory") { expense.mappingKey = "INVENTORY"; lines[0].mappingKey = "INVENTORY" }
+    if (kind === "control") { expense.mappingKey = "SUPPLIER_RETURN_CLAIM"; lines[0].mappingKey = expense.mappingKey }
+    if (kind === "settlement") { expense.mappingKey = "BANK"; lines[0].mappingKey = expense.mappingKey }
+    if (kind === "receivables") { expense.mappingKey = "ACCOUNTS_RECEIVABLE"; expense.type = "ASSET"; lines[0].mappingKey = expense.mappingKey }
+    if (kind === "double") for (const line of lines) line.multiplier = "2"
+    const accounts = [...apMappedAccounts.filter(a => a.mappingKey !== expense.mappingKey), { ...apMappedAccounts[0], id: "acct-grni", mappingKey: "GRNI" }, expense]
+    const actual = { ...expense, organizationId: kind === "foreign" ? "other-org" : "org-1", currency: kind === "wrong-currency" ? "EUR" : kind === "normalized-currency" ? " usd " : null, _count: { children: kind === "non-leaf" ? 1 : 0 } }
+    tx.chartOfAccount.findMany.mockResolvedValueOnce(accounts).mockResolvedValue(kind === "missing-account" ? [] : [actual])
+    mockedGetActivePostingRule.mockResolvedValue({ id: "explicit-treatment", code: "NON-STOCK", lines })
+    tx.journal.findFirst.mockResolvedValue({ id: "purchase-journal", code: "AC" })
+    tx.ledgerPostingBatch.update.mockImplementation(async ({ data }) => ({ id: "batch-1", ...data }))
+    tx.journalEntry.create.mockImplementation(async ({ data }) => ({ ...data, id: "entry-1", lines: data.lines.create.map((line: Record<string, unknown>, i: number) => ({ ...line, id: `line-${i}` })) }))
+    const result = await createAPLedgerPosting(tx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", periodId: "period-1", sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: "invoice-mixed", sourceNumber: "INV-MIXED", sourceDate: new Date("2026-06-15T12:00:00Z"),
+      postingPurpose: AccountingPostingPurpose.SUPPLIER_INVOICE, journalType: JournalType.PURCHASE,
+      journalPrefix: "APINV", actorId: "approver", supplierId: "supplier-1", currency: "USD", memo: "Mixed receipt invoice",
+      documentHash: "sha256:invoice", blockerCode: "AP_POSTING_RULE_REVIEW", blockerMessage: "Configure invoice rule",
+      amounts: { sourceAmount: residual, costAmount: stock, netAmount: stock.plus(residual), grossAmount: stock.plus(residual), taxAmount: zero, varianceAmount: zero },
+      conditionContext: { receiptRecognition: "ACCRUAL", receiptResidualTreatment: "NON_STOCK", receiptVarianceDirection: "NONE", receiptRecognitionHash: "a".repeat(64) },
+    })
+    if (["mixed", "pure", "direct-unmapped", "normalized-currency"].includes(kind)) {
+      expect(result.ledgerStatus).toBe("POSTED")
+      const posted = tx.journalEntry.create.mock.calls[0][0].data.lines.create
+      expect(posted.some((line: { accountId: string }) => line.accountId === "acct-inventory")).toBe(false)
+      expect(posted.find((line: { accountId: string }) => line.accountId === expense.id).debit.toFixed(2)).toBe("5.00")
+      expect(tx.chartOfAccount.findMany).toHaveBeenLastCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", isActive: true, deletedAt: null }) }))
+    } else {
+      expect(result).toMatchObject({ ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode: "AP_NON_STOCK_TREATMENT_REVIEW" })
+      expect(tx.journalEntry.create).not.toHaveBeenCalled()
+      expect(mockedLinkAccountingSource).not.toHaveBeenCalled()
+    }
+  })
+})
+
+describe("source-bound supplier credit rounding", () => {
+  it.each(["credit-variance", "debit-variance", "zero-net-positive-claim", "wrong-balanced-account", "double-amounts", "wrong-direction"])("validates actual allocated credit effects: %s", async kind => {
+    const tx = buildTx(), template = invoicePostingRule().lines[0]
+    const claim = new Prisma.Decimal(kind === "debit-variance" ? ".02" : kind === "zero-net-positive-claim" ? ".01" : "0"), net = new Prisma.Decimal(kind === "zero-net-positive-claim" ? "0" : ".01")
+    const direction = kind === "debit-variance" || kind === "zero-net-positive-claim" ? "DEBIT" : "CREDIT"
+    const lines: Array<Record<string, unknown>> = [
+      { ...template, lineNumber: 1, mappingKey: "ACCOUNTS_PAYABLE", amountSource: PostingRuleAmountSource.GROSS_AMOUNT },
+      { ...template, lineNumber: 2, mappingKey: "SUPPLIER_RETURN_CLAIM", side: PostingRuleLineSide.CREDIT, amountSource: PostingRuleAmountSource.COST_AMOUNT },
+      { ...template, lineNumber: 3, mappingKey: kind === "wrong-balanced-account" ? "INVENTORY" : "INVENTORY_VARIANCE", side: direction, amountSource: PostingRuleAmountSource.VARIANCE_AMOUNT },
+    ]
+    if (kind === "double-amounts") for (const line of lines) line.multiplier = "2"
+    mockedGetActivePostingRule.mockResolvedValue({ id: "credit-rule", code: "CREDIT", lines })
+    tx.chartOfAccount.findMany.mockResolvedValue([...apMappedAccounts, ...["INVENTORY_VARIANCE", "SUPPLIER_RETURN_CLAIM"].map(mappingKey => ({ ...apMappedAccounts[0], id: `acct-${mappingKey.toLowerCase()}`, mappingKey }))])
+    tx.journal.findFirst.mockResolvedValue({ id: "purchase-journal", code: "AC" })
+    tx.ledgerPostingBatch.update.mockImplementation(async ({ data }) => ({ id: "batch-1", ...data }))
+    tx.journalEntry.create.mockImplementation(async ({ data }) => ({ ...data, id: "entry-1", lines: data.lines.create.map((line: Record<string, unknown>, index: number) => ({ ...line, id: `line-${index}` })) }))
+    const result = await postPurchaseCorrectionLedgerInTx(tx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", sourceType: AccountingSourceType.SUPPLIER_CREDIT_NOTE,
+      sourceId: "credit-1", sourceNumber: "CR-1", sourceDate: new Date("2026-06-15T12:00:00Z"),
+      actorId: "accountant", supplierId: "supplier-1", currency: "USD", documentHash: "sha256:credit-source",
+      sourceAmount: net, costAmount: claim, netAmount: net, varianceAmount: net.minus(claim).abs(), grossAmount: net, taxAmount: 0,
+      receiptCreditRecognitionHash: "sha256:verified-credit-allocation", receiptCreditVarianceDirection: kind === "wrong-direction" ? "DEBIT" : direction,
+      metadata: { receiptCreditRecognition: "retained source allocation" },
+    })
+    if (kind === "credit-variance" || kind === "debit-variance" || kind === "zero-net-positive-claim") {
+      expect(result.ledgerStatus).toBe("POSTED")
+      const actual = tx.journalEntry.create.mock.calls[0][0].data.lines.create.map((line: { accountId: string; debit: Prisma.Decimal; credit: Prisma.Decimal }) => [line.accountId, line.debit.toFixed(2), line.credit.toFixed(2)])
+      expect(actual).toEqual(kind === "zero-net-positive-claim"
+        ? [["acct-supplier_return_claim", "0.00", "0.01"], ["acct-inventory_variance", "0.01", "0.00"]]
+        : kind === "credit-variance"
+        ? [["acct-accounts_payable", "0.01", "0.00"], ["acct-inventory_variance", "0.00", "0.01"]]
+        : [["acct-accounts_payable", "0.01", "0.00"], ["acct-supplier_return_claim", "0.00", "0.02"], ["acct-inventory_variance", "0.01", "0.00"]])
+    } else {
+      expect(result).toMatchObject({ ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode: "SUPPLIER_CREDIT_RECOGNITION_RULE_REVIEW" })
+      expect(tx.journalEntry.create).not.toHaveBeenCalled()
+    }
+  })
+})
+
+describe("receipt inventory recognition kernel", () => {
+  it.each(["valid", "payable", "opposite", "partial", "extra", "direct-account", "tax"])("validates actual receipt effects: %s", async (kind) => {
+    const tx = buildTx()
+    const cost = new Prisma.Decimal(100)
+    const rule = invoicePostingRule()
+    const receiptLines: Array<Record<string, unknown>> = [
+      { ...rule.lines[0], amountSource: PostingRuleAmountSource.COST_AMOUNT },
+      { ...rule.lines[2], mappingKey: "GRNI", amountSource: PostingRuleAmountSource.COST_AMOUNT },
+    ]
+    if (kind === "payable") receiptLines[1].mappingKey = "ACCOUNTS_PAYABLE"
+    if (kind === "opposite") { receiptLines[0].side = PostingRuleLineSide.CREDIT; receiptLines[1].side = PostingRuleLineSide.DEBIT }
+    if (kind === "partial") for (const line of receiptLines) line.multiplier = "0.5"
+    if (kind === "extra") receiptLines.push({ ...rule.lines[1], amountSource: PostingRuleAmountSource.COST_AMOUNT })
+    if (kind === "direct-account") receiptLines[1].account = { ...apMappedAccounts[2], mappingKey: "ACCOUNTS_PAYABLE" }
+    mockedGetActivePostingRule.mockResolvedValue({ ...rule, sourceType: AccountingSourceType.GOODS_RECEIPT, postingPurpose: AccountingPostingPurpose.GOODS_RECEIPT, lines: receiptLines })
+    tx.chartOfAccount.findMany.mockResolvedValue([...apMappedAccounts, { ...apMappedAccounts[0], id: "acct-grni", mappingKey: "GRNI" }])
+    tx.journal.findFirst.mockResolvedValue({ id: "purchase-journal", code: "AC" })
+    tx.ledgerPostingBatch.update.mockImplementation(async ({ data }) => ({ id: "batch-1", ...data }))
+    tx.journalEntry.create.mockImplementation(async ({ data }) => ({ ...data, id: "entry-1", lines: data.lines.create.map((line: Record<string, unknown>, index: number) => ({ ...line, id: `line-${index}` })) }))
+    const result = await createAPLedgerPosting(tx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", periodId: "period-1", sourceType: AccountingSourceType.GOODS_RECEIPT,
+      sourceId: "gr-1", sourceNumber: "GR-001", sourceDate: new Date("2026-06-15T12:00:00Z"),
+      postingPurpose: AccountingPostingPurpose.GOODS_RECEIPT, journalType: JournalType.PURCHASE,
+      journalPrefix: "APGR", actorId: "receiver-1", supplierId: "supplier-1", currency: "USD",
+      memo: "Accepted receipt", documentHash: "sha256:receipt-source", blockerCode: "RECEIPT_RULE_MISSING", blockerMessage: "Configure receipt rules",
+      amounts: { sourceAmount: cost, costAmount: cost, netAmount: cost, grossAmount: cost, taxAmount: new Prisma.Decimal(kind === "tax" ? 10 : 0) },
+    })
+    if (kind === "valid") {
+      expect(result.ledgerStatus).toBe("POSTED")
+      const entry = tx.journalEntry.create.mock.calls[0][0].data
+      expect(entry).toMatchObject({ entryNumber: "APGR-20260615-0001", currency: "USD", sourceType: AccountingSourceType.GOODS_RECEIPT })
+      expect(entry.lines.create.map((line: { accountId: string; debit: Prisma.Decimal; credit: Prisma.Decimal }) => [line.accountId, line.debit.toString(), line.credit.toString()])).toEqual([["acct-inventory", "100", "0"], ["acct-grni", "0", "100"]])
+      expect(mockedLinkAccountingSource).toHaveBeenCalledTimes(1)
+      expect(mockedRecordPostedJournalCloseInvalidation).toHaveBeenCalledTimes(1)
+    } else {
+      expect(result).toMatchObject({ ledgerStatus: "BLOCKED_PENDING_RULES", blockerCode: "GOODS_RECEIPT_RULE_REVIEW" })
+      expect(tx.journalEntry.create).not.toHaveBeenCalled()
+      expect(mockedLinkAccountingSource).not.toHaveBeenCalled()
+    }
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+  })
+})
+
 beforeEach(() => {
   jest.clearAllMocks()
+  mockedReceiptRecognition.mockImplementation(async (_tx, input: InvoiceReceiptRecognitionInput) => legacyRecognition(input))
   mockedCreateLedgerPostingBatch.mockResolvedValue({ id: "batch-1" })
   mockedRecordPostedJournalCloseInvalidation.mockResolvedValue({
     invalidatedCount: 0,
@@ -328,6 +529,28 @@ beforeEach(() => {
 })
 
 describe("ap-control.service", () => {
+  it.each([
+    ["3", "0", "0", "7", true],
+    ["3", "0", "0", "8", false],
+    ["0", "4", "6", "4", true],
+    ["2", "6", "6", "3", false],
+  ])("validates uninvoiced returns %s and invoiced returns %s against existing invoices %s", async (uninvoiced, invoiced, reserved, requested, allowed) => {
+    const tx = buildTx(), d = (value: string) => new Prisma.Decimal(value)
+    approvalReceipts(tx)
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: reserved } })
+    tx.purchaseReturn.findMany.mockResolvedValue([{ id: "return", organizationId: "org-1", supplierId: "supplier-1", goodsReceiptId: "gr-1", purchaseOrderId: "po-1", direction: "CORRECTION", reversalOfPurchaseReturnId: null, lines: [{ id: "return-line", organizationId: "org-1", purchaseReturnId: "return", sourceGoodsReceiptLineId: "gr-line-1", sourcePurchaseOrderLineId: "po-line-1", itemId: "item-1", quantity: d(uninvoiced as string).plus(invoiced as string), uninvoicedQuantity: d(uninvoiced as string), invoicedQuantity: d(invoiced as string) }] }])
+    const result = buildInvoiceLinePlans(tx as unknown as Prisma.TransactionClient, { organizationId: "org-1", supplierId: "supplier-1", lines: [{ goodsReceiptLineId: "gr-line-1", description: "Returned receipt", quantity: requested as string, unitCost: "100.00" }] })
+    if (allowed) expect((await result)[0].availableQuantity.toString()).toBe(requested)
+    else await expect(result).rejects.toThrow("exceeds received and uninvoiced goods")
+  })
+
+  it("reserves repeated invoice lines together after subtracting uninvoiced returns", async () => {
+    const tx = buildTx()
+    approvalReceipts(tx)
+    tx.purchaseReturn.findMany.mockResolvedValue([{ id: "return", organizationId: "org-1", supplierId: "supplier-1", goodsReceiptId: "gr-1", direction: "CORRECTION", reversalOfPurchaseReturnId: null, lines: [{ organizationId: "org-1", purchaseReturnId: "return", sourceGoodsReceiptLineId: "gr-line-1", sourcePurchaseOrderLineId: "po-line-1", itemId: "item-1", quantity: new Prisma.Decimal(3), uninvoicedQuantity: new Prisma.Decimal(3), invoicedQuantity: new Prisma.Decimal(0) }] }])
+    await expect(buildInvoiceLinePlans(tx as unknown as Prisma.TransactionClient, { organizationId: "org-1", supplierId: "supplier-1", lines: [4, 4].map(quantity => ({ goodsReceiptLineId: "gr-line-1", description: "Repeated receipt", quantity, unitCost: "100.00" })) })).rejects.toThrow("exceeds received and uninvoiced goods")
+  })
+
   it.each(["total", "tax", "scope", "ambiguous", "variance", "liability", "batch", "receipt"])("rejects changed approval source %s before financial effects", async (kind) => {
     const tx = buildTx()
     approvalReceipts(tx)
@@ -979,8 +1202,9 @@ describe("ap-control.service", () => {
     expect(tx.supplier.update).not.toHaveBeenCalled()
   })
 
-  it("atomically approves a prepared invoice and creates ledger and audit evidence as a separate checker", async () => {
+  it.each([false, true])("atomically approves a prepared invoice as a separate checker (receipt accrual: %s)", async (accrued) => {
     const tx = buildTx()
+    if (accrued) mockedReceiptRecognition.mockImplementation(async (_tx, input: InvoiceReceiptRecognitionInput) => accruedRecognition(input))
     approvalReceipts(tx)
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     const preparedInvoice = {
@@ -1025,6 +1249,18 @@ describe("ap-control.service", () => {
       approvedById: "checker-1",
     })
     const postedAt = tx.supplierInvoice.updateMany.mock.calls[0][0].data.postedAt as Date
+    expect(mockedReceiptRecognition).toHaveBeenCalledWith(tx, expect.objectContaining({ organizationId: "org-1", supplierId: "supplier-1", invoiceId: "invoice-prepared", lines: preparedInvoice.lines }))
+    const retained = tx.supplierInvoice.update.mock.calls[0][0].data.metadata
+    const payload = mockedRecordBusinessEventInTx.mock.calls[0][1].payload
+    if (accrued) {
+      const recognition = accruedRecognition(mockedReceiptRecognition.mock.calls[0][1]).recognition
+      expect(retained.receiptRecognition).toEqual(recognition)
+      expect(payload.receiptRecognitionHash).toBe(hashBusinessPayload(recognition))
+      expect(mockedCreateLedgerPostingBatch.mock.calls[0][0].metadata.details.receiptRecognition).toEqual(recognition)
+    } else {
+      expect(retained).not.toHaveProperty("receiptRecognition")
+      expect(payload).not.toHaveProperty("receiptRecognitionHash")
+    }
     expect(postedAt.getTime()).toBeGreaterThanOrEqual(startedAt.getTime())
     expect(postedAt.getTime()).toBeLessThanOrEqual(Date.now())
     expect(mockedRecordBusinessEventInTx.mock.calls[0][1].occurredAt).toEqual(postedAt)
@@ -1374,6 +1610,39 @@ describe("ap-control.service", () => {
 
     expect(tx.supplierPayment.update).not.toHaveBeenCalled()
   })
+  it.each(["matching", "different approver", "different match"])("derives immediate-posting approval evidence from persisted rows: %s", async evidence => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async handler => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.purchaseOrder.findFirst.mockResolvedValue({ id: "po-1", status: "RECEIVED" })
+    approvalReceipts(tx)
+    tx.supplierInvoice.findFirst.mockResolvedValue(null)
+    tx.supplierInvoice.create.mockImplementation(async ({ data }) => ({
+      ...data, id: "invoice-1",
+      approvedById: evidence === "different approver" ? "another-checker" : data.approvedById,
+      lines: data.lines.create.map((line: Record<string, unknown>) => ({ ...line, id: "invoice-line-1" })),
+    }))
+    tx.threeWayMatch.create.mockImplementation(async ({ data }) => ({
+      ...data, id: "match-1", supplierInvoiceId: evidence === "different match" ? "another-invoice" : data.supplierInvoiceId,
+    }))
+    tx.ledgerPostingBatch.update.mockResolvedValue({ id: "batch-1", status: LedgerPostingBatchStatus.FAILED })
+    tx.supplierInvoice.update.mockResolvedValue({ id: "invoice-1" })
+
+    const result = await postSupplierInvoice({
+      organizationId: "org-1", supplierId: "supplier-1", purchaseOrderId: "po-1",
+      invoiceNumber: "INV-AUDIT", invoiceDate: "2026-06-15", createdById: "buyer-1", approvedById: "accountant-1",
+      lines: [{ purchaseOrderLineId: "po-line-1", goodsReceiptLineId: "gr-line-1", itemId: "item-1", description: "Received stock", quantity: "2.000", unitCost: "100.00" }],
+    })
+
+    expect(result.ledgerStatus).toBe("BLOCKED_PENDING_RULES")
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(tx, expect.objectContaining({
+      payload: expect.objectContaining({ makerId: "buyer-1", approverId: evidence === "different approver" ? "another-checker" : "accountant-1", matchStatus: "MATCHED" }),
+      metadata: expect.objectContaining({ makerCheckerVerified: evidence === "matching" }),
+    }))
+    expect(tx.supplierLedgerEntry.create).toHaveBeenCalledTimes(1)
+    expect(mockedMarkBusinessEventAppliedInTx).toHaveBeenCalledTimes(1)
+  })
+
   it("posts matched supplier invoices with event evidence and explicit ledger blocker", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
@@ -1463,10 +1732,15 @@ describe("ap-control.service", () => {
     expect(mockedRecordPostedJournalCloseInvalidation).not.toHaveBeenCalled()
   })
 
-  it("posts matched supplier invoices to a balanced AP journal when rules resolve", async () => {
+  it.each([false, true])("posts matched supplier invoices to a balanced AP journal (receipt accrual: %s)", async (accrued) => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
-    mockedGetActivePostingRule.mockResolvedValue(invoicePostingRule())
+    const rule = invoicePostingRule()
+    if (accrued) {
+      mockedReceiptRecognition.mockImplementation(async (_tx, input: InvoiceReceiptRecognitionInput) => accruedRecognition(input))
+      rule.lines[0] = { ...rule.lines[0], mappingKey: "GRNI", amountSource: PostingRuleAmountSource.COST_AMOUNT }
+    }
+    mockedGetActivePostingRule.mockResolvedValue(rule)
     tx.organization.findFirst.mockResolvedValue({
       country: "CM",
       accountingSettings: { countryPack: null, taxRegime: null },
@@ -1487,7 +1761,7 @@ describe("ap-control.service", () => {
       lines: [{ id: "invoice-line-1" }],
     })
     tx.threeWayMatch.create.mockResolvedValue({ id: "match-1" })
-    tx.chartOfAccount.findMany.mockResolvedValue(apMappedAccounts)
+    tx.chartOfAccount.findMany.mockResolvedValue([...apMappedAccounts, { ...apMappedAccounts[0], id: "acct-grni", mappingKey: "GRNI" }])
     tx.journal.findFirst.mockResolvedValue({
       id: "journal-ac",
       code: "AC",
@@ -1532,6 +1806,13 @@ describe("ap-control.service", () => {
     })
 
     expect(result.ledgerStatus).toBe("POSTED")
+    expect(mockedReceiptRecognition).toHaveBeenCalledWith(tx, expect.objectContaining({ organizationId: "org-1", invoiceId: "invoice-1", currency: "XAF" }))
+    if (accrued) {
+      const recognition = accruedRecognition(mockedReceiptRecognition.mock.calls[0][1]).recognition
+      expect(tx.supplierInvoice.update.mock.calls[0][0].data.metadata.receiptRecognition).toEqual(recognition)
+      expect(mockedRecordBusinessEventInTx.mock.calls[0][1].payload.receiptRecognitionHash).toBe(hashBusinessPayload(recognition))
+      expect(tx.journalEntry.create.mock.calls[0][0].data.lines.create).not.toEqual(expect.arrayContaining([expect.objectContaining({ accountId: "acct-inventory" })]))
+    }
     expect(tx.journalEntry.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -1543,7 +1824,7 @@ describe("ap-control.service", () => {
           lines: expect.objectContaining({
             create: expect.arrayContaining([
               expect.objectContaining({
-                accountId: "acct-inventory",
+                accountId: accrued ? "acct-grni" : "acct-inventory",
                 debit: expect.any(Object),
                 credit: expect.any(Object),
               }),

@@ -1,4 +1,5 @@
 "use client"
+import { ReceiptLedgerRecoveryDialog } from "./ReceiptLedgerRecoveryDialog"
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { z } from "zod"
@@ -132,7 +133,7 @@ export function PurchaseReceivingWorkbench({ orderId, organizationId, actorId, o
   }
   function close() { if (!busy) { setPassword(""); if (!pending) { setPreview(null); setReceipt(null); if (resolution) { setResolution(null); setReason("") } } onOpenChange(false) } }
   function update(id: string, field: keyof Entry, value: string) { setEntries(old => ({ ...old, [id]: { ...emptyEntry(), ...old[id], [field]: value } })) }
-  const money = (value: string, currency = data?.currency ?? preview?.currency ?? receipt?.currency) => currency ? new Intl.NumberFormat(locale, { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value)) : value
+  const money = (value: string, currency: string | null | undefined = data?.currency ?? preview?.currency ?? receipt?.currency) => currency ? new Intl.NumberFormat(locale, { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value)) : value
   const date = (value: string) => new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value))
   const status = (value: string) => t(["HELD", "RECEIVED", "COMPLETED", "REJECTED", "CANCELLED"].includes(value) ? `status.${value}` : "status.unknown")
   const outcomeView = (value: Pick<PurchaseReceivingDecision, "stockStatus" | "accountingStatus">) => <div className="space-y-1 text-sm"><p>{t(`stock.${value.stockStatus}`)}</p><p className={value.accountingStatus === "review_required" ? "text-[var(--dash-warning)]" : ""}>{t(`accounting.${value.accountingStatus}`)}</p>{value.accountingStatus === "review_required" && <p>{t("accountingNext")}</p>}</div>
@@ -144,10 +145,11 @@ export function PurchaseReceivingWorkbench({ orderId, organizationId, actorId, o
       {data && <><p className="text-sm text-[var(--dash-text-soft)]">{t("checked", { at: date(data.checkedAt) })}</p>{data.receipts.length === 0 && <p>{t("empty")}</p>}
         <ul className="space-y-4">{data.receipts.map(row => <li key={row.id} className="space-y-3 rounded-lg border border-[var(--dash-border)] p-4">
           <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{row.number}</h3><p className={`inline-flex items-center gap-2 ${row.status === "HELD" ? "text-[var(--dash-warning)]" : row.stockStatus === "recorded" ? "text-[var(--dash-success)]" : ""}`}>{row.status === "HELD" ? <Clock aria-hidden className="h-4 w-4"/> : row.stockStatus === "recorded" ? <CheckCircle2 aria-hidden className="h-4 w-4"/> : <AlertTriangle aria-hidden className="h-4 w-4"/>}{status(row.status)}</p></div>
-          <p>{date(row.recordedAt)} · {row.receiver} · {row.location}</p><p>{t("quantity")}: {row.quantity} · {t("value")}: {money(row.value)}</p>
+          <p>{date(row.recordedAt)} · {row.receiver} · {row.location}</p><p>{t("quantity")}: {row.quantity} · {t("value")}: {money(row.value, row.currency)}</p>
           {row.inspection && <div><p>{t("inspection")}: {t(`inspectionOutcome.${row.inspection.outcome}`)} · {row.inspection.inspector}</p>{row.inspection.reason && <p>{row.inspection.reason}</p>}{row.inspection.evidenceNotes && <p className="whitespace-pre-wrap">{row.inspection.evidenceNotes}</p>}</div>}
           {row.resolution && <p>{t(row.resolution.decision === "ACCEPT" ? "acceptedBy" : "rejectedBy", { person: row.resolution.resolver, at: date(row.resolution.at) })}: {row.resolution.reason}</p>}
           {outcomeView(row)}{row.decision ? <p className="break-all text-xs">{t("reference")}: {row.decision.requestReference}</p> : <p className="text-sm">{t("legacy")}</p>}
+          {data.canReviewAccounting && row.stockStatus === "recorded" && <ReceiptLedgerRecoveryDialog organizationId={organizationId} actorId={actorId} orderId={orderId} receiptId={row.id} disabled={busy} onChanged={() => { void loadRef.current(); onChanged() }}/>} 
           {row.canReject && <div className="space-y-2"><div className="flex flex-wrap gap-3"><Button className={`dashboard-button-primary ${actionClass}`} disabled={!row.canAccept || busy} onClick={() => startResolution(row.id, "ACCEPT")}>{t("accept")}</Button><Button variant="outline" className={`dashboard-button-secondary ${actionClass}`} disabled={busy} onClick={() => startResolution(row.id, "REJECT")}>{t("reject")}</Button></div>{!row.canAccept && <p className="text-sm">{t("separation")}</p>}</div>}
         </li>)}</ul>{data.olderReceipts && <p>{t("older")}</p>}</>}
     </section>

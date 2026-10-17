@@ -1,0 +1,127 @@
+{
+  "at": "2026-09-28T09:47:52.724Z",
+  "workflow": "FA-CASH-COMMAND",
+  "report": "CASH_COMMAND_PRIVATE_SOURCES_2026-09-28.md",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "services/cash-command/cash-command.service.ts": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370",
+    "services/cash-command/cash-command-visibility.service.ts": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366",
+    "services/cash-command/cash-command-contracts.ts": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/_shared/__tests__/protect.test.ts": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "aff9900a37cf65079749d7ddd30b0ac2542aca965d35daff8ef75d718a1828f4",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "priorImpact": [
+    {
+      "file": "services/cash-command/cash-command.service.ts",
+      "before": "aca8f32b2f4473a21c0511bf8073d77c6a9f2a7c7d8d723eb59286d85fc87ee3",
+      "after": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370"
+    },
+    {
+      "file": "services/cash-command/cash-command-visibility.service.ts",
+      "before": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+      "after": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366"
+    },
+    {
+      "file": "services/cash-command/cash-command-contracts.ts",
+      "before": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+      "after": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command.service.test.ts",
+      "before": "7779054e99f727c9bc2aed2ff250a800a1580996d965a23698edc1c223377900",
+      "after": "aff9900a37cf65079749d7ddd30b0ac2542aca965d35daff8ef75d718a1828f4"
+    }
+  ],
+  "receipts": [
+    {
+      "file": "evidence/cash-private-checks-6584ea53-f92b-4437-aa12-f8aac7e4b45e.json",
+      "sha256": "d893d1830e1761b67ffcc24bc486f840a3ba4c5210dd48e92bdb2845da1b296b"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b.json",
+      "sha256": "d6a936b1267783037df2efeb3248691e9c748e73772e0414a6787e49d30da690"
+    },
+    {
+      "file": "lanes/environment/cash-private-22ff2620-e84e-4f6c-ba33-eee20ef9e7ca.json",
+      "sha256": "cb5a4d10241fd202027ebe80b52c25206ab98736d06d1700c576911675bf8bd5"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-en-missing-dependency.png",
+      "sha256": "1c7e3929924ba5549516bc459d323a1fd3d2635f35d6a462a167451ff4bd3d50"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-fr-missing-dependency.png",
+      "sha256": "3d875b2fa987d01cfe4434ba450e0d5e04fdc8ac25699a2cb2af0677fc91c95f"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-en-allowed.png",
+      "sha256": "3d19a0bf1f2ddbc6e941919478f97933e13cdccfe436402277fbb9489aeba1c1"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-fr-allowed.png",
+      "sha256": "53231c5c3f890a1ede66045c872fb5370bea31b3a1cfe87dd749b126f665fa76"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-en-permission-revoked.png",
+      "sha256": "d323277d90361e71efa6b2fad1dc9646d4df0b3f949c497c53b8a95bad093fb7"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-fr-permission-revoked.png",
+      "sha256": "2af5c69a322ea9495801779da06d0efc2109cb4c538a69a61968f7faeb72ed1b"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-en-module-suspended.png",
+      "sha256": "240fb6d6391f46c2bd4255c219fc0cfd005f00d93e7f0be2a682c1ee73b2260e"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-fr-module-suspended.png",
+      "sha256": "c5f87234844acef5f5db976b0e8bcea7b90b415c37b0c8d52906d5a39ade83e2"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-en-retained-read.png",
+      "sha256": "1bb09300bf103c93c3a2a7b898270319e36c73851286dfc6ebec1ed01c1686da"
+    },
+    {
+      "file": "lanes/environment/cash-private-82358d34-39e8-4ecb-9ec8-a08989cfe03b-fr-retained-read.png",
+      "sha256": "53231c5c3f890a1ede66045c872fb5370bea31b3a1cfe87dd749b126f665fa76"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "drawer_permission_and_current_module_admission_before_domain_query",
+    "withheld_drawer_source_remains_null_without_risk_or_health_claim",
+    "module_diagnostics_permission_before_query",
+    "owned_en_fr_drawer_dependency_revocation_retention_and_tenant_isolation"
+  ],
+  "impact": "Cash Command reads only organization name/currency after tenant authority, before private source queries. Drawer read requires CASH_DRAWER_READ and enforced current cash_drawer read admission, including dependencies. Full module diagnostics require MANAGE_SYSTEM_SETTINGS. Nullable contracts suppress unqueried drawer cards, changes, risks, trust, totals and signals; projection retains explicit source restrictions. Existing snapshot calculations, currency and payroll proof contracts, domain services, proof actions and UI presentation remain unchanged.",
+  "remaining": "Mixed tenant/payment/inventory/close snapshots still load before their domain output permissions. Replace them with independently authorized source reads and domain-specific provenance; preserve payroll proof/currency and failed-query contracts. Cash Command handoffs, complete server-authored EN/FR, remaining proof types and genuinely posted payroll lifecycle remain open.",
+  "limits": [
+    "Ten browser views cover the changed drawer-source states and existing unavailable-data banner; no new complete accessibility certification.",
+    "Synthetic drawer balances establish read isolation only, not cash operation correctness or ledger posting.",
+    "Module diagnostic current permission was exercised with actual source service calls; module-management lifecycle remains separate."
+  ]
+}

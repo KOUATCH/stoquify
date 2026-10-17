@@ -1,0 +1,61 @@
+{
+  "status": "WINDOWS_PREPARATION_VALIDATED_LINUX_NOT_RUN",
+  "capturedAt": "2026-10-01T08:39:17.629Z",
+  "platform": "win32",
+  "node": "22.17.0",
+  "runnerSha256": "ae253397e6972cec1fb386172f5e221882d687cc5dc144909a9e742c11429cbd",
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--check",
+        "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\platform-remediation\\2026-10-01-r01-01\\runner\\run-linux-verification.cjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 200,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--check",
+        "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\platform-remediation\\2026-10-01-r01-01\\runner\\run-linux-verification.test.cjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 183,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "--test",
+        "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\platform-remediation\\2026-10-01-r01-01\\runner\\run-linux-verification.test.cjs"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 1012,
+      "stdout": "TAP version 13\n# Subtest: runtime guard rejects Windows, other platforms and non-20 Node before execution\nok 1 - runtime guard rejects Windows, other platforms and non-20 Node before execution\n  ---\n  duration_ms: 3.8435\n  type: 'test'\n  ...\n# Subtest: real Windows entry point refuses before filesystem creation or command execution\nok 2 - real Windows entry point refuses before filesystem creation or command execution\n  ---\n  duration_ms: 274.094\n  type: 'test'\n  ...\n# Subtest: CLI requires explicit manifest and rejects ambiguous options\nok 3 - CLI requires explicit manifest and rejects ambiguous options\n  ---\n  duration_ms: 4.4681\n  type: 'test'\n  ...\n# Subtest: evidence path cannot overlap candidate or overwrite existing evidence\nok 4 - evidence path cannot overlap candidate or overwrite existing evidence\n  ---\n  duration_ms: 16.1299\n  type: 'test'\n  ...\n# Subtest: environment discards inherited credentials, database aliases and startup injection\nok 5 - environment discards inherited credentials, database aliases and startup injection\n  ---\n  duration_ms: 8.4371\n  type: 'test'\n  ...\n# Subtest: full candidate inventory includes assets, nested extensionless files and newly added paths\nok 6 - full candidate inventory includes assets, nested extensionless files and newly added paths\n  ---\n  duration_ms: 29.723\n  type: 'test'\n  ...\n# Subtest: manifest binding accepts exact files and rejects changes, additions, missing files and invalid identity\nok 7 - manifest binding accepts exact files and rejects changes, additions, missing files and invalid identity\n  ---\n  duration_ms: 38.017\n  type: 'test'\n  ...\n# Subtest: manifest rejects path traversal, duplicate entries, wrong byte size and generated input\nok 8 - manifest rejects path traversal, duplicate entries, wrong byte size and generated input\n  ---\n  duration_ms: 22.2318\n  type: 'test'\n  ...\n# Subtest: preflight rejects dotenv, prior dependencies, npm configuration and root lifecycle hooks\nok 9 - preflight rejects dotenv, prior dependencies, npm configuration and root lifecycle hooks\n  ---\n  duration_ms: 37.7178\n  type: 'test'\n  ...\n# Subtest: only the exact Next-generated config change can be restored\nok 10 - only the exact Next-generated config change can be restored\n  ---\n  duration_ms: 4.6436\n  type: 'test'\n  ...\n1..10\n# tests 10\n# suites 0\n# pass 10\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 795.8201\n",
+      "stderr": ""
+    }
+  ],
+  "actualCandidateReadOnlyBinding": {
+    "status": "PASS",
+    "candidateId": "fad60d274131a4bf50f13b78bbb351358254033e1dde19a4e0bda8f82727afba",
+    "manifestSha256": "0f14ca22b351470ed93ee4a9e02c5073b13616ea9717b43ec4b4fc7c75f35f16",
+    "files": 6314
+  },
+  "linuxExecuted": false,
+  "dependencyInstallExecuted": false,
+  "earlierGuardIterations": [
+    {
+      "result": "Sandbox EPERM before fixture creation; no guard assertions ran"
+    },
+    {
+      "result": "9 pass/1 fail: test classified PGDATABASE database name as a URL; assertion filter corrected"
+    }
+  ]
+}

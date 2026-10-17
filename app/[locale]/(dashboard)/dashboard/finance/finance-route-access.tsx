@@ -25,22 +25,27 @@ type FinanceRouteAccessResult =
 
 const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
 const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
-const NO_ACTIVE_ORG_MESSAGE =
-  "Refresh your session from the dashboard so this finance surface can load tenant-scoped data."
 const PERMISSION_DENIED_MESSAGE =
-  "This finance surface is read-only, but it still requires the matching finance permission. The denial was recorded by the RBAC guard."
-const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this tenant"
+  "Ask your organization administrator to review your finance access. This access denial has been recorded."
+const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this organization"
 const DEFAULT_MODULE_LOCKED_MESSAGE =
-  "This workflow is protected by the payment reconciliation module entitlement. Enable the module before relying on cash, bank, card, or mobile-money reconciliation results here."
+  "Ask your organization administrator to review the modules required to use this page."
 
 const FINANCE_ROUTE_STATE_COPY = {
   en: {
     backToDashboard: "Back to dashboard",
     moduleLockedEyebrow: "Module locked",
     permissionDeniedEyebrow: "Permission required",
-    reconciliationLockedTitle: "Payment reconciliation is not enabled for this tenant",
+    noActiveOrgTitle: "An active organization is required",
+    noActiveOrgMessage: "Refresh your session from the dashboard to load your organization’s financial data.",
+    permissionDeniedTitle: "This finance page is not available for your role",
+    cashCommandDeniedTitle: "Cash Command Intelligence is not available for this role",
+    reconciliationLockedTitle: "Payment reconciliation is not enabled for this organization",
     reconciliationLockedMessage:
-      "Enable the payment reconciliation module so cash, bank, card, or mobile-money reconciliation results can be validated by this surface.",
+      "An administrator must enable payment reconciliation before you can review cash, bank, card or mobile-money reconciliation here.",
+    cashDrawerLockedTitle: "Cash drawer is not enabled for this organization",
+    cashDrawerLockedMessage:
+      "An administrator must enable the cash drawer module before you can view cash movements and payment history.",
     reconciliationDeniedTitle: "Payment reconciliation is not available for this role",
     permissionDeniedMessage: PERMISSION_DENIED_MESSAGE,
   },
@@ -48,12 +53,19 @@ const FINANCE_ROUTE_STATE_COPY = {
     backToDashboard: "Retour au tableau de bord",
     moduleLockedEyebrow: "Module verrouillé",
     permissionDeniedEyebrow: "Autorisation requise",
-    reconciliationLockedTitle: "Le rapprochement des paiements n’est pas activé pour ce locataire",
+    noActiveOrgTitle: "Une organisation active est requise",
+    noActiveOrgMessage: "Actualisez votre session depuis le tableau de bord pour charger les données financières de votre organisation.",
+    permissionDeniedTitle: "Cette page financière n’est pas accessible à votre rôle",
+    cashCommandDeniedTitle: "Le pilotage de la trésorerie n’est pas accessible à votre rôle",
+    reconciliationLockedTitle: "Le rapprochement des paiements n’est pas activé pour cette organisation",
     reconciliationLockedMessage:
-      "Activez le module de rapprochement des paiements afin de valider ici les résultats liés aux espèces, aux banques, aux cartes et au mobile money.",
+      "Un administrateur doit activer le rapprochement des paiements pour vous permettre de consulter ici les rapprochements d’espèces, de banque, de cartes ou de mobile money.",
+    cashDrawerLockedTitle: "Le module de caisse n’est pas activé pour cette organisation",
+    cashDrawerLockedMessage:
+      "Un administrateur doit activer le module de caisse pour vous permettre de consulter les mouvements de caisse et l’historique des paiements.",
     reconciliationDeniedTitle: "Le rapprochement des paiements n’est pas accessible à ce rôle",
     permissionDeniedMessage:
-      "Cette surface financière est en lecture seule, mais elle exige toujours l’autorisation financière correspondante. Le refus a été enregistré par le contrôle RBAC.",
+      "Demandez à votre administrateur de vérifier vos droits d’accès aux pages financières. Ce refus d’accès a été enregistré.",
   },
 } as const
 
@@ -62,7 +74,7 @@ const MODULE_ACTIVATION_COPY = {
     button: "Enable reconciliation",
     pending: "Enabling…",
     confirm:
-      "Enable Payment Reconciliation and any missing required Finance or Accounting modules for this tenant? This access change will be audit logged.",
+      "Enable Payment Reconciliation and any missing required Finance or Accounting modules for this organization? This access change will be audit logged.",
     success: "Reconciliation enabled. Reloading the workbench…",
     error: "Reconciliation could not be enabled.",
     freshAuthRequired: "Confirm your current password to authorize this module access change.",
@@ -73,7 +85,7 @@ const MODULE_ACTIVATION_COPY = {
     button: "Activer le rapprochement",
     pending: "Activation…",
     confirm:
-      "Activer le rapprochement des paiements ainsi que les modules Finance ou Comptabilité requis et manquants pour ce locataire ? Cette modification d’accès sera journalisée.",
+      "Activer le rapprochement des paiements ainsi que les modules Finance ou Comptabilité requis et manquants pour cette organisation ? Cette modification d’accès sera journalisée.",
     success: "Rapprochement activé. Rechargement de l’espace de travail…",
     error: "Le rapprochement n’a pas pu être activé.",
     freshAuthRequired: "Confirmez votre mot de passe actuel pour autoriser cette modification d’accès.",
@@ -108,16 +120,20 @@ async function evaluateFinanceRouteAccess(
         kind: "blocked",
         node: (
           <DashboardRouteState
+            embedded
+            locale={locale}
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
             eyebrow={!noActiveOrg ? routeStateCopy.permissionDeniedEyebrow : undefined}
             title={
               noActiveOrg
-                ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
+                ? locale === "en" ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : routeStateCopy.noActiveOrgTitle
                 : isReconciliationSurface
                   ? routeStateCopy.reconciliationDeniedTitle
-                  : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`
+                  : surface.key === "finance-cash-command"
+                    ? routeStateCopy.cashCommandDeniedTitle
+                    : locale === "en" ? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}` : routeStateCopy.permissionDeniedTitle
             }
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : routeStateCopy.permissionDeniedMessage}
+            message={noActiveOrg ? routeStateCopy.noActiveOrgMessage : routeStateCopy.permissionDeniedMessage}
             primaryHref={localizePath("/dashboard", locale)}
             primaryLabel={routeStateCopy.backToDashboard}
           />
@@ -157,17 +173,23 @@ async function evaluateFinanceRouteAccess(
         kind: "blocked",
         node: (
           <DashboardRouteState
+            embedded
+            locale={locale}
             kind="locked_module"
             eyebrow={routeStateCopy.moduleLockedEyebrow}
             title={
-              isReconciliationSurface
+              moduleRequirement.moduleSlug === "payment_reconciliation"
                 ? routeStateCopy.reconciliationLockedTitle
-                : moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`
+                : moduleRequirement.moduleSlug === "cash_drawer"
+                  ? routeStateCopy.cashDrawerLockedTitle
+                  : moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`
             }
             message={
-              isReconciliationSurface
+              moduleRequirement.moduleSlug === "payment_reconciliation"
                 ? routeStateCopy.reconciliationLockedMessage
-                : moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE
+                : moduleRequirement.moduleSlug === "cash_drawer"
+                  ? routeStateCopy.cashDrawerLockedMessage
+                  : moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE
             }
             primaryHref={localizePath("/dashboard", locale)}
             primaryLabel={routeStateCopy.backToDashboard}

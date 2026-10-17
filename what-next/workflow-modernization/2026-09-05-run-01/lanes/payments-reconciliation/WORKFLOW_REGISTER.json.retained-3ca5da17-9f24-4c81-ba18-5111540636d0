@@ -1,0 +1,1760 @@
+{
+  "updatedAt": "2026-09-13T11:52:22.417Z",
+  "discoveryComplete": false,
+  "workflows": [
+    {
+      "id": "PR-01",
+      "name": "Run automatic payment reconciliation",
+      "purpose": "Create explainable matches and unresolved items for one provider business date.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "payments.reconciliation.run; server-derived actor/organization; active provider/rail/settlement mappings and module admission",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "actions/payments/reconciliation.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-run.service.ts#runPaymentReconciliation"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Resolve current provider and setup",
+        "Reject duplicate date",
+        "Read scoped internal/external evidence in serializable transaction",
+        "Reject prior allocations; match only unique consistent evidence",
+        "Persist actual matched totals, exceptions, suspense and inbox",
+        "Return ready-for-signoff or needs-review without ledger posting",
+        "Persist both exception/suspense links before notifications; abort whole creation if linkage fails"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "automatic_evidence_and_transactional_bidirectional_exception_link_corrected_lifecycle_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_service_proof",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+        "evidence/reconciliation-notifications-v93.json",
+        "RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md",
+        "evidence/provider-review-v118.json",
+        "PROVIDER_REVIEW_HANDOFF_V118.md"
+      ],
+      "remaining": [
+        "Business-date timezone and late-event ownership require review.",
+        "Safe run revision/resume and approved partial allocation/correction are not implemented by this patch.",
+        "Provider-plus-statement totalExternalAmount may count two evidence sources for the same money; historical stored totals must not be blindly overwritten.",
+        "Actual EN/FR authorized action/browser recovery remains unverified.",
+        "Existing unlinked records require a controlled provenance-checked repair, including signed evidence consequences.",
+        "v109 supplies explicit provenance-checked historical-link repair with retained evidence and run/close invalidation; ambiguous/missing provenance and the genuine exception-review/sign-off handoff remain open."
+      ],
+      "v93NotificationIntegration": {
+        "separateRecordsAndRevisions": true,
+        "insertOnceRetry": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "PR-02",
+      "name": "Propose a manual reconciliation match",
+      "purpose": "Submit an explicit amount and evidence pairing for independent review.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "payments.reconciliation.match; tenant-scoped evidence",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "actions/payments/reconciliation.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-manual-match.service.ts#proposeManualMatch",
+        "services/reconciliation/payment-reconciliation-manual-read.service.ts#getPendingManualMatchProposals",
+        "services/reconciliation/payment-reconciliation-manual-candidates.service.ts#getManualMatchCandidates",
+        "services/reconciliation/manual-match-evidence.ts#validateManualMatchEvidence"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Select exactly one external evidence record",
+        "Validate current scoped evidence and remaining amount under provider lock",
+        "Evaluate and audit current permission",
+        "Append proposal with evidence revision/summary and inbox transactionally",
+        "Retry same request using saved receipt",
+        "Original preparer explicitly replaces undecided proposal with current evidence and retained supersession"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "manual_residual_eligibility_and_refresh_recovery_corrected_lifecycle_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+        "evidence/reconciliation-manual-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-manual-run-f03ebb7afd2b.json",
+        "lanes/environment/manual-browser-browser-52cadf1a.json",
+        "lanes/environment/manual-browser-recovery-fd139788.json",
+        "evidence/reconciliation-access-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_ACCESS_AND_OBLIGATIONS.md",
+        "lanes/environment/reconciliation-manual-run-8a23f58475e1.json",
+        "lanes/environment/manual-browser-precision-926e63c2.json",
+        "evidence/reconciliation-residual-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_REMAINING_AMOUNTS.md",
+        "lanes/environment/reconciliation-manual-run-e14aac7c1857.json",
+        "lanes/environment/manual-browser-residual-347868e0.json",
+        "../../evidence/permission-refresh-receipt.json",
+        "../organization-access/PERMISSION_REFRESH.md"
+      ],
+      "remaining": [
+        "Current module read/write preparation verified in PostgreSQL and component tests; actual browser coverage of every restricted grant remains incomplete.",
+        "Paging/full history and controlled rejection/correction remain open; dual provider/statement evidence selection remains explicitly unavailable.",
+        "Cross-session draft/request recovery and distinct partial-intent duplicate resolution remain open; same-page failed read recovery is verified.",
+        "Approval does not complete run/suspense/accounting lifecycle; those engineering workflows remain open.",
+        "Statement-side browser, screen-reader/native zoom/manual contrast remain unverified. Full build remains failed.",
+        "Remaining dashboard aggregate/currency/date truth and other payment workflow producers need review."
+      ],
+      "permissionDisplayReview": {
+        "status": "loading_error_signed_out_and_retry_corrected",
+        "source": "v32",
+        "financialSubmissionVerifiedInThisBatch": false
+      }
+    },
+    {
+      "id": "PR-03",
+      "name": "Approve a manual reconciliation match",
+      "purpose": "Independently accept a still-valid proposed allocation with durable lineage.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "payments.reconciliation.override and fresh authentication; proposer must differ from approver",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "actions/payments/reconciliation.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-manual-match.service.ts#approveManualMatch",
+        "services/reconciliation/payment-reconciliation-manual-read.service.ts#getPendingManualMatchProposals",
+        "services/reconciliation/payment-reconciliation-manual-candidates.service.ts#getManualMatchCandidates",
+        "services/reconciliation/manual-match-evidence.ts#validateManualMatchEvidence"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Review saved evidence and scoped proof",
+        "Require independent reviewer and verified fresh authentication",
+        "Serialize and recompute evidence/remaining allocation",
+        "Append approval decision and inbox atomically",
+        "Retry finds original approval without duplicate allocation",
+        "Exclude decided original from pending queue while retaining history"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "manual_residual_eligibility_and_refresh_recovery_corrected_lifecycle_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+        "evidence/reconciliation-manual-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-manual-run-f03ebb7afd2b.json",
+        "lanes/environment/manual-browser-browser-52cadf1a.json",
+        "lanes/environment/manual-browser-recovery-fd139788.json",
+        "evidence/reconciliation-access-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_ACCESS_AND_OBLIGATIONS.md",
+        "lanes/environment/reconciliation-manual-run-8a23f58475e1.json",
+        "lanes/environment/manual-browser-precision-926e63c2.json",
+        "evidence/reconciliation-residual-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_REMAINING_AMOUNTS.md",
+        "lanes/environment/reconciliation-manual-run-e14aac7c1857.json",
+        "lanes/environment/manual-browser-residual-347868e0.json",
+        "../../evidence/permission-refresh-receipt.json",
+        "../organization-access/PERMISSION_REFRESH.md"
+      ],
+      "remaining": [
+        "Current module read/write preparation verified in PostgreSQL and component tests; actual browser coverage of every restricted grant remains incomplete.",
+        "Paging/full history and controlled rejection/correction remain open; dual provider/statement evidence selection remains explicitly unavailable.",
+        "Cross-session draft/request recovery and distinct partial-intent duplicate resolution remain open; same-page failed read recovery is verified.",
+        "Approval does not complete run/suspense/accounting lifecycle; those engineering workflows remain open.",
+        "Statement-side browser, screen-reader/native zoom/manual contrast remain unverified. Full build remains failed.",
+        "Remaining dashboard aggregate/currency/date truth and other payment workflow producers need review."
+      ],
+      "permissionDisplayReview": {
+        "status": "loading_error_signed_out_and_retry_corrected",
+        "source": "v32",
+        "financialSubmissionVerifiedInThisBatch": false
+      }
+    },
+    {
+      "id": "PR-04",
+      "name": "Capture provider payment evidence",
+      "purpose": "Store authenticated external evidence with duplicate/tamper history and downstream events.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "Tenant-scoped active provider; provider adapter HMAC verification; actual public transport discovery remains open",
+      "entryPoints": [
+        "services/payments/provider-event.service.ts"
+      ],
+      "services": [
+        "services/payments/provider-event.service.ts#captureProviderEvent",
+        "services/payments/adapters/mobile-money-hmac.adapter.ts#parseEvent"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Parse payload and validate provider",
+        "Verify signature and replay window",
+        "Classify duplicate/tampered/rejected input",
+        "Persist captured evidence/inbox/business-event/outbox",
+        "Invalidate dependent close evidence"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "automatic_evidence_corrected_lifecycle_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_service_proof",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json"
+      ],
+      "remaining": [
+        "Missing direction now remains unknown; pre-existing incorrectly inferred direction cannot be rewritten in immutable provider evidence.",
+        "Actual provider endpoint/worker handoff, replay recovery, event-to-internal-payment bridge, and outbox delivery remain incomplete in this review."
+      ]
+    },
+    {
+      "id": "PR-05",
+      "name": "Import a provider statement",
+      "purpose": "Capture retained statement lines with exact duplicate and tamper evidence.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "payments.reconciliation.import; tenant-scoped active provider",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "actions/payments/reconciliation.actions.ts"
+      ],
+      "services": [
+        "services/payments/statement-import.service.ts#importProviderStatement"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Parse bounded file",
+        "Validate provider and file fingerprint",
+        "Classify duplicate file/line",
+        "Persist statement, lines and inbox/events",
+        "Hand off to matching"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "existing_with_open_defects",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_service_proof",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+        "evidence/provider-review-v118.json",
+        "PROVIDER_REVIEW_HANDOFF_V118.md"
+      ],
+      "remaining": [
+        "Real isolated import participates in outbound matching proof; complete UI file/retry/invalid-content paths remain unverified.",
+        "CSV quoting/amount/calendar semantics, event delivery and import-plus-run partial completion require further review."
+      ],
+      "v118Correction": "Provider-serialized duplicate rejection reuses retained exception; new imports obey transaction-owned stop-new-work admission. Actual concurrent PostgreSQL verification passed; complete import UI lifecycle still open."
+    },
+    {
+      "id": "PR-06",
+      "name": "Import and reconcile a provider statement, then hand off for independent signature",
+      "purpose": "Retain an import and actual reconciliation result through retries; review current evidence separately before authorized signature.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator, independent reviewer, provider integration operator as applicable"
+      ],
+      "authority": "Trusted server-derived active tenant actor with reconciliation read/import/run and enforced module eligibility; independent checker signs only through reviewed signing controls.",
+      "entryPoints": [
+        "services/payments/provider-operations.service.ts"
+      ],
+      "services": [
+        "services/payments/provider-operations.service.ts#importProviderStatementForReview",
+        "services/payments/provider-operation-evidence.ts#loadProviderOperationIntent",
+        "services/payments/statement-import.service.ts#importProviderStatement",
+        "services/reconciliation/payment-reconciliation-run.service.ts#runPaymentReconciliation",
+        "services/reconciliation/payment-reconciliation-certification.service.ts#previewReconciliationSignOff"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ProviderEvent",
+        "StatementFile/StatementLine",
+        "PaymentTransaction",
+        "ReconciliationRun",
+        "MatchRecord",
+        "PaymentException",
+        "SuspenseItem",
+        "PaymentReconciliationInboxItem",
+        "BusinessEvent/Outbox where applicable"
+      ],
+      "transitions": [
+        "Validate active scoped actor, permissions and current module eligibility",
+        "Register immutable tenant/actor/provider/date/file request intent",
+        "Import or return retained duplicate evidence",
+        "Create a source-bound reconciliation run or report retained partial completion",
+        "Open actual current evidence through the localized review route",
+        "Independent checker resolves setup/evidence conditions and explicitly signs through the separate canonical action"
+      ],
+      "sideEffects": [
+        "Durable evidence, match/review history, unresolved item and event records as listed; no direct payment or ledger posting in automatic matching"
+      ],
+      "implementationStatus": "automatic_sign_retired_durable_import_run_review_handoff",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "owned_postgres_concurrent_retry_partial_failure_unsigned_handoff_and_actual_en_fr_missing_setup_review_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-auto-receipt.json",
+        "lanes/payments-reconciliation/AUTOMATIC_MATCHING_CORRECTION.md",
+        "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+        "evidence/reconciliation-period-v87.json",
+        "evidence/manager-sign-v117.json",
+        "MANAGER_SIGN_HANDOFF_V117.md",
+        "evidence/provider-review-v118.json",
+        "PROVIDER_REVIEW_HANDOFF_V118.md",
+        "evidence/run-discovery-v119.json",
+        "RUN_DISCOVERY_V119.md"
+      ],
+      "remaining": [
+        "No production caller found in current scoped source search; provider-specific adapter ingestion, business-day cutoff, deployment and real external handoff remain unverified.",
+        "Cold/warm local route latency remains unresolved; native assistive technology and broader source/provider boundaries need verification.",
+        "Continue every registered and unmapped workflow; this service slice does not complete the whole assignment."
+      ],
+      "v117SourceReview": "provider-operations.service.ts still imports and creates a run before signing with trusted control context, without full human evidence review; only its definition was found outside tests by current scoped production-source search. Requires explicit lifecycle/authority review; not a runtime pass.",
+      "v119Discovery": "Reconciliation readers can search/page minimal run metadata without accounting-read. Preparation evidence retains accounting-read. Ready rows open the separately authorized sign review. Actual 22-run PostgreSQL pagination and EN/FR limited-role search/recovery/handoff passed."
+    },
+    {
+      "id": "PR-07",
+      "name": "Assign a suspense item",
+      "purpose": "Give a same-organization operator responsibility for unresolved suspense.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator and independent checker"
+      ],
+      "authority": "payments.reconciliation.exception.assign; server-derived organization and actor at actions",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "actions/payments/reconciliation.actions.ts",
+        "hooks/payments/usePaymentReconciliationDashboard.ts"
+      ],
+      "prerequisites": [
+        "Scoped suspense item, appropriate lifecycle state, configured account for posting"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-workflow.service.ts#assignPaymentSuspenseItem"
+      ],
+      "records": [
+        "SuspenseItem",
+        "PaymentException",
+        "LedgerPostingBatch",
+        "JournalEntry",
+        "AccountingSourceLink",
+        "LedgerAuditEvent",
+        "PaymentReconciliationInboxItem"
+      ],
+      "transitions": [
+        "Locate open suspense",
+        "Check assignment authority",
+        "Assign owner and related exceptions",
+        "Record audit and inbox notice",
+        "Preserve each open exception metadata object and compare observed updatedAt before assignment; conflict rolls back all assignment changes"
+      ],
+      "sideEffects": [
+        "Record audit and inbox notice"
+      ],
+      "implementationStatus": "linked_assignment_preserves_metadata_and_rejects_stale_exception_updates",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "owned_postgres_rollback_and_actual_en_fr_keyboard_assignment_reload_mobile_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-period-v87.json",
+        "RECONCILIATION_PERIOD_VERIFICATION_V87.md",
+        "RECONCILIATION_PERIOD_GUIDE.md",
+        "evidence/suspense-authority-v88.json",
+        "SUSPENSE_AUTHORITY_GUIDE.md",
+        "SUSPENSE_AUTHORITY_VERIFICATION_V88.md",
+        "evidence/suspense-review-v89.json",
+        "SUSPENSE_REVIEW_GUIDE.md",
+        "SUSPENSE_REVIEW_VERIFICATION_V89.md",
+        "evidence/reconciliation-overview-v92.json",
+        "RECONCILIATION_OVERVIEW_GUIDE.md",
+        "RECONCILIATION_OVERVIEW_VERIFICATION_V92.md",
+        "evidence/reconciliation-notifications-v93.json",
+        "RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md"
+      ],
+      "remaining": [
+        "Concurrent deactivation/reassignment and historical invalid-owner repair remain open.",
+        "Stale update, idempotent retry, in-app read/unread delivery and complete EN/FR public-session/browser lifecycle remain unverified.",
+        "v89 serializes assignment with proposal/approval and denies assignment after posting; assignment idempotency/history and complete UI journey remain open.",
+        "v92 supersedes older-work assignment/proposal and retained-only inspection-copy limitations; full resolution/reversal/export, setup edits and accessibility remain incomplete.",
+        "v108 verifies EN/FR assignment/reload/320px reflow and injected stale-update rollback; real two-client exception races, historical repair and idempotent assignment retries remain open.",
+        "v109 supplies explicit provenance-checked historical-link repair with retained evidence and run/close invalidation; ambiguous/missing provenance and the genuine exception-review/sign-off handoff remain open."
+      ],
+      "v88AuthorityReview": {
+        "moduleWriteAdmission": "actual_actions_and_protect_wrapper_verified_with_mocked_lookup",
+        "verifiedAuthenticationProvenance": "not_required_for_this_operation",
+        "activeSameTenantAssignee": "actual_owned_database_verified",
+        "publicBrowserAuthorityVerified": false
+      },
+      "v89Review": {
+        "scopedRowLock": true,
+        "fullLifecycleComplete": false
+      },
+      "v92OlderWork": {
+        "assignmentAndProposalFromHistory": true,
+        "refreshAfterSavedChange": true,
+        "pureReadErrorDoesNotClaimSave": true,
+        "wholeLifecycleComplete": false
+      },
+      "v93NotificationIntegration": {
+        "separateRecordsAndRevisions": true,
+        "insertOnceRetry": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "PR-08",
+      "name": "Propose suspense reclassification",
+      "purpose": "Prepare a reasoned suspense treatment for independent review.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator and independent checker"
+      ],
+      "authority": "payments.reconciliation.suspense.propose; server-derived organization and actor at actions",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "actions/payments/reconciliation.actions.ts",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "components/finance/PaymentSuspenseQueue.tsx"
+      ],
+      "prerequisites": [
+        "Scoped suspense item, appropriate lifecycle state, configured account for posting"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-workflow.service.ts#proposeSuspenseReclassification",
+        "services/reconciliation/payment-suspense-evidence.ts",
+        "hooks/payments/suspense-recovery.ts",
+        "services/reconciliation/payment-suspense-read.service.ts",
+        "components/finance/PaymentSuspenseHistory.tsx"
+      ],
+      "records": [
+        "SuspenseItem",
+        "PaymentException",
+        "LedgerPostingBatch",
+        "JournalEntry",
+        "AccountingSourceLink",
+        "LedgerAuditEvent",
+        "PaymentReconciliationInboxItem"
+      ],
+      "transitions": [
+        "Locate open suspense",
+        "Check proposal authority and reason",
+        "Record proposed type/account and maker evidence",
+        "Notify independent reviewer"
+      ],
+      "sideEffects": [
+        "Notify independent reviewer"
+      ],
+      "implementationStatus": "reviewed_revision_stale_conflict_safe_retry_and_en_fr_queue_implemented",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "partial_owned_en_fr_reload_lost_response_expired_session_reauthentication_exact_retry_and_role_denial",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-period-v87.json",
+        "RECONCILIATION_PERIOD_VERIFICATION_V87.md",
+        "RECONCILIATION_PERIOD_GUIDE.md",
+        "evidence/suspense-authority-v88.json",
+        "SUSPENSE_AUTHORITY_GUIDE.md",
+        "SUSPENSE_AUTHORITY_VERIFICATION_V88.md",
+        "evidence/suspense-review-v89.json",
+        "SUSPENSE_REVIEW_GUIDE.md",
+        "SUSPENSE_REVIEW_VERIFICATION_V89.md",
+        "evidence/suspense-recovery-v90.json",
+        "SUSPENSE_SESSION_RECOVERY_GUIDE.md",
+        "SUSPENSE_SESSION_RECOVERY_VERIFICATION_V90.md",
+        "evidence/suspense-history-v91.json",
+        "SUSPENSE_HISTORY_GUIDE.md",
+        "SUSPENSE_HISTORY_VERIFICATION_V91.md",
+        "evidence/reconciliation-overview-v92.json",
+        "RECONCILIATION_OVERVIEW_GUIDE.md",
+        "RECONCILIATION_OVERVIEW_VERIFICATION_V92.md",
+        "evidence/reconciliation-notifications-v93.json",
+        "RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "evidence/suspense-correction-v98.json",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md"
+      ],
+      "remaining": [
+        "Posting-configuration evidence, complete retained-history/export navigation and notification read/delivery lifecycle require further review.",
+        "Proposal exception metadata retention and superseded-proposal history require review.",
+        "Full screen-reader/contrast checks, account labels and queue pagination remain incomplete.",
+        "Current stored requests outside the bounded queue need retained-history navigation; cross-device draft storage is not implemented.",
+        "Other reconciliation query families, retained posting date/labels and all platform workflows remain under review.",
+        "v91 supersedes earlier history-pagination, account-label and off-queue approval lookup limitations; older work editing, lifecycle resolution/reversal/exports and full accessibility remain incomplete.",
+        "v92 supersedes older-work assignment/proposal and retained-only inspection-copy limitations; full resolution/reversal/export, setup edits and accessibility remain incomplete.",
+        "v109 supplies explicit provenance-checked historical-link repair with retained evidence and run/close invalidation; ambiguous/missing provenance and the genuine exception-review/sign-off handoff remain open."
+      ],
+      "v88AuthorityReview": {
+        "moduleWriteAdmission": "actual_actions_and_protect_wrapper_verified_with_mocked_lookup",
+        "verifiedAuthenticationProvenance": "not_required_for_this_operation",
+        "activeSameTenantAssignee": "not_applicable",
+        "publicBrowserAuthorityVerified": false
+      },
+      "v89Review": {
+        "scopedRowLock": true,
+        "fullLifecycleComplete": false,
+        "reviewRevision": true,
+        "exactRetry": true,
+        "actualEnFrBrowser": true,
+        "postedAmountPrecision": true
+      },
+      "v90Recovery": {
+        "tabReload": true,
+        "normalReauthentication": true,
+        "originalRequestRetry": true,
+        "organizationActorIsolation": true,
+        "serverReadFacts": true,
+        "crossDeviceDraftStorage": false
+      },
+      "v91History": {
+        "boundedCursorPages": true,
+        "offQueueApprovalLookup": true,
+        "retainedJournalDate": true,
+        "accountLabels": true,
+        "fullLifecycleComplete": false
+      },
+      "v92OlderWork": {
+        "assignmentAndProposalFromHistory": true,
+        "refreshAfterSavedChange": true,
+        "pureReadErrorDoesNotClaimSave": true,
+        "wholeLifecycleComplete": false
+      },
+      "v93NotificationIntegration": {
+        "separateRecordsAndRevisions": true,
+        "insertOnceRetry": true,
+        "wholeWorkflowComplete": false
+      },
+      "v98ConnectedReview": "Cycle-specific approval receipts and posting dates; prior compensation lineage verified on later posting and posted-truth checks. Broader workflow remains incomplete."
+    },
+    {
+      "id": "PR-09",
+      "name": "Approve and post suspense reclassification",
+      "purpose": "Turn an independently reviewed proposal into balanced ledger and retained source evidence.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator and independent checker"
+      ],
+      "authority": "payments.reconciliation.suspense.post; fresh authentication and independent checker; server-derived organization and actor at actions",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "actions/payments/reconciliation.actions.ts",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "components/finance/PaymentSuspenseQueue.tsx"
+      ],
+      "prerequisites": [
+        "Scoped suspense item, appropriate lifecycle state, configured account for posting",
+        "New posting requires explicit accounting settings whose base currency matches source currency; no implicit foreign exchange conversion."
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-workflow.service.ts#approveSuspensePosting",
+        "services/reconciliation/payment-suspense-ledger.service.ts",
+        "services/reconciliation/payment-suspense-evidence.ts",
+        "hooks/payments/suspense-recovery.ts",
+        "services/reconciliation/payment-suspense-read.service.ts",
+        "components/finance/PaymentSuspenseHistory.tsx"
+      ],
+      "records": [
+        "SuspenseItem",
+        "PaymentException",
+        "LedgerPostingBatch",
+        "JournalEntry",
+        "AccountingSourceLink",
+        "LedgerAuditEvent",
+        "PaymentReconciliationInboxItem"
+      ],
+      "transitions": [
+        "Load proposed reclassification",
+        "Check checker authority",
+        "Lock and validate current period",
+        "Lock the configured accounting currency; refuse unsupported conversion; retain the actual basis used",
+        "Post balanced journal and source link",
+        "Update suspense, audit, close invalidation and inbox"
+      ],
+      "sideEffects": [
+        "Update suspense, audit, close invalidation and inbox"
+      ],
+      "implementationStatus": "same_currency_basis_and_typed_conflict_recovery_implemented_full_lifecycle_open",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "v102_owned_currency_rollback_replay_concurrency_correction_cycle_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-period-v87.json",
+        "RECONCILIATION_PERIOD_VERIFICATION_V87.md",
+        "RECONCILIATION_PERIOD_GUIDE.md",
+        "evidence/suspense-authority-v88.json",
+        "SUSPENSE_AUTHORITY_GUIDE.md",
+        "SUSPENSE_AUTHORITY_VERIFICATION_V88.md",
+        "evidence/suspense-review-v89.json",
+        "SUSPENSE_REVIEW_GUIDE.md",
+        "SUSPENSE_REVIEW_VERIFICATION_V89.md",
+        "evidence/suspense-recovery-v90.json",
+        "SUSPENSE_SESSION_RECOVERY_GUIDE.md",
+        "SUSPENSE_SESSION_RECOVERY_VERIFICATION_V90.md",
+        "evidence/suspense-history-v91.json",
+        "SUSPENSE_HISTORY_GUIDE.md",
+        "SUSPENSE_HISTORY_VERIFICATION_V91.md",
+        "evidence/reconciliation-overview-v92.json",
+        "RECONCILIATION_OVERVIEW_GUIDE.md",
+        "RECONCILIATION_OVERVIEW_VERIFICATION_V92.md",
+        "evidence/reconciliation-notifications-v93.json",
+        "RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "evidence/suspense-reversal-v95.json",
+        "SUSPENSE_CORRECTION_BOUNDARY.md",
+        "SUSPENSE_REVERSAL_VERIFICATION_V95.md",
+        "evidence/posting-identity-v96.json",
+        "POSTING_IDENTITY_AND_CORRECTION_PLAN.md",
+        "POSTING_IDENTITY_VERIFICATION_V96.md",
+        "evidence/suspense-cycles-v97.json",
+        "SUSPENSE_POSTING_CYCLES.md",
+        "SUSPENSE_CYCLES_VERIFICATION_V97.md",
+        "evidence/suspense-correction-v98.json",
+        "evidence/suspense-currency-v102.json",
+        "SUSPENSE_CURRENCY_GUIDE.md",
+        "SUSPENSE_CURRENCY_VERIFICATION_V102.md",
+        "evidence/suspense-resolution-v103.json",
+        "evidence/suspense-resolution-recovery-v104.json",
+        "evidence/suspense-resolution-ui-v105.json",
+        "evidence/suspense-local-recovery-v106.json",
+        "evidence/suspense-resolution-export-v107.json",
+        "evidence/suspense-resolution-export-localization-v107.json"
+      ],
+      "remaining": [
+        "Posting-configuration evidence, complete retained-history/export navigation and notification read/delivery lifecycle require further review.",
+        "Standalone suspense period-close obligations, lifecycle reversal/correction and all configured provider/period cases remain incomplete.",
+        "Full screen-reader/contrast checks, account labels and queue pagination remain incomplete.",
+        "Current stored requests outside the bounded queue need retained-history navigation; cross-device draft storage is not implemented.",
+        "Other reconciliation query families, retained posting date/labels and all platform workflows remain under review.",
+        "v91 supersedes earlier history-pagination, account-label and off-queue approval lookup limitations; older work editing, lifecycle resolution/reversal/exports and full accessibility remain incomplete.",
+        "v92 supersedes older-work assignment/proposal and retained-only inspection-copy limitations; full resolution/reversal/export, setup edits and accessibility remain incomplete.",
+        "v102 refuses implicit FX conversion and retains the same-currency basis for new postings. Foreign-currency conversion, legacy currency provenance and final resolution/write-off remain incomplete.",
+        "v103 adds PR-15 internal resolution/write-off core and manifest lineage verification. Recovery, public controls and complete connected lifecycle remain open."
+      ],
+      "v88AuthorityReview": {
+        "moduleWriteAdmission": "actual_actions_and_protect_wrapper_verified_with_mocked_lookup",
+        "verifiedAuthenticationProvenance": "forwarded_and_scope_checked",
+        "activeSameTenantAssignee": "not_applicable",
+        "publicBrowserAuthorityVerified": false
+      },
+      "v89Review": {
+        "scopedRowLock": true,
+        "fullLifecycleComplete": false,
+        "reviewRevision": true,
+        "exactRetry": true,
+        "actualEnFrBrowser": true,
+        "postedAmountPrecision": true
+      },
+      "v90Recovery": {
+        "tabReload": true,
+        "normalReauthentication": true,
+        "originalRequestRetry": true,
+        "organizationActorIsolation": true,
+        "serverReadFacts": true,
+        "crossDeviceDraftStorage": false
+      },
+      "v91History": {
+        "boundedCursorPages": true,
+        "offQueueApprovalLookup": true,
+        "retainedJournalDate": true,
+        "accountLabels": true,
+        "fullLifecycleComplete": false
+      },
+      "v92OlderWork": {
+        "assignmentAndProposalFromHistory": true,
+        "refreshAfterSavedChange": true,
+        "pureReadErrorDoesNotClaimSave": true,
+        "wholeLifecycleComplete": false
+      },
+      "v93NotificationIntegration": {
+        "separateRecordsAndRevisions": true,
+        "insertOnceRetry": true,
+        "wholeWorkflowComplete": false
+      },
+      "v95": {
+        "unsafeGenericReversalReproduced": true,
+        "genericReversalNowRefused": true,
+        "linkedCorrectionImplemented": false
+      },
+      "v96": {
+        "postingIdentityConflictReproduced": true,
+        "conflictingIdentityNowRejected": true,
+        "sourceVersionNotInDatabaseUniqueConstraint": true,
+        "linkedCorrectionImplemented": false
+      },
+      "v97": {
+        "postingCycleSchemaImplemented": true,
+        "unrelatedDomainsRestrictedToCycleOne": true,
+        "ownedMigrationRehearsedAndApplied": true,
+        "legacyCycleOneRuntimeVerified": true,
+        "correctionCommandImplemented": false
+      },
+      "v98ConnectedReview": "Cycle-specific approval receipts and posting dates; prior compensation lineage verified on later posting and posted-truth checks. Broader workflow remains incomplete.",
+      "v102": {
+        "sameCurrencyBasis": true,
+        "settingsLock": true,
+        "currencyErrorPreservedThroughActions": true,
+        "independentCorrectionCycleRegression": true,
+        "historicalFxCertified": false,
+        "foreignExchangeImplemented": false,
+        "fullLifecycleComplete": false
+      }
+    },
+    {
+      "id": "PR-10",
+      "name": "Sign a reconciliation run",
+      "purpose": "Retain independent sign-off only for a current ready run with valid evidence and period.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Independent reconciliation signer"
+      ],
+      "authority": "payments.reconciliation.sign; enforced module and verified fresh authentication; server-derived organization and actor at actions",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "actions/payments/reconciliation.actions.ts",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/ReconciliationPreparationWorkbench.tsx",
+        "app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx"
+      ],
+      "prerequisites": [
+        "Ready run, source evidence, provider setup, open correct period"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts#signReconciliationRun",
+        "services/reconciliation/payment-reconciliation-certification.service.ts#previewReconciliationSignOff"
+      ],
+      "records": [
+        "ReconciliationRun",
+        "AccountingPeriod",
+        "LedgerAuditEvent",
+        "BusinessEvent",
+        "OutboxMessage"
+      ],
+      "transitions": [
+        "Review ready run and source revision",
+        "Check independent signer/current authority",
+        "Return retained signed evidence on safe replay",
+        "Lock and validate current period assignment",
+        "Recheck evidence and unresolved items",
+        "Conditionally sign with immutable certificate/event evidence"
+      ],
+      "sideEffects": [
+        "Conditionally sign with immutable certificate/event evidence"
+      ],
+      "implementationStatus": "independent_review_sign_recovery_retention_and_durable_handoff_verified",
+      "reviewStatus": "current_source_and_owned_independent_signing_review",
+      "runtimeStatus": "owned_en_fr_full_signing_lifecycle_and_connected_database_handoffs_verified",
+      "completeWorkflowVerified": true,
+      "evidence": [
+        "evidence/reconciliation-period-v87.json",
+        "RECONCILIATION_PERIOD_VERIFICATION_V87.md",
+        "RECONCILIATION_PERIOD_GUIDE.md",
+        "evidence/suspense-correction-v98.json",
+        "evidence/certificate-export-v100.json",
+        "evidence/certificate-history-v101.json",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md",
+        "evidence/run-detail-v110.json",
+        "RUN_DETAIL_COUNTS_V110.md",
+        "evidence/exception-closure-v111.json",
+        "EXCEPTION_CLOSURE_SERVICE_V111.md",
+        "evidence/exception-workbench-v112.json",
+        "EXCEPTION_WORKBENCH_V112.md",
+        "evidence/exception-recovery-v113.json",
+        "EXCEPTION_RECOVERY_V113.md",
+        "evidence/run-preparation-v114.json",
+        "RUN_PREPARATION_V114.md",
+        "evidence/run-preparation-ui-v115.json",
+        "RUN_PREPARATION_UI_V115.md",
+        "evidence/sign-review-ui-v116.json",
+        "SIGN_REVIEW_UI_V116.md",
+        "evidence/manager-sign-v117.json",
+        "MANAGER_SIGN_HANDOFF_V117.md",
+        "evidence/provider-review-v118.json",
+        "PROVIDER_REVIEW_HANDOFF_V118.md",
+        "evidence/run-discovery-v119.json",
+        "RUN_DISCOVERY_V119.md",
+        "../../RECONCILIATION_SIGNOFF_VERIFICATION_2026-09-27.md",
+        "../../RECONCILIATION_ADDITIONAL_SOURCES_VERIFICATION_2026-09-27.md",
+        "../../RECONCILIATION_RECOVERY_INTERFACE_VERIFICATION_2026-09-27.md",
+        "../../RECONCILIATION_SIGNOFF_HANDOFF_VERIFICATION_2026-09-27.md",
+        "../../RECONCILIATION_STATEMENT_ORDERING_VERIFICATION_2026-09-27.md",
+        "../../RECONCILIATION_CORROBORATING_SOURCE_IMPLEMENTATION_2026-09-27.md",
+        "../../RECONCILIATION_SOURCE_WITHDRAWAL_2026-09-27.md",
+        "../../RECONCILIATION_SIGNED_SOURCE_RECOVERY_2026-09-27.md",
+        "../../RECONCILIATION_AMOUNT_REVIEW_2026-09-27.md",
+        "../../RECONCILIATION_SIGN_AUTHORITY_2026-09-27.md",
+        "../../RECONCILIATION_SIGN_MODULE_BOUNDARY_2026-09-27.md",
+        "../../RECONCILIATION_SIGN_AUTH_RECOVERY_2026-09-27.md",
+        "../../RECONCILIATION_SIGN_ENTRY_2026-09-27.md",
+        "../../evidence/signoff-closure-2026-09-27.json"
+      ],
+      "remaining": [],
+      "v98ConnectedReview": "Cycle-specific approval receipts and posting dates; prior compensation lineage verified on later posting and posted-truth checks. Broader workflow remains incomplete.",
+      "v100ConnectedReview": "Owned synthetic provider/internal-payment fixture now uses actual HMAC capture, matching and independent sign service before export. No live provider or statutory approval; full sign-off workflow still incomplete.",
+      "v101LateEvidenceReview": "Reproduced and corrected sign-off/detail provider event count using occurrence-or-receipt window matching existing source manifest and matching. Actual late-arriving provider fixture signs successfully; no-event sign-off remains refused. Broader cross-day allocation policy remains open.",
+      "v114PreparationReview": "Evidence-bound preparation and actual independent signing/export/reopening verified on owned synthetic mismatch; UI handoff and broader contexts remain open.",
+      "v118Correction": "Missing accounting-period setup is a localized actionable blocker; period query failures remain errors. Actual EN/FR returned-run review with no accounting-read permission, keyboard and 320/768/1440 reflow verified; signature remained disabled.",
+      "v119Discovery": "Reconciliation readers can search/page minimal run metadata without accounting-read. Preparation evidence retains accounting-read. Ready rows open the separately authorized sign review. Actual 22-run PostgreSQL pagination and EN/FR limited-role search/recovery/handoff passed.",
+      "status": "Complete—verified",
+      "closureReview": {
+        "checklist": "RECONCILIATION_SIGNOFF_CLOSURE.md",
+        "completeWorkflowVerified": true,
+        "evidence": "evidence/signoff-closure-2026-09-27.json",
+        "verifiedCriteria": [
+          "later_start_winner_exact_recovery",
+          "same_and_other_signer_serializable_races",
+          "new_unmatched_source_preview_and_commit_refusal",
+          "closed_exception_prepare_sign_export_reverse",
+          "additional_sources_exact_pair_preserves_original_match",
+          "additional_source_atomic_rollback_and_concurrent_retry",
+          "all_recovery_actors_independent_from_signer",
+          "protected_action_scope_and_fresh_authentication",
+          "en_fr_committed_response_loss_reload_exact_retry",
+          "validated_combined_history_and_renewed_preparation",
+          "en_fr_operator_sign_refusal_and_independent_sign",
+          "three_width_preview_reflow_and_keyboard_focus",
+          "provider_preview_drift_and_suspension_denial",
+          "period_close_before_lock_refuses_recovery",
+          "committed_recovery_cannot_be_overwritten_by_earlier_sign_or_prepare",
+          "signed_event_validated_inbox_consumer",
+          "competing_workers_and_lost_acknowledgement_backoff_retry",
+          "actual_cli_and_en_fr_neutral_inbox_observation",
+          "real_statement_import_recovery_prepare_sign_export",
+          "immutable_statement_file_hash_protection",
+          "committed_sign_and_prepare_reject_stale_recovery",
+          "genuine_retained_statement_investigation_gap_reproduced",
+          "exact_nonfinancial_source_disposition_with_independent_decision",
+          "source_decision_atomic_rollback_and_concurrent_retry",
+          "late_statement_and_callback_prepare_sign_export_no_new_allocation",
+          "en_fr_actual_source_review_authentication_rejection_retry_history",
+          "retained_source_decision_withdrawal_independent_approval",
+          "stale_source_withdrawal_and_fresh_reapproval",
+          "withdrawal_audit_rollback_concurrent_and_late_exact_retry",
+          "retained_certificate_and_second_signature_event_identity",
+          "two_signature_events_exact_inbox_delivery",
+          "en_fr_withdrawal_rejection_retry_history_and_remounted_focus",
+          "signed_source_arrival_retains_verified_certificate",
+          "signed_recovery_corrupt_certificate_and_provider_drift_refusal",
+          "signed_recovery_atomic_close_invalidation_and_inbox",
+          "signed_late_callback_and_statement_independent_review_and_resigning",
+          "en_fr_signed_recovery_response_loss_retry_history_reflow_and_enlargement",
+          "source_currency_category_amounts_and_current_unresolved_suspense",
+          "v3_certificate_preview_binding_and_v2_export_preservation",
+          "full_121_source_review_despite_100_record_display_limit",
+          "en_fr_amount_review_reflow_enlargement_and_independent_signing",
+          "cold_entry_compilation_span_measured",
+          "read_withdrawal_and_active_tenant_signer_before_sign_and_replay",
+          "retired_preview_sign_and_authentication_responses_on_authority_change",
+          "en_fr_actual_role_withdrawal_exact_pending_retry_and_single_signature",
+          "en_fr_ready_and_signed_rendered_contrast",
+          "warm_entry_document_and_post_load_resource_timeline",
+          "transaction_bound_module_write_matrix_and_denial_audit",
+          "real_module_withdrawal_first_and_sign_first_lock_orderings",
+          "en_fr_read_only_pending_retry_suspension_restore_and_retained_export",
+          "en_fr_read_only_module_locked_contrast_reflow_enlargement_and_export_focus",
+          "post_authentication_keyboard_focus_without_automatic_submission",
+          "en_fr_wrong_password_clearing_and_refocus",
+          "en_fr_controlled_transport_failure_exact_reload_retry_single_signature",
+          "en_fr_authentication_error_contrast_reflow_and_controlled_enlargement",
+          "en_fr_entry_repeated_permission_queries_three_to_one",
+          "shared_live_authority_withdrawal_failed_lookup_reload_recovery_and_signing",
+          "entry_and_personas",
+          "authoritative_signature_and_full_population_amounts",
+          "tenant_actor_operation_and_entitlement",
+          "review_commit_provider_period_and_source_boundaries",
+          "concurrency_and_duplicate_effects",
+          "authentication_interruption_and_exact_recovery",
+          "source_correction_and_retained_obligations",
+          "durable_inbox_handoff_history_and_export",
+          "en_fr_keyboard_responsive_contrast_and_reflow",
+          "measured_entry_diagnosis_and_correction",
+          "current_guidance_and_proportionate_regression"
+        ],
+        "note": "Final audit plus preparation-module-impact-2026-09-27 revalidation passed. Two changed preparation dependencies and one added EN/FR blocker are exactly bound; downstream preparation/sign/export and browser recovery refreshed. Original limits remain. The overall platform goal remains active."
+      },
+      "verificationLimits": [
+        "Native screen-reader speech and browser-chrome zoom not exercised; semantic, keyboard, rendered contrast, responsive and controlled enlargement checks verified.",
+        "Production-scale latency, release build/deployment and live scheduler installation unverified.",
+        "General exhausted/invalid-message recovery and notification monitoring remain with NTF-DELIVERY-RECOVERY and NTF-DELIVERY-MONITOR; signed-event transaction/consumer/backoff handoff verified."
+      ]
+    },
+    {
+      "id": "PR-11",
+      "name": "Inspect retained suspense history and resume an off-queue approval",
+      "purpose": "Find retained suspense records beyond the prioritized queue, inspect actual posting references and retry the original pending request safely.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator",
+        "Independent checker",
+        "Accountant/support with authorized access"
+      ],
+      "authority": "Protected payments.reconciliation.read plus enforced read module admission; posting requires the existing independent checker/fresh-auth/write controls.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentSuspenseHistory.tsx",
+        "actions/payments/reconciliation.actions.ts#getPaymentSuspenseRecordsAction"
+      ],
+      "prerequisites": [
+        "Current actor/tenant permissions",
+        "Retained source record; original tab request for exact retry"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-read.service.ts",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "services/reconciliation/payment-suspense-workflow.service.ts"
+      ],
+      "records": [
+        "SuspenseItem",
+        "ChartOfAccount",
+        "JournalEntry",
+        "LedgerPostingBatch",
+        "Retained request in tab storage"
+      ],
+      "transitions": [
+        "Open history",
+        "Read bounded cursor page",
+        "Inspect current record/account/journal",
+        "Return focus and navigate pages",
+        "Lookup original pending item directly",
+        "Explicit authenticated exact retry",
+        "Retain request on denial/read failure"
+      ],
+      "sideEffects": [
+        "History reads do not mutate business state or deliver notifications; retry delegates to existing authoritative posting service"
+      ],
+      "implementationStatus": "implemented_read_history_and_off_queue_retry_remaining_lifecycle_open",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "passed_owned_postgres_and_actual_en_fr_history_recovery",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/suspense-history-v91.json",
+        "SUSPENSE_HISTORY_GUIDE.md",
+        "SUSPENSE_HISTORY_VERIFICATION_V91.md",
+        "evidence/reconciliation-overview-v92.json",
+        "RECONCILIATION_OVERVIEW_GUIDE.md",
+        "RECONCILIATION_OVERVIEW_VERIFICATION_V92.md",
+        "evidence/suspense-reversal-v95.json",
+        "SUSPENSE_CORRECTION_BOUNDARY.md",
+        "SUSPENSE_REVERSAL_VERIFICATION_V95.md",
+        "evidence/posting-identity-v96.json",
+        "POSTING_IDENTITY_AND_CORRECTION_PLAN.md",
+        "POSTING_IDENTITY_VERIFICATION_V96.md",
+        "evidence/suspense-cycles-v97.json",
+        "SUSPENSE_POSTING_CYCLES.md",
+        "SUSPENSE_CYCLES_VERIFICATION_V97.md",
+        "evidence/suspense-correction-v98.json"
+      ],
+      "remaining": [
+        "Full screen-reader/contrast audit and retained-record-specific copy polish remain incomplete.",
+        "Direct journal navigation, exports, editing/assignment of older work and resolution/reversal remain incomplete.",
+        "Read-history module denial combinations have focused wrapper coverage; all live tenant policies are not certified.",
+        "v92 supersedes older-work assignment/proposal and retained-only inspection-copy limitations; full resolution/reversal/export, setup edits and accessibility remain incomplete."
+      ],
+      "v92OlderWork": {
+        "assignmentAndProposalFromHistory": true,
+        "refreshAfterSavedChange": true,
+        "pureReadErrorDoesNotClaimSave": true,
+        "wholeLifecycleComplete": false
+      },
+      "v95": {
+        "unsafeGenericReversalReproduced": true,
+        "genericReversalNowRefused": true,
+        "linkedCorrectionImplemented": false
+      },
+      "v96": {
+        "postingIdentityConflictReproduced": true,
+        "conflictingIdentityNowRejected": true,
+        "sourceVersionNotInDatabaseUniqueConstraint": true,
+        "linkedCorrectionImplemented": false
+      },
+      "v97": {
+        "postingCycleSchemaImplemented": true,
+        "unrelatedDomainsRestrictedToCycleOne": true,
+        "ownedMigrationRehearsedAndApplied": true,
+        "legacyCycleOneRuntimeVerified": true,
+        "correctionCommandImplemented": false
+      },
+      "v98ConnectedReview": "Cycle-specific approval receipts and posting dates; prior compensation lineage verified on later posting and posted-truth checks. Broader workflow remains incomplete."
+    },
+    {
+      "id": "PR-12",
+      "name": "Review whole-workspace reconciliation status and currency exposure",
+      "purpose": "Interpret all retained organization counts, exact per-currency suspense amounts and outstanding review signals without confusing them with a bounded list or close decision.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator",
+        "Accountant",
+        "Authorized manager"
+      ],
+      "authority": "Current protected reconciliation read access and tenant scope; overview never grants posting or close authority.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx#PaymentTrustBanner",
+        "actions/payments/reconciliation.actions.ts#getPaymentReconciliationDashboardAction"
+      ],
+      "prerequisites": [
+        "Authorized organization context",
+        "Actual durable reconciliation records"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-summary.service.ts",
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "components/finance/reconciliation-amount.ts"
+      ],
+      "records": [
+        "ProviderAccount",
+        "ReconciliationRun",
+        "SuspenseItem",
+        "PaymentException",
+        "ProviderEvent",
+        "StatementLine"
+      ],
+      "transitions": [
+        "Resolve authorized workspace",
+        "Read aggregate snapshot",
+        "Show all-record counts and separate currency amounts",
+        "Prioritize unfinished work over signed-state history",
+        "Open relevant history or dedicated run/period controls",
+        "Retry failed read without interpreting failure as zero"
+      ],
+      "sideEffects": [
+        "Summary service is read-only; existing dashboard notification-on-read remains separately tracked"
+      ],
+      "implementationStatus": "corrected_whole_population_currency_and_status_contract",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "passed_owned_postgres_and_actual_en_fr_overview",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-overview-v92.json",
+        "RECONCILIATION_OVERVIEW_GUIDE.md",
+        "RECONCILIATION_OVERVIEW_VERIFICATION_V92.md",
+        "evidence/reconciliation-notifications-v93.json",
+        "RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "evidence/loading-cache-v120.json",
+        "RECONCILIATION_LOADING_AND_CACHE_V120.md"
+      ],
+      "remaining": [
+        "Full notification-on-read lifecycle, all period/country/provider contexts and screen-reader/contrast evidence remain incomplete.",
+        "Summary snapshot and detail lists are distinct reads; no cross-view atomic snapshot or production performance certification.",
+        "Profile the repeated permission-request and authentication/layout/action chain with a controlled workload; direct service timing alone does not explain browser delay."
+      ],
+      "v93NotificationIntegration": {
+        "separateRecordsAndRevisions": true,
+        "insertOnceRetry": true,
+        "wholeWorkflowComplete": false
+      },
+      "v120CacheCorrection": "Payment-workbench action returns server-derived tenant/actor; cache keys and response validation bind both. Initial requests await authority, denial hides cached data and localized retry reloads current permission identity. Existing alert trigger retained.",
+      "v120Runtime": "Six before-fix scope tests failed.57 distinct current tests passed. Actual EN/FR permission-failure cache hiding and reload recovery passed after an explicitly retained navigation timeout under concurrent verification load. No overall performance improvement claimed."
+    },
+    {
+      "id": "PR-13",
+      "name": "Correct or reverse a posted suspense item with linked source and ledger evidence",
+      "purpose": "Correct a suspense posting without leaving reconciliation state inconsistent with its original and compensating journals.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Finance operator",
+        "Independent authorized reviewer"
+      ],
+      "authority": "Server-derived current actor/tenant and module read/write access; active actor; proposal permission; independent decision requires suspense-posting and journal-reversal permissions and verified fresh authentication. Reviewer differs from correction proposer and original posting approver. Historical export additionally requires payments.export plus reconciliation read permission and verified fresh authentication; export grants no approval authority.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx",
+        "actions/accounting/journals.actions.ts#reverseJournalEntryAction",
+        "services/accounting/posting.service.ts#reverseJournalEntry",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/PaymentSuspenseCorrectionPanel.tsx",
+        "actions/payments/reconciliation.actions.ts#previewSuspenseCorrectionAction",
+        "actions/payments/reconciliation.actions.ts#decideSuspenseCorrectionAction",
+        "actions/payments/reconciliation.actions.ts#exportSuspenseCorrectionAction"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-workflow.service.ts",
+        "services/reconciliation/payment-suspense-ledger.service.ts",
+        "services/accounting/posting.service.ts",
+        "services/reconciliation/payment-suspense-correction.service.ts",
+        "services/reconciliation/payment-suspense-cycle-ledger.service.ts",
+        "services/reconciliation/payment-suspense-read.service.ts",
+        "services/reconciliation/payment-suspense-correction-export.service.ts",
+        "services/reconciliation/payment-suspense-correction-record.ts"
+      ],
+      "records": [
+        "SuspenseItem",
+        "JournalEntry",
+        "LedgerPostingBatch",
+        "AccountingSourceLink",
+        "PaymentException",
+        "ReconciliationRun",
+        "AuditLog",
+        "PaymentReconciliationInboxItem immutable proposal/decision receipts",
+        "LedgerAuditEvent",
+        "CloseRun stale state",
+        "Immutable correction export bytes, SHA-256 and issuance audit"
+      ],
+      "transitions": [
+        "Inspect verified current posting and original approval",
+        "Preview exact reversal/date and retained obligations",
+        "Persist immutable correction proposal; original posting stays effective",
+        "Independent current-evidence review and fresh authentication",
+        "Reject and retain original, or atomically reverse/reopen/invalidate affected evidence",
+        "Recover exact uncertain submission from retained receipt",
+        "Repost through a new reviewed cycle",
+        "Read paginated correction history and export a selected verified historical record; recover exact retained download request"
+      ],
+      "sideEffects": [
+        "Exact compensating journal and source links; original journal and batch marked reversed",
+        "Suspense/linked exception reopened; prior reconciliation certificate retained and current sign-off invalidated",
+        "Close evidence in both affected accounting periods invalidated",
+        "Immutable correction receipt, audit and in-app notification records"
+      ],
+      "implementationStatus": "source_correction_cycle_reposting_and_controlled_export_implemented_extended_lifecycle_open",
+      "reviewStatus": "partial_engineering_review_with_owned_financial_and_browser_evidence",
+      "runtimeStatus": "owned_postgres_correction_14_checks_export_12_checks_and_actual_en_fr_recovery_passed",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/suspense-reversal-v95.json",
+        "SUSPENSE_CORRECTION_BOUNDARY.md",
+        "SUSPENSE_REVERSAL_VERIFICATION_V95.md",
+        "evidence/posting-identity-v96.json",
+        "POSTING_IDENTITY_AND_CORRECTION_PLAN.md",
+        "POSTING_IDENTITY_VERIFICATION_V96.md",
+        "evidence/suspense-cycles-v97.json",
+        "SUSPENSE_POSTING_CYCLES.md",
+        "SUSPENSE_CYCLES_VERIFICATION_V97.md",
+        "evidence/suspense-correction-v98.json",
+        "SUSPENSE_CORRECTION_GUIDE.md",
+        "SUSPENSE_CORRECTION_DESIGN.md",
+        "SUSPENSE_CORRECTION_VERIFICATION_V98.md",
+        "evidence/suspense-export-v99.json",
+        "SUSPENSE_CORRECTION_EXPORT_GUIDE.md",
+        "SUSPENSE_CORRECTION_EXPORT_VERIFICATION_V99.md",
+        "evidence/suspense-currency-v102.json",
+        "evidence/suspense-resolution-v103.json",
+        "evidence/suspense-resolution-recovery-v104.json"
+      ],
+      "remaining": [
+        "Final resolution/write-off and remaining connected lifecycle require implementation and whole-workflow verification. Correction history tested across 33 records with timestamp ties; wider retention/country/accessibility contexts remain open.",
+        "Investigate pre-existing inconsistencies with actual source and journal evidence; no repair/backfill performed.",
+        "Verify real reconciliation sign-off issuance and close-pack consumption after correction; this batch tests synthetic restrictive-state invalidation, not certification issuance.",
+        "Measure notification inbox refresh latency: final screenshots show correction events, while earlier captures lagged durable records. No freshness budget or root cause is established.",
+        "Broader journal localization/precision, full accessibility, country/provider contexts and production performance/rollout remain open.",
+        "v103 adds PR-15 internal resolution/write-off core and manifest lineage verification. Recovery, public controls and complete connected lifecycle remain open."
+      ],
+      "v96": {
+        "postingIdentityConflictReproduced": true,
+        "conflictingIdentityNowRejected": true,
+        "sourceVersionNotInDatabaseUniqueConstraint": true,
+        "linkedCorrectionImplemented": false
+      },
+      "v97": {
+        "postingCycleSchemaImplemented": true,
+        "unrelatedDomainsRestrictedToCycleOne": true,
+        "ownedMigrationRehearsedAndApplied": true,
+        "legacyCycleOneRuntimeVerified": true,
+        "correctionCommandImplemented": false
+      },
+      "v98": {
+        "sourceCorrectionImplemented": true,
+        "priorCycleProofEnforced": true,
+        "actualDatabaseChecks": 14,
+        "enFrBrowserRecovery": true,
+        "wholeWorkflowComplete": false
+      },
+      "v99": {
+        "controlledHistoricalExport": true,
+        "actualDatabaseChecks": 12,
+        "enFrBrowserDownloadRecovery": true,
+        "downloadFocusRestored": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "PR-14",
+      "name": "Review, export and recover a signed reconciliation certificate",
+      "purpose": "Retrieve verified signed application evidence with immutable bytes, receipt and safe recovery.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Authorized reconciliation reader and certificate exporter",
+        "Records/finance owner"
+      ],
+      "authority": "Current server-derived tenant and active actor; reconciliation read, certificate export, module read gate and verified fresh authentication on every issuance/replay.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/ReconciliationCertificateExportPanel.tsx",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "actions/payments/reconciliation.actions.ts#exportReconciliationCertificateAction",
+        "components/finance/ReconciliationCertificateHistory.tsx",
+        "actions/payments/reconciliation.actions.ts#readReconciliationCertificateHistoryAction"
+      ],
+      "prerequisites": [
+        "Source-bound signed run",
+        "Current scoped authority and fresh password assurance",
+        "Available browser session storage for interrupted-request recovery"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts#exportReconciliationCertificate",
+        "services/reconciliation/reconciliation-certificate-export.contracts.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/reconciliation/reconciliation-certificate-history.service.ts",
+        "services/reconciliation/reconciliation-certificate-history.contracts.ts"
+      ],
+      "records": [
+        "ReconciliationRun",
+        "Immutable CERTIFICATE_EXPORT V2 inbox receipt with exact bytes/SHA-256",
+        "Sensitive-action audit",
+        "LedgerAuditEvent",
+        "BusinessEvent/outbox",
+        "Existing close invalidation"
+      ],
+      "transitions": [
+        "Find older signed/current-changed runs by scoped search and deterministic cursor pages",
+        "Review selected signed run, hash and consequences",
+        "Persist request identity and authenticate if necessary",
+        "Recheck source/certificate, tenant, active actor and current authority",
+        "Atomically issue immutable receipt and audit/events or refuse drift",
+        "Verify returned scope and bytes before browser download",
+        "Retry exact saved request after interrupted response/reload",
+        "Keep prior receipt when starting an explicitly new export",
+        "Discover summary-only receipts, distinguish legacy/damaged evidence and reopen a same-actor historical request through current export controls"
+      ],
+      "sideEffects": [
+        "One issuance receipt/audit/event per request; sensitive-action decisions on every call",
+        "New issuance invokes existing close-evidence review; drift retains existing invalidation",
+        "No payment or ledger posting"
+      ],
+      "implementationStatus": "paginated_history_and_cross_session_immutable_recovery_implemented_extended_contexts_open",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "owned_postgres_9_history_checks_and_actual_en_fr_history_recovery_passed",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/certificate-export-v100.json",
+        "CERTIFICATE_EXPORT_GUIDE.md",
+        "CERTIFICATE_EXPORT_VERIFICATION_V100.md",
+        "evidence/certificate-history-v101.json",
+        "CERTIFICATE_HISTORY_GUIDE.md",
+        "CERTIFICATE_HISTORY_VERIFICATION_V101.md",
+        "evidence/suspense-resolution-v103.json",
+        "evidence/suspense-resolution-recovery-v104.json",
+        "evidence/exception-closure-v111.json",
+        "EXCEPTION_CLOSURE_SERVICE_V111.md",
+        "evidence/exception-workbench-v112.json",
+        "EXCEPTION_WORKBENCH_V112.md",
+        "evidence/exception-recovery-v113.json",
+        "EXCEPTION_RECOVERY_V113.md"
+      ],
+      "remaining": [
+        "Provider/period/country/large-export variants, full screen-reader/contrast/native zoom and production performance remain unverified.",
+        "Review existing new-export close-invalidation policy; preserve drift invalidation.",
+        "External outbox dispatch, production rollout and institutional retention/signature approval are not supplied by this batch.",
+        "History pagination and same-actor cross-session receipt retrieval are implemented; production-scale query/storage profiling and broader period/provider/country contexts remain.",
+        "v103 adds PR-15 internal resolution/write-off core and manifest lineage verification. Recovery, public controls and complete connected lifecycle remain open."
+      ]
+    },
+    {
+      "id": "PR-15",
+      "name": "Resolve posted suspense against independent clearing evidence",
+      "purpose": "Record a full resolution or supported expense write-off while preserving original posting, clearing and independent decision evidence.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation proposer",
+        "Independent finance reviewer"
+      ],
+      "authority": "Active scoped actor, reconciliation and accounting journal read permissions, existing suspense propose/post controls; fresh independent decision; clearing journal maker cannot approve resolution. Public transport is not yet wired.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/PaymentSuspenseResolutionPanel.tsx",
+        "actions/payments/suspense-resolution.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-resolution.service.ts",
+        "services/reconciliation/payment-suspense-resolution-evidence.service.ts",
+        "services/reconciliation/payment-suspense-resolution.contracts.ts",
+        "services/reconciliation/payment-suspense-resolution-read.service.ts",
+        "services/reconciliation/payment-suspense-resolution-archive.service.ts",
+        "services/reconciliation/payment-suspense-resolution-export.service.ts"
+      ],
+      "prerequisites": [
+        "Verified original suspense posting and same-currency basis",
+        "Independent posted two-line full clearing journal and retained reference",
+        "No pending posting correction",
+        "Authorized accounting destination and decision"
+      ],
+      "records": [
+        "SuspenseItem",
+        "Original and clearing JournalEntry/LedgerPostingBatch",
+        "Immutable proposal/decision/allocation inbox records",
+        "LedgerAuditEvent",
+        "Close invalidation",
+        "Notification event"
+      ],
+      "transitions": [
+        "Preview current original and clearing evidence",
+        "Propose against reviewed revision",
+        "Retain posted state during review",
+        "Reject and re-propose or independently approve",
+        "Reserve clearing journal for one case and record final status atomically",
+        "Verify financial and decision lineage in certificate manifest",
+        "Reopen through source-owned recovery — implementation pending"
+      ],
+      "sideEffects": [
+        "No new journal from final resolution",
+        "Final status, immutable allocation and decision, audit, close invalidation and notification event in one transaction",
+        "Related exceptions remain subject to their own review"
+      ],
+      "implementationStatus": "protected_en_fr_resolution_recovery_and_durable_private_historical_exports_implemented",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "actual_en_fr_export_authentication_download_replay_and_28_retained_financial_records_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/suspense-resolution-v103.json",
+        "SUSPENSE_RESOLUTION_CORE_GUIDE.md",
+        "SUSPENSE_RESOLUTION_CORE_VERIFICATION_V103.md",
+        "evidence/suspense-resolution-recovery-v104.json",
+        "evidence/suspense-resolution-ui-v105.json",
+        "SUSPENSE_RESOLUTION_OPERATOR_GUIDE.md",
+        "SUSPENSE_RESOLUTION_OPERATOR_VERIFICATION_V105.md",
+        "evidence/suspense-local-recovery-v106.json",
+        "SUSPENSE_LOCAL_RECOVERY_V106.md",
+        "evidence/suspense-resolution-export-v107.json",
+        "SUSPENSE_RESOLUTION_EXPORT_GUIDE_V107.md",
+        "evidence/suspense-resolution-export-localization-v107.json",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md"
+      ],
+      "remaining": [
+        "Complete genuine exception/sign-off/export handoff across connected reconciliation workflows",
+        "Cross-item allocation and concurrent generic reversal, larger history and additional provider/period/country variants",
+        "Complete screen-reader/contrast/native zoom and production-scale performance review",
+        "Legacy final records, changed currency-configuration policy and applicable organization/expert authority for rollout",
+        "Additional unallocated generic-clearing reversal export variants and broader operational contexts"
+      ]
+    },
+    {
+      "id": "PR-16",
+      "name": "Reopen a final suspense resolution through independent clearing reversal",
+      "purpose": "Neutralize a final clearing without losing its original posting, financial evidence or prior decisions.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation proposer",
+        "Independent finance reviewer"
+      ],
+      "authority": "Active scoped actor, reconciliation/accounting reads, existing suspense propose/post and journal reverse controls, fresh authentication; reviewer differs from proposer and original clearing poster. Public transport pending.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/PaymentSuspenseResolutionPanel.tsx",
+        "actions/payments/suspense-resolution.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-suspense-resolution-recovery.service.ts",
+        "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts",
+        "services/reconciliation/payment-suspense-resolution-recovery.contracts.ts",
+        "services/reconciliation/payment-suspense-resolution-read.service.ts",
+        "services/reconciliation/payment-suspense-resolution-archive.service.ts",
+        "services/reconciliation/payment-suspense-resolution-export.service.ts"
+      ],
+      "prerequisites": [
+        "Verified final resolution/allocation/clearing evidence",
+        "Open recovery accounting period",
+        "Required independent authority"
+      ],
+      "records": [
+        "SuspenseItem",
+        "Original clearing and compensating JournalEntry/LedgerPostingBatch",
+        "Immutable recovery proposal/decision/receipt and former allocation",
+        "LedgerAuditEvent",
+        "ReconciliationRun prior certificate",
+        "PaymentException",
+        "Close invalidation",
+        "Notification inbox"
+      ],
+      "transitions": [
+        "Read-only preview",
+        "Propose while retaining final status",
+        "Reject/re-propose or independently approve current evidence",
+        "Create exact clearing reversal atomically",
+        "Retain original suspense posting and reopen obligation/non-dismissed exceptions",
+        "Invalidate run/close and retain former certificate bytes",
+        "Verify historical neutralization before subsequent source correction, posting and new resolution",
+        "Retry exact recovery after later lifecycle changes"
+      ],
+      "sideEffects": [
+        "One reversal journal per allocated clearing",
+        "Immutable evidence and audit, reopened source and exceptions, run/close invalidation and durable notification event",
+        "No change to original suspense posting cycle during recovery"
+      ],
+      "implementationStatus": "protected_en_fr_resolution_recovery_and_durable_private_historical_exports_implemented",
+      "reviewStatus": "partial_engineering_review",
+      "runtimeStatus": "actual_en_fr_export_authentication_download_replay_and_28_retained_financial_records_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/suspense-resolution-recovery-v104.json",
+        "SUSPENSE_RESOLUTION_RECOVERY_GUIDE.md",
+        "SUSPENSE_RESOLUTION_RECOVERY_VERIFICATION_V104.md",
+        "evidence/suspense-resolution-ui-v105.json",
+        "SUSPENSE_RESOLUTION_OPERATOR_GUIDE.md",
+        "SUSPENSE_RESOLUTION_OPERATOR_VERIFICATION_V105.md",
+        "evidence/suspense-local-recovery-v106.json",
+        "SUSPENSE_LOCAL_RECOVERY_V106.md",
+        "evidence/suspense-resolution-export-v107.json",
+        "SUSPENSE_RESOLUTION_EXPORT_GUIDE_V107.md",
+        "evidence/suspense-resolution-export-localization-v107.json",
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-closure-v111.json",
+        "EXCEPTION_CLOSURE_SERVICE_V111.md",
+        "evidence/exception-workbench-v112.json",
+        "EXCEPTION_WORKBENCH_V112.md",
+        "evidence/exception-recovery-v113.json",
+        "EXCEPTION_RECOVERY_V113.md",
+        "evidence/run-preparation-v114.json",
+        "RUN_PREPARATION_V114.md",
+        "evidence/run-preparation-ui-v115.json",
+        "RUN_PREPARATION_UI_V115.md"
+      ],
+      "remaining": [
+        "Complete genuine exception/sign-off/export handoff across connected reconciliation workflows",
+        "Cross-item allocation and concurrent generic reversal, larger history and additional provider/period/country variants",
+        "Complete screen-reader/contrast/native zoom and production-scale performance review",
+        "Legacy final records, changed currency-configuration policy and applicable organization/expert authority for rollout",
+        "Additional unallocated generic-clearing reversal export variants and broader operational contexts"
+      ]
+    },
+    {
+      "id": "PR-17",
+      "name": "Review and resolve reconciliation exceptions",
+      "purpose": "Record a justified exception decision and preserve its relationship to financial treatment, run sign-off and reopening.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Authorized reconciliation exception reviewer"
+      ],
+      "authority": "Current reconciliation/accounting read authority; exception.resolve permission plus server-bound recent authentication for writes; independent proposer/reviewer and run-maker exclusion for approval.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "actions/payments/exception-closure.actions.ts",
+        "components/finance/PaymentExceptionClosurePanel.tsx"
+      ],
+      "entryPointQualification": "Existing authenticated reconciliation queue opens the EN/FR tenant-scoped case browser and independently reviewed closure panel.",
+      "services": [
+        "services/reconciliation/payment-reconciliation-run.service.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-suspense-resolution-recovery.service.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/reconciliation/payment-exception-closure-evidence.service.ts",
+        "services/reconciliation/payment-exception-closure.contracts.ts",
+        "services/reconciliation/payment-exception-source-evidence.ts",
+        "services/reconciliation/payment-exception-link.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/accounting/close-assurance-pack.service.ts"
+      ],
+      "records": [
+        "PaymentException",
+        "SuspenseItem",
+        "ReconciliationRun",
+        "Retained decision/audit evidence"
+      ],
+      "transitions": [
+        "Financial treatment verified separately from exception closure",
+        "Retained proposal without terminal mutation",
+        "Independent approval or rejection bound to unchanged original and financial evidence",
+        "Approved exception RESOLVED with receipt, audit and run/close review requirement",
+        "Manifest validates retained closure lineage",
+        "Source-owned clearing reversal reopens exception and preserves prior decision"
+      ],
+      "sideEffects": [
+        "Proposed closure must retain justified decisions without claiming financial clearing resolves security/fraud issues"
+      ],
+      "implementationStatus": "financial_exception_case_history_proposal_decision_and_draft_recovery_implemented_other_investigations_pending",
+      "reviewStatus": "current_mobile_focus_and_exceptional_recovery_review",
+      "runtimeStatus": "actual_en_fr_malformed_draft_lost_committed_response_stale_review_source_reopening_and_postgres_history_pages_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/reconciliation-exception-link-v108.json",
+        "RECONCILIATION_EXCEPTION_LINK_GUIDE_V108.md",
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md",
+        "evidence/run-detail-v110.json",
+        "RUN_DETAIL_COUNTS_V110.md",
+        "evidence/exception-closure-v111.json",
+        "EXCEPTION_CLOSURE_SERVICE_V111.md",
+        "evidence/exception-workbench-v112.json",
+        "EXCEPTION_WORKBENCH_V112.md",
+        "evidence/exception-recovery-v113.json",
+        "EXCEPTION_RECOVERY_V113.md",
+        "evidence/run-preparation-v114.json",
+        "RUN_PREPARATION_V114.md",
+        "evidence/run-preparation-ui-v115.json",
+        "RUN_PREPARATION_UI_V115.md"
+      ],
+      "remaining": [
+        "Distinguish incomplete financial treatment from a stale preview in operator preflight guidance; both currently map to the generic conflict message.",
+        "Complete native zoom and assistive-technology validation plus remaining transport/role combinations.",
+        "Implement nonfinancial investigation adapters and terminal legacy/domain evidence compatibility.",
+        "Implement reviewed-run preparation and genuine independent sign-off/export after closure and reopening.",
+        "Continue the full platform register; no whole-workflow or platform completion claim."
+      ]
+    },
+    {
+      "id": "PR-18",
+      "name": "Review and repair historical reconciliation exception links",
+      "purpose": "Restore a provable missing relation while retaining evidence and invalidating current run/close certification.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator with current read/run authority"
+      ],
+      "authority": "Server-derived organization/actor, active membership, read/run permissions, enforced module access and recent password assurance.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/PaymentExceptionLinkPanel.tsx",
+        "actions/payments/exception-link.actions.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-exception-link.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts"
+      ],
+      "records": [
+        "PaymentException",
+        "SuspenseItem",
+        "ReconciliationRun",
+        "PaymentReconciliationInboxItem",
+        "LedgerAuditEvent",
+        "CloseRun",
+        "ClosePackExport"
+      ],
+      "transitions": [
+        "Read original pair, scope, evidence, source and uniqueness",
+        "Review consequence and retain exact reason/revision/request",
+        "Verify password and explicitly confirm",
+        "Atomically restore link and retain private before/after/certificate evidence",
+        "Require run review and mark affected close evidence stale",
+        "Retry exact request or refresh after conflict; preserve uncertain local request"
+      ],
+      "sideEffects": [
+        "No ledger/financial status changes; explicit audit/notification and current run/close invalidation"
+      ],
+      "implementationStatus": "provenance_checked_repair_and_protected_en_fr_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "owned_postgres_and_actual_en_fr_repair_authentication_reload_replay_mobile_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/exception-link-repair-v109.json",
+        "EXCEPTION_LINK_REPAIR_GUIDE_V109.md",
+        "evidence/exception-closure-v111.json",
+        "EXCEPTION_CLOSURE_SERVICE_V111.md"
+      ],
+      "remaining": [
+        "Additional historical provenance variants and real two-client races.",
+        "Actual historical signed-provider certificate repair and connected genuine exception/sign-off/export/reopening handoffs.",
+        "Full screen-reader, contrast, native zoom and production rollout/performance evidence."
+      ]
+    },
+    {
+      "id": "PR-19",
+      "name": "Prepare a reviewed reconciliation run",
+      "purpose": "Bind reviewed current source and resolved obligations to unsigned readiness for independent sign-off.",
+      "domain": "payments_reconciliation",
+      "personas": [
+        "Reconciliation operator",
+        "Independent signer"
+      ],
+      "authority": "Server-scoped reconciliation/accounting read; payments.reconciliation.run and verified recent password for preparation; independent existing sign authority.",
+      "entryPoints": [
+        "actions/payments/reconciliation-preparation.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+        "components/finance/ReconciliationPreparationWorkbench.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx"
+      ],
+      "prerequisites": [
+        "Unsigned run with maker",
+        "Effective provider/accounting setup",
+        "External evidence",
+        "Verified terminal obligations and ledger/source lineage"
+      ],
+      "services": [
+        "services/reconciliation/reconciliation-run-preparation.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts"
+      ],
+      "records": [
+        "ReconciliationRun",
+        "PaymentReconciliationInboxItem",
+        "LedgerAuditEvent"
+      ],
+      "transitions": [
+        "Review current preview",
+        "Recheck current authority and source revision",
+        "Conditionally prepare with private receipt/audit/notification",
+        "Independently sign current preparation",
+        "Retain history through source-owned reopening"
+      ],
+      "sideEffects": [
+        "Unsigned readiness, private evidence, audit and in-app notification; no financial posting"
+      ],
+      "implementationStatus": "transaction_bound_module_access_and_history_keyboard_focus_corrected",
+      "reviewStatus": "current_closure_assessment_after_signing_handoff_verified",
+      "runtimeStatus": "owned_reviewers_rollback_23_record_history_30_legacy_cases_en_fr_history_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/run-preparation-v114.json",
+        "RUN_PREPARATION_V114.md",
+        "evidence/run-preparation-ui-v115.json",
+        "RUN_PREPARATION_UI_V115.md",
+        "evidence/sign-review-ui-v116.json",
+        "SIGN_REVIEW_UI_V116.md",
+        "evidence/manager-sign-v117.json",
+        "MANAGER_SIGN_HANDOFF_V117.md",
+        "evidence/run-discovery-v119.json",
+        "RUN_DISCOVERY_V119.md",
+        "RECONCILIATION_PREPARATION_CLOSURE.md",
+        "lanes/environment/preparation-module-reproduction-329d92c6-361d-4b27-bb93-168ff101b74f.json",
+        "evidence/preparation-module-impact-2026-09-27.json",
+        "RECONCILIATION_PREPARATION_MODULE_ACCESS_2026-09-27.md",
+        "lanes/environment/preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5.json",
+        "evidence/preparation-history-impact-2026-09-27.json",
+        "RECONCILIATION_PREPARATION_HISTORY_2026-09-27.md",
+        "RECONCILIATION_PREPARATION_OPERATING_GUIDE.md"
+      ],
+      "remaining": [
+        "Verify remaining preparation authentication/denial accessibility, including focus when the password form is removed after successful authentication.",
+        "Perform final requirement/source/evidence audit and reconcile any remaining preparation lifecycle gaps. Legacy investigation repair remains PR-17 engineering work; preparation correctly refuses unsupported final labels. Native speech/browser-chrome zoom remain explicit limitations."
+      ],
+      "v116SignHandoff": "Ready history entries open the same evidence-bound independent review; actual EN/FR sign/download checked from recent runs.",
+      "v119Discovery": "Reconciliation readers can search/page minimal run metadata without accounting-read. Preparation evidence retains accounting-read. Ready rows open the separately authorized sign review. Actual 22-run PostgreSQL pagination and EN/FR limited-role search/recovery/handoff passed.",
+      "status": "In progress",
+      "closureReview": {
+        "checklist": "RECONCILIATION_PREPARATION_CLOSURE.md",
+        "completeWorkflowVerified": false,
+        "evidence": "evidence/preparation-history-impact-2026-09-27.json",
+        "verifiedCriteria": [
+          "transaction_bound_module_admission_and_denied_replay",
+          "withdrawal_first_and_preparation_first_database_lock_orderings",
+          "en_fr_lost_committed_response_reload_exact_retry_single_receipt_audit",
+          "en_fr_read_only_explanation_pending_command_retention_keyboard_reflow",
+          "current_independent_signing_export_handoff",
+          "en_fr_read_only_preview_rendered_contrast_mobile_desktop",
+          "concurrent_duplicate_and_distinct_reviewers_one_receipt_audit_observation",
+          "notification_failure_atomic_rollback_and_exact_retry",
+          "23_genuine_history_records_tenant_cursor_corruption_and_signed_retention",
+          "all_15_exception_types_resolved_dismissed_without_proof_refused",
+          "en_fr_history_failed_read_keeps_prior_page_focus_paging_reload_reflow_and_contrast"
+        ],
+        "note": "Module admission, concurrent reviewers, 23 genuine retained records, legacy final-status refusal and EN/FR history failure/recovery/focus now verified. Authentication accessibility and final criterion/source audit remain; no workflow closure claimed."
+      }
+    }
+  ]
+}

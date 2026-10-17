@@ -1,0 +1,64 @@
+{
+  "validatedAt": "2026-10-04T11:02:06.002Z",
+  "status": "PASSED",
+  "publisherExitCode": 0,
+  "useCases": 8,
+  "packages": 20,
+  "dependencyGraph": "acyclic",
+  "effortPersonDays": [
+    69,
+    111
+  ],
+  "existingImplementationPathsChecked": 50,
+  "localLinksChecked": 24,
+  "existingPublicationFilesUnchanged": 10,
+  "publicationContainsOnlyFivePairs": true,
+  "pairs": [
+    {
+      "markdown": "01_REFINED_PROMPT.md",
+      "pdf": "01_REFINED_PROMPT.pdf",
+      "bytes": 53951,
+      "pages": 2,
+      "extractedTextCharacters": 5272,
+      "markdownHashPreserved": true
+    },
+    {
+      "markdown": "02_EXECUTION_REPORT.md",
+      "pdf": "02_EXECUTION_REPORT.pdf",
+      "bytes": 58066,
+      "pages": 2,
+      "extractedTextCharacters": 3835,
+      "markdownHashPreserved": true
+    },
+    {
+      "markdown": "03_EXECUTION_FINDINGS_AND_RISKS.md",
+      "pdf": "03_EXECUTION_FINDINGS_AND_RISKS.pdf",
+      "bytes": 57269,
+      "pages": 3,
+      "extractedTextCharacters": 6991,
+      "markdownHashPreserved": true
+    },
+    {
+      "markdown": "04_IMPLEMENTATION_ROADMAP.md",
+      "pdf": "04_IMPLEMENTATION_ROADMAP.pdf",
+      "bytes": 158485,
+      "pages": 20,
+      "extractedTextCharacters": 52772,
+      "markdownHashPreserved": true
+    },
+    {
+      "markdown": "05_ROADMAP_EXECUTIVE_SUMMARY.md",
+      "pdf": "05_ROADMAP_EXECUTIVE_SUMMARY.pdf",
+      "bytes": 50024,
+      "pages": 2,
+      "extractedTextCharacters": 3899,
+      "markdownHashPreserved": true
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Rendered previews cover representative pages only; not a manual review of every PDF page.",
+    "13 existing foundation tests passed; no new feature or protected browser workflow has been implemented.",
+    "Bundled Python lacked PyMuPDF; PDF text/page validation and previews used bundled pdfjs-dist and canvas instead."
+  ]
+}

@@ -1,0 +1,5129 @@
+{
+  "startedAt": "2026-09-27T11:26:55.684Z",
+  "finishedAt": "2026-09-27T11:27:22.280Z",
+  "target": "stoquify_replay_next_20260830",
+  "stage": "reference",
+  "result": {
+    "referenceDate": "2026-09-27",
+    "roles": [
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "accountant",
+        "roleId": "sysseed_role_fa2e563b6e3e1442af4b2d74",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "accounting_owner",
+        "roleId": "sysseed_role_c9d16c42312d3c88ecaf64af",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "admin",
+        "roleId": "sysseed_role_08abb2dc83e643570e7babce",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "administrator",
+        "roleId": "0e348d8a-40e3-4a2d-94d7-e833aac4f022",
+        "status": "preserved",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_PURCHASE_REPORTS",
+          "APPROVE_STOCK_ADJUSTMENTS",
+          "APPROVE_STOCK_TRANSFERS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "VIEW_CASH_MANAGEMENT",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_ALL_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "PAYROLL_DELETE"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "approver",
+        "roleId": "sysseed_role_86e7f3bf4d0c7c858e4deec9",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "attendance_time_administrator",
+        "roleId": "sysseed_role_2de31fb6d4f4a781f216066d",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "EDIT_PRESENCE_SESSIONS"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "auditor",
+        "roleId": "sysseed_role_6009195e96dfa38b8b961b75",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "branch_manager",
+        "roleId": "sysseed_role_48bb99d52a75255968f732cb",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "buyer",
+        "roleId": "sysseed_role_aadf6ca608b62e527a6fb151",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "cashier",
+        "roleId": "sysseed_role_e7936b99512d9d6a969bf044",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "cashier_pos_user",
+        "roleId": "sysseed_role_ea7a68f63a8bbb9b3a118b6d",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "checker",
+        "roleId": "sysseed_role_6815f0ea51bc09abc935e5ab",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "compensation_approver",
+        "roleId": "sysseed_role_d7fa6e881ade2eeca75dfa48",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "controller_approver",
+        "roleId": "sysseed_role_fe082ca72546f34876f7a03a",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "database_migration_operator",
+        "roleId": "sysseed_role_56ffab89b2ab74459735c17a",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "employee",
+        "roleId": "sysseed_role_b1b535db9dc12b416f5c9afa",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "SALES_PERFORMANCE_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "employee_self_service",
+        "roleId": "sysseed_role_08882dfff6c42c5f521519cb",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "external_accountant",
+        "roleId": "sysseed_role_bdfe254132a63b2033593418",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "financial_controller",
+        "roleId": "sysseed_role_d8038709b03a85953f823d26",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "fulfillment_owner",
+        "roleId": "sysseed_role_ac51b2722c86502ca29fbaad",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "hr_manager",
+        "roleId": "sysseed_role_7296f0d97798860d8805a39e",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "hris_user",
+        "roleId": "sysseed_role_929f9427b67a0467faf53f5c",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "independent_migration_checker",
+        "roleId": "sysseed_role_86d5d77b186cfe10609331e9",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_adjustment_checker",
+        "roleId": "sysseed_role_d2a8f21fb6db573025ffe999",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; distinct actor posts the stock and journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_adjustment_maker",
+        "roleId": "sysseed_role_5ac2a0a8839e67fb3c4c97dc",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; prepare stock and its opening journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_controller",
+        "roleId": "sysseed_role_ebf8ffdb1fe3596d9fe92318",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_manager",
+        "roleId": "sysseed_role_9117dbddbf730aa8b9ac1681",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "maker",
+        "roleId": "sysseed_role_404c23e232fa704b0f55a60d",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "manager",
+        "roleId": "sysseed_role_feefc55a111a8bcf35bec5a2",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "FINANCIAL_ALERTS_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "EXPORT_PRESENCE_DATA",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_CASH_MANAGEMENT",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "order_to_cash_product_owner",
+        "roleId": "sysseed_role_4e15f75bae1c1aa3482ef026",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "owner",
+        "roleId": "sysseed_role_b444cac7d59fa5cd3f88756a",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payments_owner",
+        "roleId": "sysseed_role_d1984f3b0d4b234b7b2feb9a",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_administrator",
+        "roleId": "sysseed_role_21df1720078a277e0f645a1b",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_approver",
+        "roleId": "sysseed_role_7947f5063f8b7d2cec8801f1",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_processor",
+        "roleId": "sysseed_role_f15af9b2b6eaddd5c4d86d99",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "pos_architect",
+        "roleId": "sysseed_role_e3718e7074b67f3e7abd6380",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "VIEW_POS_REPORTS"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "pos_user",
+        "roleId": "sysseed_role_37f031479410c5adec1197f5",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "product_approver",
+        "roleId": "sysseed_role_2d13acf7f267d2e10d3cf1c6",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "product_owner",
+        "roleId": "sysseed_role_f39255542190d57000cfa476",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "purchaser",
+        "roleId": "sysseed_role_5aa0c44fe3276540ced4dd81",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qa_owner",
+        "roleId": "sysseed_role_2e076b6edd6408c82576085d",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qualified_accounting_reviewer",
+        "roleId": "sysseed_role_bc466fb091e2e98d895d4376",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "roleId": "sysseed_role_1c0278ec3c0f6802dec4c9e0",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "read_only",
+        "roleId": "sysseed_role_1cbf9767abf7e8bdfbb0aedc",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "receiver",
+        "roleId": "sysseed_role_b6d17d7161a2d9390f5034c9",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "retail_operations_owner",
+        "roleId": "sysseed_role_030a794c234a573118201106",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "risk_owner",
+        "roleId": "sysseed_role_56de3573e4f4362b8f75b771",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "sales_manager",
+        "roleId": "sysseed_role_9f845570c7183a9a0b167639",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "security_owner",
+        "roleId": "sysseed_role_26151d0a9f1bca2f9a4854a8",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "sre_owner",
+        "roleId": "sysseed_role_cf4f215a14b6f7de3a0f69b3",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "staff",
+        "roleId": "sysseed_role_1875ba8af8ee0aefd855d60b",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "super_admin",
+        "roleId": "sysseed_role_0d3f6fd56e1ca781c23e5a12",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "supervisor",
+        "roleId": "sysseed_role_d2ef60d16247240346d69b1a",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "support",
+        "roleId": "sysseed_role_6b3364b5ae388cb14423f235",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "support_owner",
+        "roleId": "sysseed_role_b9fa4faa5119391772b12614",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "treasury_owner",
+        "roleId": "sysseed_role_1012af511d07afa36009148a",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "user",
+        "roleId": "sysseed_role_ccf7e70c4151fcec7186d32d",
+        "status": "added",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "viewer",
+        "roleId": "sysseed_role_0466fa711fb292c9a5ee8821",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_OWN_PRESENCE",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "accountant",
+        "roleId": "rds_org_001_role_008",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "accounting_owner",
+        "roleId": "rds_org_001_compliance_role_accounting_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "admin",
+        "roleId": "rds_org_001_role_002",
+        "status": "preserved",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "dashboard.analytics.read",
+          "dashboard.overview.read",
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "users.roles.remove",
+          "users.activate",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "locations.settings.update",
+          "purchases.orders.receive",
+          "finance.payables.update",
+          "finance.receivables.create",
+          "finance.receivables.update",
+          "finance.receivables.reverse",
+          "payments.provider-account.manage",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.override",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose",
+          "payments.reconciliation.suspense.post",
+          "payments.reconciliation.sign",
+          "payments.reconciliation.certificate.export",
+          "payroll.payslips.self.export",
+          "taxes.calculations.read",
+          "taxes.reports.read",
+          "customers.analytics.read",
+          "customers.communication.send",
+          "pos.receipts.revoke",
+          "analytics.sales.read",
+          "analytics.inventory.read",
+          "analytics.financial.read",
+          "analytics.customer.read",
+          "analytics.performance.read",
+          "reports.create",
+          "reports.schedule",
+          "system.backup.create",
+          "system.backup.restore",
+          "system.logs.read",
+          "system.integrations.read",
+          "agent.release.prepare",
+          "agent.release.product.approve",
+          "agent.release.security.approve",
+          "agent.release.owner.manage",
+          "agent.release.owner.accept",
+          "agent.release.provision",
+          "agent.release.activate",
+          "agent.release.suspend",
+          "agent.release.retire",
+          "communication.emails.send",
+          "communication.notifications.read",
+          "communication.notifications.send",
+          "communication.templates.read",
+          "communication.templates.create",
+          "communication.templates.update",
+          "data.import",
+          "data.backup",
+          "data.restore",
+          "data.migrate"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "administrator",
+        "roleId": "sysseed_role_f01b740f459c2a014b9f5dd1",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "VIEW_CASH_MANAGEMENT",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_ALL_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "PAYROLL_DELETE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "approver",
+        "roleId": "sysseed_role_1b7065f73f2296125b82ccd6",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "attendance_time_administrator",
+        "roleId": "rds_org_001_compliance_role_attendance_time_administrator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "hris.people.read",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "EDIT_PRESENCE_SESSIONS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "auditor",
+        "roleId": "rds_org_001_role_010",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "branch_manager",
+        "roleId": "rds_org_001_role_003",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "purchases.orders.receive",
+          "branch.daily-close.review",
+          "branch.daily-close.sign"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "buyer",
+        "roleId": "sysseed_role_46c20b30d922815b368310b1",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "cashier",
+        "roleId": "sysseed_role_a81096f1515986522a485c67",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "cashier_pos_user",
+        "roleId": "rds_org_001_role_006",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.read",
+          "sales.read",
+          "sales.create",
+          "sales.orders.read",
+          "sales.orders.create",
+          "customers.create",
+          "customers.update",
+          "pos.transactions.read",
+          "pos.discounts.apply",
+          "analytics.read",
+          "analytics.sales.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "checker",
+        "roleId": "rds_org_001_compliance_role_checker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "purchases.orders.read",
+          "purchasing.ap.invoice.view",
+          "payroll.read",
+          "purchasing.ap.payment.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "compensation_approver",
+        "roleId": "rds_org_001_compliance_role_compensation_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "controller_approver",
+        "roleId": "rds_org_001_compliance_role_controller_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "database_migration_operator",
+        "roleId": "rds_org_001_compliance_role_database_migration_operator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "data.migrate",
+          "data.backup"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "employee",
+        "roleId": "sysseed_role_4e21c8bb10822f5c81a12465",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "SALES_PERFORMANCE_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "employee_self_service",
+        "roleId": "rds_org_001_compliance_role_employee_self_service",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.export",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "external_accountant",
+        "roleId": "rds_org_001_compliance_role_external_accountant",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "financial_controller",
+        "roleId": "rds_org_001_compliance_role_financial_controller",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "fulfillment_owner",
+        "roleId": "rds_org_001_compliance_role_fulfillment_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read",
+          "purchases.orders.receive"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "hr_manager",
+        "roleId": "rds_org_001_role_009",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read",
+          "hris.people.manage"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "hris_user",
+        "roleId": "rds_org_001_compliance_role_hris_user",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "independent_migration_checker",
+        "roleId": "rds_org_001_compliance_role_independent_migration_checker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_adjustment_checker",
+        "roleId": "sysseed_role_9bbbf3069d69d3b6e2e210af",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; distinct actor posts the stock and journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_adjustment_maker",
+        "roleId": "sysseed_role_edd3ff8386a2609b7aeb4326",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; prepare stock and its opening journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_controller",
+        "roleId": "rds_org_001_compliance_role_inventory_controller",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_manager",
+        "roleId": "rds_org_001_role_004",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.categories.read",
+          "locations.read",
+          "inventory.categories.create",
+          "inventory.categories.update",
+          "purchases.orders.receive"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "maker",
+        "roleId": "rds_org_001_compliance_role_maker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.levels.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read",
+          "purchases.read",
+          "purchases.orders.read",
+          "purchases.orders.update",
+          "purchases.suppliers.read",
+          "purchases.suppliers.update",
+          "purchasing.ap.invoice.view",
+          "purchasing.ap.payment.request",
+          "purchasing.supplier.bank.request",
+          "payroll.salary_changes.request"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "manager",
+        "roleId": "rds_org_001_compliance_role_manager",
+        "status": "preserved",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "READ_USERS",
+          "READ_LOCATIONS",
+          "CREATE_ITEMS",
+          "READ_ITEMS",
+          "UPDATE_ITEMS",
+          "MANAGE_INVENTORY_LEVELS",
+          "VIEW_INVENTORY_REPORTS",
+          "READ_CATEGORIES",
+          "CREATE_PURCHASE_ORDERS",
+          "READ_PURCHASE_ORDERS",
+          "UPDATE_PURCHASE_ORDERS",
+          "VIEW_PURCHASE_REPORTS",
+          "CREATE_SALES_ORDERS",
+          "READ_SALES_ORDERS",
+          "UPDATE_SALES_ORDERS",
+          "PROCESS_SALES",
+          "CREATE_STOCK_ADJUSTMENTS",
+          "CREATE_STOCK_TRANSFERS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "READ_SUPPLIERS",
+          "READ_CUSTOMERS",
+          "UPDATE_CUSTOMERS",
+          "OPERATE_POS",
+          "MANAGE_POS_SESSIONS",
+          "MANAGE_CASH_DRAWER",
+          "PROCESS_PAYMENTS",
+          "PROCESS_REFUNDS",
+          "VIEW_POS_REPORTS",
+          "FINANCIAL_READ",
+          "FINANCIAL_DASHBOARD_ACCESS",
+          "CUSTOMER_RECEIVABLES_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_PAYMENTS_PROCESS",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_ANALYTICS_READ",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COST_ANALYTICS_READ",
+          "PURCHASE_ANALYTICS_READ",
+          "INVENTORY_COST_READ",
+          "SUPPLIER_PAYMENTS_READ",
+          "SUPPLIER_PAYABLES_READ",
+          "CASH_FLOW_READ",
+          "CASH_POSITION_READ",
+          "FINANCIAL_ALERTS_READ",
+          "FINANCIAL_KPI_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "EXPORT_PRESENCE_DATA",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "VIEW_CHART_OF_ACCOUNTS",
+          "VIEW_JOURNAL_ENTRIES",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_CASH_MANAGEMENT",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "hris.people.read",
+          "EMPLOYEE_SALARY_READ",
+          "dashboard.read",
+          "dashboard.analytics.read",
+          "dashboard.overview.read",
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "users.read",
+          "users.invite",
+          "users.roles.assign",
+          "inventory.read",
+          "inventory.create",
+          "inventory.update",
+          "inventory.delete",
+          "inventory.items.read",
+          "inventory.items.create",
+          "inventory.items.update",
+          "inventory.items.delete",
+          "inventory.levels.read",
+          "inventory.levels.adjust",
+          "inventory.categories.read",
+          "inventory.categories.create",
+          "inventory.categories.update",
+          "inventory.categories.delete",
+          "inventory.brands.read",
+          "inventory.brands.create",
+          "inventory.brands.update",
+          "inventory.brands.delete",
+          "inventory.units.read",
+          "inventory.units.create",
+          "inventory.units.update",
+          "inventory.units.delete",
+          "inventory.stock.adjust",
+          "inventory.stock.transfer",
+          "locations.read",
+          "locations.create",
+          "locations.update",
+          "locations.delete",
+          "locations.manage",
+          "locations.settings.update",
+          "sales.read",
+          "sales.create",
+          "sales.update",
+          "sales.delete",
+          "sales.orders.read",
+          "sales.orders.create",
+          "sales.orders.update",
+          "sales.orders.cancel",
+          "sales.orders.refund",
+          "sales.analytics.read",
+          "sales.reports.export",
+          "purchases.read",
+          "purchases.create",
+          "purchases.update",
+          "purchases.delete",
+          "purchases.orders.read",
+          "purchases.orders.create",
+          "purchases.orders.update",
+          "purchases.orders.cancel",
+          "purchases.orders.receive",
+          "purchasing.returns.post",
+          "purchases.suppliers.read",
+          "purchases.suppliers.create",
+          "purchases.suppliers.update",
+          "purchases.suppliers.delete",
+          "purchasing.ap.invoice.view",
+          "purchasing.ap.invoice.post",
+          "purchasing.ap.credit.post",
+          "purchasing.supplier.bank.request",
+          "purchasing.supplier.bank.approve",
+          "purchasing.ap.payment.request",
+          "purchasing.ap.payment.approve",
+          "purchasing.ap.payment.release",
+          "finance.read",
+          "finance.payables.read",
+          "finance.receivables.read",
+          "finance.analytics.read",
+          "accounting.accounts.read",
+          "accounting.journal.read",
+          "accounting.close.run",
+          "accounting.close.finding.assign",
+          "accounting.close.finding.comment",
+          "accounting.close.accountant.comment",
+          "compliance.documents.read",
+          "compliance.metadata.read",
+          "payroll.read",
+          "payroll.employees.read",
+          "payroll.contracts.read",
+          "payroll.compensation.read",
+          "payroll.salary_changes.read",
+          "payroll.payment_destination.read",
+          "taxes.read",
+          "taxes.create",
+          "taxes.update",
+          "taxes.delete",
+          "taxes.rates.read",
+          "taxes.rates.create",
+          "taxes.rates.update",
+          "taxes.rates.delete",
+          "taxes.calculations.read",
+          "taxes.reports.read",
+          "customers.read",
+          "customers.create",
+          "customers.update",
+          "customers.delete",
+          "customers.export",
+          "customers.orders.read",
+          "customers.analytics.read",
+          "customers.communication.send",
+          "pos.read",
+          "pos.use",
+          "pos.session.start",
+          "pos.session.end",
+          "pos.transactions.read",
+          "pos.transactions.void",
+          "pos.transactions.refund",
+          "pos.cash.drawer.open",
+          "pos.discounts.apply",
+          "pos.receipts.print",
+          "pos.receipts.reprint",
+          "pos.receipts.revoke",
+          "analytics.read",
+          "analytics.sales.read",
+          "analytics.inventory.read",
+          "analytics.financial.read",
+          "analytics.customer.read",
+          "analytics.performance.read",
+          "reports.create",
+          "reports.schedule",
+          "communication.emails.send",
+          "communication.notifications.read",
+          "communication.notifications.send",
+          "communication.templates.read",
+          "communication.templates.create",
+          "communication.templates.update",
+          "data.export"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "order_to_cash_product_owner",
+        "roleId": "rds_org_001_compliance_role_order_to_cash_product_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "owner",
+        "roleId": "rds_org_001_compliance_role_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "users.roles.remove",
+          "users.activate",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "locations.settings.update",
+          "finance.payables.update",
+          "finance.receivables.create",
+          "finance.receivables.update",
+          "finance.receivables.reverse",
+          "payments.provider-account.manage",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.override",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose",
+          "payments.reconciliation.suspense.post",
+          "payments.reconciliation.sign",
+          "payments.reconciliation.certificate.export",
+          "payroll.payslips.self.export",
+          "pos.receipts.revoke",
+          "analytics.financial.read",
+          "reports.create",
+          "system.backup.create",
+          "agent.release.prepare",
+          "agent.release.product.approve",
+          "agent.release.security.approve",
+          "agent.release.owner.manage",
+          "agent.release.owner.accept",
+          "agent.release.provision",
+          "agent.release.activate",
+          "agent.release.suspend",
+          "agent.release.retire",
+          "communication.templates.create",
+          "communication.templates.update",
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payments_owner",
+        "roleId": "rds_org_001_compliance_role_payments_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "finance.read",
+          "payments.provider-account.read",
+          "payments.reconciliation.read",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_administrator",
+        "roleId": "rds_org_001_compliance_role_payroll_administrator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read",
+          "hris.people.manage"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_approver",
+        "roleId": "rds_org_001_compliance_role_payroll_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_processor",
+        "roleId": "rds_org_001_compliance_role_payroll_processor",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "pos_architect",
+        "roleId": "rds_org_001_compliance_role_pos_architect",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "pos.transactions.read",
+          "inventory.items.read",
+          "VIEW_POS_REPORTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "pos_user",
+        "roleId": "rds_org_001_compliance_role_pos_user",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "product_approver",
+        "roleId": "rds_org_001_compliance_role_product_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "agent.release.product.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "product_owner",
+        "roleId": "rds_org_001_compliance_role_product_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.analytics.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "purchaser",
+        "roleId": "rds_org_001_role_007",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.levels.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qa_owner",
+        "roleId": "rds_org_001_compliance_role_qa_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qualified_accounting_reviewer",
+        "roleId": "rds_org_001_compliance_role_qualified_accounting_reviewer",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "roleId": "rds_org_001_compliance_role_qualified_cameroon_country_pack_reviewer",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "read_only",
+        "roleId": "rds_org_001_role_011",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "receiver",
+        "roleId": "sysseed_role_2ca6a2f214a28779e3cc6ad6",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "retail_operations_owner",
+        "roleId": "rds_org_001_compliance_role_retail_operations_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "branch.daily-close.review"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "risk_owner",
+        "roleId": "rds_org_001_compliance_role_risk_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "sales_manager",
+        "roleId": "rds_org_001_role_005",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "security_owner",
+        "roleId": "rds_org_001_compliance_role_security_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "agent.release.security.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "sre_owner",
+        "roleId": "rds_org_001_compliance_role_sre_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "staff",
+        "roleId": "sysseed_role_aae587400f33ffaca6bf5c92",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "super_admin",
+        "roleId": "rds_org_001_role_001",
+        "status": "preserved",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "supervisor",
+        "roleId": "sysseed_role_75edb343720907a7de44fdef",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "support",
+        "roleId": "rds_org_001_compliance_role_support",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "support_owner",
+        "roleId": "rds_org_001_compliance_role_support_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "treasury_owner",
+        "roleId": "rds_org_001_compliance_role_treasury_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "payments.reconciliation.sign"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "user",
+        "roleId": "rds_org_001_role_012",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.read",
+          "payroll.payslips.self.export",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "viewer",
+        "roleId": "sysseed_role_a4a43769e24e9e145267a1bb",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_OWN_PRESENCE",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "accountant",
+        "roleId": "rds_org_002_role_008",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "accounting_owner",
+        "roleId": "rds_org_002_compliance_role_accounting_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "admin",
+        "roleId": "rds_org_002_role_002",
+        "status": "preserved",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "dashboard.analytics.read",
+          "dashboard.overview.read",
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "users.roles.remove",
+          "users.activate",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "locations.settings.update",
+          "purchases.orders.receive",
+          "finance.payables.update",
+          "finance.receivables.create",
+          "finance.receivables.update",
+          "finance.receivables.reverse",
+          "payments.provider-account.manage",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.override",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose",
+          "payments.reconciliation.suspense.post",
+          "payments.reconciliation.sign",
+          "payments.reconciliation.certificate.export",
+          "payroll.payslips.self.export",
+          "taxes.calculations.read",
+          "taxes.reports.read",
+          "customers.analytics.read",
+          "customers.communication.send",
+          "pos.receipts.revoke",
+          "analytics.sales.read",
+          "analytics.inventory.read",
+          "analytics.financial.read",
+          "analytics.customer.read",
+          "analytics.performance.read",
+          "reports.create",
+          "reports.schedule",
+          "system.backup.create",
+          "system.backup.restore",
+          "system.logs.read",
+          "system.integrations.read",
+          "agent.release.prepare",
+          "agent.release.product.approve",
+          "agent.release.security.approve",
+          "agent.release.owner.manage",
+          "agent.release.owner.accept",
+          "agent.release.provision",
+          "agent.release.activate",
+          "agent.release.suspend",
+          "agent.release.retire",
+          "communication.emails.send",
+          "communication.notifications.read",
+          "communication.notifications.send",
+          "communication.templates.read",
+          "communication.templates.create",
+          "communication.templates.update",
+          "data.import",
+          "data.backup",
+          "data.restore",
+          "data.migrate"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "administrator",
+        "roleId": "sysseed_role_e6c1f8ab61e5db1c45a3815f",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "VIEW_CASH_MANAGEMENT",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_ALL_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "PAYROLL_DELETE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "approver",
+        "roleId": "sysseed_role_29b4cb6849b8a4948c31cba3",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "attendance_time_administrator",
+        "roleId": "rds_org_002_compliance_role_attendance_time_administrator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "hris.people.read",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "EDIT_PRESENCE_SESSIONS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "auditor",
+        "roleId": "rds_org_002_role_010",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "branch_manager",
+        "roleId": "rds_org_002_role_003",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "purchases.orders.receive",
+          "branch.daily-close.review",
+          "branch.daily-close.sign"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "buyer",
+        "roleId": "sysseed_role_ae38870142fef853ea7dd3bd",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "cashier",
+        "roleId": "sysseed_role_00cfd4a9b4a61b34205053c6",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "cashier_pos_user",
+        "roleId": "rds_org_002_role_006",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.read",
+          "sales.read",
+          "sales.create",
+          "sales.orders.read",
+          "sales.orders.create",
+          "customers.create",
+          "customers.update",
+          "pos.transactions.read",
+          "pos.discounts.apply",
+          "analytics.read",
+          "analytics.sales.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "checker",
+        "roleId": "rds_org_002_compliance_role_checker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "purchases.orders.read",
+          "purchasing.ap.invoice.view",
+          "payroll.read",
+          "purchasing.ap.payment.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "compensation_approver",
+        "roleId": "rds_org_002_compliance_role_compensation_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "controller_approver",
+        "roleId": "rds_org_002_compliance_role_controller_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "database_migration_operator",
+        "roleId": "rds_org_002_compliance_role_database_migration_operator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "data.migrate",
+          "data.backup"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "employee",
+        "roleId": "sysseed_role_997c440225377f05ca99f8ad",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS",
+          "SALES_PERFORMANCE_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "employee_self_service",
+        "roleId": "rds_org_002_compliance_role_employee_self_service",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.export",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "external_accountant",
+        "roleId": "rds_org_002_compliance_role_external_accountant",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "financial_controller",
+        "roleId": "rds_org_002_compliance_role_financial_controller",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "fulfillment_owner",
+        "roleId": "rds_org_002_compliance_role_fulfillment_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read",
+          "purchases.orders.receive"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "hr_manager",
+        "roleId": "rds_org_002_role_009",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read",
+          "hris.people.manage"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "hris_user",
+        "roleId": "rds_org_002_compliance_role_hris_user",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "independent_migration_checker",
+        "roleId": "rds_org_002_compliance_role_independent_migration_checker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_adjustment_checker",
+        "roleId": "sysseed_role_79bcdea78b217fad1ff33672",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; distinct actor posts the stock and journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_adjustment_maker",
+        "roleId": "sysseed_role_fd9edcd655d5f7adbd40af5b",
+        "status": "added",
+        "source": "actions/inventory/inventoryLossControlActions.ts + actions/accounting/journals.actions.ts; prepare stock and its opening journal",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_controller",
+        "roleId": "rds_org_002_compliance_role_inventory_controller",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_manager",
+        "roleId": "rds_org_002_role_004",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.categories.read",
+          "locations.read",
+          "inventory.categories.create",
+          "inventory.categories.update",
+          "purchases.orders.receive"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "maker",
+        "roleId": "rds_org_002_compliance_role_maker",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.levels.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read",
+          "purchases.read",
+          "purchases.orders.read",
+          "purchases.orders.update",
+          "purchases.suppliers.read",
+          "purchases.suppliers.update",
+          "purchasing.ap.invoice.view",
+          "purchasing.ap.payment.request",
+          "purchasing.supplier.bank.request",
+          "payroll.salary_changes.request"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "manager",
+        "roleId": "rds_org_002_compliance_role_manager",
+        "status": "preserved",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "READ_USERS",
+          "READ_LOCATIONS",
+          "CREATE_ITEMS",
+          "READ_ITEMS",
+          "UPDATE_ITEMS",
+          "MANAGE_INVENTORY_LEVELS",
+          "VIEW_INVENTORY_REPORTS",
+          "READ_CATEGORIES",
+          "CREATE_PURCHASE_ORDERS",
+          "READ_PURCHASE_ORDERS",
+          "UPDATE_PURCHASE_ORDERS",
+          "VIEW_PURCHASE_REPORTS",
+          "CREATE_SALES_ORDERS",
+          "READ_SALES_ORDERS",
+          "UPDATE_SALES_ORDERS",
+          "PROCESS_SALES",
+          "CREATE_STOCK_ADJUSTMENTS",
+          "CREATE_STOCK_TRANSFERS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "READ_SUPPLIERS",
+          "READ_CUSTOMERS",
+          "UPDATE_CUSTOMERS",
+          "OPERATE_POS",
+          "MANAGE_POS_SESSIONS",
+          "MANAGE_CASH_DRAWER",
+          "PROCESS_PAYMENTS",
+          "PROCESS_REFUNDS",
+          "VIEW_POS_REPORTS",
+          "FINANCIAL_READ",
+          "FINANCIAL_DASHBOARD_ACCESS",
+          "CUSTOMER_RECEIVABLES_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_PAYMENTS_PROCESS",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_ANALYTICS_READ",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COST_ANALYTICS_READ",
+          "PURCHASE_ANALYTICS_READ",
+          "INVENTORY_COST_READ",
+          "SUPPLIER_PAYMENTS_READ",
+          "SUPPLIER_PAYABLES_READ",
+          "CASH_FLOW_READ",
+          "CASH_POSITION_READ",
+          "FINANCIAL_ALERTS_READ",
+          "FINANCIAL_KPI_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "EXPORT_PRESENCE_DATA",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "VIEW_CHART_OF_ACCOUNTS",
+          "VIEW_JOURNAL_ENTRIES",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_CASH_MANAGEMENT",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "hris.people.read",
+          "EMPLOYEE_SALARY_READ",
+          "dashboard.read",
+          "dashboard.analytics.read",
+          "dashboard.overview.read",
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "users.read",
+          "users.invite",
+          "users.roles.assign",
+          "inventory.read",
+          "inventory.create",
+          "inventory.update",
+          "inventory.delete",
+          "inventory.items.read",
+          "inventory.items.create",
+          "inventory.items.update",
+          "inventory.items.delete",
+          "inventory.levels.read",
+          "inventory.levels.adjust",
+          "inventory.categories.read",
+          "inventory.categories.create",
+          "inventory.categories.update",
+          "inventory.categories.delete",
+          "inventory.brands.read",
+          "inventory.brands.create",
+          "inventory.brands.update",
+          "inventory.brands.delete",
+          "inventory.units.read",
+          "inventory.units.create",
+          "inventory.units.update",
+          "inventory.units.delete",
+          "inventory.stock.adjust",
+          "inventory.stock.transfer",
+          "locations.read",
+          "locations.create",
+          "locations.update",
+          "locations.delete",
+          "locations.manage",
+          "locations.settings.update",
+          "sales.read",
+          "sales.create",
+          "sales.update",
+          "sales.delete",
+          "sales.orders.read",
+          "sales.orders.create",
+          "sales.orders.update",
+          "sales.orders.cancel",
+          "sales.orders.refund",
+          "sales.analytics.read",
+          "sales.reports.export",
+          "purchases.read",
+          "purchases.create",
+          "purchases.update",
+          "purchases.delete",
+          "purchases.orders.read",
+          "purchases.orders.create",
+          "purchases.orders.update",
+          "purchases.orders.cancel",
+          "purchases.orders.receive",
+          "purchasing.returns.post",
+          "purchases.suppliers.read",
+          "purchases.suppliers.create",
+          "purchases.suppliers.update",
+          "purchases.suppliers.delete",
+          "purchasing.ap.invoice.view",
+          "purchasing.ap.invoice.post",
+          "purchasing.ap.credit.post",
+          "purchasing.supplier.bank.request",
+          "purchasing.supplier.bank.approve",
+          "purchasing.ap.payment.request",
+          "purchasing.ap.payment.approve",
+          "purchasing.ap.payment.release",
+          "finance.read",
+          "finance.payables.read",
+          "finance.receivables.read",
+          "finance.analytics.read",
+          "accounting.accounts.read",
+          "accounting.journal.read",
+          "accounting.close.run",
+          "accounting.close.finding.assign",
+          "accounting.close.finding.comment",
+          "accounting.close.accountant.comment",
+          "compliance.documents.read",
+          "compliance.metadata.read",
+          "payroll.read",
+          "payroll.employees.read",
+          "payroll.contracts.read",
+          "payroll.compensation.read",
+          "payroll.salary_changes.read",
+          "payroll.payment_destination.read",
+          "taxes.read",
+          "taxes.create",
+          "taxes.update",
+          "taxes.delete",
+          "taxes.rates.read",
+          "taxes.rates.create",
+          "taxes.rates.update",
+          "taxes.rates.delete",
+          "taxes.calculations.read",
+          "taxes.reports.read",
+          "customers.read",
+          "customers.create",
+          "customers.update",
+          "customers.delete",
+          "customers.export",
+          "customers.orders.read",
+          "customers.analytics.read",
+          "customers.communication.send",
+          "pos.read",
+          "pos.use",
+          "pos.session.start",
+          "pos.session.end",
+          "pos.transactions.read",
+          "pos.transactions.void",
+          "pos.transactions.refund",
+          "pos.cash.drawer.open",
+          "pos.discounts.apply",
+          "pos.receipts.print",
+          "pos.receipts.reprint",
+          "pos.receipts.revoke",
+          "analytics.read",
+          "analytics.sales.read",
+          "analytics.inventory.read",
+          "analytics.financial.read",
+          "analytics.customer.read",
+          "analytics.performance.read",
+          "reports.create",
+          "reports.schedule",
+          "communication.emails.send",
+          "communication.notifications.read",
+          "communication.notifications.send",
+          "communication.templates.read",
+          "communication.templates.create",
+          "communication.templates.update",
+          "data.export"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "order_to_cash_product_owner",
+        "roleId": "rds_org_002_compliance_role_order_to_cash_product_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "owner",
+        "roleId": "rds_org_002_compliance_role_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "branch.daily-close.review",
+          "branch.daily-close.sign",
+          "users.roles.remove",
+          "users.activate",
+          "profile.update",
+          "profile.password.update",
+          "profile.avatar.update",
+          "locations.settings.update",
+          "finance.payables.update",
+          "finance.receivables.create",
+          "finance.receivables.update",
+          "finance.receivables.reverse",
+          "payments.provider-account.manage",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.override",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose",
+          "payments.reconciliation.suspense.post",
+          "payments.reconciliation.sign",
+          "payments.reconciliation.certificate.export",
+          "payroll.payslips.self.export",
+          "pos.receipts.revoke",
+          "analytics.financial.read",
+          "reports.create",
+          "system.backup.create",
+          "agent.release.prepare",
+          "agent.release.product.approve",
+          "agent.release.security.approve",
+          "agent.release.owner.manage",
+          "agent.release.owner.accept",
+          "agent.release.provision",
+          "agent.release.activate",
+          "agent.release.suspend",
+          "agent.release.retire",
+          "communication.templates.create",
+          "communication.templates.update",
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payments_owner",
+        "roleId": "rds_org_002_compliance_role_payments_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "finance.read",
+          "payments.provider-account.read",
+          "payments.reconciliation.read",
+          "payments.reconciliation.import",
+          "payments.reconciliation.match",
+          "payments.reconciliation.exception.assign",
+          "payments.reconciliation.exception.resolve",
+          "payments.reconciliation.suspense.propose"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_administrator",
+        "roleId": "rds_org_002_compliance_role_payroll_administrator",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read",
+          "hris.people.manage"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_approver",
+        "roleId": "rds_org_002_compliance_role_payroll_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_processor",
+        "roleId": "rds_org_002_compliance_role_payroll_processor",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "hris.people.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "pos_architect",
+        "roleId": "rds_org_002_compliance_role_pos_architect",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "pos.transactions.read",
+          "inventory.items.read",
+          "VIEW_POS_REPORTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "pos_user",
+        "roleId": "rds_org_002_compliance_role_pos_user",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "PROCESS_PAYMENTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "product_approver",
+        "roleId": "rds_org_002_compliance_role_product_approver",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "agent.release.product.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "product_owner",
+        "roleId": "rds_org_002_compliance_role_product_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.analytics.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "purchaser",
+        "roleId": "rds_org_002_role_007",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.levels.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "locations.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qa_owner",
+        "roleId": "rds_org_002_compliance_role_qa_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qualified_accounting_reviewer",
+        "roleId": "rds_org_002_compliance_role_qualified_accounting_reviewer",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "accounting.accounts.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "roleId": "rds_org_002_compliance_role_qualified_cameroon_country_pack_reviewer",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "read_only",
+        "roleId": "rds_org_002_role_011",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "receiver",
+        "roleId": "sysseed_role_f28cbafadfd9e028513a9eec",
+        "status": "added",
+        "source": "lib/permissions.ts:roleMatrix; explicit purchase guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "retail_operations_owner",
+        "roleId": "rds_org_002_compliance_role_retail_operations_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "inventory.read",
+          "inventory.items.read",
+          "inventory.categories.read",
+          "inventory.brands.read",
+          "inventory.units.read",
+          "branch.daily-close.review"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "risk_owner",
+        "roleId": "rds_org_002_compliance_role_risk_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "sales_manager",
+        "roleId": "rds_org_002_role_005",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "security_owner",
+        "roleId": "rds_org_002_compliance_role_security_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read",
+          "agent.release.security.approve"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "sre_owner",
+        "roleId": "rds_org_002_compliance_role_sre_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "dashboard.read"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "staff",
+        "roleId": "sysseed_role_876a71ddf91783d32d61f08b",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "super_admin",
+        "roleId": "rds_org_002_role_001",
+        "status": "preserved",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "SERIAL_NUMBERS_READ",
+          "ADJUSTMENTS_READ",
+          "PROFILE_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "BREAK_EVEN_ANALYSIS",
+          "FINANCIAL_ALERTS_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_COMPLIANCE_STATUS",
+          "PERFORM_SOX_TESTING",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_INTEGRATIONS",
+          "PAYROLL_DELETE",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "supervisor",
+        "roleId": "sysseed_role_778a6348e71a18512b8fb305",
+        "status": "added",
+        "source": "lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "PROCESS_PAYMENTS",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "support",
+        "roleId": "rds_org_002_compliance_role_support",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "support_owner",
+        "roleId": "rds_org_002_compliance_role_support_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "treasury_owner",
+        "roleId": "rds_org_002_compliance_role_treasury_owner",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "payments.reconciliation.sign"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "user",
+        "roleId": "rds_org_002_role_012",
+        "status": "preserved",
+        "source": "prisma/compliance-hris-role-seed.ts:COMPLIANCE_HRIS_ROLE_CODES; explicit runtime guard mapping",
+        "missingTemplatePermissions": [
+          "profile.read",
+          "profile.update",
+          "profile.password.update",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "payroll.payslips.self.read",
+          "payroll.payslips.self.export",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "VIEW_OWN_SCHEDULE"
+        ]
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "viewer",
+        "roleId": "sysseed_role_03645b517a6af8855b69aec7",
+        "status": "added",
+        "source": "config/permissions.ts:rolePermissionMap + lib/permissions.ts:ROLE_TEMPLATES",
+        "missingTemplatePermissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_OWN_PRESENCE",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "PRESENCE_READ",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ"
+        ]
+      }
+    ],
+    "personas": [
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "accountant",
+        "userId": "sysseed_user_fa2e563b6e3e1442af4b2d74",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "accounting_owner",
+        "userId": "sysseed_user_c9d16c42312d3c88ecaf64af",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "admin",
+        "userId": "sysseed_user_08abb2dc83e643570e7babce",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "administrator",
+        "userId": "sysseed_user_31116bb50f9ce1fe0fca0111",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "approver",
+        "userId": "sysseed_user_86e7f3bf4d0c7c858e4deec9",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "attendance_time_administrator",
+        "userId": "sysseed_user_2de31fb6d4f4a781f216066d",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "auditor",
+        "userId": "sysseed_user_6009195e96dfa38b8b961b75",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "branch_manager",
+        "userId": "sysseed_user_48bb99d52a75255968f732cb",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "buyer",
+        "userId": "sysseed_user_aadf6ca608b62e527a6fb151",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "cashier",
+        "userId": "sysseed_user_e7936b99512d9d6a969bf044",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "cashier_pos_user",
+        "userId": "sysseed_user_ea7a68f63a8bbb9b3a118b6d",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "checker",
+        "userId": "sysseed_user_6815f0ea51bc09abc935e5ab",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "compensation_approver",
+        "userId": "sysseed_user_d7fa6e881ade2eeca75dfa48",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "controller_approver",
+        "userId": "sysseed_user_fe082ca72546f34876f7a03a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "database_migration_operator",
+        "userId": "sysseed_user_56ffab89b2ab74459735c17a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "employee",
+        "userId": "sysseed_user_b1b535db9dc12b416f5c9afa",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "employee_self_service",
+        "userId": "sysseed_user_08882dfff6c42c5f521519cb",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "external_accountant",
+        "userId": "sysseed_user_bdfe254132a63b2033593418",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "financial_controller",
+        "userId": "sysseed_user_d8038709b03a85953f823d26",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "fulfillment_owner",
+        "userId": "sysseed_user_ac51b2722c86502ca29fbaad",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "hr_manager",
+        "userId": "sysseed_user_7296f0d97798860d8805a39e",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "hris_user",
+        "userId": "sysseed_user_929f9427b67a0467faf53f5c",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "independent_migration_checker",
+        "userId": "sysseed_user_86d5d77b186cfe10609331e9",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_adjustment_checker",
+        "userId": "sysseed_user_d2a8f21fb6db573025ffe999",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_adjustment_maker",
+        "userId": "sysseed_user_5ac2a0a8839e67fb3c4c97dc",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_controller",
+        "userId": "sysseed_user_ebf8ffdb1fe3596d9fe92318",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "inventory_manager",
+        "userId": "sysseed_user_9117dbddbf730aa8b9ac1681",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "maker",
+        "userId": "sysseed_user_404c23e232fa704b0f55a60d",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "manager",
+        "userId": "sysseed_user_feefc55a111a8bcf35bec5a2",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "order_to_cash_product_owner",
+        "userId": "sysseed_user_4e15f75bae1c1aa3482ef026",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "owner",
+        "userId": "sysseed_user_b444cac7d59fa5cd3f88756a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payments_owner",
+        "userId": "sysseed_user_d1984f3b0d4b234b7b2feb9a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_administrator",
+        "userId": "sysseed_user_21df1720078a277e0f645a1b",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_approver",
+        "userId": "sysseed_user_7947f5063f8b7d2cec8801f1",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "payroll_processor",
+        "userId": "sysseed_user_f15af9b2b6eaddd5c4d86d99",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "pos_architect",
+        "userId": "sysseed_user_e3718e7074b67f3e7abd6380",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "pos_user",
+        "userId": "sysseed_user_37f031479410c5adec1197f5",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "product_approver",
+        "userId": "sysseed_user_2d13acf7f267d2e10d3cf1c6",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "product_owner",
+        "userId": "sysseed_user_f39255542190d57000cfa476",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "purchaser",
+        "userId": "sysseed_user_5aa0c44fe3276540ced4dd81",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qa_owner",
+        "userId": "sysseed_user_2e076b6edd6408c82576085d",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qualified_accounting_reviewer",
+        "userId": "sysseed_user_bc466fb091e2e98d895d4376",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "userId": "sysseed_user_1c0278ec3c0f6802dec4c9e0",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "read_only",
+        "userId": "sysseed_user_1cbf9767abf7e8bdfbb0aedc",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "receiver",
+        "userId": "sysseed_user_b6d17d7161a2d9390f5034c9",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "retail_operations_owner",
+        "userId": "sysseed_user_030a794c234a573118201106",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "risk_owner",
+        "userId": "sysseed_user_56de3573e4f4362b8f75b771",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "sales_manager",
+        "userId": "sysseed_user_9f845570c7183a9a0b167639",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "security_owner",
+        "userId": "sysseed_user_26151d0a9f1bca2f9a4854a8",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "sre_owner",
+        "userId": "sysseed_user_cf4f215a14b6f7de3a0f69b3",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "staff",
+        "userId": "sysseed_user_1875ba8af8ee0aefd855d60b",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "super_admin",
+        "userId": "sysseed_user_0d3f6fd56e1ca781c23e5a12",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "supervisor",
+        "userId": "sysseed_user_d2ef60d16247240346d69b1a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "support",
+        "userId": "sysseed_user_6b3364b5ae388cb14423f235",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "support_owner",
+        "userId": "sysseed_user_b9fa4faa5119391772b12614",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "treasury_owner",
+        "userId": "sysseed_user_1012af511d07afa36009148a",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "user",
+        "userId": "sysseed_user_ccf7e70c4151fcec7186d32d",
+        "status": "added"
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "code": "viewer",
+        "userId": "sysseed_user_0466fa711fb292c9a5ee8821",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "accountant",
+        "userId": "rds_org_001_user_008",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "accounting_owner",
+        "userId": "rds_org_001_compliance_user_accounting_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "admin",
+        "userId": "rds_org_001_register_owner_user_001",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "administrator",
+        "userId": "sysseed_user_f01b740f459c2a014b9f5dd1",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "approver",
+        "userId": "sysseed_user_1b7065f73f2296125b82ccd6",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "attendance_time_administrator",
+        "userId": "rds_org_001_compliance_user_attendance_time_administrator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "auditor",
+        "userId": "rds_org_001_user_010",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "branch_manager",
+        "userId": "rds_org_001_user_003",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "buyer",
+        "userId": "sysseed_user_46c20b30d922815b368310b1",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "cashier",
+        "userId": "sysseed_user_a81096f1515986522a485c67",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "cashier_pos_user",
+        "userId": "rds_org_001_user_006",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "checker",
+        "userId": "rds_org_001_compliance_user_checker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "compensation_approver",
+        "userId": "rds_org_001_compliance_user_compensation_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "controller_approver",
+        "userId": "rds_org_001_compliance_user_controller_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "database_migration_operator",
+        "userId": "rds_org_001_compliance_user_database_migration_operator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "employee",
+        "userId": "sysseed_user_4e21c8bb10822f5c81a12465",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "employee_self_service",
+        "userId": "rds_org_001_compliance_user_employee_self_service",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "external_accountant",
+        "userId": "sysseed_user_069fed34ff2cd799ed206d2a",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "financial_controller",
+        "userId": "rds_org_001_compliance_user_financial_controller",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "fulfillment_owner",
+        "userId": "rds_org_001_compliance_user_fulfillment_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "hr_manager",
+        "userId": "rds_org_001_user_009",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "hris_user",
+        "userId": "rds_org_001_compliance_user_hris_user",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "independent_migration_checker",
+        "userId": "rds_org_001_compliance_user_independent_migration_checker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_adjustment_checker",
+        "userId": "sysseed_user_9bbbf3069d69d3b6e2e210af",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_adjustment_maker",
+        "userId": "sysseed_user_edd3ff8386a2609b7aeb4326",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_controller",
+        "userId": "rds_org_001_compliance_user_inventory_controller",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "inventory_manager",
+        "userId": "rds_org_001_user_004",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "maker",
+        "userId": "rds_org_001_compliance_user_maker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "manager",
+        "userId": "rds_org_001_compliance_user_manager",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "order_to_cash_product_owner",
+        "userId": "rds_org_001_compliance_user_order_to_cash_product_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "owner",
+        "userId": "rds_org_001_compliance_user_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payments_owner",
+        "userId": "rds_org_001_compliance_user_payments_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_administrator",
+        "userId": "rds_org_001_compliance_user_payroll_administrator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_approver",
+        "userId": "rds_org_001_compliance_user_payroll_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "payroll_processor",
+        "userId": "rds_org_001_compliance_user_payroll_processor",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "pos_architect",
+        "userId": "rds_org_001_compliance_user_pos_architect",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "pos_user",
+        "userId": "rds_org_001_compliance_user_pos_user",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "product_approver",
+        "userId": "rds_org_001_compliance_user_product_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "product_owner",
+        "userId": "rds_org_001_compliance_user_product_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "purchaser",
+        "userId": "rds_org_001_user_007",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qa_owner",
+        "userId": "rds_org_001_compliance_user_qa_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qualified_accounting_reviewer",
+        "userId": "rds_org_001_compliance_user_qualified_accounting_reviewer",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "userId": "rds_org_001_compliance_user_qualified_cameroon_country_pack_reviewer",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "read_only",
+        "userId": "rds_org_001_user_011",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "receiver",
+        "userId": "sysseed_user_2ca6a2f214a28779e3cc6ad6",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "retail_operations_owner",
+        "userId": "rds_org_001_compliance_user_retail_operations_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "risk_owner",
+        "userId": "rds_org_001_compliance_user_risk_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "sales_manager",
+        "userId": "rds_org_001_user_005",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "security_owner",
+        "userId": "rds_org_001_compliance_user_security_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "sre_owner",
+        "userId": "rds_org_001_compliance_user_sre_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "staff",
+        "userId": "sysseed_user_aae587400f33ffaca6bf5c92",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "super_admin",
+        "userId": "rds_org_001_user_001",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "supervisor",
+        "userId": "sysseed_user_75edb343720907a7de44fdef",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "support",
+        "userId": "rds_org_001_compliance_user_support",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "support_owner",
+        "userId": "rds_org_001_compliance_user_support_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "treasury_owner",
+        "userId": "rds_org_001_compliance_user_treasury_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "user",
+        "userId": "rds_org_001_user_012",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "viewer",
+        "userId": "sysseed_user_a4a43769e24e9e145267a1bb",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "accountant",
+        "userId": "rds_org_002_user_008",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "accounting_owner",
+        "userId": "rds_org_002_compliance_user_accounting_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "admin",
+        "userId": "rds_org_002_register_owner_user_001",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "administrator",
+        "userId": "sysseed_user_e6c1f8ab61e5db1c45a3815f",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "approver",
+        "userId": "sysseed_user_29b4cb6849b8a4948c31cba3",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "attendance_time_administrator",
+        "userId": "rds_org_002_compliance_user_attendance_time_administrator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "auditor",
+        "userId": "rds_org_002_user_010",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "branch_manager",
+        "userId": "rds_org_002_user_003",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "buyer",
+        "userId": "sysseed_user_ae38870142fef853ea7dd3bd",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "cashier",
+        "userId": "sysseed_user_00cfd4a9b4a61b34205053c6",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "cashier_pos_user",
+        "userId": "rds_org_002_user_006",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "checker",
+        "userId": "rds_org_002_compliance_user_checker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "compensation_approver",
+        "userId": "rds_org_002_compliance_user_compensation_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "controller_approver",
+        "userId": "rds_org_002_compliance_user_controller_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "database_migration_operator",
+        "userId": "rds_org_002_compliance_user_database_migration_operator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "employee",
+        "userId": "sysseed_user_997c440225377f05ca99f8ad",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "employee_self_service",
+        "userId": "rds_org_002_compliance_user_employee_self_service",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "external_accountant",
+        "userId": "rds_org_002_compliance_user_external_accountant",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "financial_controller",
+        "userId": "rds_org_002_compliance_user_financial_controller",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "fulfillment_owner",
+        "userId": "rds_org_002_compliance_user_fulfillment_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "hr_manager",
+        "userId": "rds_org_002_user_009",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "hris_user",
+        "userId": "rds_org_002_compliance_user_hris_user",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "independent_migration_checker",
+        "userId": "rds_org_002_compliance_user_independent_migration_checker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_adjustment_checker",
+        "userId": "sysseed_user_79bcdea78b217fad1ff33672",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_adjustment_maker",
+        "userId": "sysseed_user_fd9edcd655d5f7adbd40af5b",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_controller",
+        "userId": "rds_org_002_compliance_user_inventory_controller",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "inventory_manager",
+        "userId": "rds_org_002_user_004",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "maker",
+        "userId": "rds_org_002_compliance_user_maker",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "manager",
+        "userId": "rds_org_002_compliance_user_manager",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "order_to_cash_product_owner",
+        "userId": "rds_org_002_compliance_user_order_to_cash_product_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "owner",
+        "userId": "rds_org_002_compliance_user_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payments_owner",
+        "userId": "rds_org_002_compliance_user_payments_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_administrator",
+        "userId": "rds_org_002_compliance_user_payroll_administrator",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_approver",
+        "userId": "rds_org_002_compliance_user_payroll_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "payroll_processor",
+        "userId": "rds_org_002_compliance_user_payroll_processor",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "pos_architect",
+        "userId": "rds_org_002_compliance_user_pos_architect",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "pos_user",
+        "userId": "rds_org_002_compliance_user_pos_user",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "product_approver",
+        "userId": "rds_org_002_compliance_user_product_approver",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "product_owner",
+        "userId": "rds_org_002_compliance_user_product_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "purchaser",
+        "userId": "rds_org_002_user_007",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qa_owner",
+        "userId": "rds_org_002_compliance_user_qa_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qualified_accounting_reviewer",
+        "userId": "rds_org_002_compliance_user_qualified_accounting_reviewer",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "qualified_cameroon_country_pack_reviewer",
+        "userId": "rds_org_002_compliance_user_qualified_cameroon_country_pack_reviewer",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "read_only",
+        "userId": "rds_org_002_user_011",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "receiver",
+        "userId": "sysseed_user_f28cbafadfd9e028513a9eec",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "retail_operations_owner",
+        "userId": "rds_org_002_compliance_user_retail_operations_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "risk_owner",
+        "userId": "rds_org_002_compliance_user_risk_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "sales_manager",
+        "userId": "rds_org_002_user_005",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "security_owner",
+        "userId": "rds_org_002_compliance_user_security_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "sre_owner",
+        "userId": "rds_org_002_compliance_user_sre_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "staff",
+        "userId": "sysseed_user_876a71ddf91783d32d61f08b",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "super_admin",
+        "userId": "rds_org_002_user_001",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "supervisor",
+        "userId": "sysseed_user_778a6348e71a18512b8fb305",
+        "status": "added"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "support",
+        "userId": "rds_org_002_compliance_user_support",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "support_owner",
+        "userId": "rds_org_002_compliance_user_support_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "treasury_owner",
+        "userId": "rds_org_002_compliance_user_treasury_owner",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "user",
+        "userId": "rds_org_002_user_012",
+        "status": "existing"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "viewer",
+        "userId": "sysseed_user_03645b517a6af8855b69aec7",
+        "status": "added"
+      }
+    ],
+    "employeeLinks": [
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_08abb2dc83e643570e7babce",
+        "employeeId": "sysseed_employee_08abb2dc83e643570e7babce",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_31116bb50f9ce1fe0fca0111",
+        "employeeId": "sysseed_employee_31116bb50f9ce1fe0fca0111",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_e7936b99512d9d6a969bf044",
+        "employeeId": "sysseed_employee_e7936b99512d9d6a969bf044",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_ea7a68f63a8bbb9b3a118b6d",
+        "employeeId": "sysseed_employee_ea7a68f63a8bbb9b3a118b6d",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_b1b535db9dc12b416f5c9afa",
+        "employeeId": "sysseed_employee_b1b535db9dc12b416f5c9afa",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_08882dfff6c42c5f521519cb",
+        "employeeId": "sysseed_employee_08882dfff6c42c5f521519cb",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_929f9427b67a0467faf53f5c",
+        "employeeId": "sysseed_employee_929f9427b67a0467faf53f5c",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_feefc55a111a8bcf35bec5a2",
+        "employeeId": "sysseed_employee_feefc55a111a8bcf35bec5a2",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_b444cac7d59fa5cd3f88756a",
+        "employeeId": "sysseed_employee_b444cac7d59fa5cd3f88756a",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_1875ba8af8ee0aefd855d60b",
+        "employeeId": "sysseed_employee_1875ba8af8ee0aefd855d60b",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_0d3f6fd56e1ca781c23e5a12",
+        "employeeId": "sysseed_employee_0d3f6fd56e1ca781c23e5a12",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_d2ef60d16247240346d69b1a",
+        "employeeId": "sysseed_employee_d2ef60d16247240346d69b1a",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_ccf7e70c4151fcec7186d32d",
+        "employeeId": "sysseed_employee_ccf7e70c4151fcec7186d32d",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "userId": "sysseed_user_0466fa711fb292c9a5ee8821",
+        "employeeId": "sysseed_employee_0466fa711fb292c9a5ee8821",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_f01b740f459c2a014b9f5dd1",
+        "employeeId": "sysseed_employee_f01b740f459c2a014b9f5dd1",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_a81096f1515986522a485c67",
+        "employeeId": "sysseed_employee_a81096f1515986522a485c67",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_4e21c8bb10822f5c81a12465",
+        "employeeId": "sysseed_employee_4e21c8bb10822f5c81a12465",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_aae587400f33ffaca6bf5c92",
+        "employeeId": "sysseed_employee_aae587400f33ffaca6bf5c92",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_75edb343720907a7de44fdef",
+        "employeeId": "sysseed_employee_75edb343720907a7de44fdef",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_001",
+        "userId": "sysseed_user_a4a43769e24e9e145267a1bb",
+        "employeeId": "sysseed_employee_a4a43769e24e9e145267a1bb",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_e6c1f8ab61e5db1c45a3815f",
+        "employeeId": "sysseed_employee_e6c1f8ab61e5db1c45a3815f",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_00cfd4a9b4a61b34205053c6",
+        "employeeId": "sysseed_employee_00cfd4a9b4a61b34205053c6",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_997c440225377f05ca99f8ad",
+        "employeeId": "sysseed_employee_997c440225377f05ca99f8ad",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_876a71ddf91783d32d61f08b",
+        "employeeId": "sysseed_employee_876a71ddf91783d32d61f08b",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_778a6348e71a18512b8fb305",
+        "employeeId": "sysseed_employee_778a6348e71a18512b8fb305",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "userId": "sysseed_user_03645b517a6af8855b69aec7",
+        "employeeId": "sysseed_employee_03645b517a6af8855b69aec7",
+        "status": "DRAFT",
+        "purpose": "Linked synthetic onboarding profile; contracts, payslips and payment evidence remain unapproved."
+      }
+    ],
+    "referenceChanges": [
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_8a32c1f44d3a7f98e43fa063",
+        "reason": "Explicit packaging for A4 printer paper, 500 sheets; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "ream500",
+          "baseUnit": "sheet",
+          "conversionRate": "500"
+        }
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Item.unitId",
+        "id": "rds_org_001_item_011",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_001_unit_002",
+        "after": "sysseed_unit_8a32c1f44d3a7f98e43fa063"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_e2fb854615ca30c0444b6aa8",
+        "reason": "Explicit packaging for Mineral water, 6-bottle pack; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "pack6btl",
+          "baseUnit": "btl",
+          "conversionRate": "6"
+        }
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Item.unitId",
+        "id": "rds_org_001_item_014",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_001_unit_002",
+        "after": "sysseed_unit_e2fb854615ca30c0444b6aa8"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_39707e8800570b60935e01f7",
+        "reason": "Explicit packaging for Laundry detergent 1 kg; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "bag1kg",
+          "baseUnit": "bag1kg",
+          "conversionRate": "1"
+        }
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Item.unitId",
+        "id": "rds_org_001_item_007",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_001_unit_002",
+        "after": "sysseed_unit_39707e8800570b60935e01f7"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_002",
+        "reason": "Retain original reference ID as a legacy package count; remove false universal package-to-piece conversion and retire when unused.",
+        "before": {
+          "baseUnit": "piece",
+          "active": true
+        },
+        "after": {
+          "baseUnit": "pack",
+          "active": false
+        }
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_3fffb105fca2560ee0ecd7e3",
+        "reason": "Conversion base for the 500-sheet A4 ream; valid reference configuration even when no loose-sheet SKU is sold.",
+        "before": null,
+        "after": {
+          "symbol": "sheet",
+          "conversionRate": 1
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_e729d0f281129a5e09a8693e",
+        "reason": "Explicit packaging for A4 printer paper, 500 sheets; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "ream500",
+          "baseUnit": "sheet",
+          "conversionRate": "500"
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Item.unitId",
+        "id": "rds_org_002_item_011",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_002_unit_002",
+        "after": "sysseed_unit_e729d0f281129a5e09a8693e"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_5c31a35d0af20a905ad27b8a",
+        "reason": "Explicit packaging for Mineral water, 6-bottle pack; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "pack6btl",
+          "baseUnit": "btl",
+          "conversionRate": "6"
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Item.unitId",
+        "id": "rds_org_002_item_014",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_002_unit_002",
+        "after": "sysseed_unit_5c31a35d0af20a905ad27b8a"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_55399118f1ca7eaf06bb023a",
+        "reason": "Explicit packaging for Laundry detergent 1 kg; transaction quantities continue to count packages.",
+        "before": null,
+        "after": {
+          "symbol": "bag1kg",
+          "baseUnit": "bag1kg",
+          "conversionRate": "1"
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Item.unitId",
+        "id": "rds_org_002_item_007",
+        "reason": "Replace ambiguous generic package with the same count of explicitly defined packages. Names, stock quantities, costs, and historical lines are unchanged.",
+        "before": "rds_org_002_unit_002",
+        "after": "sysseed_unit_55399118f1ca7eaf06bb023a"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_002",
+        "reason": "Retain original reference ID as a legacy package count; remove false universal package-to-piece conversion and retire when unused.",
+        "before": {
+          "baseUnit": "piece",
+          "active": true
+        },
+        "after": {
+          "baseUnit": "pack",
+          "active": false
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_acc8646dde35d7e834b615ff",
+        "reason": "Conversion base for the 500-sheet A4 ream; valid reference configuration even when no loose-sheet SKU is sold.",
+        "before": null,
+        "after": {
+          "symbol": "sheet",
+          "conversionRate": 1
+        }
+      }
+    ],
+    "taxProvenance": [
+      {
+        "organizationId": "96a74406-95a9-49ad-8399-2bd005623787",
+        "resolution": {
+          "countryCode": "CM",
+          "parameterPath": "taxes.vat.standardRateBps",
+          "value": 1925,
+          "packVersion": "CM-2026.1",
+          "schemaVersion": "country-pack.v1",
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "SOURCE_CHECKED",
+          "layer": "country",
+          "capabilityStatus": "SUPPORTED",
+          "resolutionHash": "sha256:4eba792f0c582888b5a258112be9ff5d62e20d2d3f6c34e31c28a071f47c3a63"
+        }
+      },
+      {
+        "organizationId": "rds_org_001",
+        "resolution": {
+          "countryCode": "CM",
+          "parameterPath": "taxes.vat.standardRateBps",
+          "value": 1925,
+          "packVersion": "CM-2026.1",
+          "schemaVersion": "country-pack.v1",
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "SOURCE_CHECKED",
+          "layer": "country",
+          "capabilityStatus": "SUPPORTED",
+          "resolutionHash": "sha256:4eba792f0c582888b5a258112be9ff5d62e20d2d3f6c34e31c28a071f47c3a63"
+        }
+      },
+      {
+        "organizationId": "rds_org_002",
+        "resolution": {
+          "countryCode": "CM",
+          "parameterPath": "taxes.vat.standardRateBps",
+          "value": 1925,
+          "packVersion": "CM-2026.1",
+          "schemaVersion": "country-pack.v1",
+          "legalRef": "CM_DGI_CGI_2025",
+          "effectiveFrom": "2026-01-01",
+          "effectiveTo": null,
+          "verifiedOn": "2026-06-11",
+          "verifiedBy": "Codex regulatory source pass; legal-owner approval required before statutory publication",
+          "verificationStatus": "SOURCE_CHECKED",
+          "layer": "country",
+          "capabilityStatus": "SUPPORTED",
+          "resolutionHash": "sha256:4eba792f0c582888b5a258112be9ff5d62e20d2d3f6c34e31c28a071f47c3a63"
+        }
+      }
+    ],
+    "referenceInventory": [
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_005",
+        "name": "Tube",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_006",
+        "name": "Kilogram",
+        "itemCount": 4,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_e2fb854615ca30c0444b6aa8",
+        "name": "Pack of 6 bottles",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_003",
+        "name": "Bottle",
+        "itemCount": 4,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_8a32c1f44d3a7f98e43fa063",
+        "name": "Ream of 500 sheets",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_007",
+        "name": "Liter",
+        "itemCount": 2,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_001",
+        "name": "Piece",
+        "itemCount": 4,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_004",
+        "name": "Can",
+        "itemCount": 3,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_39707e8800570b60935e01f7",
+        "name": "Detergent bag of 1 kg",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "sysseed_unit_3fffb105fca2560ee0ecd7e3",
+        "name": "Sheet",
+        "itemCount": 0,
+        "purpose": "Conversion base for A4 reams"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "Unit",
+        "id": "rds_org_001_unit_002",
+        "name": "Pack",
+        "itemCount": 0,
+        "purpose": "Preserved inactive legacy reference"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "TaxRate",
+        "id": "rds_org_001_tax_rate_001",
+        "name": "Cameroon standard VAT 19.25%",
+        "itemCount": 21,
+        "purpose": "Existing catalog tax assignment; product eligibility review recorded separately"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "model": "TaxRate",
+        "id": "rds_org_001_tax_rate_002",
+        "name": "Zero-rated VAT",
+        "itemCount": 0,
+        "purpose": "Existing unused tax configuration retained; no eligibility or certification claimed"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_007",
+        "name": "Liter",
+        "itemCount": 2,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_003",
+        "name": "Bottle",
+        "itemCount": 4,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_001",
+        "name": "Piece",
+        "itemCount": 3,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_004",
+        "name": "Can",
+        "itemCount": 3,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_55399118f1ca7eaf06bb023a",
+        "name": "Detergent bag of 1 kg",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_5c31a35d0af20a905ad27b8a",
+        "name": "Pack of 6 bottles",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_e729d0f281129a5e09a8693e",
+        "name": "Ream of 500 sheets",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_006",
+        "name": "Kilogram",
+        "itemCount": 4,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_005",
+        "name": "Tube",
+        "itemCount": 1,
+        "purpose": "Used by catalog products"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "rds_org_002_unit_002",
+        "name": "Pack",
+        "itemCount": 0,
+        "purpose": "Preserved inactive legacy reference"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "Unit",
+        "id": "sysseed_unit_acc8646dde35d7e834b615ff",
+        "name": "Sheet",
+        "itemCount": 0,
+        "purpose": "Conversion base for A4 reams"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "TaxRate",
+        "id": "rds_org_002_tax_rate_001",
+        "name": "Cameroon standard VAT 19.25%",
+        "itemCount": 20,
+        "purpose": "Existing catalog tax assignment; product eligibility review recorded separately"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "model": "TaxRate",
+        "id": "rds_org_002_tax_rate_002",
+        "name": "Zero-rated VAT",
+        "itemCount": 0,
+        "purpose": "Existing unused tax configuration retained; no eligibility or certification claimed"
+      }
+    ],
+    "issues": [
+      {
+        "code": "STOCK_APPROVAL_PERMISSION_SHARED_BY_ACTIONS",
+        "detail": "Current stock actions require inventory.stock.adjust for both preparation and posting. New maker/checker identities are distinct; the stock service enforces actor separation. Journal create/post capabilities are separated. No stronger RBAC separation is claimed."
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "administrator"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, VIEW_PURCHASE_REPORTS, PURCHASES_ORDERS_RECEIVE, CUSTOMER_RECEIVABLES_MANAGE, CUSTOMER_CREDIT_MANAGE, CUSTOMER_AGING_REPORT, SALES_PERFORMANCE_READ, REVENUE_REPORTS, SALES_TRENDS_READ, BREAK_EVEN_ANALYSIS, FINANCIAL_ALERTS_READ, VIEW_INCOME_STATEMENT, VIEW_BALANCE_SHEET, VIEW_CASH_FLOW_STATEMENT, GENERATE_FINANCIAL_STATEMENTS, VIEW_FINANCIAL_RATIOS, VIEW_FINANCIAL_TRENDS, VIEW_FINANCIAL_FORECASTS, VIEW_BUDGETS, CREATE_BUDGETS, APPROVE_BUDGETS, VIEW_BUDGET_VARIANCE, VIEW_COMPLIANCE_STATUS, VIEW_CASH_MANAGEMENT, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, VIEW_TEAM_PRESENCE, VIEW_TEAM_OVERVIEW, MANAGE_TEAM_ALERTS, VIEW_TEAM_ATTENDANCE_REPORTS, VIEW_TEAM_PRESENCE_ALERTS, RESOLVE_PRESENCE_ALERTS, VIEW_SCHEDULES, CREATE_SCHEDULES, UPDATE_SCHEDULES, DELETE_SCHEDULES, MANAGE_ALL_SCHEDULES, VIEW_ORG_ATTENDANCE_REPORTS, GENERATE_ATTENDANCE_REPORTS, OVERRIDE_CLOCK_ACTIONS, EDIT_PRESENCE_SESSIONS, EXPORT_PRESENCE_DATA, MANAGE_ALL_PRESENCE_ALERTS, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ, PRESENCE_TEAM_READ, PAYROLL_DELETE"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "attendance_time_administrator"
+        ],
+        "detail": "VIEW_SCHEDULES, CREATE_SCHEDULES, UPDATE_SCHEDULES, VIEW_ORG_ATTENDANCE_REPORTS, EDIT_PRESENCE_SESSIONS"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "cashier"
+        ],
+        "detail": "PROCESS_PAYMENTS, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "employee"
+        ],
+        "detail": "PROCESS_PAYMENTS, SALES_PERFORMANCE_READ, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "employee_self_service"
+        ],
+        "detail": "VIEW_OWN_PRESENCE, CLOCK_IN_OUT, VIEW_OWN_SCHEDULE"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "manager"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, VIEW_PURCHASE_REPORTS, PURCHASES_ORDERS_RECEIVE, PROCESS_PAYMENTS, VIEW_POS_REPORTS, CUSTOMER_RECEIVABLES_MANAGE, CUSTOMER_AGING_REPORT, SALES_PERFORMANCE_READ, REVENUE_REPORTS, SALES_TRENDS_READ, FINANCIAL_ALERTS_READ, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, VIEW_TEAM_PRESENCE, VIEW_TEAM_OVERVIEW, MANAGE_TEAM_ALERTS, VIEW_TEAM_ATTENDANCE_REPORTS, VIEW_TEAM_PRESENCE_ALERTS, RESOLVE_PRESENCE_ALERTS, VIEW_SCHEDULES, CREATE_SCHEDULES, UPDATE_SCHEDULES, DELETE_SCHEDULES, VIEW_ORG_ATTENDANCE_REPORTS, GENERATE_ATTENDANCE_REPORTS, EXPORT_PRESENCE_DATA, VIEW_INCOME_STATEMENT, VIEW_BALANCE_SHEET, VIEW_CASH_FLOW_STATEMENT, VIEW_FINANCIAL_RATIOS, VIEW_BUDGETS, VIEW_BUDGET_VARIANCE, VIEW_CASH_MANAGEMENT, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ, PRESENCE_TEAM_READ"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "owner"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, SERIAL_NUMBERS_READ, ADJUSTMENTS_READ, PROFILE_READ, PASSWORD_READ, RETURNS_READ, ORDERS_READ, BLOGS_READ, CUSTOMER_RECEIVABLES_MANAGE, CUSTOMER_CREDIT_MANAGE, CUSTOMER_AGING_REPORT, SALES_PERFORMANCE_READ, REVENUE_REPORTS, SALES_TRENDS_READ, COMMERCIAL_AGENTS_READ, COMMERCIAL_AGENTS_CREATE, COMMERCIAL_AGENTS_UPDATE, COMMERCIAL_AGENTS_DELETE, AGENT_TRANSACTIONS_READ, AGENT_TRANSACTIONS_CREATE, AGENT_TRANSACTIONS_RECONCILE, AGENT_SETTLEMENTS_READ, AGENT_SETTLEMENTS_CREATE, BREAK_EVEN_ANALYSIS, FINANCIAL_ALERTS_READ, SESSION_POS_SYNC_READ, PURCHASE_ORDER_WORKFLOW_READ, RECENT_INVENTORY_READ, SUPPLIERS_SYSTEM_READ, VIEW_PURCHASE_REPORTS, PURCHASES_ORDERS_RECEIVE, PROCESS_PAYMENTS, VIEW_POS_REPORTS, VIEW_INCOME_STATEMENT, VIEW_BALANCE_SHEET, VIEW_CASH_FLOW_STATEMENT, GENERATE_FINANCIAL_STATEMENTS, APPROVE_FINANCIAL_STATEMENTS, PUBLISH_FINANCIAL_STATEMENTS, VIEW_FINANCIAL_RATIOS, VIEW_FINANCIAL_TRENDS, VIEW_FINANCIAL_FORECASTS, GENERATE_FINANCIAL_FORECASTS, VIEW_DUPONT_ANALYSIS, VIEW_BUDGETS, CREATE_BUDGETS, APPROVE_BUDGETS, VIEW_BUDGET_VARIANCE, VIEW_COMPLIANCE_STATUS, PERFORM_SOX_TESTING, VIEW_CASH_MANAGEMENT, MANAGE_INTEGRATIONS, PAYROLL_DELETE, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ, PRESENCE_TEAM_READ, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, VIEW_TEAM_PRESENCE, VIEW_TEAM_OVERVIEW, MANAGE_TEAM_ALERTS, VIEW_TEAM_ATTENDANCE_REPORTS, VIEW_TEAM_PRESENCE_ALERTS, RESOLVE_PRESENCE_ALERTS, VIEW_SCHEDULES, CREATE_SCHEDULES, UPDATE_SCHEDULES, DELETE_SCHEDULES, MANAGE_ALL_SCHEDULES, VIEW_ORG_ATTENDANCE_REPORTS, GENERATE_ATTENDANCE_REPORTS, OVERRIDE_CLOCK_ACTIONS, EDIT_PRESENCE_SESSIONS, EXPORT_PRESENCE_DATA, MANAGE_PRESENCE_SYSTEM_SETTINGS, MANAGE_ALL_PRESENCE_ALERTS"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "pos_architect"
+        ],
+        "detail": "VIEW_POS_REPORTS"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "pos_user"
+        ],
+        "detail": "PROCESS_PAYMENTS"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "super_admin"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, SERIAL_NUMBERS_READ, ADJUSTMENTS_READ, PROFILE_READ, PASSWORD_READ, RETURNS_READ, ORDERS_READ, BLOGS_READ, CUSTOMER_RECEIVABLES_MANAGE, CUSTOMER_CREDIT_MANAGE, CUSTOMER_AGING_REPORT, SALES_PERFORMANCE_READ, REVENUE_REPORTS, SALES_TRENDS_READ, COMMERCIAL_AGENTS_READ, COMMERCIAL_AGENTS_CREATE, COMMERCIAL_AGENTS_UPDATE, COMMERCIAL_AGENTS_DELETE, AGENT_TRANSACTIONS_READ, AGENT_TRANSACTIONS_CREATE, AGENT_TRANSACTIONS_RECONCILE, AGENT_SETTLEMENTS_READ, AGENT_SETTLEMENTS_CREATE, BREAK_EVEN_ANALYSIS, FINANCIAL_ALERTS_READ, SESSION_POS_SYNC_READ, PURCHASE_ORDER_WORKFLOW_READ, RECENT_INVENTORY_READ, SUPPLIERS_SYSTEM_READ, VIEW_PURCHASE_REPORTS, PURCHASES_ORDERS_RECEIVE, PROCESS_PAYMENTS, VIEW_POS_REPORTS, VIEW_INCOME_STATEMENT, VIEW_BALANCE_SHEET, VIEW_CASH_FLOW_STATEMENT, GENERATE_FINANCIAL_STATEMENTS, APPROVE_FINANCIAL_STATEMENTS, PUBLISH_FINANCIAL_STATEMENTS, VIEW_FINANCIAL_RATIOS, VIEW_FINANCIAL_TRENDS, VIEW_FINANCIAL_FORECASTS, GENERATE_FINANCIAL_FORECASTS, VIEW_DUPONT_ANALYSIS, VIEW_BUDGETS, CREATE_BUDGETS, APPROVE_BUDGETS, VIEW_BUDGET_VARIANCE, VIEW_COMPLIANCE_STATUS, PERFORM_SOX_TESTING, VIEW_CASH_MANAGEMENT, MANAGE_INTEGRATIONS, PAYROLL_DELETE, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ, PRESENCE_TEAM_READ, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, VIEW_TEAM_PRESENCE, VIEW_TEAM_OVERVIEW, MANAGE_TEAM_ALERTS, VIEW_TEAM_ATTENDANCE_REPORTS, VIEW_TEAM_PRESENCE_ALERTS, RESOLVE_PRESENCE_ALERTS, VIEW_SCHEDULES, CREATE_SCHEDULES, UPDATE_SCHEDULES, DELETE_SCHEDULES, MANAGE_ALL_SCHEDULES, VIEW_ORG_ATTENDANCE_REPORTS, GENERATE_ATTENDANCE_REPORTS, OVERRIDE_CLOCK_ACTIONS, EDIT_PRESENCE_SESSIONS, EXPORT_PRESENCE_DATA, MANAGE_PRESENCE_SYSTEM_SETTINGS, MANAGE_ALL_PRESENCE_ALERTS"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "supervisor"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, PURCHASES_ORDERS_RECEIVE, PROCESS_PAYMENTS, VIEW_OWN_PRESENCE, CLOCK_IN_OUT, MANAGE_OWN_BREAKS, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, VIEW_TEAM_PRESENCE, VIEW_TEAM_OVERVIEW, RESOLVE_PRESENCE_ALERTS, VIEW_SCHEDULES, PRESENCE_READ, PRESENCE_CLOCK, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ, PRESENCE_TEAM_READ"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "user"
+        ],
+        "detail": "VIEW_OWN_PRESENCE, CLOCK_IN_OUT, VIEW_OWN_SCHEDULE"
+      },
+      {
+        "code": "LEGACY_TEMPLATE_PERMISSION_REVIEW",
+        "ids": [
+          "viewer"
+        ],
+        "detail": "VIEW_INVENTORY_REPORTS, VIEW_POS_REPORTS, VIEW_OWN_PRESENCE, VIEW_OWN_SCHEDULE, VIEW_OWN_ATTENDANCE_REPORTS, VIEW_OWN_PRESENCE_ALERTS, PRESENCE_READ, PRESENCE_REPORTS_READ, PRESENCE_ALERTS_READ"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "code": "PRODUCT_TAX_CLASSIFICATION_REVIEW",
+        "ids": [
+          "cmu8qg3bg004tmabswqot2u2d",
+          "rds_org_001_item_001",
+          "rds_org_001_item_002",
+          "rds_org_001_item_003",
+          "rds_org_001_item_004",
+          "rds_org_001_item_005",
+          "rds_org_001_item_006",
+          "rds_org_001_item_007",
+          "rds_org_001_item_008",
+          "rds_org_001_item_009",
+          "rds_org_001_item_010",
+          "rds_org_001_item_011",
+          "rds_org_001_item_012",
+          "rds_org_001_item_013",
+          "rds_org_001_item_014",
+          "rds_org_001_item_015",
+          "rds_org_001_item_016",
+          "rds_org_001_item_017",
+          "rds_org_001_item_018",
+          "rds_org_001_item_019",
+          "rds_org_001_item_020"
+        ],
+        "detail": "Existing item tax assignments are retained. The pack resolves the standard VAT rate but provides no product exemption schedule; blanket assignments cannot be certified by this reseed."
+      },
+      {
+        "organizationId": "rds_org_002",
+        "code": "PRODUCT_TAX_CLASSIFICATION_REVIEW",
+        "ids": [
+          "rds_org_002_item_001",
+          "rds_org_002_item_002",
+          "rds_org_002_item_003",
+          "rds_org_002_item_004",
+          "rds_org_002_item_005",
+          "rds_org_002_item_006",
+          "rds_org_002_item_007",
+          "rds_org_002_item_008",
+          "rds_org_002_item_009",
+          "rds_org_002_item_010",
+          "rds_org_002_item_011",
+          "rds_org_002_item_012",
+          "rds_org_002_item_013",
+          "rds_org_002_item_014",
+          "rds_org_002_item_015",
+          "rds_org_002_item_016",
+          "rds_org_002_item_017",
+          "rds_org_002_item_018",
+          "rds_org_002_item_019",
+          "rds_org_002_item_020"
+        ],
+        "detail": "Existing item tax assignments are retained. The pack resolves the standard VAT rate but provides no product exemption schedule; blanket assignments cannot be certified by this reseed."
+      }
+    ]
+  }
+}

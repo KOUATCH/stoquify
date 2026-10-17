@@ -1,0 +1,65 @@
+{
+  "at": "2026-09-30T18:36:31.127Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "cases": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "routeReadyMs": 42710,
+      "authMs": 17903,
+      "denialMs": 6794,
+      "realPasswordVerification": true,
+      "invalidPasswordRecoverable": true,
+      "passwordCleared": true,
+      "keyboardFocusReturned": true,
+      "explicitRetryRequired": true,
+      "localizedGuidanceVisible": true,
+      "noDownloadOrFinancialEffects": true,
+      "retainedAssessmentUnchanged": true,
+      "layout": {
+        "viewport": 1440,
+        "body": 1440
+      },
+      "authScreenshot": "close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-en1440-recovery.png",
+      "screenshot": "close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-en1440.png"
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "routeReadyMs": 12544,
+      "authMs": 9954,
+      "denialMs": 4833,
+      "realPasswordVerification": true,
+      "invalidPasswordRecoverable": true,
+      "passwordCleared": true,
+      "keyboardFocusReturned": true,
+      "explicitRetryRequired": true,
+      "localizedGuidanceVisible": true,
+      "noDownloadOrFinancialEffects": true,
+      "retainedAssessmentUnchanged": true,
+      "layout": {
+        "viewport": 320,
+        "body": 320
+      },
+      "authScreenshot": "close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-fr320-recovery.png",
+      "screenshot": "close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-fr320.png"
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "sourceStable": true
+}

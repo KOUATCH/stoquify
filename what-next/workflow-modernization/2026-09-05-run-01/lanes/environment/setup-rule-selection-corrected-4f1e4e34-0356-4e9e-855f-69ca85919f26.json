@@ -1,0 +1,81 @@
+{
+  "at": "2026-09-30T19:08:27.341Z",
+  "sourceBefore": {
+    "services/accounting/accounting-settings.service.ts": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f"
+  },
+  "syntheticNegativeFixtures": true,
+  "cases": [
+    {
+      "scenario": "wrong_source",
+      "organizationId": "cmuohafw10000ma1sofkv9xx6",
+      "setupRecognizesIssue": true,
+      "operationalDenied": true,
+      "operationalReason": "No applicable source rule",
+      "readinessMs": 257,
+      "queryCounts": {
+        "PostingRule.findMany": 1,
+        "ChartOfAccount.findMany": 1,
+        "Journal.findMany": 1,
+        "AccountingPeriod.findMany": 1
+      },
+      "displayedRule": {
+        "code": null,
+        "sourceType": null,
+        "expectedSourceType": "POS_SALE",
+        "status": "blocked"
+      },
+      "noFinancialEffects": true
+    },
+    {
+      "scenario": "inactive_account",
+      "organizationId": "cmuohah10000ama1sd1pgz8v0",
+      "setupRecognizesIssue": true,
+      "operationalDenied": true,
+      "operationalReason": "Posting rule account 5000 is inactive",
+      "readinessMs": 88,
+      "queryCounts": {
+        "PostingRule.findMany": 1,
+        "ChartOfAccount.findMany": 2,
+        "Journal.findMany": 1,
+        "AccountingPeriod.findMany": 1
+      },
+      "displayedRule": {
+        "code": "CANDIDATE",
+        "sourceType": "POS_SALE",
+        "expectedSourceType": "POS_SALE",
+        "status": "blocked"
+      },
+      "noFinancialEffects": true
+    },
+    {
+      "scenario": "shadowed_rule",
+      "organizationId": "cmuohahc1000kma1s4ibkacxr",
+      "setupRecognizesIssue": true,
+      "operationalDenied": true,
+      "operationalReason": "Posting rule must include both debit and credit lines",
+      "readinessMs": 33,
+      "queryCounts": {
+        "PostingRule.findMany": 1,
+        "ChartOfAccount.findMany": 1,
+        "Journal.findMany": 1,
+        "AccountingPeriod.findMany": 1
+      },
+      "displayedRule": {
+        "code": "CANDIDATE",
+        "sourceType": "POS_SALE",
+        "expectedSourceType": "POS_SALE",
+        "status": "blocked"
+      },
+      "noFinancialEffects": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/accounting/accounting-settings.service.ts": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f"
+  },
+  "sourceStable": true
+}

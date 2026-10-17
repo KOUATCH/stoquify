@@ -1,0 +1,172 @@
+{
+  "startedAt": "2026-09-27T11:27:24.194Z",
+  "finishedAt": "2026-09-27T11:27:30.346Z",
+  "target": "stoquify_replay_next_20260830",
+  "stage": "scenarios",
+  "result": {
+    "customerLocationsAdded": 29,
+    "modules": [
+      {
+        "organizationId": "rds_org_001",
+        "state": "DRAFT",
+        "preservedActiveModules": [
+          "accounting",
+          "administration",
+          "compliance",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "payroll",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "source": "durable",
+        "commandReused": false,
+        "readiness": [
+          {
+            "moduleSlug": "accounting",
+            "stepKey": "accounting-foundation",
+            "status": "WAITING_INPUT",
+            "code": "ACCOUNTING_SETUP_REQUIRED",
+            "href": "/dashboard/accounting/settings",
+            "checkedAt": "2026-09-27T11:27:29.212Z",
+            "evidenceHash": "29e1473cd79bcb886fb22e072c5e299e28fbc615f68d09951f2d09cc08c4b206",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "payment_reconciliation",
+            "stepKey": "provider-foundation",
+            "status": "WAITING_INPUT",
+            "code": "PROVIDER_SETUP_REQUIRED",
+            "href": "/dashboard/finance/reconciliation",
+            "checkedAt": "2026-09-27T11:27:29.212Z",
+            "evidenceHash": "abc97fd33d2af0eb6bacae1727ab0f5dc848b2e624aee675abffd048732a8268",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "pos",
+            "stepKey": "terminal-foundation",
+            "status": "SUCCEEDED",
+            "code": "SETUP_VERIFIED",
+            "href": "/dashboard/settings/terminals",
+            "checkedAt": "2026-09-27T11:27:29.212Z",
+            "evidenceHash": "3520df423015753a6191f97c586955b1d53bc0f2608b71d018e9251e6ffe5370",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "payroll",
+            "stepKey": "payroll-scope",
+            "status": "WAITING_INPUT",
+            "code": "PAYROLL_SCOPE_REQUIRED",
+            "href": "/dashboard/payroll",
+            "checkedAt": "2026-09-27T11:27:29.212Z",
+            "evidenceHash": "85054db693c190f37efd7776821154ede9589d5dba2ce36a0532681046123d8b",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "compliance",
+            "stepKey": "compliance-scope",
+            "status": "WAITING_INPUT",
+            "code": "COMPLIANCE_SETUP_REQUIRED",
+            "href": "/dashboard/compliance",
+            "checkedAt": "2026-09-27T11:27:29.212Z",
+            "evidenceHash": "60757295ca6f0451dd64db7474842d9bd52c70f4753310cdaad90e7560252d41",
+            "attempts": 0
+          }
+        ],
+        "issues": []
+      },
+      {
+        "organizationId": "rds_org_002",
+        "state": "DRAFT",
+        "preservedActiveModules": [
+          "accounting",
+          "administration",
+          "compliance",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "payroll",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "source": "durable",
+        "commandReused": false,
+        "readiness": [
+          {
+            "moduleSlug": "accounting",
+            "stepKey": "accounting-foundation",
+            "status": "WAITING_INPUT",
+            "code": "ACCOUNTING_SETUP_REQUIRED",
+            "href": "/dashboard/accounting/settings",
+            "checkedAt": "2026-09-27T11:27:29.995Z",
+            "evidenceHash": "1d4634daae1158add666331c5c37a4d8f1913505f3fe1ef114c722d000308e6a",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "payment_reconciliation",
+            "stepKey": "provider-foundation",
+            "status": "WAITING_INPUT",
+            "code": "PROVIDER_SETUP_REQUIRED",
+            "href": "/dashboard/finance/reconciliation",
+            "checkedAt": "2026-09-27T11:27:29.995Z",
+            "evidenceHash": "c2246597772b858d4f4938f522114ae3032ff79ec6632eaf3d5a5ddbc1903ba5",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "pos",
+            "stepKey": "terminal-foundation",
+            "status": "SUCCEEDED",
+            "code": "SETUP_VERIFIED",
+            "href": "/dashboard/settings/terminals",
+            "checkedAt": "2026-09-27T11:27:29.995Z",
+            "evidenceHash": "743bdd60f2cdc33d7988a8cbca13b62df1d02e1d41515e45fa38e97232d02c69",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "payroll",
+            "stepKey": "payroll-scope",
+            "status": "WAITING_INPUT",
+            "code": "PAYROLL_SCOPE_REQUIRED",
+            "href": "/dashboard/payroll",
+            "checkedAt": "2026-09-27T11:27:29.995Z",
+            "evidenceHash": "85054db693c190f37efd7776821154ede9589d5dba2ce36a0532681046123d8b",
+            "attempts": 0
+          },
+          {
+            "moduleSlug": "compliance",
+            "stepKey": "compliance-scope",
+            "status": "WAITING_INPUT",
+            "code": "COMPLIANCE_SETUP_REQUIRED",
+            "href": "/dashboard/compliance",
+            "checkedAt": "2026-09-27T11:27:29.995Z",
+            "evidenceHash": "60757295ca6f0451dd64db7474842d9bd52c70f4753310cdaad90e7560252d41",
+            "attempts": 0
+          }
+        ],
+        "issues": []
+      }
+    ],
+    "time": [
+      {
+        "organizationId": "rds_org_001",
+        "foundationState": "DRAFT",
+        "policyRequiresReview": true,
+        "attendanceReused": false,
+        "certification": "NOT_CERTIFIED_FOR_PAYROLL"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "foundationState": "DRAFT",
+        "policyRequiresReview": true,
+        "attendanceReused": false,
+        "certification": "NOT_CERTIFIED_FOR_PAYROLL"
+      }
+    ],
+    "issues": []
+  }
+}

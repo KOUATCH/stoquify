@@ -1,0 +1,61 @@
+{
+  "startedAt": "2026-09-30T21:30:19.702Z",
+  "status": "PREFLIGHT_COMPLETE_WAITING_FINAL_BUNDLE",
+  "target": "stoquify_restore_local_remediation_20260930_run01",
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "authAttempts": [],
+  "routes": [],
+  "serverOutputBytes": 0,
+  "serverDiagnosticMarkers": [],
+  "browserExternalRequestsBlocked": 0,
+  "expectedWrites": [
+    "ordinary authentication/session lifecycle",
+    "read-access RBAC/module audit records"
+  ],
+  "prohibitedActionsAttempted": false,
+  "rawIdentifiersOrSecretsEmitted": false,
+  "limitations": [
+    "One existing local fixture identity; denial is not functional feature acceptance.",
+    "Read-only route render proof; no business mutation, cross-tenant matrix, accessibility or production qualification.",
+    "All non-allowlisted screenshot text and media are redacted; screenshots are local only."
+  ],
+  "sourceMutationAttempted": false,
+  "cloneMigrationSnapshot": {
+    "capturedAt": "2026-09-30T21:30:19.940Z",
+    "completedRows": 89,
+    "nameChecksumSha256": "3274e00f37fb1098ffd996824a2bd8db328cc2d1dc665d2d502f50177a590f7c",
+    "originalRestoreCompletedMigrations": 87
+  },
+  "fixtureCandidates": [
+    {
+      "matches": 0,
+      "eligible": false,
+      "credential_available": false,
+      "emailFingerprint": "e2543aee54a389e1e8869bda08e31484c951de941ccfcb8938eb12e6045a31ba",
+      "source": "existing_payroll_test_default"
+    },
+    {
+      "matches": 1,
+      "eligible": true,
+      "credential_available": true,
+      "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+      "source": "documented_local_development_fixture"
+    }
+  ],
+  "fixture": {
+    "matches": 1,
+    "eligible": true,
+    "credential_available": true,
+    "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+    "source": "documented_local_development_fixture"
+  },
+  "actualDatabaseVerified": true,
+  "cookieInventory": {
+    "parsedStates": 6,
+    "expiredCookies": 12,
+    "candidates": 0,
+    "valuesRetainedInReport": false
+  },
+  "ownedServerStopped": true,
+  "completedAt": "2026-09-30T21:30:20.433Z"
+}

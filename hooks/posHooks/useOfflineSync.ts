@@ -12,12 +12,9 @@ import {
 } from "@/actions/pos/sync.actions"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import {
-  buildOfflineSyncBatchEnvelope,
+  claimOfflineLocalQueueBatch,
   enqueueOfflineLocalEvent,
-  loadOfflineLocalQueue,
-  markOfflineLocalQueueEntries,
-  offlineLocalQueuePendingEntries,
-  pruneSyncedOfflineLocalQueue,
+  settleOfflineLocalQueueBatch,
   type EnqueueOfflineLocalEventInput,
   type OfflineLocalQueueConfig,
   type OfflineLocalQueueEntry,
@@ -40,7 +37,7 @@ type UseOfflineLocalQueueConfig = {
 }
 
 type OfflineQueueFlushResult =
-  | { skipped: true; reason: "EMPTY_QUEUE"; pendingCount: 0 }
+  | { skipped: true; reason: "EMPTY_QUEUE" | "LEASE_ACTIVE" | "CONFLICT_REVIEW"; pendingCount: number }
   | (OfflineSyncBatchResult & { skipped?: false; syncedQueueIds: string[] })
 
 const copy = {
@@ -56,6 +53,7 @@ const copy = {
     queueStoredBody: "The provisional receipt evidence was saved locally until sync is available.",
     queueEmptyTitle: "Offline queue empty",
     queueEmptyBody: "There are no queued offline POS events to sync.",
+    queueBusyBody: "Another sync attempt is still active. Unconfirmed events become retryable after its recovery lease expires.",
   },
   fr: {
     fetchError: "Les preuves de synchronisation POS hors ligne sont indisponibles.",
@@ -69,6 +67,7 @@ const copy = {
     queueStoredBody: "La preuve du recu provisoire a ete conservee localement jusqu'a la synchronisation.",
     queueEmptyTitle: "File hors ligne vide",
     queueEmptyBody: "Aucun evenement POS hors ligne n'est en attente de synchronisation.",
+    queueBusyBody: "Une synchronisation est en cours. Les evenements non confirmes pourront etre renvoyes apres expiration du delai de reprise.",
   },
 } as const
 
@@ -207,45 +206,38 @@ export function useFlushOfflinePOSQueue(
   return useMutation<OfflineQueueFlushResult, Error, void>({
     mutationFn: async () => {
       const queueConfig = requireLocalQueueConfig(config)
-      const state = loadOfflineLocalQueue(queueConfig)
-      const pending = offlineLocalQueuePendingEntries(state)
-
-      if (pending.length === 0) {
-        return { skipped: true, reason: "EMPTY_QUEUE", pendingCount: 0 }
-      }
-
-      const queueIds = pending.map((entry) => entry.queueId)
-      const envelope = buildOfflineSyncBatchEnvelope(queueConfig, state)
-      if (!envelope) return { skipped: true, reason: "EMPTY_QUEUE", pendingCount: 0 }
-
-      markOfflineLocalQueueEntries(queueConfig, queueIds, "SYNCING")
-
-      const result = await syncOfflineEventsAction(envelope)
-      if (!result.success || !result.data) {
-        markOfflineLocalQueueEntries(queueConfig, queueIds, "FAILED", result.error || t.syncBlockedBody)
-        throw new Error(result.error || t.syncBlockedBody)
-      }
-
-      markOfflineLocalQueueEntries(
-        queueConfig,
-        queueIds,
-        result.data.conflictCount > 0 ? "CONFLICT" : "SYNCED",
-      )
-      if (result.data.conflictCount === 0) {
-        pruneSyncedOfflineLocalQueue(queueConfig)
-      }
-
-      return {
-        ...result.data,
-        skipped: false,
-        syncedQueueIds: queueIds,
+      const claim = await claimOfflineLocalQueueBatch(queueConfig)
+      if (claim.skipped) return claim
+      try {
+        // Re-send the immutable identity when an earlier response was lost. The
+        // ingestion service resolves duplicates before applying sequence checks.
+        const result = await syncOfflineEventsAction(claim.envelope)
+        if (!result.success || !result.data) throw new Error(result.error || t.syncBlockedBody)
+        const data = result.data
+        if (!data.batchId || data.device.id !== queueConfig.deviceId ||
+            ![data.acceptedCount, data.duplicateCount, data.conflictCount].every(value => Number.isSafeInteger(value) && value >= 0) ||
+            (data.conflictCount === 0 && data.acceptedCount + data.duplicateCount !== claim.queueIds.length)) {
+          throw new Error("Offline sync acknowledgement is incomplete. Evidence is retained for recovery.")
+        }
+        await settleOfflineLocalQueueBatch(queueConfig, claim, {
+          status: data.conflictCount > 0 ? "CONFLICT" : "SYNCED",
+          serverBatchId: data.batchId,
+        })
+        // Keep acknowledged envelopes and attempt evidence locally; ingestion
+        // acknowledgement does not certify payment, fiscal or economic finality.
+        return { ...data, skipped: false, syncedQueueIds: data.conflictCount > 0 ? [] : claim.queueIds }
+      } catch (error) {
+        await settleOfflineLocalQueueBatch(queueConfig, claim, { status: "UNCERTAIN" })
+        throw error
       }
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: offlineSyncKeys.all })
 
       if (result.skipped) {
-        notifications.info(t.queueEmptyTitle, t.queueEmptyBody)
+        if (result.reason === "CONFLICT_REVIEW") notifications.warning(t.syncBlockedTitle, t.syncBlockedBody)
+        else if (result.reason === "LEASE_ACTIVE") notifications.info(t.syncBlockedTitle, t.queueBusyBody)
+        else notifications.info(t.queueEmptyTitle, t.queueEmptyBody)
         return
       }
 

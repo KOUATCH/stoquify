@@ -1,0 +1,25 @@
+{
+  "name": "modernization-lint-final-20261007",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "node_modules/eslint/bin/eslint.js",
+    "components/hris/HrisApprovalInbox.tsx",
+    "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+    "services/hris/operational-time.service.ts",
+    "services/hris/__tests__/operational-time.service.test.ts",
+    "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+    "tests/postgres/ui-workflow/hris-time-decision.test.ts",
+    "services/accounting/close-evidence-workflow.service.ts"
+  ],
+  "startedAt": "2026-10-07T05:22:55.297Z",
+  "endedAt": "2026-10-07T05:23:00.790Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "fingerprints": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+  },
+  "databaseTarget": "disabled localhost:1; no live data target"
+}

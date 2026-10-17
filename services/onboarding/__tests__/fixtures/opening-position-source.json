@@ -1,0 +1,46 @@
+{
+  "version": "opening-fixture-v1",
+  "synthetic": true,
+  "statutory": false,
+  "organizationId": "synthetic-cutover-a",
+  "currency": "XAF",
+  "timezone": "Africa/Douala",
+  "cutoverAt": "2026-09-30T23:00:00.000Z",
+  "cutoverLocal": "2026-10-01T00:00:00+01:00",
+  "makerId": "synthetic-maker",
+  "review": { "id": "synthetic-review-v1", "reviewerId": "synthetic-reviewer", "decision": "FIXTURE_APPROVED", "scope": "NON_STATUTORY_ARITHMETIC_ONLY" },
+  "locations": [
+    { "id": "site-a", "organizationId": "synthetic-cutover-a" },
+    { "id": "site-b", "organizationId": "synthetic-cutover-a" }
+  ],
+  "items": [
+    { "id": "item-each", "organizationId": "synthetic-cutover-a", "unit": "EA" },
+    { "id": "item-weight", "organizationId": "synthetic-cutover-a", "unit": "KG" }
+  ],
+  "counterparties": [
+    { "id": "customer-a", "organizationId": "synthetic-cutover-a", "kind": "CUSTOMER" },
+    { "id": "supplier-a", "organizationId": "synthetic-cutover-a", "kind": "SUPPLIER" }
+  ],
+  "stock": [
+    { "sourceId": "stock-001", "organizationId": "synthetic-cutover-a", "locationId": "site-a", "itemId": "item-each", "unit": "EA", "quantity": "10.000", "unitCost": "100.00", "sourceValue": "1000.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" },
+    { "sourceId": "stock-002", "organizationId": "synthetic-cutover-a", "locationId": "site-b", "itemId": "item-each", "unit": "EA", "quantity": "5.000", "unitCost": "100.00", "sourceValue": "500.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" },
+    { "sourceId": "stock-003", "organizationId": "synthetic-cutover-a", "locationId": "site-a", "itemId": "item-weight", "unit": "KG", "quantity": "2.500", "unitCost": "400.00", "sourceValue": "1000.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" },
+    { "sourceId": "stock-004", "organizationId": "synthetic-cutover-a", "locationId": "site-b", "itemId": "item-weight", "unit": "KG", "quantity": "1.250", "unitCost": "400.00", "sourceValue": "500.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" }
+  ],
+  "openItems": [
+    { "sourceId": "ar-001", "organizationId": "synthetic-cutover-a", "counterpartyId": "customer-a", "kind": "AR", "sourceDocumentId": "legacy-customer-invoice-001", "sourceDate": "2026-09-15", "dueDate": "2026-10-15", "originalAmount": "1500.00", "settledBeforeCutover": "300.00", "outstandingAmount": "1200.00", "currency": "XAF", "reviewId": "synthetic-review-v1" },
+    { "sourceId": "ap-001", "organizationId": "synthetic-cutover-a", "counterpartyId": "supplier-a", "kind": "AP", "sourceDocumentId": "legacy-supplier-invoice-001", "sourceDate": "2026-09-20", "dueDate": "2026-10-20", "originalAmount": "1000.00", "settledBeforeCutover": "300.00", "outstandingAmount": "700.00", "currency": "XAF", "reviewId": "synthetic-review-v1" }
+  ],
+  "ledger": [
+    { "sourceId": "ledger-001", "organizationId": "synthetic-cutover-a", "account": "FIXTURE_INVENTORY", "side": "DEBIT", "amount": "3000.00", "postingOwner": "OPENING_LEDGER", "covers": ["stock-001", "stock-002", "stock-003", "stock-004"], "reviewId": "synthetic-review-v1" },
+    { "sourceId": "ledger-002", "organizationId": "synthetic-cutover-a", "account": "FIXTURE_AR", "side": "DEBIT", "amount": "1200.00", "postingOwner": "OPENING_LEDGER", "covers": ["ar-001"], "reviewId": "synthetic-review-v1" },
+    { "sourceId": "ledger-003", "organizationId": "synthetic-cutover-a", "account": "FIXTURE_CASH", "side": "DEBIT", "amount": "500.00", "postingOwner": "OPENING_LEDGER", "covers": [], "reviewId": "synthetic-review-v1" },
+    { "sourceId": "ledger-004", "organizationId": "synthetic-cutover-a", "account": "FIXTURE_AP", "side": "CREDIT", "amount": "700.00", "postingOwner": "OPENING_LEDGER", "covers": ["ap-001"], "reviewId": "synthetic-review-v1" },
+    { "sourceId": "ledger-005", "organizationId": "synthetic-cutover-a", "account": "FIXTURE_EQUITY", "side": "CREDIT", "amount": "4000.00", "postingOwner": "OPENING_LEDGER", "covers": [], "reviewId": "synthetic-review-v1" }
+  ],
+  "rejectedStockRows": [
+    { "expectedIssue": "UNKNOWN_ITEM", "row": { "sourceId": "reject-001", "organizationId": "synthetic-cutover-a", "locationId": "site-a", "itemId": "missing-item", "unit": "EA", "quantity": "1.000", "unitCost": "100.00", "sourceValue": "100.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" } },
+    { "expectedIssue": "WRONG_LOCATION", "row": { "sourceId": "reject-002", "organizationId": "synthetic-cutover-a", "locationId": "foreign-site", "itemId": "item-each", "unit": "EA", "quantity": "1.000", "unitCost": "100.00", "sourceValue": "100.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" } },
+    { "expectedIssue": "PRECISION", "row": { "sourceId": "reject-003", "organizationId": "synthetic-cutover-a", "locationId": "site-a", "itemId": "item-each", "unit": "EA", "quantity": "1.0001", "unitCost": "100.00", "sourceValue": "100.00", "ledgerEffect": "REVIEW_ONLY", "reviewId": "synthetic-review-v1" } }
+  ]
+}

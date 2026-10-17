@@ -1,0 +1,727 @@
+- complementary "Navigation du tableau de bord":
+  - link "Accueil du tableau de bord Stoquify":
+    - /url: /fr/dashboard
+    - generic "Stoquify":
+      - generic: q
+      - text: sto
+      - generic: q
+      - text: uify
+      - generic: Enterprise OS
+  - button "Notifications 0":
+    - generic: Notifications
+    - generic: "0"
+  - paragraph: Wilkinson - Feeney 001
+  - generic: Accountant
+  - text: Session
+  - textbox "Rechercher dans la navigation":
+    - /placeholder: Rechercher des modules
+  - generic: Modules
+  - generic "4 Modules": "4"
+  - navigation "Modules du tableau de bord":
+    - region "Finance et contrôles":
+      - generic "Comptabilité, trésorerie, contrôles et conformité": Finance et contrôles
+      - generic: "3"
+      - button "Comptabilité menu" [expanded]:
+        - generic "Comptabilité":
+          - generic: Comptabilité
+          - generic: Grand livre, clôture, rapports et contrôles
+        - generic "9 liens": "9"
+      - link "Vue d’ensemble":
+        - /url: /fr/dashboard/accounting
+        - generic: Vue d’ensemble
+      - link "Accès comptable":
+        - /url: /fr/dashboard/accounting/accountant-access
+        - generic: Accès comptable
+      - link "Portail comptable":
+        - /url: /fr/dashboard/accounting/accountant-portal
+        - generic: Portail comptable
+      - link "Portefeuille comptable":
+        - /url: /fr/dashboard/accounting/accountant-portfolio
+        - generic: Portefeuille comptable
+      - link "Centre de contrôle":
+        - /url: /fr/dashboard/accounting/control-center
+        - generic: Centre de contrôle
+      - link "Journaux":
+        - /url: /fr/dashboard/accounting/journals
+        - generic: Journaux
+      - link "Nouvelle écriture":
+        - /url: /fr/dashboard/accounting/journals/new
+        - generic: Nouvelle écriture
+      - link "Configuration":
+        - /url: /fr/dashboard/accounting/setup
+        - generic: Configuration
+      - link "Balance générale":
+        - /url: /fr/dashboard/accounting/reports/trial-balance
+        - generic: Balance générale
+      - link "Conformité Contrôles fiscaux et preuves de conformité":
+        - /url: /fr/dashboard/compliance
+        - generic: Conformité
+        - generic: Contrôles fiscaux et preuves de conformité
+      - button "Finance menu":
+        - generic "Finance":
+          - generic: Finance
+          - generic: Trésorerie, rentabilité, paiements et rapprochement
+        - generic "14 liens": "14"
+    - region "Gouvernance":
+      - generic "Paramètres, sécurité et administration de la plateforme": Gouvernance
+      - generic: "1"
+      - button "Paramètres menu":
+        - generic "Paramètres":
+          - generic: Paramètres
+          - generic: Entreprise, rôles, emplacements, modules et sécurité
+        - generic "3 liens": "3"
+  - generic: NE
+  - paragraph: Nadia Essomba
+  - paragraph: accountant.rds-org001@stockflow.test
+  - button "Se déconnecter":
+- banner:
+  - paragraph: Portail comptable
+  - paragraph: Finance et contrôles / Comptabilité / Portail comptable
+  - generic: Wilkinson - Feeney 001
+  - generic: Accountant
+  - generic: Session
+  - generic: /
+  - generic: RG_001
+  - combobox "Rechercher une page ou un document"
+  - link "Ouvrir le site web":
+    - /url: /
+  - link "Switch to English":
+    - /url: /en/dashboard/accounting/accountant-portal
+    - generic: en
+  - button "Activer le thème clair":
+    - generic: Clair
+  - button "Désactiver le son des notifications" [pressed]:
+  - button "Ouvrir le menu du compte":
+    - generic: Nadia Essomba
+- main:
+  - generic: Fiabilité des données
+  - heading "Portail comptable" [level=1]
+  - paragraph: Rapports fondés sur le grand livre, justificatifs sources, piste d’audit et contrôles d’export du pack de confiance certifié.
+  - navigation "Sections de la page":
+    - link "Blocages de clôture":
+      - /url: "#portal-blockers"
+      - generic: "01"
+      - generic: Blocages de clôture
+    - link "Montants comptabilisés":
+      - /url: "#portal-figures"
+      - generic: "02"
+      - generic: Montants comptabilisés
+    - link "Liens sources récents":
+      - /url: "#portal-source-links"
+      - generic: "03"
+      - generic: Liens sources récents
+    - link "Audit et contrôles":
+      - /url: "#portal-audit"
+      - generic: "04"
+      - generic: Audit et contrôles
+  - paragraph: Niveau de confiance
+  - paragraph: T0 Non conforme
+  - paragraph: "Au: 15 oct. 2026, 17:19"
+  - paragraph: Écritures comptabilisées
+  - paragraph: "80"
+  - paragraph: 229 lignes du grand livre issues d’écritures comptabilisées ou extournées
+  - paragraph: Couverture des liens sources
+  - paragraph: 97.5%
+  - paragraph: 78/80 écritures liées
+  - paragraph: Blocages
+  - paragraph: "12"
+  - paragraph: 2 critiques / 8 élevés
+  - paragraph: Export certifié bloqué
+  - paragraph: "L’export du dossier comptable certifié exige le niveau T4 : grand livre équilibré, couverture des liens sources, aucun événement en échec, aucune anomalie à risque élevé ouverte et aucun blocage réglementaire non résolu."
+  - button "Exporter le dossier certifié" [disabled]:
+    - text: Exporter le dossier certifié
+  - heading "Blocages de clôture" [level=2]
+  - textbox "Rechercher les blocages de clôture..." [active]
+  - button "Colonnes":
+    - text: Colonnes
+  - region "Blocages de clôture":
+    - table "Blocages de clôture":
+      - caption: Blocages de clôture
+      - rowgroup:
+        - row "Trier Statut, non trié Trier Contrôle, non trié Trier Détail, non trié Trier Source, non trié":
+          - columnheader "Trier Statut, non trié":
+            - button "Trier Statut, non trié":
+              - generic: Statut
+          - columnheader "Trier Contrôle, non trié":
+            - button "Trier Contrôle, non trié":
+              - generic: Contrôle
+          - columnheader "Trier Détail, non trié":
+            - button "Trier Détail, non trié":
+              - generic: Détail
+          - columnheader "Trier Source, non trié":
+            - button "Trier Source, non trié":
+              - generic: Source
+      - rowgroup:
+        - row "Élevé Configuration comptable non verrouillée La configuration comptable doit être marquée comme prête avant la certification du dossier comptable. organization_accounting_settings":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Configuration comptable non verrouillée":
+            - paragraph: Configuration comptable non verrouillée
+            - generic "Référence du contrôle"
+          - cell "La configuration comptable doit être marquée comme prête avant la certification du dossier comptable.":
+            - paragraph: La configuration comptable doit être marquée comme prête avant la certification du dossier comptable.
+          - cell "organization_accounting_settings":
+            - paragraph: organization_accounting_settings
+        - row "Critique Écritures comptabilisées sans lien source 2 écriture(s) comptabilisée(s) ou extournée(s) sans lien source comptable. journal_entries, accounting_source_links":
+          - cell "Critique":
+            - generic: Critique
+          - cell "Écritures comptabilisées sans lien source":
+            - paragraph: Écritures comptabilisées sans lien source
+            - generic "Référence du contrôle"
+          - cell "2 écriture(s) comptabilisée(s) ou extournée(s) sans lien source comptable.":
+            - paragraph: 2 écriture(s) comptabilisée(s) ou extournée(s) sans lien source comptable.
+          - cell "journal_entries, accounting_source_links":
+            - paragraph: journal_entries, accounting_source_links
+        - row "Critique Écritures comptabilisées sans lot de comptabilisation 2 écriture(s) comptabilisée(s) ou extournée(s) sans lot de comptabilisation associé. journal_entries, ledger_posting_batches":
+          - cell "Critique":
+            - generic: Critique
+          - cell "Écritures comptabilisées sans lot de comptabilisation":
+            - paragraph: Écritures comptabilisées sans lot de comptabilisation
+            - generic "Référence du contrôle"
+          - cell "2 écriture(s) comptabilisée(s) ou extournée(s) sans lot de comptabilisation associé.":
+            - paragraph: 2 écriture(s) comptabilisée(s) ou extournée(s) sans lot de comptabilisation associé.
+          - cell "journal_entries, ledger_posting_batches":
+            - paragraph: journal_entries, ledger_posting_batches
+        - row "Élevé Anomalies de rapprochement des paiements ouvertes 12 anomalie(s) de rapprochement des paiements encore ouverte(s). payment_exceptions":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Anomalies de rapprochement des paiements ouvertes":
+            - paragraph: Anomalies de rapprochement des paiements ouvertes
+            - generic "Référence du contrôle"
+          - cell "12 anomalie(s) de rapprochement des paiements encore ouverte(s).":
+            - paragraph: 12 anomalie(s) de rapprochement des paiements encore ouverte(s).
+          - cell "payment_exceptions":
+            - paragraph: payment_exceptions
+        - row "Modéré Déclarations de paie en attente de justificatifs de l’autorité 12 déclaration(s) de paie préparée(s), mais pas encore acceptée(s), payée(s) ou rapprochée(s). payroll_declarations":
+          - cell "Modéré":
+            - generic: Modéré
+          - cell "Déclarations de paie en attente de justificatifs de l’autorité":
+            - paragraph: Déclarations de paie en attente de justificatifs de l’autorité
+            - generic "Référence du contrôle"
+          - cell "12 déclaration(s) de paie préparée(s), mais pas encore acceptée(s), payée(s) ou rapprochée(s).":
+            - paragraph: 12 déclaration(s) de paie préparée(s), mais pas encore acceptée(s), payée(s) ou rapprochée(s).
+          - cell "payroll_declarations":
+            - paragraph: payroll_declarations
+        - row "Élevé Déclarations de paie sans preuve du registre 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du registre de paie source. payroll_declaration_evidence, payroll_runs":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Déclarations de paie sans preuve du registre":
+            - paragraph: Déclarations de paie sans preuve du registre
+            - generic "Référence du contrôle"
+          - cell "12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du registre de paie source.":
+            - paragraph: 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du registre de paie source.
+          - cell "payroll_declaration_evidence, payroll_runs":
+            - paragraph: payroll_declaration_evidence, payroll_runs
+        - row "Élevé Déclarations de paie sans preuve du registre du référentiel pays 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve concordante du registre du référentiel pays. payroll_declaration_evidence, payroll_runs, payroll_run_lines":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Déclarations de paie sans preuve du registre du référentiel pays":
+            - paragraph: Déclarations de paie sans preuve du registre du référentiel pays
+            - generic "Référence du contrôle"
+          - cell "12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve concordante du registre du référentiel pays.":
+            - paragraph: 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve concordante du registre du référentiel pays.
+          - cell "payroll_declaration_evidence, payroll_runs, payroll_run_lines":
+            - paragraph: payroll_declaration_evidence, payroll_runs, payroll_run_lines
+        - row "Élevé Déclarations de paie sans preuve du connecteur de l’autorité 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du connecteur de l’autorité ou empreinte de son contrat. payroll_declaration_evidence, payroll_declarations":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Déclarations de paie sans preuve du connecteur de l’autorité":
+            - paragraph: Déclarations de paie sans preuve du connecteur de l’autorité
+            - generic "Référence du contrôle"
+          - cell "12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du connecteur de l’autorité ou empreinte de son contrat.":
+            - paragraph: 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du connecteur de l’autorité ou empreinte de son contrat.
+          - cell "payroll_declaration_evidence, payroll_declarations":
+            - paragraph: payroll_declaration_evidence, payroll_declarations
+        - row "Élevé Déclarations de paie sans preuve du cycle de traitement par l’autorité 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans empreinte du contrat de cycle de l’autorité, statut ou preuve d’impact sur la clôture. payroll_declaration_evidence, payroll_declarations":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Déclarations de paie sans preuve du cycle de traitement par l’autorité":
+            - paragraph: Déclarations de paie sans preuve du cycle de traitement par l’autorité
+            - generic "Référence du contrôle"
+          - cell "12 justificatif(s) déclaratif(s) de paie affectant la clôture sans empreinte du contrat de cycle de l’autorité, statut ou preuve d’impact sur la clôture.":
+            - paragraph: 12 justificatif(s) déclaratif(s) de paie affectant la clôture sans empreinte du contrat de cycle de l’autorité, statut ou preuve d’impact sur la clôture.
+          - cell "payroll_declaration_evidence, payroll_declarations":
+            - paragraph: payroll_declaration_evidence, payroll_declarations
+        - row "Élevé Conflits de synchronisation de caisse hors ligne ouverts 11 conflit(s) de caisse hors ligne nécessitant une revue du responsable avant certification ou clôture. pos_offline_sync_conflicts, pos_offline_events":
+          - cell "Élevé":
+            - generic: Élevé
+          - cell "Conflits de synchronisation de caisse hors ligne ouverts":
+            - paragraph: Conflits de synchronisation de caisse hors ligne ouverts
+            - generic "Référence du contrôle"
+          - cell "11 conflit(s) de caisse hors ligne nécessitant une revue du responsable avant certification ou clôture.":
+            - paragraph: 11 conflit(s) de caisse hors ligne nécessitant une revue du responsable avant certification ou clôture.
+          - cell "pos_offline_sync_conflicts, pos_offline_events":
+            - paragraph: pos_offline_sync_conflicts, pos_offline_events
+      - rowgroup:
+        - row:
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+  - paragraph: Lignes par page
+  - combobox "Lignes par page":
+    - generic: "10"
+  - generic: Page 1 sur 2
+  - button "Aller à la première page" [disabled]:
+    - generic: Aller à la première page
+  - button "Aller à la page précédente" [disabled]:
+    - generic: Aller à la page précédente
+  - button "Aller à la page suivante":
+    - generic: Aller à la page suivante
+  - button "Aller à la dernière page":
+    - generic: Aller à la dernière page
+  - heading "Montants comptabilisés" [level=2]
+  - paragraph: Les montants financiers s’affichent uniquement après résolution des blocages critiques de fiabilité des données.
+  - paragraph: Mouvements au débit
+  - paragraph: Indisponible
+  - paragraph: "Provenance: Indisponible"
+  - paragraph: 15 oct. 2026, 17:19
+  - paragraph: Les blocages critiques de fiabilité des données doivent être résolus avant l’affichage de ce montant.
+  - paragraph: Mouvements au crédit
+  - paragraph: Indisponible
+  - paragraph: "Provenance: Indisponible"
+  - paragraph: 15 oct. 2026, 17:19
+  - paragraph: Les blocages critiques de fiabilité des données doivent être résolus avant l’affichage de ce montant.
+  - heading "Modules de preuve" [level=2]
+  - paragraph: Grand livre de référence
+  - paragraph: Écritures et lignes comptabilisées, lots de comptabilisation et liens sources.
+  - generic: Bloqué
+  - generic: Écritures comptabilisées
+  - generic: "80"
+  - generic: Lignes d’écriture
+  - generic: "229"
+  - generic: Couverture des liens sources
+  - generic: 97.5%
+  - paragraph: Traitement des événements métier
+  - paragraph: Les événements métier en échec ou rejetés bloquent la certification comptable.
+  - generic: Prêt
+  - generic: Événements en échec ou rejetés
+  - generic: "0"
+  - paragraph: Rapprochement des paiements
+  - paragraph: Les anomalies de paiement ouvertes, la fréquence des relevés prestataires et les rapprochements signés conditionnent la certification.
+  - generic: Bloqué
+  - generic: Comptes prestataires actifs
+  - generic: "0"
+  - generic: Fichiers de relevé
+  - generic: "0"
+  - generic: Lignes de relevé
+  - generic: "0"
+  - generic: Comptes aux relevés trop anciens
+  - generic: "0"
+  - generic: Rapprochements signés
+  - generic: "0"
+  - generic: Anomalies ouvertes
+  - generic: "12"
+  - generic: Élevées ou critiques
+  - generic: "0"
+  - paragraph: Achats et dettes fournisseurs
+  - paragraph: Les factures et paiements fournisseurs doivent être rapprochés des justificatifs du grand livre.
+  - generic: Prêt
+  - generic: Factures fournisseurs ouvertes
+  - generic: "0"
+  - generic: Paiements sans comptabilisation
+  - generic: "0"
+  - paragraph: Paie et déclarations
+  - paragraph: Les services de paie fournissent les preuves des transitions, des données RH certifiées, de la concordance du registre, des bulletins, des rapprochements et composantes de paiement, des liens sources du grand livre et du cycle déclaratif.
+  - generic: Bloqué
+  - generic: Paies émises en attente de comptabilisation
+  - generic: "0"
+  - generic: Preuves de transition manquantes après bascule
+  - generic: "0"
+  - generic: Transitions historiques déclarées partielles
+  - generic: "0"
+  - generic: Déclarations préparées
+  - generic: "12"
+  - generic: Déclarations rejetées
+  - generic: "0"
+  - generic: Déclarations en cours
+  - generic: "0"
+  - generic: Justificatifs déclaratifs manquants
+  - generic: "0"
+  - generic: Preuves du registre déclaratif manquantes
+  - generic: "12"
+  - generic: Preuves du registre déclaratif du référentiel pays manquantes
+  - generic: "12"
+  - generic: Preuves du connecteur déclaratif manquantes
+  - generic: "12"
+  - generic: Preuves du cycle déclaratif manquantes
+  - generic: "12"
+  - generic: Rectifications de déclaration
+  - generic: "0"
+  - generic: Lots non réglés
+  - generic: "0"
+  - generic: Preuves de rapprochement des paiements manquantes
+  - generic: "0"
+  - generic: Preuves du registre des paiements manquantes
+  - generic: "0"
+  - generic: Preuves des composantes de paiement manquantes
+  - generic: "0"
+  - generic: Preuves du connecteur de paiement manquantes
+  - generic: "0"
+  - generic: Affectations de paiement manquantes
+  - generic: "0"
+  - generic: Paies sans comptabilisation
+  - generic: "0"
+  - generic: Preuves des composantes de paie comptabilisée manquantes
+  - generic: "0"
+  - generic: Preuves des données certifiées de paie comptabilisée manquantes
+  - generic: "0"
+  - generic: Preuves des composantes applicables manquantes
+  - generic: "0"
+  - generic: Lignes de paie sans bulletin
+  - generic: "0"
+  - generic: Bulletins sans empreinte justificative
+  - generic: "0"
+  - generic: Paies payées sans règlement justifié
+  - generic: "0"
+  - generic: Paiements sans comptabilisation
+  - generic: "0"
+  - generic: Lots de paie sans lien source
+  - generic: "0"
+  - paragraph: Documents de conformité
+  - paragraph: Les preuves de certification ou de rejet des documents fiscaux entrent dans les contrôles de fiabilité.
+  - generic: Prêt
+  - generic: Documents fiscaux en attente
+  - generic: "0"
+  - generic: Documents fiscaux rejetés
+  - generic: "0"
+  - paragraph: Synchronisation de caisse hors ligne
+  - paragraph: Justificatifs de synchronisation des terminaux, conflits, reçus provisoires et blocages de clôture du module de caisse hors ligne.
+  - generic: Bloqué
+  - generic: En attente de reprise
+  - generic: "11"
+  - generic: Conflits ouverts
+  - generic: "11"
+  - generic: Blocages de clôture
+  - generic: "11"
+  - paragraph: Audit et contrôles
+  - paragraph: Les événements d’audit du grand livre et les décisions de contrôle des actions sensibles sont consultables par les comptables.
+  - generic: Prêt
+  - generic: Événements d’audit du grand livre
+  - generic: "102"
+  - generic: Événements d’audit des contrôles
+  - generic: "17980"
+  - heading "Liens sources récents" [level=2]
+  - textbox "Rechercher les liens source récents..."
+  - button "Période":
+    - generic: Période
+  - combobox "Filtrer":
+    - generic: Toutes les dates
+  - button "Colonnes":
+    - text: Colonnes
+  - region "Liens sources récents":
+    - table "Liens sources récents":
+      - caption: Liens sources récents
+      - rowgroup:
+        - row "Trier Source, non trié Trier Journal, non trié Trier Lot, non trié Trier Statut, non trié Trier Date, non trié":
+          - columnheader "Trier Source, non trié":
+            - button "Trier Source, non trié":
+              - generic: Source
+          - columnheader "Trier Journal, non trié":
+            - button "Trier Journal, non trié":
+              - generic: Journal
+          - columnheader "Trier Lot, non trié":
+            - button "Trier Lot, non trié":
+              - generic: Lot
+          - columnheader "Trier Statut, non trié":
+            - button "Trier Statut, non trié":
+              - generic: Statut
+          - columnheader "Trier Date, non trié":
+            - button "Trier Date, non trié":
+              - generic: Date
+      - rowgroup:
+        - row "POS_PAYMENT PAY-20261012-ZKUI4VX PY-20261012-0001 cmv57grd600inmaqgqrcktn78 Comptabilisé 12 oct. 2026, 13:05":
+          - cell "POS_PAYMENT PAY-20261012-ZKUI4VX":
+            - paragraph: POS_PAYMENT
+            - paragraph: PAY-20261012-ZKUI4VX
+          - cell "PY-20261012-0001"
+          - cell "cmv57grd600inmaqgqrcktn78":
+            - generic "cmv57grd600inmaqgqrcktn78"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "12 oct. 2026, 13:05"
+        - row "POS_SALE POS-RDS001-TERM-011-20261012-IXVT3 VT-20261012-0001 cmv57gr4x00i7maqgatd9nqq0 Comptabilisé 12 oct. 2026, 13:05":
+          - cell "POS_SALE POS-RDS001-TERM-011-20261012-IXVT3":
+            - paragraph: POS_SALE
+            - paragraph: POS-RDS001-TERM-011-20261012-IXVT3
+          - cell "VT-20261012-0001"
+          - cell "cmv57gr4x00i7maqgatd9nqq0":
+            - generic "cmv57gr4x00i7maqgatd9nqq0"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "12 oct. 2026, 13:05"
+        - row "POS_PAYMENT PAY-20261011-WDJ0UG1 PY-20261011-0002 cmv3thm5g00y3may0c27y7nf4 Comptabilisé 11 oct. 2026, 13:46":
+          - cell "POS_PAYMENT PAY-20261011-WDJ0UG1":
+            - paragraph: POS_PAYMENT
+            - paragraph: PAY-20261011-WDJ0UG1
+          - cell "PY-20261011-0002"
+          - cell "cmv3thm5g00y3may0c27y7nf4":
+            - generic "cmv3thm5g00y3may0c27y7nf4"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "11 oct. 2026, 13:46"
+        - row "POS_SALE POS-RDS001-TERM-011-20261011-1ZUHV VT-20261011-0002 cmv3thm0c00xnmay052kc92we Comptabilisé 11 oct. 2026, 13:46":
+          - cell "POS_SALE POS-RDS001-TERM-011-20261011-1ZUHV":
+            - paragraph: POS_SALE
+            - paragraph: POS-RDS001-TERM-011-20261011-1ZUHV
+          - cell "VT-20261011-0002"
+          - cell "cmv3thm0c00xnmay052kc92we":
+            - generic "cmv3thm0c00xnmay052kc92we"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "11 oct. 2026, 13:46"
+        - row "POS_PAYMENT PAY-20261011-G531819 PY-20261011-0001 cmv3skr8900j9may0x0c9x3hc Comptabilisé 11 oct. 2026, 13:20":
+          - cell "POS_PAYMENT PAY-20261011-G531819":
+            - paragraph: POS_PAYMENT
+            - paragraph: PAY-20261011-G531819
+          - cell "PY-20261011-0001"
+          - cell "cmv3skr8900j9may0x0c9x3hc":
+            - generic "cmv3skr8900j9may0x0c9x3hc"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "11 oct. 2026, 13:20"
+        - row "POS_SALE POS-RDS001-TERM-011-20261011-ZA4PD VT-20261011-0001 cmv3skr2600itmay0unpwd15t Comptabilisé 11 oct. 2026, 13:20":
+          - cell "POS_SALE POS-RDS001-TERM-011-20261011-ZA4PD":
+            - paragraph: POS_SALE
+            - paragraph: POS-RDS001-TERM-011-20261011-ZA4PD
+          - cell "VT-20261011-0001"
+          - cell "cmv3skr2600itmay0unpwd15t":
+            - generic "cmv3skr2600itmay0unpwd15t"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "11 oct. 2026, 13:20"
+        - row "POS_PAYMENT PAY-20261002-9NGXJQQ PY-20261002-0002 cmurba8u900ixmad47tesqbjo Comptabilisé 2 oct. 2026, 19:43":
+          - cell "POS_PAYMENT PAY-20261002-9NGXJQQ":
+            - paragraph: POS_PAYMENT
+            - paragraph: PAY-20261002-9NGXJQQ
+          - cell "PY-20261002-0002"
+          - cell "cmurba8u900ixmad47tesqbjo":
+            - generic "cmurba8u900ixmad47tesqbjo"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "2 oct. 2026, 19:43"
+        - row "POS_SALE POS-RDS001-TERM-009-20261002-VD69T VT-20261002-0002 cmurba8qn00ihmad4ufsz6bb6 Comptabilisé 2 oct. 2026, 19:43":
+          - cell "POS_SALE POS-RDS001-TERM-009-20261002-VD69T":
+            - paragraph: POS_SALE
+            - paragraph: POS-RDS001-TERM-009-20261002-VD69T
+          - cell "VT-20261002-0002"
+          - cell "cmurba8qn00ihmad4ufsz6bb6":
+            - generic "cmurba8qn00ihmad4ufsz6bb6"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "2 oct. 2026, 19:43"
+        - row "POS_PAYMENT PAY-20261002-OLZL3PP PY-20261002-0001 cmurb6bww00d7mad4us39brru Comptabilisé 2 oct. 2026, 19:40":
+          - cell "POS_PAYMENT PAY-20261002-OLZL3PP":
+            - paragraph: POS_PAYMENT
+            - paragraph: PAY-20261002-OLZL3PP
+          - cell "PY-20261002-0001"
+          - cell "cmurb6bww00d7mad4us39brru":
+            - generic "cmurb6bww00d7mad4us39brru"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "2 oct. 2026, 19:40"
+        - row "POS_SALE POS-RDS001-TERM-009-20261002-2ZD0Y VT-20261002-0001 cmurb6bpu00crmad4nzsyz3z6 Comptabilisé 2 oct. 2026, 19:40":
+          - cell "POS_SALE POS-RDS001-TERM-009-20261002-2ZD0Y":
+            - paragraph: POS_SALE
+            - paragraph: POS-RDS001-TERM-009-20261002-2ZD0Y
+          - cell "VT-20261002-0001"
+          - cell "cmurb6bpu00crmad4nzsyz3z6":
+            - generic "cmurb6bpu00crmad4nzsyz3z6"
+          - cell "Comptabilisé":
+            - generic: Comptabilisé
+          - cell "2 oct. 2026, 19:40"
+      - rowgroup:
+        - row:
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+  - paragraph: Lignes par page
+  - combobox "Lignes par page":
+    - generic: "10"
+  - generic: Page 1 sur 2
+  - button "Aller à la première page" [disabled]:
+    - generic: Aller à la première page
+  - button "Aller à la page précédente" [disabled]:
+    - generic: Aller à la page précédente
+  - button "Aller à la page suivante":
+    - generic: Aller à la page suivante
+  - button "Aller à la dernière page":
+    - generic: Aller à la dernière page
+  - heading "Audit et contrôles" [level=2]
+  - textbox "Rechercher les audits et contrôles..."
+  - button "Période":
+    - generic: Période
+  - combobox "Filtrer":
+    - generic: Toutes les dates
+  - button "Colonnes":
+    - text: Colonnes
+  - region "Audit et contrôles":
+    - table "Audit et contrôles":
+      - caption: Audit et contrôles
+      - rowgroup:
+        - row "Trier Source, non trié Trier Action, non trié Trier Ressource, non trié Trier Acteur, non trié Trier Statut, non trié Trier Date, non trié":
+          - columnheader "Trier Source, non trié":
+            - button "Trier Source, non trié":
+              - generic: Source
+          - columnheader "Trier Action, non trié":
+            - button "Trier Action, non trié":
+              - generic: Action
+          - columnheader "Trier Ressource, non trié":
+            - button "Trier Ressource, non trié":
+              - generic: Ressource
+          - columnheader "Trier Acteur, non trié":
+            - button "Trier Acteur, non trié":
+              - generic: Acteur
+          - columnheader "Trier Statut, non trié":
+            - button "Trier Statut, non trié":
+              - generic: Statut
+          - columnheader "Trier Date, non trié":
+            - button "Trier Date, non trié":
+              - generic: Date
+      - rowgroup:
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent AccountantPortal rds_org_001_user_008 Enregistré 15 oct. 2026, 17:19":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent AccountantPortal":
+            - text: SecurityEvent
+            - generic "AccountantPortal"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:19"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent AccountantPortal rds_org_001_user_008 Enregistré 15 oct. 2026, 17:17":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent AccountantPortal":
+            - text: SecurityEvent
+            - generic "AccountantPortal"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:17"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent accounting.audit.read rds_org_001_user_008 Enregistré 15 oct. 2026, 17:17":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent accounting.audit.read":
+            - text: SecurityEvent
+            - generic "accounting.audit.read"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:17"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent AccountingAccountantPortal rds_org_001_user_008 Enregistré 15 oct. 2026, 17:17":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent AccountingAccountantPortal":
+            - text: SecurityEvent
+            - generic "AccountingAccountantPortal"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:17"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent AccountantAccessGrant rds_org_001_user_008 Enregistré 15 oct. 2026, 17:15":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent AccountantAccessGrant":
+            - text: SecurityEvent
+            - generic "AccountantAccessGrant"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:15"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent accounting.close.accountant.invite rds_org_001_user_008 Enregistré 15 oct. 2026, 17:15":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent accounting.close.accountant.invite":
+            - text: SecurityEvent
+            - generic "accounting.close.accountant.invite"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:15"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent AccountingAccountantAccess rds_org_001_user_008 Enregistré 15 oct. 2026, 17:15":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent AccountingAccountantAccess":
+            - text: SecurityEvent
+            - generic "AccountingAccountantAccess"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:15"
+        - row "Contrôle PERMISSION_DENIED SecurityEvent rds_org_001 rds_org_001_user_008 Enregistré 15 oct. 2026, 17:04":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_DENIED"
+          - cell "SecurityEvent rds_org_001":
+            - text: SecurityEvent
+            - generic "rds_org_001"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:04"
+        - row "Contrôle PERMISSION_DENIED SecurityEvent rds_org_001 rds_org_001_user_008 Enregistré 15 oct. 2026, 17:03":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_DENIED"
+          - cell "SecurityEvent rds_org_001":
+            - text: SecurityEvent
+            - generic "rds_org_001"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:03"
+        - row "Contrôle PERMISSION_GRANTED SecurityEvent PaymentReconciliation rds_org_001_user_008 Enregistré 15 oct. 2026, 17:01":
+          - cell "Contrôle":
+            - generic: Contrôle
+          - cell "PERMISSION_GRANTED"
+          - cell "SecurityEvent PaymentReconciliation":
+            - text: SecurityEvent
+            - generic "PaymentReconciliation"
+          - cell "rds_org_001_user_008":
+            - generic "rds_org_001_user_008"
+          - cell "Enregistré":
+            - generic: Enregistré
+          - cell "15 oct. 2026, 17:01"
+      - rowgroup:
+        - row:
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+          - columnheader
+  - paragraph: Lignes par page
+  - combobox "Lignes par page":
+    - generic: "10"
+  - generic: Page 1 sur 2
+  - button "Aller à la première page" [disabled]:
+    - generic: Aller à la première page
+  - button "Aller à la page précédente" [disabled]:
+    - generic: Aller à la page précédente
+  - button "Aller à la page suivante":
+    - generic: Aller à la page suivante
+  - button "Aller à la dernière page":
+    - generic: Aller à la dernière page
+- status
+- alert
+- region "Notifications temporaires"
+- alert

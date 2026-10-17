@@ -45,6 +45,13 @@ function toMoney(value: Prisma.Decimal) {
   return value.toDecimalPlaces(2).toFixed(2)
 }
 
+function functionalAmounts(line: { baseDebit: Prisma.Decimal | null; baseCredit: Prisma.Decimal | null }) {
+  if (line.baseDebit === null || line.baseCredit === null) {
+    throw new BusinessRuleError("Functional-currency evidence is missing from a journal line. Review the historical entry before reporting.")
+  }
+  return { debit: line.baseDebit, credit: line.baseCredit }
+}
+
 function entryDateFilter(input: TrialBalanceInput | GeneralLedgerInput) {
   if (!input.startDate && !input.endDate) return {}
 
@@ -133,8 +140,9 @@ export async function getTrialBalance(input: TrialBalanceInput) {
       rowsByAccount.set(account.id, row)
     }
 
-    row.activityDebit = row.activityDebit.plus(line.debit)
-    row.activityCredit = row.activityCredit.plus(line.credit)
+    const amounts = functionalAmounts(line)
+    row.activityDebit = row.activityDebit.plus(amounts.debit)
+    row.activityCredit = row.activityCredit.plus(amounts.credit)
   }
 
   const rows = Array.from(rowsByAccount.values())
@@ -185,7 +193,36 @@ export async function getTrialBalance(input: TrialBalanceInput) {
 }
 
 export async function getGeneralLedger(input: GeneralLedgerInput) {
-  const lines = await db.journalEntryLine.findMany({
+  return (await getGeneralLedgerReport(input)).rows
+}
+
+async function getGeneralLedgerReport(input: GeneralLedgerInput) {
+  if (input.startDate && input.endDate && input.startDate > input.endDate) {
+    throw new BusinessRuleError("General ledger end date must not precede start date")
+  }
+  // Opening and in-range activity must describe the same ledger snapshot,
+  // including when another transaction posts a backdated entry concurrently.
+  return db.$transaction(async (tx) => {
+  const opening = input.startDate
+    ? await tx.journalEntryLine.aggregate({
+      where: {
+        organizationId: input.organizationId,
+        accountId: input.accountId,
+        journalEntry: {
+          organizationId: input.organizationId,
+          status: { in: [JournalEntryStatus.POSTED, JournalEntryStatus.REVERSED] },
+          entryDate: { lt: input.startDate },
+        },
+      },
+      _sum: { baseDebit: true, baseCredit: true },
+      _count: { _all: true, baseDebit: true, baseCredit: true },
+    })
+    : null
+  if (opening && (opening._count._all !== opening._count.baseDebit || opening._count._all !== opening._count.baseCredit)) {
+    throw new BusinessRuleError("Functional-currency evidence is missing from the opening ledger. Review the historical entries before reporting.")
+  }
+  const openingBalance = (opening?._sum.baseDebit ?? decimalZero()).minus(opening?._sum.baseCredit ?? decimalZero())
+  const lines = await tx.journalEntryLine.findMany({
     where: {
       organizationId: input.organizationId,
       accountId: input.accountId,
@@ -204,13 +241,18 @@ export async function getGeneralLedger(input: GeneralLedgerInput) {
         },
       },
     },
-    orderBy: [{ journalEntry: { entryDate: "asc" } }, { lineNumber: "asc" }],
+    orderBy: [{ journalEntry: { entryDate: "asc" } }, { journalEntryId: "asc" }, { lineNumber: "asc" }, { id: "asc" }],
   })
 
-  let runningBalance = decimalZero()
+  let runningBalance = openingBalance
+  let movementDebit = decimalZero()
+  let movementCredit = decimalZero()
 
-  return lines.map((line) => {
-    runningBalance = runningBalance.plus(line.debit).minus(line.credit)
+  const rows = lines.map((line) => {
+    const amounts = functionalAmounts(line)
+    runningBalance = runningBalance.plus(amounts.debit).minus(amounts.credit)
+    movementDebit = movementDebit.plus(amounts.debit)
+    movementCredit = movementCredit.plus(amounts.credit)
 
     return {
       id: line.id,
@@ -222,11 +264,33 @@ export async function getGeneralLedger(input: GeneralLedgerInput) {
       accountCode: line.account.code,
       accountName: line.account.nameEn,
       description: line.description,
-      debit: toMoney(line.debit),
-      credit: toMoney(line.credit),
+      debit: toMoney(amounts.debit),
+      credit: toMoney(amounts.credit),
+      openingBalance: toMoney(openingBalance),
+      periodMovement: toMoney(runningBalance.minus(openingBalance)),
       runningBalance: toMoney(runningBalance),
     }
   })
+  return {
+    rows,
+    summary: {
+      schemaVersion: "general-ledger-summary.v1" as const,
+      accountId: input.accountId,
+      amountBasis: "FUNCTIONAL_CURRENCY" as const,
+      signConvention: "DEBIT_POSITIVE" as const,
+      startDate: input.startDate?.toISOString() ?? null,
+      endDate: input.endDate?.toISOString() ?? null,
+      openingDebit: toMoney(opening?._sum.baseDebit ?? decimalZero()),
+      openingCredit: toMoney(opening?._sum.baseCredit ?? decimalZero()),
+      openingBalance: toMoney(openingBalance),
+      movementDebit: toMoney(movementDebit),
+      movementCredit: toMoney(movementCredit),
+      movementBalance: toMoney(movementDebit.minus(movementCredit)),
+      closingBalance: toMoney(runningBalance),
+      rowCount: rows.length,
+    },
+  }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 
 export async function getAccountingDashboardSummary(organizationId: string) {
@@ -285,20 +349,35 @@ export async function getAccountingDashboardSummary(organizationId: string) {
 }
 
 export async function exportAccountingReport(input: ExportAccountingReportInput) {
+  if (input.reportType === "GENERAL_LEDGER" && !input.accountId) {
+    throw new BusinessRuleError("General ledger export requires an account")
+  }
+  const period = input.periodId
+    ? await db.accountingPeriod.findFirst({
+      where: { id: input.periodId, organizationId: input.organizationId },
+      select: { id: true, name: true, startDate: true, endDate: true, status: true },
+    })
+    : null
+  if (input.periodId && !period) throw new BusinessRuleError("Accounting period is unavailable for this organization")
+  let startDate = input.startDate
+  let endDate = input.endDate
+  if (input.reportType === "GENERAL_LEDGER" && period) {
+    startDate = startDate ?? period.startDate
+    endDate = endDate ?? period.endDate
+    if (startDate < period.startDate || endDate > period.endDate || startDate > endDate) {
+      throw new BusinessRuleError("General ledger date range must be within the selected accounting period")
+    }
+  }
   const normalizedFilters = {
     reportType: input.reportType,
     periodId: input.periodId || null,
     accountId: input.accountId || null,
-    startDate: input.startDate?.toISOString() || null,
-    endDate: input.endDate?.toISOString() || null,
+    startDate: startDate?.toISOString() || null,
+    endDate: endDate?.toISOString() || null,
     includeZeroBalance: input.includeZeroBalance ?? true,
   }
 
-  if (input.reportType === "GENERAL_LEDGER" && !input.accountId) {
-    throw new BusinessRuleError("General ledger export requires an account")
-  }
-
-  const [report, accountingSettings, organization, period] = await Promise.all([
+  const [report, accountingSettings, organization] = await Promise.all([
     input.reportType === "TRIAL_BALANCE"
       ? getTrialBalance({
           organizationId: input.organizationId,
@@ -307,11 +386,11 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
           endDate: input.endDate,
           includeZeroBalance: input.includeZeroBalance ?? true,
         })
-      : getGeneralLedger({
+      : getGeneralLedgerReport({
           organizationId: input.organizationId,
           accountId: input.accountId!,
-          startDate: input.startDate,
-          endDate: input.endDate,
+          startDate,
+          endDate,
         }),
     db.organizationAccountingSettings.findUnique({
       where: { organizationId: input.organizationId },
@@ -321,25 +400,15 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
       where: { id: input.organizationId },
       select: { currency: true },
     }),
-    input.periodId
-      ? db.accountingPeriod.findFirst({
-          where: { id: input.periodId, organizationId: input.organizationId },
-          select: { id: true, name: true, startDate: true, endDate: true, status: true },
-        })
-      : Promise.resolve(null),
   ])
 
-  if (input.periodId && !period) {
-    throw new BusinessRuleError("Accounting period is unavailable for this organization")
-  }
-
   const currency = (accountingSettings?.baseCurrency || organization?.currency || "XAF").trim().toUpperCase()
-  const rowCount = Array.isArray(report) ? report.length : report.rows.length
+  const rowCount = report.rows.length
   const exportId = randomUUID()
   const watermarkId = "acct-" + input.organizationId + "-" + exportId
   const filtersHash = hashFilters(normalizedFilters)
   const generatedAt = new Date().toISOString()
-  const balanceStatus = Array.isArray(report)
+  const balanceStatus = "summary" in report
     ? "NOT_APPLICABLE"
     : report.totals.isBalanced
       ? "BALANCED"
@@ -385,7 +454,8 @@ export async function exportAccountingReport(input: ExportAccountingReportInput)
     watermarkId,
     provenance,
     filters: normalizedFilters,
-    data: report,
+    data: "summary" in report ? report.rows : report,
+    ...("summary" in report ? { summary: { ...report.summary, currency } } : {}),
   }
   const contentHash = hashContent(payload)
 

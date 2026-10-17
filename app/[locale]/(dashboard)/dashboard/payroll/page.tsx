@@ -3,9 +3,15 @@ import PayrollCommandCenter from "@/components/payroll/PayrollCommandCenter"
 import { pickLocale } from "@/i18n/routing"
 import { routeByKey, withPayrollSurfaceAccess } from "./payroll-route-access"
 
-export const metadata = {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  return locale === "fr" ? {
+    title: "Centre de pilotage de la paie | Stoquify",
+    description: "Pilotage de la paie, blocages, preuves, paiements, déclarations et clôture.",
+  } : {
   title: "Payroll Command Center | Stoquify",
   description: "Role-aware payroll command center for blockers, evidence, readiness, payment, declaration, posting, and close state.",
+}
 }
 
 export default async function PayrollWorkbenchPage({

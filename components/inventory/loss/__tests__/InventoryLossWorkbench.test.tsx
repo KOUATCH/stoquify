@@ -203,7 +203,8 @@ function hookState(overrides: Partial<HookState> = {}): HookState {
   };
 }
 
-const { InventoryLossWorkbench } = require("../InventoryLossWorkbench");
+const { InventoryLossWorkbench: Workbench } = require("../InventoryLossWorkbench");
+const InventoryLossWorkbench = () => <Workbench organizationId="org-1" actorId="actor-1" />;
 
 describe("InventoryLossWorkbench", () => {
   beforeEach(() => {
@@ -339,5 +340,16 @@ describe("InventoryLossWorkbench", () => {
       screen.getByText("Inventory loss access is unavailable"),
     ).toBeInTheDocument();
     expect(screen.queryByText("Rice")).not.toBeInTheDocument();
+  });
+
+  it("closes a previously opened record when current read authority is lost", () => {
+    const { rerender } = render(<InventoryLossWorkbench />);
+    fireEvent.click(screen.getByRole("button", { name: "Open loss record details: ADJ-001" }));
+    expect(screen.getByRole("dialog")).toBeVisible();
+    mockHookState = hookState({ response: undefined, result: undefined, scope: undefined, isError: true, error: Object.assign(new Error("Forbidden"), { status: 403 }) });
+    rerender(<InventoryLossWorkbench />);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByText("Awa Manager")).not.toBeInTheDocument();
+    expect(screen.getByText("Inventory loss access is unavailable")).toBeInTheDocument();
   });
 });

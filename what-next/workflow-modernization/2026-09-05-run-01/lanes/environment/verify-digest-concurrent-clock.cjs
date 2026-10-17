@@ -14,7 +14,7 @@ async function main() {
     const actor = await db.user.create({ data: { organizationId: org.id, email: 'digest-clock-' + index + '-' + stamp + '@example.invalid' } });
     const customer = await db.customer.create({ data: { organizationId: org.id, name: 'Owned customer' } });
     const location = await db.location.create({ data: { organizationId: org.id, name: 'Owned site', code: 'SITE' } });
-    for (const [day, amount] of [[19, amounts[0]], [20, amounts[1]]]) await db.salesOrder.create({ data: { organizationId: org.id, customerId: customer.id, locationId: location.id, createdById: actor.id, orderNumber: 'CLOCK-' + index + '-' + day + '-' + stamp, status: 'COMPLETED', orderDate: new NativeDate('2026-09-' + day + 'T12:00:00Z'), subtotal: amount, total: amount } });
+    for (const [day, amount] of [[19, amounts[0]], [20, amounts[1]]]) await db.salesOrder.create({ data: { organizationId: org.id, customerId: customer.id, locationId: location.id, createdById: actor.id, orderNumber: 'CLOCK-' + index + '-' + day + '-' + stamp, status: 'COMPLETED', orderDate: new NativeDate('2026-09-' + day + 'T12:00:00Z'), subtotal: amount, total: amount }, select: { id: true } });
     tenants.push({ org, actor });
   }
   const where = { organizationId: { in: tenants.map(t => t.org.id) } };

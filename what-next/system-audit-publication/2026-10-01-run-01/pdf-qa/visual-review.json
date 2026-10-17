@@ -1,0 +1,163 @@
+{
+  "checkedAt": "2026-10-01T06:51:03.549651+00:00",
+  "status": "PASS_WITH_MINOR_LAYOUT_LIMITATION",
+  "pdfCount": 19,
+  "pageCount": 115,
+  "initialReceipt": "pdf-inspection.json",
+  "initialCheckDisposition": "Contiguous ID regex missed register IDs visibly wrapped over two lines; underlying content is present. Initial result preserved unchanged.",
+  "registerPackageIdsAfterLineWrapNormalization": [
+    "R00",
+    "R01",
+    "R02",
+    "R03",
+    "R04",
+    "R05",
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R13",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19",
+    "R20",
+    "R21",
+    "R22",
+    "R23",
+    "R24",
+    "R25",
+    "R26",
+    "R27",
+    "R28",
+    "R29",
+    "R30",
+    "R31",
+    "R32",
+    "R33",
+    "R34",
+    "R35",
+    "R36",
+    "R37"
+  ],
+  "registerTableStatusCountsAfterLineWrapNormalization": {
+    "PARTIAL": 12,
+    "NOT_STARTED": 22,
+    "CONDITIONAL_NOT_STARTED": 4
+  },
+  "latestReleaseBlockedStatementsPresent": true,
+  "roadmapR00ThroughR37Present": true,
+  "allPdfsParsedAndAllPagesHaveText": true,
+  "characterBoxesOutsidePageBounds": 0,
+  "visualPagesReviewed": [
+    {
+      "pdf": "EXECUTION_REPORT.pdf",
+      "page": 1,
+      "image": "EXECUTION_REPORT-page-01.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "EXECUTION_REPORT.pdf",
+      "page": 4,
+      "image": "EXECUTION_REPORT-page-04.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "EXECUTION_REPORT.pdf",
+      "page": 6,
+      "image": "EXECUTION_REPORT-page-06.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "EXECUTION_REGISTER.pdf",
+      "page": 1,
+      "image": "EXECUTION_REGISTER-page-01.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "EXECUTION_REGISTER.pdf",
+      "page": 3,
+      "image": "EXECUTION_REGISTER-page-03.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "EXECUTION_REGISTER.pdf",
+      "page": 4,
+      "image": "EXECUTION_REGISTER-page-04.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "findings.pdf",
+      "page": 1,
+      "image": "findings-page-01.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "findings.pdf",
+      "page": 6,
+      "image": "findings-page-06.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "findings.pdf",
+      "page": 11,
+      "image": "findings-page-11.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "SYSTEM_AUDIT_PUBLICATION_2026-10-01.pdf",
+      "page": 1,
+      "image": "SYSTEM_AUDIT_PUBLICATION_2026-10-01-page-01.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    },
+    {
+      "pdf": "SYSTEM_AUDIT_PUBLICATION_2026-10-01.pdf",
+      "page": 2,
+      "image": "SYSTEM_AUDIT_PUBLICATION_2026-10-01-page-02.png",
+      "pixels": [
+        1014,
+        1433
+      ]
+    }
+  ],
+  "visualResult": "No material clipping, missing table content, text overlap or illegible headings observed in the 11 sampled rendered pages.",
+  "minorLayoutIssue": "Narrow first columns split register IDs (R then 00) and findings IDs (F0 then 1). Register long status labels wrap across lines. Content remains readable, but simple contiguous text searches can miss these labels.",
+  "sourcePreservation": "Root separately verified 18 source/archive SHA256 matches and preservation of prior non-PDF artifacts.",
+  "writes": "QA scripts, receipts and rendered page PNGs only, under this pdf-qa directory",
+  "limitations": "Visual inspection sampled first/middle/final report, register and findings pages plus both index pages. Text parsing and geometric bounds checks covered all 115 pages; this is not an exhaustive visual review of every page or a fresh platform audit."
+}

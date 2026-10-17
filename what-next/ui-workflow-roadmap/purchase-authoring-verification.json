@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-04",
+  "packages": ["UX14", "UX15"],
+  "scope": "Durable purchase-order authoring and creation-receipt recovery behind explicit rollout flags",
+  "sourceManifest": "purchase-authoring-source-hashes.json",
+  "tests": { "report": "purchase-authoring-jest.json", "suitesPassed": 6, "testsPassed": 88, "exitCode": 0 },
+  "typecheck": { "session": 7255, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "exitCode": 0 },
+  "eslint": { "session": 23642, "scope": "authoring contracts/service/actions/hook/panel/durable form, source create service and new-PO page", "exitCode": 0, "warnings": 0 },
+  "diffWhitespaceExitCode": 0,
+  "schema": { "workingSchemaValidationExitCode": 0, "migration": "prisma/migrations/20261004130000_purchase_order_authoring/migration.sql", "migrationApplied": false, "dependsOn": "20261004120000_access_requests", "clientGenerationAttemptedThisSlice": false },
+  "flags": { "PURCHASE_ORDER_AUTHORING_UI_ENABLED": "default false; not enabled", "PURCHASE_ORDER_AUTHORING_WRITES_ENABLED": "default false; not enabled" },
+  "compatibility": { "defaultLegacyFormPreserved": true, "legacyFormDiffEmpty": true, "existingPOEditPreserved": true, "allLegacyCreateCallersMigrated": false },
+  "automaticApprovalReview": { "rejected": "Replacing live default creation with a write-disabled authoring form", "reason": "Potential service outage without rollout/fallback", "resolvedBy": "Preserving original default path and using an explicit opt-in variant", "replacementEnabled": false },
+  "databaseConcurrencyVerified": false,
+  "livePurchaseOrderCreated": false,
+  "browser": { "environment": "http://localhost:3000", "attemptedPath": "/en/dashboard/purchase-orders/new", "defaultFormVerified": false, "newFormVerified": false, "failure": "CDP Page.navigate timeout followed by Emulation.setFocusEmulationEnabled timeout", "screenshot": null },
+  "remaining": ["Disposable PostgreSQL migration/concurrency/rollback evidence", "Full wizard localization", "Populated/restricted-role browser and accessibility tasks", "Organization lock performance", "Retention and operating ownership", "Legacy caller transition", "Rollout and pilot"],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

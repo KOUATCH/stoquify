@@ -20,8 +20,8 @@ import type {
   InventoryCashMetrics,
   PaymentTruthMetrics,
   SnapshotResult,
-  TenantOperatingMetrics,
 } from "@/services/snapshots/snapshot-contracts"
+import type { CashOperatingMetrics, CashSource } from "./cash-command-sources.service"
 import type { CashDrawerDashboardData } from "@/services/pos/drawer-dashboard.service"
 
 export type CashCommandCardId =
@@ -76,17 +76,17 @@ export type CashCommandActionItem = {
 }
 
 export type CashCommandSummary = {
-  cashCollected: number
+  cashCollected: number | null
   unreconciledCash: number | null
-  openSuspenseCount: number
-  drawerVariance: number
-  drawerAlertCount: number
-  providerRiskCount: number
-  activeEmployeeBalanceCaseCount: number
-  employeeBalanceOutstandingAmount: number
-  upcomingPayrollNetPayAmount: number
-  upcomingStatutoryLiabilityAmount: number
-  payrollForecastTotalAmount: number
+  openSuspenseCount: number | null
+  drawerVariance: number | null
+  drawerAlertCount: number | null
+  providerRiskCount: number | null
+  activeEmployeeBalanceCaseCount: number | null
+  employeeBalanceOutstandingAmount: number | null
+  upcomingPayrollNetPayAmount: number | null
+  upcomingStatutoryLiabilityAmount: number | null
+  payrollForecastTotalAmount: number | null
   actionCountToday: number
   staleCount: number
   blockedCount: number
@@ -117,20 +117,29 @@ export type CashCommandData = {
   actionsToday: CashCommandActionItem[]
   risks: BIRiskRank[]
   proofSubjects: BIProofDrawerSubject[]
-  drawerState: CashCommandDrawerState
+  drawerState: CashCommandDrawerState | null
+  sourceRestrictions?: { id: string; title: string; reason: "permission_denied" | "module_unavailable" }[]
   actionQueue: Pick<ActionQueueResult, "summary" | "filteredOutCount">
   moduleControl: Pick<
     ModuleControlCenterData,
     "mode" | "hardEnforcementEnabled" | "summary" | "generatedAt" | "unknownRequestedModules"
-  >
+  > | null
   summary: CashCommandSummary
 }
 
+export type AuthorizedCashCommandData = Omit<CashCommandData, "summary" | "drawerState" | "moduleControl" | "actionQueue"> & {
+  summary: { [K in keyof CashCommandSummary]: CashCommandSummary[K] | null }
+  drawerState: CashCommandDrawerState | null
+  moduleControl: CashCommandData["moduleControl"] | null
+  actionQueue: { summary: Pick<ActionQueueResult["summary"], "total" | "bySeverity">; filteredOutCount: number | null }
+  restrictedCapabilities?: { id: string; title: string; reason: "permission_denied" | "module_unavailable" }[]
+}
+
 export type CashCommandSnapshotBundle = {
-  tenantOperating: SnapshotResult<TenantOperatingMetrics>
-  paymentTruth: SnapshotResult<PaymentTruthMetrics>
-  inventoryCash: SnapshotResult<InventoryCashMetrics>
-  closeReadiness: SnapshotResult<CloseReadinessMetrics>
+  tenantOperating: CashSource<CashOperatingMetrics>
+  paymentTruth: SnapshotResult<PaymentTruthMetrics> | null
+  inventoryCash: SnapshotResult<InventoryCashMetrics> | null
+  closeReadiness: SnapshotResult<CloseReadinessMetrics> | null
 }
 
 export type ComposeCashCommandInput = {
@@ -138,10 +147,13 @@ export type ComposeCashCommandInput = {
   organizationName: string | null
   generatedAt: string
   currency: string
+  cardSources?: Partial<Record<CashCommandCardId, CashSource<unknown>>>
   snapshots: CashCommandSnapshotBundle
-  drawerDashboard: CashDrawerDashboardData
+  drawerDashboard: CashDrawerDashboardData | null
+  sourceRestrictions?: CashCommandData["sourceRestrictions"]
   actionQueue: ActionQueueResult
-  moduleControl: ModuleControlCenterData
+  moduleControl: ModuleControlCenterData | null
+  proofSubjectUnavailableReasons?: Partial<Record<"payment.transaction" | "journal.entry" | "reconciliation.run" | "close.run", string>>
   proofSubjectIds?: {
     paymentTransactionId?: string | null
     journalEntryId?: string | null

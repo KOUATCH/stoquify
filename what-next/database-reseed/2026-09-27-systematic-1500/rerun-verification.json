@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-09-27T11:33:15.912Z",
+  "target": "stoquify_reseed_local_20260927_1500",
+  "stages": [
+    "scenarios",
+    "financial",
+    "inventory"
+  ],
+  "businessRowsStable": true,
+  "changes": [
+    {
+      "table": "audit_logs",
+      "before": 10166,
+      "after": 10168
+    }
+  ],
+  "stock": {
+    "items": 41,
+    "below1500": 0,
+    "missingLevels": 0,
+    "minimum": 1500
+  },
+  "referenceRerun": {
+    "addedRoles": 0,
+    "addedPersonas": 0
+  },
+  "note": "Audits record execution/authentication. No duplicate stock, journal, payment, membership, event, notification, or scenario rows."
+}

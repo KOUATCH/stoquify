@@ -1,0 +1,62 @@
+{
+  "startedAt": "2026-09-30T20:44:56.240Z",
+  "endedAt": "2026-09-30T21:04:06.039Z",
+  "command": "node scripts/build-app-safe.js --skip-clean",
+  "environment": {
+    "NODE_ENV": "production",
+    "NEXT_DIST_DIR": ".next-remediation-r01-20260930",
+    "databaseTarget": "disabled localhost:1"
+  },
+  "configChanges": [
+    {
+      "file": "tsconfig.json",
+      "beforeHash": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+      "generatedHash": "9c7ce40263a8de6d2567926504b6035a6858a104d84e7e53bc952af3f0de98d4",
+      "restoredBuildOnlyChange": true
+    },
+    {
+      "file": "next-env.d.ts",
+      "beforeHash": "4c9344e62bfcabbb29c4fc820a895546444aa5c2cc6cc60b870a3d6e547b70c3",
+      "generatedHash": "4982d3991b29cdab00be63d0bbcb08ef0db5252ec359921d99c388ebfc8707b6",
+      "restoredBuildOnlyChange": true
+    }
+  ],
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "status": "failed",
+  "exitCode": 1,
+  "allowOrphans": false,
+  "dryRun": false,
+  "skippedClean": true,
+  "devProcessesBlockBuildOutput": false,
+  "processInspectionError": null,
+  "orphanedBuildProcesses": [],
+  "nextOutput": {
+    "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+    "state": "absent",
+    "shouldClean": false,
+    "reasons": [],
+    "buildId": null,
+    "requireStandalone": false
+  },
+  "cleanedNext": false,
+  "build": {
+    "commandLine": "C:\\Program Files\\nodejs\\node.exe E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\next\\dist\\bin\\next build",
+    "exitCode": 1,
+    "signal": null,
+    "spawnError": null,
+    "timedOut": false,
+    "childPid": 8764
+  },
+  "postBuildNextOutput": {
+    "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+    "state": "stale-or-corrupt",
+    "shouldClean": true,
+    "reasons": [
+      ".next-remediation-r01-20260930 has production build markers but no BUILD_ID"
+    ],
+    "buildId": null,
+    "requireStandalone": false
+  },
+  "postBuildOrphanedBuildProcesses": [],
+  "postBuildProcessInspectionError": null
+}

@@ -1,0 +1,962 @@
+{
+  "recordedAt": "2026-10-04T15:23:42.395Z",
+  "database": {
+    "name": "stoquify_local_ui_workflow_20261004_01a10672",
+    "version": "PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit"
+  },
+  "applicationDatabaseChanged": false,
+  "migrations": [
+    {
+      "migration_name": "20260528124341_refine_item_barcode",
+      "checksum": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "finished_at": "2026-10-04T14:50:13.241Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260528124341_refine_item_barcode/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260611120000_payment_provider_reference_uniqueness",
+      "checksum": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "finished_at": "2026-10-04T14:50:13.252Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260611120000_payment_provider_reference_uniqueness/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260611130000_accounting_auth_baseline_bridge",
+      "checksum": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+      "finished_at": "2026-10-04T14:50:13.600Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260618154500_repair_accounting_source_links",
+      "checksum": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643",
+      "finished_at": "2026-10-04T14:50:13.608Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260618154500_repair_accounting_source_links/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260618160000_payroll_foundation_bridge",
+      "checksum": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8",
+      "finished_at": "2026-10-04T14:50:13.843Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260618160000_payroll_foundation_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260618161000_ap_stock_count_foundation_bridge",
+      "checksum": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc",
+      "finished_at": "2026-10-04T14:50:14.079Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260618161000_ap_stock_count_foundation_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260619120000_backfill_purchase_receive_permission",
+      "checksum": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "finished_at": "2026-10-04T14:50:14.083Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260619120000_backfill_purchase_receive_permission/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260621102500_workflow_assurance_enum_bridge",
+      "checksum": "da34bc1196e951830980419a3e5f6f98600054a2a1f136e633a7301406c9cb35",
+      "finished_at": "2026-10-04T14:50:14.091Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260621102500_workflow_assurance_enum_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260621103000_workflow_assurance_registry_foundation",
+      "checksum": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473",
+      "finished_at": "2026-10-04T14:50:14.149Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260621103000_workflow_assurance_registry_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "checksum": "8fa08137b6d785ddc812391ce212aa411c4e777bf453bfbf4c450b31cedac0e4",
+      "finished_at": "2026-10-04T14:50:14.162Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260621112500_workflow_assurance_incident_enum_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260621113000_workflow_assurance_incident_spine",
+      "checksum": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664",
+      "finished_at": "2026-10-04T14:50:14.243Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260621113000_workflow_assurance_incident_spine/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260625110000_payroll_kernel_immutability",
+      "checksum": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4",
+      "finished_at": "2026-10-04T14:50:14.260Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260625110000_payroll_kernel_immutability/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260626093000_payroll_compensation_approval",
+      "checksum": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "finished_at": "2026-10-04T14:50:14.327Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260626093000_payroll_compensation_approval/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260626103000_payroll_payment_evidence_readiness",
+      "checksum": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "finished_at": "2026-10-04T14:50:14.348Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260626103000_payroll_payment_evidence_readiness/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "checksum": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "finished_at": "2026-10-04T14:50:14.352Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260626123000_payroll_cnps_country_pack_expansion/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "checksum": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "finished_at": "2026-10-04T14:50:14.375Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260626133000_payroll_declaration_lifecycle_evidence/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "checksum": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "finished_at": "2026-10-04T14:50:14.378Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260626143000_payroll_payment_reconciliation_lifecycle/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260628123000_payroll_employee_balance_lifecycle",
+      "checksum": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "finished_at": "2026-10-04T14:50:14.440Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260628123000_payroll_employee_balance_lifecycle/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260630090000_payment_reconciliation_foundation",
+      "checksum": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "finished_at": "2026-10-04T14:50:14.785Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260630090000_payment_reconciliation_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "checksum": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "finished_at": "2026-10-04T14:50:14.792Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260630100000_payment_reconciliation_inbox_worker_leases/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260703110000_public_receipt_access_tokens",
+      "checksum": "2097ae01e00361195610fcbf2cf06748bef7e190054d030a5983acb68b1f66f8",
+      "finished_at": "2026-10-04T14:50:14.808Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260703110000_public_receipt_access_tokens/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260711133000_public_identity_abuse_limits",
+      "checksum": "53e55fb881f552ab9f54b8d69ca92cf3554f690b149d890d60d7ce9e5d5bb258",
+      "finished_at": "2026-10-04T14:50:14.821Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260711133000_public_identity_abuse_limits/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260714194500_inventory_history_accounting_time_controls",
+      "checksum": "bdff0414f9046d566dcb03bb3b59fbefa28f3570af51bd6b527cdcb1c881ab72",
+      "finished_at": "2026-10-04T14:50:14.838Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260714194500_inventory_history_accounting_time_controls/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260714203000_session_assurance",
+      "checksum": "b30c2a40ecdc2b82e631dea157ac2a2b6fa3078a7837f311a4b7052a259f1fa2",
+      "finished_at": "2026-10-04T14:50:14.842Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260714203000_session_assurance/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260715090000_inventory_correction_reversal_lineage",
+      "checksum": "c3e8c220f522f6b26b86f9e794f4e9fe6f44ca80f9b1d808f9d9fa5e199eb69f",
+      "finished_at": "2026-10-04T14:50:14.862Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260718100000_branch_daily_close_review_foundation",
+      "checksum": "2d2fb6276b5bc5a8a1cbcab774c39c1ee2fb67b6c7f2f82afc3f06c7cb6804ec",
+      "finished_at": "2026-10-04T14:50:14.892Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260718100000_branch_daily_close_review_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "checksum": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "finished_at": "2026-10-04T14:50:14.935Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260718130000_branch_daily_close_sign_off_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260719190000_hris_org_manager_scope_foundation",
+      "checksum": "cef33045a530b51f10bd86cc42c08c1951ce2ad1eeaa096562c6b9d83ee36f0f",
+      "finished_at": "2026-10-04T14:50:15.053Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260719190000_hris_org_manager_scope_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260719203000_workflow_assurance_stable_case_identity",
+      "checksum": "cb88d079e9ee8ea2b360cbacfa711df8aef6892e672b8b7e72abd76e3065c2ec",
+      "finished_at": "2026-10-04T14:50:15.065Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260719203000_workflow_assurance_stable_case_identity/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260720090000_close_assurance_schema_foundation",
+      "checksum": "d2ac0be6867203ce77f3293c778b69b7dd162213613f71be013c3e845d557100",
+      "finished_at": "2026-10-04T14:50:15.163Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260720090000_close_assurance_schema_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260720130000_cash_shortage_policy_governance",
+      "checksum": "3cef5f9080d5bf58359a3e7ec569b86dfddfa16e0a7355de52d1dd6cf52f7805",
+      "finished_at": "2026-10-04T14:50:15.181Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260720130000_cash_shortage_policy_governance/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "checksum": "e46a97770a96a83c0c97db74aebb6644fa2eaffd9a588dd4f4b3b3cbe0739a1b",
+      "finished_at": "2026-10-04T14:50:15.200Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260720210000_workflow_assurance_multi_finding_persistence/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722143000_agent_runtime_phase_1_foundation",
+      "checksum": "94a21b2478abed9013ad91b86a3c0ca8d1be299c4c647e9d72db7060d7891422",
+      "finished_at": "2026-10-04T14:50:15.281Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722143000_agent_runtime_phase_1_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722150000_agent_runtime_tenant_consistency",
+      "checksum": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d",
+      "finished_at": "2026-10-04T14:50:15.312Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722150000_agent_runtime_tenant_consistency/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "checksum": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146",
+      "finished_at": "2026-10-04T14:50:15.317Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722153000_agent_runtime_incident_cascade_consistency/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "checksum": "b17cfa95100676b20853918337b295859e3790fba99e07ba988936ca511c9831",
+      "finished_at": "2026-10-04T14:50:15.323Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722160000_agent_runtime_phase_2a_provenance/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "checksum": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c",
+      "finished_at": "2026-10-04T14:50:15.326Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722161000_agent_runtime_phase_2a_operational_controls/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "checksum": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d",
+      "finished_at": "2026-10-04T14:50:15.334Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260722162000_agent_runtime_tenant_scoped_correlation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260723100000_agent_runtime_release_control",
+      "checksum": "36cfeaca10404bdecb900e04b6c6059b3f0b1525742601c376d78f4edf158410",
+      "finished_at": "2026-10-04T14:50:15.388Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260723100000_agent_runtime_release_control/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260724100000_agent_runtime_release_hardening",
+      "checksum": "1b49cff8f3465d4d82d8684f0f990843c9800a9371c178d0ac5066f317adfc60",
+      "finished_at": "2026-10-04T14:50:15.394Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260724100000_agent_runtime_release_hardening/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "checksum": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2",
+      "finished_at": "2026-10-04T14:50:15.399Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260724113000_agent_runtime_retirement_alert_dead_letter/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260724193000_agent_reconciler_invocation_ledger",
+      "checksum": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a",
+      "finished_at": "2026-10-04T14:50:15.413Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260724193000_agent_reconciler_invocation_ledger/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260726140000_business_event_foundation_bridge",
+      "checksum": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e",
+      "finished_at": "2026-10-04T14:50:15.447Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260726140000_business_event_foundation_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260726143000_regulatory_isolation_outbox",
+      "checksum": "cb4891823eb8473d01ff1323890383bef0a49d87a8a82a638ccf175a5a2e6fbb",
+      "finished_at": "2026-10-04T14:50:15.450Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260726143000_regulatory_isolation_outbox/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260726190000_retire_production_bom_capability",
+      "checksum": "f8e1ed80e1e0ef53cb6c7cfed2902baa3a65065e99a044ea72a62ed432d11ae5",
+      "finished_at": "2026-10-04T14:50:15.464Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260726190000_retire_production_bom_capability/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260726213000_hris_operational_time_management",
+      "checksum": "b48051b1fb971666933f6f915966cdf184b936add25402075243b3731800ab9d",
+      "finished_at": "2026-10-04T14:50:15.618Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260726213000_hris_operational_time_management/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260727090000_accountant_access_portfolio",
+      "checksum": "92eb7d70aec20347911f3b6ae3b6197bedf1a85e0cac0117974627fd682ffd41",
+      "finished_at": "2026-10-04T14:50:15.647Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260727090000_accountant_access_portfolio/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260727110000_offline_pos_sync_foundation",
+      "checksum": "4a8896360a554d94707dbf86495b2e4e0bbb80e1cae4e8ec9343463c2e30d725",
+      "finished_at": "2026-10-04T14:50:15.821Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260727110000_offline_pos_sync_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "checksum": "035a01b974be882877669107d4e7c68b939097c6e49cb6273c9daf5b458d584d",
+      "finished_at": "2026-10-04T14:50:15.825Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260727110100_offline_pos_sync_foundation_reconciliation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260727143000_country_adapter_pilot_foundation",
+      "checksum": "da49e87bd903ba3130b4ad2782338f72ddd002ecf988c8789a66bd09400fad61",
+      "finished_at": "2026-10-04T14:50:16.017Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260727143000_country_adapter_pilot_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260727170000_ai_copilot_proposal_guardrails",
+      "checksum": "755aef868ddba0f420b6b728a23b50f2097a8054b1fbd090716207f76461e439",
+      "finished_at": "2026-10-04T14:50:16.047Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260727170000_ai_copilot_proposal_guardrails/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "checksum": "dbf12970ca133f5241f8814a56102374baefa6dd155a1682b2b76543ae3be270",
+      "finished_at": "2026-10-04T14:50:16.070Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260728100000_pos_cash_shortage_checkpoint_persistence/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "checksum": "939c1a58986dbe63fa005df7fac668689038287238e877ecdded43b4dc87d1fa",
+      "finished_at": "2026-10-04T14:50:16.081Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260730150000_organization_onboarding_entitlement_bridge/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260730160000_pos_sales_dependency_entitlement",
+      "checksum": "60b09a3d7b59e3886483990819cb489b2cee55b2b0b5b9894d833008d91dbbf5",
+      "finished_at": "2026-10-04T14:50:16.084Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260730160000_pos_sales_dependency_entitlement/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260801153000_certified_fiscal_evidence_immutability",
+      "checksum": "fb2349ba0a80398ca18d53fc756d84f55948d114b1ba4791f81cad3727939073",
+      "finished_at": "2026-10-04T14:50:16.092Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260801153000_certified_fiscal_evidence_immutability/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260808120000_customer_settlement_allocation_foundation",
+      "checksum": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "finished_at": "2026-10-04T14:50:16.157Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260808120000_customer_settlement_allocation_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "checksum": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "finished_at": "2026-10-04T14:50:16.171Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260808133000_customer_settlement_compensating_reversal_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809100000_customer_receivable_document_foundation",
+      "checksum": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "finished_at": "2026-10-04T14:50:16.235Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809100000_customer_receivable_document_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809113000_customer_statement_snapshot_foundation",
+      "checksum": "ef4f1a295873dc53a40e3376a1a83aec723fa5ab92e517d54bc4f67dd5ff467f",
+      "finished_at": "2026-10-04T14:50:16.272Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809113000_customer_statement_snapshot_foundation/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809130000_customer_statement_external_access",
+      "checksum": "ba745969c795572cd9f7692f519e56781bce463356a8720e91d0d3b57d826b97",
+      "finished_at": "2026-10-04T14:50:16.370Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809130000_customer_statement_external_access/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809143000_customer_statement_delivery_referral",
+      "checksum": "7fb1b45b6f599c661e7831ed282185331b263f82ad430c2f465f1d547bd3fb06",
+      "finished_at": "2026-10-04T14:50:16.461Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809143000_customer_statement_delivery_referral/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809160000_accountant_client_invite_onboarding",
+      "checksum": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "finished_at": "2026-10-04T14:50:16.523Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809160000_accountant_client_invite_onboarding/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809170000_referral_accounting_source_types",
+      "checksum": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "finished_at": "2026-10-04T14:50:16.527Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809170000_referral_accounting_source_types/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260809180000_accounting_enum_completion",
+      "checksum": "e89b4380a5ee50ddf6f587c40d9da9d987e0b79bdf41cc4f3a42b4339f464043",
+      "finished_at": "2026-10-04T14:50:16.531Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260809180000_accounting_enum_completion/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "checksum": "6ba2d60a539d4daa6396a5398648dc15310bb146513ad5b8db7a4c40012d6e99",
+      "finished_at": "2026-10-04T14:50:16.649Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260815120000_supplier_po_acknowledgement_pilot/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260815130000_governed_master_data_onboarding",
+      "checksum": "89128f621cbde5711f6a8dde4679fc077bc34d0b3849ea0739926e07a1d475b4",
+      "finished_at": "2026-10-04T14:50:16.718Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260815130000_governed_master_data_onboarding/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260815143000_pos_customer_location_scope",
+      "checksum": "a4a5fc37cc0d405ad567a3ea87d846ed8f9dfc528aa2139d38f7a8d739022c0a",
+      "finished_at": "2026-10-04T14:50:16.743Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260815143000_pos_customer_location_scope/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "checksum": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e",
+      "finished_at": "2026-10-04T14:50:16.749Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260815190000_payment_reconciliation_evidence_immutability/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260816100000_master_data_onboarding_risk_tier",
+      "checksum": "c67d33b36703ba1815bf8d9d2d19c5ddc6c9757985741d3e5941de12d3a8af27",
+      "finished_at": "2026-10-04T14:50:16.757Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260816100000_master_data_onboarding_risk_tier/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260817120000_pos_commit_result_registry",
+      "checksum": "991a1508f73aa75c2331316d019dbf4abc505097dd2d60d7d108a85e24d7f056",
+      "finished_at": "2026-10-04T14:50:16.784Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260817120000_pos_commit_result_registry/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260818100000_purchase_receiving_integrity",
+      "checksum": "df4aa75d35f09d856b8f4eb75fd2c283ec333b519e99a3ed4579ffc513d9ba8f",
+      "finished_at": "2026-10-04T14:50:16.806Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260818100000_purchase_receiving_integrity/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260818120000_governed_delivery_order_to_cash",
+      "checksum": "74d1b1f491b1fc8e8a8319a21d29e957f21a362f227eacc4403ddd87df38bd78",
+      "finished_at": "2026-10-04T14:50:16.906Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260818120000_governed_delivery_order_to_cash/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260818120000_pos_electronic_tender_authority",
+      "checksum": "3451178f2323b8c8d96fb0f38e01fc2cc3c82e3a89c917c68b980253ef503d3f",
+      "finished_at": "2026-10-04T14:50:16.927Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260818120000_pos_electronic_tender_authority/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260818130000_sales_order_reporting_schema_repair",
+      "checksum": "eed41a06bff7999be0bc41dc88ca46c13bed08ed5ed8791c8e6406179a0d32ca",
+      "finished_at": "2026-10-04T14:50:16.939Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260818130000_sales_order_reporting_schema_repair/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260819100000_purchase_receiving_inspection_control",
+      "checksum": "a407a1fe586934c9066dad7e2e0f1cf4ad4a692e50dce9964e92076d7fb48451",
+      "finished_at": "2026-10-04T14:50:16.980Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260819100000_purchase_receiving_inspection_control/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "checksum": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c",
+      "finished_at": "2026-10-04T14:50:17.114Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260819120000_purchase_return_credit_evidence_boundary/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "checksum": "126bc799c1885856f23a8d768c1f7fe8808841ec8382f9e2c20e52b870e9ed76",
+      "finished_at": "2026-10-04T14:50:17.145Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260820100000_supplier_invoice_match_exception_boundary/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "checksum": "98a4907bb72cbb99c2919df3ef975c3c5924e70b19c9b34a536c9b3a77915a52",
+      "finished_at": "2026-10-04T14:50:17.203Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260821210000_payroll_trust_spine_transition_ledger/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260823100000_business_event_gateway_completion",
+      "checksum": "a9031a12fda4b925e90f52b6f510c2f65dbe4904cf6abd7c35c3a2ed4585fb3b",
+      "finished_at": "2026-10-04T14:50:17.240Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260823100000_business_event_gateway_completion/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260828190000_align_onboarding_risk_reasons_default",
+      "checksum": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e",
+      "finished_at": "2026-10-04T14:50:17.243Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260828190000_align_onboarding_risk_reasons_default/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260905170000_add_tenant_module_composition",
+      "checksum": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+      "finished_at": "2026-10-04T14:50:17.280Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260905173000_protect_module_configuration_authority",
+      "checksum": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+      "finished_at": "2026-10-04T14:50:17.295Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260905200000_add_module_lifecycle_command_state",
+      "checksum": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+      "finished_at": "2026-10-04T14:50:17.298Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260905200100_add_module_lifecycle",
+      "checksum": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+      "finished_at": "2026-10-04T14:50:17.334Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260909093000_add_suspense_posting_cycles",
+      "checksum": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+      "finished_at": "2026-10-04T14:50:17.342Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260909093000_add_suspense_posting_cycles/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260919110000_managed_picture_assets",
+      "checksum": "ed1cc1ee182cbd119abfd2cbb5953ca96cad6fc9ca08f380153e917692fab5ae",
+      "finished_at": "2026-10-04T14:50:17.353Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260919110000_managed_picture_assets/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260920060000_pos_checkout_lifecycle",
+      "checksum": "f09015253f4479d62404f1ddd840687173854508aca058fc2d0a7589396f020c",
+      "finished_at": "2026-10-04T14:50:17.369Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260920060000_pos_checkout_lifecycle/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260930211500_journal_posted_line_tenant_guards",
+      "checksum": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde",
+      "finished_at": "2026-10-04T14:50:17.373Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260930211500_journal_posted_line_tenant_guards/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260930213000_journal_posted_status_transitions",
+      "checksum": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97",
+      "finished_at": "2026-10-04T14:50:17.375Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260930213000_journal_posted_status_transitions/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20260930231500_supplier_credit_zero_value_evidence",
+      "checksum": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+      "finished_at": "2026-10-04T14:50:17.379Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20260930231500_supplier_credit_zero_value_evidence/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20261004000000_close_evidence_notifications",
+      "checksum": "d7ff57b0070851dd095ae6d4da6797bae46420a2108cb686b2d5d3912f3b4d3b",
+      "finished_at": "2026-10-04T14:50:17.393Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20261004000000_close_evidence_notifications/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20261004120000_access_requests",
+      "checksum": "5b8b73f6370bb6e2d0175ad1b7511a04c030566cfec8fde8d7be6c74db23d776",
+      "finished_at": "2026-10-04T14:50:17.409Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20261004120000_access_requests/migration.sql",
+      "sourceMatches": true
+    },
+    {
+      "migration_name": "20261004130000_purchase_order_authoring",
+      "checksum": "bf5bf939856394cbb6e45cb9bd1b6ab84619193f86f05d6a1efbcf52b969deb7",
+      "finished_at": "2026-10-04T14:50:17.422Z",
+      "rolled_back_at": null,
+      "file": "prisma/migrations/20261004130000_purchase_order_authoring/migration.sql",
+      "sourceMatches": true
+    }
+  ],
+  "allMigrationSourcesMatch": true,
+  "reports": [
+    {
+      "file": "alert-recovery-postgres-jest.json",
+      "sha256": "45f23293fdb8e65a12d2ff61c27a9d038167f1099b13fb6791e68adca260fde3",
+      "suites": 2,
+      "tests": 22,
+      "skipped": 0,
+      "startedAt": "2026-10-04T14:59:49.431Z"
+    },
+    {
+      "file": "purchase-authoring-postgres-jest.json",
+      "sha256": "0bc1c7bbb8a4c48e305b4a849864a1475c6f165f8e8ec905d4f4af84c4b6c380",
+      "suites": 1,
+      "tests": 8,
+      "skipped": 0,
+      "startedAt": "2026-10-04T15:01:33.727Z"
+    },
+    {
+      "file": "access-requests-postgres-jest.json",
+      "sha256": "ee703efb7564f5421343a3f29fae93302808c575590829e4724b1b7bf60f7fd6",
+      "suites": 1,
+      "tests": 14,
+      "skipped": 0,
+      "startedAt": "2026-10-04T15:10:01.359Z"
+    },
+    {
+      "file": "payroll-settlement-postgres-jest.json",
+      "sha256": "0ade88dcd67d5aa30a4840c988ec7cf960f265ff29d6f499ed7f27a3715cde56",
+      "suites": 1,
+      "tests": 14,
+      "skipped": 0,
+      "startedAt": "2026-10-04T15:16:09.112Z"
+    },
+    {
+      "file": "item-search-postgres-jest.json",
+      "sha256": "1fbf20245ca9d5e7fe7d873502c80e71566305f9ee3f3d4e5bee01291f905bb9",
+      "suites": 1,
+      "tests": 9,
+      "skipped": 0,
+      "startedAt": "2026-10-04T15:20:52.276Z"
+    },
+    {
+      "file": "audit-explorer-postgres-jest.json",
+      "sha256": "6ccca9829faab079ea8beb489e3244b7b6cc2c7e470f92e63b3111c082aa1553",
+      "suites": 1,
+      "tests": 7,
+      "skipped": 0,
+      "startedAt": "2026-10-04T15:22:31.768Z"
+    }
+  ],
+  "databaseScenarios": {
+    "alertRecovery": 11,
+    "purchaseAuthoring": 8,
+    "accessRequests": 14,
+    "payrollSettlement": 14,
+    "itemSearch": 9,
+    "auditExplorer": 7,
+    "targetGuards": 11
+  },
+  "sourceHashes": [
+    {
+      "file": "jest.ui-workflow-postgres.config.cjs",
+      "sha256": "56aa7879f495490641f17d85927600d76b87a691bfef10e4bed3ccea4f761bfe"
+    },
+    {
+      "file": "scripts/ui-workflow-postgres-target.cjs",
+      "sha256": "497202f461616c24e1ad4927b471654581d3d29ecbbf14a18d303567bb9810b5"
+    },
+    {
+      "file": "scripts/ui-workflow-postgres-bootstrap.cjs",
+      "sha256": "fdf115d197c5c154c9ef301421b696d6e276a18bad1f7193d79abdf489acdb03"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/target.test.ts",
+      "sha256": "98ff618f5e56089bfa8c4e8c65d4e77efe9ce6d870f8364bc5c999fe5c78d57b"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/alert-recovery.test.ts",
+      "sha256": "4b0722ef03c9b3c8a0261e90301b2f5063dc862a4be449a6c9659244cae4b87b"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/purchase-authoring.test.ts",
+      "sha256": "575474fe6a6e9d45c9fd79048bebcc02c479cc731c4402f13cd004bd6d676012"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/access-requests.test.ts",
+      "sha256": "b55c6531d56533a190f1297375ea833337db604e4e8db6350cc85b8c1dd887fb"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/payroll-settlement.test.ts",
+      "sha256": "24a77ae64cc77941d44c14c25c3b26c3717d8e8eed688149e19b3fb351b4d9a6"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/item-search.test.ts",
+      "sha256": "33bf5b6043635bd9159f2f074a2b32f1c456856f03a8b536c3ac5ff64a678ee3"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/audit-explorer.test.ts",
+      "sha256": "ea0d7381e9aa28416c153eba810510dddbf19c061aa178c323f9f8d45e08bfdb"
+    },
+    {
+      "file": "services/item/item-overview.service.ts",
+      "sha256": "ea8e824e3d85a74834ec53376ff72b11931a3aecfe10c66747b351bd03f43e77"
+    },
+    {
+      "file": "services/search/business-record-search.service.ts",
+      "sha256": "ddb7f0deed7b57c5367effd81abee30839b4603659003978a59aaf44ae5ba50a"
+    },
+    {
+      "file": "services/audit/audit-explorer.service.ts",
+      "sha256": "1b8ebd0921b51622ccd909d769b804669aa4c65a20dcd8b91c01c4c25f07ab1e"
+    },
+    {
+      "file": "services/audit/audit-explorer-contracts.ts",
+      "sha256": "c875ffd8f08ca82349a30cb77b3c591252fc77e1c42571ef94d3417b72921b69"
+    },
+    {
+      "file": "services/operating-access/operating-access-scope-contracts.ts",
+      "sha256": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10"
+    },
+    {
+      "file": "services/payroll/payment-reconciliation.service.ts",
+      "sha256": "b6eb3817be0223f528c17d0859571b9dd337800821cd685115baaf15945cdc41"
+    },
+    {
+      "file": "services/payroll/payment-settlement-proof.ts",
+      "sha256": "b82ba5d92beac8b4306eaea2a53a1fdc66a1257d9f43ca19b406add9312c877b"
+    },
+    {
+      "file": "services/payroll/payment-settlement-balance.ts",
+      "sha256": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+    },
+    {
+      "file": "services/payroll/payroll-adapter-registry.service.ts",
+      "sha256": "4c0ffee111b44df1c9425b84057645b1356771b69154ef85d5267e7a121381d9"
+    },
+    {
+      "file": "services/controls/sensitive-action.service.ts",
+      "sha256": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+    },
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "sha256": "d3131b5411dcb3628364cf239bbfd3f1fda22ec7f0a7fb0e3d8c1a21a5c63870"
+    },
+    {
+      "file": "services/access-requests/access-request.service.ts",
+      "sha256": "b7c06ab7fbc0d61a71c28353d2a02ed1578ba62ba613279ebcf6ffc2a64bb408"
+    },
+    {
+      "file": "services/access-requests/access-request-contracts.ts",
+      "sha256": "6381479aee305676f50f22ea9d20e942a76e73c943b57511ae38608e0b350aa4"
+    },
+    {
+      "file": "services/users/member-access.service.ts",
+      "sha256": "093e879a7c25777e43017d30f1ce71554ac78b8d7c5d708d742e913ce1183933"
+    },
+    {
+      "file": "services/users/member-access-policy.ts",
+      "sha256": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947"
+    },
+    {
+      "file": "services/reconciliation/alert-scan-recovery.service.ts",
+      "sha256": "e19615331289a7d1de03893b7b20dad5c9657758c35ade368a5e18dba3a4a5e3"
+    },
+    {
+      "file": "services/reconciliation/alert-scan-recovery.contracts.ts",
+      "sha256": "ede20691f7fc2c60aaae659129d36933c70923f6e951bd9037e494e071374fe4"
+    },
+    {
+      "file": "services/reconciliation/payment-reconciliation-alert-scan.service.ts",
+      "sha256": "266d97a17db6cd9da26d1d8c83799f7a309cc50f449a660393b84bdc15365e8e"
+    },
+    {
+      "file": "services/reconciliation/payment-reconciliation-notifications.ts",
+      "sha256": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946"
+    },
+    {
+      "file": "services/purchase-order/purchase-order-authoring.service.ts",
+      "sha256": "8fd28738f93cbaf2bd78b11088546228b9e0ccad18fded6a41d01a869006f842"
+    },
+    {
+      "file": "services/purchase-order/purchase-order-authoring-contracts.ts",
+      "sha256": "d04ac0ed5b6e2a64df18b40caf6aaf2e1b4473848047d1d87a4ba30c2c027d79"
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "b37fc3e05357381c890145091f3c54a91a5edb2b2a9b49a02abb860abd42adbc"
+    },
+    {
+      "file": "services/purchase-order/purchase-document-number.service.ts",
+      "sha256": "9be48c7b4339a5d28c63d3fbc4adbdefb7e0f10aad15f8e884cf103d72a94d36"
+    },
+    {
+      "file": "services/modules/module-entitlement.service.ts",
+      "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+    },
+    {
+      "file": "services/events/business-event.service.ts",
+      "sha256": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "c2f637a999160da10d41737afdf3fbf17cc9a60471fefdc915938f4ebecef22e"
+    }
+  ],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

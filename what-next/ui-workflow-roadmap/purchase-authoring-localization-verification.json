@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-04",
+  "packages": ["UX15", "UX18"],
+  "scope": "Opt-in purchase-order wizard localization and accessible controls",
+  "sourceManifest": "purchase-authoring-localization-source-hashes.json",
+  "tests": { "report": "purchase-authoring-localization-jest.json", "session": 81945, "suitesPassed": 7, "testsPassed": 93, "exitCode": 0 },
+  "typecheck": { "session": 48312, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "exitCode": 0 },
+  "eslint": { "exitCode": 0, "warnings": 0, "scope": "Durable form, bilingual copy and wizard tests" },
+  "verified": ["French wizard and confirmation", "French calendar navigation and full date names", "English compatibility", "Step region focus", "Named line controls", "Saved business text unchanged on resume", "Numeric text retained"],
+  "defaultLegacyFormDiffEmpty": true,
+  "defaultRouteBrowser": { "path": "/en/dashboard/purchase-orders/new", "account": "super.admin.rds-org001@stockflow.test", "rendered": true, "verified": ["Create Purchase Order heading", "Wizard steps", "Order date field"], "navigationTimeoutRecovered": true, "orderCreated": false },
+  "newFormBrowserVerified": false,
+  "screenReaderVerified": false,
+  "flagsEnabled": false,
+  "migrationApplied": false,
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

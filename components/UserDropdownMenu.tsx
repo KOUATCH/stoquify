@@ -24,9 +24,10 @@ interface UserDropdownProps {
   organizationName?: string
   roleNames?: string[]
   canChangePassword?: boolean
+  fixedDarkAppearance?: boolean
 }
 
-export default function UserDropdownMenu({ username, email, avatarUrl, organizationName, roleNames = [], canChangePassword = false }: UserDropdownProps) {
+export default function UserDropdownMenu({ username, email, avatarUrl, organizationName, roleNames = [], canChangePassword = false, fixedDarkAppearance = false }: UserDropdownProps) {
   const router = useRouter(), pathname = usePathname(), passwordCopy = useTranslations("passwordChange")
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE, t = accountMenuCopy[locale === "fr" ? "fr" : "en"]
   const { resolvedTheme, setTheme } = useTheme()
@@ -62,6 +63,7 @@ export default function UserDropdownMenu({ username, email, avatarUrl, organizat
       <DropdownMenuGroup>
         <DropdownMenuLabel className="text-xs">{t.account}</DropdownMenuLabel>
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/profile")}><User aria-hidden="true" /><span>{t.profile}<span className="block text-xs font-normal">{t.profileHint}</span></span></DropdownMenuItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/access-requests")}><KeyRound aria-hidden="true" />{locale === "fr" ? "Demandes d’accès" : "Access requests"}</DropdownMenuItem>
         {canChangePassword && <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/change-password")}><KeyRound aria-hidden="true" />{passwordCopy("title")}</DropdownMenuItem>}
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/security")}><Shield aria-hidden="true" /><span>{t.security}<span className="block text-xs font-normal">{t.securityHint}</span></span></DropdownMenuItem>
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/notifications")}><Bell aria-hidden="true" /><span>{t.notifications}<span className="block text-xs font-normal">{t.notificationsHint}</span></span></DropdownMenuItem>
@@ -70,7 +72,10 @@ export default function UserDropdownMenu({ username, email, avatarUrl, organizat
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuLabel className="text-xs">{t.preferences}</DropdownMenuLabel>
-        <DropdownMenuCheckboxItem className="cursor-pointer rounded-lg py-2.5" checked={resolvedTheme === "dark"} onCheckedChange={value => setTheme(value ? "dark" : "light")} onSelect={event => event.preventDefault()}><Moon aria-hidden="true" className="mr-2 h-4 w-4" />{t.dark}</DropdownMenuCheckboxItem>
+        {fixedDarkAppearance ? <DropdownMenuLabel className="px-3 py-2.5 font-normal">
+          <span className="flex items-center gap-2"><Moon aria-hidden="true" className="h-4 w-4" />{locale === "fr" ? "Espace de travail sombre" : "Dark workspace"}</span>
+          <span className="mt-1 block text-xs">{locale === "fr" ? "Le tableau de bord utilise une apparence sombre fixe. Votre préférence de thème reste disponible sur les autres pages." : "The dashboard uses a fixed dark appearance. Your theme preference remains available on other pages."}</span>
+        </DropdownMenuLabel> : <DropdownMenuCheckboxItem className="cursor-pointer rounded-lg py-2.5" checked={resolvedTheme === "dark"} onCheckedChange={value => setTheme(value ? "dark" : "light")} onSelect={event => event.preventDefault()}><Moon aria-hidden="true" className="mr-2 h-4 w-4" />{t.dark}</DropdownMenuCheckboxItem>}
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/appearance")}><Palette aria-hidden="true" />{t.appearance}</DropdownMenuItem>
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/billing")}><CreditCard aria-hidden="true" />{t.billing}</DropdownMenuItem>
         <DropdownMenuItem className={itemClass} onSelect={() => navigate("/help")}><HelpCircle aria-hidden="true" />{t.help}</DropdownMenuItem>

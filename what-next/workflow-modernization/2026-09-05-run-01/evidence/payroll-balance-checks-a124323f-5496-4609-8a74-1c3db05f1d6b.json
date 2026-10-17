@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-30T11:13:52.661Z",
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "a72354934cf8335404a299e4bf02ae85d35ff0283cfe002b8191fa4f589ba511",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "fe6b27f3d3fb968da24743d497f86e890ac07dc065786a8e6ebc6e8a82536b94",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "584e8d769bee66bf5e8c5da261d863304641f5c6fc8dd11d4866e7795ad70dfb",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payment-settlement-balance.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       130 passed, 130 total\nSnapshots:   0 total\nTime:        4.525 s\nRan all test suites within paths \"services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts\", \"services/payroll/__tests__/payment-settlement-balance.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/cash-command/__tests__/cash-command-sources.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/payroll/payment-reconciliation.service.ts",
+        "services/payroll/payment-settlement-balance.ts",
+        "services/payroll/payroll-finance-forecast.service.ts",
+        "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payment-settlement-balance.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 2,
+      "error": null,
+      "stdout": "services/payroll/payment-reconciliation.service.ts(1545,73): error TS18047: 'matchRecord.amountMatched' is possibly 'null'.\r\n",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "a72354934cf8335404a299e4bf02ae85d35ff0283cfe002b8191fa4f589ba511",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "fe6b27f3d3fb968da24743d497f86e890ac07dc065786a8e6ebc6e8a82536b94",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "584e8d769bee66bf5e8c5da261d863304641f5c6fc8dd11d4866e7795ad70dfb",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657"
+  },
+  "sourceStable": true,
+  "passed": false
+}

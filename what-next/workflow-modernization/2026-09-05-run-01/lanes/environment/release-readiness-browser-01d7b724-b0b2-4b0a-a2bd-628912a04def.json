@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-30T14:37:32.681Z",
+  "sourceBefore": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "checks": [],
+  "server": {
+    "missingProofActionsBlocked": true,
+    "destinationStillValid": true,
+    "writeGateDeniedWithoutPaymentEffects": true
+  },
+  "passed": false,
+  "error": "expect(locator).toBeDisabled() failed\n\nLocator: getByRole('button', { name: 'Open declaration preparation drawer', exact: true })\nExpected: disabled\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Open declaration preparation drawer', exact: true })\n",
+  "sourceAfter": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true
+}

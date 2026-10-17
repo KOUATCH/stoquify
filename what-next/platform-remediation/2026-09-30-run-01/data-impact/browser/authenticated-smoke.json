@@ -1,0 +1,201 @@
+{
+  "startedAt": "2026-09-30T21:51:44.196Z",
+  "status": "AUTHENTICATED_SMOKE_PARTIAL",
+  "target": "stoquify_restore_local_remediation_20260930_run01",
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "authAttempts": [
+    {
+      "method": "one_ordinary_local_fixture_login",
+      "status": 200,
+      "additionalAuthenticationRequired": false
+    }
+  ],
+  "routes": [
+    {
+      "key": "reconciliation",
+      "route": "/en/dashboard/finance/reconciliation",
+      "status": "UNVERIFIED_RENDER",
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": false,
+      "permissionDenied": false,
+      "moduleLocked": false,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "reconciliation-redacted.png",
+      "pageErrorCount": 0
+    },
+    {
+      "key": "accounting-close",
+      "route": "/en/dashboard/accounting/close",
+      "status": "AUTHENTICATED_MODULE_DENIAL",
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": false,
+      "permissionDenied": false,
+      "moduleLocked": true,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "accounting-close-redacted.png",
+      "pageErrorCount": 0
+    },
+    {
+      "key": "owner-war-room",
+      "route": "/en/dashboard/owner-war-room",
+      "status": "AUTHENTICATED_RENDER",
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": true,
+      "permissionDenied": false,
+      "moduleLocked": false,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "owner-war-room-redacted.png",
+      "pageErrorCount": 0
+    },
+    {
+      "key": "manager-action-center",
+      "route": "/en/dashboard/manager-action-center",
+      "status": "AUTHENTICATED_RENDER",
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": true,
+      "permissionDenied": false,
+      "moduleLocked": false,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "manager-action-center-redacted.png",
+      "pageErrorCount": 0
+    },
+    {
+      "key": "cash-command",
+      "route": "/en/dashboard/finance/cash-command",
+      "status": "AUTHENTICATED_RENDER",
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": true,
+      "permissionDenied": false,
+      "moduleLocked": false,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "cash-command-redacted.png",
+      "pageErrorCount": 0
+    }
+  ],
+  "serverOutputBytes": 146,
+  "serverDiagnosticMarkers": [],
+  "browserExternalRequestsBlocked": 0,
+  "schedulerRequestsBlocked": 0,
+  "expectedWrites": [
+    "ordinary authentication/session lifecycle",
+    "read-access RBAC/module audit records"
+  ],
+  "prohibitedActionsAttempted": false,
+  "rawIdentifiersOrSecretsEmitted": false,
+  "limitations": [
+    "One existing local fixture identity; denial is not functional feature acceptance.",
+    "Read-only route render proof; no business mutation, cross-tenant matrix, accessibility or production qualification.",
+    "All non-allowlisted screenshot text and media are redacted; screenshots are local only."
+  ],
+  "sourceMutationAttempted": false,
+  "cloneMigrationSnapshot": {
+    "capturedAt": "2026-09-30T21:51:44.580Z",
+    "completedRows": 89,
+    "nameChecksumSha256": "3274e00f37fb1098ffd996824a2bd8db328cc2d1dc665d2d502f50177a590f7c",
+    "originalRestoreCompletedMigrations": 87
+  },
+  "fixtureCandidates": [
+    {
+      "matches": 0,
+      "eligible": false,
+      "credential_available": false,
+      "emailFingerprint": "e2543aee54a389e1e8869bda08e31484c951de941ccfcb8938eb12e6045a31ba",
+      "source": "existing_payroll_test_default"
+    },
+    {
+      "matches": 1,
+      "eligible": true,
+      "credential_available": true,
+      "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+      "source": "documented_local_development_fixture"
+    }
+  ],
+  "fixture": {
+    "matches": 1,
+    "eligible": true,
+    "credential_available": true,
+    "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+    "source": "documented_local_development_fixture"
+  },
+  "actualDatabaseVerified": true,
+  "cookieInventory": {
+    "parsedStates": 6,
+    "expiredCookies": 12,
+    "candidates": 0,
+    "valuesRetainedInReport": false
+  },
+  "bundle": {
+    "directory": ".next-remediation-r01-20260930",
+    "buildIdSha256": "2abda580df94356363d652a823ac1d691f12b2de235f10890a765625e415f4fb",
+    "configSha256": "f37e603c4217dce2a621e26f9ec7c0474d0d55f61b5c9cdbf26f14e638399693",
+    "qualification": "Workspace-backed compiled runtime only. Compilation, lint/types and static generation passed; standalone packaging exited 1 on Windows EPERM and is not certified by this smoke.",
+    "runnerConfirmedSourceDrift": "none across 6042 build-window files and 52 baseline supplemental files"
+  },
+  "server": {
+    "pid": 24500,
+    "origin": "http://127.0.0.1:60818",
+    "compilerStarted": false,
+    "externalSocketsBlocked": true,
+    "rawLogsRetained": false
+  },
+  "authentication": {
+    "status": 200,
+    "authenticated": true,
+    "databasePairVerified": true,
+    "userFingerprint": "5afb6a1c7d6f77eae6c4cbf4174fc6e8d82a873142de121e579553991b6adc6c",
+    "organizationFingerprint": "2220f0d6b1ae5fcced133ea64cf6be9bc76909e01923b4f00898ea48da1d5f8f",
+    "permissionCount": 431,
+    "roleCount": 1
+  },
+  "businessCountsBefore": {
+    "users": "180",
+    "sessions": "66",
+    "journal_entries": "141",
+    "journal_entry_lines": "368",
+    "payroll_runs": "26"
+  },
+  "businessCountsAfter": {
+    "users": "180",
+    "sessions": "66",
+    "journal_entries": "141",
+    "journal_entry_lines": "368",
+    "payroll_runs": "26"
+  },
+  "businessAggregateCountsUnchanged": true,
+  "finalAuthentication": {
+    "status": 200,
+    "authenticated": true,
+    "databasePairVerified": true,
+    "userFingerprint": "5afb6a1c7d6f77eae6c4cbf4174fc6e8d82a873142de121e579553991b6adc6c",
+    "organizationFingerprint": "2220f0d6b1ae5fcced133ea64cf6be9bc76909e01923b4f00898ea48da1d5f8f",
+    "permissionCount": 431,
+    "roleCount": 1
+  },
+  "identityStable": true,
+  "serverExit": {
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "ownedServerStopped": true,
+  "completedAt": "2026-09-30T21:52:46.287Z"
+}

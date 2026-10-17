@@ -1,0 +1,14 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawnSync,execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'../../../../..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),hash=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex');
+const baseline=JSON.parse(fs.readFileSync(path.join(__dirname,'BASELINE.json'),'utf8'));
+const ownedExisting=['services/onboarding/master-data-import.service.ts','components/onboarding/MasterDataOnboardingWorkbench.tsx','app/[locale]/(dashboard)/dashboard/settings/data-onboarding/error.tsx','docs/retention/execution/STATUS.md'];
+const ownedNew=['services/onboarding/opening-readiness.ts','services/onboarding/__tests__/opening-readiness.test.ts','services/onboarding/__tests__/opening-readiness-access.test.ts','services/onboarding/__tests__/opening-readiness.postgres.test.ts','components/onboarding/OpeningReadinessPanel.tsx','components/onboarding/__tests__/OpeningReadinessPanel.test.tsx'];
+const statusPath='docs/retention/execution/STATUS.md',before=fs.readFileSync(path.join(__dirname,'STATUS.md.before'),'utf8');
+const withoutP07=s=>s.split(/\r?\n/).filter(line=>!line.startsWith('| [P07]')).join('\n');
+const changed=Object.entries(baseline.files).filter(([p,h])=>hash(p)!==h).map(([p])=>p);
+for(const p of ownedExisting){const old=path.join(__dirname,path.basename(p)+'.before');const result=spawnSync('git',['diff','--no-index','--',old,path.join(root,p)],{cwd:root,encoding:'utf8',maxBuffer:8e6});if(![0,1].includes(result.status))throw Error('Diff failed');fs.writeFileSync(path.join(__dirname,path.basename(p)+'.patch'),result.stdout);}
+const result={at:new Date().toISOString(),head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),baselineFiles:Object.keys(baseline.files).length,changed,unownedDrift:changed.filter(p=>!ownedExisting.includes(p)),onlyP07StatusRowChanged:withoutP07(before)===withoutP07(read(statusPath)),ownedFiles:[...ownedExisting,...ownedNew].map(p=>({path:p,sha256:hash(p)}))};
+fs.writeFileSync(path.join(__dirname,'VALIDATION.json'),JSON.stringify(result,null,2));
+fs.writeFileSync(path.join(__dirname,'FINAL_WORKTREE_STATUS.txt'),execFileSync('git',['status','--short','--untracked-files=all'],{cwd:root,encoding:'utf8',maxBuffer:32e6}));
+const artifacts=[];function walk(p){for(const name of fs.readdirSync(p)){const file=path.join(p,name);if(fs.statSync(file).isDirectory())walk(file);else if(name!=='ARTIFACT_MANIFEST.json')artifacts.push({path:path.relative(root,file).replaceAll('\\','/'),sha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')});}}walk(path.resolve(__dirname,'..'));
+fs.writeFileSync(path.join(__dirname,'ARTIFACT_MANIFEST.json'),JSON.stringify(artifacts,null,2));console.log(JSON.stringify({unownedDrift:result.unownedDrift,onlyP07StatusRowChanged:result.onlyP07StatusRowChanged,artifacts:artifacts.length}));

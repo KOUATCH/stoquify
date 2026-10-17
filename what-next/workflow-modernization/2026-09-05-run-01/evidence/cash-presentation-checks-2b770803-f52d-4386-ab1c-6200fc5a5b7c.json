@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-30T10:04:39.595Z",
+  "sourceBefore": {
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28",
+    "components/bi/BIActionPriorityBoard.tsx": "1a9841d5a4517e81de97afb78a232944fe89211c0fe07c91652b309f311fc916",
+    "components/bi/BITrustLegend.tsx": "b3f6fd16143c1fdaebfda053231fa54cf8f7983e2dda646cd81633af097fe1ea",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "91ff507d2b403cdce40cf81434408920ba8d424c06679c237d2b4dd7a1f8f98a",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "components/bi/__tests__/bi-command-primitives.test.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 3 passed, 3 total\nTests:       87 passed, 87 total\nSnapshots:   0 total\nTime:        10.053 s, estimated 14 s\nRan all test suites within paths \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"components/bi/__tests__/bi-command-primitives.test.tsx\", \"services/cash-command/__tests__/cash-command.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/cash-command/CashCommandDashboard.tsx",
+        "components/bi/BIActionPriorityBoard.tsx",
+        "components/bi/BITrustLegend.tsx",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "components/bi/__tests__/bi-command-primitives.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "\nE:\\ohada saas\\Focused projects\\stoquify\\components\\cash-command\\CashCommandDashboard.tsx\n  314:53  warning  The ref value 'request.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'request.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps\n\n✖ 1 problem (0 errors, 1 warning)\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28",
+    "components/bi/BIActionPriorityBoard.tsx": "1a9841d5a4517e81de97afb78a232944fe89211c0fe07c91652b309f311fc916",
+    "components/bi/BITrustLegend.tsx": "b3f6fd16143c1fdaebfda053231fa54cf8f7983e2dda646cd81633af097fe1ea",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "91ff507d2b403cdce40cf81434408920ba8d424c06679c237d2b4dd7a1f8f98a",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a"
+  },
+  "sourceStable": true,
+  "passed": true
+}

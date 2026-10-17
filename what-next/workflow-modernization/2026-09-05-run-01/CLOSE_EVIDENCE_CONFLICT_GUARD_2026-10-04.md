@@ -1,0 +1,54 @@
+# Conflicting Close evidence must not be accepted
+
+FA-CLOSE-PACK remains the supporting dependency of primary FA-CASH-COMMAND. Both are In progress. This investigation found a correctness prerequisite to ambiguous-history recovery; no workflow was split, newly counted or closed.
+
+Baseline: 2026-10-04, branch `codex/migration-control-plane-release-2026-08-29`, HEAD `62a56036a5ac9b37236a20c9b148052199069479`, existing shared changes preserved. The historical graph node `accounting_close_assurance_actions_ts` locates the action/service boundary; current source confirms the affected writers and queues.
+
+## Finding, correction and acceptance scope
+
+Requester history and review queues rejected conflicting evidence, but direct calls to response and acceptance writers could still operate on a chosen request/response pair. A duplicate request, extraneous response or prior acceptance could therefore remain in history while a new response was recorded or the finding was resolved. Legacy queue queries also filtered out malformed metadata, and one non-paginated request query selected only the latest request. Those filters concealed precisely the records that required investigation.
+
+The correction requires the complete workflow evidence set before admitting new work: exactly the selected request for response; exactly the selected request and response for acceptance. The query is bounded at the expected count plus one and includes all three workflow visibilities without metadata filters. Scope is the tenant and finding, so even a misbound period/run record attached to that finding prevents implicit acceptance. Internal comments do not count as workflow evidence.
+
+Response performs this read in its existing Serializable transaction. Acceptance performs the final read after taking the finding lock in its existing ReadCommitted transaction, following any earlier committed changes. Existing exact replay is resolved before this new-work guard, preserving committed outcomes rather than silently undoing them when later investigation evidence appears. Other permission, module, session, current source, independent reviewer and fresh-authentication controls remain effective.
+
+Both paginated and legacy queues now retain malformed/duplicate workflow rows in validation. The EN/FR workbench handles `REVIEW_REQUIRED` explicitly, focuses investigation guidance, clears the pending submission and retains the user's response/review draft. The shared canonical/legacy error mapping now preserves that existing application error code as a non-retryable business rule, rather than collapsing it into generic validation guidance. Acceptance also rereads the locked finding's current status/owner: an already-completed concurrent acceptance is stale state, not proof of corrupt history. A selected preview does not establish acceptance.
+
+Bounded acceptance criteria: reproduce direct-writer bypass; refuse conflicting new work without mutation; preserve valid work and exact replay; detect a conflict committed after the preview; align all queue variants; verify localized refusal and draft continuity in the actual application. This correction does not choose a canonical record or claim to complete ambiguous-history recovery.
+
+## Evidence
+
+- [Before: six reproduced writer bypasses](evidence/close-evidence-recovery-regression-2126852e-e86f-45ca-9825-8eba038b5913.json): 28 passed, six failed, 114 excluded by the focused test-name filter. The six promises incorrectly resolved instead of refusing conflicting history.
+- [Focused correction check](evidence/close-evidence-recovery-regression-1e340bd9-97aa-4125-9e9c-1ad9d7b87810.json): all 34 selected tests passed; the same 114 tests were excluded by that filter.
+- [Intermediate full check](evidence/close-evidence-recovery-jest-c9074292-cff4-4a67-ac96-908f868473de.json): 539 passed, one obsolete queue-query expectation failed because it omitted acceptance records. The assertion was corrected to require their inclusion.
+- [Initial focused suites](evidence/close-evidence-recovery-jest-c8d9fc55-68fc-4031-ae0b-ffc411ae8c8a.json): 540 tests across 16 suites passed with no failures or skips.
+- [No-emit TypeScript](evidence/close-evidence-recovery-typecheck-f308f959-29f2-44b5-a045-91ef1da7a99c.json) passed.
+- [Focused lint](evidence/close-evidence-recovery-lint-42004d31-96b0-41c5-b0e0-b7e0f5e47463.json) passed.
+
+[Six actual database checks](lanes/environment/close-evidence-ambiguity-a7635a46-0b91-498f-9d64-2a97ee5e4763.json) passed in the identity-guarded owned loopback database. Both queue variants and direct writers refused malformed/conflicting history. A conflict committed after preview and before the final finding lock was detected without acceptance effects. Unambiguous work still reached actual acceptance; exact response and acceptance retries returned their committed results after later conflict evidence was added. Source bindings, financial hashes after synthetic setup and outside-fixture hashes were unchanged. Test identities used the actual password step-up service; no real approval was created.
+
+[Initial EN/FR browser attempt](lanes/environment/close-evidence-ambiguity-browser-9b02bc6a-4f8f-4603-8439-6dfdae475b7d.json) failed at the expected investigation-message assertion. The rendered page showed generic refresh guidance because shared error normalization discarded `REVIEW_REQUIRED`. Its screenshots and failed receipt are retained. This prompted the mapping correction and added shared canonical/action/route regression coverage; it was not treated as a passing interaction check.
+
+[Final focused suites](evidence/close-evidence-recovery-jest-cfe8681f-9b68-498d-ab90-0a7fd3d81cc6.json): 554 tests across 19 suites passed with no failures or skips, including the shared canonical, action-error and route-error contracts. [Final TypeScript](evidence/close-evidence-recovery-typecheck-205ee408-e0e1-4205-a286-5aba49084696.json) and [final focused lint](evidence/close-evidence-recovery-lint-6e021df5-fd9b-4ab5-bb76-a2b7302bffa4.json) passed.
+
+[Final seven database checks](lanes/environment/close-evidence-ambiguity-7b86d4e7-ffd6-46dd-862f-46a7515a49ee.json) passed and supersede the earlier six-check source binding. The additional barrier test makes both concurrent review commands read the same pre-completion finding: exactly one acceptance is retained; the other returns `CONFLICT`, not `REVIEW_REQUIRED`. Normal acceptance, exact replay, all conflict refusals, source stability, outside-fixture preservation and post-setup financial invariants also passed.
+
+[Final actual EN/FR browser check](lanes/environment/close-evidence-ambiguity-browser-769e8eee-c85f-4ca2-adbe-966fa87912a3.json) passed against the exact owned loopback process and final runtime fixture. Both response and acceptance submissions were refused after conflicting evidence appeared, without mutation. Response and review drafts survived, the localized alert received focus, acceptance became unavailable, and refreshed history showed investigation states without replacement controls. Keyboard activation, reduced motion and 1440/768/320 containment passed. There were no page errors; source, financial and outside-fixture hashes remained stable. The actual development route artifact is recorded with SHA256 `59644833e01f8dc35a52d4dd66f22c296f4e43801baa51798c70e56f610e2de9`.
+
+Visually inspected [English response guidance](lanes/environment/close-evidence-ambiguity-browser-769e8eee-c85f-4ca2-adbe-966fa87912a3-en-response-investigation.png), [French mobile guidance](lanes/environment/close-evidence-ambiguity-browser-769e8eee-c85f-4ca2-adbe-966fa87912a3-fr-response-investigation.png) and [French mobile retained review](lanes/environment/close-evidence-ambiguity-browser-769e8eee-c85f-4ca2-adbe-966fa87912a3-fr-review-investigation-320.png): wrapped text, visible draft and disabled acceptance remain within the page. Route-to-workbench observations ranged from 5.238 to 10.596 seconds on this already-running development server. These observations do not establish a performance improvement, production build or complete accessibility certification.
+
+## User and operator guidance
+
+Routes: `/en/dashboard/accounting/close` and `/fr/dashboard/accounting/close`. If a response or acceptance reports that evidence needs investigation, preserve the draft and give the work reference to an authorized reviewer. Do not delete records, create a replacement request, repeatedly submit, or treat this message as source evidence recovery. Refresh to see the current retained history.
+
+The operator needs the work/finding reference, accounting period and the observed discrepancy. References and history come from the Close workbench; underlying request/response/acceptance records and their audit trail are server-owned. Selecting the authoritative evidence, recording why other records are retained but superseded, and independently confirming that decision still need a controlled recovery workflow. No user signature or X1 approval is fabricated by this correction.
+
+## Reviews, rollout and remaining work
+
+Backend/data/security review: bounded evidence queries, existing transaction/locking rules, server-derived scope and unchanged replay/authority controls. Finance/audit review: contradictory evidence cannot newly resolve a finding; all original records are retained. UX/localization review: bilingual actionable refusal with drafts kept. Architecture review: a small shared guard inside the existing domain service; no new module or schema. SRE/operations review: no migration, seed, reset or new delivery infrastructure; scoped actual timings and side effects are recorded above. Packaging uses existing Close eligibility. Payroll/country-pack calculations, POS, AI and billing-provider behavior are not applicable because this correction changes none of them. No professional certification is claimed.
+
+The shared mapping change is limited to `REVIEW_REQUIRED`. Existing purchasing request, execution, posting-recovery and reconciliation-handoff workbenches already handle that code explicitly; source inspection confirms compatibility. Their complete lifecycle is not claimed as reverified here. The shared canonical/action/route regression suites cover the affected normalization contracts.
+
+Roll out writers, queues and localized handling together. Reverting only the writers restores the reproduced bypass; keep the guard when containing an interface issue. No production deployment or live activation is authorized by these tests.
+
+Next: explicit, revision-bound investigation and resolution of ambiguous history, including malformed or conflicting records and an unavailable original requester; delegated summary context; remaining authority races, notification delivery, full accessibility/zoom and high-volume behavior. The full original workflow assignment remains active.

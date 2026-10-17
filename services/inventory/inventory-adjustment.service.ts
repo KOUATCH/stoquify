@@ -235,6 +235,16 @@ function isSensitiveAdjustment(type: AdjustmentType) {
   return sensitiveTypes.includes(type)
 }
 
+function adjustmentTraceability(metadata: Prisma.JsonValue | null) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return {}
+  const traceability = metadata.inventoryTraceability
+  if (!traceability || typeof traceability !== "object" || Array.isArray(traceability)) return {}
+  const batchNumber = typeof traceability.batchNumber === "string" ? traceability.batchNumber : undefined
+  const expiryDate = typeof traceability.expiryDate === "string" ? traceability.expiryDate : undefined
+  if (expiryDate && !Number.isFinite(new Date(expiryDate).getTime())) throw new BusinessRuleError("Stock adjustment expiry date is invalid.")
+  return { ...(batchNumber ? { batchNumber } : {}), ...(expiryDate ? { expiryDate } : {}) }
+}
+
 function defaultAdjustmentDocumentHash(adjustment: StockAdjustmentWithLines) {
   return `sha256:${hashBusinessPayload({
     adjustmentId: adjustment.id,
@@ -254,6 +264,7 @@ function defaultAdjustmentDocumentHash(adjustment: StockAdjustmentWithLines) {
       unitCost: String(line.unitCost ?? line.item.costPrice ?? 0),
       evidenceHash: line.evidenceHash,
       stockCountLineId: line.stockCountLineId,
+      ...adjustmentTraceability(line.metadata),
     })),
   })}`
 }
@@ -303,6 +314,7 @@ function buildAdjustmentPayload(input: {
       balanceAfter: plan.nextQuantityOnHand.toFixed(3),
       evidenceHash: plan.line.evidenceHash,
       stockCountLineId: plan.line.stockCountLineId,
+      ...adjustmentTraceability(plan.line.metadata),
     })),
   }
 }
@@ -483,6 +495,7 @@ async function postAdjustmentPlan(
   effectiveAt: Date,
   now: Date,
 ) {
+  const traceability = adjustmentTraceability(plan.line.metadata)
   if (plan.level) {
     const guard: Prisma.InventoryLevelWhereInput = {
       id: plan.level.id,
@@ -535,6 +548,7 @@ async function postAdjustmentPlan(
       totalCost: plan.absoluteValue,
       evidenceHash: plan.line.evidenceHash ?? adjustment.evidenceHash,
       metadata: {
+        ...(plan.line.metadata && typeof plan.line.metadata === "object" && !Array.isArray(plan.line.metadata) ? plan.line.metadata : {}),
         valueDelta: plan.signedValueDelta.toFixed(2),
         movementType: plan.movementType,
       },
@@ -556,6 +570,8 @@ async function postAdjustmentPlan(
       referenceId: adjustment.id,
       referenceNumber: adjustment.adjustmentNumber,
       notes: adjustment.reason,
+      ...(traceability.batchNumber ? { batchNumber: traceability.batchNumber } : {}),
+      ...(traceability.expiryDate ? { expiryDate: new Date(traceability.expiryDate) } : {}),
       effectiveAt,
       recordedAt: now,
       timeProvenance: "EXPLICIT_SOURCE_TIME",
@@ -581,6 +597,24 @@ function postingAmount(
   }
 
   return money(sourceAmount.times(line.multiplier.abs()))
+}
+
+function adjustmentRuleSourceAmount(
+  condition: Prisma.JsonValue | null,
+  totals: { increase: Prisma.Decimal; decrease: Prisma.Decimal },
+) {
+  if (condition === null) return totals.increase.plus(totals.decrease)
+  if (typeof condition !== "object" || Array.isArray(condition)) {
+    throw new BusinessRuleError("Inventory adjustment rule conditions must be JSON objects.")
+  }
+  const keys = Object.keys(condition)
+  if (keys.length === 0) return totals.increase.plus(totals.decrease)
+  if (keys.length !== 1 || keys[0] !== "adjustmentDirection") {
+    throw new BusinessRuleError("Inventory adjustment rules only support the adjustmentDirection condition.")
+  }
+  if (condition.adjustmentDirection === "INCREASE") return totals.increase
+  if (condition.adjustmentDirection === "DECREASE") return totals.decrease
+  throw new BusinessRuleError("Inventory adjustmentDirection must be INCREASE or DECREASE.")
 }
 
 async function resolvePostingAccount(
@@ -742,9 +776,18 @@ async function postAdjustmentLedgerOrBlock(
 
   try {
     const journalLines = []
+    const totals = input.plans.reduce((result, plan) => {
+      if (plan.signedValueDelta.gt(0)) result.increase = result.increase.plus(plan.signedValueDelta)
+      if (plan.signedValueDelta.lt(0)) result.decrease = result.decrease.plus(plan.signedValueDelta.abs())
+      return result
+    }, { increase: new Prisma.Decimal(0), decrease: new Prisma.Decimal(0) })
+    let inventoryDebit = new Prisma.Decimal(0)
+    let inventoryCredit = new Prisma.Decimal(0)
 
     for (const ruleLine of rule.lines) {
-      const amount = postingAmount(sourceAmount, {
+      const applicableAmount = adjustmentRuleSourceAmount(ruleLine.condition, totals)
+      if (applicableAmount.eq(0)) continue
+      const amount = postingAmount(applicableAmount, {
         amountSource: ruleLine.amountSource,
         multiplier: ruleLine.multiplier,
       })
@@ -754,6 +797,10 @@ async function postAdjustmentLedgerOrBlock(
         accountId: ruleLine.accountId,
         mappingKey: ruleLine.mappingKey,
       })
+      if (account.mappingKey === "INVENTORY") {
+        if (ruleLine.side === PostingRuleLineSide.DEBIT) inventoryDebit = inventoryDebit.plus(amount)
+        else inventoryCredit = inventoryCredit.plus(amount)
+      }
 
       journalLines.push({
         organizationId: input.adjustment.organizationId,
@@ -784,6 +831,11 @@ async function postAdjustmentLedgerOrBlock(
     if (journalLines.length < 2 || !debit.eq(credit)) {
       throw new BusinessRuleError(
         `Inventory adjustment posting rule produced an unbalanced entry: debit ${debit.toFixed(2)} credit ${credit.toFixed(2)}.`,
+      )
+    }
+    if (!inventoryDebit.eq(totals.increase) || !inventoryCredit.eq(totals.decrease)) {
+      throw new BusinessRuleError(
+        "Inventory adjustment rule must debit the mapped INVENTORY account for gains and credit it for losses at the recorded stock value.",
       )
     }
 
@@ -964,7 +1016,13 @@ export async function createStockAdjustment(
               notes: line.notes ?? null,
               evidenceHash: line.evidenceHash ?? parsed.evidenceHash ?? null,
               stockCountLineId: line.stockCountLineId ?? null,
-              metadata: line.metadata as Prisma.InputJsonValue | undefined,
+              metadata: line.batchNumber || line.expiryDate ? {
+                ...(line.metadata && typeof line.metadata === "object" && !Array.isArray(line.metadata) ? line.metadata : {}),
+                inventoryTraceability: {
+                  ...(line.batchNumber ? { batchNumber: line.batchNumber } : {}),
+                  ...(line.expiryDate ? { expiryDate: line.expiryDate.toISOString() } : {}),
+                },
+              } as Prisma.InputJsonValue : line.metadata as Prisma.InputJsonValue | undefined,
             }
           }),
         },
@@ -1164,6 +1222,25 @@ export async function postStockAdjustment(
         throw new ConflictError("Stock adjustment idempotency key was replayed by a different approver.")
       }
 
+      const source = {
+        organizationId: parsed.organizationId,
+        sourceType: AccountingSourceType.STOCK_ADJUSTMENT,
+        sourceId: adjustment.id,
+      }
+      const previousBatch = adjustment.ledgerPostingBatchId
+        ? await tx.ledgerPostingBatch.findFirst({
+          where: { ...source, id: adjustment.ledgerPostingBatchId, postingPurpose: AccountingPostingPurpose.INVENTORY_ADJUSTMENT },
+          include: {
+            journalEntries: { where: { ...source, postingPurpose: AccountingPostingPurpose.INVENTORY_ADJUSTMENT, status: JournalEntryStatus.POSTED }, select: { id: true }, take: 2 },
+            sourceLinks: { where: source, select: { journalEntryId: true } },
+          },
+        })
+        : null
+      const previousEntry = previousBatch?.journalEntries.length === 1 ? previousBatch.journalEntries[0] : null
+      const verifiedPosting = existingEvent.status === "APPLIED" &&
+        previousBatch?.status === LedgerPostingBatchStatus.POSTED && previousEntry &&
+        previousBatch.sourceLinks.some(link => link.journalEntryId === previousEntry.id)
+
       return {
         adjustment,
         eventId: existingEvent.id,
@@ -1171,10 +1248,14 @@ export async function postStockAdjustment(
         documentHash: existingEvent.documentHash ?? adjustment.documentHash ?? defaultAdjustmentDocumentHash(adjustment),
         evidenceHash: adjustment.evidenceHash ?? undefined,
         movementTransactionIds: [],
-        ledger: {
-          status: adjustment.ledgerPostingBatchId ? "BLOCKED" : "BLOCKED",
+        ledger: verifiedPosting ? {
+          status: "POSTED",
+          postingBatchId: previousBatch.id,
+          journalEntryId: previousEntry.id,
+        } : {
+          status: "BLOCKED",
           postingBatchId: adjustment.ledgerPostingBatchId ?? "",
-          message: "Replay returned the previously recorded stock adjustment event.",
+          message: previousBatch?.errorMessage || "The retained adjustment has no verified active posting. Review its ledger evidence before recovery.",
         },
         replayed: true,
       }

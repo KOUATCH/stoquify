@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-30T14:29:40.721Z",
+  "syntheticInput": true,
+  "steps": [
+    {
+      "name": "review",
+      "status": "REVIEWED",
+      "eventId": "cmuo7c2sf002dmajgyqel9gmb"
+    },
+    {
+      "name": "approve",
+      "status": "APPROVED",
+      "eventId": "cmuo7c2w8002rmajg7evl9mnh"
+    },
+    {
+      "name": "emit",
+      "status": "EMITTED",
+      "eventId": "cmuo7c355003kmajgbyrpd3ji"
+    },
+    {
+      "name": "post",
+      "status": "POSTED",
+      "eventId": "cmuo7c3gr004jmajgsi2wwln8"
+    }
+  ],
+  "sourceBefore": {
+    "services/payroll/payroll-control.service.ts": "a78fa4fd3c9090485b4e195815a0720bca3c73ef2cfa3aab9624698c765a4736",
+    "services/accounting/posting.service.ts": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/payroll/payment-reconciliation.service.ts": "bcbf27c1fd70b28fd46883f1dc487ffdf9bb983eadf7ef3d46b2a6819333c630",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "selfReviewDenied": true,
+  "stage": "destination request/approve/apply",
+  "failedSealRolledBack": true,
+  "emittedLineMutationDenied": true,
+  "result": {
+    "organizationId": "cmuo7c2b00000majg66whrpa4",
+    "payrollRunId": "cmuo7c2mi0027majgcvkdatw8",
+    "journalEntryId": "cmuo7c3dz0047majgnm0n0cl3",
+    "ledgerPostingBatchId": "cmuo7c3ck0045majgth52km34",
+    "sourceLinkId": "cmuo7c3fk004fmajg1sv5pvm6",
+    "proofGrade": "posted",
+    "debit": "112950.00",
+    "credit": "112950.00",
+    "transitionCount": 4,
+    "idempotentReplay": true
+  },
+  "destinationPrerequisite": {
+    "requestId": "cmuo7c49l004xmajg9moacx9j",
+    "requestApproveApply": true,
+    "independentActors": true,
+    "selfApprovalDenied": true,
+    "tenantDenial": true,
+    "noRawDestinationPersisted": true,
+    "authoritativeEvidenceValidated": true
+  },
+  "releasePrerequisite": {
+    "status": "BLOCKED_ENGINEERING_FIXTURE_INPUT",
+    "missing": "hrisPayrollReadinessHash/payrollInputReadinessHash/payrollEngineInputHashes/payrollEngineInputSnapshotHash",
+    "noPaymentEffects": true,
+    "releaseExecuted": false,
+    "settlementExecuted": false
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/payroll/payroll-control.service.ts": "a78fa4fd3c9090485b4e195815a0720bca3c73ef2cfa3aab9624698c765a4736",
+    "services/accounting/posting.service.ts": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/payroll/payment-reconciliation.service.ts": "bcbf27c1fd70b28fd46883f1dc487ffdf9bb983eadf7ef3d46b2a6819333c630",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "sourceStable": true
+}

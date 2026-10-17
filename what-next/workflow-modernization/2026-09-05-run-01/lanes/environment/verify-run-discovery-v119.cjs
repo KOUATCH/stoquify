@@ -65,11 +65,18 @@ async function main() {
       await list.getByRole('button', { name: t.next, exact: true }).click();
       await expect(list.getByText(t.run.replace('{id}', ids[0]), { exact: true })).toBeVisible();
       await expect(list.getByRole('button', { name: t.next, exact: true })).toBeDisabled();
+      if (process.argv.includes('--focus-probe')) {
+        journey.scope = 'Run-discovery last-page focus reproduction only';
+        journey.focusAfterLastPage = await page.evaluate(() => document.activeElement.tagName);
+        assert.equal(journey.focusAfterLastPage, 'BODY'); journey.defectReproduced = true; report.passed = true; return;
+      }
+      await expect(list).toBeFocused(); journey.lastPageFocusRestored = true;
       await list.getByRole('button', { name: t.previous, exact: true }).click(); await expect(list.getByRole('button', { name: t.next, exact: true })).toBeEnabled();
       const failureSearch = 'owned-v119-fail-' + stamp; let interrupted = false;
       await page.route('**/*', async route => { if (!interrupted && route.request().method() === 'POST' && route.request().postData()?.includes(failureSearch)) { interrupted = true; await route.fulfill({ status: 503, contentType: 'text/plain', body: 'Owned read interruption' }); } else await route.fallback(); });
       await list.getByLabel(t.searchLabel, { exact: true }).fill(failureSearch); await list.getByRole('button', { name: t.search, exact: true }).click();
       await expect(list.getByText(t.failed, { exact: true })).toBeVisible(); assert.equal(interrupted, true);
+      await expect(list).toBeFocused(); journey.failedReadFocusRestored = true;
       await expect(list.getByText(t.emptyRuns, { exact: true })).toHaveCount(0);
       await expect(list.getByRole('button', { name: copy.signReview.open, exact: true }).first()).toBeDisabled();
       await list.getByRole('button', { name: t.retryRead, exact: true }).click(); await expect(list.getByText(t.emptyRuns, { exact: true })).toBeVisible();

@@ -404,9 +404,9 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
     nameEn: "Supplier invoice posting",
     nameFr: "Comptabilisation facture fournisseur",
     descriptionEn:
-      "Recognizes received inventory, deductible input VAT, and supplier payables from matched AP invoices.",
+      "Clears verified receipt accruals, recognizes unposted received inventory and price differences, and records input VAT and supplier payables.",
     descriptionFr:
-      "Comptabilise le stock recu, la TVA deductible et la dette fournisseur des factures rapprochees.",
+      "Solde les réceptions comptabilisées, comptabilise le stock non encore reconnu et les écarts de prix, la TVA déductible et la dette fournisseur.",
     sourceType: AccountingSourceType.SUPPLIER_INVOICE,
     postingPurpose: AccountingPostingPurpose.SUPPLIER_INVOICE,
     priority: 10,
@@ -416,6 +416,7 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
         side: PostingRuleLineSide.DEBIT,
         mappingKey: "INVENTORY",
         amountSource: PostingRuleAmountSource.NET_AMOUNT,
+        condition: { receiptRecognition: "LEGACY" },
         description: "Recognize received inventory before supplier settlement",
       },
       {
@@ -431,6 +432,38 @@ export const DEFAULT_AP_POSTING_RULES: DefaultPostingRuleTemplate[] = [
         mappingKey: "ACCOUNTS_PAYABLE",
         amountSource: PostingRuleAmountSource.GROSS_AMOUNT,
         description: "Recognize supplier payable",
+      },
+      {
+        lineNumber: 4,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "INVENTORY",
+        amountSource: PostingRuleAmountSource.SOURCE_AMOUNT,
+        condition: { receiptRecognition: "ACCRUAL" },
+        description: "Recognize only invoice lines without a verified receipt accrual",
+      },
+      {
+        lineNumber: 5,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "GRNI",
+        amountSource: PostingRuleAmountSource.COST_AMOUNT,
+        condition: { receiptRecognition: "ACCRUAL" },
+        description: "Clear the allocated receipt accrual at receipt cost",
+      },
+      {
+        lineNumber: 6,
+        side: PostingRuleLineSide.DEBIT,
+        mappingKey: "INVENTORY_VARIANCE",
+        amountSource: PostingRuleAmountSource.VARIANCE_AMOUNT,
+        condition: { receiptRecognition: "ACCRUAL", receiptVarianceDirection: "DEBIT" },
+        description: "Recognize an invoice price increase against receipt cost",
+      },
+      {
+        lineNumber: 7,
+        side: PostingRuleLineSide.CREDIT,
+        mappingKey: "INVENTORY_VARIANCE",
+        amountSource: PostingRuleAmountSource.VARIANCE_AMOUNT,
+        condition: { receiptRecognition: "ACCRUAL", receiptVarianceDirection: "CREDIT" },
+        description: "Recognize an invoice price reduction against receipt cost",
       },
     ],
   },
@@ -819,10 +852,30 @@ export const DEFAULT_PAYROLL_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   },
 ];
 
+export const DEFAULT_INVENTORY_POSTING_RULES: DefaultPostingRuleTemplate[] = [
+  {
+    code: "INVENTORY-ADJUSTMENT",
+    nameEn: "Inventory adjustment",
+    nameFr: "Ajustement de stock",
+    descriptionEn: "Records stock gains and losses separately at their approved value using the inventory variance mapping.",
+    descriptionFr: "Comptabilise séparément les gains et pertes de stock à leur valeur approuvée avec le compte d’écart de stock.",
+    sourceType: AccountingSourceType.STOCK_ADJUSTMENT,
+    postingPurpose: AccountingPostingPurpose.INVENTORY_ADJUSTMENT,
+    priority: 10,
+    lines: [
+      { lineNumber: 1, side: PostingRuleLineSide.DEBIT, mappingKey: "INVENTORY", amountSource: PostingRuleAmountSource.SOURCE_AMOUNT, condition: { adjustmentDirection: "INCREASE" }, description: "Record inventory gain" },
+      { lineNumber: 2, side: PostingRuleLineSide.CREDIT, mappingKey: "INVENTORY_VARIANCE", amountSource: PostingRuleAmountSource.SOURCE_AMOUNT, condition: { adjustmentDirection: "INCREASE" }, description: "Offset inventory gain" },
+      { lineNumber: 3, side: PostingRuleLineSide.DEBIT, mappingKey: "INVENTORY_VARIANCE", amountSource: PostingRuleAmountSource.SOURCE_AMOUNT, condition: { adjustmentDirection: "DECREASE" }, description: "Record inventory loss" },
+      { lineNumber: 4, side: PostingRuleLineSide.CREDIT, mappingKey: "INVENTORY", amountSource: PostingRuleAmountSource.SOURCE_AMOUNT, condition: { adjustmentDirection: "DECREASE" }, description: "Relieve inventory asset" },
+    ],
+  },
+];
+
 export const DEFAULT_POSTING_RULES: DefaultPostingRuleTemplate[] = [
   ...DEFAULT_POS_POSTING_RULES,
   ...DEFAULT_DELIVERY_ORDER_POSTING_RULES,
   ...DEFAULT_AP_POSTING_RULES,
   ...DEFAULT_CUSTOMER_SETTLEMENT_POSTING_RULES,
   ...DEFAULT_PAYROLL_POSTING_RULES,
+  ...DEFAULT_INVENTORY_POSTING_RULES,
 ];

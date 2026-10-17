@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-30T16:23:15.889Z",
+  "sourceBefore": {
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/modules/__tests__/module-access-batch.service.test.ts": "996c1aed93e61e6c45910e847ef8b139f58ee11a0a54f090d31c35e761604fb4",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "0e5ddfba4d99a4c7cd0516a1f0b3e5e5ddbc405cef32f743fead59e6a1bdf09b",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "79cb70ac95530f38970b1d92fa93ff3725d2814bd464be8152ad297dfcc51645",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "actions/modules/__tests__/module-control.actions.test.ts": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/modules/__tests__/module-access-batch.service.test.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "services/modules/__tests__/module-entitlement.service.test.ts",
+        "actions/modules/__tests__/module-control.actions.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       114 passed, 114 total\nSnapshots:   0 total\nTime:        8.041 s, estimated 27 s\nRan all test suites within paths \"services/modules/__tests__/module-access-batch.service.test.ts\", \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"services/modules/__tests__/module-entitlement.service.test.ts\", \"actions/modules/__tests__/module-control.actions.test.ts\", \"services/cash-command/__tests__/cash-command.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/modules/module-access-batch.service.ts",
+        "services/modules/__tests__/module-access-batch.service.test.ts",
+        "services/cash-command/cash-command-sources.service.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/modules/__tests__/module-access-batch.service.test.ts": "996c1aed93e61e6c45910e847ef8b139f58ee11a0a54f090d31c35e761604fb4",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "0e5ddfba4d99a4c7cd0516a1f0b3e5e5ddbc405cef32f743fead59e6a1bdf09b",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "79cb70ac95530f38970b1d92fa93ff3725d2814bd464be8152ad297dfcc51645",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "actions/modules/__tests__/module-control.actions.test.ts": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29"
+  },
+  "sourceStable": true,
+  "passed": true
+}

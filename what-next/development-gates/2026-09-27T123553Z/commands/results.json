@@ -1,0 +1,53 @@
+[
+  {
+    "name": "migration-status",
+    "command": [
+      "node",
+      "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\prisma\\build\\index.js",
+      "migrate",
+      "status"
+    ],
+    "startedAt": "2026-09-27T12:41:58.510Z",
+    "finishedAt": "2026-09-27T12:42:07.262Z",
+    "exitCode": 0,
+    "error": null,
+    "readOnlyConnectionOption": true,
+    "log": "migration-status.log"
+  },
+  {
+    "name": "migration-history",
+    "command": [
+      "node",
+      "scripts/prisma-migration-history-health-check.js",
+      "--mode",
+      "fail",
+      "--out",
+      "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\development-gates\\2026-09-27T123553Z\\commands\\migration-history.md",
+      "--json-out",
+      "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\development-gates\\2026-09-27T123553Z\\commands\\migration-history.json"
+    ],
+    "startedAt": "2026-09-27T12:42:07.282Z",
+    "finishedAt": "2026-09-27T12:42:08.024Z",
+    "exitCode": 0,
+    "error": null,
+    "readOnlyConnectionOption": true,
+    "log": "migration-history.log"
+  },
+  {
+    "name": "migration-catalog",
+    "command": [
+      "node",
+      "scripts/prisma-migration-catalog-gate.js",
+      "--mode",
+      "fail",
+      "--out",
+      "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\development-gates\\2026-09-27T123553Z\\commands\\migration-catalog.json"
+    ],
+    "startedAt": "2026-09-27T12:42:08.025Z",
+    "finishedAt": "2026-09-27T12:42:08.443Z",
+    "exitCode": 0,
+    "error": null,
+    "readOnlyConnectionOption": true,
+    "log": "migration-catalog.log"
+  }
+]

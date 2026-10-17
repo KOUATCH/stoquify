@@ -46,7 +46,7 @@ export type SnapshotKpiInput<TMetrics> = {
   format?: BIKpiValueFormat
   moduleSlug: CommercialModuleSlug
   requiredPermission: string
-  snapshot: SnapshotResult<TMetrics>
+  snapshot: Omit<SnapshotResult<TMetrics>, "kind"> & { kind: string }
   href?: string | null
   actionLink?: BIActionLink | null
   proofSubject?: {

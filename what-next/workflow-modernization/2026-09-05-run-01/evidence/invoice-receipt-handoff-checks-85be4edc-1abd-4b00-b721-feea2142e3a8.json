@@ -1,0 +1,91 @@
+{
+  "at": "2026-09-30T20:31:39.513Z",
+  "sourceBefore": {
+    "services/purchasing/ap-control.service.ts": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "11b8fa982a826031028d76dbcf563ebedff6846c78bb8cc59950a30fea8009fe",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "7d39c8ae8a9301885fbda09f01d91b6e1b727e35a172247fd9e3f1fa208489ae",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts": "0ecdee3cedd072ab8a24538b6a0879defb6095fa645b9ec0bdf6d5e5dfec6e7c",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx": "d87dbc40cde21b644f60ae625b605459fe6e457102b52a766e5b12199d9e9247"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "services/purchasing/__tests__/ap-ledger-retry.test.ts",
+        "services/accounting/__tests__/default-posting-rules.service.test.ts",
+        "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts",
+        "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+        "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+        "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx",
+        "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 9 passed, 9 total\nTests:       157 passed, 157 total\nSnapshots:   0 total\nTime:        44.113 s\nRan all test suites within paths \"services/purchasing/__tests__/invoice-receipt-recognition.test.ts\", \"services/purchasing/__tests__/ap-control.service.test.ts\", \"services/purchasing/__tests__/ap-ledger-retry.test.ts\", \"services/accounting/__tests__/default-posting-rules.service.test.ts\", \"services/purchasing/__tests__/purchase-correction-ledger.service.test.ts\", \"services/purchasing/__tests__/purchase-return-credit.service.test.ts\", \"services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts\", \"components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx\", \"components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchasing/ap-control.service.ts",
+        "services/purchasing/invoice-approval.service.ts",
+        "services/purchasing/invoice-ledger-recovery.service.ts",
+        "services/purchasing/invoice-receipt-recognition.ts",
+        "services/accounting/default-posting-rules.ts",
+        "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "services/purchasing/__tests__/ap-ledger-retry.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 2,
+      "error": null,
+      "stdout": "services/accounting/reports.service.ts(136,48): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Value'.\r\n  Type 'null' is not assignable to type 'Value'.\r\nservices/accounting/reports.service.ts(137,50): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Value'.\r\n  Type 'null' is not assignable to type 'Value'.\r\nservices/accounting/reports.service.ts(231,42): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Value'.\r\n  Type 'null' is not assignable to type 'Value'.\r\nservices/accounting/reports.service.ts(231,64): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Value'.\r\n  Type 'null' is not assignable to type 'Value'.\r\nservices/accounting/reports.service.ts(243,22): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Decimal'.\r\n  Type 'null' is not assignable to type 'Decimal'.\r\nservices/accounting/reports.service.ts(244,23): error TS2345: Argument of type 'Decimal | null' is not assignable to parameter of type 'Decimal'.\r\n  Type 'null' is not assignable to type 'Decimal'.\r\n",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/purchasing/ap-control.service.ts": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "11b8fa982a826031028d76dbcf563ebedff6846c78bb8cc59950a30fea8009fe",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "7d39c8ae8a9301885fbda09f01d91b6e1b727e35a172247fd9e3f1fa208489ae",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts": "0ecdee3cedd072ab8a24538b6a0879defb6095fa645b9ec0bdf6d5e5dfec6e7c",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx": "d87dbc40cde21b644f60ae625b605459fe6e457102b52a766e5b12199d9e9247"
+  },
+  "sourceStable": true,
+  "passed": false
+}

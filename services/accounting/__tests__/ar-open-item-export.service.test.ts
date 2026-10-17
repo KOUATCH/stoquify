@@ -29,7 +29,7 @@ import {
 
 const item = {
   customerId: "customer-1",
-  customerName: "=unsafe customer",
+  customerName: "\t =unsafe customer",
   referenceType: "CUSTOMER_RECEIVABLE_DOCUMENT",
   referenceId: "document-1",
   documentNumber: "AR-001",
@@ -118,14 +118,14 @@ describe("AR open-items controlled export", () => {
     expect(content).toContain(`"watermark_id","wm_ar_export"`)
     expect(content).toContain(`"currency_summary","EUR"`)
     expect(content).toContain(`"recorded_through","2026-08-09T12:00:00.000Z"`)
-    expect(content).toContain(`"'=unsafe customer"`)
+    expect(content).toContain(`"'\t =unsafe customer"`)
   })
 
   it("derives row count from server data and audits before releasing the file", async () => {
     const result = await prepareAROpenItemsExport({
       organizationId: "org-1",
       actorId: "user-1",
-      actorPermissions: ["finance.reports.export"],
+      actorPermissions: ["finance.receivables.read", "finance.reports.export"],
       lastAuthAt: new Date("2026-08-09T11:59:00.000Z").getTime(),
       now: new Date("2026-08-09T12:00:00.000Z"),
     })
@@ -148,4 +148,16 @@ describe("AR open-items controlled export", () => {
     })
     expect(result.contentHash).toMatch(/^sha256:[a-f0-9]{64}$/)
   })
+})
+
+it("refuses export-only authority before reading invoices", async () => {
+  jest.clearAllMocks()
+  await expect(prepareAROpenItemsExport({ organizationId: "org", actorId: "actor", actorPermissions: ["reports.export"], lastAuthAt: Date.now() })).rejects.toThrow(/read and report export/)
+  expect(getCustomerAROpenItems).not.toHaveBeenCalled()
+})
+it("withholds export bytes if mandatory auditing fails", async () => {
+  ;(getCustomerAROpenItems as jest.Mock).mockResolvedValue({ items: [], summariesByCurrency: [], asOf: "2026-10-12", recordedThrough: "2026-10-12" })
+  ;(evaluateExportSafety as jest.Mock).mockReturnValue({ allowed: true })
+  ;(auditExportSafetyDecision as jest.Mock).mockRejectedValueOnce(new Error("audit unavailable"))
+  await expect(prepareAROpenItemsExport({ organizationId: "org", actorId: "actor", actorPermissions: ["finance.read", "reports.export"], lastAuthAt: Date.now() })).rejects.toThrow("audit unavailable")
 })

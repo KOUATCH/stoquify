@@ -1,5 +1,7 @@
 # Findings and remediation — active register
 
+2026-09-27: AN-DAILY-DIGEST read-workflow corrections and acceptance checks are [closed with current evidence](DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md). PR-10 is the next primary under its [bounded checklist](RECONCILIATION_SIGNOFF_CLOSURE.md). See [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md) for reconciled counts; historical findings below retain their original scope.
+
 | ID | Evidence and impact | Current action/status |
 | --- | --- | --- |
 | ID-F01 | Reset token checked before transaction; two callers could both reach credential mutation. Three focused pre-fix regressions failed. | Corrected. Real PostgreSQL independent-connection race, genuine session revocation, denial invariants and rollback/retry passed. Public reset browser journey remains pending. |

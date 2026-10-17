@@ -1,7 +1,7 @@
 "use client"
 
-import type { ReactNode } from "react"
-import { AlertTriangle, CheckCircle2, CircleDot, EyeOff, GitBranch, RefreshCw, ShieldCheck } from "lucide-react"
+import type { CSSProperties, ReactNode } from "react"
+import { AlertTriangle, CircleDot, EyeOff, GitBranch, RefreshCw, ShieldCheck } from "lucide-react"
 
 import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import type { ProofTrailResult } from "@/services/evidence/evidence-contracts"
+import { presentProofTrail, proofTypeLabel } from "./proof-trail-presentation"
 
 type ProofTrailDrawerProps = {
   open: boolean
@@ -21,22 +22,43 @@ type ProofTrailDrawerProps = {
   proofTrail: ProofTrailResult | null
   isLoading?: boolean
   error?: string | null
+  locale?: "en" | "fr"
 }
 
-function EmptyState() {
+// Portals do not inherit the dashboard ancestor. Use the same product-token
+// aliases locally, without adding the dashboard page's positioning or backdrop.
+const portalTokens = Object.fromEntries([
+  "canvas", "border-subtle", "text", "text-soft", "info", "info-soft", "brand", "brand-soft",
+  "gold", "gold-soft", "success", "success-soft", "danger", "danger-soft", "spruce", "spruce-soft",
+].map(token => ["--dash-" + token, "var(--product-" + token + ")"])) as CSSProperties
+
+const drawerCopy = {
+  en: { title: "Proof Trail", description: "Evidence chain, blockers, redactions, and next actions for the selected record.", close: "Close proof",
+    empty: "Proof trail unavailable. Select a supported record to inspect its evidence chain.", loading: "Loading proof trail.",
+    nodes: "Evidence Nodes", edges: "Evidence Edges", blockers: "Blockers", redactions: "Redactions", from: "from", to: "to", unknown: "unknown source",
+    noBlockers: "No proof blockers were returned for this record.", audited: "Sensitive proof access was audited.", auditRequired: "Sensitive proof access requires audit logging.",
+    freshness: { fresh: "Fresh", stale: "Stale", partial: "Partial", blocked: "Blocked", unknown: "Unknown" } },
+  fr: { title: "Piste de preuve", description: "Chaîne de preuve, blocages, masquages et prochaines actions pour le document sélectionné.", close: "Fermer la preuve",
+    empty: "Piste de preuve indisponible. Sélectionnez un document pris en charge pour examiner sa chaîne de preuve.", loading: "Chargement de la piste de preuve.",
+    nodes: "Éléments de preuve", edges: "Liens entre les preuves", blockers: "Blocages", redactions: "Masquages", from: "depuis", to: "vers", unknown: "source inconnue",
+    noBlockers: "Aucun blocage de preuve n’a été renvoyé pour ce document.", audited: "L’accès aux preuves sensibles a été journalisé.", auditRequired: "L’accès aux preuves sensibles doit être journalisé.",
+    freshness: { fresh: "À jour", stale: "Ancienne", partial: "Partielle", blocked: "Bloquée", unknown: "Inconnue" } },
+} as const
+
+function EmptyState({ text }: { text: string }) {
   return (
     <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-sm text-[var(--dash-text-soft)]">
-      Proof trail unavailable. Select a supported record to inspect its evidence chain.
+      {text}
     </div>
   )
 }
 
-function LoadingState() {
+function LoadingState({ text }: { text: string }) {
   return (
     <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-sm text-[var(--dash-text-soft)]">
       <div className="flex items-center gap-2">
-        <RefreshCw className="h-4 w-4 animate-spin text-[var(--dash-info)]" aria-hidden="true" />
-        <span>Loading proof trail.</span>
+        <RefreshCw className="h-4 w-4 animate-spin motion-reduce:animate-none text-[var(--dash-info)]" aria-hidden="true" />
+        <span role="status">{text}</span>
       </div>
     </div>
   )
@@ -47,7 +69,7 @@ function ErrorState({ error }: { error: string }) {
     <div className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4 text-sm text-[var(--dash-text)]">
       <div className="flex gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 text-[var(--dash-danger)]" aria-hidden="true" />
-        <p>{error}</p>
+        <p role="alert">{error}</p>
       </div>
     </div>
   )
@@ -70,40 +92,43 @@ function Section({
   )
 }
 
-export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = false, error = null }: ProofTrailDrawerProps) {
+export function ProofTrailDrawer({ open, onOpenChange, proofTrail: sourceProof, isLoading = false, error = null, locale = "en" }: ProofTrailDrawerProps) {
+  const t = drawerCopy[locale]
+  const proofTrail = sourceProof ? presentProofTrail(sourceProof, locale) : null
+  const nodeLabels = new Map(proofTrail?.nodes.map(node => [node.id, node.label]))
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full overflow-y-auto bg-[var(--dash-bg)] text-[var(--dash-text)] sm:max-w-2xl">
+      <SheetContent style={portalTokens} lang={locale} closeLabel={t.close} overlayClassName="motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none" className="w-full overflow-y-auto bg-[var(--product-canvas)] text-[var(--dash-text)] [overflow-wrap:anywhere] motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none motion-reduce:transition-none sm:max-w-2xl">
         <SheetHeader className="pr-8">
-          <SheetTitle className="text-[var(--dash-text)]">Proof Trail</SheetTitle>
+          <SheetTitle className="text-[var(--dash-text)]">{t.title}</SheetTitle>
           <SheetDescription className="text-[var(--dash-text-soft)]">
-            Evidence chain, blockers, redactions, and next actions for the selected record.
+            {t.description}
           </SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
           {isLoading ? (
-            <LoadingState />
+            <LoadingState text={t.loading} />
           ) : error ? (
             <ErrorState error={error} />
           ) : !proofTrail ? (
-            <EmptyState />
+            <EmptyState text={t.empty} />
           ) : (
             <>
               <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <EvidenceGradeBadge grade={proofTrail.evidenceGrade} reason={proofTrail.reason} />
+                  <EvidenceGradeBadge locale={locale} grade={proofTrail.evidenceGrade} reason={proofTrail.reason} />
                   <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
-                    {proofTrail.freshness}
+                    {t.freshness[proofTrail.freshness]}
                   </Badge>
                   <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
-                    {proofTrail.sourceModules.join(", ")}
+                    {proofTrail.sourceModules.map(module => proofTypeLabel(module, locale)).join(", ")}
                   </Badge>
                 </div>
                 <p className="mt-3 text-sm text-[var(--dash-text-soft)]">{proofTrail.reason}</p>
               </div>
 
-              <Section title="Evidence Nodes">
+              <Section title={t.nodes}>
                 <div className="space-y-2">
                   {proofTrail.nodes.map((node) => (
                     <div
@@ -120,10 +145,10 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-medium text-[var(--dash-text)]">{node.label}</span>
-                          <EvidenceGradeBadge grade={node.evidenceGrade} />
+                          <EvidenceGradeBadge locale={locale} grade={node.evidenceGrade} />
                         </div>
                         <p className="mt-1 text-xs text-[var(--dash-text-soft)]">
-                          {node.nodeType} from {node.sourceTable ?? "unknown source"}.
+                          {proofTypeLabel(node.nodeType, locale)} {t.from} {node.sourceTable ?? t.unknown}.
                         </p>
                       </div>
                     </div>
@@ -131,7 +156,7 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
                 </div>
               </Section>
 
-              <Section title="Evidence Edges">
+              <Section title={t.edges}>
                 <div className="space-y-2">
                   {proofTrail.edges.map((edge, index) => (
                     <div
@@ -142,7 +167,7 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
                       <div>
                         <p className="text-sm font-medium text-[var(--dash-text)]">{edge.label}</p>
                         <p className="text-xs text-[var(--dash-text-soft)]">
-                          {edge.fromNodeId} to {edge.toNodeId}
+                          {nodeLabels.get(edge.fromNodeId) ?? edge.fromNodeId} {t.to} {nodeLabels.get(edge.toNodeId) ?? edge.toNodeId}
                         </p>
                       </div>
                     </div>
@@ -151,7 +176,7 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
               </Section>
 
               {proofTrail.blockers.length ? (
-                <Section title="Blockers">
+                <Section title={t.blockers}>
                   <div className="space-y-2">
                     {proofTrail.blockers.map((blocker) => (
                       <div
@@ -173,14 +198,14 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
                   </div>
                 </Section>
               ) : (
-                <div className="flex gap-2 rounded-lg border border-[var(--dash-success)] bg-[var(--dash-success-soft)] p-3">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-[var(--dash-success)]" aria-hidden="true" />
-                  <p className="text-sm text-[var(--dash-text)]">No proof blockers were returned for this record.</p>
+                <div className="flex gap-2 rounded-lg border border-[var(--dash-info)] bg-[var(--dash-info-soft)] p-3">
+                  <CircleDot className="mt-0.5 h-4 w-4 text-[var(--dash-info)]" aria-hidden="true" />
+                  <p className="text-sm text-[var(--dash-text)]">{t.noBlockers}</p>
                 </div>
               )}
 
               {proofTrail.redactions.length ? (
-                <Section title="Redactions">
+                <Section title={t.redactions}>
                   <div className="space-y-2">
                     {proofTrail.redactions.map((redaction) => (
                       <div
@@ -202,7 +227,7 @@ export function ProofTrailDrawer({ open, onOpenChange, proofTrail, isLoading = f
                 <div className="flex gap-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-3">
                   <ShieldCheck className="mt-0.5 h-4 w-4 text-[var(--dash-spruce)]" aria-hidden="true" />
                   <p className="text-sm text-[var(--dash-text-soft)]">
-                    Sensitive proof access {proofTrail.audit.accessLogged ? "was audited" : "requires audit logging"}.
+                    {proofTrail.audit.accessLogged ? t.audited : t.auditRequired}
                   </p>
                 </div>
               ) : null}

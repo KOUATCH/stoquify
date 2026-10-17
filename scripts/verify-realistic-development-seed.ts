@@ -2,10 +2,12 @@ import "dotenv/config";
 
 import { readFile } from "fs/promises";
 import path from "path";
+import { randomUUID } from "crypto";
 
 import { PrismaClient } from "@prisma/client";
 
 import { verifyUserCredentialPassword } from "@/lib/security/auth-credentials";
+import { hasRbacPermission } from "@/lib/security/rbac-permissions";
 import { db } from "@/prisma/db";
 import {
   addPOSCartLine,
@@ -14,9 +16,12 @@ import {
   listPOSCatalogItems,
   openPOSShift,
 } from "@/services/pos/pos.service";
+import { createTerminalForManagement } from "@/services/pos/terminal-management.service";
 
 const prisma = new PrismaClient();
-const credentialPath = path.join(
+const credentialPath = process.env.STOQUIFY_SEED_CREDENTIAL_ARTIFACT?.trim()
+  ? path.resolve(process.env.STOQUIFY_SEED_CREDENTIAL_ARTIFACT.trim())
+  : path.join(
   process.cwd(),
   ".seed-artifacts",
   "seed-login-credentials.json",
@@ -27,6 +32,7 @@ type Credential = {
   email: string;
   password: string;
   role: string;
+  roleCodes?: string[];
 };
 
 type CredentialArtifact = {
@@ -49,29 +55,30 @@ function assertDisposableTarget() {
       "The realistic seed smoke test is restricted to an explicitly named local development/test database.",
     );
   }
+  return databaseName;
 }
 
-function matchesRequiredPersona(role: string) {
-  return /admin|manager|cashier|inventory|accountant/i.test(role);
+function credentialPersona(credential: Credential): string | undefined {
+  const roles = credential.roleCodes?.length
+    ? credential.roleCodes.map((code) => code.toLowerCase())
+    : credential.role.toLowerCase().split(",").map((name) => name.trim().replaceAll(" ", "_"));
+  if (roles.some((role) => role.includes("cashier"))) return "cashier";
+  if (roles.some((role) => role.includes("inventory"))) return "inventory";
+  if (roles.some((role) => role.includes("accountant"))) return "accountant";
+  if (roles.some((role) => role.includes("manager"))) return "manager";
+  if (roles.some((role) => ["owner", "admin", "administrator", "super_admin", "super_administrator"].includes(role))) return "admin";
+  return undefined;
 }
 
 async function verifyLoginPersonas(credentials: Credential[]) {
   const candidates = credentials.filter((credential) =>
-    matchesRequiredPersona(credential.role),
+    credentialPersona(credential),
   );
   const selected: Credential[] = [];
   const represented = new Set<string>();
 
   for (const credential of candidates) {
-    const persona = credential.role.toLowerCase().includes("cashier")
-      ? "cashier"
-      : credential.role.toLowerCase().includes("inventory")
-        ? "inventory"
-        : credential.role.toLowerCase().includes("accountant")
-          ? "accountant"
-          : credential.role.toLowerCase().includes("manager")
-            ? "manager"
-            : "admin";
+    const persona = credentialPersona(credential)!;
     if (!represented.has(persona)) {
       represented.add(persona);
       selected.push(credential);
@@ -101,9 +108,46 @@ async function verifyLoginPersonas(credentials: Credential[]) {
   return results;
 }
 
-async function verifyPOSFlow(credentials: Credential[]) {
+export async function selectSmokeTerminal(
+  input: { organizationId: string; locationId: string; databaseName: string; actorPermissions: string[] },
+  client: Pick<PrismaClient, "pOSStation"> = prisma,
+  createTerminal: typeof createTerminalForManagement = createTerminalForManagement,
+) {
+  const vacant = await client.pOSStation.findFirst({
+    where: {
+      organizationId: input.organizationId,
+      locationId: input.locationId,
+      isActive: true,
+      hasCashDrawer: true,
+      currentSessionId: null,
+      sessions: { none: { status: { in: ["ACTIVE", "SUSPENDED"] } } },
+      cashDrawers: { none: { isOpen: true } },
+    },
+    orderBy: { terminalNumber: "asc" },
+    select: { id: true, terminalNumber: true },
+  });
+  if (vacant) return vacant;
+  // Never close a preserved shift, reset a station link, or reuse its drawer.
+  // Creating a dedicated test station is limited to an explicitly named clone.
+  if (!/(?:^|_)smoke(?:_|$)/i.test(input.databaseName)) {
+    throw new Error("No vacant cash-drawer station exists. Prepare an isolated smoke database before creating a synthetic verification station.");
+  }
+  if (!hasRbacPermission(input.actorPermissions, "pos.session.start")) {
+    throw new Error("The smoke actor lacks pos.session.start for terminal creation.");
+  }
+  const created = await createTerminal(input.organizationId, {
+    locationId: input.locationId,
+    terminalNumber: `RESEED-SMOKE-${randomUUID().slice(0, 8)}`,
+    name: "Synthetic reseed smoke station",
+    isActive: true,
+    hasCashDrawer: true,
+  });
+  return { id: created.id, terminalNumber: created.terminalNumber };
+}
+
+async function verifyPOSFlow(credentials: Credential[], databaseName: string) {
   const cashierCredential = credentials.find((credential) =>
-    /cashier/i.test(credential.role),
+    credentialPersona(credential) === "cashier",
   );
   if (!cashierCredential) throw new Error("Seeded cashier credential is missing.");
 
@@ -112,7 +156,7 @@ async function verifyPOSFlow(credentials: Credential[]) {
       organizationId: cashierCredential.organizationId,
       email: cashierCredential.email,
     },
-    select: { id: true },
+    select: { id: true, roles: { select: { permissions: true } } },
   });
   const location = await prisma.location.findFirstOrThrow({
     where: {
@@ -123,13 +167,11 @@ async function verifyPOSFlow(credentials: Credential[]) {
     },
     select: { id: true, name: true },
   });
-  const terminal = await prisma.pOSStation.findFirstOrThrow({
-    where: {
-      organizationId: cashierCredential.organizationId,
-      locationId: location.id,
-      isActive: true,
-    },
-    select: { id: true, terminalNumber: true },
+  const terminal = await selectSmokeTerminal({
+    organizationId: cashierCredential.organizationId,
+    locationId: location.id,
+    databaseName,
+    actorPermissions: cashier.roles.flatMap((role) => role.permissions),
   });
   const session = await openPOSShift({
     organizationId: cashierCredential.organizationId,
@@ -188,6 +230,7 @@ async function verifyPOSFlow(credentials: Credential[]) {
     organizationId: cashierCredential.organizationId,
     userId: cashier.id,
     clientCommitId: `seed:${cart.id}`,
+    expectedCartRevision: cart.revision,
     salesOrderId: cart.id,
     locationId: location.id,
     terminalId: terminal.id,
@@ -269,12 +312,12 @@ async function verifyPOSFlow(credentials: Credential[]) {
 }
 
 async function main() {
-  assertDisposableTarget();
+  const databaseName = assertDisposableTarget();
   const artifact = JSON.parse(
     await readFile(credentialPath, "utf8"),
   ) as CredentialArtifact;
   const loginPersonas = await verifyLoginPersonas(artifact.credentials);
-  const pos = await verifyPOSFlow(artifact.credentials);
+  const pos = await verifyPOSFlow(artifact.credentials, databaseName);
   console.log(
     JSON.stringify(
       {
@@ -292,7 +335,7 @@ async function main() {
   );
 }
 
-main()
+if (require.main === module) main()
   .catch((error) => {
     console.error("Realistic seed verification failed:", error);
     process.exitCode = 1;

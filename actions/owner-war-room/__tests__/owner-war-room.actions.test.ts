@@ -52,6 +52,7 @@ describe("owner war room action", () => {
     const result = await getOwnerWarRoomAction({ maxAgeMinutes: 60 })
 
     expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith({
+      locale: "en",
       organizationId: "org-session",
       actorId: "user-session",
       actorPermissions: ["DASHBOARD_READ", "payments.reconciliation.read"],
@@ -65,5 +66,17 @@ describe("owner war room action", () => {
       success: true,
       data: { organizationId: "org-session" },
     })
+  })
+
+  it("accepts French presentation without accepting caller-owned access context", async () => {
+    await getOwnerWarRoomAction({ locale: "fr", organizationId: "other-org", actorPermissions: ["*"], isSuperUser: true })
+    expect(mockGetOwnerWarRoomData).toHaveBeenCalledWith(expect.objectContaining({
+      locale: "fr", organizationId: "org-session", actorPermissions: ["DASHBOARD_READ", "payments.reconciliation.read"], isSuperUser: false,
+    }))
+  })
+
+  it("rejects unsupported locales before loading the dashboard", async () => {
+    await expect(getOwnerWarRoomAction({ locale: "de" })).rejects.toThrow()
+    expect(mockGetOwnerWarRoomData).not.toHaveBeenCalled()
   })
 })

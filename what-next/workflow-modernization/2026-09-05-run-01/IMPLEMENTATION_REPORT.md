@@ -1,3 +1,5 @@
+Current signing closure: [criterion/source audit](RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md), [operating and recovery guide](RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md). [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md) identifies the active workflow and current totals; earlier checkpoints below retain their original scope.
+
 # Workflow modernization — implementation in progress
 
 Full scope: discover, visit, analyze and improve every existing workflow, including incomplete, secondary, exceptional and background paths. This is not a completed platform review. The source baseline is 5 September 2026 on `codex/migration-control-plane-release-2026-08-29`, HEAD `a05a41ef66cd5d98fd69ae3df18225795f912232`; unrelated dirty work is preserved.

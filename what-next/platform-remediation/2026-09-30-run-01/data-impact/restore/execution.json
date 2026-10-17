@@ -1,0 +1,44 @@
+{
+  "startedAt": "2026-09-30T20:53:58.298Z",
+  "status": "RESTORE_REHEARSAL_READY",
+  "databaseName": "stoquify_restore_local_remediation_20260930_run01",
+  "databaseCreatedByThisRun": true,
+  "databaseRetained": true,
+  "stages": [
+    {
+      "stage": "pg_dump",
+      "completedAt": "2026-09-30T20:54:04.054Z",
+      "elapsedMs": 5321,
+      "exitCode": 0,
+      "sourceReadOnlyEnforced": true
+    },
+    {
+      "stage": "create_new_restore_database",
+      "completedAt": "2026-09-30T20:54:08.360Z",
+      "noOverwriteGuard": true
+    },
+    {
+      "stage": "pg_restore",
+      "completedAt": "2026-09-30T20:55:24.809Z",
+      "elapsedMs": 76444,
+      "exitCode": 0,
+      "sourceReadOnlyEnforced": false
+    }
+  ],
+  "sourceMutationAttempted": false,
+  "command": "node what-next/platform-remediation/2026-09-30-run-01/data-impact/restore/run-restore.cjs",
+  "underlyingModule": "scripts/prisma-local-restore-rehearsal.js",
+  "underlyingModuleSha256": "236aba0e86b186360ac3197df54eb0ab08b3e3525406b4675913a1ddeca8b336",
+  "sourceFingerprint": "ef40937645117a57260e1740228ca54ca2070066e158394da9f23d93b79658d9",
+  "report": {
+    "ready": true,
+    "migrations": "87/87",
+    "schemaDiffPreserved": true,
+    "profilePreserved": true,
+    "migrateStatusReady": true,
+    "dumpBytes": 2165735,
+    "temporaryDumpRetained": false
+  },
+  "completedAt": "2026-09-30T20:58:49.171Z",
+  "elapsedMs": 290865
+}

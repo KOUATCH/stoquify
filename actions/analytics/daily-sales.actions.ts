@@ -2,7 +2,7 @@
 import { z } from "zod"
 import { requirePermission } from "@/lib/security/rbac"
 import { protect } from "@/services/_shared/protect"
-import { getDailySalesReadModel } from "@/services/analytics/daily-sales-read.service"
+import { getDailySalesReadModel, getLatestDailySalesDay } from "@/services/analytics/daily-sales-read.service"
 
 const scopeSchema = z.object({
   organizationId: z.string().trim().min(1).optional(),
@@ -18,5 +18,15 @@ export const getDailySalesReportAction = protect(
     await requirePermission("sales.read", { resource: "DailySalesReport" })
     const scope = scopeSchema.parse(input)
     return getDailySalesReadModel({ ...scope, organizationId: ctx.isSuperUser && scope.organizationId ? scope.organizationId : ctx.orgId })
+  },
+)
+
+const latestScopeSchema = z.object({ organizationId: z.string().trim().min(1).optional(), locationId: z.string().trim().min(1).max(200) }).strict()
+export const getLatestDailySalesDayAction = protect(
+  { permission: "reports.read", auditResource: "DailySalesReport", module: { moduleSlug: "sales", accessIntent: "read", mode: "observe", surface: "actions/analytics/daily-sales.actions.ts#getLatestDailySalesDayAction" } },
+  async (input: z.input<typeof latestScopeSchema>, ctx) => {
+    await requirePermission("sales.read", { resource: "DailySalesReport" })
+    const scope = latestScopeSchema.parse(input)
+    return getLatestDailySalesDay({ ...scope, organizationId: ctx.isSuperUser && scope.organizationId ? scope.organizationId : ctx.orgId })
   },
 )

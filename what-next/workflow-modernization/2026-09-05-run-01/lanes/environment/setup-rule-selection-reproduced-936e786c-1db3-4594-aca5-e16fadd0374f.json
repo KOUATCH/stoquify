@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-30T19:00:38.373Z",
+  "sourceBefore": {
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+    "services/accounting/posting-rules.service.ts": "bc0901046581189e1469cbb73c193c59dd03846ab27c1a3640c93a1476984af2",
+    "services/accounting/control-center.service.ts": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227"
+  },
+  "syntheticNegativeFixtures": true,
+  "cases": [
+    {
+      "scenario": "wrong_source",
+      "organizationId": "cmuoh0dcv0000ma9g8p0ipxg0",
+      "setupRecognizesIssue": false,
+      "operationalDenied": true,
+      "operationalReason": "No applicable source rule",
+      "readinessMs": 148,
+      "noFinancialEffects": true
+    },
+    {
+      "scenario": "inactive_account",
+      "organizationId": "cmuoh0dp8000ama9gk6e0pb6e",
+      "setupRecognizesIssue": false,
+      "operationalDenied": true,
+      "operationalReason": "Posting rule account 5000 is inactive",
+      "readinessMs": 141,
+      "noFinancialEffects": true
+    },
+    {
+      "scenario": "shadowed_rule",
+      "organizationId": "cmuoh0dx7000kma9gs42qbkn9",
+      "setupRecognizesIssue": false,
+      "operationalDenied": true,
+      "operationalReason": "Posting rule must include both debit and credit lines",
+      "readinessMs": 15,
+      "noFinancialEffects": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+    "services/accounting/posting-rules.service.ts": "bc0901046581189e1469cbb73c193c59dd03846ab27c1a3640c93a1476984af2",
+    "services/accounting/control-center.service.ts": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227"
+  },
+  "sourceStable": true
+}

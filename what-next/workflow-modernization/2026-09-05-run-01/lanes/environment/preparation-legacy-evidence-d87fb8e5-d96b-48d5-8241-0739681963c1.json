@@ -1,0 +1,200 @@
+{
+  "at": "2026-09-27T18:16:20.964Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e"
+  },
+  "cases": [
+    {
+      "type": "DUPLICATE_PROVIDER_REFERENCE",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "DUPLICATE_PROVIDER_REFERENCE",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "TAMPER_SIGNAL",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "TAMPER_SIGNAL",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "AMOUNT_MISMATCH",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "AMOUNT_MISMATCH",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_PROVIDER_EVENT",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_PROVIDER_EVENT",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_STATEMENT_LINE",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_STATEMENT_LINE",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "FEE_DEVIATION",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "FEE_DEVIATION",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "LATE_SETTLEMENT",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "LATE_SETTLEMENT",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "STALE_PENDING_PAYMENT",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "STALE_PENDING_PAYMENT",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "UNMAPPED_PROVIDER_ACCOUNT",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "UNMAPPED_PROVIDER_ACCOUNT",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MANUAL_REVIEW_REQUIRED",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "MANUAL_REVIEW_REQUIRED",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "SIGNATURE_FAILURE",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "SIGNATURE_FAILURE",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "REPLAY_SPIKE",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "REPLAY_SPIKE",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "SUSPENSE_POSTING_BLOCKED",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "SUSPENSE_POSTING_BLOCKED",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "OTHER",
+      "status": "RESOLVED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    },
+    {
+      "type": "OTHER",
+      "status": "DISMISSED",
+      "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+      "noPreparation": true
+    }
+  ],
+  "scope": "Synthetic legacy-style final-status records without current retained independent decision evidence. No claims about actual customer legacy populations.",
+  "organizationId": "cmuk53un30000madc014qqgpy",
+  "runId": "cmuk53uwl001amadcwoakwm6v",
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e"
+  },
+  "sourceStable": true
+}

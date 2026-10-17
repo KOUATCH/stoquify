@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-09-30T21:19:45.716Z",
+  "status": "PASS",
+  "mode": "corrected",
+  "source": "prisma/comprehensive-seed.ts",
+  "sourceSha256": "d97e5796fe368dff7d371d40fb52430dc4f1c3f43fa7a6c9190b3a1d3ec4c8e3",
+  "databaseAccess": false,
+  "seedModuleImported": false,
+  "checks": [
+    {
+      "name": "generated XAF base lines balance and journal/batch/source dates agree across month boundary",
+      "passed": true,
+      "journals": 4,
+      "lines": 20
+    },
+    {
+      "name": "generated EUR base lines balance and journal/batch/source dates agree across month boundary",
+      "passed": true,
+      "journals": 4,
+      "lines": 20
+    },
+    {
+      "name": "all normal seed journals have complete base amounts and containing periods",
+      "passed": true,
+      "journals": 12,
+      "lines": 60
+    }
+  ]
+}

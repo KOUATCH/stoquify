@@ -10,6 +10,58 @@ type Translation = {
 
 // Match source identity and exact canonical wording; never translate custom evidence.
 const sourceCopy: Record<string, Translation> = {
+  "close-assessment-not-current": {
+    gate: "close_readiness",
+    en: { title: "Close assessment is historical", detail: "This assessment is not the latest assessment for its accounting period.", nextAction: "Open the latest close assessment before relying on certification." },
+    fr: { title: "L’évaluation de clôture est historique", detail: "Cette évaluation n’est pas la dernière évaluation de sa période comptable.", nextAction: "Ouvrez la dernière évaluation de clôture avant de vous fier à la certification." },
+  },
+  "close-assessment-voided": {
+    gate: "close_readiness",
+    en: { title: "Close assessment is voided", detail: "This assessment has been voided and cannot establish current certification.", nextAction: "Run a new close assessment and resolve its controls before requesting certification." },
+    fr: { title: "L’évaluation de clôture est annulée", detail: "Cette évaluation a été annulée et ne peut pas établir la certification actuelle.", nextAction: "Lancez une nouvelle évaluation de clôture et résolvez ses contrôles avant de demander la certification." },
+  },
+  "close-assessment-order-ambiguous": {
+    gate: "close_readiness",
+    en: { title: "Current close assessment is ambiguous", nextAction: "Review the competing assessments and run Close Assurance again before relying on certification." },
+    fr: { title: "L’évaluation de clôture actuelle est ambiguë", nextAction: "Examinez les évaluations concurrentes et relancez les contrôles de clôture avant de vous fier à la certification." },
+    detail: { pattern: /^(\d+) accounting period\(s\) have multiple latest assessments with the same creation time\.$/, render: m => `${m[1]} période(s) comptable(s) ont plusieurs dernières évaluations créées au même instant.` },
+  },
+  "close-evidence-stale": {
+    gate: "close_readiness",
+    en: { title: "Close evidence has been invalidated", nextAction: "Reevaluate Close Assurance and obtain current certification evidence." },
+    fr: { title: "Les preuves de clôture ont été invalidées", nextAction: "Réévaluez la clôture et obtenez des preuves de certification à jour." },
+    detail: { pattern: /^(\d+) close run\(s\) require fresh evidence after a source change\.$/, render: m => `${m[1]} clôture(s) nécessitent des preuves à jour après une modification des sources.` },
+  },
+  "close-certified-export-missing": {
+    gate: "close_readiness",
+    en: { title: "Close certification evidence is missing", nextAction: "Review and retain a current certified close pack before relying on certification." },
+    fr: { title: "Les preuves de certification de clôture sont absentes", nextAction: "Examinez et conservez un dossier de clôture certifié à jour avant de vous fier à la certification." },
+    detail: { pattern: /^(\d+) certified close run\(s\) lack a current certified export\.$/, render: m => `${m[1]} clôture(s) marquées certifiées ne disposent pas d’un export certifié à jour.` },
+  },
+  "close-findings-open": {
+    gate: "close_readiness",
+    en: { title: "Close findings remain open", nextAction: "Resolve or formally waive close findings through Close Assurance." },
+    fr: { title: "Des constats de clôture restent ouverts", nextAction: "Résolvez les constats ou faites approuver leur dérogation dans le centre de clôture." },
+    detail: { pattern: /^(\d+) finding\(s\) remain unresolved in the selected close runs\.$/, render: m => `${m[1]} constat(s) restent non résolus dans les clôtures sélectionnées.` },
+  },
+  "close-checklist-incomplete": {
+    gate: "close_readiness",
+    en: { title: "Close controls failed or are unavailable", nextAction: "Review failed controls and restore their evidence before certification." },
+    fr: { title: "Des contrôles de clôture ont échoué ou sont indisponibles", nextAction: "Examinez les contrôles en échec et rétablissez leurs preuves avant la certification." },
+    detail: { pattern: /^(\d+) checklist control\(s\) failed or are unavailable in the selected close runs\.$/, render: m => `${m[1]} contrôle(s) ont échoué ou sont indisponibles dans les clôtures sélectionnées.` },
+  },
+  "close-evidence-unavailable": {
+    gate: "close_readiness",
+    en: { title: "Close evidence is unavailable", nextAction: "Regenerate or attach the missing close evidence." },
+    fr: { title: "Des preuves de clôture sont indisponibles", nextAction: "Régénérez ou joignez les preuves de clôture manquantes." },
+    detail: { pattern: /^(\d+) close evidence item\(s\) are unavailable for this organization\.$/, render: m => `${m[1]} élément(s) de preuve de clôture sont indisponibles pour cette organisation.` },
+  },
+  "close-periods-unreviewed": {
+    gate: "close_readiness",
+    en: { title: "Accounting periods need close review", nextAction: "Run Close Assurance for each uncovered accounting period." },
+    fr: { title: "Des périodes comptables nécessitent un examen de clôture", nextAction: "Lancez les contrôles de clôture pour chaque période comptable non couverte." },
+    detail: { pattern: /^(\d+) accounting period\(s\) have no close run in the selected scope\.$/, render: m => `${m[1]} période(s) comptable(s) ne disposent d’aucune clôture dans le périmètre sélectionné.` },
+  },
   "payment-location-scope-unsupported": {
     gate: "payment_truth_scope",
     en: { title: "Location-scoped payment truth is unavailable", detail: "Payment Truth currently reconciles tenant-wide provider evidence and cannot safely claim location-level results.", nextAction: "Use tenant-wide Payment Truth or a location-aware branch snapshot until payment allocation evidence supports location scope." },
@@ -29,7 +81,9 @@ const sourceCopy: Record<string, Translation> = {
     gate: "payroll_employee_balance",
     en: { title: "Employee balance recovery cases are open", nextAction: "Open payroll payments and settle, refund, or review employee balance recovery cases." },
     fr: { title: "Des dossiers de recouvrement de soldes salariés restent ouverts", nextAction: "Ouvrez les paiements de paie pour examiner les dossiers de recouvrement, les règlements ou les remboursements selon vos autorisations." },
-    detail: { pattern: /^(\d+) active employee balance case\(s\) have (-?\d+\.\d{2}) outstanding\.$/, render: m => m[1] === "1" ? `1 dossier actif de solde salarié présente un montant restant de ${m[2]}.` : `${m[1]} dossiers actifs de soldes salariés présentent un montant restant de ${m[2]}.` },
+    detail: { pattern: /^(\d+) active employee balance case\(s\) (?:have (-?\d+\.\d{2})(?: ([A-Z]{3}))? outstanding\.|remain open; a combined currency total is unavailable\.)$/, render: m => m[2]
+      ? `${m[1]} ${m[1] === "1" ? "dossier actif de solde salarié présente" : "dossiers actifs de soldes salariés présentent"} un montant restant de ${m[2]}${m[3] ? ` ${m[3]}` : ""}.`
+      : `${m[1]} ${m[1] === "1" ? "dossier actif de solde salarié reste ouvert" : "dossiers actifs de soldes salariés restent ouverts"} ; le total combiné des devises est indisponible.` },
   },
   "inventory-negative-stock": {
     gate: "inventory_cash",
@@ -91,6 +145,10 @@ const sourceCopy: Record<string, Translation> = {
 }
 
 const forecastCopy: Record<string, Omit<Translation, "gate">> = {
+  PAYROLL_FORECAST_SETTLEMENT_BALANCE_UNVERIFIED: {
+    en: { title: "Remaining payroll payment balance is unverified", detail: "A partially settled payroll batch has no verified remaining balance. Its original amount cannot be used as upcoming cash.", nextAction: "Review payroll settlement evidence and establish the remaining obligation before relying on this forecast." },
+    fr: { title: "Le solde restant du paiement de paie n’est pas vérifié", detail: "Un lot de paie partiellement réglé ne dispose pas d’un solde restant vérifié. Son montant initial ne peut pas servir de prévision de trésorerie.", nextAction: "Examinez les preuves de règlement de la paie et établissez l’obligation restante avant de vous fier à cette prévision." },
+  },
   PAYROLL_FORECAST_PROVIDER_PROOF_MISSING: {
     en: { title: "Payroll provider proof is missing", detail: "Upcoming payroll net-pay is withheld until an active payment provider evidence path is visible.", nextAction: "Open payment provider evidence and payroll payment batches before relying on payroll cash forecasts." },
     fr: { title: "Les preuves du prestataire de paiement de paie sont manquantes", detail: "Le salaire net prévisionnel n’est pas présenté tant que les preuves d’un prestataire de paiement actif ne sont pas disponibles.", nextAction: "Examinez les preuves du prestataire et les lots de paiement de paie avant de vous fier aux prévisions de trésorerie." },

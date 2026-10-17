@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-27T13:34:36.804Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "00b5f47905ec8eb98a4ce73900798aa7455e2eccf6d45846481b4604b80e5ca4",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "checks": [
+    "Two workers publish one signed observation; unrelated provider outbox and all financial/signature records remain unchanged.",
+    "Committed inbox publication survives lost acknowledgement; FAILED/backoff prevents early retry, then exact delivery retains original bytes and one delivered audit."
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "00b5f47905ec8eb98a4ce73900798aa7455e2eccf6d45846481b4604b80e5ca4",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "sourceStable": true
+}

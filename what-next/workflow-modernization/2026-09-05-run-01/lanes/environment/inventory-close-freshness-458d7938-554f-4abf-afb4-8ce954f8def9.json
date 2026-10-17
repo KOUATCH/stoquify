@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-30T17:22:21.578Z",
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "bfe8b3cb9382eeb3476b221da8adecb56b0627fb4c942084c7525a8ee3499f5b",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71"
+  },
+  "checks": [
+    {
+      "name": "observation-time-changes-without-source-change",
+      "passed": true,
+      "firstReportHash": "sha256:d7fbfe7b43f87a145b1adadd86ee2beee59968c07b67dea6423787ed98ae97bc",
+      "secondReportHash": "sha256:03c8052fe490445af5fcc3e13badff5fa8bc6c0fb871ce77a0c04c30b2920dd9",
+      "evidenceHash": "sha256:70fcd4342d3b15411b191fa8503edeb208ae9df319fb2b33a2d4f605c0f9fc4e"
+    },
+    {
+      "name": "actual-assessment-and-draft-export-non-XAF-fresh",
+      "passed": true,
+      "runId": "cmuodi0au000cma10m1p9sca9",
+      "remainingBlockers": [
+        "Close run status is BLOCKED, not READY.",
+        "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+        "1 high-severity blocker(s) remain open.",
+        "1 open high-risk finding(s) block certification.",
+        "No payroll run belongs to this close period for pilot-cycle certification."
+      ]
+    },
+    {
+      "name": "later-recorded-backdated-net-zero-source-invalidates-old-annex",
+      "passed": true,
+      "evidenceHash": "sha256:850b94a6dd30ed67a3b0a2b57e9acecf7f69e9f9e5a9539a027297d61f5b5f71"
+    },
+    {
+      "name": "new-assessment-recovers-after-source-change",
+      "passed": true,
+      "runId": "cmuodi1ec0020ma10w85ptdlz"
+    },
+    {
+      "name": "future-effective-source-excluded-from-prior-period",
+      "passed": true
+    },
+    {
+      "name": "recorded-invalidation-remains-effective",
+      "passed": true
+    },
+    {
+      "name": "legacy-annex-requires-new-assessment",
+      "passed": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuodhzcg0000ma100adh0msp",
+    "actorId": "cmuodhzcx0002ma10zwfxkn99",
+    "periodId": "cmuodhzdm0006ma10oe2p9hev",
+    "initialRunId": "cmuodi0au000cma10m1p9sca9",
+    "refreshedRunId": "cmuodi1ec0020ma10w85ptdlz",
+    "legacyRunId": "cmuodi21i003sma10x4dngluz"
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "bfe8b3cb9382eeb3476b221da8adecb56b0627fb4c942084c7525a8ee3499f5b",
+    "services/accounting/close-assurance-pack.service.ts": "2e87df6525a59bde1a5d1d584b81d955037d002ef4e0f10cf08f25cca9c9bc71"
+  },
+  "sourceStable": true
+}

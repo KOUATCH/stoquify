@@ -1,0 +1,60 @@
+{
+  "at": "2026-09-27T11:17:33.767Z",
+  "sourceBefore": {
+    "services/signals/business-signal-rules.service.ts": "403ba973553873b0d29e8153b7679d3df7ac9cf7bc44ec9716016452a57b63e1",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070"
+  },
+  "checks": [
+    {
+      "state": "history-only",
+      "locale": "en",
+      "approvedOrPaidCount": 5,
+      "forecastBlockerCodes": [],
+      "serviceAndBrowserPassed": true,
+      "screenshot": "digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d-en-history-only.png"
+    },
+    {
+      "state": "history-only",
+      "locale": "fr",
+      "approvedOrPaidCount": 5,
+      "forecastBlockerCodes": [],
+      "serviceAndBrowserPassed": true,
+      "screenshot": "digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d-fr-history-only.png"
+    },
+    {
+      "state": "missing-forecast-proof",
+      "locale": "en",
+      "approvedOrPaidCount": 5,
+      "forecastBlockerCodes": [
+        "PAYROLL_FORECAST_POSTED_RUN_MISSING"
+      ],
+      "serviceAndBrowserPassed": true,
+      "screenshot": "digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d-en-missing-forecast-proof.png"
+    },
+    {
+      "state": "missing-forecast-proof",
+      "locale": "fr",
+      "approvedOrPaidCount": 5,
+      "forecastBlockerCodes": [
+        "PAYROLL_FORECAST_POSTED_RUN_MISSING"
+      ],
+      "serviceAndBrowserPassed": true,
+      "screenshot": "digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d-fr-missing-forecast-proof.png"
+    }
+  ],
+  "noBusinessMutationsDuringReads": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/signals/business-signal-rules.service.ts": "403ba973553873b0d29e8153b7679d3df7ac9cf7bc44ec9716016452a57b63e1",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070"
+  },
+  "sourceStable": true
+}

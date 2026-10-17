@@ -1,6 +1,7 @@
 "use client";
 import { QueryProvider } from "@/lib/providers/query-provider";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import type { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { UploadThingBootstrap } from "@/components/security/UploadThingBootstrap";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import {
@@ -23,7 +24,7 @@ export default function Providers({
       <AuthProvider>
         <NotificationProvider>
           {uploadThingRouterConfig ? (
-            <NextSSRPlugin routerConfig={uploadThingRouterConfig} />
+            <UploadThingBootstrap routerConfig={uploadThingRouterConfig} nonce={props.nonce} />
           ) : null}
           <NextThemesProvider
             attribute="class"

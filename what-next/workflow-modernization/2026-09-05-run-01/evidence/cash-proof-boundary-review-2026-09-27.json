@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-27T19:20:59.900Z",
+  "workflow": "FA-CASH-COMMAND",
+  "status": "In progress",
+  "completeWorkflowVerified": false,
+  "report": "CASH_COMMAND_PROOF_BOUNDARY_2026-09-27.md",
+  "receipt": {
+    "file": "evidence/cash-proof-checks-38e16fcc-b952-47e4-b861-3bf95bda6d17.json",
+    "sha256": "a9e9c0844b6055686de41acd918ec147753cf09aca8483633c19859ac06ce6e9"
+  },
+  "sourceHashes": {
+    "services/cash-command/cash-command.service.ts": "6d90a5c1612e8c8409cb0523da1e68e8076f7fbb97d5e21e83126fe0209d6cc0",
+    "services/cash-command/cash-command-contracts.ts": "3453faee9881c81d332adbd8d908053db5987ceef0c06b1b0171c67e29817c96",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "df903b1c97103dadeb3b7f38cef5cdd19da54e8ec90e5277b95b2bab30159d03",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "f18d0df383a6c8a4265b811d4c963436ddf90fb7cacbcd7e4f4101069162f5ef",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "focusedTestsAndLintPassed": true,
+  "fullTypecheckPassed": false,
+  "fullTypecheck": {
+    "name": "typecheck",
+    "args": [
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "status": 2,
+    "error": null,
+    "stdout": "services/accounting/accountant-work-desk.service.ts(4,35): error TS2307: Cannot find module '@/lib/security/permission-aliases' or its corresponding type declarations.\r\nservices/accounting/accountant-work-desk.service.ts(71,32): error TS2322: Type '\"CERTIFIER\"' is not assignable to type 'AccountantAccessRole'.\r\nservices/accounting/accountant-work-desk.service.ts(102,27): error TS2551: Property 'organization' does not exist on type '{ id: string; organizationId: string; status: AccountantAccessStatus; createdAt: Date; updatedAt: Date; role: AccountantAccessRole; ... 13 more ...; metadata: JsonValue; }'. Did you mean 'organizationId'?\r\n",
+    "stderr": ""
+  },
+  "pageTestLint": {
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "verifiedSubcriteria": [
+    "unit_proof_identifiers_authorized_before_discovery",
+    "unit_module_admission_ordering_and_request_revocation",
+    "unit_tenant_period_and_posted_journal_query_contract",
+    "unit_read_intent_and_propagated_query_failures"
+  ],
+  "remaining": [
+    "Critical: authorize all Cash Command domain totals, briefs, risks, trust signals and inherited snapshot metadata; queue filtering alone does not protect them.",
+    "Cash Command proof drawer identity, concurrent request order, transport recovery and scope withdrawal require correction and runtime verification.",
+    "Current proof-discovery database and EN/FR browser verification remain pending; full TypeScript is blocked by three unrelated accountant-work-desk errors recorded in the receipt."
+  ]
+}

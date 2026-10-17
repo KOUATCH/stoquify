@@ -488,6 +488,55 @@ describe("commitPOSSale accounting wiring", () => {
     mockSendReceipt.mockResolvedValue(null)
   })
 
+  it("P05 rejects replacing the retained commit identity before financial work", async () => {
+    const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
+    const sale = draftSaleFixture()
+    mockTx.salesOrder.findFirst.mockResolvedValue({ ...sale, lines: sale.lines.map(line => ({
+      ...line, item: { ...line.item, sellingPrice: line.unitPrice, taxRate: { rate: line.taxRate } },
+    })) })
+    mockTx.pOSCheckoutWorkspace.findFirst.mockResolvedValue({
+      leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(Date.now() + 60_000),
+      pendingRequest: { ...input, clientCommitId: "pos-original-retained" },
+    })
+    mockTx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 1 })
+
+    await expect(commitPOSSale(input)).rejects.toThrow("POS_CHECKOUT_RECOVERY_REQUIRED")
+    expect(mockTx.salesOrder.findFirst).not.toHaveBeenCalled()
+    expect(mockTx.pOSCommitResult.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+  })
+
+  it("P05 preserves the matching retained identity and original outcome on retry", async () => {
+    const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
+    const sale = draftSaleFixture()
+    mockTx.salesOrder.findFirst.mockResolvedValue({ ...sale, lines: sale.lines.map(line => ({
+      ...line, item: { ...line.item, sellingPrice: line.unitPrice, taxRate: { rate: line.taxRate } },
+    })) })
+    const retained = { ...input }
+    mockTx.pOSCheckoutWorkspace.findFirst.mockResolvedValue({
+      leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(Date.now() + 60_000), pendingRequest: retained,
+    })
+    mockTx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 1 })
+    const original = await commitPOSSale(input)
+    const effects = {
+      payments: mockTx.payment.create.mock.calls.length,
+      stock: mockTx.inventoryTransaction.create.mock.calls.length,
+      salePosting: mockPostSale.mock.calls.length,
+      paymentPosting: mockPostPayment.mock.calls.length,
+    }
+    mockTx.pOSCommitResult.findUnique.mockResolvedValue(completedCommitRecord())
+    await expect(commitPOSSale(input)).resolves.toEqual({ ...original, replayed: true })
+    expect(original.clientCommitId).toBe(retained.clientCommitId)
+    expect(retained).toEqual(input)
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(effects.payments)
+    expect(mockTx.inventoryTransaction.create).toHaveBeenCalledTimes(effects.stock)
+    expect(mockPostSale).toHaveBeenCalledTimes(effects.salePosting)
+    expect(mockPostPayment).toHaveBeenCalledTimes(effects.paymentPosting)
+  })
+
   it("requires a fresh review if live prices changed before a browser submission", async () => {
     const input = { ...commitInput(), checkoutLeaseId: "00000000-0000-4000-8000-000000000001" }
     const sale = draftSaleFixture()

@@ -1,7 +1,10 @@
 "use client";
 
+import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+import type { Locale } from "@/types/bilingual"
+
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 
 import {
@@ -40,10 +43,10 @@ export type PayrollProofDrawerSubject = {
   }>;
 };
 
-function displayValue(value: PayrollProofDrawerRow["value"]) {
-  if (value === true) return "Yes";
-  if (value === false) return "No";
-  if (value === null || value === undefined || value === "") return "Pending";
+function displayValue(value: PayrollProofDrawerRow["value"], locale: Locale = "en") {
+  if (value === true) return payrollUiText("Yes", locale);
+  if (value === false) return payrollUiText("No", locale);
+  if (value === null || value === undefined || value === "") return payrollUiText("Pending", locale);
   return String(value);
 }
 
@@ -72,38 +75,42 @@ function tone(value: string | null | undefined) {
   return "border-amber-400/30 bg-amber-400/10 text-amber-100";
 }
 
-function Badge({ value }: { value: string | null | undefined }) {
+function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
   return (
     <span
       className={`inline-flex min-h-7 max-w-full items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${tone(value)}`}
     >
-      <span className="truncate">{value ?? "Pending"}</span>
+      <span className="truncate">{payrollStatusText(value, locale)}</span>
     </span>
   );
 }
 
-export default function PayrollProofDrawerButton({
+export default function PayrollProofDrawerButton({ locale = "en",
   subject,
 }: {
   subject: PayrollProofDrawerSubject;
-}) {
+} & { locale?: Locale }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const blockers = subject.blockers ?? [];
   const redactions = subject.redactions ?? [];
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex min-h-8 items-center justify-center gap-2 rounded-md border border-white/12 bg-white/10 px-2.5 text-xs font-semibold text-white transition hover:bg-white/15"
       >
         <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-        Proof drawer
-      </button>
+         {payrollUiText("Proof drawer", locale)} </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="w-full overflow-y-auto border-white/10 bg-[#101820] text-slate-100 sm:max-w-2xl">
+        <SheetContent lang={locale} closeLabel={locale === "fr" ? "Fermer" : "Close"} onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          triggerRef.current?.focus();
+        }} className="w-full overflow-y-auto border-white/10 bg-[#101820] text-slate-100 sm:max-w-2xl">
           <SheetHeader className="pr-8">
             <SheetTitle className="text-white">{subject.label}</SheetTitle>
             <SheetDescription className="break-all text-slate-400">
@@ -113,20 +120,18 @@ export default function PayrollProofDrawerButton({
 
           <div className="mt-6 grid gap-4">
             <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] p-4">
-              <Badge value={subject.status} />
+              <Badge locale={locale} value={subject.status} />
               {redactions.length ? (
                 <span className="inline-flex min-h-7 items-center gap-2 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-2.5 text-xs font-semibold text-cyan-100">
                   <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
-                  Redacted
-                </span>
+                   {payrollUiText("Redacted", locale)} </span>
               ) : null}
               {subject.href ? (
                 <Link
                   href={subject.href}
                   className="inline-flex min-h-7 items-center gap-2 rounded-md border border-white/12 px-2.5 text-xs font-semibold text-white hover:bg-white/10"
                 >
-                  Open
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                   {payrollUiText("Open", locale)} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               ) : null}
             </div>
@@ -138,10 +143,10 @@ export default function PayrollProofDrawerButton({
                   className="grid gap-2 px-4 py-3 sm:grid-cols-[170px_minmax(0,1fr)]"
                 >
                   <dt className="text-xs font-semibold uppercase tracking-normal text-slate-400">
-                    {row.label}
+                    {payrollUiText(row.label, locale)}
                   </dt>
                   <dd className="min-w-0 break-all text-sm text-slate-100">
-                    {displayValue(row.value)}
+                    {displayValue(row.value, locale)}
                   </dd>
                 </div>
               ))}
@@ -149,14 +154,14 @@ export default function PayrollProofDrawerButton({
 
             {blockers.length ? (
               <div className="grid gap-2 rounded-lg border border-amber-400/20 bg-amber-400/10 p-4">
-                <h3 className="text-sm font-semibold text-white">Blockers</h3>
+                <h3 className="text-sm font-semibold text-white">{payrollUiText("Blockers", locale)}</h3>
                 {blockers.map((blocker) => (
                   <div
                     key={blocker.id}
                     className="rounded-md border border-white/10 bg-black/10 p-3 text-xs text-amber-50"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge value={blocker.severity} />
+                      <Badge locale={locale} value={blocker.severity} />
                       <p className="font-semibold text-white">
                         {blocker.title}
                       </p>
@@ -174,7 +179,7 @@ export default function PayrollProofDrawerButton({
 
             {redactions.length ? (
               <div className="grid gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 p-4">
-                <h3 className="text-sm font-semibold text-white">Redactions</h3>
+                <h3 className="text-sm font-semibold text-white">{payrollUiText("Redactions", locale)}</h3>
                 {redactions.map((redaction) => (
                   <div
                     key={`${redaction.policy}:${redaction.field}`}

@@ -1,0 +1,64 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\ProfessionalPOSSystem.tsx.before.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\ProfessionalPOSSystem.tsx"
+index ed4ffc7c..fef1db02 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\ProfessionalPOSSystem.tsx.before.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\ProfessionalPOSSystem.tsx"	
+@@ -52,6 +52,8 @@ import { Separator } from "@/components/ui/separator"
+ import { Textarea } from "@/components/ui/textarea"
+ import { useNotifications } from "@/components/notifications/NotificationProvider"
+ import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
++import { LocalOfflineRecovery, localOfflineCopy } from "@/components/pos/offline/LocalOfflineRecovery"
++import { assertNoLocalOfflineWork } from "@/lib/pos/offline-local-queue"
+ import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
+ import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
+ import { currencyFractionDigits } from "@/lib/i18n/organization-money"
+@@ -843,6 +845,16 @@ function POSWorkspace() {
+   async function handleCloseShift() {
+     if (!activeShift || !canSubmitCloseShift || parsedCloseBalance === null) return false
+ 
++    try {
++      if (!organizationId) throw new Error("Current organization unavailable")
++      // Re-read durable local evidence at the command boundary; polling/server
++      // counts alone cannot prove that this browser has no unsent work.
++      await assertNoLocalOfflineWork({ organizationKey: organizationId, locationId: activeShift.locationId, terminalId: activeShift.terminalId })
++    } catch {
++      setCloseShiftError(localOfflineCopy[locale === "fr" ? "fr" : "en"].closeBlocked)
++      return false
++    }
++
+     setCloseShiftError(null)
+     const pendingId = notifications.info(t("notifications.closeShiftPendingTitle"), t("notifications.closeShiftPendingMessage"), {
+       category: "pos",
+@@ -1357,18 +1369,21 @@ function POSWorkspace() {
+     ...(selectedTerminalId ? [activeShiftQuery, cartQuery] : []),
+   ]
+   const failedReads = requiredReads.filter(query => query.isError)
+-  if (failedReads.length) return <DashboardErrorState
++  const localOfflineRecovery = <LocalOfflineRecovery organizationId={organizationId} userId={user?.id}
++    locationId={selectedLocationId} terminalId={selectedTerminalId} sessionId={activeShift?.id}
++    canRead={hasPermission("pos.transactions.read")} canSend={hasPermission("pos.use")} locale={locale === "fr" ? "fr" : "en"} />
++  if (failedReads.length) return <>{localOfflineRecovery}<DashboardErrorState
+     locale={locale === "fr" ? "fr" : "en"}
+     title={t("readState.failedTitle")}
+     message={t("readState.failedMessage")}
+     reset={() => { void Promise.all(failedReads.map(query => query.retryRead())) }}
+-  />
++  /></>
+   // Catalogue search has its own loading state; keep the scanner input mounted while it loads.
+-  if (requiredReads.some(query => query !== catalogQuery && query.isLoading)) return <DashboardRouteState
++  if (requiredReads.some(query => query !== catalogQuery && query.isLoading)) return <>{localOfflineRecovery}<DashboardRouteState
+     kind="loading" locale={locale === "fr" ? "fr" : "en"}
+     title={t("readState.loadingTitle")} message={t("readState.loadingMessage")}
+     primaryHref={`/${locale}/dashboard`}
+-  />
++  /></>
+ 
+   return (
+     <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden text-[var(--dash-text)]", touchMode && "text-base")}>
+@@ -1483,6 +1498,7 @@ function POSWorkspace() {
+       ) : null}
+ 
+       <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-4 px-3 py-4 pb-12 sm:px-4 lg:px-5">
++        {localOfflineRecovery}
+         <OfflineSyncStatusStrip
+           className="mt-20 scroll-mt-48"
+           access={{ organizationId, userId: user?.id, canRead: hasPermission("pos.transactions.read"), canReview: hasPermission("controls.manage") }}

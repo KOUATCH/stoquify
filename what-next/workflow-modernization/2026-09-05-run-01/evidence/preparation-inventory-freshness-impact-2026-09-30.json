@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-30T17:49:18.317Z",
+  "passed": true,
+  "workflow": "PR-19",
+  "correctedSigningWorkflow": "PR-10",
+  "supersedesWorkflowLabelIn": "evidence/signing-inventory-freshness-impact-2026-09-30.json",
+  "parent": "evidence/preparation-closure-2026-09-27.json",
+  "source": {
+    "file": "services/accounting/close-assurance-pack.service.ts",
+    "before": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "after": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d"
+  },
+  "sourceHashes": {
+    "services/accounting/close-assurance-pack.service.ts": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65"
+  },
+  "report": "CLOSE_INVENTORY_DEPENDENCY_AUDIT_2026-09-30.md",
+  "runtime": {
+    "preparationAndReplay": true,
+    "independentSigning": true,
+    "retainedSignedHistory": true,
+    "noDuplicatePreparationOrFinancialEffects": true
+  },
+  "evidence": [
+    {
+      "file": "lanes/environment/freshness-preparation-impact-95060730-66b8-4160-ad07-78f3e5bc6d65.json",
+      "sha256": "d0b954855ab0bf0f7ee1432b269b410f4f83e3d205d67884711d43ad23efbdae"
+    },
+    {
+      "file": "evidence/signing-inventory-freshness-impact-2026-09-30.json",
+      "sha256": "cb6f0b8179f4997cc2200d19ba8fe022752f503e95d23d9eed9e6f9d4c94722c"
+    },
+    {
+      "file": "evidence/preparation-closure-2026-09-27.json",
+      "sha256": "f86bbc310e40eb17262af90fdf5e85ba39dc7e591478020d228fb5bb869a58f0"
+    },
+    {
+      "file": "CLOSE_INVENTORY_DEPENDENCY_AUDIT_2026-09-30.md",
+      "sha256": "fb77395dd5d49ed3b518d97124bb7491faa277dccba273e2f5330afd73852a71"
+    },
+    {
+      "file": "lanes/environment/verify-freshness-preparation-impact.cjs",
+      "sha256": "91030efc0387d6a1a349b37867eab398272c7652bbdc71ad18107f78cdcb77ec"
+    }
+  ]
+}

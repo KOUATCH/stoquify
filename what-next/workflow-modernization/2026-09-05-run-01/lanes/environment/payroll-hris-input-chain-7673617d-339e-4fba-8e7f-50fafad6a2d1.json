@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-30T14:52:20.201Z",
+  "fixtureOnly": true,
+  "stage": "attendance certification",
+  "steps": [
+    "actual document request and independent approval; self-approval denied",
+    "actual contract activation with independent approval",
+    "actual destination request/approval/application with three distinct actors"
+  ],
+  "sourceBefore": {
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/employee.service.ts": "2a3a3f9094b27e9b1593c3c68ce6a0319d964eb35c7c82ef93789994e04af04d",
+    "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+    "services/hris/employee.service.ts": "89d497c2daeb4f6fb7579deccebeae3a7dd2cfb8b85221d2a429ea6e0849b7e9",
+    "services/hris/contract.service.ts": "b8f90d6706e44ebec6a993eec481abca65db7bf7fedc396a9a4ed7db6ae60a1e",
+    "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+    "services/hris/time-leave.service.ts": "81a81e14d226b84220ca748abd94aa2c6158be430e344593810819a4a28ed242",
+    "services/hris/time-leave.contract.ts": "9d264a306ed417187726a268d8719ea2dc31db1e500e993a93cb95a6e9b8f2e5",
+    "services/hris/payroll-readiness-contract.ts": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/regulatory/country-packs/cameroon.ts": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749",
+    "services/regulatory/country-packs/registry.ts": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb",
+    "services/regulatory/country-packs/resolve.ts": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "organizationId": "cmuo854pz0000ma5gz5kyq59w",
+  "periodCreation": {
+    "blocked": true,
+    "message": "CNPS pension rates requires EXPERT_REVIEWED or REGULATOR_CONFIRMED country-pack provenance.",
+    "noPeriodCreated": true
+  },
+  "fixturePeriodId": "cmuo854tl000ama5gfawvyqoz",
+  "employeeId": "cmuo854v3000cma5gr0ffehrk",
+  "passed": false,
+  "error": "HRIS_TIME_CERTIFICATION_INVALID: Payroll attendance requires a complete HRIS certification manifest.",
+  "sourceAfter": {
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/employee.service.ts": "2a3a3f9094b27e9b1593c3c68ce6a0319d964eb35c7c82ef93789994e04af04d",
+    "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+    "services/hris/employee.service.ts": "89d497c2daeb4f6fb7579deccebeae3a7dd2cfb8b85221d2a429ea6e0849b7e9",
+    "services/hris/contract.service.ts": "b8f90d6706e44ebec6a993eec481abca65db7bf7fedc396a9a4ed7db6ae60a1e",
+    "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+    "services/hris/time-leave.service.ts": "81a81e14d226b84220ca748abd94aa2c6158be430e344593810819a4a28ed242",
+    "services/hris/time-leave.contract.ts": "9d264a306ed417187726a268d8719ea2dc31db1e500e993a93cb95a6e9b8f2e5",
+    "services/hris/payroll-readiness-contract.ts": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/regulatory/country-packs/cameroon.ts": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749",
+    "services/regulatory/country-packs/registry.ts": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb",
+    "services/regulatory/country-packs/resolve.ts": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "sourceStable": true
+}

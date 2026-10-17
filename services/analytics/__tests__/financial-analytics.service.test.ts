@@ -573,7 +573,7 @@ describe("financial analytics payroll facts", () => {
       status: "REDACTED",
       redacted: true,
       reasonCode: "PAYROLL_MODULE_NOT_ENTITLED",
-      totalUpcomingAmount: 0,
+      totalUpcomingAmount: null,
       blockerCodes: ["PAYROLL_FORECAST_MODULE_NOT_ENTITLED"],
       redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
     })

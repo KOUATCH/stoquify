@@ -1,0 +1,33 @@
+const f=require('./statement-recipient-fixtures.cjs'),{db,fs,path,crypto,assert,root,helper}=f;
+const {runCloseAssurance}=require(path.join(root,'services/accounting/close-assurance.service.ts'));
+const {exportClosePack}=require(path.join(root,'services/accounting/close-assurance-pack.service.ts'));
+const stamp=crypto.randomUUID(),files=['services/accounting/close-assurance.service.ts','services/accounting/close-assurance-pack.service.ts'];
+const hashes=()=>Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
+const result={at:new Date().toISOString(),syntheticOnly:true,sourceBefore:hashes(),checks:[]};
+async function main(){
+ await helper.withClient(f.target,helper.assertOwned);
+ const org=await db.organization.create({data:{name:helper.prefix+'Close payroll scope '+stamp,slug:'close-payroll-scope-'+stamp,currency:'XOF'}}),scope={organizationId:org.id};
+ const actor=await db.user.create({data:{...scope,email:'close-payroll-'+stamp+'@example.invalid',isActive:true}});
+ const startDate=new Date('2026-09-01T00:00:00Z'),endDate=new Date('2026-09-30T23:59:59.999Z');
+ const year=await db.fiscalYear.create({data:{...scope,name:'Owned year',startDate,endDate}}),period=await db.accountingPeriod.create({data:{...scope,fiscalYearId:year.id,periodNumber:1,name:'Owned payroll scope period',startDate,endDate}});
+ await runCloseAssurance(org.id,{periodId:period.id},{actorId:actor.id});
+ const run=await db.closeRun.findFirstOrThrow({where:{...scope,periodId:period.id},orderBy:{createdAt:'desc'}});
+ const draft=async()=>{const exported=await exportClosePack(org.id,{closeRunId:run.id},{actorId:actor.id,actorPermissions:['accounting.close.export']});assert.equal(exported.isCertified,false);return JSON.parse(exported.content)};
+ const clean=await draft();assert.equal(clean.annexes.pilotCycleCertification.saved.applicability,'NO_RECORDED_PAYROLL_PERIOD');assert.equal(clean.annexes.pilotCycleCertification.saved.certificateHash,null);assert.equal(clean.annexes.inventoryValuation.freshness.status,'FRESH');assert.ok(!clean.export.certificationBlockers.some(text=>text.includes('pilot-cycle')));
+ result.checks.push({name:'actual-assessment-with-no-payroll-period-has-no-pilot-gate',passed:true,remainingBlockers:clean.export.certificationBlockers});
+ const payrollPeriod=await db.payrollPeriod.create({data:{...scope,name:'Owned unlinked period',periodStart:startDate,periodEnd:endDate,payDate:endDate,countryCode:'CM'}});
+ const unlinked=await draft();assert.equal(unlinked.annexes.pilotCycleCertification.saved.applicability,'REQUIRED');assert.ok(unlinked.export.certificationBlockers.some(text=>text.includes('no retained payroll run')));assert.ok(unlinked.export.certificationBlockers.some(text=>text.includes('matching accounting-period link')));
+ result.checks.push({name:'overlapping-period-without-accounting-link-and-run-blocks',passed:true});
+ await db.payrollPeriod.update({where:{id:payrollPeriod.id},data:{accountingPeriodId:period.id}});
+ for(const n of [1,2])await db.payrollRun.create({data:{...scope,payrollPeriodId:payrollPeriod.id,runNumber:'OWNED-'+n,countryCode:'CM',countryPackVersion:'synthetic-unapproved',countryPackSchemaVersion:'synthetic',countryPackResolutionHash:'synthetic-unapproved',countryPackCapabilityStatus:'BLOCKED',ruleSetHash:'synthetic-unapproved',calculationHash:'synthetic-uncalculated',attendanceSnapshotHash:'synthetic-unapproved',metadata:{syntheticScopeFixture:true,noCalculationOrApprovalClaim:true}}});
+ const two=await draft(),annex=two.annexes.pilotCycleCertification.saved;assert.equal(annex.closePeriodPayrollRunCount,2);assert.equal(annex.runCertificates.length,2);assert.equal(annex.status,'BLOCKED');assert.equal(two.export.certificationBlockers.filter(text=>text.includes('pilot-cycle certification evidence is missing')).length,2);
+ assert.ok(!two.export.certificationBlockers.some(text=>text.includes('matching accounting-period link')));assert.ok(annex.runCertificates.every(row=>row.certificateHash===null));
+ result.checks.push({name:'each-retained-run-requires-its-own-persisted-certificate',passed:true});
+ const foreign=await db.organization.create({data:{name:helper.prefix+'Foreign payroll scope '+stamp,slug:'foreign-payroll-scope-'+stamp}});
+ await db.payrollPeriod.create({data:{organizationId:foreign.id,name:'Foreign unlinked period',periodStart:startDate,periodEnd:endDate,payDate:endDate,countryCode:'CM',accountingPeriodId:period.id}});
+ const isolated=await draft();assert.equal(isolated.annexes.pilotCycleCertification.saved.closePeriodPayrollPeriodCount,1);assert.equal(isolated.annexes.pilotCycleCertification.saved.closePeriodPayrollRunCount,2);
+ result.checks.push({name:'foreign-period-with-same-accounting-reference-excluded',passed:true});
+ assert.equal(await db.journalEntry.count({where:scope}),0);assert.equal(await db.payment.count({where:scope}),0);assert.equal(await db.closePackExport.count({where:{...scope,isCertified:true}}),0);
+ result.fixture={organizationId:org.id,actorId:actor.id,periodId:period.id,runId:run.id};result.noFinancialOrCertifiedEffects=true;result.passed=true;
+}
+main().catch(error=>{result.passed=false;result.error=f.safe(error)}).finally(async()=>{result.sourceAfter=hashes();result.sourceStable=JSON.stringify(result.sourceBefore)===JSON.stringify(result.sourceAfter);result.passed=!!result.passed&&result.sourceStable;const file='close-payroll-applicability-'+stamp+'.json';fs.writeFileSync(path.join(__dirname,file),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,...result}));await db.$disconnect();process.exit(result.passed?0:1)});

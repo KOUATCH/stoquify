@@ -1,0 +1,29 @@
+{
+  "task": "S04 AP recovery and S05 POS/offline recovery verification",
+  "baseHead": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "ownedFiles": [
+    "scripts/s04-s05-target.cjs",
+    "scripts/run-s04-s05.cjs",
+    "scripts/__tests__/s04-s05-target.node-test.cjs",
+    "jest.s04-s05.config.cjs",
+    "tsconfig.s04-s05.json",
+    "tests/s04-s05/guard.cjs",
+    "tests/s04-s05/ap-payment.postgres.test.ts",
+    "services/pos/pos.service.ts",
+    "services/events/business-event.service.ts",
+    "services/events/__tests__/business-event.service.test.ts",
+    "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+    "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+    "lib/pos/__tests__/offline-local-queue.test.ts",
+    "docs/prompt-execution/S04-S05_SCOPE_2026-10-15.json",
+    "docs/prompt-execution/S04-S05_EXECUTION_2026-10-15.md"
+  ],
+  "concurrentUnrelatedChangesObserved": [
+    "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx",
+    "components/accounting/AccountantAccessManager.tsx",
+    "components/accounting/AccountantPortal.tsx",
+    "components/accounting/__tests__/AccountantAccessManager.test.tsx"
+  ],
+  "productionAccess": false,
+  "committedOrStaged": false
+}

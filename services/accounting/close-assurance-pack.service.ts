@@ -22,6 +22,8 @@ import {
   type InventoryClass3ReconciliationResult,
 } from "@/services/inventory/inventory-valuation.service";
 import type { ExportClosePackInput } from "./close-assurance.schemas";
+import { assertCloseAssessmentCurrent, deriveCloseAssessmentSelection, lockCloseAssessmentOrderInTx, readCloseAssessmentOrderInTx } from "./close-assessment-order.service";
+import { lockCloseSourceRevisionInTx, closeSourceRevisionMatches, type CloseSourceRevision } from "./close-source-revision.service";
 
 export type ClosePackExportMode = "DRAFT_NOT_CERTIFIED" | "CERTIFIED";
 
@@ -57,8 +59,11 @@ export type ClosePackExportResult = {
 export type CloseCertificationInvalidationSourceCode =
   | "INVENTORY_VALUATION_ANNEX"
   | "INVENTORY_VALUATION_WRITE"
+  | "INVENTORY_PHYSICAL_COUNT_VALIDATED"
   | "LEDGER_JOURNAL_POSTED"
   | "LEDGER_JOURNAL_REVERSED"
+  | "SUPPLIER_CREDIT_NOTE_REVERSED"
+  | "SUPPLIER_PAYMENT_RECONCILIATION_REVIEWED"
   | "PAYROLL_RUN_APPROVED"
   | "PAYSLIP_EMITTED"
   | "PAYROLL_RUN_POSTED"
@@ -75,8 +80,12 @@ export type CloseCertificationInvalidationSourceCode =
   | "PAYROLL_DECLARATION_RECONCILED"
   | "PAYROLL_DECLARATION_AMENDED"
   | "PAYMENT_PROVIDER_EVENT_CAPTURED"
+  | "PAYMENT_PROVIDER_EVENT_REJECTED"
   | "PAYMENT_STATEMENT_IMPORT"
+  | "PAYMENT_NO_ACTIVITY_EVIDENCE_CHANGED"
   | "PAYMENT_RECONCILIATION_SIGNED"
+  | "PAYMENT_RECONCILIATION_CREATED"
+  | "PAYMENT_RECONCILIATION_PREPARED"
   | "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED"
   | "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT"
   | "PAYMENT_RECONCILIATION_SOURCE_REPAIRED"
@@ -113,6 +122,15 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceEventName: "inventory.valuation.write",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
+  INVENTORY_PHYSICAL_COUNT_VALIDATED: {
+    sourceCode: "INVENTORY_PHYSICAL_COUNT_VALIDATED",
+    ring: "DOMAIN_RECHECK",
+    domain: "inventory",
+    sourceModel: "StockCountSession",
+    sourceTable: "stock_count_sessions",
+    sourceEventName: "inventory.physical_count.validated",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
   LEDGER_JOURNAL_POSTED: {
     sourceCode: "LEDGER_JOURNAL_POSTED",
     ring: "FIRST_RING",
@@ -129,6 +147,15 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceModel: "JournalEntry",
     sourceTable: "journal_entries",
     sourceEventName: "ledger.journal.reversed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  SUPPLIER_CREDIT_NOTE_REVERSED: {
+    sourceCode: "SUPPLIER_CREDIT_NOTE_REVERSED",
+    ring: "FIRST_RING",
+    domain: "ledger",
+    sourceModel: "SupplierCreditNote",
+    sourceTable: "supplier_credit_notes",
+    sourceEventName: "purchase.supplier_credit.reversed",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
   PAYROLL_RUN_APPROVED: {
@@ -275,6 +302,15 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceEventName: "payment.provider_event.captured",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
+  PAYMENT_PROVIDER_EVENT_REJECTED: {
+    sourceCode: "PAYMENT_PROVIDER_EVENT_REJECTED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "PaymentException",
+    sourceTable: "payment_exceptions",
+    sourceEventName: "payment.provider_event.rejected",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
   PAYMENT_STATEMENT_IMPORT: {
     sourceCode: "PAYMENT_STATEMENT_IMPORT",
     ring: "FIRST_RING",
@@ -284,6 +320,15 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceEventName: "payment.statement.imported",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
+  PAYMENT_NO_ACTIVITY_EVIDENCE_CHANGED: {
+    sourceCode: "PAYMENT_NO_ACTIVITY_EVIDENCE_CHANGED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationNoActivityEvidence",
+    sourceTable: "reconciliation_no_activity_evidence",
+    sourceEventName: "payment.no_activity.evidence_changed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
   PAYMENT_RECONCILIATION_SIGNED: {
     sourceCode: "PAYMENT_RECONCILIATION_SIGNED",
     ring: "FIRST_RING",
@@ -291,6 +336,24 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceModel: "ReconciliationRun",
     sourceTable: "reconciliation_runs",
     sourceEventName: "payment.reconciliation.signed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_CREATED: {
+    sourceCode: "PAYMENT_RECONCILIATION_CREATED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.created",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_PREPARED: {
+    sourceCode: "PAYMENT_RECONCILIATION_PREPARED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.prepared",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
   PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED: {
@@ -338,6 +401,15 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceEventName: "payment.reconciliation.exception.decided",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
+  SUPPLIER_PAYMENT_RECONCILIATION_REVIEWED: {
+    sourceCode: "SUPPLIER_PAYMENT_RECONCILIATION_REVIEWED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "SupplierPayment",
+    sourceTable: "supplier_payments",
+    sourceEventName: "supplier.payment.reconciliation.reviewed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
 } as const satisfies Record<
   Exclude<CloseCertificationInvalidationSourceCode, "CUSTOM">,
   CloseCertificationInvalidationSourceMetadata
@@ -368,6 +440,7 @@ export type RecordCloseCertificationInvalidationsForSourceInput = {
   closeRunId?: string | null;
   closePackExportId?: string | null;
   periodId?: string | null;
+  periodIds?: readonly string[];
   periodStart?: Date | string | null;
   periodEnd?: Date | string | null;
   staleReason: string;
@@ -406,6 +479,9 @@ type PilotCertificationAnnex = {
   expectedAdapterChaosReleaseGateHash: string | null;
   proofBackfillAdapterChaosMatchesExpected: boolean | null;
   closePeriodPayrollRunCount: number;
+  applicability?: "REQUIRED" | "NO_RECORDED_PAYROLL_PERIOD";
+  closePeriodPayrollPeriodCount?: number;
+  runCertificates?: PilotCertificationAnnex[];
 };
 
 type PilotCertificationEvidence = {
@@ -662,7 +738,10 @@ function inventoryAnnexFromResult(
     class3LedgerBalanceTotal: result.ledgerClass3Value,
     inventorySubledgerValueTotal: result.inventoryValue,
     mismatchAmount: result.driftAmount,
-    sourceHash: result.reportHash,
+    sourceHash: result.evidenceHash,
+    evidenceHashVersion: result.evidenceHashVersion,
+    observationHash: result.reportHash,
+    recordedThrough: result.recordedThrough,
     blockerStatus:
       result.status === "PASSED" ? "PASSED" : "INVENTORY_VALUATION_MISMATCH",
     failures: result.failures.map((failure) => ({
@@ -844,34 +923,81 @@ async function loadPilotCertificationEvidenceForCloseRun(
   run: NonNullable<Awaited<ReturnType<typeof loadCloseRunForPack>>>,
   tx: Prisma.TransactionClient | typeof db,
 ): Promise<PilotCertificationEvidence> {
+  // Applicability follows retained period records, never module selection. Include
+  // overlapping dates so a missing/wrong accounting link cannot hide payroll.
+  const periods = await tx.payrollPeriod.findMany({
+    where: {
+      organizationId: run.organizationId,
+      OR: [
+        { accountingPeriodId: run.periodId },
+        { periodStart: { lte: run.period.endDate }, periodEnd: { gte: run.period.startDate } },
+      ],
+    },
+    select: { id: true, accountingPeriodId: true },
+    orderBy: { id: "asc" },
+  });
+  if (periods.length === 0) {
+    return {
+      annex: {
+        ...pilotCertificationEvidenceFromAudit(null, 0).annex,
+        status: "NOT_APPLICABLE",
+        applicability: "NO_RECORDED_PAYROLL_PERIOD",
+        closePeriodPayrollPeriodCount: 0,
+        runCertificates: [],
+      },
+      certificationBlockers: [],
+    };
+  }
   const payrollRuns = await tx.payrollRun.findMany({
     where: {
       organizationId: run.organizationId,
       deletedAt: null,
-      payrollPeriod: {
-        accountingPeriodId: run.periodId,
-      },
+      payrollPeriod: { organizationId: run.organizationId, id: { in: periods.map(period => period.id) } },
     },
-    select: { id: true },
+    select: { id: true, payrollPeriodId: true },
+    orderBy: { id: "asc" },
   });
-  const payrollRunIds = payrollRuns.map((payrollRun) => payrollRun.id);
-  const latestPilotAudit = payrollRunIds.length
-    ? await tx.auditLog.findFirst({
-        where: {
-          organizationId: run.organizationId,
-          entityType: PILOT_ENTITY_TYPE,
-          action: PILOT_AUDIT_ACTION,
-          entityId: { in: payrollRunIds },
-        },
-        orderBy: { createdAt: "desc" },
-        select: { id: true, entityId: true, changes: true, createdAt: true },
-      })
-    : null;
-
-  return pilotCertificationEvidenceFromAudit(
-    latestPilotAudit as PilotAuditRow | null,
-    payrollRunIds.length,
+  const audits = payrollRuns.length ? await tx.auditLog.findMany({
+    where: {
+      organizationId: run.organizationId,
+      entityType: PILOT_ENTITY_TYPE,
+      action: PILOT_AUDIT_ACTION,
+      entityId: { in: payrollRuns.map(payrollRun => payrollRun.id) },
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { id: true, entityId: true, changes: true, createdAt: true },
+  }) : [];
+  const latestByRun = new Map<string, PilotAuditRow>();
+  for (const audit of audits) if (!latestByRun.has(audit.entityId)) latestByRun.set(audit.entityId, audit);
+  const evidence = payrollRuns.map(payrollRun => {
+    const result = pilotCertificationEvidenceFromAudit(latestByRun.get(payrollRun.id) ?? null, 1);
+    result.annex.payrollRunRef = redactClosePackEvidenceRef(payrollRun.id);
+    return result;
+  });
+  const certificationBlockers = evidence.flatMap((item, index) =>
+    item.certificationBlockers.map(blocker => "Payroll run " + (index + 1) + ": " + blocker),
   );
+  const periodsWithRuns = new Set(payrollRuns.map(payrollRun => payrollRun.payrollPeriodId));
+  const missingRuns = periods.filter(period => !periodsWithRuns.has(period.id)).length;
+  if (missingRuns > 0) certificationBlockers.push(
+    missingRuns + " payroll period(s) have no retained payroll run for pilot-cycle certification.",
+  );
+  const unlinkedPeriods = periods.filter(period => period.accountingPeriodId !== run.periodId).length;
+  if (unlinkedPeriods > 0) certificationBlockers.push(
+    unlinkedPeriods + " overlapping payroll period(s) require a matching accounting-period link before certification.",
+  );
+  return {
+    annex: {
+      ...(evidence.length === 1 ? evidence[0].annex : pilotCertificationEvidenceFromAudit(null, payrollRuns.length).annex),
+      status: certificationBlockers.length > 0 ? "BLOCKED" : PILOT_CERTIFIED_STATUS,
+      applicability: "REQUIRED",
+      closePeriodPayrollPeriodCount: periods.length,
+      closePeriodPayrollRunCount: payrollRuns.length,
+      blockerCount: certificationBlockers.length,
+      runCertificates: evidence.map(item => item.annex),
+    },
+    certificationBlockers,
+  };
 }
 
 async function evaluateInventoryAnnexFreshness(
@@ -900,6 +1026,17 @@ async function evaluateInventoryAnnexFreshness(
       savedAnnex,
       currentAnnex: null,
       certificationBlocker: "Inventory valuation annex evidence is missing.",
+      detectedAt,
+    };
+  }
+
+  if (savedAnnex.evidenceHashVersion !== 1) {
+    return {
+      status: "MISSING", sourceModel: "InventoryValuationAnnex", sourceId,
+      sourceEventName: "inventory.valuation.annex.checked",
+      staleReason: "Inventory valuation evidence predates the source-fingerprint contract. Run a new close assessment.",
+      previousEvidenceHash, newEvidenceHash: null, savedAnnex, currentAnnex: null,
+      certificationBlocker: "Inventory valuation evidence must be regenerated with a current source fingerprint.",
       detectedAt,
     };
   }
@@ -959,7 +1096,7 @@ async function evaluateInventoryAnnexFreshness(
         current.failures[0]?.message ??
         "Current inventory valuation reconciliation is blocked.",
       previousEvidenceHash,
-      newEvidenceHash: current.reportHash,
+      newEvidenceHash: current.evidenceHash,
       savedAnnex,
       currentAnnex,
       certificationBlocker:
@@ -969,8 +1106,8 @@ async function evaluateInventoryAnnexFreshness(
   }
 
   if (
-    previousEvidenceHash !== current.reportHash ||
-    inventoryEvidence.sourceHash !== current.reportHash
+    previousEvidenceHash !== current.evidenceHash ||
+    inventoryEvidence.sourceHash !== current.evidenceHash
   ) {
     return {
       status: "STALE",
@@ -980,7 +1117,7 @@ async function evaluateInventoryAnnexFreshness(
       staleReason:
         "Inventory valuation annex hash changed after close readiness was captured.",
       previousEvidenceHash,
-      newEvidenceHash: current.reportHash,
+      newEvidenceHash: current.evidenceHash,
       savedAnnex,
       currentAnnex,
       certificationBlocker: "Inventory valuation annex evidence is stale.",
@@ -995,7 +1132,7 @@ async function evaluateInventoryAnnexFreshness(
     sourceEventName: "inventory.valuation.annex.checked",
     staleReason: null,
     previousEvidenceHash,
-    newEvidenceHash: current.reportHash,
+    newEvidenceHash: current.evidenceHash,
     savedAnnex,
     currentAnnex,
     certificationBlocker: null,
@@ -1007,7 +1144,7 @@ function requireFreshControl(control: ExportClosePackControl, now: Date) {
   const lastAuthAt = control.lastAuthAt
     ? new Date(control.lastAuthAt).getTime()
     : 0;
-  if (!lastAuthAt || now.getTime() - lastAuthAt > 5 * 60 * 1000) {
+  if (!control.actorId || !Number.isFinite(lastAuthAt) || !lastAuthAt || !Number.isFinite(now.getTime()) || now.getTime() < lastAuthAt || now.getTime() - lastAuthAt > 5 * 60 * 1000) {
     throw new BusinessRuleError(
       "Fresh authentication is required to certify a close pack.",
       "FRESH_AUTH_REQUIRED",
@@ -1083,6 +1220,8 @@ function certificationBlockers(
   const trustLevel = closePackTrustLevelFromMetadata(run.metadata);
   const trustRank = closePackTrustRank(run.metadata);
 
+  if (metadataRecord(metadataRecord(run.metadata).staleState).status === "EVIDENCE_STALE")
+    blockers.push("A recorded change invalidated close certification evidence. Run a new close assessment.");
   if (run.status !== CloseRunStatus.READY)
     blockers.push(`Close run status is ${run.status}, not READY.`);
   if (trustRank < TRUST_LEVEL_RANK[minimumTrustLevel])
@@ -1125,13 +1264,28 @@ function certificationBlockers(
   return blockers;
 }
 
+async function lockCloseRunEvidenceInTx(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  closeRunId: string,
+) {
+  // Source writers take their domain locks before reaching this boundary. The
+  // certifier only reads those sources; both paths lock the run before exports.
+  const rows = await tx.$queryRaw<{ id: string }[]>(Prisma.sql`
+    SELECT "id" FROM "close_runs"
+    WHERE "organizationId" = ${organizationId} AND "id" = ${closeRunId}
+    FOR NO KEY UPDATE
+  `);
+  if (rows.length === 0) throw new NotFoundError("Close run not found");
+}
+
 async function loadCloseRunForPack(
   organizationId: string,
   closeRunId: string,
   tx: Prisma.TransactionClient | typeof db = db,
 ) {
   return tx.closeRun.findFirst({
-    where: { id: closeRunId, organizationId },
+    where: { id: closeRunId, organizationId, period: { organizationId } },
     include: {
       organization: {
         select: {
@@ -1715,7 +1869,9 @@ async function recordCloseCertificationInvalidationInTx(
   organizationId: string,
   input: CloseCertificationInvalidationInput,
   control: ExportClosePackControl = {},
+  resolveCurrentExport = false,
 ): Promise<CloseCertificationInvalidationResult> {
+  await lockCloseRunEvidenceInTx(tx, organizationId, input.closeRunId);
   const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx);
   if (!run) throw new NotFoundError("Close run not found");
 
@@ -1727,13 +1883,24 @@ async function recordCloseCertificationInvalidationInTx(
           closeRunId: run.id,
         },
       })
-    : null;
+    : resolveCurrentExport
+      ? await tx.closePackExport.findFirst({
+          where: { organizationId, closeRunId: run.id, isCertified: true },
+          orderBy: [{ exportedAt: "desc" }, { id: "desc" }],
+        })
+      : null;
+
+  // Discovery can precede a competing certification. Bind the invalidation to
+  // the current export after the run lock, while preserving explicit references.
+  const evidenceInput = !input.closePackExportId && closePackExport
+    ? { ...input, closePackExportId: closePackExport.id }
+    : input;
 
   const source = sourcePayload(sourceMetadataForInput(input));
   const businessEventId = await recordInvalidationEvidenceInTx(
     tx,
     run,
-    input,
+    evidenceInput,
     control,
   );
   const staleState = {
@@ -1775,7 +1942,7 @@ async function recordCloseCertificationInvalidationInTx(
     where: { id: run.id },
     data: {
       status:
-        run.status === CloseRunStatus.CERTIFIED
+        [CloseRunStatus.RUNNING, CloseRunStatus.READY, CloseRunStatus.CERTIFIED, CloseRunStatus.EXPORTED].some((status) => status === run.status)
           ? CloseRunStatus.BLOCKED
           : run.status,
       metadata: jsonObject({
@@ -1833,6 +2000,7 @@ async function closeInvalidationTargetsInTx(
   const periodFilters: Prisma.CloseRunWhereInput[] = [];
 
   if (input.periodId) periodFilters.push({ periodId: input.periodId });
+  if (input.periodIds?.length) periodFilters.push({ periodId: { in: [...new Set(input.periodIds)].sort() } });
   if (periodStart && periodEnd) {
     periodFilters.push({
       period: {
@@ -1855,7 +2023,10 @@ async function closeInvalidationTargetsInTx(
         { OR: periodFilters },
         {
           OR: [
-            { status: CloseRunStatus.CERTIFIED },
+            { status: { in: [CloseRunStatus.RUNNING, CloseRunStatus.READY, CloseRunStatus.CERTIFIED, CloseRunStatus.EXPORTED] } },
+            // The database guard may have blocked the run earlier in this same
+            // source transaction. Still retain the domain-specific audit event.
+            { status: CloseRunStatus.BLOCKED, metadata: { path: ["staleState", "sourceCode"], equals: "CLOSE_SOURCE_REVISION_CHANGED" } },
             { packExports: { some: { isCertified: true } } },
           ],
         },
@@ -1863,19 +2034,13 @@ async function closeInvalidationTargetsInTx(
     },
     select: {
       id: true,
-      packExports: {
-        where: { isCertified: true },
-        orderBy: { exportedAt: "desc" },
-        take: 1,
-        select: { id: true },
-      },
     },
+    orderBy: { id: "asc" },
   });
 
   return runs.map((run) => ({
     closeRunId: run.id,
-    closePackExportId:
-      input.closePackExportId ?? run.packExports[0]?.id ?? null,
+    closePackExportId: input.closePackExportId ?? null,
   }));
 }
 
@@ -1907,6 +2072,7 @@ export async function recordCloseCertificationInvalidationsForSourceInTx(
           correlationId: input.correlationId ?? null,
         },
         control,
+        true,
       ),
     );
   }
@@ -1937,6 +2103,7 @@ export async function exportClosePack(
   input: ExportClosePackInput,
   control: ExportClosePackControl = {},
 ): Promise<ClosePackExportResult> {
+  const startedAt = Date.now();
   const now = control.now ? new Date(control.now) : new Date();
   const mode = exportMode(input);
   const correlationId = input.correlationId ?? randomUUID();
@@ -1945,9 +2112,43 @@ export async function exportClosePack(
   assertExportPermission(mode, control);
   if (mode === "CERTIFIED") requireFreshControl(control, now);
 
-  return db.$transaction(async (tx) => {
+  const outcome = await db.$transaction<ClosePackExportResult | { blockedReason: string }>(async (tx) => {
+    let sourceRevision: CloseSourceRevision | null = null;
+    if (mode === "CERTIFIED") {
+      const target = await tx.closeRun.findFirst({
+        where: { id: input.closeRunId, organizationId, period: { organizationId } }, select: { periodId: true },
+      });
+      if (!target) throw new NotFoundError("Close run not found");
+      await lockCloseAssessmentOrderInTx(tx, organizationId, target.periodId);
+      sourceRevision = await lockCloseSourceRevisionInTx(tx, organizationId);
+      await lockCloseRunEvidenceInTx(tx, organizationId, input.closeRunId);
+    }
     const run = await loadCloseRunForPack(organizationId, input.closeRunId, tx);
     if (!run) throw new NotFoundError("Close run not found");
+
+    if (mode === "CERTIFIED") {
+      if (!sourceRevision || !closeSourceRevisionMatches(run.metadata, sourceRevision)) {
+        await recordCloseCertificationInvalidationInTx(tx, organizationId, {
+          closeRunId: run.id, sourceModel: "CloseSourceRevision", sourceEventName: "close.source_revision.changed",
+          staleReason: "The close source revision is missing or changed. Run a new assessment before certification.",
+          correlationId,
+        }, control, true);
+        return { blockedReason: "The close source revision is missing or changed. Run a new assessment before certification." };
+      }
+      const order = await readCloseAssessmentOrderInTx(tx, organizationId, run.periodId);
+      assertCloseAssessmentCurrent(deriveCloseAssessmentSelection(order, run));
+      const settings = await tx.organizationAccountingSettings.findUnique({
+        where: { organizationId },
+        select: { accountingEnabled: true, setupStatus: true },
+      });
+      if (!settings?.accountingEnabled ||
+          (settings.setupStatus !== "READY" && settings.setupStatus !== "LOCKED")) {
+        throw new BusinessRuleError(
+          "Certified close pack requires enabled accounting with READY or LOCKED setup. Complete accounting setup and run a new assessment.",
+        );
+      }
+    }
+
 
     if (
       mode === "CERTIFIED" &&
@@ -1976,10 +2177,13 @@ export async function exportClosePack(
       pilotCertification,
     );
     if (mode === "CERTIFIED" && blockers.length > 0) {
-      if (inventoryFreshness.status !== "FRESH") {
-        await recordInvalidationEvidenceInTx(
+      if (
+        inventoryFreshness.status !== "FRESH" &&
+        metadataRecord(metadataRecord(run.metadata).staleState).status !== "EVIDENCE_STALE"
+      ) {
+        await recordCloseCertificationInvalidationInTx(
           tx,
-          run,
+          organizationId,
           {
             closeRunId: run.id,
             sourceModel: inventoryFreshness.sourceModel,
@@ -1994,7 +2198,11 @@ export async function exportClosePack(
             correlationId,
           },
           control,
+          true,
         );
+        // Commit the detected invalidation before returning the domain denial.
+        // Retrying an already-invalidated run must retain its original evidence.
+        return { blockedReason: blockers[0] };
       }
       throw new BusinessRuleError(
         `Certified close pack is blocked: ${blockers[0]}`,
@@ -2033,6 +2241,7 @@ export async function exportClosePack(
     const fileName = `${watermarkId}.json`;
     const isCertified = mode === "CERTIFIED";
 
+    if (isCertified) requireFreshControl(control, new Date(now.getTime() + Date.now() - startedAt));
     const closePackExport = await tx.closePackExport.create({
       data: {
         organizationId,
@@ -2163,5 +2372,9 @@ export async function exportClosePack(
       redactionNote,
       certificationLimitations: certificationLimitations(mode),
     };
-  });
+  }, mode === "CERTIFIED" ? { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted } : undefined);
+  if ("blockedReason" in outcome) {
+    throw new BusinessRuleError(`Certified close pack is blocked: ${outcome.blockedReason}`);
+  }
+  return outcome;
 }

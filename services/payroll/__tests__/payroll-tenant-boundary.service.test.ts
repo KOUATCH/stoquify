@@ -1,3 +1,9 @@
+// Keep tenant-denial fixtures independent of the separately tested admission contract.
+jest.mock("../payroll-production-admission", () => ({
+  assertPayrollProductionAdmission: jest.fn(),
+  assertPayrollProductionAdmissionInTx: jest.fn(),
+}))
+
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),

@@ -1,0 +1,13 @@
+const fs=require('node:fs');const path=require('node:path');const cp=require('node:child_process');
+const [name,seconds,script,...args]=process.argv.slice(2);
+if(!/^[a-z0-9-]+$/.test(name||'')||!script||!(+seconds>0))throw Error('Expected unique name, timeout seconds, Node script, args');
+const target=path.join(__dirname,name);
+if(fs.existsSync(target+'.result.json'))throw Error('Evidence already exists; choose a new name');
+const startedAt=new Date().toISOString();const env={...process.env,NEXT_TELEMETRY_DISABLED:'1'};
+for(const key of ['DATABASE_URL','DIRECT_URL','DATABASE_URL_UNPOOLED','POSTGRES_URL','POSTGRES_PRISMA_URL','POSTGRES_URL_NON_POOLING'])env[key]='postgresql://test:test@127.0.0.1:1/remediation_disabled?connect_timeout=2';
+const child=cp.spawn(process.execPath,[script,...args],{cwd:path.resolve(__dirname,'../../..'),env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+let stdout='',stderr='',timedOut=false;
+child.stdout.on('data',d=>stdout+=d);child.stderr.on('data',d=>stderr+=d);
+const timer=setTimeout(()=>{timedOut=true;child.kill();},+seconds*1000);
+child.on('error',e=>stderr+=e.message);
+child.on('close',(code,signal)=>{clearTimeout(timer);const redact=s=>s.replace(/postgres(?:ql)?:\/\/[^\s"']+/g,'[REDACTED_DATABASE_URL]');fs.writeFileSync(target+'.stdout.log',redact(stdout));fs.writeFileSync(target+'.stderr.log',redact(stderr));const result={name,command:['node',script,...args],startedAt,endedAt:new Date().toISOString(),code,signal,timedOut,databaseTarget:'disabled localhost:1; no live database',stdoutBytes:stdout.length,stderrBytes:stderr.length};fs.writeFileSync(target+'.result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));console.log(redact((stdout+'\n'+stderr).slice(-5000)));process.exitCode=timedOut||code!==0?1:0;});

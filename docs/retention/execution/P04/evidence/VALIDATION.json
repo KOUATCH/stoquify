@@ -1,0 +1,90 @@
+{
+  "utc": "2026-10-13T10:27:17.850279+00:00",
+  "status": "PASS",
+  "scope": "local artifact integrity, selected source and actual mocked test results only",
+  "head": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "p01_fingerprints": 81,
+  "p01_drift": [],
+  "prior_artifacts_checked": 71,
+  "prior_artifact_drift": [],
+  "only_P04_status_row_changed": true,
+  "inventory_original_content_preserved": true,
+  "tests": [
+    {
+      "file": "RBAC_RESULTS.json",
+      "success": true,
+      "passed": 8,
+      "suites": 1,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "ACCESS_RESULTS.json",
+      "success": true,
+      "passed": 57,
+      "suites": 7,
+      "failed": 0,
+      "pending": 0
+    }
+  ],
+  "source_manifest_files": 54,
+  "links_checked": 13,
+  "concurrent_unowned_status_changes": [
+    {
+      "path": "actions/owner-war-room/owner-war-room.actions.ts",
+      "before": null,
+      "after": " M"
+    },
+    {
+      "path": "docs/UI/UX/evidence/pos-finance-sales-2026-10-13/payables-en.jpg",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "docs/UI/UX/evidence/pos-finance-sales-2026-10-13/purchasing-before.json",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "docs/UI/UX/evidence/pos-finance-sales-2026-10-13/purchasing-grant-applied.json",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-04.md",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-05-baseline.json",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/stock-handoff-2026-10-13.patch",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "scripts/inspect-rds-purchasing-access.cjs",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "scripts/provision-rds-purchasing-local.cjs",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "services/owner-war-room/owner-signal-copy.ts",
+      "before": null,
+      "after": "??"
+    },
+    {
+      "path": "services/owner-war-room/owner-war-room-copy.ts",
+      "before": null,
+      "after": "??"
+    }
+  ],
+  "errors": []
+}

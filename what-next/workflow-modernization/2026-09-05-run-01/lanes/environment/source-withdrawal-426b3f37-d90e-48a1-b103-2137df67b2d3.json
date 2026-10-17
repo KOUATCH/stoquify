@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-27T14:35:21.330Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf"
+  },
+  "cases": [
+    {
+      "withdrawalVerified": true,
+      "staleSourceCanBeWithdrawn": true,
+      "priorCertificateRetained": true,
+      "rejectionAndAuditRollback": true,
+      "concurrentRetryAndReapproval": true,
+      "kind": "statement",
+      "organizationId": "cmujx7npe0000maw8s5cdd7vo",
+      "runId": "cmujx7o29001amaw8ow8z5h89",
+      "passed": true,
+      "noFinancialOrAllocationEffects": true,
+      "independentDecisionRequired": true,
+      "concurrentExactRetry": true,
+      "freshPrepareSignExport": true
+    },
+    {
+      "withdrawalVerified": true,
+      "staleSourceCanBeWithdrawn": true,
+      "priorCertificateRetained": true,
+      "rejectionAndAuditRollback": true,
+      "concurrentRetryAndReapproval": true,
+      "kind": "event",
+      "organizationId": "cmujx7tf7003nmaw85n2q27kj",
+      "runId": "cmujx7tkh004xmaw8kdv4q3rt",
+      "passed": true,
+      "noFinancialOrAllocationEffects": true,
+      "independentDecisionRequired": true,
+      "concurrentExactRetry": true,
+      "freshPrepareSignExport": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf"
+  },
+  "sourceStable": true
+}

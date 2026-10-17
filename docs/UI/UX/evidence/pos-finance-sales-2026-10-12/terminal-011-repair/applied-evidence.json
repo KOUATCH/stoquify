@@ -1,0 +1,116 @@
+{
+  "appliedAt": "2026-10-12T11:18:29.016Z",
+  "event": [
+    {
+      "id": "rds_org_001_pos_offline_event_011",
+      "status": "REJECTED"
+    }
+  ],
+  "conflict": [
+    {
+      "id": "rds_org_001_pos_offline_sync_conflict_011",
+      "status": "DISMISSED"
+    }
+  ],
+  "certificate": [
+    {
+      "id": "rds_org_001_pos_offline_sync_certificate_011",
+      "status": "EXPIRED",
+      "closeBlocker": false
+    }
+  ],
+  "audit": [
+    {
+      "id": "pos-terminal-011-fixture-repair-20261012-apply",
+      "action": "LOCAL_POS_TEST_FIXTURE_RETIRED",
+      "createdAt": "2026-10-12T11:18:28.884Z"
+    }
+  ],
+  "cartUnchanged": true,
+  "before": {
+    "cart": {
+      "id": "cmv53ko22010xmafggrikcbxv",
+      "orderNumber": "POS-RDS001-TERM-011-20261012-IXVT3",
+      "status": "DRAFT",
+      "posCartState": "ACTIVE",
+      "total": "4889.26",
+      "sessionId": "cmv3siorh00dzmay0ttoqjg8q"
+    },
+    "lines": [
+      {
+        "id": "cmv53ko3f010zmafgz6p1co6m",
+        "itemId": "rds_org_001_item_003",
+        "quantity": "1.000",
+        "unitPrice": "850.00"
+      },
+      {
+        "id": "cmv53l3pg011fmafge1lffldm",
+        "itemId": "rds_org_001_item_016",
+        "quantity": "1.000",
+        "unitPrice": "1450.00"
+      },
+      {
+        "id": "cmv53l8m8011pmafg3s2qf4yv",
+        "itemId": "rds_org_001_item_017",
+        "quantity": "1.000",
+        "unitPrice": "975.00"
+      },
+      {
+        "id": "cmv53lnm10123mafgvjd2evr4",
+        "itemId": "rds_org_001_item_015",
+        "quantity": "1.000",
+        "unitPrice": "825.00"
+      }
+    ],
+    "shift": [
+      {
+        "id": "cmv3siorh00dzmay0ttoqjg8q",
+        "status": "ACTIVE",
+        "endTime": null
+      }
+    ]
+  },
+  "after": {
+    "cart": {
+      "id": "cmv53ko22010xmafggrikcbxv",
+      "orderNumber": "POS-RDS001-TERM-011-20261012-IXVT3",
+      "status": "DRAFT",
+      "posCartState": "ACTIVE",
+      "total": "4889.26",
+      "sessionId": "cmv3siorh00dzmay0ttoqjg8q"
+    },
+    "lines": [
+      {
+        "id": "cmv53ko3f010zmafgz6p1co6m",
+        "itemId": "rds_org_001_item_003",
+        "quantity": "1.000",
+        "unitPrice": "850.00"
+      },
+      {
+        "id": "cmv53l3pg011fmafge1lffldm",
+        "itemId": "rds_org_001_item_016",
+        "quantity": "1.000",
+        "unitPrice": "1450.00"
+      },
+      {
+        "id": "cmv53l8m8011pmafg3s2qf4yv",
+        "itemId": "rds_org_001_item_017",
+        "quantity": "1.000",
+        "unitPrice": "975.00"
+      },
+      {
+        "id": "cmv53lnm10123mafgvjd2evr4",
+        "itemId": "rds_org_001_item_015",
+        "quantity": "1.000",
+        "unitPrice": "825.00"
+      }
+    ],
+    "shift": [
+      {
+        "id": "cmv3siorh00dzmay0ttoqjg8q",
+        "status": "ACTIVE",
+        "endTime": null
+      }
+    ]
+  }
+}

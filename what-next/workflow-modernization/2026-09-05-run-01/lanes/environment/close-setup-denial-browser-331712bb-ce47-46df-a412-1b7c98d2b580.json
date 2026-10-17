@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-30T18:23:30.227Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "365ecb7345a0cadb52e830552660ab150943a527a0983c009e8ffcb21553a4d3",
+    "components/accounting/CloseAssuranceCenter.tsx": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61"
+  },
+  "cases": [],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Complete accounting setup, then run a new assessment before certifying this close pack.', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Complete accounting setup, then run a new assessment before certifying this close pack.', { exact: true }).first()\n",
+  "failureScreenshot": "close-setup-denial-browser-331712bb-ce47-46df-a412-1b7c98d2b580-failed.png",
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "365ecb7345a0cadb52e830552660ab150943a527a0983c009e8ffcb21553a4d3",
+    "components/accounting/CloseAssuranceCenter.tsx": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61"
+  },
+  "sourceStable": true
+}

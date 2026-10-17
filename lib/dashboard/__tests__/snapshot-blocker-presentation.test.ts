@@ -1,4 +1,10 @@
 import { presentSnapshotBlocker } from "../snapshot-blocker-presentation"
+
+it("explains unverified partial payroll settlement in French without changing its control identity", () => {
+  const blocker = { id: "tenant-payroll-finance-forecast-payroll-forecast-settlement-balance-unverified", severity: "high" as const, gate: "payroll_finance_forecast", title: "Remaining payroll payment balance is unverified", detail: "A partially settled payroll batch has no verified remaining balance. Its original amount cannot be used as upcoming cash.", nextAction: "Review payroll settlement evidence and establish the remaining obligation before relying on this forecast.", sourceTables: ["payroll_payment_batches"] }
+  expect(presentSnapshotBlocker(blocker, "fr")).toEqual({ ...blocker, title: "Le solde restant du paiement de paie n’est pas vérifié", detail: "Un lot de paie partiellement réglé ne dispose pas d’un solde restant vérifié. Son montant initial ne peut pas servir de prévision de trésorerie.", nextAction: "Examinez les preuves de règlement de la paie et établissez l’obligation restante avant de vous fier à cette prévision." })
+  expect(presentSnapshotBlocker(blocker, "en")).toBe(blocker)
+})
 import type { SnapshotBlocker } from "@/services/snapshots/snapshot-contracts"
 
 const cases = [
@@ -7,6 +13,27 @@ const cases = [
   ["close-periods-missing", "close_readiness", "No accounting period covers this snapshot", "Aucune période comptable ne couvre cet instantané"],
   ["tenant-active-location-missing", "tenant_operating_snapshot", "No active location is configured", "Aucun site actif n’est configuré"],
 ]
+it.each([
+  ["close-assessment-order-ambiguous", "Current close assessment is ambiguous", "2 accounting period(s) have multiple latest assessments with the same creation time.", "Review the competing assessments and run Close Assurance again before relying on certification."],
+  ["close-evidence-stale", "Close evidence has been invalidated", "2 close run(s) require fresh evidence after a source change.", "Reevaluate Close Assurance and obtain current certification evidence."],
+  ["close-certified-export-missing", "Close certification evidence is missing", "2 certified close run(s) lack a current certified export.", "Review and retain a current certified close pack before relying on certification."],
+  ["close-findings-open", "Close findings remain open", "2 finding(s) remain unresolved in the selected close runs.", "Resolve or formally waive close findings through Close Assurance."],
+  ["close-checklist-incomplete", "Close controls failed or are unavailable", "2 checklist control(s) failed or are unavailable in the selected close runs.", "Review failed controls and restore their evidence before certification."],
+  ["close-evidence-unavailable", "Close evidence is unavailable", "2 close evidence item(s) are unavailable for this organization.", "Regenerate or attach the missing close evidence."],
+  ["close-periods-unreviewed", "Accounting periods need close review", "2 accounting period(s) have no close run in the selected scope.", "Run Close Assurance for each uncovered accounting period."],
+])("localizes current close condition %s without rewriting custom evidence", (id, title, detail, nextAction) => {
+  const blocker: SnapshotBlocker = { id, title, detail, nextAction, gate: "close_readiness", severity: "high", sourceTables: ["close_runs"] }
+  const fr = presentSnapshotBlocker(blocker, "fr")
+  expect(fr.title).not.toBe(title)
+  expect(fr.detail).not.toBe(detail)
+  expect(fr.detail).toMatch(/^2 /)
+  expect(fr.nextAction).not.toBe(nextAction)
+  expect({ ...fr, title, detail, nextAction }).toEqual(blocker)
+  expect(presentSnapshotBlocker(blocker, "en")).toBe(blocker)
+  const custom = { ...blocker, title: "Custom", detail: "Private note", nextAction: "Assigned action" }
+  expect(presentSnapshotBlocker(custom, "fr")).toEqual(custom)
+  expect(presentSnapshotBlocker({ ...blocker, gate: "accounting.close.evidence" }, "fr")).toEqual({ ...blocker, gate: "accounting.close.evidence" })
+})
 it("localizes currency evidence without converting amounts or overwriting custom notes", () => {
   const blocker: SnapshotBlocker = { id: "payment-suspense-currency-mismatch", gate: "payment_truth", severity: "high", sourceTables: ["suspense_items"], title: "Suspense currencies cannot be combined", detail: "Open suspense by currency: 20.00 USD; 100.00 XAF. No conversion evidence establishes a total in XAF.", nextAction: "Review suspense by currency in reconciliation; do not treat these amounts as one converted total." }
   expect(presentSnapshotBlocker(blocker, "fr")).toEqual({ ...blocker, title: "Les suspens de devises différentes ne peuvent pas être additionnés", detail: "Suspens ouverts par devise : 20.00 USD; 100.00 XAF. Aucune preuve de conversion ne permet d’établir un total en XAF.", nextAction: "Examinez les suspens par devise dans le rapprochement ; ces montants ne constituent pas un total converti." })

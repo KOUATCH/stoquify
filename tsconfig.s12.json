@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmit": true
+  },
+  "files": [
+    "next-env.d.ts",
+    "services/assurance/assurance-alert-delivery.service.ts",
+    "tests/s12/pos-fixture.ts",
+    "tests/s12/seed.postgres.test.ts",
+    "tests/s12/operations.postgres.test.ts",
+    "scripts/s12-auth-probe.ts",
+    "scripts/s12-crash-probe.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

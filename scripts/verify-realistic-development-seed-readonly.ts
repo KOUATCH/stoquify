@@ -9,7 +9,9 @@ import { verifyPassword } from "@/lib/password";
 import { PERMISSIONS } from "@/lib/permissions";
 
 const prisma = new PrismaClient();
-const credentialPath = path.join(
+const credentialPath = process.env.STOQUIFY_SEED_CREDENTIAL_ARTIFACT?.trim()
+  ? path.resolve(process.env.STOQUIFY_SEED_CREDENTIAL_ARTIFACT.trim())
+  : path.join(
   process.cwd(),
   ".seed-artifacts",
   "seed-login-credentials.json",
@@ -145,9 +147,14 @@ async function verifyPersonas(
         select: { id: true, code: true, nameEn: true, nameFr: true, permissions: true },
       });
       assertCondition(role, `${persona.label} role is missing from ${organizationId}.`);
+      const personaCredentials = credentials.filter(
+        (candidate) => candidate.organizationId === organizationId && candidate.roleCodes.includes(persona.roleCode),
+      );
+      assertCondition(personaCredentials.length > 0, `${persona.label} credential reference is missing from ${organizationId}.`);
       const user = await tx.user.findFirst({
         where: {
           organizationId,
+          email: { in: personaCredentials.map((candidate) => candidate.email) },
           isActive: true,
           isVerified: true,
           emailVerified: true,
@@ -156,7 +163,7 @@ async function verifyPersonas(
         select: { id: true, email: true },
       });
       assertCondition(user, `${persona.label} active user is missing from ${organizationId}.`);
-      const credential = credentials.find(
+      const credential = personaCredentials.find(
         (candidate) =>
           candidate.organizationId === organizationId &&
           candidate.email === user.email &&
@@ -185,7 +192,7 @@ async function verifyPersonas(
         roleCode: role.code,
         userId: user.id,
         accountIdentifier: user.email,
-        secretReference: ".seed-artifacts/seed-login-credentials.json",
+        secretReference: path.relative(process.cwd(), credentialPath).replaceAll("\\", "/"),
       });
     }
   }

@@ -1,0 +1,973 @@
+{
+  "capturedAt": "2026-09-30T14:18:35.310Z",
+  "scope": "Local configured database only; scalar-name comparison, constraints catalog retained separately",
+  "models": 211,
+  "tables": 216,
+  "missingTables": [],
+  "missingColumns": [],
+  "extraColumns": [],
+  "extraTables": [
+    "_UserRoles",
+    "_prisma_migrations",
+    "legacy_production_batches",
+    "legacy_recipe_ingredients",
+    "legacy_recipes"
+  ],
+  "migrations": {
+    "local": 87,
+    "recorded": 87,
+    "pending": [],
+    "checksumMismatch": [],
+    "unfinished": [],
+    "databaseOnly": []
+  },
+  "rlsTableCount": 0,
+  "triggerCount": 55,
+  "checkConstraints": [
+    {
+      "conname": "accountant_client_invite_states_acceptance_check",
+      "contype": "c",
+      "table_name": "accountant_client_invite_states",
+      "definition": "CHECK (((status <> 'ACCEPTED'::\"AccountantClientInviteStatus\") OR ((\"accountantUserId\" IS NOT NULL) AND (\"accessGrantId\" IS NOT NULL))))"
+    },
+    {
+      "conname": "accountant_client_invite_states_first_state_check",
+      "contype": "c",
+      "table_name": "accountant_client_invite_states",
+      "definition": "CHECK (((version > 1) OR ((status = 'PENDING'::\"AccountantClientInviteStatus\") AND (\"previousStateHash\" IS NULL))))"
+    },
+    {
+      "conname": "accountant_client_invite_states_hash_check",
+      "contype": "c",
+      "table_name": "accountant_client_invite_states",
+      "definition": "CHECK (((\"stateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"previousStateHash\" IS NULL) OR (\"previousStateHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "accountant_client_invite_states_version_check",
+      "contype": "c",
+      "table_name": "accountant_client_invite_states",
+      "definition": "CHECK ((version > 0))"
+    },
+    {
+      "conname": "accountant_client_invites_consent_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK (((\"consentEvidenceHash\" ~ '^sha256:[0-9a-f]{64}$'::text) AND ((length(btrim(\"consentGrantedById\")) >= 1) AND (length(btrim(\"consentGrantedById\")) <= 191)) AND (\"consentGrantedAt\" <= \"createdAt\")))"
+    },
+    {
+      "conname": "accountant_client_invites_email_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK (((\"emailHash\" ~ '^[0-9a-f]{64}$'::text) AND ((length(btrim(\"redactedEmail\")) >= 3) AND (length(btrim(\"redactedEmail\")) <= 191))))"
+    },
+    {
+      "conname": "accountant_client_invites_evidence_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK ((\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "conname": "accountant_client_invites_key_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    {
+      "conname": "accountant_client_invites_time_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK (((\"expiresAt\" > \"effectiveFrom\") AND (\"expiresAt\" > \"createdAt\")))"
+    },
+    {
+      "conname": "accountant_client_invites_token_hash_check",
+      "contype": "c",
+      "table_name": "accountant_client_invites",
+      "definition": "CHECK ((\"inviteTokenHash\" ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "conname": "agent_cost_ledger_nonnegative_check",
+      "contype": "c",
+      "table_name": "agent_cost_ledger",
+      "definition": "CHECK (((\"promptTokens\" >= 0) AND (\"completionTokens\" >= 0) AND (\"estimatedCost\" >= (0)::numeric)))"
+    },
+    {
+      "conname": "agent_evidence_links_counts_check",
+      "contype": "c",
+      "table_name": "agent_evidence_links",
+      "definition": "CHECK (((\"blockerCount\" >= 0) AND (\"redactionCount\" >= 0)))"
+    },
+    {
+      "conname": "agent_steps_stepNumber_check",
+      "contype": "c",
+      "table_name": "agent_steps",
+      "definition": "CHECK ((\"stepNumber\" >= 0))"
+    },
+    {
+      "conname": "branch_daily_close_runs_count_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_runs",
+      "definition": "CHECK (((\"supportedItemCount\" >= 0) AND (\"unsupportedItemCount\" >= 0) AND ((\"supportedItemCount\" + \"unsupportedItemCount\") > 0) AND (\"blockerCount\" >= 0)))"
+    },
+    {
+      "conname": "branch_daily_close_runs_hash_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_runs",
+      "definition": "CHECK (((length(btrim((\"readinessSourceHash\")::text)) = 71) AND (length(btrim((\"evidenceHash\")::text)) = 71) AND (length(btrim((\"requestHash\")::text)) = 71)))"
+    },
+    {
+      "conname": "branch_daily_close_runs_identity_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_runs",
+      "definition": "CHECK (((length(btrim((\"idempotencyKey\")::text)) > 0) AND (length(btrim((\"correlationId\")::text)) > 0)))"
+    },
+    {
+      "conname": "branch_daily_close_runs_period_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_runs",
+      "definition": "CHECK ((\"periodStart\" < \"periodEnd\"))"
+    },
+    {
+      "conname": "branch_daily_close_runs_readiness_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_runs",
+      "definition": "CHECK ((((\"readinessState\")::text = ANY ((ARRAY['READY_FOR_REVIEW'::character varying, 'ACTION_REQUIRED'::character varying, 'NO_ACTIVITY'::character varying, 'UNAVAILABLE'::character varying])::text[])) AND ((\"evidenceCoverageState\")::text = ANY ((ARRAY['PARTIAL'::character varying, 'COMPLETE'::character varying])::text[]))))"
+    },
+    {
+      "conname": "branch_daily_close_sign_offs_assurance_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_sign_offs",
+      "definition": "CHECK ((((\"authAssuranceLevel\")::text = 'L1'::text) AND (\"freshAuthAt\" <= \"signedAt\") AND (\"freshAuthAt\" >= (\"signedAt\" - '00:05:00'::interval))))"
+    },
+    {
+      "conname": "branch_daily_close_sign_offs_evidence_time_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_sign_offs",
+      "definition": "CHECK ((\"signedEvidenceObservedAt\" <= \"signedAt\"))"
+    },
+    {
+      "conname": "branch_daily_close_sign_offs_hash_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_sign_offs",
+      "definition": "CHECK (((length(btrim((\"signedReadinessSourceHash\")::text)) = 71) AND (\"left\"((\"signedReadinessSourceHash\")::text, 7) = 'sha256:'::text) AND (length(btrim((\"signedEvidenceHash\")::text)) = 71) AND (\"left\"((\"signedEvidenceHash\")::text, 7) = 'sha256:'::text) AND (length(btrim((\"requestHash\")::text)) = 71) AND (\"left\"((\"requestHash\")::text, 7) = 'sha256:'::text)))"
+    },
+    {
+      "conname": "branch_daily_close_sign_offs_identity_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_sign_offs",
+      "definition": "CHECK (((length(btrim((\"idempotencyKey\")::text)) > 0) AND (length(btrim((\"correlationId\")::text)) > 0) AND ((\"activeKey\" IS NULL) OR (length(btrim((\"activeKey\")::text)) > 0)) AND ((\"supersedesSignOffId\" IS NULL) OR (\"supersedesSignOffId\" <> id))))"
+    },
+    {
+      "conname": "branch_daily_close_sign_offs_lifecycle_check",
+      "contype": "c",
+      "table_name": "branch_daily_close_sign_offs",
+      "definition": "CHECK ((((status = 'ACTIVE'::\"BranchDailyCloseSignOffStatus\") AND ((\"activeKey\")::text = \"branchDailyCloseRunId\") AND (\"invalidatedById\" IS NULL) AND (\"invalidatedAt\" IS NULL) AND (\"invalidationReason\" IS NULL)) OR ((status = ANY (ARRAY['REVOKED'::\"BranchDailyCloseSignOffStatus\", 'SUPERSEDED'::\"BranchDailyCloseSignOffStatus\"])) AND (\"activeKey\" IS NULL) AND (\"invalidatedById\" IS NOT NULL) AND (\"invalidatedAt\" IS NOT NULL) AND (length(btrim((\"invalidationReason\")::text)) > 0) AND (\"invalidatedAt\" >= \"signedAt\"))))"
+    },
+    {
+      "conname": "cash_shortage_policies_approval_evidence_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK ((((status = 'DRAFT'::\"CashShortagePolicyStatus\") AND (\"approvedById\" IS NULL) AND (\"approvedAt\" IS NULL) AND (\"documentHash\" IS NULL)) OR ((status = 'APPROVED'::\"CashShortagePolicyStatus\") AND (\"approvedById\" IS NOT NULL) AND (\"approvedAt\" IS NOT NULL) AND (\"documentHash\" ~ '^[a-f0-9]{64}$'::text))))"
+    },
+    {
+      "conname": "cash_shortage_policies_currency_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK ((currency ~ '^[A-Z]{3}$'::text))"
+    },
+    {
+      "conname": "cash_shortage_policies_effective_window_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK (((\"effectiveTo\" IS NULL) OR (\"effectiveTo\" > \"effectiveFrom\")))"
+    },
+    {
+      "conname": "cash_shortage_policies_scale_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK (((\"minorUnitScale\" >= 0) AND (\"minorUnitScale\" <= 4)))"
+    },
+    {
+      "conname": "cash_shortage_policies_threshold_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK (((\"reviewThreshold\" > (0)::numeric) AND (\"highThreshold\" >= \"reviewThreshold\") AND (\"reviewThreshold\" = round(\"reviewThreshold\", \"minorUnitScale\")) AND (\"highThreshold\" = round(\"highThreshold\", \"minorUnitScale\"))))"
+    },
+    {
+      "conname": "cash_shortage_policies_version_check",
+      "contype": "c",
+      "table_name": "cash_shortage_policies",
+      "definition": "CHECK ((version > 0))"
+    },
+    {
+      "conname": "customer_receivable_document_states_hash_check",
+      "contype": "c",
+      "table_name": "customer_receivable_document_states",
+      "definition": "CHECK ((((\"previousStateHash\" IS NULL) OR (\"previousStateHash\" ~ '^[0-9a-f]{64}$'::text)) AND (\"stateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "customer_receivable_document_states_lineage_check",
+      "contype": "c",
+      "table_name": "customer_receivable_document_states",
+      "definition": "CHECK ((((version = 1) AND (\"previousStateHash\" IS NULL)) OR ((version > 1) AND (\"previousStateHash\" IS NOT NULL))))"
+    },
+    {
+      "conname": "customer_receivable_document_states_money_check",
+      "contype": "c",
+      "table_name": "customer_receivable_document_states",
+      "definition": "CHECK (((\"paidAmount\" >= (0)::numeric) AND (\"unpaidAmount\" >= (0)::numeric)))"
+    },
+    {
+      "conname": "customer_receivable_document_states_reason_check",
+      "contype": "c",
+      "table_name": "customer_receivable_document_states",
+      "definition": "CHECK (((status <> ALL (ARRAY['CANCELLED'::\"CustomerReceivableDocumentStatus\", 'VOIDED'::\"CustomerReceivableDocumentStatus\"])) OR ((char_length(btrim(reason)) >= 3) AND (char_length(btrim(reason)) <= 500))))"
+    },
+    {
+      "conname": "customer_receivable_document_states_version_check",
+      "contype": "c",
+      "table_name": "customer_receivable_document_states",
+      "definition": "CHECK ((version >= 1))"
+    },
+    {
+      "conname": "customer_receivable_documents_correction_check",
+      "contype": "c",
+      "table_name": "customer_receivable_documents",
+      "definition": "CHECK ((((\"supersedesDocumentId\" IS NULL) AND (\"correctionReason\" IS NULL) AND (version = 1)) OR ((\"supersedesDocumentId\" IS NOT NULL) AND (\"supersedesDocumentId\" <> id) AND ((char_length(btrim(\"correctionReason\")) >= 3) AND (char_length(btrim(\"correctionReason\")) <= 500)) AND (version > 1))))"
+    },
+    {
+      "conname": "customer_receivable_documents_hash_check",
+      "contype": "c",
+      "table_name": "customer_receivable_documents",
+      "definition": "CHECK (((\"documentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"sourceEvidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"metadataHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "customer_receivable_documents_identity_check",
+      "contype": "c",
+      "table_name": "customer_receivable_documents",
+      "definition": "CHECK (((version >= 1) AND (\"sourceVersion\" >= 1) AND ((char_length(btrim(\"documentNumber\")) >= 1) AND (char_length(btrim(\"documentNumber\")) <= 120)) AND (char_length(btrim(currency)) = 3) AND ((\"currencyPrecision\" >= 0) AND (\"currencyPrecision\" <= 6)) AND ((\"paymentTermsDays\" >= 0) AND (\"paymentTermsDays\" <= 3650)) AND (\"dueDate\" >= \"invoiceDate\") AND (\"issuedAt\" >= \"invoiceDate\")))"
+    },
+    {
+      "conname": "customer_receivable_documents_money_check",
+      "contype": "c",
+      "table_name": "customer_receivable_documents",
+      "definition": "CHECK (((subtotal >= (0)::numeric) AND (\"taxAmount\" >= (0)::numeric) AND (\"shippingAmount\" >= (0)::numeric) AND (\"discountAmount\" >= (0)::numeric) AND (\"totalAmount\" > (0)::numeric) AND (\"initialPaidAmount\" >= (0)::numeric) AND (\"initialUnpaidAmount\" >= (0)::numeric) AND ((\"initialPaidAmount\" + \"initialUnpaidAmount\") = \"totalAmount\")))"
+    },
+    {
+      "conname": "customer_settlements_reversed_evidence_complete_check",
+      "contype": "c",
+      "table_name": "customer_settlements",
+      "definition": "CHECK ((((status = 'POSTED'::\"CustomerSettlementStatus\") AND (\"reversalDate\" IS NULL) AND (\"reversedAt\" IS NULL) AND (\"reversedById\" IS NULL) AND (\"reversalReason\" IS NULL) AND (\"reversalIdempotencyKey\" IS NULL) AND (\"reversalIdempotencyPayloadHash\" IS NULL) AND (\"reversalCorrelationId\" IS NULL) AND (\"reversalDocumentHash\" IS NULL) AND (\"reversalEvidenceHash\" IS NULL) AND (\"reversalLedgerPostingBatchId\" IS NULL) AND (\"reversalJournalEntryId\" IS NULL) AND (\"reversalAccountingSourceLinkId\" IS NULL) AND (\"reversalBusinessEventId\" IS NULL)) OR ((status = 'REVERSED'::\"CustomerSettlementStatus\") AND (\"reversalDate\" IS NOT NULL) AND (\"reversedAt\" IS NOT NULL) AND (\"reversedById\" IS NOT NULL) AND (\"reversedById\" <> \"receivedById\") AND (\"reversalReason\" IS NOT NULL) AND ((char_length(btrim(\"reversalReason\")) >= 3) AND (char_length(btrim(\"reversalReason\")) <= 500)) AND (\"reversalIdempotencyKey\" IS NOT NULL) AND ((char_length(btrim(\"reversalIdempotencyKey\")) >= 8) AND (char_length(btrim(\"reversalIdempotencyKey\")) <= 160)) AND (\"reversalIdempotencyPayloadHash\" IS NOT NULL) AND (char_length(\"reversalIdempotencyPayloadHash\") = 64) AND (\"reversalCorrelationId\" IS NOT NULL) AND ((char_length(btrim(\"reversalCorrelationId\")) >= 8) AND (char_length(btrim(\"reversalCorrelationId\")) <= 160)) AND (\"reversalDocumentHash\" IS NOT NULL) AND (\"reversalDocumentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"reversalEvidenceHash\" IS NOT NULL) AND (\"reversalEvidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"reversalLedgerPostingBatchId\" IS NOT NULL) AND (\"reversalJournalEntryId\" IS NOT NULL) AND (\"reversalAccountingSourceLinkId\" IS NOT NULL) AND (\"reversalBusinessEventId\" IS NOT NULL) AND (\"reversalDate\" >= \"settlementDate\"))))"
+    },
+    {
+      "conname": "customer_statement_access_logs_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_logs",
+      "definition": "CHECK (((\"statementContentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"tokenHashPrefix\" ~ '^[0-9a-f]{12}$'::text) AND ((\"ipHash\" IS NULL) OR (\"ipHash\" ~ '^[0-9a-f]{64}$'::text)) AND ((\"userAgentHash\" IS NULL) OR (\"userAgentHash\" ~ '^[0-9a-f]{64}$'::text)) AND ((\"responseHash\" IS NULL) OR (\"responseHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "customer_statement_access_logs_outcome_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_logs",
+      "definition": "CHECK ((((outcome = 'GRANTED'::\"CustomerStatementAccessOutcome\") AND (\"denialReason\" IS NULL)) OR ((outcome = 'DENIED'::\"CustomerStatementAccessOutcome\") AND ((char_length(btrim(\"denialReason\")) >= 3) AND (char_length(btrim(\"denialReason\")) <= 120)))))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_access_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK (((\"accessCount\" >= 0) AND (((\"accessCount\" = 0) AND (\"lastAccessedAt\" IS NULL)) OR ((\"accessCount\" > 0) AND (\"lastAccessedAt\" IS NOT NULL)))))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK (((\"tokenHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"jtiHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"statementContentHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"recipientHash\" IS NULL) OR (\"recipientHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_metadata_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK (((metadata IS NULL) OR (jsonb_typeof(metadata) = 'object'::text)))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_scope_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK ((\"allowView\" = true))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_status_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK ((((status = 'ACTIVE'::\"CustomerStatementAccessTokenStatus\") AND (\"revokedAt\" IS NULL) AND (\"revokedById\" IS NULL) AND (\"revocationReason\" IS NULL)) OR ((status = 'REVOKED'::\"CustomerStatementAccessTokenStatus\") AND (\"revokedAt\" IS NOT NULL) AND (char_length(btrim(\"revokedById\")) > 0) AND ((char_length(btrim(\"revocationReason\")) >= 3) AND (char_length(btrim(\"revocationReason\")) <= 500))) OR ((status = 'EXPIRED'::\"CustomerStatementAccessTokenStatus\") AND (\"revokedAt\" IS NULL) AND (\"revokedById\" IS NULL) AND (\"revocationReason\" IS NULL))))"
+    },
+    {
+      "conname": "customer_statement_access_tokens_time_check",
+      "contype": "c",
+      "table_name": "customer_statement_access_tokens",
+      "definition": "CHECK (((\"issuedAt\" < \"expiresAt\") AND ((\"lastAccessedAt\" IS NULL) OR (\"lastAccessedAt\" >= \"issuedAt\"))))"
+    },
+    {
+      "conname": "customer_statement_deliveries_consent_check",
+      "contype": "c",
+      "table_name": "customer_statement_deliveries",
+      "definition": "CHECK (((\"consentEvidenceHash\" ~ '^sha256:[0-9a-f]{64}$'::text) AND ((length(btrim(\"consentCapturedById\")) >= 1) AND (length(btrim(\"consentCapturedById\")) <= 191)) AND (\"consentCapturedAt\" <= \"createdAt\")))"
+    },
+    {
+      "conname": "customer_statement_deliveries_destination_check",
+      "contype": "c",
+      "table_name": "customer_statement_deliveries",
+      "definition": "CHECK (((\"destinationHash\" ~ '^sha256:[0-9a-f]{64}$'::text) AND ((length(btrim(\"redactedDestination\")) >= 3) AND (length(btrim(\"redactedDestination\")) <= 191))))"
+    },
+    {
+      "conname": "customer_statement_deliveries_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_deliveries",
+      "definition": "CHECK (((\"statementContentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "customer_statement_deliveries_key_check",
+      "contype": "c",
+      "table_name": "customer_statement_deliveries",
+      "definition": "CHECK ((((length(btrim(\"idempotencyKey\")) >= 8) AND (length(btrim(\"idempotencyKey\")) <= 191)) AND ((length(btrim(\"correlationId\")) >= 8) AND (length(btrim(\"correlationId\")) <= 191))))"
+    },
+    {
+      "conname": "customer_statement_deliveries_locale_check",
+      "contype": "c",
+      "table_name": "customer_statement_deliveries",
+      "definition": "CHECK ((locale = ANY (ARRAY['EN'::text, 'FR'::text])))"
+    },
+    {
+      "conname": "customer_statement_delivery_states_first_state_check",
+      "contype": "c",
+      "table_name": "customer_statement_delivery_states",
+      "definition": "CHECK (((version > 1) OR ((status = 'QUEUED'::\"CustomerStatementDeliveryStatus\") AND (\"previousStateHash\" IS NULL))))"
+    },
+    {
+      "conname": "customer_statement_delivery_states_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_delivery_states",
+      "definition": "CHECK (((\"stateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"previousStateHash\" IS NULL) OR (\"previousStateHash\" ~ '^[0-9a-f]{64}$'::text)) AND ((\"providerReferenceHash\" IS NULL) OR (\"providerReferenceHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "customer_statement_delivery_states_version_check",
+      "contype": "c",
+      "table_name": "customer_statement_delivery_states",
+      "definition": "CHECK ((version > 0))"
+    },
+    {
+      "conname": "customer_statement_recipient_action_states_actor_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_action_states",
+      "definition": "CHECK (((version > 0) AND ((char_length(btrim(\"actorType\")) >= 3) AND (char_length(btrim(\"actorType\")) <= 40)) AND ((\"actorId\" IS NULL) OR (char_length(btrim(\"actorId\")) > 0)) AND ((reason IS NULL) OR ((char_length(btrim(reason)) >= 3) AND (char_length(btrim(reason)) <= 500)))))"
+    },
+    {
+      "conname": "customer_statement_recipient_action_states_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_action_states",
+      "definition": "CHECK (((\"stateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"previousStateHash\" IS NULL) OR (\"previousStateHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "customer_statement_recipient_action_states_lineage_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_action_states",
+      "definition": "CHECK ((((version = 1) AND (status = 'OPEN'::\"CustomerStatementRecipientActionStatus\") AND (\"previousStateHash\" IS NULL)) OR ((version > 1) AND (\"previousStateHash\" IS NOT NULL))))"
+    },
+    {
+      "conname": "customer_statement_recipient_actions_key_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_actions",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "conname": "customer_statement_recipient_actions_note_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_actions",
+      "definition": "CHECK ((((char_length(btrim(\"recipientNote\")) >= 3) AND (char_length(btrim(\"recipientNote\")) <= 500)) AND (\"noteHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"payloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "customer_statement_recipient_actions_type_check",
+      "contype": "c",
+      "table_name": "customer_statement_recipient_actions",
+      "definition": "CHECK ((((\"actionType\" = 'DISPUTE'::\"CustomerStatementRecipientActionType\") AND (\"customerReceivableDocumentId\" IS NOT NULL) AND (\"requestedAmount\" > (0)::numeric) AND (\"promisedFor\" IS NULL)) OR ((\"actionType\" = 'PROMISE_TO_PAY'::\"CustomerStatementRecipientActionType\") AND (\"requestedAmount\" > (0)::numeric) AND (\"promisedFor\" IS NOT NULL))))"
+    },
+    {
+      "conname": "customer_statement_count_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((version > 0) AND (\"itemCount\" >= 0) AND (\"movementCount\" >= 0) AND (\"sourceItemCount\" >= 0) AND (\"includedItemCount\" >= 0) AND (\"itemLimit\" > 0) AND (\"includedItemCount\" = \"itemCount\") AND (\"sourceItemCount\" = \"includedItemCount\") AND (truncated = false)))"
+    },
+    {
+      "conname": "customer_statement_currency_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((currency ~ '^[A-Z]{3}$'::text) AND ((\"currencyPrecision\" >= 0) AND (\"currencyPrecision\" <= 6))))"
+    },
+    {
+      "conname": "customer_statement_hash_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((\"contentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"idempotencyPayloadHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "customer_statement_identity_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK ((((char_length(btrim(\"statementNumber\")) >= 8) AND (char_length(btrim(\"statementNumber\")) <= 80)) AND ((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"generatedById\")) > 0) AND (char_length(btrim(\"businessEventId\")) > 0) AND ((\"supersedesStatementId\" IS NULL) OR (\"supersedesStatementId\" <> id))))"
+    },
+    {
+      "conname": "customer_statement_json_shape_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((jsonb_typeof(\"organizationSnapshot\") = 'object'::text) AND (jsonb_typeof(\"customerSnapshot\") = 'object'::text) AND (jsonb_typeof(\"statementPayload\") = 'object'::text) AND (jsonb_typeof(\"sourceTables\") = 'array'::text) AND (jsonb_typeof(\"sourceDocumentHashes\") = 'array'::text) AND (jsonb_typeof(\"sourceStateHashes\") = 'array'::text) AND (jsonb_typeof(\"sourceLedgerEntryIds\") = 'array'::text)))"
+    },
+    {
+      "conname": "customer_statement_money_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((\"openingBalance\" >= (0)::numeric) AND (\"periodDebits\" >= (0)::numeric) AND (\"closingBalance\" >= (0)::numeric) AND (\"overdueBalance\" >= (0)::numeric) AND (\"overdueBalance\" <= \"closingBalance\") AND (((\"openingBalance\" + \"periodDebits\") - \"periodCredits\") = \"closingBalance\")))"
+    },
+    {
+      "conname": "customer_statement_scope_check",
+      "contype": "c",
+      "table_name": "customer_statement_snapshots",
+      "definition": "CHECK (((\"periodStart\" <= \"periodEnd\") AND (\"asOf\" = \"periodEnd\") AND (\"recordedThrough\" >= \"periodEnd\") AND (\"generatedAt\" = \"recordedThrough\")))"
+    },
+    {
+      "conname": "document_sequences_next_value_check",
+      "contype": "c",
+      "table_name": "document_sequences",
+      "definition": "CHECK ((\"nextValue\" > 0))"
+    },
+    {
+      "conname": "goods_receipt_inspection_resolutions_command_evidence_check",
+      "contype": "c",
+      "table_name": "goods_receipt_inspection_resolutions",
+      "definition": "CHECK ((((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191)) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "goods_receipt_inspection_resolutions_reason_check",
+      "contype": "c",
+      "table_name": "goods_receipt_inspection_resolutions",
+      "definition": "CHECK ((char_length(btrim(reason)) > 0))"
+    },
+    {
+      "conname": "goods_receipt_inspections_reason_check",
+      "contype": "c",
+      "table_name": "goods_receipt_inspections",
+      "definition": "CHECK (((outcome = 'PASSED'::\"GoodsReceiptInspectionOutcome\") OR ((reason IS NOT NULL) AND (char_length(btrim(reason)) > 0))))"
+    },
+    {
+      "conname": "goods_receipts_command_evidence_check",
+      "contype": "c",
+      "table_name": "goods_receipts",
+      "definition": "CHECK ((((\"idempotencyKey\" IS NULL) AND (\"payloadHash\" IS NULL)) OR ((\"idempotencyKey\" IS NOT NULL) AND ((char_length(btrim((\"idempotencyKey\")::text)) >= 8) AND (char_length(btrim((\"idempotencyKey\")::text)) <= 191)) AND ((\"idempotencyKey\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND (\"payloadHash\" IS NOT NULL) AND ((\"payloadHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"finalizedAt\" IS NOT NULL))))"
+    },
+    {
+      "conname": "hris_employment_assignments_effective_period_check",
+      "contype": "c",
+      "table_name": "hris_employment_assignments",
+      "definition": "CHECK (((\"effectiveTo\" IS NULL) OR (\"effectiveTo\" > \"effectiveFrom\")))"
+    },
+    {
+      "conname": "hris_manager_delegations_effective_period_check",
+      "contype": "c",
+      "table_name": "hris_manager_delegations",
+      "definition": "CHECK ((\"effectiveTo\" > \"effectiveFrom\"))"
+    },
+    {
+      "conname": "hris_manager_delegations_hash_check",
+      "contype": "c",
+      "table_name": "hris_manager_delegations",
+      "definition": "CHECK (((length(btrim((\"approvalEvidenceHash\")::text)) = 71) AND (\"left\"((\"approvalEvidenceHash\")::text, 7) = 'sha256:'::text) AND (length(btrim((\"reasonHash\")::text)) = 71) AND (\"left\"((\"reasonHash\")::text, 7) = 'sha256:'::text) AND ((\"revocationReasonHash\" IS NULL) OR ((length(btrim((\"revocationReasonHash\")::text)) = 71) AND (\"left\"((\"revocationReasonHash\")::text, 7) = 'sha256:'::text)))))"
+    },
+    {
+      "conname": "hris_manager_delegations_people_check",
+      "contype": "c",
+      "table_name": "hris_manager_delegations",
+      "definition": "CHECK ((\"delegatorEmployeeId\" <> \"delegateEmployeeId\"))"
+    },
+    {
+      "conname": "hris_manager_delegations_revocation_check",
+      "contype": "c",
+      "table_name": "hris_manager_delegations",
+      "definition": "CHECK ((((status = 'ACTIVE'::\"HrisManagerDelegationStatus\") AND (\"revokedAt\" IS NULL) AND (\"revocationReasonHash\" IS NULL)) OR ((status = ANY (ARRAY['REVOKED'::\"HrisManagerDelegationStatus\", 'SUPERSEDED'::\"HrisManagerDelegationStatus\"])) AND (\"revokedAt\" IS NOT NULL) AND (\"revocationReasonHash\" IS NOT NULL))))"
+    },
+    {
+      "conname": "hris_manager_delegations_supersession_check",
+      "contype": "c",
+      "table_name": "hris_manager_delegations",
+      "definition": "CHECK (((\"supersedesDelegationId\" IS NULL) OR (\"supersedesDelegationId\" <> id)))"
+    },
+    {
+      "conname": "hris_org_units_effective_period_check",
+      "contype": "c",
+      "table_name": "hris_org_units",
+      "definition": "CHECK (((\"effectiveTo\" IS NULL) OR (\"effectiveTo\" > \"effectiveFrom\")))"
+    },
+    {
+      "conname": "hris_org_units_parent_check",
+      "contype": "c",
+      "table_name": "hris_org_units",
+      "definition": "CHECK (((\"parentId\" IS NULL) OR (\"parentId\" <> id)))"
+    },
+    {
+      "conname": "hris_positions_effective_period_check",
+      "contype": "c",
+      "table_name": "hris_positions",
+      "definition": "CHECK (((\"effectiveTo\" IS NULL) OR (\"effectiveTo\" > \"effectiveFrom\")))"
+    },
+    {
+      "conname": "hris_reporting_relationships_assignment_check",
+      "contype": "c",
+      "table_name": "hris_reporting_relationships",
+      "definition": "CHECK ((\"managerAssignmentId\" <> \"reportAssignmentId\"))"
+    },
+    {
+      "conname": "hris_reporting_relationships_effective_period_check",
+      "contype": "c",
+      "table_name": "hris_reporting_relationships",
+      "definition": "CHECK (((\"effectiveTo\" IS NULL) OR (\"effectiveTo\" > \"effectiveFrom\")))"
+    },
+    {
+      "conname": "hris_reporting_relationships_hash_check",
+      "contype": "c",
+      "table_name": "hris_reporting_relationships",
+      "definition": "CHECK (((length(btrim((\"approvalEvidenceHash\")::text)) = 71) AND (\"left\"((\"approvalEvidenceHash\")::text, 7) = 'sha256:'::text) AND (length(btrim((\"reasonHash\")::text)) = 71) AND (\"left\"((\"reasonHash\")::text, 7) = 'sha256:'::text)))"
+    },
+    {
+      "conname": "hris_reporting_relationships_people_check",
+      "contype": "c",
+      "table_name": "hris_reporting_relationships",
+      "definition": "CHECK ((\"managerEmployeeId\" <> \"reportEmployeeId\"))"
+    },
+    {
+      "conname": "hris_reporting_relationships_supersession_check",
+      "contype": "c",
+      "table_name": "hris_reporting_relationships",
+      "definition": "CHECK (((\"supersedesRelationshipId\" IS NULL) OR (\"supersedesRelationshipId\" <> id)))"
+    },
+    {
+      "conname": "inventory_transactions_reversal_control_check",
+      "contype": "c",
+      "table_name": "inventory_transactions",
+      "definition": "CHECK (((\"reversalOfTransactionId\" IS NULL) OR (\"reversalOfTransactionId\" <> id)))"
+    },
+    {
+      "conname": "ledger_posting_batches_cycle_scope_check",
+      "contype": "c",
+      "table_name": "ledger_posting_batches",
+      "definition": "CHECK (((\"postingCycle\" >= 1) AND ((\"postingCycle\" = 1) OR ((\"sourceType\" = 'PAYMENT_SUSPENSE'::\"AccountingSourceType\") AND (\"postingPurpose\" = ANY (ARRAY['SUSPENSE_RECLASSIFICATION'::\"AccountingPostingPurpose\", 'REVERSAL'::\"AccountingPostingPurpose\"]))))))"
+    },
+    {
+      "conname": "payroll_run_transitions_evidence_check",
+      "contype": "c",
+      "table_name": "payroll_run_transitions",
+      "definition": "CHECK ((((origin = 'RUNTIME'::\"PayrollRunTransitionOrigin\") AND (\"evidenceStatus\" = 'VERIFIED'::\"PayrollRunTransitionEvidenceStatus\") AND (\"fromStatus\" IS NOT NULL) AND (\"fromVersion\" IS NOT NULL) AND (\"toVersion\" = (\"fromVersion\" + 1)) AND (\"actorId\" IS NOT NULL) AND (\"transitionedAt\" IS NOT NULL) AND (\"businessEventId\" IS NOT NULL) AND (\"idempotencyKey\" IS NOT NULL) AND (\"payloadHash\" IS NOT NULL) AND (\"legacyNote\" IS NULL) AND (((\"fromStatus\" = 'CALCULATED'::\"PayrollRunStatus\") AND (\"toStatus\" = 'REVIEWED'::\"PayrollRunStatus\")) OR ((\"fromStatus\" = 'REVIEWED'::\"PayrollRunStatus\") AND (\"toStatus\" = 'APPROVED'::\"PayrollRunStatus\")) OR ((\"fromStatus\" = 'APPROVED'::\"PayrollRunStatus\") AND (\"toStatus\" = 'EMITTED'::\"PayrollRunStatus\")) OR ((\"fromStatus\" = 'EMITTED'::\"PayrollRunStatus\") AND (\"toStatus\" = 'POSTED'::\"PayrollRunStatus\")))) OR ((origin = 'LEGACY_BACKFILL'::\"PayrollRunTransitionOrigin\") AND (\"evidenceStatus\" = 'LEGACY_PARTIAL_EVIDENCE'::\"PayrollRunTransitionEvidenceStatus\") AND (\"fromStatus\" IS NULL) AND (\"fromVersion\" IS NULL) AND (\"idempotencyKey\" IS NULL) AND (\"payloadHash\" IS NULL) AND (\"legacyNote\" IS NOT NULL) AND (\"toStatus\" = ANY (ARRAY['REVIEWED'::\"PayrollRunStatus\", 'APPROVED'::\"PayrollRunStatus\", 'EMITTED'::\"PayrollRunStatus\", 'POSTED'::\"PayrollRunStatus\"])))))"
+    },
+    {
+      "conname": "payroll_run_transitions_sequence_check",
+      "contype": "c",
+      "table_name": "payroll_run_transitions",
+      "definition": "CHECK ((sequence > 0))"
+    },
+    {
+      "conname": "payroll_run_transitions_version_check",
+      "contype": "c",
+      "table_name": "payroll_run_transitions",
+      "definition": "CHECK ((((\"fromVersion\" IS NULL) OR (\"fromVersion\" > 0)) AND ((\"toVersion\" IS NULL) OR (\"toVersion\" > 0))))"
+    },
+    {
+      "conname": "pos_cash_shortage_worker_checkpoints_attempt_check",
+      "contype": "c",
+      "table_name": "pos_cash_shortage_worker_checkpoints",
+      "definition": "CHECK ((attempt >= 0))"
+    },
+    {
+      "conname": "pos_cash_shortage_worker_checkpoints_status_check",
+      "contype": "c",
+      "table_name": "pos_cash_shortage_worker_checkpoints",
+      "definition": "CHECK ((status = ANY (ARRAY['PENDING'::text, 'LEASED'::text, 'RETRY_SCHEDULED'::text, 'COMPLETED'::text, 'DEAD_LETTERED'::text])))"
+    },
+    {
+      "conname": "pos_cash_shortage_worker_checkpoints_window_check",
+      "contype": "c",
+      "table_name": "pos_cash_shortage_worker_checkpoints",
+      "definition": "CHECK ((\"recordedFromInclusive\" < \"recordedThroughExclusive\"))"
+    },
+    {
+      "conname": "pos_commit_results_request_identity_check",
+      "contype": "c",
+      "table_name": "pos_commit_results",
+      "definition": "CHECK ((((char_length(btrim((\"clientCommitId\")::text)) >= 8) AND (char_length(btrim((\"clientCommitId\")::text)) <= 191)) AND ((\"clientCommitId\")::text ~ '^[A-Za-z0-9][A-Za-z0-9._:-]{7,190}$'::text) AND ((\"requestHash\")::text ~ '^[0-9a-f]{64}$'::text) AND (\"requestSchemaVersion\" > 0)))"
+    },
+    {
+      "conname": "pos_commit_results_result_hash_check",
+      "contype": "c",
+      "table_name": "pos_commit_results",
+      "definition": "CHECK (((\"resultHash\" IS NULL) OR ((\"resultHash\")::text ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "pos_commit_results_state_shape_check",
+      "contype": "c",
+      "table_name": "pos_commit_results",
+      "definition": "CHECK ((((status = 'CLAIMED'::\"POSCommitResultStatus\") AND (\"resultEnvelope\" IS NULL) AND (\"resultHash\" IS NULL) AND (\"committedAt\" IS NULL) AND (\"completedAt\" IS NULL)) OR ((status = 'COMMITTED'::\"POSCommitResultStatus\") AND (jsonb_typeof(\"resultEnvelope\") = 'object'::text) AND (\"resultHash\" IS NOT NULL) AND (\"committedAt\" IS NOT NULL) AND (\"completedAt\" IS NULL)) OR ((status = 'COMPLETED'::\"POSCommitResultStatus\") AND (jsonb_typeof(\"resultEnvelope\") = 'object'::text) AND (\"resultHash\" IS NOT NULL) AND (\"committedAt\" IS NOT NULL) AND (\"completedAt\" IS NOT NULL) AND (\"completedAt\" >= \"committedAt\"))))"
+    },
+    {
+      "conname": "purchase_return_amount_split",
+      "contype": "c",
+      "table_name": "purchase_return_lines",
+      "definition": "CHECK (((\"inventoryAmount\" >= (0)::numeric) AND (\"supplierClaimAmount\" >= (0)::numeric) AND (\"grniAmount\" >= (0)::numeric) AND ((\"supplierClaimAmount\" + \"grniAmount\") = \"inventoryAmount\")))"
+    },
+    {
+      "conname": "purchase_return_positive_quantity",
+      "contype": "c",
+      "table_name": "purchase_return_lines",
+      "definition": "CHECK ((quantity > (0)::numeric))"
+    },
+    {
+      "conname": "purchase_return_quantity_split",
+      "contype": "c",
+      "table_name": "purchase_return_lines",
+      "definition": "CHECK (((\"invoicedQuantity\" >= (0)::numeric) AND (\"uninvoicedQuantity\" >= (0)::numeric) AND ((\"invoicedQuantity\" + \"uninvoicedQuantity\") = quantity)))"
+    },
+    {
+      "conname": "referral_attribution_events_hash_check",
+      "contype": "c",
+      "table_name": "referral_attribution_events",
+      "definition": "CHECK (((\"payloadHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"subjectHash\" IS NULL) OR (\"subjectHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "referral_attribution_events_key_check",
+      "contype": "c",
+      "table_name": "referral_attribution_events",
+      "definition": "CHECK (((length(btrim(\"sourceEventKey\")) >= 1) AND (length(btrim(\"sourceEventKey\")) <= 191)))"
+    },
+    {
+      "conname": "referral_attribution_events_metadata_check",
+      "contype": "c",
+      "table_name": "referral_attribution_events",
+      "definition": "CHECK (((metadata IS NULL) OR (jsonb_typeof(metadata) = 'object'::text)))"
+    },
+    {
+      "conname": "referral_attributions_code_check",
+      "contype": "c",
+      "table_name": "referral_attributions",
+      "definition": "CHECK ((\"referralCode\" ~ '^[A-Za-z0-9_-]{12,64}$'::text))"
+    },
+    {
+      "conname": "referral_attributions_hash_check",
+      "contype": "c",
+      "table_name": "referral_attributions",
+      "definition": "CHECK ((\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "conname": "referral_attributions_source_check",
+      "contype": "c",
+      "table_name": "referral_attributions",
+      "definition": "CHECK ((((\"sourceType\" = 'CUSTOMER_STATEMENT'::\"ReferralAttributionSource\") AND (\"statementSnapshotId\" IS NOT NULL) AND (\"sourceId\" = \"statementSnapshotId\")) OR (\"sourceType\" = 'ACCOUNTANT_INVITE'::\"ReferralAttributionSource\")))"
+    },
+    {
+      "conname": "referral_attributions_text_check",
+      "contype": "c",
+      "table_name": "referral_attributions",
+      "definition": "CHECK ((((length(btrim(\"sourceId\")) >= 1) AND (length(btrim(\"sourceId\")) <= 191)) AND ((length(btrim(campaign)) >= 1) AND (length(btrim(campaign)) <= 120)) AND ((length(btrim(\"createdById\")) >= 1) AND (length(btrim(\"createdById\")) <= 191))))"
+    },
+    {
+      "conname": "stock_adjustments_reversal_control_check",
+      "contype": "c",
+      "table_name": "stock_adjustments",
+      "definition": "CHECK ((((\"reversalOfAdjustmentId\" IS NULL) AND (\"correctionKind\" IS NULL)) OR ((\"reversalOfAdjustmentId\" IS NOT NULL) AND (\"reversalOfAdjustmentId\" <> id) AND (\"correctionKind\" = 'REVERSAL'::\"StockAdjustmentCorrectionKind\") AND (\"createdById\" IS NOT NULL) AND (\"approvedById\" IS NOT NULL) AND (\"createdById\" <> \"approvedById\") AND (length(btrim(reason)) > 0))))"
+    },
+    {
+      "conname": "supplier_credit_line_nonnegative_amounts",
+      "contype": "c",
+      "table_name": "supplier_credit_note_lines",
+      "definition": "CHECK (((\"unitCost\" >= (0)::numeric) AND (\"taxRate\" >= (0)::numeric) AND (\"taxAmount\" >= (0)::numeric) AND (\"lineTotal\" > (0)::numeric)))"
+    },
+    {
+      "conname": "supplier_credit_line_positive_quantity",
+      "contype": "c",
+      "table_name": "supplier_credit_note_lines",
+      "definition": "CHECK ((quantity > (0)::numeric))"
+    },
+    {
+      "conname": "supplier_credit_nonnegative_amounts",
+      "contype": "c",
+      "table_name": "supplier_credit_notes",
+      "definition": "CHECK (((subtotal >= (0)::numeric) AND (\"taxAmount\" >= (0)::numeric) AND (total > (0)::numeric) AND ((subtotal + \"taxAmount\") = total)))"
+    },
+    {
+      "conname": "supplier_po_access_logs_hash_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_logs",
+      "definition": "CHECK (((\"envelopeContentHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"tokenHashPrefix\" ~ '^[0-9a-f]{12}$'::text) AND ((\"ipHash\" IS NULL) OR (\"ipHash\" ~ '^[0-9a-f]{64}$'::text)) AND ((\"userAgentHash\" IS NULL) OR (\"userAgentHash\" ~ '^[0-9a-f]{64}$'::text)) AND ((\"responseHash\" IS NULL) OR (\"responseHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "supplier_po_access_logs_outcome_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_logs",
+      "definition": "CHECK ((((outcome = 'GRANTED'::\"SupplierPoAccessOutcome\") AND (\"denialReason\" IS NULL)) OR ((outcome = 'DENIED'::\"SupplierPoAccessOutcome\") AND ((char_length(btrim(\"denialReason\")) >= 3) AND (char_length(btrim(\"denialReason\")) <= 120)))))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_access_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK (((\"accessCount\" >= 0) AND (((\"accessCount\" = 0) AND (\"lastAccessedAt\" IS NULL)) OR ((\"accessCount\" > 0) AND (\"lastAccessedAt\" IS NOT NULL)))))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_hash_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK (((\"tokenHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"jtiHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"envelopeContentHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"recipientHash\" IS NULL) OR (\"recipientHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_key_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_metadata_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK (((metadata IS NULL) OR (jsonb_typeof(metadata) = 'object'::text)))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_scope_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK ((\"allowView\" = true))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_status_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK ((((status = 'ACTIVE'::\"SupplierPoAccessTokenStatus\") AND (\"revokedAt\" IS NULL) AND (\"revokedById\" IS NULL) AND (\"revocationReason\" IS NULL)) OR ((status = 'REVOKED'::\"SupplierPoAccessTokenStatus\") AND (\"revokedAt\" IS NOT NULL) AND (char_length(btrim(\"revokedById\")) > 0) AND ((char_length(btrim(\"revocationReason\")) >= 3) AND (char_length(btrim(\"revocationReason\")) <= 500))) OR ((status = 'EXPIRED'::\"SupplierPoAccessTokenStatus\") AND (\"revokedAt\" IS NULL) AND (\"revokedById\" IS NULL) AND (\"revocationReason\" IS NULL))))"
+    },
+    {
+      "conname": "supplier_po_access_tokens_time_check",
+      "contype": "c",
+      "table_name": "supplier_po_access_tokens",
+      "definition": "CHECK (((\"issuedAt\" < \"expiresAt\") AND ((\"lastAccessedAt\" IS NULL) OR (\"lastAccessedAt\" >= \"issuedAt\"))))"
+    },
+    {
+      "conname": "supplier_po_envelopes_hash_check",
+      "contype": "c",
+      "table_name": "supplier_po_envelopes",
+      "definition": "CHECK (((\"sourceStateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"contentHash\" ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "conname": "supplier_po_envelopes_key_check",
+      "contype": "c",
+      "table_name": "supplier_po_envelopes",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0) AND (char_length(btrim(\"createdById\")) > 0)))"
+    },
+    {
+      "conname": "supplier_po_envelopes_payload_check",
+      "contype": "c",
+      "table_name": "supplier_po_envelopes",
+      "definition": "CHECK ((jsonb_typeof(payload) = 'object'::text))"
+    },
+    {
+      "conname": "supplier_po_proposal_lines_quantity_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposal_lines",
+      "definition": "CHECK (((\"originalOrderedQuantity\" > (0)::numeric) AND (\"requestedQuantity\" > (0)::numeric) AND (\"originalOrderedQuantity\" <> \"requestedQuantity\")))"
+    },
+    {
+      "conname": "supplier_po_proposal_states_hash_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposal_states",
+      "definition": "CHECK (((\"stateHash\" ~ '^[0-9a-f]{64}$'::text) AND (\"evidenceHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"previousStateHash\" IS NULL) OR (\"previousStateHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "supplier_po_proposal_states_lineage_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposal_states",
+      "definition": "CHECK ((((version = 1) AND (status = 'SUBMITTED'::\"SupplierPoProposalStatus\") AND (\"actorType\" = 'SUPPLIER'::\"SupplierPoProposalActorType\") AND (\"actorId\" IS NULL) AND (\"previousStateHash\" IS NULL) AND (reason IS NULL)) OR ((version = 2) AND (status = ANY (ARRAY['BUYER_ACCEPTED'::\"SupplierPoProposalStatus\", 'BUYER_REJECTED'::\"SupplierPoProposalStatus\"])) AND (\"actorType\" = 'BUYER'::\"SupplierPoProposalActorType\") AND (char_length(btrim(\"actorId\")) > 0) AND (\"previousStateHash\" IS NOT NULL) AND ((char_length(btrim(reason)) >= 3) AND (char_length(btrim(reason)) <= 500)))))"
+    },
+    {
+      "conname": "supplier_po_proposals_hash_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposals",
+      "definition": "CHECK (((\"payloadHash\" ~ '^[0-9a-f]{64}$'::text) AND ((\"noteHash\" IS NULL) OR (\"noteHash\" ~ '^[0-9a-f]{64}$'::text))))"
+    },
+    {
+      "conname": "supplier_po_proposals_key_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposals",
+      "definition": "CHECK ((((char_length(btrim(\"idempotencyKey\")) >= 8) AND (char_length(btrim(\"idempotencyKey\")) <= 160)) AND ((char_length(btrim(\"correlationId\")) >= 8) AND (char_length(btrim(\"correlationId\")) <= 160)) AND (char_length(btrim(\"businessEventId\")) > 0)))"
+    },
+    {
+      "conname": "supplier_po_proposals_note_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposals",
+      "definition": "CHECK ((((\"supplierNote\" IS NULL) AND (\"noteHash\" IS NULL)) OR (((char_length(btrim(\"supplierNote\")) >= 3) AND (char_length(btrim(\"supplierNote\")) <= 500)) AND (\"noteHash\" IS NOT NULL))))"
+    },
+    {
+      "conname": "supplier_po_proposals_type_check",
+      "contype": "c",
+      "table_name": "supplier_po_proposals",
+      "definition": "CHECK ((((\"proposalType\" = 'ACCEPT'::\"SupplierPoProposalType\") AND (\"requestedDeliveryDate\" IS NULL)) OR ((\"proposalType\" = 'REJECT'::\"SupplierPoProposalType\") AND (\"requestedDeliveryDate\" IS NULL) AND (\"supplierNote\" IS NOT NULL)) OR ((\"proposalType\" = 'REQUEST_CHANGE'::\"SupplierPoProposalType\") AND (\"supplierNote\" IS NOT NULL))))"
+    },
+    {
+      "conname": "tenant_module_configuration_commands_revision_check",
+      "contype": "c",
+      "table_name": "tenant_module_configuration_commands",
+      "definition": "CHECK (((\"expectedRevision\" >= 0) AND ((\"resultRevision\" IS NULL) OR (\"resultRevision\" = (\"expectedRevision\" + 1)))))"
+    },
+    {
+      "conname": "tenant_module_configuration_commands_state_check",
+      "contype": "c",
+      "table_name": "tenant_module_configuration_commands",
+      "definition": "CHECK ((((state = 'ACTIVE'::\"TenantModuleConfigurationCommandState\") AND (\"resultRevision\" IS NOT NULL) AND (\"errorCode\" IS NULL) AND (\"previewHash\" IS NOT NULL)) OR ((state = 'FAILED'::\"TenantModuleConfigurationCommandState\") AND (\"resultRevision\" IS NULL) AND (\"errorCode\" IS NOT NULL)) OR ((state = 'DRAFT'::\"TenantModuleConfigurationCommandState\") AND (\"resultRevision\" IS NULL) AND (\"errorCode\" IS NULL)) OR ((state = 'REQUESTED'::\"TenantModuleConfigurationCommandState\") AND (\"resultRevision\" IS NULL) AND (\"errorCode\" IS NULL) AND (\"previewHash\" IS NOT NULL))))"
+    },
+    {
+      "conname": "module_active_revision_check",
+      "contype": "c",
+      "table_name": "tenant_module_configurations",
+      "definition": "CHECK (((\"activeRevision\" >= 0) AND (\"activeRevision\" <= revision) AND (jsonb_typeof(\"newWorkStoppedAt\") = 'object'::text)))"
+    },
+    {
+      "conname": "tenant_module_configurations_revision_check",
+      "contype": "c",
+      "table_name": "tenant_module_configurations",
+      "definition": "CHECK ((revision >= 0))"
+    },
+    {
+      "conname": "tenant_module_grants_revision_check",
+      "contype": "c",
+      "table_name": "tenant_module_grants",
+      "definition": "CHECK ((revision >= 1))"
+    },
+    {
+      "conname": "tenant_module_grants_source_check",
+      "contype": "c",
+      "table_name": "tenant_module_grants",
+      "definition": "CHECK ((source = ANY (ARRAY['requested_modules'::text, 'legacy_default'::text, 'system_default'::text, 'manual_override'::text, 'plan'::text, 'trial'::text])))"
+    },
+    {
+      "conname": "tenant_module_grants_status_check",
+      "contype": "c",
+      "table_name": "tenant_module_grants",
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'trial'::text, 'read_only'::text, 'suspended'::text, 'expired'::text, 'unavailable'::text, 'legacy_default'::text, 'system_default'::text])))"
+    },
+    {
+      "conname": "tenant_module_grants_validity_check",
+      "contype": "c",
+      "table_name": "tenant_module_grants",
+      "definition": "CHECK (((\"startsAt\" IS NULL) OR (\"endsAt\" IS NULL) OR (\"endsAt\" > \"startsAt\")))"
+    },
+    {
+      "conname": "tenant_module_lifecycle_events_sequence_check",
+      "contype": "c",
+      "table_name": "tenant_module_lifecycle_events",
+      "definition": "CHECK ((sequence >= 0))"
+    },
+    {
+      "conname": "module_lifecycle_lease_check",
+      "contype": "c",
+      "table_name": "tenant_module_lifecycle_operations",
+      "definition": "CHECK (((\"leaseToken\" IS NULL) = (\"leaseUntil\" IS NULL)))"
+    },
+    {
+      "conname": "module_lifecycle_revision_check",
+      "contype": "c",
+      "table_name": "tenant_module_lifecycle_operations",
+      "definition": "CHECK (((\"desiredRevision\" > \"baseActiveRevision\") AND (\"baseActiveRevision\" >= 0) AND (version >= 0)))"
+    },
+    {
+      "conname": "tenant_module_lifecycle_steps_attempts_check",
+      "contype": "c",
+      "table_name": "tenant_module_lifecycle_steps",
+      "definition": "CHECK ((attempts >= 0))"
+    },
+    {
+      "conname": "workflow_assurance_check_findings_counts_check",
+      "contype": "c",
+      "table_name": "workflow_assurance_check_findings",
+      "definition": "CHECK (((\"scannedCount\" >= 0) AND (\"passedCount\" >= 0) AND (\"warningCount\" >= 0) AND (\"failedCount\" >= 0) AND (\"blockedCount\" >= 0) AND (\"skippedCount\" >= 0) AND (\"errorCount\" >= 0)))"
+    },
+    {
+      "conname": "workflow_assurance_check_findings_ordinal_check",
+      "contype": "c",
+      "table_name": "workflow_assurance_check_findings",
+      "definition": "CHECK (((ordinal >= 0) AND (ordinal <= 99)))"
+    },
+    {
+      "conname": "workflow_assurance_check_findings_source_identity_check",
+      "contype": "c",
+      "table_name": "workflow_assurance_check_findings",
+      "definition": "CHECK (((length(btrim(\"sourceType\")) > 0) AND (length(btrim(\"sourceId\")) > 0) AND (\"sourceType\" = btrim(\"sourceType\")) AND (\"sourceId\" = btrim(\"sourceId\"))))"
+    },
+    {
+      "conname": "workflow_assurance_check_runs_execution_identity_check",
+      "contype": "c",
+      "table_name": "workflow_assurance_check_runs",
+      "definition": "CHECK ((((\"executionKey\" IS NULL) AND (\"executionDigest\" IS NULL)) OR ((\"executionKey\" IS NOT NULL) AND (\"executionDigest\" IS NOT NULL) AND (length(btrim((\"executionKey\")::text)) > 0) AND ((\"executionKey\")::text = btrim((\"executionKey\")::text)) AND ((\"executionDigest\")::text ~ '^sha256:[0-9a-f]{64}$'::text))))"
+    }
+  ],
+  "journalTriggers": [],
+  "journalConstraints": [
+    {
+      "conname": "journal_entries_journalId_fkey",
+      "contype": "f",
+      "table_name": "journal_entries",
+      "definition": "FOREIGN KEY (\"journalId\") REFERENCES journals(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "journal_entries_organizationId_fkey",
+      "contype": "f",
+      "table_name": "journal_entries",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "conname": "journal_entries_periodId_fkey",
+      "contype": "f",
+      "table_name": "journal_entries",
+      "definition": "FOREIGN KEY (\"periodId\") REFERENCES accounting_periods(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "journal_entries_pkey",
+      "contype": "p",
+      "table_name": "journal_entries",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "conname": "journal_entries_postingBatchId_fkey",
+      "contype": "f",
+      "table_name": "journal_entries",
+      "definition": "FOREIGN KEY (\"postingBatchId\") REFERENCES ledger_posting_batches(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "conname": "journal_entries_reversalOfEntryId_fkey",
+      "contype": "f",
+      "table_name": "journal_entries",
+      "definition": "FOREIGN KEY (\"reversalOfEntryId\") REFERENCES journal_entries(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "conname": "journal_entry_lines_accountId_fkey",
+      "contype": "f",
+      "table_name": "journal_entry_lines",
+      "definition": "FOREIGN KEY (\"accountId\") REFERENCES chart_of_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+    },
+    {
+      "conname": "journal_entry_lines_journalEntryId_fkey",
+      "contype": "f",
+      "table_name": "journal_entry_lines",
+      "definition": "FOREIGN KEY (\"journalEntryId\") REFERENCES journal_entries(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "conname": "journal_entry_lines_organizationId_fkey",
+      "contype": "f",
+      "table_name": "journal_entry_lines",
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "conname": "journal_entry_lines_pkey",
+      "contype": "p",
+      "table_name": "journal_entry_lines",
+      "definition": "PRIMARY KEY (id)"
+    }
+  ]
+}

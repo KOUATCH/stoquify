@@ -1,5 +1,5 @@
 import "server-only"
-import type { Role, Session } from "@prisma/client"
+import type { Prisma, Role, Session } from "@prisma/client"
 import { db } from "@/prisma/db"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
@@ -7,15 +7,28 @@ import { isRoleCustodian, isUsableAccount } from "@/services/roles/role-custodia
 import { memberAccessCommand, type MemberAccessCommand, type MemberAccessReceipt } from "./member-access-input"
 import { accessDigest, canGrantMemberRole, hasMemberControl, hasRecordedDeactivation, memberAccessRevision, type AccessMember, type AccessMembership } from "./member-access-policy"
 
-export async function changeMemberAccess(input: { organizationId: string; actorId: string; targetUserId: string; command: MemberAccessCommand; session: { id: string; token: string } }): Promise<MemberAccessReceipt> {
+type ChangeMemberAccessInput = { organizationId: string; actorId: string; targetUserId: string; command: MemberAccessCommand; session: { id: string; token: string } }
+
+export async function changeMemberAccess(input: ChangeMemberAccessInput): Promise<MemberAccessReceipt> {
+  validateInput(input)
+  return db.$transaction(tx => changeMemberAccessInTx(tx, input), { isolationLevel: "ReadCommitted", timeout: 10000 })
+}
+
+function validateInput(input: ChangeMemberAccessInput) {
   const parsed = memberAccessCommand.safeParse(input.command)
   if (!parsed.success || !input.targetUserId) throw new ApplicationError("VALIDATION_ERROR", "Review the member and selected roles before continuing.", 400)
   if (!input.actorId || !input.organizationId || !input.session?.id || !input.session.token) throw new ForbiddenError()
   if (input.actorId === input.targetUserId) throw new BusinessRuleError("Ask another authorized administrator to change your access.")
+  return parsed
+}
+
+// Internal composition boundary: callers must use an interactive transaction.
+// All original locks, stored grant checks and fresh-session checks remain here.
+export async function changeMemberAccessInTx(tx: Prisma.TransactionClient, input: ChangeMemberAccessInput): Promise<MemberAccessReceipt> {
+  const parsed = validateInput(input)
   const command = { ...parsed.data, roleIds: [...parsed.data.roleIds].sort() }
   const fingerprint = accessDigest({ targetUserId: input.targetUserId, ...command })
   const auditId = "member_access_" + accessDigest([input.organizationId, input.actorId, command.requestId])
-  return db.$transaction(async tx => {
     // Same organization-first lock order as role editing and member deactivation.
     await tx.$queryRaw`SELECT id FROM organizations WHERE id = ${input.organizationId} FOR UPDATE`
     if (!await tx.organization.findFirst({ where: { id: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } })) throw new NotFoundError("Organization unavailable.")
@@ -65,5 +78,4 @@ export async function changeMemberAccess(input: { organizationId: string; actorI
     const receipt: MemberAccessReceipt = { id: member.id, auditId, revision: memberAccessRevision(after, command.roleIds, roles), operation: command.operation, sessionsRevoked: revoked.count, replayed: false }
     await tx.auditLog.create({ data: { id: auditId, organizationId: input.organizationId, userId: input.actorId, entityType: "User", entityId: member.id, action: "MEMBER_ACCESS_CHANGED", changes: { fingerprint, operation: command.operation, reason: command.reason, reviewedRevision: command.expectedRevision, beforeRoleIds: beforeIds, afterRoleIds: command.roleIds, beforeActive: member.isActive, afterActive: after.isActive, added, removed, receipt } } })
     return receipt
-  }, { isolationLevel: "ReadCommitted", timeout: 10000 })
 }

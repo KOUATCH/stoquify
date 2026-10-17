@@ -1,0 +1,368 @@
+{
+  "preparedOn": "2026-09-27",
+  "status": "proposed_execution_plan",
+  "scope": "Roadmap extraction and execution guidance; no application execution",
+  "sourceRoadmap": "what-next/codebase-rewrite/execution-roadmap.md",
+  "canonicalOperationalRegisterToCreate": "what-next/codebase-rewrite/work-packages.json",
+  "notes": [
+    "The stage dependency skeleton is proposed; producer/consumer contracts refine package dependencies.",
+    "RW01-01 discovery can start independently; its final inventory must align with RW00-01 before RW02-03 closes.",
+    "RW00-05 database subwork can start after RW00-03; package closure also requires RW00-02.",
+    "Missing required external approvals continue blocking their release scopes; this plan cannot waive them.",
+    "Status proposed denotes future work, not a transition in the eventual live register."
+  ],
+  "stages": [
+    {
+      "id": "00",
+      "title": "Reliable verification",
+      "dependencies": [],
+      "levelOfDetail": "initial packages proposed",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "01",
+      "title": "Whole-product inventory",
+      "dependencies": [],
+      "levelOfDetail": "initial packages proposed",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "02",
+      "title": "Architecture and targets",
+      "dependencies": [
+        "00",
+        "01"
+      ],
+      "levelOfDetail": "initial packages proposed",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "03",
+      "title": "Shared foundations",
+      "dependencies": [
+        "02"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "04",
+      "title": "Inventory/POS/offline",
+      "dependencies": [
+        "03"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "05",
+      "title": "Commercial and payments",
+      "dependencies": [
+        "03",
+        "04"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "06",
+      "title": "Accounting/close/statutory",
+      "dependencies": [
+        "03",
+        "04",
+        "05"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "07",
+      "title": "HRIS/payroll",
+      "dependencies": [
+        "03",
+        "06"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "08",
+      "title": "Remaining product areas",
+      "dependencies": [
+        "03"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "09",
+      "title": "Measured optimization and retirement",
+      "dependencies": [
+        "04",
+        "05",
+        "06",
+        "07",
+        "08"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    },
+    {
+      "id": "10",
+      "title": "Integrated acceptance and handover",
+      "dependencies": [
+        "09"
+      ],
+      "levelOfDetail": "wave only; packages require discovery",
+      "status": "not_reassessed_as_complete"
+    }
+  ],
+  "packages": [
+    {
+      "id": "RW00-01",
+      "title": "Accepted source and environment snapshot",
+      "stage": "00",
+      "dependencies": [],
+      "ownerRole": "Engineering lead",
+      "paths": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json"
+      ],
+      "definitionOfDone": "Candidate manifest, environment identity, resource ownership and evidence freshness recorded.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW00-02",
+      "title": "Reproducible packaged build",
+      "stage": "00",
+      "dependencies": [
+        "RW00-01"
+      ],
+      "ownerRole": "SRE/build owner",
+      "paths": [
+        "scripts/build-app-safe.js",
+        "scripts/build-app-diagnostics.js",
+        "next.config.mjs",
+        ".github/workflows"
+      ],
+      "definitionOfDone": "Successful isolated artifact, startup/smoke evidence and exact source/config provenance.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW00-03",
+      "title": "Isolated database, app and identities",
+      "stage": "00",
+      "dependencies": [
+        "RW00-01"
+      ],
+      "ownerRole": "QA/data/security",
+      "paths": [
+        "playwright.config.ts",
+        "prisma",
+        "tests/e2e"
+      ],
+      "definitionOfDone": "Verified test target, required schema, role/tenant/module fixtures and responsive owned app.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW00-04",
+      "title": "Refresh gate dispositions",
+      "stage": "00",
+      "dependencies": [
+        "RW00-01"
+      ],
+      "ownerRole": "Controls/platform",
+      "paths": [
+        "scripts/inventory-boundary-gate.js",
+        "scripts/service-boundary-gate.js",
+        "scripts/pos-g1-contract-gate.js",
+        "scripts/pos-enterprise-program-gate.js"
+      ],
+      "definitionOfDone": "Fresh gate evidence and individual dispositions; authentic external gaps remain explicit.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW00-05",
+      "title": "Real cash-history database and browser proof",
+      "stage": "00",
+      "dependencies": [
+        "RW00-02",
+        "RW00-03"
+      ],
+      "ownerRole": "Data/backend and QA",
+      "paths": [
+        "services/pos/cash-payment-history.service.ts",
+        "actions/pos/cash-payment-history.actions.ts",
+        "hooks/useCashPaymentHistoryWorkbench.ts",
+        "components/finance/CashPaymentHistoryWorkbench.tsx"
+      ],
+      "definitionOfDone": "Real SQL/endpoint equivalence and measured performance, scoped browser and EN/FR recovery evidence.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW00-06",
+      "title": "Verify the implemented cash/preflight slice",
+      "stage": "00",
+      "dependencies": [
+        "RW00-01"
+      ],
+      "ownerRole": "QA/integration",
+      "paths": [
+        "what-next/codebase-rewrite/evidence/jest.config.cjs",
+        "services/leakage/pos-cash-shortage-production-activation-preflight.ts"
+      ],
+      "definitionOfDone": "Current relevant regression/type/schema and compatibility evidence; historical artifacts retained.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW01-01",
+      "title": "Complete first-party surface inventory",
+      "stage": "01",
+      "dependencies": [],
+      "ownerRole": "Architecture/product",
+      "paths": [
+        "app",
+        "actions",
+        "services",
+        "components",
+        "hooks",
+        "lib",
+        "config",
+        "types",
+        "scripts",
+        "prisma",
+        ".github/workflows"
+      ],
+      "definitionOfDone": "All maintained surfaces and dynamic entries classified; final inventory aligned with RW00-01.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW01-02",
+      "title": "Workflow and consumer contracts",
+      "stage": "01",
+      "dependencies": [
+        "RW01-01"
+      ],
+      "ownerRole": "Domain owners",
+      "paths": [
+        "services",
+        "actions",
+        "app"
+      ],
+      "definitionOfDone": "Supported outcomes, authority, states, owners, effects, consumers and failure/recovery contracts mapped.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW01-03",
+      "title": "Duplication, cycles and effective coverage",
+      "stage": "01",
+      "dependencies": [
+        "RW01-01"
+      ],
+      "ownerRole": "Architecture/QA",
+      "paths": [
+        "tsconfig.json",
+        "jest.config.ts",
+        "graphify-out",
+        "what-next/codebase-rewrite/evidence/cycles-classified.json"
+      ],
+      "definitionOfDone": "Current classification of historical repeated groups, cycles and non-root source coverage.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW02-01",
+      "title": "Architecture and ownership decisions",
+      "stage": "02",
+      "dependencies": [
+        "RW01-02",
+        "RW01-03"
+      ],
+      "ownerRole": "Architecture/security/domain owners",
+      "paths": [
+        "services",
+        "actions",
+        "components/DataTableComponents/finance-accounting-contracts.ts"
+      ],
+      "definitionOfDone": "Recorded contract ownership, transaction boundaries, dependency direction and exceptions.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW02-02",
+      "title": "Measured targets and acceptance budgets",
+      "stage": "02",
+      "dependencies": [
+        "RW00-05",
+        "RW00-06",
+        "RW01-02"
+      ],
+      "ownerRole": "Performance/QA/product",
+      "paths": [
+        "what-next/codebase-rewrite/evidence/benchmark.cjs",
+        "services/pos/cash-payment-history.service.ts"
+      ],
+      "definitionOfDone": "Comparable datasets/environments, metrics and acceptance variance frozen before replacements.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    },
+    {
+      "id": "RW02-03",
+      "title": "Operating method, backlog and handoff",
+      "stage": "02",
+      "dependencies": [
+        "RW00-01",
+        "RW00-02",
+        "RW00-03",
+        "RW00-04",
+        "RW00-05",
+        "RW00-06",
+        "RW01-01",
+        "RW01-02",
+        "RW01-03",
+        "RW02-01",
+        "RW02-02"
+      ],
+      "ownerRole": "Engineering lead/integration reviewer",
+      "paths": [
+        "what-next/codebase-rewrite"
+      ],
+      "definitionOfDone": "Canonical register/evidence/handoff/method validation; stage coverage and next eligible package clear.",
+      "status": "proposed",
+      "implementationPerformed": false,
+      "effortEstimate": null,
+      "effortReason": "Estimate after baseline and discovery; no full-program calendar commitment."
+    }
+  ]
+}

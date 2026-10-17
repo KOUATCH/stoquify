@@ -1,0 +1,55 @@
+{
+  "startedAt": "2026-10-01T08:40:46.643Z",
+  "node": "v22.17.0",
+  "platform": "win32",
+  "scope": "Synthetic filesystem fixtures only; no existing app package, browser, login or database used",
+  "before": {
+    "standalone-package-preflight.cjs": "ed8997ee7c7b676c1f415e8d4627a2a7cad0c0c01e9c3a897aea2d4bd24f25d6",
+    "standalone-package-preflight.test.cjs": "22b8abe2dfc118a4788f88ab024854004eb49c04a812c228de749a8caab15712",
+    "verify-preflight.cjs": "ac7f7dcbbe26e4e072eea083fb00dbc8ddee52b7aad74868a5ee7981d3bc057b"
+  },
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "standalone-package-preflight.cjs"
+      ],
+      "exitCode": 0,
+      "spawnErrorCode": null
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "standalone-package-preflight.test.cjs"
+      ],
+      "exitCode": 0,
+      "spawnErrorCode": null
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "standalone-package-preflight.test.cjs"
+      ],
+      "exitCode": 0,
+      "spawnErrorCode": null,
+      "log": "fixture-tests-2026-10-01T08-40-55-445Z.tap"
+    }
+  ],
+  "after": {
+    "standalone-package-preflight.cjs": "ed8997ee7c7b676c1f415e8d4627a2a7cad0c0c01e9c3a897aea2d4bd24f25d6",
+    "standalone-package-preflight.test.cjs": "22b8abe2dfc118a4788f88ab024854004eb49c04a812c228de749a8caab15712",
+    "verify-preflight.cjs": "ac7f7dcbbe26e4e072eea083fb00dbc8ddee52b7aad74868a5ee7981d3bc057b"
+  },
+  "helperSourcesUnchanged": true,
+  "ownedTemporaryDirectoriesRemaining": 0,
+  "tests": 30,
+  "passed": 30,
+  "failed": 0,
+  "status": "FIXTURE_VERIFICATION_PASS",
+  "finishedAt": "2026-10-01T08:40:55.449Z",
+  "actualLinuxRuntimeQualification": "NOT_RUN"
+}

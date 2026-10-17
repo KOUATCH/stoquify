@@ -1,0 +1,789 @@
+{
+  "date": "2026-10-04",
+  "status": "PROPOSED_NOT_IMPLEMENTED",
+  "useCases": [
+    {
+      "id": "UC01",
+      "title": "Read-only item workspace",
+      "packages": [
+        "UX02",
+        "UX03"
+      ]
+    },
+    {
+      "id": "UC02",
+      "title": "Business-record search",
+      "packages": [
+        "UX04",
+        "UX05"
+      ]
+    },
+    {
+      "id": "UC03",
+      "title": "Guided payroll evidence selection",
+      "packages": [
+        "UX06",
+        "UX07"
+      ]
+    },
+    {
+      "id": "UC04",
+      "title": "Communication delivery exceptions",
+      "packages": [
+        "UX08",
+        "UX09"
+      ]
+    },
+    {
+      "id": "UC05",
+      "title": "Cross-record audit explorer",
+      "packages": [
+        "UX10",
+        "UX11"
+      ]
+    },
+    {
+      "id": "UC06",
+      "title": "Trackable access requests",
+      "packages": [
+        "UX12",
+        "UX13"
+      ]
+    },
+    {
+      "id": "UC07",
+      "title": "Resumable new purchase orders",
+      "packages": [
+        "UX14",
+        "UX15"
+      ]
+    },
+    {
+      "id": "UC08",
+      "title": "Reconciliation alert processing recovery",
+      "packages": [
+        "UX16",
+        "UX17"
+      ]
+    }
+  ],
+  "totalPersonDays": [
+    69,
+    111
+  ],
+  "packages": [
+    {
+      "id": "UX00",
+      "title": "Confirm baseline, cohort and ownership",
+      "dependencies": [],
+      "useCases": [],
+      "effortPersonDays": [
+        2,
+        3
+      ],
+      "priority": "P0",
+      "owner": "Product lead + QA lead",
+      "currentState": "Source audit is broad; authenticated workflow coverage and user demand baselines are missing.",
+      "objective": "Establish a reproducible starting point and named decision owners.",
+      "paths": [
+        "what-next/ui-use-case-gap-audit.md",
+        "what-next/ui-use-case-gap-audit/route-inventory.json",
+        "docs/prompt-execution/04_IMPLEMENTATION_ROADMAP.md"
+      ],
+      "tasks": [
+        "Record current HEAD, local changes and running revision without resetting work. Revalidate each finding before implementation.",
+        "Select synthetic tenant fixtures and authorized role cohort; measure the eight task baselines. Assign a named person to each owner role.",
+        "Reconcile work with parent roadmap R00/R01; record already completed work and acceptance evidence rather than rebuilding it."
+      ],
+      "dataImpact": "No migration. Use isolated representative test data; record fixture provenance.",
+      "controls": "Do not use production financial mutations to establish a baseline. Record unavailable environments explicitly.",
+      "verification": "Reproduce source entry points and baseline tasks; inventory denied, limited and full roles and EN/FR fixtures.",
+      "releaseGate": "G0: scope, baseline evidence and accountable owners recorded.",
+      "blockers": "Authenticated test session, representative users and runtime-to-revision mapping remain unavailable until arranged.",
+      "definitionOfDone": "All eight cases have a baseline or explicit missing-evidence entry; owners and first cohort are assigned.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX01",
+      "title": "Freeze shared read, command and UI-state contracts",
+      "dependencies": [
+        "UX00"
+      ],
+      "useCases": [],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P0",
+      "owner": "Platform lead + security reviewer",
+      "currentState": "Domain controls and shared route states exist, but new feature contracts are not yet defined.",
+      "objective": "Specify the smallest safe contracts before building new surfaces.",
+      "paths": [
+        "components/dashboard/DashboardRouteState.tsx",
+        "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+        "services/users/member-access.service.ts"
+      ],
+      "tasks": [
+        "Define minimal DTOs, pagination, query budgets, source freshness and safe local return URLs for the eight cases.",
+        "Resolve organization, entity, location, permissions and entitlements before querying records, counts or snippets.",
+        "Write state tables for loading, empty, partial, denied, stale, failed and uncertain outcomes; reuse primitives and EN/FR conventions."
+      ],
+      "dataImpact": "No shared business-status table. Each domain retains its own authoritative states.",
+      "controls": "Resolve the customer read versus analytics destination mismatch without granting additional authority. Do not infer write rights from visibility.",
+      "verification": "Contract examples include foreign tenant, limited location, revoked role, disabled module and stale session. Review output fields for privacy.",
+      "releaseGate": "G1: domain owners approve DTOs, transition tables, permission matrix and test contracts.",
+      "blockers": "D02 destination choice, D03 proof eligibility and D08 recovery authority must be decided before dependent command work.",
+      "definitionOfDone": "No unresolved critical authority or source-of-truth ambiguity remains for each slice entering implementation.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX02",
+      "title": "Build item read projection",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC01"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P1",
+      "owner": "Inventory backend engineer",
+      "currentState": "Item edit and related activity exist; no minimal general reader projection is established by the audit.",
+      "objective": "Return item identity and authoritative stock limited to the reader’s permitted locations.",
+      "paths": [
+        "services/item/item.service.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/items"
+      ],
+      "tasks": [
+        "Add a scoped read service and action using current inventory truth.",
+        "Project identity, unit, archive state, permitted quantities and freshness; provide authorized movement/supplier links.",
+        "Distinguish not found, no visible location, zero, unknown and unavailable."
+      ],
+      "dataImpact": "Reuse existing tables; add an index only after a measured query-plan need.",
+      "controls": "Do not return edit DTOs wholesale. Costs, margins and supplier terms require explicit field authority.",
+      "verification": "Test read-without-update, foreign tenant, hidden locations, archived/deleted records, sensitive fields and unavailable stock.",
+      "releaseGate": "G2: projection and privacy tests pass on representative fixtures.",
+      "blockers": "Inventory quantity semantics and location-scoping contracts require domain-owner confirmation.",
+      "definitionOfDone": "Read-only users receive correct authorized facts with no business mutation and no hidden-location totals.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX03",
+      "title": "Deliver item overview and entry points",
+      "dependencies": [
+        "UX02"
+      ],
+      "useCases": [
+        "UC01"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P1",
+      "owner": "Inventory frontend engineer + QA",
+      "currentState": "Item names are plain text and row actions emphasize edit/delete; related routes are fragmented.",
+      "objective": "Make an item inspectable from a stable read destination.",
+      "paths": [
+        "components/ui/groups/inventory/ItemManagement.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/page.tsx (new)"
+      ],
+      "tasks": [
+        "Add the localized overview route and register it in the current inventory access catalog.",
+        "Link item names and View item actions; render identity, stock, source links and conditional edit controls.",
+        "Use shared state components and explain zero, unknown, restricted and failed reads accurately."
+      ],
+      "dataImpact": "No migration or derived stock storage.",
+      "controls": "Route and source links recheck permissions; hiding a button is not authorization.",
+      "verification": "Authenticated read-only and denied-role browser tasks; EN/FR, keyboard/focus and 390px plus desktop layouts.",
+      "releaseGate": "G3/G4: task completion and role-negative evidence accepted; expose first to the selected cohort.",
+      "blockers": "Authenticated browser fixtures remain required; screenshots alone do not prove authorization.",
+      "definitionOfDone": "Users answer the baseline item questions without entering edit; overview can be disabled without changing inventory.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX04",
+      "title": "Implement bounded record-search adapters",
+      "dependencies": [
+        "UX02"
+      ],
+      "useCases": [
+        "UC02"
+      ],
+      "effortPersonDays": [
+        4,
+        6
+      ],
+      "priority": "P1",
+      "owner": "Backend search owner + domain owners",
+      "currentState": "Domain list queries exist; current PO listing is unsuitable as an unbounded header-search source.",
+      "objective": "Search items, customers and POs with scoped, bounded server queries.",
+      "paths": [
+        "services/customer/customer.service.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "services/search (new)"
+      ],
+      "tasks": [
+        "Create domain adapters and a small aggregator with exact-reference and text matching.",
+        "Apply scope before counts and limits; cap results per domain, enforce time budgets and explicit partial results.",
+        "Resolve accessible record destinations, deterministic ordering and minimal distinguishable snippets. Inspect query plans at representative volume."
+      ],
+      "dataImpact": "No search index service initially. Add database indexes only from plan evidence and migration review.",
+      "controls": "Exclude payroll, payment and other sensitive record types from the first release. Do not return inaccessible customer analytics destinations.",
+      "verification": "Test exact SKU/code/reference, ambiguous names, tenant/location negatives, inaccessible destinations, timeouts and bounded query plans.",
+      "releaseGate": "G2: scoped retrieval and measured performance meet D09 budgets.",
+      "blockers": "D02 basic customer profile versus existing destination; representative dataset size is not yet established.",
+      "definitionOfDone": "Each enabled domain has bounded queries, correct links and zero unauthorized snippets/counts in negative fixtures.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX05",
+      "title": "Integrate business search into the shell",
+      "dependencies": [
+        "UX03",
+        "UX04"
+      ],
+      "useCases": [
+        "UC02"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P1",
+      "owner": "Shell frontend engineer",
+      "currentState": "Navbar currently searches authorized navigation destinations only.",
+      "objective": "Let users find pages and records from one understandable keyboard-accessible interaction.",
+      "paths": [
+        "components/dashboard/Navbar.tsx"
+      ],
+      "tasks": [
+        "Preserve page search and add separate Records groups with recognizable type/reference/context.",
+        "Debounce requests, cancel obsolete work, suppress stale responses and clear results when session or organization changes.",
+        "Support loading, no results, partial domains, retry and preserved query text."
+      ],
+      "dataImpact": "No persistent sensitive search history in the first release.",
+      "controls": "Use server permission decisions and allowlisted local destinations; never infer grants from search results.",
+      "verification": "Browser exact/ambiguous tasks, rapid query changes, tenant switch, transient failure, keyboard selection and EN/FR.",
+      "releaseGate": "G3/G4: correct-record tasks pass; release item/customer/PO domains independently if one is blocked.",
+      "blockers": "Requires UX03 destination and UX04 query contract; destination mismatch cannot be hidden by UI.",
+      "definitionOfDone": "Users reach the intended authorized records with complete partial/error behavior and no stale-result replacement.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX06",
+      "title": "Resolve payroll proof from controlled records",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC03"
+      ],
+      "effortPersonDays": [
+        4,
+        6
+      ],
+      "priority": "P1",
+      "owner": "Payroll backend owner + controls reviewer",
+      "currentState": "Settlement already enforces proof and balance controls, but forms require technical hashes.",
+      "objective": "Expose eligible evidence and resolve submitted record IDs to current proof inside the controlled settlement operation.",
+      "paths": [
+        "services/payroll/payment-reconciliation.service.ts",
+        "actions/payroll/payroll-payment-reconciliation.actions.ts"
+      ],
+      "tasks": [
+        "Project eligible register versions and existing provider/match/statement evidence with readable context.",
+        "Accept stable record IDs and resolve authoritative hashes and eligibility in the transactional command.",
+        "Preserve balance revision, amount/currency checks, current authority, separation of duties, idempotency and close invalidation; review compatibility of existing callers."
+      ],
+      "dataImpact": "Reuse existing records/events; no evidence upload or new proof-truth table in this slice.",
+      "controls": "Reject stale, revoked, ambiguous, mismatched and foreign-tenant sources. Selection alone cannot settle a batch.",
+      "verification": "Extend focused settlement tests for eligible IDs, races, replay/unknown outcomes and every rejection condition; use transactional integration fixtures.",
+      "releaseGate": "G2: payroll and controls owners approve evidence semantics and regression evidence.",
+      "blockers": "D03 eligibility/version policy and test fixtures; no statutory formula changes are included.",
+      "definitionOfDone": "No client-supplied hash determines business truth, and existing controlled settlement invariants remain demonstrated.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX07",
+      "title": "Replace manual payroll hashes with guided selection",
+      "dependencies": [
+        "UX06"
+      ],
+      "useCases": [
+        "UC03"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P1",
+      "owner": "Payroll frontend engineer + QA",
+      "currentState": "Source-register and evidence hash text fields are blank despite linked source context.",
+      "objective": "Complete settlement-proof submission without technical identifier copying.",
+      "paths": [
+        "components/payroll/PayrollPaymentSettlementForm.tsx",
+        "components/payroll/PayrollPaymentReconciliationWorkbench.tsx"
+      ],
+      "tasks": [
+        "Add eligible register/evidence selectors with reference, version, date, amount, currency and review status.",
+        "Show remaining obligation and confirmation summary; explain unavailable evidence and link to its source workflow.",
+        "Keep hashes in optional technical details; retain appropriate inputs through validation, stale-session and uncertain-result recovery."
+      ],
+      "dataImpact": "No new evidence storage.",
+      "controls": "Never display selected evidence as confirmed payment; server checks remain authoritative.",
+      "verification": "First-submit task without a hash; stale/revoked/no-evidence and partial/final amount flows; fresh-auth return, EN/FR and keyboard errors.",
+      "releaseGate": "G3/G4: payroll task and controls regression evidence accepted before pilot.",
+      "blockers": "Authorized payroll fixtures and reviewer access are required.",
+      "definitionOfDone": "Eligible proof can be selected and submitted, ineligible choices explain recovery, and unknown outcomes cannot duplicate settlement.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX08",
+      "title": "Project communication delivery exceptions",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC04"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P2",
+      "owner": "Communication backend owner",
+      "currentState": "Statement and invitation histories have source-owned recovery; no cross-record discovery projection was found.",
+      "objective": "Provide a durable, paginated exception read model over existing delivery sources.",
+      "paths": [
+        "services/users/user-invitation-history.service.ts",
+        "components/customers/CustomerStatementWorkflow.tsx",
+        "services/communication/whatsapp-receipt-worker.service.ts"
+      ],
+      "tasks": [
+        "Start with statement and invitation adapters, source links and masked recipients.",
+        "Keep queued, accepted, confirmed delivered, failed, deferred and unknown meanings explicit by transport capability.",
+        "Filter by authorized source/channel/state/date; add receipt support only after its recovery contract is verified."
+      ],
+      "dataImpact": "Reuse outbox/history storage. No new delivery engine or generic notification status model.",
+      "controls": "Apply source permissions before paging/counting; redact tokens and destinations; preserve consent and disabled-transport semantics.",
+      "verification": "Test durable reload, scope, redaction, partial adapter failure, unknown outcome and disabled-provider labels.",
+      "releaseGate": "G2: source owners approve status mapping and privacy contract.",
+      "blockers": "D04 channel certainty mapping and operator ownership; delivered status requires source evidence.",
+      "definitionOfDone": "Exceptions remain discoverable across reloads with accurate source status and authorized recovery links.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX09",
+      "title": "Deliver the communications worklist",
+      "dependencies": [
+        "UX08"
+      ],
+      "useCases": [
+        "UC04"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P2",
+      "owner": "Communication frontend engineer + support owner",
+      "currentState": "Users must know which source record to open to discover delivery failure.",
+      "objective": "Give operators a clear queue and next action for delivery issues.",
+      "paths": [
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx",
+        "components/Forms/users/InvitationHistory.tsx",
+        "components/customers/CustomerStatementWorkflow.tsx"
+      ],
+      "tasks": [
+        "Add Delivery issues at an authorized destination with filters, age, masked recipient, source reference and last safe reason.",
+        "Link to existing recovery workflows and refresh from source truth after a retry.",
+        "Document ownership, unknown-result handling and escalation; release the read-only queue first."
+      ],
+      "dataImpact": "No new send log, bulk-send mechanism or delivery assertion.",
+      "controls": "Do not send messages on page load or acknowledgment. Existing retries retain authority and duplicate protection.",
+      "verification": "Test failed/deferred/unknown discovery, safe source retry handoff, reload, provider-disabled and EN/FR accessible layouts.",
+      "releaseGate": "G3/G4: support can complete the exception task; no live external sends required for test evidence.",
+      "blockers": "Communications owner must accept queue responsibility and escalation policy.",
+      "definitionOfDone": "Each displayed issue has an accurate state and useful authorized next step; acknowledgment never implies delivery.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX10",
+      "title": "Build redacted cross-record audit reads",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC05"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P2",
+      "owner": "Audit backend owner + privacy reviewer",
+      "currentState": "AuditLog and domain histories exist; an eight-event accounting projection is not a general explorer.",
+      "objective": "Support filtered investigations without exposing raw audit payloads.",
+      "paths": [
+        "prisma/schema.prisma",
+        "services/accounting/control-center.service.ts",
+        "services/audit (new)"
+      ],
+      "tasks": [
+        "Start with access and item event families; allowlist readable fields per event type.",
+        "Apply organization/audit/entity/location authority before cursor pagination and counts.",
+        "Specify stable snapshot/order semantics, event coverage limitations and authorized source links."
+      ],
+      "dataImpact": "Reuse existing audit indexes subject to query-plan validation; do not rewrite historical events or add an audit table solely for this view.",
+      "controls": "Never emit raw changes JSON, IP or user-agent by default. Do not equate visibility with completeness or tamper resistance.",
+      "verification": "Test field redaction, revoked authority, foreign tenant, pagination under concurrent events and bounded query plans.",
+      "releaseGate": "G2: event allowlist and coverage statements accepted by privacy and domain owners.",
+      "blockers": "D05 visible fields/retention and actual event-family coverage must be reviewed.",
+      "definitionOfDone": "Allowed events can be filtered safely with stable pagination and explicit coverage boundaries.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX11",
+      "title": "Deliver audit investigation workflows",
+      "dependencies": [
+        "UX10"
+      ],
+      "useCases": [
+        "UC05"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P2",
+      "owner": "Audit frontend engineer + QA",
+      "currentState": "Users cannot investigate changes through a general cross-record view.",
+      "objective": "Reconstruct defined access/item incidents without developer log access.",
+      "paths": [
+        "app/[locale]/(dashboard)/dashboard/settings/audit (new)",
+        "components/audit (new)"
+      ],
+      "tasks": [
+        "Add date/actor/action/entity filters, cursor navigation and safe event details.",
+        "Distinguish source unavailable, detail redacted and event coverage missing.",
+        "Provide authorized source links and task guidance; defer financial families and exports until separately reviewed."
+      ],
+      "dataImpact": "No export storage or new historical truth.",
+      "controls": "Read-only explorer does not add audit-write or source-edit authority; filters cannot bypass entity permissions.",
+      "verification": "Browser reconstructs baseline incidents; test restricted details, lost authority, fixed-snapshot paging, EN/FR and keyboard.",
+      "releaseGate": "G3/G4: investigation task accepted with explicit source coverage limits.",
+      "blockers": "Representative synthetic incident timeline and D05 field decisions are needed.",
+      "definitionOfDone": "Operators reconstruct the agreed scenarios from safe evidence and see when evidence is incomplete.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX12",
+      "title": "Implement durable access-request lifecycle",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC06"
+      ],
+      "effortPersonDays": [
+        5,
+        8
+      ],
+      "priority": "P2",
+      "owner": "IAM backend owner + security reviewer",
+      "currentState": "Denial pages advise contacting an administrator; actual grant services already exist.",
+      "objective": "Track requests and decisions while preserving current grant authority.",
+      "paths": [
+        "prisma/schema.prisma",
+        "services/users/member-access.service.ts",
+        "services/roles/role-editor.service.ts",
+        "services/access-requests (new)"
+      ],
+      "tasks": [
+        "Add tenant/requester/normalized-target/reason/reviewer/revision/timestamps and durable transitions; deduplicate pending requests and support withdrawal/expiry.",
+        "Separate pending/approved/declined/withdrawn/expired decisions from grant application pending/applied/failed states.",
+        "Use current grant services with current reviewer ceilings, no self-approval, revision fencing and audit events; verify effective access before claiming completion."
+      ],
+      "dataImpact": "Additive migration with tenant indexes and pending uniqueness strategy; avoid backfill unless a real historical source exists. Set retention before rollout.",
+      "controls": "No automatic subscriptions, purchases, module activation or entitlement bypass. Requesters cannot set tenant/reviewer/grants arbitrarily.",
+      "verification": "Database concurrency, duplicate creation, competing decisions, revoked reviewers, self-approval, partial grant failure and safe retry; migration rehearsal.",
+      "releaseGate": "G2: security approves transitions and grant boundary; schema and concurrency checks pass.",
+      "blockers": "D06 reviewer ownership, expiry, notification policy and service recovery behavior.",
+      "definitionOfDone": "Every decision and application attempt is attributable; approved is never falsely presented as effective access.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX13",
+      "title": "Connect denials to requester and reviewer queues",
+      "dependencies": [
+        "UX12"
+      ],
+      "useCases": [
+        "UC06"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P2",
+      "owner": "IAM frontend engineer + operations owner",
+      "currentState": "NotAuthorized offers navigation but no tracked handoff.",
+      "objective": "Let staff request review, track the decision and safely return after access is verified.",
+      "paths": [
+        "components/NotAuthorized.tsx",
+        "components/dashboard/DashboardRouteState.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/access-requests (new)"
+      ],
+      "tasks": [
+        "Offer request review for eligible authenticated permission denials with task and reason.",
+        "Provide requester timeline and authorized reviewer queue with explicit decision and application outcomes.",
+        "Keep expired authentication, unavailable modules and permission denials distinct; use allowlisted local callback paths."
+      ],
+      "dataImpact": "Use UX12 storage; no parallel request cache or email-only workflow.",
+      "controls": "Notifications and denial labels reveal no protected records; no requester self-approval or client-computed access success.",
+      "verification": "Role/tenant negatives, reviewer revocation, withdrawal/expiry, failed grant, safe return and EN/FR keyboard tasks.",
+      "releaseGate": "G3/G4: staff and reviewers complete the handoff; rollback disables new submissions while preserving history.",
+      "blockers": "A real reviewer must own the queue; elapsed SLA is not authorization to grant access.",
+      "definitionOfDone": "Requests have visible ownership and accurate status, and return navigation succeeds only after current authority is checked.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX14",
+      "title": "Persist new-PO drafts and fence order creation",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC07"
+      ],
+      "effortPersonDays": [
+        5,
+        8
+      ],
+      "priority": "P1",
+      "owner": "Purchasing backend owner + data reviewer",
+      "currentState": "Create service allocates and creates in a transaction; no replay fence was found in that inspected create path. Edit drafts already exist separately.",
+      "objective": "Preserve incomplete authoring and resolve uncertain create results without duplicate orders.",
+      "paths": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "prisma/schema.prisma"
+      ],
+      "tasks": [
+        "Add scoped durable authoring drafts with revision, incomplete-field support and explicit save/discard; keep them separate from business PO lifecycle.",
+        "Persist a stable create request key, canonical payload hash and atomic result linkage; inspect existing event/idempotency infrastructure before choosing additive storage.",
+        "On retry return the same result for same payload, reject key reuse with changed payload and expose scoped request-status lookup. Recheck current validation and authority when creating."
+      ],
+      "dataImpact": "Likely additive draft model plus unique organization/request fence or compatible existing infrastructure. Review retention, index and migration plans; no business-data backfill by default.",
+      "controls": "Saving an authoring draft allocates no PO number, stock, payable or outbound message. Server document numbering and transactional validation remain authoritative.",
+      "verification": "Concurrent creates, lost response after commit, replay after tab closure, changed payload, revoked permission, multi-tab revision conflict and migration rehearsal.",
+      "releaseGate": "G2: database tests prove one order per accepted request and correct conflict recovery.",
+      "blockers": "D07 draft retention and durability policy; compatibility with existing business-event infrastructure requires inspection.",
+      "definitionOfDone": "An uncertain submission can be resolved without issuing a new key, and incomplete drafts survive the agreed interruption boundaries.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX15",
+      "title": "Deliver new-PO save, resume and recovery UX",
+      "dependencies": [
+        "UX14"
+      ],
+      "useCases": [
+        "UC07"
+      ],
+      "effortPersonDays": [
+        4,
+        6
+      ],
+      "priority": "P1",
+      "owner": "Purchasing frontend engineer + QA",
+      "currentState": "ModernCreatePurchaseOrderForm keeps authoring in state; edit form has scoped session draft and uncertain-result protection.",
+      "objective": "Restore new-order work and make saved, unsaved and uncertain states understandable.",
+      "paths": [
+        "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx",
+        "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+        "components/purchase-orders/purchase-order-edit-draft.ts",
+        "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx"
+      ],
+      "tasks": [
+        "Integrate durable save/resume/discard with honest saved-state feedback and revision conflicts.",
+        "Retain the stable request identity across submission; resolve status before offering same-key retry after uncertainty.",
+        "Clear actor/organization-local data on session changes and preserve the existing edit recovery behavior; reconcile changed suppliers/items before submission."
+      ],
+      "dataImpact": "Use UX14 draft/request persistence; do not store sensitive drafts under unscoped browser keys.",
+      "controls": "Never label an uncertain create as definitely failed or encourage a new submission key before resolution.",
+      "verification": "Close/reopen, navigation interruption, network/storage failure, sign-out/in, tenant switch, multi-tab and commit-with-lost-response scenarios; existing edit tests remain passing.",
+      "releaseGate": "G3/G4: restore and uncertain-result tasks pass before enabling writes for the cohort.",
+      "blockers": "UX14 durable contract and explicit policy for unsaved local edits on logout.",
+      "definitionOfDone": "Users recover the last confirmed saved draft, understand any unsaved delta and cannot duplicate a committed PO by retrying the same request.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX16",
+      "title": "Expose safe alert processing diagnostics",
+      "dependencies": [
+        "UX01"
+      ],
+      "useCases": [
+        "UC08"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P1",
+      "owner": "Reconciliation backend owner + SRE",
+      "currentState": "Inbox worker tracks attempts, retry time and safe error codes; dashboard maps business payload status and omits processing fields.",
+      "objective": "Explain whether a reconciliation alert is queued, delayed, leased, retried or dead-lettered.",
+      "paths": [
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/payments/payment-reconciliation-inbox-worker.service.ts"
+      ],
+      "tasks": [
+        "Add a dedicated operator projection of processing state, attempts, last safe error, age, next attempt and eligibility.",
+        "Keep scan state, business notification meaning and worker lifecycle separate in names and presentation.",
+        "Reuse existing inbox records and query scope; check current indexes before adding any."
+      ],
+      "dataImpact": "No new queue. Read existing fields; no attempt resets or destructive status normalization.",
+      "controls": "Do not reuse the worker DTO in the browser: it includes leaseToken. Omit lease secrets, payload secrets and sensitive proof details.",
+      "verification": "Test all worker states, redaction, foreign tenants, live leases, missing metadata and bounded projections.",
+      "releaseGate": "G2: SRE/domain owner approve status meanings and safe disclosure.",
+      "blockers": "D08 operator authority and recoverability classification; processing state must not be mistaken for settlement.",
+      "definitionOfDone": "Operators can distinguish stalled versus scheduled work with safe data and accurate next-action eligibility.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX17",
+      "title": "Add guarded alert recovery and escalation",
+      "dependencies": [
+        "UX16"
+      ],
+      "useCases": [
+        "UC08"
+      ],
+      "effortPersonDays": [
+        4,
+        6
+      ],
+      "priority": "P1",
+      "owner": "Reconciliation engineer + SRE owner",
+      "currentState": "DurableNotificationInbox shows recorded alerts; no inspected operator diagnostic/recovery handoff exists.",
+      "objective": "Recover eligible processing failures while protecting leases, poison-message handling and auditability.",
+      "paths": [
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "services/payments/payment-reconciliation-inbox-worker.service.ts",
+        "actions/payments"
+      ],
+      "tasks": [
+        "Render diagnostic details and source links in the existing inbox; release read-only diagnostics first.",
+        "Implement an explicit scoped recovery command using current authority, revision/request-key fencing and an audit event. Reuse safe worker transition primitives.",
+        "Reject active-lease theft; escalate poison/redaction failures with a runbook rather than blindly retrying. Refresh authoritative outcome after commands."
+      ],
+      "dataImpact": "Reuse queue and event data; add a recovery command record only if current idempotency/audit infrastructure cannot meet the contract.",
+      "controls": "Recovery affects alert processing only, never reconciliation settlement, accounting balances or proof truth. Do not expose worker lease tokens.",
+      "verification": "Concurrent operator/worker race, live lease, revoked authority, replay, poison payload, dead-letter recovery and safe errors; browser status interpretation task.",
+      "releaseGate": "G3/G4: diagnostics can ship first; recovery commands require the stricter concurrency and runbook gate.",
+      "blockers": "D08 retry authority, escalation owner and worker-transition compatibility.",
+      "definitionOfDone": "Eligible work recovers once, ineligible work explains escalation, and no financial or lease invariant is bypassed.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX18",
+      "title": "Complete integration and release evidence",
+      "dependencies": [
+        "UX03",
+        "UX05",
+        "UX07",
+        "UX09",
+        "UX11",
+        "UX13",
+        "UX15",
+        "UX17"
+      ],
+      "useCases": [
+        "UC01",
+        "UC02",
+        "UC03",
+        "UC04",
+        "UC05",
+        "UC06",
+        "UC07",
+        "UC08"
+      ],
+      "effortPersonDays": [
+        5,
+        8
+      ],
+      "priority": "P0",
+      "owner": "QA lead + security + domain reviewers",
+      "currentState": "Current tests cover foundations, not the eight proposed end-to-end workflows.",
+      "objective": "Prove each delivered slice and its interactions on a reproducible release candidate.",
+      "paths": [
+        "components",
+        "services",
+        "actions",
+        "prisma",
+        "what-next/ui-workflow-roadmap"
+      ],
+      "tasks": [
+        "Run focused unit/contract and real-database integration tests for changed boundaries; rehearse additive migrations on disposable data.",
+        "Execute authorized, denied and limited-role browser tasks in EN/FR at 390px and desktop; include keyboard, focus and screen-reader checks.",
+        "Record query-budget measurements, rollback rehearsal, source/runtime revision and unresolved defects; map every UC acceptance check to evidence."
+      ],
+      "dataImpact": "No production migration through a generic build command. Use reviewed migration workflow and disposable rehearsal fixtures.",
+      "controls": "Zero accepted unauthorized disclosure, duplicate create/grant, stale proof acceptance or lease theft in negative fixtures.",
+      "verification": "G2/G3 evidence plus feature-specific acceptance matrix; command-bearing features need race/uncertain-result checks beyond screenshots.",
+      "releaseGate": "G4 is evaluated per feature so completed slices can pilot; aggregate UX18 closes only after all eight pass.",
+      "blockers": "Authenticated test environment, database fixtures and reviewer availability remain release blockers until supplied.",
+      "definitionOfDone": "Each enabled feature has complete evidence and no unresolved critical/high defect; deferred features remain disabled and explicitly tracked.",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "UX19",
+      "title": "Pilot, measure and hand over operations",
+      "dependencies": [
+        "UX18"
+      ],
+      "useCases": [
+        "UC01",
+        "UC02",
+        "UC03",
+        "UC04",
+        "UC05",
+        "UC06",
+        "UC07",
+        "UC08"
+      ],
+      "effortPersonDays": [
+        3,
+        5
+      ],
+      "priority": "P0",
+      "owner": "Product owner + SRE + support",
+      "currentState": "Value expectations have not been measured and feature ownership is not yet assigned by name.",
+      "objective": "Confirm task value and operational supportability before broader rollout.",
+      "paths": [
+        "docs/ui-workflow-roadmap",
+        "what-next/ui-workflow-roadmap",
+        "docs/prompt-execution/04_IMPLEMENTATION_ROADMAP.md"
+      ],
+      "tasks": [
+        "Start the agreed cohort per G4-approved feature; train users on tasks, uncertainty and escalation.",
+        "Compare task outcomes with UX00 baseline, review privacy-safe telemetry and gather failure reports.",
+        "Exercise feature rollback, preserve drafts/requests/audit history, assign support and monitoring ownership, then decide expansion."
+      ],
+      "dataImpact": "Roll back exposure and command entry points; do not drop additive tables or delete historical requests/drafts during feature rollback.",
+      "controls": "No automatic command activation or broad rollout when baseline/reviewer evidence is missing.",
+      "verification": "G5 cohort task evidence, metric comparison, incident drill, operator runbook and rollback record.",
+      "releaseGate": "G5: named product/domain/SRE owners accept outcomes and support; expand incrementally with stop conditions.",
+      "blockers": "Pilot duration and cohort capacity are decisions, not promised dates. Parent rollout work R31–R33 must be coordinated.",
+      "definitionOfDone": "All eight features are accepted or explicitly held with an owner and remediation plan; the roadmap is complete only when every accepted proposal has passed its release gate.",
+      "status": "PROPOSED"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "at": "2026-09-30T18:34:46.610Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "48ddea38797f16252e762a39dfd56e268fdd2d74c25c272be590803309e76077",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 2 passed, 2 total\nTests:       27 passed, 27 total\nSnapshots:   0 total\nTime:        25.585 s, estimated 27 s\nRan all test suites within paths \"hooks/__tests__/useCloseAssurance.export.test.tsx\", \"components/accounting/__tests__/CloseAssuranceCenter.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "hooks/accounting/useCloseAssurance.ts",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx",
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "48ddea38797f16252e762a39dfd56e268fdd2d74c25c272be590803309e76077",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c"
+  },
+  "sourceStable": true,
+  "passed": true
+}

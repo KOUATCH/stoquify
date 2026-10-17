@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-09-30T22:29:30Z",
+  "status": "BLOCKED_NOT_RUN",
+  "buildId": "GqRaF9F_RTehAxrqSBlS2",
+  "candidateScope": "Recorded compiled candidate only; not the subsequently changed checkout",
+  "originalBuildExitCode": 1,
+  "reason": "Standalone recovery failed trace validation and origin-specific package resolution containment before runtime release",
+  "evidence": [
+    {
+      "path": "../../../runner/standalone-recovery.result.json",
+      "observedStatus": "failed-validation",
+      "missingTraceFiles": 1,
+      "missingTraceFileSuffix": "next/dist/compiled/next-server/server.runtime.prod.js"
+    },
+    {
+      "path": "../../../runner/standalone-resolution-preflight.json",
+      "checkedAt": "2026-09-30T22:27:19.929Z",
+      "method": "Node createRequire resolution only; no module executed",
+      "externalPackageLookups": ["@next/env/package.json", "styled-jsx/package.json"],
+      "affectedImportOrigins": ["server.js", "node_modules/next/dist/server/next.js"],
+      "externalDestination": "Original workspace node_modules"
+    }
+  ],
+  "relocatedHelperExecuted": false,
+  "relocatedPackageCopied": false,
+  "temporaryPackageCreated": false,
+  "applicationStarted": false,
+  "browserStarted": false,
+  "loginAttempted": false,
+  "databaseContacted": false,
+  "cleanupRequired": false,
+  "preparedHelpers": ["run-relocated-smoke.cjs", "package-resolution-guard.cjs", "package-resolution-loader.mjs"],
+  "runtimeQualification": "Not established",
+  "priorWorkspaceBackedEvidence": "Preserved unchanged; separate scope and dependency assumptions",
+  "prohibitedWorkarounds": ["Workspace dependency fallback", "Package hoisting", "Global resolver overrides"]
+}

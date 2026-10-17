@@ -7,7 +7,7 @@ import { isCopilotProposalReleaseAvailable } from "@/services/ai/copilot-proposa
 import { routeByKey, withDailyDigestSurfaceAccess } from "./daily-digest-route-access"
 
 export const metadata: Metadata = {
-  title: "Daily Habit Digest | Kontava",
+  title: "Daily Habit Digest | Stoquify",
   description: "Read-only role-specific daily and weekly digest surfaces from existing command signals.",
 }
 

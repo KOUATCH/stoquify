@@ -1,0 +1,372 @@
+{
+  "at": "2026-09-30T14:54:56.432Z",
+  "readOnly": true,
+  "unchangedPack": true,
+  "noApprovalSubmitted": true,
+  "sourceBefore": {
+    "services/regulatory/country-packs/cameroon.ts": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749",
+    "services/payroll/payroll-country-pack-review-intake.service.ts": "8546ec1e13f6db183983a72d41ac0a1f0c141a416f5ac0eff0043ae6347ac6ba",
+    "services/payroll/payroll-country-pack-fixture-runner.ts": "2461f17bc8755efa1f16595d6864858a6e357ab9bd6c3878a36d22db536abd05",
+    "services/payroll/payroll-statutory-scenario-coverage.service.ts": "87cd5c54791daff5986b2c93644f0507439b02a94351a47c095c1bba19ef570e"
+  },
+  "sourceAfter": {
+    "services/regulatory/country-packs/cameroon.ts": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749",
+    "services/payroll/payroll-country-pack-review-intake.service.ts": "8546ec1e13f6db183983a72d41ac0a1f0c141a416f5ac0eff0043ae6347ac6ba",
+    "services/payroll/payroll-country-pack-fixture-runner.ts": "2461f17bc8755efa1f16595d6864858a6e357ab9bd6c3878a36d22db536abd05",
+    "services/payroll/payroll-statutory-scenario-coverage.service.ts": "87cd5c54791daff5986b2c93644f0507439b02a94351a47c095c1bba19ef570e"
+  },
+  "sourceStable": true,
+  "certificate": {
+    "kind": "AQSTOQFLOW_PAYROLL_COUNTRY_PACK_REVIEW_INTAKE_CERTIFICATE",
+    "version": 1,
+    "status": "BLOCKED",
+    "generatedAt": "2026-09-30T14:54:56.373Z",
+    "countryCode": "CM",
+    "basePackVersion": "CM-2026.1",
+    "basePackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+    "proposedPackVersion": "CM-2026.1",
+    "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+    "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+    "proposedPackHashMatches": true,
+    "targetFamilies": [
+      {
+        "family": "CNPS_FAMILY_ALLOWANCE",
+        "status": "BLOCKED",
+        "proposedCoverageStatus": "BLOCKED",
+        "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+        "certificationStatus": "MIXED_REVIEW",
+        "executableScenarioCount": 3,
+        "passedScenarioCount": 3,
+        "failedScenarioCount": 0,
+        "fixtureIds": [
+          "cm-cnps-family-allowance-2026",
+          "cm-cnps-family-allowance-agriculture-2026",
+          "cm-cnps-family-allowance-private-education-2026"
+        ],
+        "baseRequiredReviewTopics": [],
+        "coveredReviewTopics": [],
+        "missingReviewTopics": [],
+        "invalidReviewTopics": [],
+        "reviewEvidenceSourceHashes": [],
+        "fixtureEvidence": [
+          {
+            "fixtureId": "cm-cnps-family-allowance-2026",
+            "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+            "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:680c3ac2206a5cc39192f429c7b51958170d5da75018ecfd0038eac2b2cba5ba",
+            "actualOutputHash": "sha256:680c3ac2206a5cc39192f429c7b51958170d5da75018ecfd0038eac2b2cba5ba",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:32fdbbfc308a6f79249c1ac4e65cee340219fb0b2be9a43c5fa20ba790d33d1c"
+          },
+          {
+            "fixtureId": "cm-cnps-family-allowance-agriculture-2026",
+            "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+            "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE_AGRICULTURE",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:2d4dd977fbcf7bd76c9cfc67a5a207a162892a1bbb037736fba45b0dbe85f5e0",
+            "actualOutputHash": "sha256:2d4dd977fbcf7bd76c9cfc67a5a207a162892a1bbb037736fba45b0dbe85f5e0",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:a7163fd4d3d0f1c7f067b13b52e09f86155549ff6ca062c8ac21f40ecde2d776"
+          },
+          {
+            "fixtureId": "cm-cnps-family-allowance-private-education-2026",
+            "parameterPath": "payroll.cnps.familyAllowanceRatesBps",
+            "purpose": "PAYROLL_CNPS_FAMILY_ALLOWANCE_PRIVATE_EDUCATION",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:02c44a145c2f78794cfc858681cb4e29763f6e868d2ff1743d10e26cbf7fe7f1",
+            "actualOutputHash": "sha256:02c44a145c2f78794cfc858681cb4e29763f6e868d2ff1743d10e26cbf7fe7f1",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:3dd73c628d5ac00492e87739ed18cbaf3781fe748a95382c0ffbcd79b010f6e4"
+          }
+        ],
+        "fixtureEvidenceHashes": [
+          "sha256:32fdbbfc308a6f79249c1ac4e65cee340219fb0b2be9a43c5fa20ba790d33d1c",
+          "sha256:3dd73c628d5ac00492e87739ed18cbaf3781fe748a95382c0ffbcd79b010f6e4",
+          "sha256:a7163fd4d3d0f1c7f067b13b52e09f86155549ff6ca062c8ac21f40ecde2d776"
+        ],
+        "proposedIssueCodes": [],
+        "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
+        "proposedBlockerMessage": "CNPS family allowance capability is SUPPORTED_DRAFT, so full production remains blocked."
+      },
+      {
+        "family": "CNPS_OCCUPATIONAL_RISK",
+        "status": "BLOCKED",
+        "proposedCoverageStatus": "BLOCKED",
+        "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+        "certificationStatus": "MIXED_REVIEW",
+        "executableScenarioCount": 3,
+        "passedScenarioCount": 3,
+        "failedScenarioCount": 0,
+        "fixtureIds": [
+          "cm-cnps-occupational-risk-2026",
+          "cm-cnps-occupational-risk-group-b-2026",
+          "cm-cnps-occupational-risk-group-c-2026"
+        ],
+        "baseRequiredReviewTopics": [],
+        "coveredReviewTopics": [],
+        "missingReviewTopics": [],
+        "invalidReviewTopics": [],
+        "reviewEvidenceSourceHashes": [],
+        "fixtureEvidence": [
+          {
+            "fixtureId": "cm-cnps-occupational-risk-2026",
+            "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+            "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:0cd3c1adfeae173eaf283f7431fc63d4b7856def41422727a310cdfe3d67e980",
+            "actualOutputHash": "sha256:0cd3c1adfeae173eaf283f7431fc63d4b7856def41422727a310cdfe3d67e980",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:1046470db908ca50e9a598fc5c148a596a68c80a7e474280954227563f04a3a1"
+          },
+          {
+            "fixtureId": "cm-cnps-occupational-risk-group-b-2026",
+            "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+            "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_B",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:058ee68f53670fd213ee6c336a9b8febfc3ef691b504969c2740376463448e28",
+            "actualOutputHash": "sha256:058ee68f53670fd213ee6c336a9b8febfc3ef691b504969c2740376463448e28",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:1b348a28180e4986b0ae6e0654c84cedebae55ec0cdf9603d5a553979c042268"
+          },
+          {
+            "fixtureId": "cm-cnps-occupational-risk-group-c-2026",
+            "parameterPath": "payroll.cnps.occupationalRiskRatesBps",
+            "purpose": "PAYROLL_CNPS_OCCUPATIONAL_RISK_GROUP_C",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:e1e8c9418321fa66e38f2dd9a7a1645bc46c50e278fa24d91bafb835bceca0bf",
+            "actualOutputHash": "sha256:e1e8c9418321fa66e38f2dd9a7a1645bc46c50e278fa24d91bafb835bceca0bf",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:57ae6948bbe44b5ccee14874110d4c57890c74f35665e0db9342421c5c2078e2"
+          }
+        ],
+        "fixtureEvidenceHashes": [
+          "sha256:1046470db908ca50e9a598fc5c148a596a68c80a7e474280954227563f04a3a1",
+          "sha256:1b348a28180e4986b0ae6e0654c84cedebae55ec0cdf9603d5a553979c042268",
+          "sha256:57ae6948bbe44b5ccee14874110d4c57890c74f35665e0db9342421c5c2078e2"
+        ],
+        "proposedIssueCodes": [],
+        "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
+        "proposedBlockerMessage": "CNPS occupational risk capability is SUPPORTED_DRAFT, so full production remains blocked."
+      },
+      {
+        "family": "CNPS_PENSION",
+        "status": "BLOCKED",
+        "proposedCoverageStatus": "BLOCKED",
+        "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+        "certificationStatus": "MIXED_REVIEW",
+        "executableScenarioCount": 1,
+        "passedScenarioCount": 1,
+        "failedScenarioCount": 0,
+        "fixtureIds": [
+          "cm-cnps-pension-2026"
+        ],
+        "baseRequiredReviewTopics": [],
+        "coveredReviewTopics": [],
+        "missingReviewTopics": [],
+        "invalidReviewTopics": [],
+        "reviewEvidenceSourceHashes": [],
+        "fixtureEvidence": [
+          {
+            "fixtureId": "cm-cnps-pension-2026",
+            "parameterPath": "payroll.cnps.pensionRatesBps",
+            "purpose": "PAYROLL",
+            "fixtureDate": "2026-06-11",
+            "expectedPackVersion": "CM-2026.1",
+            "expectedLegalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "reviewStatus": "SOURCE_CHECKED",
+            "reviewedBy": "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use",
+            "reviewedOn": "2026-06-26",
+            "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+            "sourceEvidenceHash": "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+            "expectedOutputHash": "sha256:5dd2d5d0c4639d66845854ea09491c30e8f54156c941a6588e6493eb92a2cd3a",
+            "actualOutputHash": "sha256:5dd2d5d0c4639d66845854ea09491c30e8f54156c941a6588e6493eb92a2cd3a",
+            "proposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "computedProposedPackHash": "sha256:1b8dac11e40a751b2ce733288fb8acee9c7b0a538f8772ac10aac29362ce8607",
+            "evidenceHash": "sha256:638d73d1bf6ed2aa5c9b435a077a26165afc1da023b8ce0f522e3add04c39048"
+          }
+        ],
+        "fixtureEvidenceHashes": [
+          "sha256:638d73d1bf6ed2aa5c9b435a077a26165afc1da023b8ce0f522e3add04c39048"
+        ],
+        "proposedIssueCodes": [],
+        "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
+        "proposedBlockerMessage": "CNPS pension capability is SUPPORTED_DRAFT, so full production remains blocked."
+      },
+      {
+        "family": "IRPP_PERIOD",
+        "status": "BLOCKED",
+        "proposedCoverageStatus": "BLOCKED",
+        "proposedCapabilityStatus": "REQUIRES_EXPERT_REVIEW",
+        "certificationStatus": "NO_EXECUTABLE_SCENARIOS",
+        "executableScenarioCount": 0,
+        "passedScenarioCount": 0,
+        "failedScenarioCount": 0,
+        "fixtureIds": [],
+        "baseRequiredReviewTopics": [
+          "bracketsAndRates",
+          "deductibleEmployeeContributions",
+          "familyQuotientOrDependentTreatment",
+          "monthlyAndAnnualRegularization",
+          "taxableSalaryBase",
+          "withholdingRounding"
+        ],
+        "coveredReviewTopics": [],
+        "missingReviewTopics": [
+          "bracketsAndRates",
+          "deductibleEmployeeContributions",
+          "familyQuotientOrDependentTreatment",
+          "monthlyAndAnnualRegularization",
+          "taxableSalaryBase",
+          "withholdingRounding"
+        ],
+        "invalidReviewTopics": [],
+        "reviewEvidenceSourceHashes": [],
+        "fixtureEvidence": [],
+        "fixtureEvidenceHashes": [],
+        "proposedIssueCodes": [],
+        "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY",
+        "proposedBlockerMessage": "IRPP period calculation capability is REQUIRES_EXPERT_REVIEW, so full production remains blocked."
+      }
+    ],
+    "publishValidation": {
+      "valid": true,
+      "canPublish": true,
+      "issueCount": 0,
+      "issueCodes": [],
+      "issues": []
+    },
+    "blockers": [
+      {
+        "code": "PAYROLL_COUNTRY_PACK_FAMILY_NOT_READY",
+        "family": "CNPS_FAMILY_ALLOWANCE",
+        "message": "CNPS family allowance capability is SUPPORTED_DRAFT, so full production remains blocked.",
+        "evidence": {
+          "family": "CNPS_FAMILY_ALLOWANCE",
+          "proposedCoverageStatus": "BLOCKED",
+          "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+          "executableScenarioCount": 3,
+          "failedScenarioCount": 0,
+          "missingPurposeMatchers": [],
+          "issueCodes": [],
+          "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY"
+        }
+      },
+      {
+        "code": "PAYROLL_COUNTRY_PACK_FAMILY_NOT_READY",
+        "family": "CNPS_OCCUPATIONAL_RISK",
+        "message": "CNPS occupational risk capability is SUPPORTED_DRAFT, so full production remains blocked.",
+        "evidence": {
+          "family": "CNPS_OCCUPATIONAL_RISK",
+          "proposedCoverageStatus": "BLOCKED",
+          "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+          "executableScenarioCount": 3,
+          "failedScenarioCount": 0,
+          "missingPurposeMatchers": [],
+          "issueCodes": [],
+          "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY"
+        }
+      },
+      {
+        "code": "PAYROLL_COUNTRY_PACK_FAMILY_NOT_READY",
+        "family": "CNPS_PENSION",
+        "message": "CNPS pension capability is SUPPORTED_DRAFT, so full production remains blocked.",
+        "evidence": {
+          "family": "CNPS_PENSION",
+          "proposedCoverageStatus": "BLOCKED",
+          "proposedCapabilityStatus": "SUPPORTED_DRAFT",
+          "executableScenarioCount": 1,
+          "failedScenarioCount": 0,
+          "missingPurposeMatchers": [],
+          "issueCodes": [],
+          "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY"
+        }
+      },
+      {
+        "code": "PAYROLL_COUNTRY_PACK_FAMILY_NOT_READY",
+        "family": "IRPP_PERIOD",
+        "message": "IRPP period calculation capability is REQUIRES_EXPERT_REVIEW, so full production remains blocked.",
+        "evidence": {
+          "family": "IRPP_PERIOD",
+          "proposedCoverageStatus": "BLOCKED",
+          "proposedCapabilityStatus": "REQUIRES_EXPERT_REVIEW",
+          "executableScenarioCount": 0,
+          "failedScenarioCount": 0,
+          "missingPurposeMatchers": [],
+          "issueCodes": [],
+          "proposedBlockerCode": "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY"
+        }
+      },
+      {
+        "code": "PAYROLL_COUNTRY_PACK_REVIEW_TOPIC_EVIDENCE_MISSING",
+        "family": "IRPP_PERIOD",
+        "message": "IRPP_PERIOD is missing required legal review topic evidence.",
+        "evidence": {
+          "missingReviewTopics": [
+            "bracketsAndRates",
+            "deductibleEmployeeContributions",
+            "familyQuotientOrDependentTreatment",
+            "monthlyAndAnnualRegularization",
+            "taxableSalaryBase",
+            "withholdingRounding"
+          ]
+        }
+      }
+    ],
+    "redaction": {
+      "rawLegalDocumentsIncluded": false,
+      "rawFormulaSourceDocumentsIncluded": false,
+      "rawEmployeeDataIncluded": false,
+      "rawSalaryDataIncluded": false
+    },
+    "certificateHash": "sha256:d31b63b2c55fa97826de2d972e4f1bd90f4bf4b3b1a3a265d3adbee168626614"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-13",
+  "state": "PARTIAL",
+  "commands": [
+    {
+      "name": "workflow",
+      "command": "npm run agent:workflow:check",
+      "exit_code": 0,
+      "limitation": "198 unclassified scripts; command definition/hooks/runner/registry inspected first",
+      "evidence": null
+    },
+    {
+      "name": "classification",
+      "command": "node scripts/verify-agent-workflow-contract.js --command test:ecc:pilots",
+      "exit_code": 0,
+      "limitation": "auditAllowed true; extra arguments/configuration reviewed independently",
+      "evidence": null
+    },
+    {
+      "name": "baseline lifecycle",
+      "command": "node node_modules/jest/bin/jest.js --config jest.ecc-pilots.config.cjs --runInBand --no-cache --selectProjects ecc-unit --runTestsByPath services/pos/__tests__/checkout-lifecycle.service.test.ts --json --outputFile docs/retention/execution/P05/evidence/CHECKOUT_LIFECYCLE_RESULTS.json",
+      "exit_code": 0,
+      "limitation": "16 baseline cases; not counted again in final total",
+      "evidence": "CHECKOUT_LIFECYCLE_RESULTS.json",
+      "success": true,
+      "numPassedTests": 16,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 1,
+      "numFailedTestSuites": 0
+    },
+    {
+      "name": "red reproduction",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-checkout.config.cjs --runInBand --no-cache --runTestsByPath services/pos/__tests__/pos.service.test.ts --testNamePattern P05 --json --outputFile docs/retention/execution/P05/evidence/RETAINED_IDENTITY_BEFORE.json",
+      "exit_code": 1,
+      "limitation": "Expected failed mismatch test before fix; other new test passed; 52 filtered cases",
+      "evidence": "RETAINED_IDENTITY_BEFORE.json",
+      "success": false,
+      "numPassedTests": 1,
+      "numFailedTests": 1,
+      "numPendingTests": 52,
+      "numPassedTestSuites": 0,
+      "numFailedTestSuites": 1
+    },
+    {
+      "name": "green recovery",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-checkout.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P05/evidence/CHECKOUT_RECOVERY_AFTER.json",
+      "exit_code": 0,
+      "limitation": "Prisma/auth/financial delegates mocked; not real transactions",
+      "evidence": "CHECKOUT_RECOVERY_AFTER.json",
+      "success": true,
+      "numPassedTests": 90,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 4,
+      "numFailedTestSuites": 0
+    },
+    {
+      "name": "storage helper",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-checkout.config.cjs --runInBand --no-cache --env=jsdom --roots lib/pos/__tests__ --testMatch '**/pending-sale.test.ts' --json --outputFile docs/retention/execution/P05/evidence/PENDING_REQUEST_RESULTS.json",
+      "exit_code": 0,
+      "limitation": "Synthetic jsdom sessionStorage; not rendered browser",
+      "evidence": "PENDING_REQUEST_RESULTS.json",
+      "success": true,
+      "numPassedTests": 3,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 1,
+      "numFailedTestSuites": 0
+    },
+    {
+      "name": "final lifecycle",
+      "command": "node node_modules/jest/bin/jest.js --config jest.ecc-pilots.config.cjs --runInBand --no-cache --selectProjects ecc-unit --runTestsByPath services/pos/__tests__/checkout-lifecycle.service.test.ts --json --outputFile docs/retention/execution/P05/evidence/CHECKOUT_LIFECYCLE_FINAL.json",
+      "exit_code": 0,
+      "limitation": "Current final service; mocked transaction delegates",
+      "evidence": "CHECKOUT_LIFECYCLE_FINAL.json",
+      "success": true,
+      "numPassedTests": 16,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 1,
+      "numFailedTestSuites": 0
+    }
+  ],
+  "final_distinct_suites": 6,
+  "final_distinct_passed_tests": 109,
+  "new_mocked_cases": 10,
+  "new_database_cases_prepared_not_run": 1,
+  "syntax": {
+    "method": "TypeScript transpileModule with reportDiagnostics on four changed TypeScript files; ES2022/CommonJS",
+    "exit_code": 0,
+    "evidence": "SYNTAX_RESULTS.json",
+    "limitation": "syntax/transpile only, not semantic typecheck"
+  },
+  "not_run": {
+    "D": "No explicitly owned disposable PostgreSQL target/prepared schema established; no connection attempted. Lifecycle 5 cases and full financial commit 3 cases prepared only.",
+    "B": "No owned running application/browser fixture established; manual script prepared in BROWSER_REHEARSAL.md.",
+    "P": "No provider or authority operations.",
+    "C": "No customer observation or retention metrics.",
+    "E": "No qualified expert review or tax/compliance certification.",
+    "O": "No operational load/restore or deployed recovery proof."
+  }
+}

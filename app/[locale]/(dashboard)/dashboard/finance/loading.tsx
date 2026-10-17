@@ -1,9 +1,14 @@
+"use client"
+
+import { useLocale } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function FinanceLoading() {
+  const french = useLocale() === "fr"
   return (
-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden bg-[var(--dash-canvas)]">
+    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden motion-reduce:[&_.animate-pulse]:animate-none bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+        <p role="status" aria-live="polite">{french ? "Chargement des données financières…" : "Loading financial data…"}</p>
         <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -15,6 +20,6 @@ export default function FinanceLoading() {
           <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
         </div>
       </div>
-    </main>
+    </div>
   )
 }

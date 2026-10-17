@@ -20,6 +20,13 @@ function parseArgs(argv = process.argv.slice(2)) {
 function read(root, relativePath) { const target = path.join(root, relativePath); return fs.existsSync(target) ? fs.readFileSync(target, "utf8") : "" }
 function scalar(source, key) { const match = source.match(new RegExp("^\\s*" + key + ":\\s*([^#\\r\\n]+)", "m")); return match ? match[1].trim().replace(/^['\"]|['\"]$/g, "") : "" }
 function databaseName(rawUrl) { try { return new URL(rawUrl).pathname.replace(/^\//, "") } catch { return "" } }
+function verificationJob(source) {
+  const lines = source.split(/\r?\n/)
+  const start = lines.findIndex(line => /^  verify:\s*$/.test(line))
+  if (start < 0) return ""
+  const next = lines.findIndex((line, index) => index > start && /^  [\w-]+:\s*$/.test(line))
+  return lines.slice(start, next < 0 ? undefined : next).join("\n")
+}
 
 function buildCiReleaseReadiness(root = process.cwd()) {
   const workflow = read(root, ".github/workflows/ci.yml")
@@ -27,9 +34,10 @@ function buildCiReleaseReadiness(root = process.cwd()) {
   const packageJson = packageSource ? JSON.parse(packageSource) : { scripts: {} }
   const policySource = String(packageJson.scripts?.["policy:gates"] || "")
   const verifyCiSource = String(packageJson.scripts?.["verify:ci"] || "")
-  const databaseUrl = scalar(workflow, "DATABASE_URL")
-  const payrollUrl = scalar(workflow, "PAYROLL_IMMUTABILITY_DATABASE_URL")
-  const authSecret = scalar(workflow, "AUTH_SECRET")
+  const verifyJob = verificationJob(workflow)
+  const databaseUrl = scalar(verifyJob, "DATABASE_URL")
+  const payrollUrl = scalar(verifyJob, "PAYROLL_IMMUTABILITY_DATABASE_URL")
+  const authSecret = scalar(verifyJob, "AUTH_SECRET")
   const createDatabaseIndex = workflow.indexOf("CREATE DATABASE stockflow_immutability_test")
   const verifyCiIndex = workflow.indexOf("npm run verify:ci")
   const installDependenciesIndex = workflow.indexOf("npm ci")
@@ -50,7 +58,7 @@ function buildCiReleaseReadiness(root = process.cwd()) {
     { id: "postgres_16_service_is_healthy", ready: /services:\s*[\s\S]*postgres:\s*[\s\S]*image:\s*postgres:16(?:-alpine)?/.test(workflow) && /--health-cmd[\s\S]*pg_isready/.test(workflow) && /- 5432:5432/.test(workflow) },
     { id: "ci_databases_are_isolated", ready: databaseName(databaseUrl) === "aqstoqflow_ci" && databaseName(payrollUrl) === "stockflow_immutability_test" && databaseUrl !== payrollUrl },
     { id: "payroll_test_database_is_created", ready: createDatabaseIndex >= 0 && createDatabaseIndex < verifyCiIndex },
-    { id: "ci_auth_configuration_is_synthetic_and_sufficient", ready: authSecret.startsWith("ci-only-") && authSecret.length >= 32 && scalar(workflow, "NODE_ENV") === "test" },
+    { id: "ci_auth_configuration_is_synthetic_and_sufficient", ready: authSecret.startsWith("ci-only-") && authSecret.length >= 32 && scalar(verifyJob, "NODE_ENV") === "test" },
     { id: "production_credentials_and_release_flags_are_absent", ready: productionReferences.every((pattern) => !pattern.test(workflow)) },
     { id: "verify_ci_migrates_before_repository_verification", ready: migrateIndex >= 0 && verifyRepoIndex > migrateIndex && /npm run verify:ci/.test(workflow) },
     { id: "close_assurance_browser_smoke_is_configured", ready: closeAssuranceSmokeIndex > verifyCiIndex && playwrightInstallIndex > installDependenciesIndex && playwrightInstallIndex < closeAssuranceSmokeIndex && closeAssuranceNeedsVerify },

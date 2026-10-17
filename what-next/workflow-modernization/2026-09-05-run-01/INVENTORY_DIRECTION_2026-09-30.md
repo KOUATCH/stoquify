@@ -1,0 +1,40 @@
+# Inventory posting direction and truthful retry
+
+FA-CASH-COMMAND remains In progress. This correction addresses its inventory/accounting setup dependency. It does not close the complete inventory, accounting or finance workflow.
+
+## Findings and delivered correction
+
+The inventory adjustment producer summed absolute values and ignored posting-line conditions. A balanced entry could therefore report the wrong inventory direction, or post both conditional branches using the combined value. The corrected producer evaluates `adjustmentDirection: INCREASE | DECREASE`, retains separate gross gain/loss amounts, and rejects unsupported conditions. Before writing a journal it verifies both balance and the mapped INVENTORY debit/credit amounts against the recorded stock gains/losses. Net-zero mixed adjustments retain both sides. Correctly valued unconditional legacy loss rules remain supported; rules with incorrect direction, missing inventory legs or doubled values become explicit retained blockers.
+
+The default catalogue now includes INVENTORY-ADJUSTMENT with four directional lines using the existing INVENTORY and INVENTORY_VARIANCE mappings. Its names and descriptions include EN/FR. It is available to the existing default-rule service and rule-write service; this change does not automatically install it for tenants, change existing rules or add an installation button. Account mappings and accounting treatment still require the organization's authorized accounting setup owner.
+
+Actual database retry verification also exposed an existing hard-coded BLOCKED response after successful posting. Replay now returns POSTED only when the same tenant/source has an APPLIED event, POSTED batch, exactly one matching POSTED journal and its source link. Failed, reversed, incomplete or contradictory evidence remains blocked. Replay produces no new stock movements or journal entries.
+
+## Verification and limits
+
+- Final focused run: 63 tests / 7 suites, changed-file lint and TypeScript passed. Scope covers directional posting, unknown conditions, reversed and doubled balanced rules, mixed gains/losses, legacy loss rules, source-scoped replay, failed/reversed/incomplete replay, reversal regression, traceability, setup selection and control-center data. Receipt: `evidence/inventory-direction-checks-d1ddea86-3132-4313-98a8-fbfb066b8ef6.json`.
+- Guarded localhost PostgreSQL: gains, losses, mixed and net-zero mixed cases each produced one correctly valued journal and source link. An intentionally reversed rule produced a retained blocker and no journal. Maker/checker denial, repeated submission without duplicate effects and accurate final replay status passed. Receipt: `lanes/environment/inventory-direction-c67200e9-42a0-46d1-9da9-0a030e45de38.json`. Source values and users were synthetic; no real payment or business approval was issued. Local posting samples were 152–305 ms, not a production performance claim.
+- Retained earlier attempts: `inventory-direction-fc595fc3-7913-4920-8ea9-9d41239c734e.json` failed on the verifier's incorrect fiscal-year relationship; `inventory-direction-d81855fa-4f6c-4999-be0f-d15596038568.json` failed on a positive-zero/negative-zero assertion. Both are verifier defects corrected before final execution. The intermediate passing `inventory-direction-746e1238-feb7-4711-9c08-4fbff9422fd0.json` demonstrated the replay-status defect; its source binding predates the retry fix.
+- Actual EN/FR control-center browser evidence and screenshots are bound by `evidence/inventory-direction-review-2026-09-30.json`. This verifies display of the configured template and continued setup blocking, not full inventory UI accessibility or a certified accounting setup.
+- Browser receipt `inventory-direction-browser-e40a3527-c5e2-4014-b128-481f3227b588.json` passes after waiting for page initialization and using the existing table search. Earlier receipts `b1ecdbc7-0feb-4d9b-926f-c41d4f0f3f9f`, `59f08760-f638-4954-9d2a-e5b6c74a1569` and `f920d954-abc3-4ffc-a617-2ae65952f564` retain, respectively, the missed paginated row, incorrect textbox role and input reset before initialization completed. The last failure's screenshot shows the search empty again; the check does not establish the cause of all earlier hydration findings. The mobile table still uses internal horizontal scrolling; this is not complete mobile readability certification.
+
+## Required-purpose applicability evidence
+
+| Purpose | Current producer finding | Remaining action |
+|---|---|---|
+| INVENTORY_ADJUSTMENT | Operational producer now supports directional rules and a corresponding default | Review actual tenant mappings/rules; complete blocked-posting recovery and full workflow verification |
+| CASH_DRAWER_CLOSE | POS shift close emits retained evidence; the inspected close path does not consume a generic drawer-close rule | Reconcile shortage-resolution accounting and whether generic setup requires this purpose |
+| GOODS_RECEIPT | Stock-event wrapper retains GOODS_RECEIPT_LEDGER_REVIEW; receiving workbench expects separate posting evidence | Verify AP/stock ledger handoff and required setup contract before adding a default |
+| EXPENSE_APPROVAL | Schema has an expense record/purpose; targeted production service/action search found no approval posting consumer | Establish actual supported lifecycle/applicability; a fabricated template would not implement it |
+
+Source anchors: `services/pos/pos.service.ts` shift closing; `services/inventory/inventory-stock-event.service.ts` goods receipt wrapper; `services/purchase-order/purchase-receiving-workbench.service.ts`; `services/accounting/accounting-settings.service.ts`. Existing required-purpose gates remain intact. Three required purposes still lack defaults. Eligible close certification, current-configuration concurrency and downstream recovery remain open.
+
+## Operating and recovery guidance
+
+Open `/en/dashboard/accounting/control-center` or `/fr/dashboard/accounting/control-center` with `accounting.setup.manage` to inspect rule status. The accounting setup owner obtains actual account mappings from the organization's chart of accounts, and approved stock values/evidence from the inventory adjustment and its maker/checker record. Review the supplied template against those mappings using existing controlled configuration services. No production rule should be created by copying the synthetic fixtures.
+
+For an adjustment already applied to stock with a blocked ledger batch, repeated submission returns retained evidence; it does not repost stock or repair the ledger. Inspect the retained batch/error and use the existing reviewed correction/reversal process where supported. Do not create another stock adjustment merely to force accounting success. Complete the blocked-ledger recovery contract before declaring this lifecycle closed.
+
+No schema migration, deployment or live activation occurred. Before rollout, review existing custom adjustment rules for mapped INVENTORY direction/value, unsupported conditions and affected accounts. Preserve the archived source baseline for a targeted code rollback, but do not restore the known incorrect posting behavior as a financial recovery mechanism or rewrite posted history.
+
+Architecture/backend/data: domain-owned evaluation and retained source identity; no new ledger. Security/IAM: existing action protection and maker/checker controls preserved; replay reads are tenant/source scoped. Finance/audit: exact inventory direction and gross values are checked in addition to balance, with existing blocker/audit records. Frontend/localization: existing control-center presentation and tokens, bilingual template metadata; broader accessibility remains open. Product/quality/SRE/support: source-bound focused and real database checks, honest retry, compatibility impact documented. Statutory/country certification, privacy changes, billing, providers, AI/agents and offline processing are not applicable to this patch; no such approvals or behavior changes are claimed. The accounting-control-center skill informed this boundary; country-pack expansion is outside this milestone.

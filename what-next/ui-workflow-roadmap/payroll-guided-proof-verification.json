@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-04",
+  "scope": "UX06/UX07 guided payroll settlement proof",
+  "tests": { "suites": 6, "passed": 76, "report": "payroll-guided-proof-jest.json", "exitCode": 0 },
+  "scopedEslintExitCode": 0,
+  "diffWhitespaceExitCode": 0,
+  "sourceManifest": "payroll-guided-proof-source-hashes.json",
+  "typecheck": { "session": 36774, "status": "passed", "exitCode": 0, "diagnostics": [], "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false" },
+  "browser": {
+    "environment": "http://localhost:3000/en/dashboard/payroll/payments",
+    "account": "super.admin.rds-org001@stockflow.test",
+    "observed": "Both pages inspected: 12 draft / ledger-blocked batches without linked transactions or eligible matches. No settlement operation attempted.",
+    "screenshot": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/04/01a10672-554e-77c3-bc80-19e54163cb72/payroll-fixture-readiness.jpg",
+    "eligibleSubmissionVerified": false
+  },
+  "open": ["Disposable PostgreSQL concurrency/rollback verification", "Eligible and restricted-role browser fixtures", "Mobile/screen-reader review", "Controls acceptance", "Pilot"],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

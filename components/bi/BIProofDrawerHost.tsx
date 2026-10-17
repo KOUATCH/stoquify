@@ -23,6 +23,7 @@ type BIProofDrawerHostProps = {
   isLoading?: boolean
   error?: string | null
   className?: string
+  locale?: "en" | "fr"
 }
 
 export function BIProofDrawerHost({
@@ -31,12 +32,15 @@ export function BIProofDrawerHost({
   open,
   onOpenChange,
   onOpenSubject,
-  triggerLabel = "View proof",
-  loadingLabel = "Loading proof",
+  triggerLabel,
+  loadingLabel,
   isLoading = false,
   error = null,
   className,
+  locale = "en",
 }: BIProofDrawerHostProps) {
+  const resolvedTriggerLabel = triggerLabel ?? (locale === "fr" ? "Voir les preuves" : "View proof")
+  const resolvedLoadingLabel = loadingLabel ?? (locale === "fr" ? "Chargement des preuves" : "Loading proof")
   const [internalOpen, setInternalOpen] = useState(false)
   const resolvedOpen = open ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
@@ -48,11 +52,11 @@ export function BIProofDrawerHost({
         size="sm"
         variant="outline"
         disabled
-        title="No proof subject was supplied."
+        title={locale === "fr" ? "Aucune source de preuve n’a été fournie." : "No proof subject was supplied."}
         className={cn("rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]", className)}
       >
         <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-        {triggerLabel}
+        {resolvedTriggerLabel}
       </Button>
     )
   }
@@ -92,9 +96,9 @@ export function BIProofDrawerHost({
         ) : (
           <Eye className="h-4 w-4" aria-hidden="true" />
         )}
-        {isLoading ? loadingLabel : subject.label || triggerLabel}
+        {isLoading ? resolvedLoadingLabel : subject.label || resolvedTriggerLabel}
       </Button>
-      <ProofTrailDrawer open={resolvedOpen} onOpenChange={setOpen} proofTrail={proofTrail} isLoading={isLoading} error={error} />
+      <ProofTrailDrawer locale={locale} open={resolvedOpen} onOpenChange={setOpen} proofTrail={proofTrail} isLoading={isLoading} error={error} />
     </>
   )
 }

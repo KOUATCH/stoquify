@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-09-27T15:53:05.832Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+  },
+  "cases": [
+    {
+      "name": "read removed after valid preview",
+      "deniedWithoutBusinessEffects": true
+    }
+  ],
+  "organizationId": "cmujzzmg40000ma9kcph08ov4",
+  "runId": "cmujzzmnk001ama9kb815h0kc",
+  "passed": false,
+  "error": "The validation function is expected to return \"true\". Received false\n\nCaught error:\n\nBusinessRuleError: You are not allowed to perform this action.",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+  },
+  "sourceStable": true,
+  "endedAt": "2026-09-27T15:53:06.848Z"
+}

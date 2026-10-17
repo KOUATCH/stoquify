@@ -1,0 +1,1458 @@
+{
+  "kind": "AQSTOQFLOW_CLOSE_ASSURANCE_PACK",
+  "version": 1,
+  "export": {
+    "exportId": "d93a79e1-9ee7-4981-8b0b-250b8689e682",
+    "mode": "DRAFT_NOT_CERTIFIED",
+    "generatedAt": "2026-09-30T17:59:23.879Z",
+    "generatedById": "cmuoes4980001ma14i15imyha",
+    "watermarkId": "close-pack-draft-not-certified-cmuoetg7y01y5mab4hwa623mk-d93a79e1-9ee",
+    "fileType": "json",
+    "correlationId": "871c70a2-4c77-4dfe-97d8-cad3e9edb7e9",
+    "redaction": "Secrets, raw provider payloads, credentials, and tenant internals are excluded from this close pack.",
+    "certificationLimitations": [
+      "Draft close pack is not certified and may include unresolved blockers.",
+      "System evidence pack only; statutory filings still require qualified expert validation."
+    ],
+    "certificationBlockers": [
+      "Close run status is BLOCKED, not READY.",
+      "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+      "2 high-severity blocker(s) remain open.",
+      "2 open high-risk finding(s) block certification.",
+      "1 high-risk checklist gate(s) failed or unavailable.",
+      "1 critical evidence reference(s) are unavailable.",
+      "Payroll run 1: Persisted payroll pilot-cycle certification evidence is missing for this close period.",
+      "Payroll run 2: Persisted payroll pilot-cycle certification evidence is missing for this close period."
+    ],
+    "contentHash": "sha256:865aca149dd1f7c6ef121b946a5c0d8361ec953574701754b44db5683bbbe372"
+  },
+  "certificationScope": {
+    "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+    "statutoryReadinessStatus": "STATUTORY_BLOCKED",
+    "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+    "blockers": [
+      "AUTHORITY_NOT_CONFIGURED",
+      "REQUIRES_EXPERT_REVIEW",
+      "COUNTRY_PACK_UNVERIFIED",
+      "ADAPTER_SANDBOX_ONLY"
+    ]
+  },
+  "organization": {
+    "id": "cmuoeqjy40000may0do0vz1x8",
+    "name": "Workflow registration Close payroll scope dde18ac1-d803-44b3-a7d4-066417a95837",
+    "country": null,
+    "currency": "XOF",
+    "timezone": "Africa/Douala",
+    "defaultLocale": "EN"
+  },
+  "period": {
+    "id": "cmuoeqjzf0006may03g907jvg",
+    "name": "Owned payroll scope period",
+    "status": "OPEN",
+    "startDate": "2026-09-01T00:00:00.000Z",
+    "endDate": "2026-09-30T23:59:59.999Z"
+  },
+  "closeRun": {
+    "id": "cmuoetg7y01y5mab4hwa623mk",
+    "status": "BLOCKED",
+    "readinessScore": 78,
+    "criticalBlockerCount": 0,
+    "highBlockerCount": 2,
+    "evidenceCoveragePct": 66.67,
+    "asOf": "2026-09-30T17:59:16.440Z",
+    "startedAt": "2026-09-30T17:59:16.440Z",
+    "completedAt": "2026-09-30T17:59:16.440Z",
+    "runById": "cmuoes4980001ma14i15imyha",
+    "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d",
+    "summary": {
+      "failedCount": 1,
+      "passedCount": 6,
+      "commentCount": 0,
+      "findingCount": 2,
+      "warningCount": 2,
+      "evidenceCount": 14,
+      "checklistCount": 9,
+      "openFindingCount": 2,
+      "unavailableCount": 0
+    },
+    "provenance": {
+      "items": [
+        {
+          "asOf": "2026-09-30T17:59:16.440Z",
+          "label": "Ledger and period close",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "accounting_periods",
+            "journal_entries",
+            "journal_entry_lines",
+            "ledger_posting_batches"
+          ]
+        },
+        {
+          "asOf": "2026-09-30T17:59:16.440Z",
+          "label": "Payment reconciliation",
+          "provenance": "OPERATIONAL",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "reconciliation_runs",
+            "suspense_items",
+            "payment_exceptions"
+          ]
+        },
+        {
+          "asOf": "2026-09-30T17:59:16.440Z",
+          "label": "Data trust",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "journal_entries",
+            "journal_entry_lines",
+            "ledger_posting_batches",
+            "accounting_source_links",
+            "business_events",
+            "ledger_audit_events",
+            "audit_logs",
+            "provider_accounts",
+            "statement_files",
+            "statement_lines",
+            "reconciliation_runs",
+            "payment_exceptions",
+            "payment_transactions",
+            "supplier_invoices",
+            "supplier_payments",
+            "payroll_runs",
+            "payroll_run_transitions",
+            "payroll_run_lines",
+            "payroll_payslips",
+            "payroll_declarations",
+            "payroll_declaration_evidence",
+            "payroll_payment_batches",
+            "payroll_payment_allocations",
+            "fiscal_documents"
+          ]
+        },
+        {
+          "asOf": "2026-09-30T17:59:16.440Z",
+          "label": "Inventory valuation",
+          "provenance": "POSTED",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "inventory_levels",
+            "inventory_transactions",
+            "stock_adjustments",
+            "stock_count_sessions",
+            "journal_entry_lines",
+            "business_events"
+          ]
+        },
+        {
+          "asOf": "2026-09-30T17:59:16.440Z",
+          "label": "Payroll finance forecast proof",
+          "reason": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+          "provenance": "UNAVAILABLE",
+          "periodStatus": "OPEN",
+          "sourceTables": [
+            "payroll_periods",
+            "payroll_runs",
+            "payroll_run_lines",
+            "payroll_payment_batches",
+            "payroll_declarations",
+            "payroll_declaration_evidence",
+            "payment_provider_accounts",
+            "accounting_source_links",
+            "ledger_posting_batches"
+          ]
+        }
+      ]
+    },
+    "metadata": {
+      "trustLevel": "T2",
+      "sourceTables": [
+        "accounting_periods",
+        "journal_entries",
+        "journal_entry_lines",
+        "ledger_posting_batches",
+        "accounting_source_links",
+        "reconciliation_runs",
+        "suspense_items",
+        "payment_exceptions",
+        "inventory_levels",
+        "inventory_transactions",
+        "stock_adjustments",
+        "stock_count_sessions",
+        "payroll_periods",
+        "payroll_runs",
+        "payroll_run_transitions",
+        "payroll_payment_batches",
+        "payroll_declarations",
+        "payroll_declaration_evidence",
+        "business_events",
+        "ledger_audit_events",
+        "audit_logs"
+      ],
+      "controlPermissions": [
+        "dashboard.read",
+        "accounting.close.read",
+        "accounting.close.run",
+        "accounting.close.export"
+      ],
+      "statutoryCertification": {
+        "blockers": [
+          "AUTHORITY_NOT_CONFIGURED",
+          "REQUIRES_EXPERT_REVIEW",
+          "COUNTRY_PACK_UNVERIFIED",
+          "ADAPTER_SANDBOX_ONLY"
+        ],
+        "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+        "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+        "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+      },
+      "inventoryValuationAnnex": {
+        "asOf": "2026-09-30T17:59:16.440Z",
+        "failures": [],
+        "sourceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+        "sourceCounts": {
+          "posMovementCount": 0,
+          "openingStockCount": 0,
+          "stockWriteOffCount": 0,
+          "inventoryLevelCount": 0,
+          "purchaseReceiptCount": 0,
+          "stockAdjustmentCount": 0,
+          "class3JournalLineCount": 0,
+          "stockBusinessEventCount": 0,
+          "stockCountVarianceCount": 0,
+          "inventoryTransactionCount": 0
+        },
+        "blockerStatus": "PASSED",
+        "mismatchAmount": "0.00",
+        "organizationId": "cmuoeqjy40000may0do0vz1x8",
+        "observationHash": "sha256:c76bb6119fd74e9bd1b5c9ae19d33b00f7406418f280fe57bf58f1de0ab13dd1",
+        "recordedThrough": "2026-09-30T17:59:16.457Z",
+        "valuationMethod": "WEIGHTED_AVERAGE",
+        "accountingPeriodId": "cmuoeqjzf0006may03g907jvg",
+        "evidenceHashVersion": 1,
+        "class3LedgerBalanceTotal": "0.00",
+        "inventorySubledgerValueTotal": "0.00"
+      },
+      "payrollFinanceForecastProof": {
+        "status": "NON_AUTHORITATIVE",
+        "authoritative": false,
+        "reasonCode": "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+        "message": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+        "horizonStart": "2026-09-30T00:00:00.000Z",
+        "horizonEnd": "2026-09-30T23:59:59.999Z",
+        "upcomingNetPayAmount": null,
+        "upcomingStatutoryLiabilityAmount": null,
+        "totalUpcomingAmount": null,
+        "payrollPeriodCount": 1,
+        "payrollRunCount": 0,
+        "paymentBatchCount": 0,
+        "declarationCount": 0,
+        "sourceLinkCount": 0,
+        "evidenceHashCount": 0,
+        "certifiedInputRunCount": 0,
+        "certifiedInputProofHashCount": 0,
+        "registerToLedgerRunCount": 0,
+        "nextPayDate": "2026-09-30T23:59:59.999Z",
+        "nextDeclarationDueDate": null,
+        "blockerCount": 1,
+        "blockerCodes": [
+          "PAYROLL_FORECAST_POSTED_RUN_MISSING"
+        ],
+        "sourceHash": "sha256:81a8b1a3e24f3819a1943eefed97dcb5df7a90ae2f98769165f22338a02a30bf",
+        "generatedAt": "2026-09-30T17:59:16.440Z",
+        "sourceModules": [
+          "dashboard",
+          "sales",
+          "payments",
+          "inventory",
+          "purchasing",
+          "hris",
+          "payroll",
+          "accounting",
+          "close",
+          "compliance"
+        ],
+        "personLevelAmounts": "redacted",
+        "personLevelAmountsRedacted": true,
+        "proofDisclosure": "AGGREGATE_HASH_COUNTS_ONLY"
+      }
+    }
+  },
+  "annexes": {
+    "inventoryValuation": {
+      "saved": {
+        "asOf": "2026-09-30T17:59:16.440Z",
+        "failures": [],
+        "sourceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+        "sourceCounts": {
+          "posMovementCount": 0,
+          "openingStockCount": 0,
+          "stockWriteOffCount": 0,
+          "inventoryLevelCount": 0,
+          "purchaseReceiptCount": 0,
+          "stockAdjustmentCount": 0,
+          "class3JournalLineCount": 0,
+          "stockBusinessEventCount": 0,
+          "stockCountVarianceCount": 0,
+          "inventoryTransactionCount": 0
+        },
+        "blockerStatus": "PASSED",
+        "mismatchAmount": "0.00",
+        "organizationId": "cmuoeqjy40000may0do0vz1x8",
+        "observationHash": "sha256:c76bb6119fd74e9bd1b5c9ae19d33b00f7406418f280fe57bf58f1de0ab13dd1",
+        "recordedThrough": "2026-09-30T17:59:16.457Z",
+        "valuationMethod": "WEIGHTED_AVERAGE",
+        "accountingPeriodId": "cmuoeqjzf0006may03g907jvg",
+        "evidenceHashVersion": 1,
+        "class3LedgerBalanceTotal": "0.00",
+        "inventorySubledgerValueTotal": "0.00"
+      },
+      "current": {
+        "organizationId": "cmuoeqjy40000may0do0vz1x8",
+        "accountingPeriodId": "cmuoeqjzf0006may03g907jvg",
+        "asOf": "2026-09-30T17:59:23.879Z",
+        "valuationMethod": "WEIGHTED_AVERAGE",
+        "sourceCounts": {
+          "inventoryLevelCount": 0,
+          "inventoryTransactionCount": 0,
+          "stockAdjustmentCount": 0,
+          "stockWriteOffCount": 0,
+          "stockCountVarianceCount": 0,
+          "purchaseReceiptCount": 0,
+          "posMovementCount": 0,
+          "openingStockCount": 0,
+          "class3JournalLineCount": 0,
+          "stockBusinessEventCount": 0
+        },
+        "class3LedgerBalanceTotal": "0.00",
+        "inventorySubledgerValueTotal": "0.00",
+        "mismatchAmount": "0.00",
+        "sourceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+        "evidenceHashVersion": 1,
+        "observationHash": "sha256:841630bbd311692d5898266e7371a2bd2154b490f46a844b27c39b8c0e0563aa",
+        "recordedThrough": "2026-09-30T17:59:23.908Z",
+        "blockerStatus": "PASSED",
+        "failures": []
+      },
+      "freshness": {
+        "status": "FRESH",
+        "detectedAt": "2026-09-30T17:59:23.879Z",
+        "staleReason": null,
+        "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+        "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+      }
+    },
+    "payrollFinanceForecast": {
+      "saved": {
+        "status": "NON_AUTHORITATIVE",
+        "authoritative": false,
+        "reasonCode": "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+        "message": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+        "horizonStart": "2026-09-30T00:00:00.000Z",
+        "horizonEnd": "2026-09-30T23:59:59.999Z",
+        "upcomingNetPayAmount": null,
+        "upcomingStatutoryLiabilityAmount": null,
+        "totalUpcomingAmount": null,
+        "payrollPeriodCount": 1,
+        "payrollRunCount": 0,
+        "paymentBatchCount": 0,
+        "declarationCount": 0,
+        "sourceLinkCount": 0,
+        "evidenceHashCount": 0,
+        "certifiedInputRunCount": 0,
+        "certifiedInputProofHashCount": 0,
+        "registerToLedgerRunCount": 0,
+        "nextPayDate": "2026-09-30T23:59:59.999Z",
+        "nextDeclarationDueDate": null,
+        "blockerCount": 1,
+        "blockerCodes": [
+          "PAYROLL_FORECAST_POSTED_RUN_MISSING"
+        ],
+        "sourceHash": "sha256:81a8b1a3e24f3819a1943eefed97dcb5df7a90ae2f98769165f22338a02a30bf",
+        "generatedAt": "2026-09-30T17:59:16.440Z",
+        "sourceModules": [
+          "dashboard",
+          "sales",
+          "payments",
+          "inventory",
+          "purchasing",
+          "hris",
+          "payroll",
+          "accounting",
+          "close",
+          "compliance"
+        ],
+        "personLevelAmounts": "redacted",
+        "personLevelAmountsRedacted": true,
+        "proofDisclosure": "AGGREGATE_HASH_COUNTS_ONLY"
+      },
+      "redaction": "Aggregate close-pack payroll forecast proof only; person-level payroll amounts are redacted."
+    },
+    "pilotCycleCertification": {
+      "saved": {
+        "status": "BLOCKED",
+        "auditLogRef": null,
+        "payrollRunRef": null,
+        "certificateHash": null,
+        "generatedAt": null,
+        "blockerCount": 2,
+        "blockerCodes": [],
+        "missingSignoffRoles": [],
+        "expectedAdapterChaosReleaseGateHash": null,
+        "proofBackfillAdapterChaosMatchesExpected": null,
+        "closePeriodPayrollRunCount": 2,
+        "applicability": "REQUIRED",
+        "closePeriodPayrollPeriodCount": 1,
+        "runCertificates": [
+          {
+            "status": null,
+            "auditLogRef": null,
+            "payrollRunRef": "redacted:7d5d6fbd1030",
+            "certificateHash": null,
+            "generatedAt": null,
+            "blockerCount": 0,
+            "blockerCodes": [],
+            "missingSignoffRoles": [],
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null,
+            "closePeriodPayrollRunCount": 1
+          },
+          {
+            "status": null,
+            "auditLogRef": null,
+            "payrollRunRef": "redacted:f5b58c56b4c9",
+            "certificateHash": null,
+            "generatedAt": null,
+            "blockerCount": 0,
+            "blockerCodes": [],
+            "missingSignoffRoles": [],
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null,
+            "closePeriodPayrollRunCount": 1
+          }
+        ]
+      },
+      "redaction": "Persisted pilot-cycle certificate summary only; raw salary, person, provider, authority, and audit payloads are excluded."
+    }
+  },
+  "checklist": [
+    {
+      "id": "cmuoetg8q01ybmab4uy62p0q6",
+      "key": "ledger-reconciliation",
+      "domain": "LEDGER",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "Ledger balance and traceability",
+      "detail": "Posted ledger entries balance and retain posting/source traceability.",
+      "sourceService": "services/accounting/reconciliations.service.ts",
+      "evidenceCount": 0,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/accounting/reports/trial-balance",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg8l01y9mab4zw2497vd",
+      "key": "period-close-preflight",
+      "domain": "LEDGER",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "Period close preflight",
+      "detail": "No period close preflight blockers were detected.",
+      "sourceService": "services/accounting/periods.service.ts",
+      "evidenceCount": 1,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/accounting/control-center",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg8a01y7mab452awy1ol",
+      "key": "period-state",
+      "domain": "LEDGER",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "Accounting period state",
+      "detail": "Owned payroll scope period is open and available for close readiness.",
+      "sourceService": "services/accounting/periods.service.ts",
+      "evidenceCount": 1,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/accounting/setup",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg8w01ydmab47tfg11ix",
+      "key": "payment-reconciliation",
+      "domain": "PAYMENT_RECONCILIATION",
+      "status": "WARNING",
+      "severity": "MEDIUM",
+      "label": "Payment reconciliation sign-off",
+      "detail": "Payment reconciliation evidence is available for close review.",
+      "sourceService": "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+      "evidenceCount": 0,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/finance/reconciliation",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg9101yfmab4ind2x3ky",
+      "key": "suspense-exceptions",
+      "domain": "SUSPENSE",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "Suspense and payment exceptions",
+      "detail": "No open close-blocking suspense items were detected.",
+      "sourceService": "services/reconciliation/payment-suspense-workflow.service.ts",
+      "evidenceCount": 0,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/finance/reconciliation",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg9a01yjmab40az1jzc7",
+      "key": "inventory-valuation",
+      "domain": "INVENTORY_VALUATION",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "Inventory valuation readiness",
+      "detail": "Inventory subledger value 0.00 reconciles to class 3 ledger value 0.00 XOF.",
+      "sourceService": "services/inventory/inventory-valuation.service.ts",
+      "evidenceCount": 1,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/inventory",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg9j01ynmab43yn4yigb",
+      "key": "tax-payroll-ap-readiness",
+      "domain": "TAX",
+      "status": "PASSED",
+      "severity": "INFO",
+      "label": "AP, payroll, and compliance exposure",
+      "detail": "Purchasing and AP: ready; Payroll and declarations: ready; Compliance documents: ready",
+      "sourceService": "services/accounting/data-trust.service.ts",
+      "evidenceCount": 3,
+      "blockerReason": null,
+      "nextActionHref": "/dashboard/accounting/accountant-portal",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg9f01ylmab4fahi8enc",
+      "key": "payroll-finance-forecast-proof",
+      "domain": "PAYROLL",
+      "status": "FAILED",
+      "severity": "HIGH",
+      "label": "Payroll finance forecast proof",
+      "detail": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+      "sourceService": "services/snapshots/tenant-operating-snapshot.service.ts",
+      "evidenceCount": 1,
+      "blockerReason": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+      "nextActionHref": "/dashboard/payroll/runs",
+      "ownerId": null,
+      "dueAt": null
+    },
+    {
+      "id": "cmuoetg9501yhmab4dyi9vwsq",
+      "key": "data-trust-provenance",
+      "domain": "DATA_TRUST",
+      "status": "WARNING",
+      "severity": "MEDIUM",
+      "label": "Data trust and provenance",
+      "detail": "Data-trust level T2; 2 blockers detected.",
+      "sourceService": "services/accounting/data-trust.service.ts",
+      "evidenceCount": 13,
+      "blockerReason": "Accountant trust packs require the accounting setup to be marked ready before certification.",
+      "nextActionHref": "/dashboard/accounting/accountant-portal",
+      "ownerId": null,
+      "dueAt": null
+    }
+  ],
+  "findings": [
+    {
+      "id": "cmuoetg9n01ypmab4xyr0w7nw",
+      "checklistItemId": "cmuoetg9f01ylmab4fahi8enc",
+      "domain": "PAYROLL",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Payroll finance forecast is blocked",
+      "detail": "Payroll forecast proof failed closed with blocker PAYROLL_FORECAST_POSTED_RUN_MISSING.",
+      "sourceService": "services/snapshots/tenant-operating-snapshot.service.ts",
+      "sourceType": "payroll_finance_forecast",
+      "sourceId": "tenant-payroll-finance-forecast-payroll-forecast-posted-run-missing",
+      "ownerId": null,
+      "assignedById": null,
+      "assignedAt": null,
+      "dueAt": null,
+      "resolutionNotes": null,
+      "resolvedAt": null,
+      "resolvedById": null,
+      "waiverRequestedById": null,
+      "waiverRequestedAt": null,
+      "waiverApprovedById": null,
+      "waiverApprovedAt": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetga001yrmab4ukplcxg0",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "domain": "DATA_TRUST",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Accounting setup is not locked",
+      "detail": "Accountant trust packs require the accounting setup to be marked ready before certification.",
+      "sourceService": "services/accounting/data-trust.service.ts",
+      "sourceType": "accounting.setup.ready",
+      "sourceId": "accounting-setup-not-locked",
+      "ownerId": null,
+      "assignedById": null,
+      "assignedAt": null,
+      "dueAt": null,
+      "resolutionNotes": null,
+      "resolvedAt": null,
+      "resolvedById": null,
+      "waiverRequestedById": null,
+      "waiverRequestedAt": null,
+      "waiverApprovedById": null,
+      "waiverApprovedAt": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    }
+  ],
+  "evidenceItems": [
+    {
+      "id": "cmuoetgae01yvmab4poip2ie0",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "CloseRun",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:16.438Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgaj01yxmab44brftt5m",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "CloseRun",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:13.986Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgao01yzmab4w5d00gzs",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "accounting.close.read",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:13.611Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgau01z1mab4k1f3flqq",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "AccountingCloseCenter",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:13.288Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgaz01z3mab4ftswedtl",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "CloseEvidenceItem",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:12.522Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgb401z5mab4j2vvoabs",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "CloseRun",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:06.331Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgb801z7mab4eigdx4v6",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "accounting.close.read",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:06.238Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbd01z9mab4pdhiw5b6",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "AccountingCloseCenter",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:59:05.043Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbh01zbmab47o3d4d7u",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "fe9a898c-a815-4466-abf0-4686a53639d2@example.invalid",
+      "sourceLabel": "LOGIN_SUCCESS - recorded",
+      "sourceDate": "2026-09-30T17:59:02.555Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbl01zdmab486kgkkrc",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "CloseRun",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:58:57.893Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbq01zfmab4oyjqa5ai",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "accounting.close.read",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:58:57.768Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbv01zhmab4ma4wp2qs",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceType": "SecurityEvent",
+      "sourceId": "AccountingCloseCenter",
+      "sourceLabel": "PERMISSION_GRANTED - recorded",
+      "sourceDate": "2026-09-30T17:58:57.548Z",
+      "sourceHash": null,
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgbz01zjmab47n9oljcd",
+      "checklistItemId": "cmuoetg9a01yjmab40az1jzc7",
+      "findingId": null,
+      "evidenceType": "REPORT_EXPORT",
+      "sourceTable": "inventory_transactions",
+      "sourceType": "InventoryValuationAnnex",
+      "sourceId": "cmuoeqjzf0006may03g907jvg",
+      "sourceLabel": "Inventory valuation annex PASSED: inventory 0.00 / class 3 0.00 XOF",
+      "sourceDate": "2026-09-30T17:59:16.440Z",
+      "sourceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": {
+        "asOf": "2026-09-30T17:59:16.440Z",
+        "failures": [],
+        "sourceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+        "sourceCounts": {
+          "posMovementCount": 0,
+          "openingStockCount": 0,
+          "stockWriteOffCount": 0,
+          "inventoryLevelCount": 0,
+          "purchaseReceiptCount": 0,
+          "stockAdjustmentCount": 0,
+          "class3JournalLineCount": 0,
+          "stockBusinessEventCount": 0,
+          "stockCountVarianceCount": 0,
+          "inventoryTransactionCount": 0
+        },
+        "blockerStatus": "PASSED",
+        "mismatchAmount": "0.00",
+        "organizationId": "cmuoeqjy40000may0do0vz1x8",
+        "observationHash": "sha256:c76bb6119fd74e9bd1b5c9ae19d33b00f7406418f280fe57bf58f1de0ab13dd1",
+        "recordedThrough": "2026-09-30T17:59:16.457Z",
+        "valuationMethod": "WEIGHTED_AVERAGE",
+        "accountingPeriodId": "cmuoeqjzf0006may03g907jvg",
+        "evidenceHashVersion": 1,
+        "class3LedgerBalanceTotal": "0.00",
+        "inventorySubledgerValueTotal": "0.00"
+      },
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetgc601zlmab44h4lb733",
+      "checklistItemId": "cmuoetg9f01ylmab4fahi8enc",
+      "findingId": "cmuoetg9n01ypmab4xyr0w7nw",
+      "evidenceType": "REPORT_EXPORT",
+      "sourceTable": "payroll_runs",
+      "sourceType": "PayrollFinanceForecastProof",
+      "sourceId": "sha256:81a8b1a3e24f3819a1943eefed97dcb5df7a90ae2f98769165f22338a02a30bf",
+      "sourceLabel": "Blocked payroll forecast proof: total upcoming unavailable",
+      "sourceDate": "2026-09-30T17:59:16.440Z",
+      "sourceHash": "sha256:81a8b1a3e24f3819a1943eefed97dcb5df7a90ae2f98769165f22338a02a30bf",
+      "provenance": "UNAVAILABLE",
+      "available": false,
+      "unavailableReason": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+      "metadata": {
+        "status": "NON_AUTHORITATIVE",
+        "authoritative": false,
+        "reasonCode": "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+        "message": "Upcoming payroll finance forecasts are withheld because currency, provider, declaration, payment, or ledger proof is incomplete.",
+        "horizonStart": "2026-09-30T00:00:00.000Z",
+        "horizonEnd": "2026-09-30T23:59:59.999Z",
+        "upcomingNetPayAmount": null,
+        "upcomingStatutoryLiabilityAmount": null,
+        "totalUpcomingAmount": null,
+        "payrollPeriodCount": 1,
+        "payrollRunCount": 0,
+        "paymentBatchCount": 0,
+        "declarationCount": 0,
+        "sourceLinkCount": 0,
+        "evidenceHashCount": 0,
+        "certifiedInputRunCount": 0,
+        "certifiedInputProofHashCount": 0,
+        "registerToLedgerRunCount": 0,
+        "nextPayDate": "2026-09-30T23:59:59.999Z",
+        "nextDeclarationDueDate": null,
+        "blockerCount": 1,
+        "blockerCodes": [
+          "PAYROLL_FORECAST_POSTED_RUN_MISSING"
+        ],
+        "sourceHash": "sha256:81a8b1a3e24f3819a1943eefed97dcb5df7a90ae2f98769165f22338a02a30bf",
+        "generatedAt": "2026-09-30T17:59:16.440Z",
+        "sourceModules": [
+          "dashboard",
+          "sales",
+          "payments",
+          "inventory",
+          "purchasing",
+          "hris",
+          "payroll",
+          "accounting",
+          "close",
+          "compliance"
+        ],
+        "personLevelAmounts": "redacted",
+        "personLevelAmountsRedacted": true,
+        "proofDisclosure": "AGGREGATE_HASH_COUNTS_ONLY"
+      },
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    },
+    {
+      "id": "cmuoetga601ytmab4ldrftu9g",
+      "checklistItemId": "cmuoetg9501yhmab4dyi9vwsq",
+      "findingId": "cmuoetga001yrmab4ukplcxg0",
+      "evidenceType": "DATA_TRUST_CERTIFICATE",
+      "sourceTable": "ledger_audit_events",
+      "sourceType": "DataTrustCertificate",
+      "sourceId": "dashboard/accounting/accountant-portal",
+      "sourceLabel": "Data trust T2 - PARTIAL",
+      "sourceDate": "2026-09-30T17:59:16.440Z",
+      "sourceHash": "sha256:f2a1f60e1b3274912dfd71b0ef1e9ebd6ae4b03588fc05fdb0e958fa664a57e9",
+      "provenance": "POSTED",
+      "available": true,
+      "unavailableReason": null,
+      "metadata": null,
+      "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+    }
+  ],
+  "reviews": [],
+  "comments": [],
+  "summaries": {
+    "rowCount": 34,
+    "availableEvidenceCount": 14,
+    "openFindingCount": 2,
+    "signedReconciliationEvidenceCount": 0,
+    "suspenseEvidenceCount": 0
+  },
+  "evidenceSummaries": {
+    "dataTrust": {
+      "closeRunTrustLevel": "T2",
+      "draftMinimumTrustLevel": "T3",
+      "certifiedTargetTrustLevel": "T4"
+    },
+    "ledgerReconciliationSummary": {
+      "checklistGateCount": 5,
+      "evidenceCount": 1,
+      "failedOrUnavailableHighRiskGateCount": 1,
+      "evidence": [
+        {
+          "id": "cmuoetga601ytmab4ldrftu9g",
+          "evidenceType": "DATA_TRUST_CERTIFICATE",
+          "sourceTable": "ledger_audit_events",
+          "sourceType": "DataTrustCertificate",
+          "sourceId": "dashboard/accounting/accountant-portal",
+          "sourceLabel": "Data trust T2 - PARTIAL",
+          "sourceDate": "2026-09-30T17:59:16.440Z",
+          "sourceHash": "sha256:f2a1f60e1b3274912dfd71b0ef1e9ebd6ae4b03588fc05fdb0e958fa664a57e9",
+          "provenance": "POSTED",
+          "available": true,
+          "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d"
+        }
+      ]
+    },
+    "trialBalanceSummary": {
+      "evidenceCount": 0,
+      "hashes": [],
+      "evidence": []
+    },
+    "signedPaymentReconciliationRuns": [],
+    "reconciliationCertificateHashes": [],
+    "suspenseRegister": [],
+    "exceptionSummary": {
+      "openFindingCount": 2,
+      "resolvedFindingCount": 0,
+      "criticalOpenFindingCount": 0,
+      "highOpenFindingCount": 2
+    },
+    "arApSummary": {
+      "status": "CAPTURED_IN_CLOSE_RUN",
+      "evidenceCount": 1,
+      "checklistGateCount": 2,
+      "sourceHashes": [
+        "sha256:f2a1f60e1b3274912dfd71b0ef1e9ebd6ae4b03588fc05fdb0e958fa664a57e9"
+      ],
+      "limitation": null
+    },
+    "inventoryValuationSummary": {
+      "status": "CAPTURED_IN_CLOSE_RUN",
+      "evidenceCount": 1,
+      "checklistGateCount": 1,
+      "sourceHashes": [
+        "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+      ],
+      "limitation": null
+    },
+    "taxVatEvidenceSummary": {
+      "status": "CAPTURED_IN_CLOSE_RUN",
+      "evidenceCount": 0,
+      "checklistGateCount": 2,
+      "sourceHashes": [],
+      "limitation": null
+    },
+    "auditLogExcerpt": [
+      {
+        "id": "cmuoetgce01znmab499xtpg54",
+        "action": "CLOSE_ASSURANCE_RUN_COMPLETED",
+        "actorId": "cmuoes4980001ma14i15imyha",
+        "resourceType": "CloseRun",
+        "resourceId": "cmuoetg7y01y5mab4hwa623mk",
+        "message": "Close assurance run completed with BLOCKED",
+        "metadata": {
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "correlationId": "f7ecc0f0-79b9-4622-b794-b3fd829a961d",
+          "readinessScore": 78,
+          "highBlockerCount": 2,
+          "criticalBlockerCount": 0
+        },
+        "createdAt": "2026-09-30T17:59:17.246Z"
+      },
+      {
+        "id": "cmuoesz4e01wzmab4b819lvmd",
+        "action": "CLOSE_PACK_DRAFT_EXPORT",
+        "actorId": "cmuoes4980001ma14i15imyha",
+        "resourceType": "ClosePackExport",
+        "resourceId": "cmuoesz4201wxmab4wc76czo6",
+        "message": "Close pack close-pack-draft-not-certified-cmuoestj401txmab4h6so3094-aa61f736-fc3 exported",
+        "metadata": {
+          "mode": "DRAFT_NOT_CERTIFIED",
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "rowCount": 32,
+          "closeRunId": "cmuoestj401txmab4h6so3094",
+          "contentHash": "sha256:542b0fa4768bd45e5d3e19988cfd495ef97bed011f630f4e16174203cb54a395",
+          "watermarkId": "close-pack-draft-not-certified-cmuoestj401txmab4h6so3094-aa61f736-fc3",
+          "correlationId": "9857c17c-f6a2-4a9c-aba3-fdfc2888318d",
+          "certificationBlockers": [
+            "Close run status is BLOCKED, not READY.",
+            "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+            "2 high-severity blocker(s) remain open.",
+            "2 open high-risk finding(s) block certification.",
+            "1 high-risk checklist gate(s) failed or unavailable.",
+            "1 critical evidence reference(s) are unavailable.",
+            "Payroll run 1: Persisted payroll pilot-cycle certification evidence is missing for this close period.",
+            "Payroll run 2: Persisted payroll pilot-cycle certification evidence is missing for this close period."
+          ],
+          "statutoryCertification": {
+            "blockers": [
+              "AUTHORITY_NOT_CONFIGURED",
+              "REQUIRES_EXPERT_REVIEW",
+              "COUNTRY_PACK_UNVERIFIED",
+              "ADAPTER_SANDBOX_ONLY"
+            ],
+            "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+            "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+            "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+          },
+          "inventoryAnnexFreshness": {
+            "status": "FRESH",
+            "detectedAt": "2026-09-30T17:58:54.601Z",
+            "staleReason": null,
+            "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+            "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+          },
+          "pilotCycleCertification": {
+            "status": "BLOCKED",
+            "auditLogRef": null,
+            "generatedAt": null,
+            "blockerCodes": [],
+            "blockerCount": 2,
+            "applicability": "REQUIRED",
+            "payrollRunRef": null,
+            "certificateHash": null,
+            "runCertificates": [
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:7d5d6fbd1030",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              },
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:f5b58c56b4c9",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              }
+            ],
+            "missingSignoffRoles": [],
+            "closePeriodPayrollRunCount": 2,
+            "closePeriodPayrollPeriodCount": 1,
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null
+          }
+        },
+        "createdAt": "2026-09-30T17:58:54.926Z"
+      },
+      {
+        "id": "cmuoestp201vfmab4129xubkp",
+        "action": "CLOSE_ASSURANCE_RUN_COMPLETED",
+        "actorId": "cmuoes4980001ma14i15imyha",
+        "resourceType": "CloseRun",
+        "resourceId": "cmuoestj401txmab4h6so3094",
+        "message": "Close assurance run completed with BLOCKED",
+        "metadata": {
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "correlationId": "1f965209-11ca-4f50-a3c3-458eaf7ac686",
+          "readinessScore": 78,
+          "highBlockerCount": 2,
+          "criticalBlockerCount": 0
+        },
+        "createdAt": "2026-09-30T17:58:47.895Z"
+      },
+      {
+        "id": "cmuoeqlpp0021may0bkh2v3vh",
+        "action": "CLOSE_PACK_DRAFT_EXPORT",
+        "actorId": "cmuoeqjyn0002may0g6qgx079",
+        "resourceType": "ClosePackExport",
+        "resourceId": "cmuoeqlpi001zmay0i2we6sy8",
+        "message": "Close pack close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-53f1db5c-d4f exported",
+        "metadata": {
+          "mode": "DRAFT_NOT_CERTIFIED",
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "rowCount": 17,
+          "closeRunId": "cmuoeqkrm0008may0gjwatjes",
+          "contentHash": "sha256:1ab5ca80397701cd7245d44e2c6dda3ac4a95eef653207c789f7f6bc554c8cb7",
+          "watermarkId": "close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-53f1db5c-d4f",
+          "correlationId": "c0042107-927c-4003-8d26-8d67aecd3111",
+          "certificationBlockers": [
+            "Close run status is BLOCKED, not READY.",
+            "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+            "1 high-severity blocker(s) remain open.",
+            "1 open high-risk finding(s) block certification.",
+            "Payroll run 1: Persisted payroll pilot-cycle certification evidence is missing for this close period.",
+            "Payroll run 2: Persisted payroll pilot-cycle certification evidence is missing for this close period."
+          ],
+          "statutoryCertification": {
+            "blockers": [
+              "AUTHORITY_NOT_CONFIGURED",
+              "REQUIRES_EXPERT_REVIEW",
+              "COUNTRY_PACK_UNVERIFIED",
+              "ADAPTER_SANDBOX_ONLY"
+            ],
+            "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+            "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+            "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+          },
+          "inventoryAnnexFreshness": {
+            "status": "FRESH",
+            "detectedAt": "2026-09-30T17:57:04.072Z",
+            "staleReason": null,
+            "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+            "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+          },
+          "pilotCycleCertification": {
+            "status": "BLOCKED",
+            "auditLogRef": null,
+            "generatedAt": null,
+            "blockerCodes": [],
+            "blockerCount": 2,
+            "applicability": "REQUIRED",
+            "payrollRunRef": null,
+            "certificateHash": null,
+            "runCertificates": [
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:7d5d6fbd1030",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              },
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:f5b58c56b4c9",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              }
+            ],
+            "missingSignoffRoles": [],
+            "closePeriodPayrollRunCount": 2,
+            "closePeriodPayrollPeriodCount": 1,
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null
+          }
+        },
+        "createdAt": "2026-09-30T17:57:04.237Z"
+      },
+      {
+        "id": "cmuoeqlkk001umay09qe7gz29",
+        "action": "CLOSE_PACK_DRAFT_EXPORT",
+        "actorId": "cmuoeqjyn0002may0g6qgx079",
+        "resourceType": "ClosePackExport",
+        "resourceId": "cmuoeqlke001smay06eibx3ju",
+        "message": "Close pack close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-8fab7874-de5 exported",
+        "metadata": {
+          "mode": "DRAFT_NOT_CERTIFIED",
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "rowCount": 16,
+          "closeRunId": "cmuoeqkrm0008may0gjwatjes",
+          "contentHash": "sha256:f31395fe28a3cd839cbed03fed0754282c4e1ae61b3b993d008915ad44ccf245",
+          "watermarkId": "close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-8fab7874-de5",
+          "correlationId": "077df678-a102-4300-a3a4-a81c845230de",
+          "certificationBlockers": [
+            "Close run status is BLOCKED, not READY.",
+            "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+            "1 high-severity blocker(s) remain open.",
+            "1 open high-risk finding(s) block certification.",
+            "Payroll run 1: Persisted payroll pilot-cycle certification evidence is missing for this close period.",
+            "Payroll run 2: Persisted payroll pilot-cycle certification evidence is missing for this close period."
+          ],
+          "statutoryCertification": {
+            "blockers": [
+              "AUTHORITY_NOT_CONFIGURED",
+              "REQUIRES_EXPERT_REVIEW",
+              "COUNTRY_PACK_UNVERIFIED",
+              "ADAPTER_SANDBOX_ONLY"
+            ],
+            "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+            "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+            "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+          },
+          "inventoryAnnexFreshness": {
+            "status": "FRESH",
+            "detectedAt": "2026-09-30T17:57:03.873Z",
+            "staleReason": null,
+            "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+            "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+          },
+          "pilotCycleCertification": {
+            "status": "BLOCKED",
+            "auditLogRef": null,
+            "generatedAt": null,
+            "blockerCodes": [],
+            "blockerCount": 2,
+            "applicability": "REQUIRED",
+            "payrollRunRef": null,
+            "certificateHash": null,
+            "runCertificates": [
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:7d5d6fbd1030",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              },
+              {
+                "status": null,
+                "auditLogRef": null,
+                "generatedAt": null,
+                "blockerCodes": [],
+                "blockerCount": 0,
+                "payrollRunRef": "redacted:f5b58c56b4c9",
+                "certificateHash": null,
+                "missingSignoffRoles": [],
+                "closePeriodPayrollRunCount": 1,
+                "expectedAdapterChaosReleaseGateHash": null,
+                "proofBackfillAdapterChaosMatchesExpected": null
+              }
+            ],
+            "missingSignoffRoles": [],
+            "closePeriodPayrollRunCount": 2,
+            "closePeriodPayrollPeriodCount": 1,
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null
+          }
+        },
+        "createdAt": "2026-09-30T17:57:04.052Z"
+      },
+      {
+        "id": "cmuoeqldu001mmay0car5zdtx",
+        "action": "CLOSE_PACK_DRAFT_EXPORT",
+        "actorId": "cmuoeqjyn0002may0g6qgx079",
+        "resourceType": "ClosePackExport",
+        "resourceId": "cmuoeqldp001kmay0863psnvc",
+        "message": "Close pack close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-0cb5597a-26f exported",
+        "metadata": {
+          "mode": "DRAFT_NOT_CERTIFIED",
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "rowCount": 15,
+          "closeRunId": "cmuoeqkrm0008may0gjwatjes",
+          "contentHash": "sha256:5afd0ae35e2a11790c597f8e1147a93776c988d85a76351730598bd259466a60",
+          "watermarkId": "close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-0cb5597a-26f",
+          "correlationId": "171d28b6-df5d-46de-a524-4ec1d6bea10e",
+          "certificationBlockers": [
+            "Close run status is BLOCKED, not READY.",
+            "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+            "1 high-severity blocker(s) remain open.",
+            "1 open high-risk finding(s) block certification.",
+            "1 payroll period(s) have no retained payroll run for pilot-cycle certification.",
+            "1 overlapping payroll period(s) require a matching accounting-period link before certification."
+          ],
+          "statutoryCertification": {
+            "blockers": [
+              "AUTHORITY_NOT_CONFIGURED",
+              "REQUIRES_EXPERT_REVIEW",
+              "COUNTRY_PACK_UNVERIFIED",
+              "ADAPTER_SANDBOX_ONLY"
+            ],
+            "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+            "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+            "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+          },
+          "inventoryAnnexFreshness": {
+            "status": "FRESH",
+            "detectedAt": "2026-09-30T17:57:03.627Z",
+            "staleReason": null,
+            "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+            "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+          },
+          "pilotCycleCertification": {
+            "status": "BLOCKED",
+            "auditLogRef": null,
+            "generatedAt": null,
+            "blockerCodes": [],
+            "blockerCount": 2,
+            "applicability": "REQUIRED",
+            "payrollRunRef": null,
+            "certificateHash": null,
+            "runCertificates": [],
+            "missingSignoffRoles": [],
+            "closePeriodPayrollRunCount": 0,
+            "closePeriodPayrollPeriodCount": 1,
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null
+          }
+        },
+        "createdAt": "2026-09-30T17:57:03.810Z"
+      },
+      {
+        "id": "cmuoeql81001gmay06q2n7rsm",
+        "action": "CLOSE_PACK_DRAFT_EXPORT",
+        "actorId": "cmuoeqjyn0002may0g6qgx079",
+        "resourceType": "ClosePackExport",
+        "resourceId": "cmuoeql6t001emay0p0osm83r",
+        "message": "Close pack close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-c1b4c684-9b9 exported",
+        "metadata": {
+          "mode": "DRAFT_NOT_CERTIFIED",
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "rowCount": 14,
+          "closeRunId": "cmuoeqkrm0008may0gjwatjes",
+          "contentHash": "sha256:1fa5a3a7f2475852e5546a82bad64fb1a0b08ba0c5854001796511a89e7f9a16",
+          "watermarkId": "close-pack-draft-not-certified-cmuoeqkrm0008may0gjwatjes-c1b4c684-9b9",
+          "correlationId": "4bd2c937-404d-4aa5-ac08-3188f3bc40c3",
+          "certificationBlockers": [
+            "Close run status is BLOCKED, not READY.",
+            "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+            "1 high-severity blocker(s) remain open.",
+            "1 open high-risk finding(s) block certification."
+          ],
+          "statutoryCertification": {
+            "blockers": [
+              "AUTHORITY_NOT_CONFIGURED",
+              "REQUIRES_EXPERT_REVIEW",
+              "COUNTRY_PACK_UNVERIFIED",
+              "ADAPTER_SANDBOX_ONLY"
+            ],
+            "systemEvidenceStatus": "SYSTEM_EVIDENCE_ONLY",
+            "statutoryAuthorityStatus": "AUTHORITY_NOT_CONFIGURED",
+            "statutoryReadinessStatus": "STATUTORY_BLOCKED"
+          },
+          "inventoryAnnexFreshness": {
+            "status": "FRESH",
+            "detectedAt": "2026-09-30T17:57:03.321Z",
+            "staleReason": null,
+            "newEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7",
+            "previousEvidenceHash": "sha256:2cbe5ca90e3f5afb43c2cea947a1e010815c2cb6eecc7e41e6285a799a2d2dc7"
+          },
+          "pilotCycleCertification": {
+            "status": "NOT_APPLICABLE",
+            "auditLogRef": null,
+            "generatedAt": null,
+            "blockerCodes": [],
+            "blockerCount": 0,
+            "applicability": "NO_RECORDED_PAYROLL_PERIOD",
+            "payrollRunRef": null,
+            "certificateHash": null,
+            "runCertificates": [],
+            "missingSignoffRoles": [],
+            "closePeriodPayrollRunCount": 0,
+            "closePeriodPayrollPeriodCount": 0,
+            "expectedAdapterChaosReleaseGateHash": null,
+            "proofBackfillAdapterChaosMatchesExpected": null
+          }
+        },
+        "createdAt": "2026-09-30T17:57:03.601Z"
+      },
+      {
+        "id": "cmuoeqkvw0010may0ojotnwmj",
+        "action": "CLOSE_ASSURANCE_RUN_COMPLETED",
+        "actorId": "cmuoeqjyn0002may0g6qgx079",
+        "resourceType": "CloseRun",
+        "resourceId": "cmuoeqkrm0008may0gjwatjes",
+        "message": "Close assurance run completed with BLOCKED",
+        "metadata": {
+          "periodId": "cmuoeqjzf0006may03g907jvg",
+          "correlationId": "1b6d1e68-d8cf-4cd8-b69b-0cca543f9212",
+          "readinessScore": 89,
+          "highBlockerCount": 1,
+          "criticalBlockerCount": 0
+        },
+        "createdAt": "2026-09-30T17:57:03.164Z"
+      }
+    ]
+  }
+}

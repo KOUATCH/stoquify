@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-30",
+  "owner": "receipt_replay_guard",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "baseline": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+  "scope": "Local receipt accounting recovery implementation only. No migrations, live targets or real financial operations executed by this agent.",
+  "status": "focused-verification-passed; root actual database/browser/typecheck pending",
+  "bindings": [
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+      "sha256": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6"
+    },
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery-authority.ts",
+      "sha256": "6ba14fb18edf9a3cd637a2e58864c236e6d45be07e3fef41a45ca0da9aeac75d"
+    },
+    {
+      "path": "services/purchase-order/receipt-ledger-recovery.service.ts",
+      "sha256": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-contracts.ts",
+      "sha256": "72f6bcd9dc2d0644042559e5e5d1ae68995d8c7afbb7c1018f87cdf45dfb5f46"
+    },
+    {
+      "path": "services/purchase-order/purchase-receiving-authority.ts",
+      "sha256": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+      "sha256": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd"
+    },
+    {
+      "path": "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+      "sha256": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+      "sha256": "935b5b82b62fb81ee6b162d505c565471f000958bf53499e2037aa5ec7c474ae"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+      "sha256": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4"
+    },
+    {
+      "path": "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts",
+      "sha256": "6060aedaa8c0065f4adab75992ea6a6d1cd0933edb1295424efa393f054f56c8"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts",
+      "sha256": "4f536b6264e7bc0c45322b086f2163090c1a9d496325794fc41a49b891f7e8ec"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchase-receiving.actions.test.ts",
+      "sha256": "fcf84a58ada88ac2aa756eb27a15b6f588a0fb2717e4b2904eca29e5f1753c7b"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+      "sha256": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6"
+    }
+  ],
+  "verification": [
+    {
+      "path": "evidence/receipt-ledger-recovery-unit-final-2026-09-30.json",
+      "sha256": "f4d5c42273b6a1f032bafa74ff2961c4302390484033fb52f3fe58dab6b9b114",
+      "passed": 55,
+      "failed": 0,
+      "suites": 5,
+      "exitCode": 0
+    },
+    {
+      "path": "evidence/receipt-ledger-recovery-ui-freeze-2026-09-30.json",
+      "sha256": "40df2d61f6caa6e8ae573c5979531508ee9a8a0fb11a54689e3706903024a593",
+      "passed": 11,
+      "failed": 0,
+      "suites": 1,
+      "exitCode": 0,
+      "reason": "Final component cleanup and current locale recheck; these 11 cases overlap the five-suite receipt, not 11 additional acceptance criteria."
+    },
+    {
+      "kind": "eslint",
+      "scope": "All 13 owned TypeScript/TSX product and focused test files listed in bindings",
+      "exitCode": 0,
+      "errors": 0,
+      "warnings": 0
+    }
+  ],
+  "earlierAttempts": [
+    {
+      "kind": "unit",
+      "result": "49 cases passed before return recovery integration; process exit 1 when sandbox blocked new output JSON creation. This is not a successful process receipt."
+    },
+    {
+      "kind": "lint",
+      "result": "Initial new component cleanup ref generated one warning; changed to stable invalidate callback; current lint has none."
+    },
+    {
+      "kind": "automatic-approval-review",
+      "result": "Local return recovery extension patch initially rejected for unclear financial scope. No workaround applied. Read original and latest user task attachments, provided explicit downstream recovery authorization and no-live-execution boundary, then retried same apply_patch mechanism; accepted."
+    }
+  ],
+  "delivered": [
+    "Finance-authorized review and password step-up submission from receiving history with current tenant/module/session checks.",
+    "Preview binds retained source, original period, rule, accounts, journal and settings; unknown legacy receipts block.",
+    "Active source-verified return accounting previewed with original dates and atomically recovered after receipt recognition through canonical helpers, no stock replay.",
+    "Strict source-bound idempotent business-event decision with retained return journal proofs; unknown network outcome preserves exact request in tenant/actor/order/receipt-scoped session storage.",
+    "EN/FR semantic statuses, blocked conditions, accessible dialog controls, visible request/journal references; zero tracked-value receipt explicitly not_required."
+  ],
+  "limitations": [
+    "Mocked unit tests cannot prove actual PostgreSQL atomic rollback or browser behavior; root owns those checks.",
+    "Receiving history displays current receipt accounting plus retained immediate/replayed recovery result; underlying business event stores durable decisions.",
+    "No global READY/LOCKED gate added; actual receipt and return accounting rules and original periods govern."
+  ]
+}

@@ -1,0 +1,3569 @@
+{
+  "run": "2586c14a-b971-42c4-b25f-a7d07c49c77b",
+  "at": "2026-10-01T09:30:52.410Z",
+  "cases": [
+    {
+      "mode": "success",
+      "scope": "Pause old terminal acknowledgement after actual inbox publication.",
+      "retainedBefore": {
+        "reconciliationRun": [
+          {
+            "id": "cmupc3nq9001amac4ph3temuo",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+            "businessDate": "2026-10-01T00:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-02T00:00:00.000Z",
+            "status": "SIGNED",
+            "totalInternalAmount": "100.25",
+            "totalExternalAmount": "100.25",
+            "matchedAmount": "100.25",
+            "suspenseAmount": "0",
+            "exceptionCount": 0,
+            "matchCount": 1,
+            "runById": "cmupc3naw0002mac40ph1vwdp",
+            "signedById": "cmupc3nb70004mac4v44ymnmq",
+            "signedAt": "2026-10-01T09:31:00.902Z",
+            "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "certificatePayload": {
+              "mode": "DURABLE_EVIDENCE_KERNEL",
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "version": 3,
+              "controls": {
+                "freshAuthEnforced": true,
+                "periodOpenVerified": true,
+                "makerCheckerEnforced": true,
+                "sourceVersionGuardEnforced": true,
+                "suspensePostingGatewayOnly": true,
+                "providerAccountReadyVerified": true,
+                "conditionalTerminalTransition": true
+              },
+              "evidence": {
+                "sourceHash": "d64af32ae6478f57c44abc8094fca2134e62f840110931f0824d8ae32bfcf9e3",
+                "sourceCounts": {
+                  "suspenseCount": 0,
+                  "exceptionCount": 0,
+                  "matchRecordCount": 1,
+                  "providerEventCount": 1,
+                  "statementFileCount": 0,
+                  "statementLineCount": 0,
+                  "paymentTransactionCount": 1
+                },
+                "openSuspenseCount": 0,
+                "openExceptionCount": 0,
+                "providerEventCount": 1,
+                "statementLineCount": 0,
+                "sourceManifestVersion": 1
+              },
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "periodEnd": "2026-10-02T00:00:00.000Z",
+              "signedById": "cmupc3nb70004mac4v44ymnmq",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "businessDate": "2026-10-01T00:00:00.000Z",
+              "providerCode": "OWNED-ORDER",
+              "amountSummary": {
+                "basis": "GROSS_SOURCE_AMOUNTS_BY_CURRENCY",
+                "version": 1,
+                "currencies": [
+                  {
+                    "amounts": {
+                      "matched": "100.25",
+                      "payments": "100.25",
+                      "providerEvents": "100.25",
+                      "statementLines": "0.00",
+                      "unresolvedSuspense": "0.00"
+                    },
+                    "currencyCode": "XAF"
+                  }
+                ]
+              },
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+              "organizationId": "cmupc3nae0000mac45u8ioyik",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "recordedRunTotals": {
+                "basis": "CUMULATIVE_RUN_CAPTURE_NOT_CURRENT_EXPOSURE",
+                "matchCount": 1,
+                "matchedAmount": "100.25",
+                "exceptionCount": 0,
+                "externalAmount": "100.25",
+                "internalAmount": "100.25",
+                "suspenseAmount": "0.00"
+              },
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+              "reviewedEvidenceRevision": "sha256:eeb59bf603aa2879cec51e80d27560d90038dac6f8550d6dad98446d3286987b"
+            },
+            "invariantResult": {
+              "matchCount": 1,
+              "suspenseCount": 0,
+              "exceptionCount": 0,
+              "openSuspenseAmount": "0.00",
+              "ledgerPostingRequested": false
+            },
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "metadata": {
+              "runDedupeKey": "cmupc3nae0000mac45u8ioyik:cmupc3nhj000umac4euo5zq95:2026-10-01",
+              "concurrencyGuard": "same_provider_business_date",
+              "signedCorrelationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "immutableAfterSignoff": true,
+              "signedSourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "voidedAt": null,
+            "createdAt": "2026-10-01T09:31:00.706Z",
+            "updatedAt": "2026-10-01T09:31:00.979Z"
+          }
+        ],
+        "matchRecord": [
+          {
+            "id": "cmupc3nrk001cmac4egbjtjcq",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "paymentTransactionId": "cmupc3niz000ymac4g7eb7mni",
+            "providerEventId": "cmupc3nmr0010mac4sz8v3blm",
+            "statementLineId": null,
+            "reconciliationRunId": "cmupc3nq9001amac4ph3temuo",
+            "ledgerPostingBatchId": null,
+            "rule": "EXACT_PROVIDER_TRANSACTION_ID",
+            "status": "AUTO_MATCHED",
+            "confidence": "100",
+            "amountMatched": "100.25",
+            "currencyCode": "XAF",
+            "matchedById": null,
+            "matchedAt": "2026-10-01T09:31:00.684Z",
+            "correctionOfId": null,
+            "correctionReason": null,
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "metadata": {
+              "cascade": "PROVIDER_EVENT",
+              "matchedBy": "SYSTEM"
+            },
+            "createdAt": "2026-10-01T09:31:00.752Z",
+            "updatedAt": "2026-10-01T09:31:00.752Z"
+          }
+        ],
+        "paymentTransaction": [
+          {
+            "id": "cmupc3niz000ymac4g7eb7mni",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "legacyPaymentId": null,
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "providerAuthorityEventId": null,
+            "ledgerPostingBatchId": null,
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100.25",
+            "feeAmount": null,
+            "currencyCode": "XAF",
+            "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a",
+            "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+            "idempotencyKey": null,
+            "sourceType": "SYNTHETIC_WORKFLOW_VERIFICATION",
+            "sourceId": null,
+            "payloadHash": null,
+            "occurredAt": "2026-10-01T09:31:00.389Z",
+            "confirmedAt": "2026-10-01T09:31:00.389Z",
+            "settledAt": null,
+            "correlationId": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.443Z",
+            "updatedAt": "2026-10-01T09:31:00.443Z"
+          }
+        ],
+        "journalEntry": [],
+        "journalEntryLine": [],
+        "ledgerPostingBatch": [],
+        "accountingSourceLink": [],
+        "ledgerAuditEvent": [
+          {
+            "id": "cmupc3nfc000mmac4abxl7zue",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "FISCAL_YEAR_CREATE",
+            "actorId": "cmupc3naw0002mac40ph1vwdp",
+            "resourceType": "AccountingPeriod",
+            "resourceId": "cmupc3nbp0008mac411yazyuo",
+            "message": "Fiscal year Owned sign ordering 2026 created",
+            "metadata": null,
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:00.312Z"
+          },
+          {
+            "id": "cmupc3nyh001hmac4kovshqyy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "PAYMENT_RECONCILIATION_RUN_SIGN",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "resourceType": "ReconciliationRun",
+            "resourceId": "cmupc3nq9001amac4ph3temuo",
+            "message": "Payment reconciliation run cmupc3nq9001amac4ph3temuo signed",
+            "metadata": {
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.002Z"
+          }
+        ],
+        "businessEvent": [
+          {
+            "id": "cmupc3no60014mac4s8t0mrj2",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "eventType": "payment.provider_event.captured",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "provider-event:cmupc3nmr0010mac4sz8v3blm:captured",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "payload": {
+              "amount": "100.25",
+              "direction": "INBOUND",
+              "eventType": "PAYMENT_CONFIRMED",
+              "feeAmount": null,
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "receivedAt": "2026-10-01T09:31:00.389Z",
+              "headersHash": "8f48a52274f7992644959a1f8973952e028613f4e3cdbb3040369a6efd15adfe",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "rawPayloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+              "signatureValid": true,
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "occurredAt": "2026-10-01T09:31:00.628Z",
+            "recordedAt": "2026-10-01T09:31:00.630Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": null,
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3nmr0010mac4sz8v3blm",
+            "postingBatchId": null,
+            "documentHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001jmac4px77clap",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "eventType": "payment.reconciliation.signed",
+            "eventSource": "SYSTEM",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "signedById": "cmupc3nb70004mac4v44ymnmq",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "occurredAt": "2026-10-01T09:31:01.008Z",
+            "recordedAt": "2026-10-01T09:31:01.011Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3nq9001amac4ph3temuo",
+            "postingBatchId": null,
+            "documentHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "closeRun": [],
+        "closePackExport": []
+      },
+      "before": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3no60018mac4lltmiaus",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3nmr0010mac4sz8v3blm:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "eaebbc00b10656b195401b01d995e2c1445d835fbf0f450978666eb27037133d",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:00.630Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001nmac49wb7sxjw",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.011Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3no60016mac49biqopk3",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001lmac4yh5gt4cy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "reason": "Business event recorded.",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3nnd0012mac4zsgfi90b",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "49d718cf10b69004b90a0e6a76252fd1882319172a0ce6a443df8b45614bd507",
+            "externalId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+            "payloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+            "createdAt": "2026-10-01T09:31:00.602Z",
+            "updatedAt": "2026-10-01T09:31:00.602Z"
+          },
+          {
+            "id": "cmupc3nsb001dmac477c6refe",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3nq9001amac4ph3temuo",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "3a9b8fb73bfae61175fe94c3f54fb98c25cfedb96862c8ad0ca17ed16aebe1a1",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:00.778Z",
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "createdAt": "2026-10-01T09:31:00.780Z",
+            "updatedAt": "2026-10-01T09:31:00.780Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3nxf001fmac4zqckb391",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3nq9001amac4ph3temuo",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3nb70004mac4v44ymnmq",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3nhj000umac4euo5zq95"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3nq9001amac4ph3temuo",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3naw0002mac40ph1vwdp",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3nb70004mac4v44ymnmq",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "createdAt": "2026-10-01T09:31:00.964Z"
+          }
+        ]
+      },
+      "workerId": "owned-sign-reused-success-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+      "messageId": "cmupc3nyr001nmac49wb7sxjw",
+      "pausedRead": {
+        "where": {
+          "id": "cmupc3nyr001nmac49wb7sxjw",
+          "organizationId": "cmupc3nae0000mac45u8ioyik",
+          "status": "LOCKED",
+          "lockedBy": "owned-sign-reused-success-2586c14a-b971-42c4-b25f-a7d07c49c77b"
+        },
+        "include": {
+          "businessEvent": true
+        }
+      },
+      "afterOldPause": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3no60018mac4lltmiaus",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3nmr0010mac4sz8v3blm:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "eaebbc00b10656b195401b01d995e2c1445d835fbf0f450978666eb27037133d",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:00.630Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001nmac49wb7sxjw",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "status": "LOCKED",
+            "attempts": 1,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.011Z",
+            "lockedAt": "2026-10-01T09:31:01.072Z",
+            "lockedBy": "owned-sign-reused-success-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.080Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3no60016mac49biqopk3",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001lmac4yh5gt4cy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "reason": "Business event recorded.",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3nnd0012mac4zsgfi90b",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "49d718cf10b69004b90a0e6a76252fd1882319172a0ce6a443df8b45614bd507",
+            "externalId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+            "payloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+            "createdAt": "2026-10-01T09:31:00.602Z",
+            "updatedAt": "2026-10-01T09:31:00.602Z"
+          },
+          {
+            "id": "cmupc3nsb001dmac477c6refe",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3nq9001amac4ph3temuo",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "3a9b8fb73bfae61175fe94c3f54fb98c25cfedb96862c8ad0ca17ed16aebe1a1",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:00.778Z",
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "createdAt": "2026-10-01T09:31:00.780Z",
+            "updatedAt": "2026-10-01T09:31:00.780Z"
+          },
+          {
+            "id": "cmupc3o14001omac4xtgtw2ej",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.signed:cmupc3nyr001jmac4px77clap",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "762d4af21bd96ca695b527fcc99af3d346dbcc9ab6670ec5d7253501d83ad97d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.signed",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.095Z",
+            "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+            "createdAt": "2026-10-01T09:31:01.096Z",
+            "updatedAt": "2026-10-01T09:31:01.096Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3nxf001fmac4zqckb391",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3nq9001amac4ph3temuo",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3nb70004mac4v44ymnmq",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3nhj000umac4euo5zq95"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3nq9001amac4ph3temuo",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3naw0002mac40ph1vwdp",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3nb70004mac4v44ymnmq",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "createdAt": "2026-10-01T09:31:00.964Z"
+          }
+        ]
+      },
+      "claimClock": {
+        "initialLockedAt": "2026-10-01T09:31:01.072Z",
+        "reclaimAt": "2026-10-01T09:36:01.073Z",
+        "staleAfterMilliseconds": 300000,
+        "actualWallClockAtReclaim": "2026-10-01T09:31:01.208Z"
+      },
+      "newClaim": [
+        {
+          "id": "cmupc3nyr001nmac49wb7sxjw",
+          "organizationId": "cmupc3nae0000mac45u8ioyik",
+          "businessEventId": "cmupc3nyr001jmac4px77clap",
+          "channel": "NOTIFICATION",
+          "eventName": "payment.reconciliation.signed",
+          "destination": null,
+          "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623:NOTIFICATION:payment.reconciliation.signed",
+          "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+          "payload": {
+            "runId": "cmupc3nq9001amac4ph3temuo",
+            "signedAt": "2026-10-01T09:31:00.902Z",
+            "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+            "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+          },
+          "status": "LOCKED",
+          "attempts": 2,
+          "maxAttempts": 5,
+          "availableAt": "2026-10-01T09:31:01.011Z",
+          "lockedAt": "2026-10-01T09:36:01.073Z",
+          "lockedBy": "owned-sign-reused-success-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+          "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972"
+        }
+      ],
+      "afterReclaim": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3no60018mac4lltmiaus",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3nmr0010mac4sz8v3blm:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "eaebbc00b10656b195401b01d995e2c1445d835fbf0f450978666eb27037133d",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:00.630Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001nmac49wb7sxjw",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "status": "LOCKED",
+            "attempts": 2,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.011Z",
+            "lockedAt": "2026-10-01T09:36:01.073Z",
+            "lockedBy": "owned-sign-reused-success-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.215Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3no60016mac49biqopk3",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001lmac4yh5gt4cy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "reason": "Business event recorded.",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3nnd0012mac4zsgfi90b",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "49d718cf10b69004b90a0e6a76252fd1882319172a0ce6a443df8b45614bd507",
+            "externalId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+            "payloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+            "createdAt": "2026-10-01T09:31:00.602Z",
+            "updatedAt": "2026-10-01T09:31:00.602Z"
+          },
+          {
+            "id": "cmupc3nsb001dmac477c6refe",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3nq9001amac4ph3temuo",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "3a9b8fb73bfae61175fe94c3f54fb98c25cfedb96862c8ad0ca17ed16aebe1a1",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:00.778Z",
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "createdAt": "2026-10-01T09:31:00.780Z",
+            "updatedAt": "2026-10-01T09:31:00.780Z"
+          },
+          {
+            "id": "cmupc3o14001omac4xtgtw2ej",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.signed:cmupc3nyr001jmac4px77clap",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "762d4af21bd96ca695b527fcc99af3d346dbcc9ab6670ec5d7253501d83ad97d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.signed",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.095Z",
+            "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+            "createdAt": "2026-10-01T09:31:01.096Z",
+            "updatedAt": "2026-10-01T09:31:01.096Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3nxf001fmac4zqckb391",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3nq9001amac4ph3temuo",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3nb70004mac4v44ymnmq",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3nhj000umac4euo5zq95"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3nq9001amac4ph3temuo",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3naw0002mac40ph1vwdp",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3nb70004mac4v44ymnmq",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "createdAt": "2026-10-01T09:31:00.964Z"
+          }
+        ]
+      },
+      "oldWorker": {
+        "success": true,
+        "value": [
+          {
+            "messageId": "cmupc3nyr001nmac49wb7sxjw",
+            "status": "SENT",
+            "processedAt": "2026-10-01T09:31:01.098Z"
+          }
+        ]
+      },
+      "afterOldTerminal": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3no60018mac4lltmiaus",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3nmr0010mac4sz8v3blm:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "eaebbc00b10656b195401b01d995e2c1445d835fbf0f450978666eb27037133d",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:00.630Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001nmac49wb7sxjw",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "status": "SENT",
+            "attempts": 2,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.011Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": "2026-10-01T09:31:01.098Z",
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.235Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3no60016mac49biqopk3",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3no60014mac4s8t0mrj2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001lmac4yh5gt4cy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "reason": "Business event recorded.",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.011Z"
+          },
+          {
+            "id": "cmupc3o51001qmac4b3rxm264",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "businessEventId": "cmupc3nyr001jmac4px77clap",
+            "action": "OUTBOX_DELIVERED",
+            "eventSource": "SYSTEM",
+            "actorId": null,
+            "reason": "Outbox message payment.reconciliation.signed was delivered.",
+            "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "metadata": {
+              "channel": "NOTIFICATION",
+              "attempts": 2,
+              "outboxMessageId": "cmupc3nyr001nmac49wb7sxjw"
+            },
+            "createdAt": "2026-10-01T09:31:01.237Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3nnd0012mac4zsgfi90b",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "49d718cf10b69004b90a0e6a76252fd1882319172a0ce6a443df8b45614bd507",
+            "externalId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+            "payloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+            "createdAt": "2026-10-01T09:31:00.602Z",
+            "updatedAt": "2026-10-01T09:31:00.602Z"
+          },
+          {
+            "id": "cmupc3nsb001dmac477c6refe",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3nq9001amac4ph3temuo",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "3a9b8fb73bfae61175fe94c3f54fb98c25cfedb96862c8ad0ca17ed16aebe1a1",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:00.778Z",
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "createdAt": "2026-10-01T09:31:00.780Z",
+            "updatedAt": "2026-10-01T09:31:00.780Z"
+          },
+          {
+            "id": "cmupc3o14001omac4xtgtw2ej",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.signed:cmupc3nyr001jmac4px77clap",
+            "externalId": "cmupc3nq9001amac4ph3temuo",
+            "payloadHash": "762d4af21bd96ca695b527fcc99af3d346dbcc9ab6670ec5d7253501d83ad97d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3nq9001amac4ph3temuo"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.signed",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.095Z",
+            "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+            "createdAt": "2026-10-01T09:31:01.096Z",
+            "updatedAt": "2026-10-01T09:31:01.096Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3nxf001fmac4zqckb391",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3nq9001amac4ph3temuo",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3nb70004mac4v44ymnmq",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3nhj000umac4euo5zq95"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3nq9001amac4ph3temuo",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3naw0002mac40ph1vwdp",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3nb70004mac4v44ymnmq",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "createdAt": "2026-10-01T09:31:00.964Z"
+          }
+        ]
+      },
+      "retainedAfter": {
+        "reconciliationRun": [
+          {
+            "id": "cmupc3nq9001amac4ph3temuo",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+            "businessDate": "2026-10-01T00:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-02T00:00:00.000Z",
+            "status": "SIGNED",
+            "totalInternalAmount": "100.25",
+            "totalExternalAmount": "100.25",
+            "matchedAmount": "100.25",
+            "suspenseAmount": "0",
+            "exceptionCount": 0,
+            "matchCount": 1,
+            "runById": "cmupc3naw0002mac40ph1vwdp",
+            "signedById": "cmupc3nb70004mac4v44ymnmq",
+            "signedAt": "2026-10-01T09:31:00.902Z",
+            "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "certificatePayload": {
+              "mode": "DURABLE_EVIDENCE_KERNEL",
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "version": 3,
+              "controls": {
+                "freshAuthEnforced": true,
+                "periodOpenVerified": true,
+                "makerCheckerEnforced": true,
+                "sourceVersionGuardEnforced": true,
+                "suspensePostingGatewayOnly": true,
+                "providerAccountReadyVerified": true,
+                "conditionalTerminalTransition": true
+              },
+              "evidence": {
+                "sourceHash": "d64af32ae6478f57c44abc8094fca2134e62f840110931f0824d8ae32bfcf9e3",
+                "sourceCounts": {
+                  "suspenseCount": 0,
+                  "exceptionCount": 0,
+                  "matchRecordCount": 1,
+                  "providerEventCount": 1,
+                  "statementFileCount": 0,
+                  "statementLineCount": 0,
+                  "paymentTransactionCount": 1
+                },
+                "openSuspenseCount": 0,
+                "openExceptionCount": 0,
+                "providerEventCount": 1,
+                "statementLineCount": 0,
+                "sourceManifestVersion": 1
+              },
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "periodEnd": "2026-10-02T00:00:00.000Z",
+              "signedById": "cmupc3nb70004mac4v44ymnmq",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "businessDate": "2026-10-01T00:00:00.000Z",
+              "providerCode": "OWNED-ORDER",
+              "amountSummary": {
+                "basis": "GROSS_SOURCE_AMOUNTS_BY_CURRENCY",
+                "version": 1,
+                "currencies": [
+                  {
+                    "amounts": {
+                      "matched": "100.25",
+                      "payments": "100.25",
+                      "providerEvents": "100.25",
+                      "statementLines": "0.00",
+                      "unresolvedSuspense": "0.00"
+                    },
+                    "currencyCode": "XAF"
+                  }
+                ]
+              },
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+              "organizationId": "cmupc3nae0000mac45u8ioyik",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "recordedRunTotals": {
+                "basis": "CUMULATIVE_RUN_CAPTURE_NOT_CURRENT_EXPOSURE",
+                "matchCount": 1,
+                "matchedAmount": "100.25",
+                "exceptionCount": 0,
+                "externalAmount": "100.25",
+                "internalAmount": "100.25",
+                "suspenseAmount": "0.00"
+              },
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+              "reviewedEvidenceRevision": "sha256:eeb59bf603aa2879cec51e80d27560d90038dac6f8550d6dad98446d3286987b"
+            },
+            "invariantResult": {
+              "matchCount": 1,
+              "suspenseCount": 0,
+              "exceptionCount": 0,
+              "openSuspenseAmount": "0.00",
+              "ledgerPostingRequested": false
+            },
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "metadata": {
+              "runDedupeKey": "cmupc3nae0000mac45u8ioyik:cmupc3nhj000umac4euo5zq95:2026-10-01",
+              "concurrencyGuard": "same_provider_business_date",
+              "signedCorrelationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "immutableAfterSignoff": true,
+              "signedSourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006"
+            },
+            "voidedAt": null,
+            "createdAt": "2026-10-01T09:31:00.706Z",
+            "updatedAt": "2026-10-01T09:31:00.979Z"
+          }
+        ],
+        "matchRecord": [
+          {
+            "id": "cmupc3nrk001cmac4egbjtjcq",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "paymentTransactionId": "cmupc3niz000ymac4g7eb7mni",
+            "providerEventId": "cmupc3nmr0010mac4sz8v3blm",
+            "statementLineId": null,
+            "reconciliationRunId": "cmupc3nq9001amac4ph3temuo",
+            "ledgerPostingBatchId": null,
+            "rule": "EXACT_PROVIDER_TRANSACTION_ID",
+            "status": "AUTO_MATCHED",
+            "confidence": "100",
+            "amountMatched": "100.25",
+            "currencyCode": "XAF",
+            "matchedById": null,
+            "matchedAt": "2026-10-01T09:31:00.684Z",
+            "correctionOfId": null,
+            "correctionReason": null,
+            "correlationId": "de0725b2-2532-42f2-9b04-d41372bb8db7",
+            "metadata": {
+              "cascade": "PROVIDER_EVENT",
+              "matchedBy": "SYSTEM"
+            },
+            "createdAt": "2026-10-01T09:31:00.752Z",
+            "updatedAt": "2026-10-01T09:31:00.752Z"
+          }
+        ],
+        "paymentTransaction": [
+          {
+            "id": "cmupc3niz000ymac4g7eb7mni",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "legacyPaymentId": null,
+            "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+            "providerAuthorityEventId": null,
+            "ledgerPostingBatchId": null,
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100.25",
+            "feeAmount": null,
+            "currencyCode": "XAF",
+            "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a",
+            "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+            "idempotencyKey": null,
+            "sourceType": "SYNTHETIC_WORKFLOW_VERIFICATION",
+            "sourceId": null,
+            "payloadHash": null,
+            "occurredAt": "2026-10-01T09:31:00.389Z",
+            "confirmedAt": "2026-10-01T09:31:00.389Z",
+            "settledAt": null,
+            "correlationId": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.443Z",
+            "updatedAt": "2026-10-01T09:31:00.443Z"
+          }
+        ],
+        "journalEntry": [],
+        "journalEntryLine": [],
+        "ledgerPostingBatch": [],
+        "accountingSourceLink": [],
+        "ledgerAuditEvent": [
+          {
+            "id": "cmupc3nfc000mmac4abxl7zue",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "FISCAL_YEAR_CREATE",
+            "actorId": "cmupc3naw0002mac40ph1vwdp",
+            "resourceType": "AccountingPeriod",
+            "resourceId": "cmupc3nbp0008mac411yazyuo",
+            "message": "Fiscal year Owned sign ordering 2026 created",
+            "metadata": null,
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:00.312Z"
+          },
+          {
+            "id": "cmupc3nyh001hmac4kovshqyy",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "PAYMENT_RECONCILIATION_RUN_SIGN",
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "resourceType": "ReconciliationRun",
+            "resourceId": "cmupc3nq9001amac4ph3temuo",
+            "message": "Payment reconciliation run cmupc3nq9001amac4ph3temuo signed",
+            "metadata": {
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.002Z"
+          }
+        ],
+        "businessEvent": [
+          {
+            "id": "cmupc3no60014mac4s8t0mrj2",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "eventType": "payment.provider_event.captured",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "provider-event:cmupc3nmr0010mac4sz8v3blm:captured",
+            "payloadHash": "69228878432404dbac3380cb82b91cc3e71484dd1ee990782184124471774102",
+            "payload": {
+              "amount": "100.25",
+              "direction": "INBOUND",
+              "eventType": "PAYMENT_CONFIRMED",
+              "feeAmount": null,
+              "occurredAt": "2026-10-01T09:31:00.389Z",
+              "receivedAt": "2026-10-01T09:31:00.389Z",
+              "headersHash": "8f48a52274f7992644959a1f8973952e028613f4e3cdbb3040369a6efd15adfe",
+              "inboxItemId": "cmupc3nnd0012mac4zsgfi90b",
+              "currencyCode": "XAF",
+              "correlationId": "4891b2a5-5825-4b82-88ba-56b156354b95",
+              "rawPayloadHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+              "signatureValid": true,
+              "providerEventId": "event-d810323b-0134-49ea-8db3-857da51c791a",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "providerReference": "d810323b-0134-49ea-8db3-857da51c791a",
+              "providerEventRecordId": "cmupc3nmr0010mac4sz8v3blm",
+              "providerTransactionId": "d810323b-0134-49ea-8db3-857da51c791a"
+            },
+            "correlationId": "evt_4d32108e-035f-427d-8db2-38d0348c8194",
+            "occurredAt": "2026-10-01T09:31:00.628Z",
+            "recordedAt": "2026-10-01T09:31:00.630Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": null,
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3nmr0010mac4sz8v3blm",
+            "postingBatchId": null,
+            "documentHash": "17e25144bbfdb7105760dcd13df658cf44a78e8c507165e05895b1dabcd4d54d",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:00.630Z",
+            "updatedAt": "2026-10-01T09:31:00.630Z"
+          },
+          {
+            "id": "cmupc3nyr001jmac4px77clap",
+            "organizationId": "cmupc3nae0000mac45u8ioyik",
+            "eventType": "payment.reconciliation.signed",
+            "eventSource": "SYSTEM",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "reconciliation-run:cmupc3nq9001amac4ph3temuo:signed:0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "payloadHash": "4bed79af48648c420a8d368a07adcd59dc711b618d5f96bdecae88c2ff26fdea",
+            "payload": {
+              "runId": "cmupc3nq9001amac4ph3temuo",
+              "signedAt": "2026-10-01T09:31:00.902Z",
+              "signedById": "cmupc3nb70004mac4v44ymnmq",
+              "correlationId": "129f9ba4-01ff-41e1-9291-f17a4570b892",
+              "paymentRailId": "cmupc3nh0000smac4mge4xaz7",
+              "certificateHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+              "providerAccountId": "cmupc3nhj000umac4euo5zq95",
+              "sourceVersionHash": "sha256:eb9f804d9f53b20456f0ed58701147b8edf780a60877550ea63f4b21a6812006",
+              "accountingPeriodId": "cmupc3nf2000imac4tjxhhjhi",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+            "occurredAt": "2026-10-01T09:31:01.008Z",
+            "recordedAt": "2026-10-01T09:31:01.011Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": "cmupc3nb70004mac4v44ymnmq",
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3nq9001amac4ph3temuo",
+            "postingBatchId": null,
+            "documentHash": "0b2cc24928464b4740a319931691478c5ee12423131bdc3633e651ca86a68623",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.011Z",
+            "updatedAt": "2026-10-01T09:31:01.011Z"
+          }
+        ],
+        "closeRun": [],
+        "closePackExport": []
+      },
+      "newAudits": [
+        {
+          "id": "cmupc3o51001qmac4b3rxm264",
+          "organizationId": "cmupc3nae0000mac45u8ioyik",
+          "businessEventId": "cmupc3nyr001jmac4px77clap",
+          "action": "OUTBOX_DELIVERED",
+          "eventSource": "SYSTEM",
+          "actorId": null,
+          "reason": "Outbox message payment.reconciliation.signed was delivered.",
+          "payloadHash": "70f40fa9c6c22bcd52a866630108455882f7b8237c1c092b52caf2213f463657",
+          "attemptedPayloadHash": null,
+          "correlationId": "evt_1a81d0ed-8955-45ac-8c6a-ecab6c78c972",
+          "metadata": {
+            "channel": "NOTIFICATION",
+            "attempts": 2,
+            "outboxMessageId": "cmupc3nyr001nmac49wb7sxjw"
+          },
+          "createdAt": "2026-10-01T09:31:01.237Z"
+        }
+      ],
+      "safetyContractSatisfied": false,
+      "defectReproduced": true,
+      "signedFinancialRecordsUnchanged": true,
+      "proofComplete": true
+    },
+    {
+      "mode": "failure",
+      "scope": "Pause old handler before its actual attempt-bound lease read.",
+      "retainedBefore": {
+        "reconciliationRun": [
+          {
+            "id": "cmupc3o8s0031mac4uja6kxoz",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+            "businessDate": "2026-10-01T00:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-02T00:00:00.000Z",
+            "status": "SIGNED",
+            "totalInternalAmount": "100.25",
+            "totalExternalAmount": "100.25",
+            "matchedAmount": "100.25",
+            "suspenseAmount": "0",
+            "exceptionCount": 0,
+            "matchCount": 1,
+            "runById": "cmupc3o6h001tmac4nfazj6rs",
+            "signedById": "cmupc3o6l001vmac43xvxcsin",
+            "signedAt": "2026-10-01T09:31:01.447Z",
+            "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "certificatePayload": {
+              "mode": "DURABLE_EVIDENCE_KERNEL",
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "version": 3,
+              "controls": {
+                "freshAuthEnforced": true,
+                "periodOpenVerified": true,
+                "makerCheckerEnforced": true,
+                "sourceVersionGuardEnforced": true,
+                "suspensePostingGatewayOnly": true,
+                "providerAccountReadyVerified": true,
+                "conditionalTerminalTransition": true
+              },
+              "evidence": {
+                "sourceHash": "238403dfc9daf468ae3f40ff5f7f40074a009685563a85d868e4530f149466d4",
+                "sourceCounts": {
+                  "suspenseCount": 0,
+                  "exceptionCount": 0,
+                  "matchRecordCount": 1,
+                  "providerEventCount": 1,
+                  "statementFileCount": 0,
+                  "statementLineCount": 0,
+                  "paymentTransactionCount": 1
+                },
+                "openSuspenseCount": 0,
+                "openExceptionCount": 0,
+                "providerEventCount": 1,
+                "statementLineCount": 0,
+                "sourceManifestVersion": 1
+              },
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "periodEnd": "2026-10-02T00:00:00.000Z",
+              "signedById": "cmupc3o6l001vmac43xvxcsin",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "businessDate": "2026-10-01T00:00:00.000Z",
+              "providerCode": "OWNED-ORDER",
+              "amountSummary": {
+                "basis": "GROSS_SOURCE_AMOUNTS_BY_CURRENCY",
+                "version": 1,
+                "currencies": [
+                  {
+                    "amounts": {
+                      "matched": "100.25",
+                      "payments": "100.25",
+                      "providerEvents": "100.25",
+                      "statementLines": "0.00",
+                      "unresolvedSuspense": "0.00"
+                    },
+                    "currencyCode": "XAF"
+                  }
+                ]
+              },
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+              "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "recordedRunTotals": {
+                "basis": "CUMULATIVE_RUN_CAPTURE_NOT_CURRENT_EXPOSURE",
+                "matchCount": 1,
+                "matchedAmount": "100.25",
+                "exceptionCount": 0,
+                "externalAmount": "100.25",
+                "internalAmount": "100.25",
+                "suspenseAmount": "0.00"
+              },
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+              "reviewedEvidenceRevision": "sha256:c31c5914e2d3250b28ec34aa9791f385c5344a94650ec5a44f63d6aad9f875b0"
+            },
+            "invariantResult": {
+              "matchCount": 1,
+              "suspenseCount": 0,
+              "exceptionCount": 0,
+              "openSuspenseAmount": "0.00",
+              "ledgerPostingRequested": false
+            },
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "metadata": {
+              "runDedupeKey": "cmupc3o6e001rmac4mt1dui8l:cmupc3o7g002lmac4y67t5l7k:2026-10-01",
+              "concurrencyGuard": "same_provider_business_date",
+              "signedCorrelationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "immutableAfterSignoff": true,
+              "signedSourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "voidedAt": null,
+            "createdAt": "2026-10-01T09:31:01.372Z",
+            "updatedAt": "2026-10-01T09:31:01.492Z"
+          }
+        ],
+        "matchRecord": [
+          {
+            "id": "cmupc3o960033mac4uox63ncm",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "paymentTransactionId": "cmupc3o7l002pmac490sbh7tj",
+            "providerEventId": "cmupc3o7u002rmac49hwy27bd",
+            "statementLineId": null,
+            "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz",
+            "ledgerPostingBatchId": null,
+            "rule": "EXACT_PROVIDER_TRANSACTION_ID",
+            "status": "AUTO_MATCHED",
+            "confidence": "100",
+            "amountMatched": "100.25",
+            "currencyCode": "XAF",
+            "matchedById": null,
+            "matchedAt": "2026-10-01T09:31:01.361Z",
+            "correctionOfId": null,
+            "correctionReason": null,
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "metadata": {
+              "cascade": "PROVIDER_EVENT",
+              "matchedBy": "SYSTEM"
+            },
+            "createdAt": "2026-10-01T09:31:01.386Z",
+            "updatedAt": "2026-10-01T09:31:01.386Z"
+          }
+        ],
+        "paymentTransaction": [
+          {
+            "id": "cmupc3o7l002pmac490sbh7tj",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "legacyPaymentId": null,
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "providerAuthorityEventId": null,
+            "ledgerPostingBatchId": null,
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100.25",
+            "feeAmount": null,
+            "currencyCode": "XAF",
+            "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "idempotencyKey": null,
+            "sourceType": "SYNTHETIC_WORKFLOW_VERIFICATION",
+            "sourceId": null,
+            "payloadHash": null,
+            "occurredAt": "2026-10-01T09:31:01.322Z",
+            "confirmedAt": "2026-10-01T09:31:01.322Z",
+            "settledAt": null,
+            "correlationId": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.329Z",
+            "updatedAt": "2026-10-01T09:31:01.329Z"
+          }
+        ],
+        "journalEntry": [],
+        "journalEntryLine": [],
+        "ledgerPostingBatch": [],
+        "accountingSourceLink": [],
+        "ledgerAuditEvent": [
+          {
+            "id": "cmupc3o70002dmac4f1zh6m7r",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "FISCAL_YEAR_CREATE",
+            "actorId": "cmupc3o6h001tmac4nfazj6rs",
+            "resourceType": "AccountingPeriod",
+            "resourceId": "cmupc3o6t001zmac4dujp8lhc",
+            "message": "Fiscal year Owned sign ordering 2026 created",
+            "metadata": null,
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.309Z"
+          },
+          {
+            "id": "cmupc3oc90038mac4dp4lnjzd",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "PAYMENT_RECONCILIATION_RUN_SIGN",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "resourceType": "ReconciliationRun",
+            "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+            "message": "Payment reconciliation run cmupc3o8s0031mac4uja6kxoz signed",
+            "metadata": {
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.497Z"
+          }
+        ],
+        "businessEvent": [
+          {
+            "id": "cmupc3o87002vmac4s7znp7v2",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "eventType": "payment.provider_event.captured",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "provider-event:cmupc3o7u002rmac49hwy27bd:captured",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "payload": {
+              "amount": "100.25",
+              "direction": "INBOUND",
+              "eventType": "PAYMENT_CONFIRMED",
+              "feeAmount": null,
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "receivedAt": "2026-10-01T09:31:01.322Z",
+              "headersHash": "1ea7b14c02c0047d2b99349415a2111ed94f14c2cbe21ce8b055f832f8483902",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "rawPayloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+              "signatureValid": true,
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "occurredAt": "2026-10-01T09:31:01.348Z",
+            "recordedAt": "2026-10-01T09:31:01.350Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": null,
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3o7u002rmac49hwy27bd",
+            "postingBatchId": null,
+            "documentHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003amac4z9i7lkqv",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "eventType": "payment.reconciliation.signed",
+            "eventSource": "SYSTEM",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "signedById": "cmupc3o6l001vmac43xvxcsin",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "occurredAt": "2026-10-01T09:31:01.500Z",
+            "recordedAt": "2026-10-01T09:31:01.502Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3o8s0031mac4uja6kxoz",
+            "postingBatchId": null,
+            "documentHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "closeRun": [],
+        "closePackExport": []
+      },
+      "before": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3o87002zmac4c1cte46a",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3o7u002rmac49hwy27bd:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "ee7d9a2f18af11a57ef55ef1fece47f9af1bc10dd3b932722f020d7ce8cdd959",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.350Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003emac4w4pmwnk3",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.502Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3o87002xmac4cyu90k41",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003cmac4qspwqbzn",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "reason": "Business event recorded.",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3o7y002tmac4am1qj04y",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "fa3a6c644d00e41887fe9afbe35150ec7a600b3cc0469765f8db30be735a9e95",
+            "externalId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "payloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+            "createdAt": "2026-10-01T09:31:01.342Z",
+            "updatedAt": "2026-10-01T09:31:01.342Z"
+          },
+          {
+            "id": "cmupc3o9d0034mac4c57t5xi1",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3o8s0031mac4uja6kxoz",
+            "externalId": "cmupc3o8s0031mac4uja6kxoz",
+            "payloadHash": "3a8355022757e0d6b81458120997b440c81823c990378ce0cf7b1d83de4bfa3d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.392Z",
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "createdAt": "2026-10-01T09:31:01.393Z",
+            "updatedAt": "2026-10-01T09:31:01.393Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3oc20036mac47ulez7uo",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3o8s0031mac4uja6kxoz",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3o6l001vmac43xvxcsin",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3o7g002lmac4y67t5l7k"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3o6h001tmac4nfazj6rs",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3o6l001vmac43xvxcsin",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "createdAt": "2026-10-01T09:31:01.490Z"
+          }
+        ]
+      },
+      "workerId": "owned-sign-reused-failure-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+      "messageId": "cmupc3oce003emac4w4pmwnk3",
+      "pausedRead": {
+        "where": {
+          "id": "cmupc3oce003emac4w4pmwnk3",
+          "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+          "channel": "NOTIFICATION",
+          "eventName": "payment.reconciliation.signed",
+          "status": "LOCKED",
+          "lockedBy": "owned-sign-reused-failure-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+          "attempts": 1
+        },
+        "include": {
+          "businessEvent": true
+        }
+      },
+      "afterOldPause": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3o87002zmac4c1cte46a",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3o7u002rmac49hwy27bd:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "ee7d9a2f18af11a57ef55ef1fece47f9af1bc10dd3b932722f020d7ce8cdd959",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.350Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003emac4w4pmwnk3",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "status": "LOCKED",
+            "attempts": 1,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.502Z",
+            "lockedAt": "2026-10-01T09:31:01.544Z",
+            "lockedBy": "owned-sign-reused-failure-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.550Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3o87002xmac4cyu90k41",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003cmac4qspwqbzn",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "reason": "Business event recorded.",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3o7y002tmac4am1qj04y",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "fa3a6c644d00e41887fe9afbe35150ec7a600b3cc0469765f8db30be735a9e95",
+            "externalId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "payloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+            "createdAt": "2026-10-01T09:31:01.342Z",
+            "updatedAt": "2026-10-01T09:31:01.342Z"
+          },
+          {
+            "id": "cmupc3o9d0034mac4c57t5xi1",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3o8s0031mac4uja6kxoz",
+            "externalId": "cmupc3o8s0031mac4uja6kxoz",
+            "payloadHash": "3a8355022757e0d6b81458120997b440c81823c990378ce0cf7b1d83de4bfa3d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.392Z",
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "createdAt": "2026-10-01T09:31:01.393Z",
+            "updatedAt": "2026-10-01T09:31:01.393Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3oc20036mac47ulez7uo",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3o8s0031mac4uja6kxoz",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3o6l001vmac43xvxcsin",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3o7g002lmac4y67t5l7k"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3o6h001tmac4nfazj6rs",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3o6l001vmac43xvxcsin",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "createdAt": "2026-10-01T09:31:01.490Z"
+          }
+        ]
+      },
+      "claimClock": {
+        "initialLockedAt": "2026-10-01T09:31:01.544Z",
+        "reclaimAt": "2026-10-01T09:36:01.545Z",
+        "staleAfterMilliseconds": 300000,
+        "actualWallClockAtReclaim": "2026-10-01T09:31:01.560Z"
+      },
+      "newClaim": [
+        {
+          "id": "cmupc3oce003emac4w4pmwnk3",
+          "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+          "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+          "channel": "NOTIFICATION",
+          "eventName": "payment.reconciliation.signed",
+          "destination": null,
+          "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071:NOTIFICATION:payment.reconciliation.signed",
+          "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+          "payload": {
+            "runId": "cmupc3o8s0031mac4uja6kxoz",
+            "signedAt": "2026-10-01T09:31:01.447Z",
+            "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+            "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+          },
+          "status": "LOCKED",
+          "attempts": 2,
+          "maxAttempts": 5,
+          "availableAt": "2026-10-01T09:31:01.502Z",
+          "lockedAt": "2026-10-01T09:36:01.545Z",
+          "lockedBy": "owned-sign-reused-failure-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+          "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59"
+        }
+      ],
+      "afterReclaim": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3o87002zmac4c1cte46a",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3o7u002rmac49hwy27bd:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "ee7d9a2f18af11a57ef55ef1fece47f9af1bc10dd3b932722f020d7ce8cdd959",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.350Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003emac4w4pmwnk3",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "status": "LOCKED",
+            "attempts": 2,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.502Z",
+            "lockedAt": "2026-10-01T09:36:01.545Z",
+            "lockedBy": "owned-sign-reused-failure-2586c14a-b971-42c4-b25f-a7d07c49c77b",
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.565Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3o87002xmac4cyu90k41",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003cmac4qspwqbzn",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "reason": "Business event recorded.",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3o7y002tmac4am1qj04y",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "fa3a6c644d00e41887fe9afbe35150ec7a600b3cc0469765f8db30be735a9e95",
+            "externalId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "payloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+            "createdAt": "2026-10-01T09:31:01.342Z",
+            "updatedAt": "2026-10-01T09:31:01.342Z"
+          },
+          {
+            "id": "cmupc3o9d0034mac4c57t5xi1",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3o8s0031mac4uja6kxoz",
+            "externalId": "cmupc3o8s0031mac4uja6kxoz",
+            "payloadHash": "3a8355022757e0d6b81458120997b440c81823c990378ce0cf7b1d83de4bfa3d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.392Z",
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "createdAt": "2026-10-01T09:31:01.393Z",
+            "updatedAt": "2026-10-01T09:31:01.393Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3oc20036mac47ulez7uo",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3o8s0031mac4uja6kxoz",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3o6l001vmac43xvxcsin",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3o7g002lmac4y67t5l7k"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3o6h001tmac4nfazj6rs",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3o6l001vmac43xvxcsin",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "createdAt": "2026-10-01T09:31:01.490Z"
+          }
+        ]
+      },
+      "oldWorker": {
+        "success": true,
+        "value": [
+          {
+            "messageId": "cmupc3oce003emac4w4pmwnk3",
+            "status": "FAILED",
+            "attempts": 2,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:31.574Z",
+            "errorCode": "CONFLICT"
+          }
+        ]
+      },
+      "afterOldTerminal": {
+        "businessEventOutbox": [
+          {
+            "id": "cmupc3o87002zmac4c1cte46a",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.provider_event.captured",
+            "destination": null,
+            "idempotencyKey": "PROVIDER_WEBHOOK:provider-event:cmupc3o7u002rmac49hwy27bd:captured:NOTIFICATION:payment.provider_event.captured",
+            "payloadHash": "ee7d9a2f18af11a57ef55ef1fece47f9af1bc10dd3b932722f020d7ce8cdd959",
+            "payload": {
+              "amount": "100.25",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "status": "PENDING",
+            "attempts": 0,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:01.350Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": null,
+            "lastErrorCode": null,
+            "lastErrorMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003emac4w4pmwnk3",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "channel": "NOTIFICATION",
+            "eventName": "payment.reconciliation.signed",
+            "destination": null,
+            "idempotencyKey": "SYSTEM:reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071:NOTIFICATION:payment.reconciliation.signed",
+            "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "status": "FAILED",
+            "attempts": 2,
+            "maxAttempts": 5,
+            "availableAt": "2026-10-01T09:31:31.574Z",
+            "lockedAt": null,
+            "lockedBy": null,
+            "processedAt": null,
+            "failedAt": "2026-10-01T09:31:01.574Z",
+            "lastErrorCode": "CONFLICT",
+            "lastErrorMessage": "Reconciliation notification lease or evidence changed.",
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.579Z"
+          }
+        ],
+        "businessEventAudit": [
+          {
+            "id": "cmupc3o87002xmac4cyu90k41",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3o87002vmac4s7znp7v2",
+            "action": "RECORDED",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "actorId": null,
+            "reason": "Business event recorded.",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "metadata": {
+              "eventType": "payment.provider_event.captured",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003cmac4qspwqbzn",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "action": "RECORDED",
+            "eventSource": "SYSTEM",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "reason": "Business event recorded.",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "metadata": {
+              "eventType": "payment.reconciliation.signed",
+              "schemaVersion": 1,
+              "outboxMessageCount": 1
+            },
+            "createdAt": "2026-10-01T09:31:01.502Z"
+          },
+          {
+            "id": "cmupc3oem003gmac423kzkg6c",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+            "action": "OUTBOX_RETRY",
+            "eventSource": "SYSTEM",
+            "actorId": null,
+            "reason": "Outbox message payment.reconciliation.signed was scheduled for retry.",
+            "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+            "attemptedPayloadHash": null,
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "metadata": {
+              "channel": "NOTIFICATION",
+              "attempts": 2,
+              "errorCode": "CONFLICT",
+              "maxAttempts": 5,
+              "outboxMessageId": "cmupc3oce003emac4w4pmwnk3"
+            },
+            "createdAt": "2026-10-01T09:31:01.582Z"
+          }
+        ],
+        "paymentReconciliationInboxItem": [
+          {
+            "id": "cmupc3o7y002tmac4am1qj04y",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "PROVIDER_EVENT",
+            "status": "RECEIVED",
+            "idempotencyKey": "fa3a6c644d00e41887fe9afbe35150ec7a600b3cc0469765f8db30be735a9e95",
+            "externalId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "payloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "payloadSummary": {
+              "eventType": "PAYMENT_CONFIRMED",
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "currencyCode": "XAF",
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": null,
+            "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+            "createdAt": "2026-10-01T09:31:01.342Z",
+            "updatedAt": "2026-10-01T09:31:01.342Z"
+          },
+          {
+            "id": "cmupc3o9d0034mac4c57t5xi1",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "source": "RECONCILIATION_RUN",
+            "status": "PROCESSED",
+            "idempotencyKey": "payment-reconciliation.run.ready-for-signoff:cmupc3o8s0031mac4uja6kxoz",
+            "externalId": "cmupc3o8s0031mac4uja6kxoz",
+            "payloadHash": "3a8355022757e0d6b81458120997b440c81823c990378ce0cf7b1d83de4bfa3d",
+            "payloadSummary": {
+              "amount": null,
+              "currency": null,
+              "evidenceRef": {
+                "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz"
+              },
+              "notification": {
+                "type": "payment-reconciliation.run.ready-for-signoff",
+                "dueAt": null,
+                "status": "UNREAD",
+                "ownerId": null,
+                "category": "reconciliation",
+                "delivery": "in-app",
+                "severity": null
+              }
+            },
+            "attempts": 0,
+            "lastError": null,
+            "nextAttemptAt": null,
+            "leasedBy": null,
+            "leaseToken": null,
+            "processedAt": "2026-10-01T09:31:01.392Z",
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "createdAt": "2026-10-01T09:31:01.393Z",
+            "updatedAt": "2026-10-01T09:31:01.393Z"
+          }
+        ],
+        "auditLog": [
+          {
+            "id": "cmupc3oc20036mac47ulez7uo",
+            "entityType": "ReconciliationRun",
+            "entityId": "cmupc3o8s0031mac4uja6kxoz",
+            "action": "PAYMENT_RECONCILIATION_SIGN_CONTROL",
+            "changes": {
+              "action": "payment.reconciliation.sign",
+              "allowed": true,
+              "riskTier": "critical",
+              "permission": "payments.reconciliation.sign",
+              "reasonCode": "ALLOWED",
+              "detectorInputs": {
+                "action": "payment.reconciliation.sign",
+                "actorId": "cmupc3o6l001vmac43xvxcsin",
+                "metadata": {
+                  "status": "READY_FOR_SIGNOFF",
+                  "businessDate": "2026-10-01T00:00:00.000Z",
+                  "providerAccountId": "cmupc3o7g002lmac4y67t5l7k"
+                },
+                "riskTier": "critical",
+                "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+                "resourceType": "ReconciliationRun",
+                "subjectActorId": "cmupc3o6h001tmac4nfazj6rs",
+                "detectorSignals": [
+                  "self_signoff_attempt",
+                  "critical_exception_open"
+                ]
+              },
+              "requiredAssurance": "L1"
+            },
+            "userId": "cmupc3o6l001vmac43xvxcsin",
+            "ipAddress": null,
+            "userAgent": null,
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "createdAt": "2026-10-01T09:31:01.490Z"
+          }
+        ]
+      },
+      "retainedAfter": {
+        "reconciliationRun": [
+          {
+            "id": "cmupc3o8s0031mac4uja6kxoz",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+            "businessDate": "2026-10-01T00:00:00.000Z",
+            "periodStart": "2026-10-01T00:00:00.000Z",
+            "periodEnd": "2026-10-02T00:00:00.000Z",
+            "status": "SIGNED",
+            "totalInternalAmount": "100.25",
+            "totalExternalAmount": "100.25",
+            "matchedAmount": "100.25",
+            "suspenseAmount": "0",
+            "exceptionCount": 0,
+            "matchCount": 1,
+            "runById": "cmupc3o6h001tmac4nfazj6rs",
+            "signedById": "cmupc3o6l001vmac43xvxcsin",
+            "signedAt": "2026-10-01T09:31:01.447Z",
+            "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "certificatePayload": {
+              "mode": "DURABLE_EVIDENCE_KERNEL",
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "version": 3,
+              "controls": {
+                "freshAuthEnforced": true,
+                "periodOpenVerified": true,
+                "makerCheckerEnforced": true,
+                "sourceVersionGuardEnforced": true,
+                "suspensePostingGatewayOnly": true,
+                "providerAccountReadyVerified": true,
+                "conditionalTerminalTransition": true
+              },
+              "evidence": {
+                "sourceHash": "238403dfc9daf468ae3f40ff5f7f40074a009685563a85d868e4530f149466d4",
+                "sourceCounts": {
+                  "suspenseCount": 0,
+                  "exceptionCount": 0,
+                  "matchRecordCount": 1,
+                  "providerEventCount": 1,
+                  "statementFileCount": 0,
+                  "statementLineCount": 0,
+                  "paymentTransactionCount": 1
+                },
+                "openSuspenseCount": 0,
+                "openExceptionCount": 0,
+                "providerEventCount": 1,
+                "statementLineCount": 0,
+                "sourceManifestVersion": 1
+              },
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "periodEnd": "2026-10-02T00:00:00.000Z",
+              "signedById": "cmupc3o6l001vmac43xvxcsin",
+              "periodStart": "2026-10-01T00:00:00.000Z",
+              "businessDate": "2026-10-01T00:00:00.000Z",
+              "providerCode": "OWNED-ORDER",
+              "amountSummary": {
+                "basis": "GROSS_SOURCE_AMOUNTS_BY_CURRENCY",
+                "version": 1,
+                "currencies": [
+                  {
+                    "amounts": {
+                      "matched": "100.25",
+                      "payments": "100.25",
+                      "providerEvents": "100.25",
+                      "statementLines": "0.00",
+                      "unresolvedSuspense": "0.00"
+                    },
+                    "currencyCode": "XAF"
+                  }
+                ]
+              },
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+              "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "recordedRunTotals": {
+                "basis": "CUMULATIVE_RUN_CAPTURE_NOT_CURRENT_EXPOSURE",
+                "matchCount": 1,
+                "matchedAmount": "100.25",
+                "exceptionCount": 0,
+                "externalAmount": "100.25",
+                "internalAmount": "100.25",
+                "suspenseAmount": "0.00"
+              },
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+              "reviewedEvidenceRevision": "sha256:c31c5914e2d3250b28ec34aa9791f385c5344a94650ec5a44f63d6aad9f875b0"
+            },
+            "invariantResult": {
+              "matchCount": 1,
+              "suspenseCount": 0,
+              "exceptionCount": 0,
+              "openSuspenseAmount": "0.00",
+              "ledgerPostingRequested": false
+            },
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "metadata": {
+              "runDedupeKey": "cmupc3o6e001rmac4mt1dui8l:cmupc3o7g002lmac4y67t5l7k:2026-10-01",
+              "concurrencyGuard": "same_provider_business_date",
+              "signedCorrelationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "immutableAfterSignoff": true,
+              "signedSourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1"
+            },
+            "voidedAt": null,
+            "createdAt": "2026-10-01T09:31:01.372Z",
+            "updatedAt": "2026-10-01T09:31:01.492Z"
+          }
+        ],
+        "matchRecord": [
+          {
+            "id": "cmupc3o960033mac4uox63ncm",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "paymentTransactionId": "cmupc3o7l002pmac490sbh7tj",
+            "providerEventId": "cmupc3o7u002rmac49hwy27bd",
+            "statementLineId": null,
+            "reconciliationRunId": "cmupc3o8s0031mac4uja6kxoz",
+            "ledgerPostingBatchId": null,
+            "rule": "EXACT_PROVIDER_TRANSACTION_ID",
+            "status": "AUTO_MATCHED",
+            "confidence": "100",
+            "amountMatched": "100.25",
+            "currencyCode": "XAF",
+            "matchedById": null,
+            "matchedAt": "2026-10-01T09:31:01.361Z",
+            "correctionOfId": null,
+            "correctionReason": null,
+            "correlationId": "07534857-cae0-4146-b218-97bf2bb71524",
+            "metadata": {
+              "cascade": "PROVIDER_EVENT",
+              "matchedBy": "SYSTEM"
+            },
+            "createdAt": "2026-10-01T09:31:01.386Z",
+            "updatedAt": "2026-10-01T09:31:01.386Z"
+          }
+        ],
+        "paymentTransaction": [
+          {
+            "id": "cmupc3o7l002pmac490sbh7tj",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "legacyPaymentId": null,
+            "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+            "providerAuthorityEventId": null,
+            "ledgerPostingBatchId": null,
+            "direction": "INBOUND",
+            "state": "CONFIRMED",
+            "amount": "100.25",
+            "feeAmount": null,
+            "currencyCode": "XAF",
+            "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+            "idempotencyKey": null,
+            "sourceType": "SYNTHETIC_WORKFLOW_VERIFICATION",
+            "sourceId": null,
+            "payloadHash": null,
+            "occurredAt": "2026-10-01T09:31:01.322Z",
+            "confirmedAt": "2026-10-01T09:31:01.322Z",
+            "settledAt": null,
+            "correlationId": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.329Z",
+            "updatedAt": "2026-10-01T09:31:01.329Z"
+          }
+        ],
+        "journalEntry": [],
+        "journalEntryLine": [],
+        "ledgerPostingBatch": [],
+        "accountingSourceLink": [],
+        "ledgerAuditEvent": [
+          {
+            "id": "cmupc3o70002dmac4f1zh6m7r",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "FISCAL_YEAR_CREATE",
+            "actorId": "cmupc3o6h001tmac4nfazj6rs",
+            "resourceType": "AccountingPeriod",
+            "resourceId": "cmupc3o6t001zmac4dujp8lhc",
+            "message": "Fiscal year Owned sign ordering 2026 created",
+            "metadata": null,
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.309Z"
+          },
+          {
+            "id": "cmupc3oc90038mac4dp4lnjzd",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "postingBatchId": null,
+            "journalEntryId": null,
+            "action": "PAYMENT_RECONCILIATION_RUN_SIGN",
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "resourceType": "ReconciliationRun",
+            "resourceId": "cmupc3o8s0031mac4uja6kxoz",
+            "message": "Payment reconciliation run cmupc3o8s0031mac4uja6kxoz signed",
+            "metadata": {
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "ipAddress": null,
+            "userAgent": null,
+            "createdAt": "2026-10-01T09:31:01.497Z"
+          }
+        ],
+        "businessEvent": [
+          {
+            "id": "cmupc3o87002vmac4s7znp7v2",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "eventType": "payment.provider_event.captured",
+            "eventSource": "PROVIDER_WEBHOOK",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "provider-event:cmupc3o7u002rmac49hwy27bd:captured",
+            "payloadHash": "e693e1cdc1c742200d811cf0eed5bfe342539b41b76689945ec191e06d86a592",
+            "payload": {
+              "amount": "100.25",
+              "direction": "INBOUND",
+              "eventType": "PAYMENT_CONFIRMED",
+              "feeAmount": null,
+              "occurredAt": "2026-10-01T09:31:01.322Z",
+              "receivedAt": "2026-10-01T09:31:01.322Z",
+              "headersHash": "1ea7b14c02c0047d2b99349415a2111ed94f14c2cbe21ce8b055f832f8483902",
+              "inboxItemId": "cmupc3o7y002tmac4am1qj04y",
+              "currencyCode": "XAF",
+              "correlationId": "6ff763af-14fa-4b00-93d0-ee12dce1a720",
+              "rawPayloadHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+              "signatureValid": true,
+              "providerEventId": "event-e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "providerReference": "e25a62b6-c645-417f-ab0f-8c9bc98add98",
+              "providerEventRecordId": "cmupc3o7u002rmac49hwy27bd",
+              "providerTransactionId": "e25a62b6-c645-417f-ab0f-8c9bc98add98"
+            },
+            "correlationId": "evt_caca8dc9-71a8-490d-9f86-12eea6d254d2",
+            "occurredAt": "2026-10-01T09:31:01.348Z",
+            "recordedAt": "2026-10-01T09:31:01.350Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": null,
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3o7u002rmac49hwy27bd",
+            "postingBatchId": null,
+            "documentHash": "e83f2f7f8758117a9e22141de62cd2e56357d54538154fd2c0db83d9c7a86e21",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.350Z",
+            "updatedAt": "2026-10-01T09:31:01.350Z"
+          },
+          {
+            "id": "cmupc3oce003amac4z9i7lkqv",
+            "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+            "eventType": "payment.reconciliation.signed",
+            "eventSource": "SYSTEM",
+            "schemaVersion": 1,
+            "status": "RECORDED",
+            "idempotencyKey": "reconciliation-run:cmupc3o8s0031mac4uja6kxoz:signed:4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "payloadHash": "81b0275c6b9c999d2a5980d19671aac860cb25cbfa67dd63d2ff68159880e7d3",
+            "payload": {
+              "runId": "cmupc3o8s0031mac4uja6kxoz",
+              "signedAt": "2026-10-01T09:31:01.447Z",
+              "signedById": "cmupc3o6l001vmac43xvxcsin",
+              "correlationId": "ecdf09da-cb76-4cc9-91b0-60f99c5ca9f8",
+              "paymentRailId": "cmupc3o7d002jmac46xyh1yx6",
+              "certificateHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+              "providerAccountId": "cmupc3o7g002lmac4y67t5l7k",
+              "sourceVersionHash": "sha256:db58b58b82120c1c4310e80094958e73f9a2530f565646f21833f1f1fab252f1",
+              "accountingPeriodId": "cmupc3o6x0029mac4n1tgtwk2",
+              "providerEventCount": 1,
+              "statementLineCount": 0
+            },
+            "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+            "occurredAt": "2026-10-01T09:31:01.500Z",
+            "recordedAt": "2026-10-01T09:31:01.502Z",
+            "processedAt": null,
+            "failedAt": null,
+            "actorId": "cmupc3o6l001vmac43xvxcsin",
+            "locationId": null,
+            "registerId": null,
+            "deviceId": null,
+            "sourceType": "PAYMENT_RECONCILIATION",
+            "sourceId": "cmupc3o8s0031mac4uja6kxoz",
+            "postingBatchId": null,
+            "documentHash": "4a00025839e39f6a5dec6866b821c8681888ea9b0a17f8f4da0242808aeea071",
+            "failureCode": null,
+            "failureMessage": null,
+            "metadata": null,
+            "createdAt": "2026-10-01T09:31:01.502Z",
+            "updatedAt": "2026-10-01T09:31:01.502Z"
+          }
+        ],
+        "closeRun": [],
+        "closePackExport": []
+      },
+      "newAudits": [
+        {
+          "id": "cmupc3oem003gmac423kzkg6c",
+          "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+          "businessEventId": "cmupc3oce003amac4z9i7lkqv",
+          "action": "OUTBOX_RETRY",
+          "eventSource": "SYSTEM",
+          "actorId": null,
+          "reason": "Outbox message payment.reconciliation.signed was scheduled for retry.",
+          "payloadHash": "55b2a5b22d5c69b037a9d0fa02ee0f8578da5be834773b8ad8d3613ee5a1d912",
+          "attemptedPayloadHash": null,
+          "correlationId": "evt_5a200671-e574-4044-85d5-9a092d435a59",
+          "metadata": {
+            "channel": "NOTIFICATION",
+            "attempts": 2,
+            "errorCode": "CONFLICT",
+            "maxAttempts": 5,
+            "outboxMessageId": "cmupc3oce003emac4w4pmwnk3"
+          },
+          "createdAt": "2026-10-01T09:31:01.582Z"
+        }
+      ],
+      "safetyContractSatisfied": false,
+      "defectReproduced": true,
+      "signedFinancialRecordsUnchanged": true,
+      "proofComplete": true
+    }
+  ],
+  "fixtures": [
+    {
+      "organizationId": "cmupc3nae0000mac45u8ioyik",
+      "runId": "cmupc3nq9001amac4ph3temuo",
+      "signerId": "cmupc3nb70004mac4v44ymnmq",
+      "makerId": "cmupc3naw0002mac40ph1vwdp"
+    },
+    {
+      "organizationId": "cmupc3o6e001rmac4mt1dui8l",
+      "runId": "cmupc3o8s0031mac4uja6kxoz",
+      "signerId": "cmupc3o6l001vmac43xvxcsin",
+      "makerId": "cmupc3o6h001tmac4nfazj6rs"
+    }
+  ],
+  "safetyContractSatisfied": false,
+  "purpose": "Source-bound baseline reproduction, not product acceptance or workflow closure.",
+  "scope": "Actual signed reconciliation fixture, actual notification worker and actual claim service; existing owned loopback DB only.",
+  "limitations": [
+    "The supplied reclaim clock advances only the lease-selection input beyond its existing five-minute timeout; it does not claim five minutes of real elapsed time.",
+    "The accepted worker identity is deliberately reused across two claims. CLI guidance recommends a unique worker identity but the current service accepts this sequence.",
+    "SENT means durable workspace inbox publication, not external delivery, reader acknowledgement or Close certification.",
+    "Synthetic provider/settlement setup is inherited from the existing guarded fixture; the run itself is reconciled and signed through actual services.",
+    "No product edits, migrations, seeds, direct lease/status writes, external messages, listener startup or production approval."
+  ],
+  "identity": {
+    "database": "stoquify_local_registration_20260906_01",
+    "server_address": "::1/128",
+    "server_port": 5432,
+    "targetHost": "localhost",
+    "expectedDatabase": "stoquify_local_registration_20260906_01",
+    "ownershipVerified": true,
+    "startsListener": false,
+    "externalFetchDisabled": true
+  },
+  "sourcesBefore": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/database-resilience.ts": "2e3902203e5a6004b9d4efd232134e27420aaad466cc1bf81c977190f2ba8168",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/monitoring.ts": "030d5781c7ba847042579699ff906d041d186d34f69d7fabd800ca1a8833c396",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "dffa355fddfbda64c724bbdae17ba97b36f0770f7a0e38d46ef68eb363a94961",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "services/payments/payment-ingestion.types.ts": "b19c06a12ef4eda285b2e1637102911395c5fe4e177ddbb044bda6ff7dcab223",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/provider-operation-evidence.ts": "69b47823cdcbd13cc962ec0c00f412b5fdd8e2067da18510c75b50122803f3b9",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-source-evidence.ts": "08492d66f11f481511d832517cadc8e0894e359874373cffcc3602167ba45896",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-sign-off-source-version.ts": "34af4215d708969c244dfa987f70065e5cb3087dd9e357e764c283aacd591138",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "services/reconciliation/payment-suspense-correction.service.ts": "7cbba1504aa78c2c723bb88e1b4ebc1b979db1306a579606b31565545aedff4a",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "26b4a2ebebc38dd79f415d8eedc0b8187ed68501fa7d3fbb854074a257b7e64a",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "ab3378cb73051c5168a86607e8c62bc082196ae7d80aa8949fbde667b5dab457",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "9a9c6cf6651fa6f95ad97800e4f994e8e28e1a187657e5d51cb5639a87bfcb23",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "0d4bdcc42c8390b1a20ac5ad447405894e99db0bed825ac72299059222a08a5e",
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-sign-lease-reclaim-baseline.cjs": "4958d118d56333529430af73f2c1a39df5a20d7ec806cc15dea0ad0c5db39935",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-sign-notification.cjs": "b3d58177800a86a3dd71831db03b6d54193fee11a975d69c085f2ec31fb9755a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-signoff-request-order.cjs": "2eb59a308e4f1d9d8728c8f957ec67ba4b4f233808d860bb92ae22607e965a0c"
+  },
+  "outsideBefore": {
+    "hash": "64d5da4f0dd3d6410bfb61b1f196887650e2cbcf682bfc2216238d3aadd27c9a",
+    "models": {
+      "reconciliationRun": {
+        "count": 455,
+        "hash": "31cd457dd00df4259f4add40dd9f0f03a6b262ba6ce000ee99128b9002d28ee5"
+      },
+      "matchRecord": {
+        "count": 987,
+        "hash": "38bb53be4cbb16820ad2639173d96ec62daf5e1ee7c793640954b0e536f600ee"
+      },
+      "paymentTransaction": {
+        "count": 696,
+        "hash": "2df1d91dd478d1c245d342389f30cb8c8061101c395f3b43b951c88e46ec143b"
+      },
+      "journalEntry": {
+        "count": 1075,
+        "hash": "bab014fb30e236d105e58836ef77656689fa7c006f4d2160c464c00ad96caf99"
+      },
+      "journalEntryLine": {
+        "count": 2180,
+        "hash": "599a4330bea9d6b4016b447701158bc8990dc214dae087222fdd3377d8f164bd"
+      },
+      "ledgerPostingBatch": {
+        "count": 2337,
+        "hash": "21a454a663bfa58d7476543ae6ca768d63fd7b31170db23fee2ad1d908712844"
+      },
+      "accountingSourceLink": {
+        "count": 1055,
+        "hash": "f93b122341c264a1c46c8f7c052dd585eac667d476643b51d5a8e90cde33e5b8"
+      },
+      "ledgerAuditEvent": {
+        "count": 11743,
+        "hash": "919e6dbfb1517d1171fa39034ee52a03d6e4bf898426551c3a647be57e28b46f"
+      },
+      "businessEvent": {
+        "count": 8247,
+        "hash": "1403b4eb51a532fb94cae71051f724ac30a365147487c3bd827229b5b230f9ee"
+      },
+      "closeRun": {
+        "count": 468,
+        "hash": "e2982032df3230d583ae69542df7ac88bba42249e6931235ce1bb56f8424e633"
+      },
+      "closePackExport": {
+        "count": 158,
+        "hash": "06f0437edff321e2299d0a628f7cf28c84e53f6eb395d2be101976e24592de3b"
+      },
+      "businessEventOutbox": {
+        "count": 5496,
+        "hash": "b0f74e87bc5f2810b454e3be4388b20941aadbe63f6e490f2d2c07af6bf86bb1"
+      },
+      "businessEventAudit": {
+        "count": 14353,
+        "hash": "94934a23ff5628da01e2b6a5e4d336c29b359f07ea1a6abd665bb10191df9e5a"
+      },
+      "paymentReconciliationInboxItem": {
+        "count": 4348,
+        "hash": "f838a272f0ed0b54536f497ce824d72541506445dba2deacf5d0f7a68960dd65"
+      },
+      "auditLog": {
+        "count": 26662,
+        "hash": "5d4e9ef5b4eededb2e1209e47f47497358fdf6f1b5975da2b35f07092db2f518"
+      },
+      "organization": {
+        "count": 2810,
+        "hash": "d543a76ef732af2a840603a2bb295433da6ab1b275ff567bbbe34764ace829ce"
+      }
+    }
+  },
+  "sourcesAfter": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/database-resilience.ts": "2e3902203e5a6004b9d4efd232134e27420aaad466cc1bf81c977190f2ba8168",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/monitoring.ts": "030d5781c7ba847042579699ff906d041d186d34f69d7fabd800ca1a8833c396",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "dffa355fddfbda64c724bbdae17ba97b36f0770f7a0e38d46ef68eb363a94961",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "services/payments/payment-ingestion.types.ts": "b19c06a12ef4eda285b2e1637102911395c5fe4e177ddbb044bda6ff7dcab223",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/provider-operation-evidence.ts": "69b47823cdcbd13cc962ec0c00f412b5fdd8e2067da18510c75b50122803f3b9",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-source-evidence.ts": "08492d66f11f481511d832517cadc8e0894e359874373cffcc3602167ba45896",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-sign-off-source-version.ts": "34af4215d708969c244dfa987f70065e5cb3087dd9e357e764c283aacd591138",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "services/reconciliation/payment-suspense-correction.service.ts": "7cbba1504aa78c2c723bb88e1b4ebc1b979db1306a579606b31565545aedff4a",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "26b4a2ebebc38dd79f415d8eedc0b8187ed68501fa7d3fbb854074a257b7e64a",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "ab3378cb73051c5168a86607e8c62bc082196ae7d80aa8949fbde667b5dab457",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "9a9c6cf6651fa6f95ad97800e4f994e8e28e1a187657e5d51cb5639a87bfcb23",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "0d4bdcc42c8390b1a20ac5ad447405894e99db0bed825ac72299059222a08a5e",
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-sign-lease-reclaim-baseline.cjs": "4958d118d56333529430af73f2c1a39df5a20d7ec806cc15dea0ad0c5db39935",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-sign-notification.cjs": "b3d58177800a86a3dd71831db03b6d54193fee11a975d69c085f2ec31fb9755a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-signoff-request-order.cjs": "2eb59a308e4f1d9d8728c8f957ec67ba4b4f233808d860bb92ae22607e965a0c"
+  },
+  "sourceStable": true,
+  "outsideAfter": {
+    "hash": "64d5da4f0dd3d6410bfb61b1f196887650e2cbcf682bfc2216238d3aadd27c9a",
+    "models": {
+      "reconciliationRun": {
+        "count": 455,
+        "hash": "31cd457dd00df4259f4add40dd9f0f03a6b262ba6ce000ee99128b9002d28ee5"
+      },
+      "matchRecord": {
+        "count": 987,
+        "hash": "38bb53be4cbb16820ad2639173d96ec62daf5e1ee7c793640954b0e536f600ee"
+      },
+      "paymentTransaction": {
+        "count": 696,
+        "hash": "2df1d91dd478d1c245d342389f30cb8c8061101c395f3b43b951c88e46ec143b"
+      },
+      "journalEntry": {
+        "count": 1075,
+        "hash": "bab014fb30e236d105e58836ef77656689fa7c006f4d2160c464c00ad96caf99"
+      },
+      "journalEntryLine": {
+        "count": 2180,
+        "hash": "599a4330bea9d6b4016b447701158bc8990dc214dae087222fdd3377d8f164bd"
+      },
+      "ledgerPostingBatch": {
+        "count": 2337,
+        "hash": "21a454a663bfa58d7476543ae6ca768d63fd7b31170db23fee2ad1d908712844"
+      },
+      "accountingSourceLink": {
+        "count": 1055,
+        "hash": "f93b122341c264a1c46c8f7c052dd585eac667d476643b51d5a8e90cde33e5b8"
+      },
+      "ledgerAuditEvent": {
+        "count": 11743,
+        "hash": "919e6dbfb1517d1171fa39034ee52a03d6e4bf898426551c3a647be57e28b46f"
+      },
+      "businessEvent": {
+        "count": 8247,
+        "hash": "1403b4eb51a532fb94cae71051f724ac30a365147487c3bd827229b5b230f9ee"
+      },
+      "closeRun": {
+        "count": 468,
+        "hash": "e2982032df3230d583ae69542df7ac88bba42249e6931235ce1bb56f8424e633"
+      },
+      "closePackExport": {
+        "count": 158,
+        "hash": "06f0437edff321e2299d0a628f7cf28c84e53f6eb395d2be101976e24592de3b"
+      },
+      "businessEventOutbox": {
+        "count": 5496,
+        "hash": "b0f74e87bc5f2810b454e3be4388b20941aadbe63f6e490f2d2c07af6bf86bb1"
+      },
+      "businessEventAudit": {
+        "count": 14353,
+        "hash": "94934a23ff5628da01e2b6a5e4d336c29b359f07ea1a6abd665bb10191df9e5a"
+      },
+      "paymentReconciliationInboxItem": {
+        "count": 4348,
+        "hash": "f838a272f0ed0b54536f497ce824d72541506445dba2deacf5d0f7a68960dd65"
+      },
+      "auditLog": {
+        "count": 26662,
+        "hash": "5d4e9ef5b4eededb2e1209e47f47497358fdf6f1b5975da2b35f07092db2f518"
+      },
+      "organization": {
+        "count": 2810,
+        "hash": "d543a76ef732af2a840603a2bb295433da6ab1b275ff567bbbe34764ace829ce"
+      }
+    }
+  },
+  "outsideUnchanged": true,
+  "defectReproduced": true,
+  "baselineProofComplete": true
+}

@@ -314,20 +314,15 @@ function LoadingDashboard() {
 
 function WorkspaceSetupPanel({ onboarding }: { onboarding: TodaysOperatingTruthModel["onboarding"] }) {
   return (
-    <section className={cn(dashboardPanelClass, "p-4")}>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 max-w-3xl">
-          <h2 className="text-base font-semibold text-[var(--dash-text)]">{onboarding.title}</h2>
-          <p className="mt-1 text-sm leading-6 text-[var(--dash-text-soft)]">{onboarding.detail}</p>
-        </div>
-        <div className="w-full min-w-0 lg:w-[320px]">
-          <div className="flex items-center justify-between gap-3 text-xs font-semibold text-[var(--dash-text-soft)]">
-            <span>{onboarding.progressLabel}</span>
-            <span>{onboarding.progressValue}%</span>
-          </div>
-          <Progress value={onboarding.progressValue} className="mt-2 h-2 bg-[var(--dash-surface-raised)]" />
-        </div>
-      </div>
+    <details open={onboarding.progressValue === 0} className={cn(dashboardPanelClass, "p-4")}>
+      <summary className="cursor-pointer rounded-md text-[var(--dash-text)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]">
+        <span className="ml-2 inline-flex w-[calc(100%-2rem)] flex-col gap-2 align-top sm:flex-row sm:items-center sm:justify-between">
+          <span className="font-semibold">{onboarding.title}</span>
+          <span className="text-sm text-[var(--dash-text-soft)]">{onboarding.progressLabel}</span>
+        </span>
+      </summary>
+      <p className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">{onboarding.detail}</p>
+      <Progress value={onboarding.progressValue} className="mt-3 h-2 bg-[var(--dash-surface-raised)]" />
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {onboarding.steps.map((step) => {
@@ -359,7 +354,7 @@ function WorkspaceSetupPanel({ onboarding }: { onboarding: TodaysOperatingTruthM
           )
         })}
       </div>
-    </section>
+    </details>
   )
 }
 
@@ -548,14 +543,6 @@ export default function EnhancedEnterpriseDashboard({
           </Alert>
         )}
 
-        <WorkspaceSetupPanel onboarding={operatingTruth.onboarding} />
-
-        <StatusStrip
-          title={operatingTruth.status.title}
-          detail={operatingTruth.status.detail}
-          items={operatingTruth.status.items}
-        />
-
         <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
           <ActionQueue
             title={operatingTruth.actionQueue.title}
@@ -571,6 +558,14 @@ export default function EnhancedEnterpriseDashboard({
             events={operatingTruth.evidence.events}
           />
         </div>
+
+        <StatusStrip
+          title={operatingTruth.status.title}
+          detail={operatingTruth.status.detail}
+          items={operatingTruth.status.items}
+        />
+
+        <WorkspaceSetupPanel onboarding={operatingTruth.onboarding} />
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {operatingTruth.kpis.map((kpi) => (

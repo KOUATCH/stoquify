@@ -25,6 +25,7 @@ import {
 
 import { buildSuspensePostingRequest } from "./payment-suspense-posting.gateway"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx, withReconciliationCloseRetry } from "./reconciliation-close-order.service"
 
 type ControlContext = {
   actorPermissions: readonly string[]
@@ -460,9 +461,25 @@ export async function approveSuspensePosting(
 ): Promise<ApproveSuspensePostingResult> {
   const correlationId = input.correlationId ?? randomUUID()
   requireReviewedRevision(input.expectedEvidenceRevision)
-  const now = input.control.now ? new Date(input.control.now) : new Date()
+  const startedAt = Date.now(), suppliedNow = input.control.now ? new Date(input.control.now).getTime() : startedAt
+  const controlNow = () => new Date(suppliedNow + Math.max(0, Date.now() - startedAt))
 
-  const result = await db.$transaction(async (tx): Promise<ControlledResult<ApproveSuspensePostingResult>> => {
+  const result = await withReconciliationCloseRetry(() => db.$transaction(async (tx): Promise<ControlledResult<ApproveSuspensePostingResult>> => {
+    await lockReconciliationCloseCatalogInTx(tx, input.organizationId)
+    const beforeLock = await tx.suspenseItem.findFirst({
+      where: { id: input.suspenseItemId, organizationId: input.organizationId },
+      include: { reconciliationRun: { select: { businessDate: true } } },
+    })
+    if (!beforeLock) throw new NotFoundError("Suspense item not found")
+    // Posting-period locks precede assessment and source locks. A retained
+    // approval remains replayable after its posting period has closed.
+    const period = beforeLock.status === SuspenseStatus.RESOLUTION_PROPOSED
+      ? await getOpenPeriodForDate(input.organizationId, suspensePostingDate(beforeLock, controlNow()), tx)
+      : null
+    // A retained replay has no new Close effect. Taking assessment locks here
+    // would invert source correction's locks while it verifies that same item.
+    const affectedPeriodIds = beforeLock.status === SuspenseStatus.POSTED_TO_SUSPENSE
+      ? [] : await lockReconciliationClosePeriodsInTx(tx, input.organizationId)
     await lockSuspense(tx, input.organizationId, input.suspenseItemId)
     const suspense = await tx.suspenseItem.findFirst({
       where: { id: input.suspenseItemId, organizationId: input.organizationId },
@@ -489,7 +506,8 @@ export async function approveSuspensePosting(
       throw new BusinessRuleError("A suspense ledger account must be configured before posting approval.")
     }
 
-    const decision = evaluateSensitiveAction({
+    let now = controlNow()
+    const authorization = () => evaluateSensitiveAction({
       action: "payment.reconciliation.suspense.post",
       actorId: input.approvedById,
       organizationId: input.organizationId,
@@ -507,6 +525,7 @@ export async function approveSuspensePosting(
         currentStatus: suspense.status,
       },
     })
+    const decision = authorization()
     if (!decision.allowed) {
       await auditSensitiveActionDecision(tx, decision)
       return { denied: decision }
@@ -533,7 +552,9 @@ export async function approveSuspensePosting(
     await assertSuspenseLedgerAccount(tx, input.organizationId, suspenseLedgerAccountId)
     await auditSensitiveActionDecision(tx, decision)
     const periodDate = suspensePostingDate(suspense, now)
-    const period = await getOpenPeriodForDate(input.organizationId, periodDate, tx)
+    if (!period || periodDate < period.startDate || periodDate > period.endDate) {
+      throw new ConflictError("Suspense posting period changed. Refresh and review before approval.")
+    }
 
     const postingRequest = buildSuspensePostingRequest({
       organizationId: input.organizationId,
@@ -557,6 +578,10 @@ export async function approveSuspensePosting(
       tx,
     )
     const batch = ledgerPosting.ledgerBatch
+    // Account/rule/sequence waits inside the ledger writer must not extend
+    // authentication. Throw on late denial so all financial effects roll back.
+    now = controlNow()
+    assertSensitiveActionAllowed(authorization())
 
     const inboxPayload = asJsonObject({
       reviewedRevision: input.expectedEvidenceRevision,
@@ -646,9 +671,7 @@ export async function approveSuspensePosting(
     await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
       sourceCode: "PAYMENT_SUSPENSE_POSTING",
       sourceId: suspense.id,
-      periodId: period.id,
-      periodStart: periodDate,
-      periodEnd: periodDate,
+      periodIds: affectedPeriodIds,
       staleReason: "Payment suspense posting changed certified close evidence.",
       newEvidenceHash: payloadHash,
       correlationId,
@@ -674,7 +697,7 @@ export async function approveSuspensePosting(
         },
       },
     }
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }).catch((error: unknown) => {
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })).catch((error: unknown) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError && (error.code === "P2034"
       || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code))))) {
       throw new ConflictError("Suspense posting or accounting setup changed concurrently. Refresh and review before retrying.")

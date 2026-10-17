@@ -10,6 +10,7 @@ import {
   REQUIRED_ACCOUNTING_MAPPINGS,
   REQUIRED_DEFAULT_JOURNAL_TYPES,
   REQUIRED_READY_POSTING_PURPOSES,
+  REQUIRED_READY_POSTING_SOURCES,
 } from "../accounting-settings.service"
 
 const mockTx = {
@@ -33,16 +34,20 @@ function readyMappedAccounts() {
     normalBalance: mapping.normalBalance,
     syscohadaClass: mapping.syscohadaClass,
     syscohadaReference: `${mapping.syscohadaClass}${index}`,
+    isActive: true,
     _count: { children: 0 },
   }))
 }
 
 function readyPostingRules() {
   return REQUIRED_READY_POSTING_PURPOSES.map((postingPurpose) => ({
+    id: `rule-${postingPurpose}`,
+    code: `RULE-${postingPurpose}`,
+    sourceType: REQUIRED_READY_POSTING_SOURCES[postingPurpose],
     postingPurpose,
     lines: [
-      { id: `${postingPurpose}-debit`, accountId: null, mappingKey: "CASH_ON_HAND" },
-      { id: `${postingPurpose}-credit`, accountId: null, mappingKey: "SALES_REVENUE" },
+      { id: `${postingPurpose}-debit`, side: "DEBIT", accountId: null, mappingKey: "CASH_ON_HAND" },
+      { id: `${postingPurpose}-credit`, side: "CREDIT", accountId: null, mappingKey: "SALES_REVENUE" },
     ],
   }))
 }
@@ -126,6 +131,28 @@ describe("accounting setup readiness gates", () => {
         }),
       }),
     )
+    expect(mockTx.organizationAccountingSettings.upsert).not.toHaveBeenCalled()
+  })
+
+  it.each(["DEBIT", "CREDIT"])("does not mark setup ready when a required rule contains only %s lines", async (side) => {
+    const rules = readyPostingRules()
+    rules[0].lines = rules[0].lines.map((line) => ({ ...line, side }))
+    mockTx.postingRule.findMany.mockResolvedValue(rules)
+    await expect(markAccountingSetupReady("org-1", "user-1", {
+      actorPermissions: ["accounting.setup.manage"], lastAuthAt: Date.now(),
+    })).rejects.toThrow(/must include both debit and credit lines/)
+    expect(mockTx.organizationAccountingSettings.upsert).not.toHaveBeenCalled()
+    expect(mockTx.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("does not use a valid fallback when the selected rule is invalid", async () => {
+    const rules = readyPostingRules()
+    mockTx.postingRule.findMany.mockResolvedValue([
+      { ...rules[0], code: "SELECTED-BAD", lines: rules[0].lines.map((line) => ({ ...line, mappingKey: "UNMAPPED" })) },
+      ...rules,
+    ])
+    await expect(markAccountingSetupReady("org-1", "user-1", { actorPermissions: ["accounting.setup.manage"], lastAuthAt: Date.now() }))
+      .rejects.toThrow(/SELECTED-BAD.*does not resolve/)
     expect(mockTx.organizationAccountingSettings.upsert).not.toHaveBeenCalled()
   })
 })

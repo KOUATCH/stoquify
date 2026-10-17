@@ -1,0 +1,184 @@
+{
+  "at": "2026-09-30T21:59:06.756Z",
+  "startedAt": "2026-09-30T21:58:31.373Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "scope": "Narrow close-invalidation source/test review and focused mocked suites; no workflow closure or certification.",
+  "sourceStable": true,
+  "sourceHashes": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+    "services/accounting/__tests__/journal-close-invalidation.service.test.ts": "3d7eeac7ec0fd53b73b4eef4a9b472f7e1186490f28bed20485c8492229d39e5",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/inventory/inventory-close-invalidation.service.ts": "5b7ec997eb6867a6272bd2b7feaa2c9d8d126ea7b6c5e09772641597a10413be",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-close-assurance-test-bridge-2026-09-30.cjs": "24859fa1b5cf43442d479e8d9d17cbf286a3aacd2742423e95360cdf98dad645"
+  },
+  "sourceHashesBefore": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+    "services/accounting/__tests__/journal-close-invalidation.service.test.ts": "3d7eeac7ec0fd53b73b4eef4a9b472f7e1186490f28bed20485c8492229d39e5",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/inventory/inventory-close-invalidation.service.ts": "5b7ec997eb6867a6272bd2b7feaa2c9d8d126ea7b6c5e09772641597a10413be",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-close-assurance-test-bridge-2026-09-30.cjs": "24859fa1b5cf43442d479e8d9d17cbf286a3aacd2742423e95360cdf98dad645"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "before": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+      "after": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+      "priorReview": "evidence/accounting-setup-trust-review-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "before": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+      "after": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+      "priorReview": "evidence/setup-rule-selection-review-2026-09-30.json"
+    }
+  ],
+  "productReconstruction": {
+    "method": "Replace only the two named current declarations with their exact retained baseline declaration text in memory; the complete result matches the historical reviewed product hash.",
+    "baseline": {
+      "file": "evidence/accounting-setup-export-before-ed0d0af2-9f0b-4784-b67c-08f4c12d38cd.json",
+      "sha256": "ee89ab5e8233e5631cb44921aedf0e7d466ecf0dc2ac79c7ffef9163cbf38197"
+    },
+    "declarations": [
+      "recordCloseCertificationInvalidationInTx",
+      "closeInvalidationTargetsInTx"
+    ],
+    "predecessorSha256": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "matchesHistoricalReviewedSource": true,
+    "publicWrapperAndTransactionalDispatcherUnchanged": true,
+    "allOtherDeclarationsExactlyPreserved": true
+  },
+  "testReconstruction": {
+    "method": "Apply exactly one match for each of the four retained regex operations in memory; the complete result matches both setup review predecessor hashes.",
+    "predecessorSha256": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+    "operations": [
+      {
+        "pattern": "^  recordCloseCertificationInvalidationsForSource,\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      },
+      {
+        "pattern": "(    closeRun: \\{\\r?\\n)      findMany: jest.fn\\(\\),\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "(  closeRun: \\{\\r?\\n)    findMany: jest.Mock\\r?\\n",
+        "flags": "",
+        "replacement": "$1"
+      },
+      {
+        "pattern": "^  it.each\\(\\[\"RUNNING\", \"READY\", \"CERTIFIED\", \"EXPORTED\"\\]\\)\\(\"invalidates a %s assessment on a new source event even without an export\", async \\(status\\) => \\{[\\s\\S]*?^  \\}\\)\\r?\\n\\r?\\n",
+        "flags": "m",
+        "replacement": ""
+      }
+    ],
+    "existingAssertionsExactlyPreserved": true
+  },
+  "reviewFindings": [
+    "Target discovery still requires organization plus a supplied period ID or date-overlap filter. The state predicate now includes RUNNING, READY, CERTIFIED and EXPORTED; the existing certified-export branch remains.",
+    "The invalidation writer changes the same four live/usable states to BLOCKED and records EVIDENCE_STALE metadata with source identity. Previously it only changed CERTIFIED.",
+    "Runs without exports receive durable run/event/audit invalidation evidence; export metadata is changed only when an organization/run-scoped export is found.",
+    "Public and transactional source dispatchers, source-code definitions, existing evidence construction and all other product declarations are unchanged against the exact predecessor.",
+    "The unchanged journal caller supplies tenant, posting period/date and journal identity; its reversal helper targets each distinct affected period. The unchanged inventory caller supplies tenant, period/date and document hash in the source transaction.",
+    "The four new cases discriminate the previous CERTIFIED-only query from the current query, require invalidatedCount=1 and BLOCKED run/source metadata, and require no export mutation when no export exists."
+  ],
+  "command": {
+    "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+      "--json",
+      "--outputFile=E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\close-assurance-bridge-jest-620ad18c-3249-43ba-b601-5c93e2b45be7.json"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "error": null
+  },
+  "results": {
+    "suites": 2,
+    "passedSuites": 2,
+    "tests": 31,
+    "passedTests": 31,
+    "failedTests": 0,
+    "addedCases": [
+      {
+        "title": "invalidates a RUNNING assessment on a new source event even without an export",
+        "status": "passed"
+      },
+      {
+        "title": "invalidates a READY assessment on a new source event even without an export",
+        "status": "passed"
+      },
+      {
+        "title": "invalidates a CERTIFIED assessment on a new source event even without an export",
+        "status": "passed"
+      },
+      {
+        "title": "invalidates a EXPORTED assessment on a new source event even without an export",
+        "status": "passed"
+      }
+    ]
+  },
+  "receipts": [
+    {
+      "file": "evidence/close-assurance-bridge-jest-620ad18c-3249-43ba-b601-5c93e2b45be7.json",
+      "sha256": "723c6c9c677c816d8d6e4412a69baa8544b2de3d14475f972d7e7a0a66f68f0b"
+    },
+    {
+      "file": "evidence/close-assurance-bridge-jest-620ad18c-3249-43ba-b601-5c93e2b45be7.log",
+      "sha256": "180245fa92bb8377d8ef310d1bfd29af9462b78956a1587959adaa20ab2ef0c8"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "evidence/close-assurance-test-drift-2026-09-30.json",
+      "sha256": "d1954b15f15a8e7252dbc68167d5e753f621038deba58d3d6dea5853169f7df8"
+    },
+    {
+      "file": "evidence/accounting-setup-export-before-ed0d0af2-9f0b-4784-b67c-08f4c12d38cd.json",
+      "sha256": "ee89ab5e8233e5631cb44921aedf0e7d466ecf0dc2ac79c7ffef9163cbf38197"
+    },
+    {
+      "file": "evidence/accounting-setup-trust-review-2026-09-30.json",
+      "sha256": "897d9e0a08c31c4079db6d974f6a879919794c407e9e8911f604c65f3df2b85e"
+    },
+    {
+      "file": "evidence/setup-rule-selection-review-2026-09-30.json",
+      "sha256": "7c1530cadadc473a956153bae3a425beec4a75dbadab4c336e44b77c4337ab2f"
+    },
+    {
+      "file": "evidence/verify-close-assurance-test-bridge-2026-09-30.cjs",
+      "sha256": "24859fa1b5cf43442d479e8d9d17cbf286a3aacd2742423e95360cdf98dad645"
+    }
+  ],
+  "conclusion": "The current focused evidence justifies bridging these exact historical product and test hashes. It does not justify broader workflow completion or certify unrelated caller behavior.",
+  "limitations": [
+    "Prisma is mocked in the focused suites. Organization/period predicates and absent-export behavior are asserted, but real database filtering, concurrent assessment/source changes and whole-workflow recovery are not newly verified here.",
+    "The journal wrapper suite has three focused caller-contract cases; inventory caller review is source inspection only. Other source dispatchers inherit the common helper but are not independently revalidated by this review.",
+    "No product, historical evidence, migration, database, reconciler or workflow status was changed by this runner."
+  ]
+}

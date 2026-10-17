@@ -3,9 +3,15 @@ import PayrollRegisterTieOut from "@/components/payroll/PayrollRegisterTieOut"
 import { pickLocale } from "@/i18n/routing"
 import { routeByKey, withPayrollSurfaceAccess } from "../payroll-route-access"
 
-export const metadata = {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  return locale === "fr" ? {
+    title: "Registre de paie | Stoquify",
+    description: "Contrôle de concordance des bulletins, écritures, paiements, déclarations et preuves de clôture.",
+  } : {
   title: "Payroll Register | Stoquify",
   description: "Payroll register tie-out for payslips, ledger, payments, declarations, and close evidence.",
+}
 }
 
 export default async function PayrollRegisterPage({

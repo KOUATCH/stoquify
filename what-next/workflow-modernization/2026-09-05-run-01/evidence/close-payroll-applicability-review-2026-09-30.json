@@ -1,0 +1,110 @@
+{
+  "at": "2026-09-30T18:02:02.181Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "CLOSE_PAYROLL_APPLICABILITY_2026-09-30.md",
+  "sourceHashes": {
+    "services/inventory/inventory-reconciliation.service.ts": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+    "services/accounting/close-assurance.service.ts": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+    "services/accounting/close-assurance-pack.service.ts": "e64756f3b131f683c2b95754d6203673b1721f4cf94a2bc6ac4314c40bb8b54b",
+    "services/inventory/__tests__/inventory-reconciliation.service.test.ts": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012",
+    "services/accounting/__tests__/close-assurance.service.test.ts": "c31bb0cf4c9ca17a31d3ffd6b67513779b8aa3bd7d5c42785e35e00d1b2893fc",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "8adbad4bdde9968ecd1f949797f5e1178082235e6f3a69f08982341a9471c863",
+    "services/evidence/__tests__/close-proof-invalidation.service.test.ts": "2694b41c8e16a57e77de81c464485b9deda0c2b49955f291f42d50aad0052941",
+    "actions/accounting/__tests__/close-assurance.actions.test.ts": "1feb0a9024b4fd66eaa047d06049f6a5df022c6bdd0fd84582be1cbcaf0c4ad1",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "components/accounting/CloseAssuranceCenter.tsx": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+    "hooks/accounting/useCloseAssurance.ts": "c2416e47d09fbbbf131ad7ec1d9eb1c05cf9e6e60a10deaf495d5f76b7191b4c"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "before": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+      "after": "e64756f3b131f683c2b95754d6203673b1721f4cf94a2bc6ac4314c40bb8b54b",
+      "priorReview": "evidence/cash-close-inventory-freshness-review-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+      "before": "08bddb1ae2aacb2f3f2e966c4e702116bd5e7ebb19cb2e04817d7f95534e1d58",
+      "after": "8adbad4bdde9968ecd1f949797f5e1178082235e6f3a69f08982341a9471c863",
+      "priorReview": "evidence/cash-close-inventory-freshness-review-2026-09-30.json"
+    }
+  ],
+  "remaining": [
+    "Actual inventory freshness and payroll-pilot applicability are corrected and verified. Complete accounting setup through its existing readiness lifecycle on an owned fixture, then verify genuinely eligible close certification; retain statutory approval, source-change concurrency, accessibility and production-performance limits.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "payroll_pilot_period_applicability",
+    "payroll_pilot_each_run_evidence",
+    "payroll_pilot_tenant_scope_and_query_failure",
+    "en_fr_actual_payroll_annex_download"
+  ],
+  "declarationImpact": {
+    "baselineFile": "evidence/close-payroll-applicability-before-9f0df9a4-1f57-45ef-924b-d1b268a27b9b.json",
+    "changed": [
+      "PilotCertificationAnnex",
+      "loadPilotCertificationEvidenceForCloseRun"
+    ],
+    "allOtherDeclarationsExactlyPreserved": true
+  },
+  "receipts": [
+    {
+      "file": "evidence/inventory-freshness-checks-9b51949c-104c-4217-9eaf-badf2f4d53b3.json",
+      "sha256": "24da4811db549d77eca803665a793962342b204ac3095d3680edd11f855907b3"
+    },
+    {
+      "file": "lanes/environment/close-payroll-applicability-dde18ac1-d803-44b3-a7d4-066417a95837.json",
+      "sha256": "af443d8f05987183d400cb1b388d358fe21b596ec6c29bebff49ecb445e23eaa"
+    },
+    {
+      "file": "lanes/environment/close-payroll-browser-34db658d-cf9a-4666-bf56-e8e34be2d0ca.json",
+      "sha256": "d3a11793faa53ea9b8b892e4c59ad499850fdbc5184e143bea712648d646eb61"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CLOSE_PAYROLL_APPLICABILITY_2026-09-30.md",
+      "sha256": "2886fa172d5f43487befa89ac2f34e0860cfed498702b246647d48e750fe6dc1"
+    },
+    {
+      "file": "evidence/close-payroll-applicability-before-9f0df9a4-1f57-45ef-924b-d1b268a27b9b.json",
+      "sha256": "68daef565ee7871dec9124f6c9a018d7ab5b36a96ffe3149d4194d9f699aeb42"
+    },
+    {
+      "file": "evidence/cash-close-inventory-freshness-review-2026-09-30.json",
+      "sha256": "80acbb04c64ce0c76f7538181ab2bee529577a2e7980541513ae9d151c679632"
+    },
+    {
+      "file": "lanes/environment/verify-close-payroll-applicability.cjs",
+      "sha256": "0c2f503ae2341d07786c214085743988829fb2421b6add28fd95a7d2513458d0"
+    },
+    {
+      "file": "lanes/environment/verify-close-payroll-browser.cjs",
+      "sha256": "eccbecbf44fb5162a133c3e4a8fa80821e001479bfc2c5af054d42013750ca3f"
+    },
+    {
+      "file": "evidence/inventory-freshness-checks-0a5c8d16-1f47-4525-b03c-2bdb8489a3a7.json",
+      "sha256": "3644b2e7a0068069e050c4bbfee25ec5432bc596b27bb41d541c1945b08aec8a"
+    },
+    {
+      "file": "lanes/environment/close-payroll-browser-34db658d-cf9a-4666-bf56-e8e34be2d0ca-en-draft.json",
+      "sha256": "e1137b62fa0f0b225e0055f4b87246760287ded859047ba1dc9dedb60b718337"
+    },
+    {
+      "file": "lanes/environment/close-payroll-browser-34db658d-cf9a-4666-bf56-e8e34be2d0ca-en1440.png",
+      "sha256": "34139b2141c5a6d50571b759eb2a7353bd767b3a9e47ff0916dfb6c87e4236a0"
+    },
+    {
+      "file": "lanes/environment/close-payroll-browser-34db658d-cf9a-4666-bf56-e8e34be2d0ca-fr-draft.json",
+      "sha256": "32094b285ab9f93fef00d24835bf39d7bf4a09df51ea4bb059fae1dca0bc7cdf"
+    },
+    {
+      "file": "lanes/environment/close-payroll-browser-34db658d-cf9a-4666-bf56-e8e34be2d0ca-fr320.png",
+      "sha256": "c9fb771e3889f4a4d5e42f73a06cbaf1e4497b368d0b2a88813ddb1793934c5b"
+    }
+  ]
+}

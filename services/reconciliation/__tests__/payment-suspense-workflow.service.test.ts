@@ -3,6 +3,13 @@ import { ExceptionSeverity, PaymentDirection, SuspenseStatus, SuspenseType, Pris
 import { db } from "@/prisma/db"
 import { postPaymentSuspenseToLedger } from "../payment-suspense-ledger.service"
 import { suspenseEvidenceRevision } from "../payment-suspense-evidence"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "../reconciliation-close-order.service"
+
+jest.mock("../reconciliation-close-order.service", () => ({
+  ...jest.requireActual("../reconciliation-close-order.service"),
+  lockReconciliationCloseCatalogInTx: jest.fn(),
+  lockReconciliationClosePeriodsInTx: jest.fn(),
+}))
 
 import {
   approveSuspensePosting,
@@ -134,6 +141,8 @@ describe("payment suspense workflow service", () => {
   })
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(lockReconciliationCloseCatalogInTx as jest.Mock).mockResolvedValue(undefined)
+    ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockResolvedValue(["earlier-period", "period-1"])
     mockedDb.$transaction.mockImplementation(async (callback) => {
       const tx: Partial<typeof mockedDb> = { ...mockedDb }
       delete tx.$transaction
@@ -276,6 +285,27 @@ describe("payment suspense workflow service", () => {
     expect(mockedPostPaymentSuspenseToLedger).not.toHaveBeenCalled()
   })
 
+  it.each(["assessment", "ledger"])("expires supplied authentication after %s waits", async (wait) => {
+    const originalNow = Date.now(), clock = jest.spyOn(Date, "now").mockReturnValue(originalNow)
+    mockedDb.suspenseItem.findFirst.mockResolvedValue(suspense({
+      status: SuspenseStatus.RESOLUTION_PROPOSED,
+      metadata: { reclassification: { proposedById: "maker-1", targetType: SuspenseType.UNKNOWN_CREDIT, reason: "Review" } },
+    }))
+    const expire = () => clock.mockReturnValue(originalNow + 60 * 60 * 1000)
+    if (wait === "assessment") (lockReconciliationClosePeriodsInTx as jest.Mock).mockImplementationOnce(async () => { expire(); return ["period-1"] })
+    else mockedPostPaymentSuspenseToLedger.mockImplementationOnce(async () => { expire(); return { ledgerBatch: { id: "batch-1" } } })
+    try {
+      await expect(approveSuspensePosting({ expectedEvidenceRevision: reviewedProposalRevision("Review"),
+        organizationId: "org-1", suspenseItemId: "suspense-1", approvedById: "checker-1",
+        control: { actorPermissions: ["payments.reconciliation.suspense.post"], lastAuthAt: new Date("2026-06-14T12:00:00Z"), now: new Date("2026-06-14T12:00:00Z") },
+      })).rejects.toThrow(/authentication/i)
+      expect(mockedDb.paymentReconciliationInboxItem.create).not.toHaveBeenCalled()
+      expect(mockedDb.suspenseItem.update).not.toHaveBeenCalled()
+      if (wait === "assessment") expect(mockedPostPaymentSuspenseToLedger).not.toHaveBeenCalled()
+      else expect(mockedPostPaymentSuspenseToLedger).toHaveBeenCalledTimes(1)
+    } finally { clock.mockRestore() }
+  })
+
   it("rejects a closed period before approving or posting suspense", async () => {
     mockedDb.suspenseItem.findFirst.mockResolvedValue(suspense({
       status: SuspenseStatus.RESOLUTION_PROPOSED,
@@ -340,6 +370,14 @@ describe("payment suspense workflow service", () => {
     )
     expect(mockedDb.paymentReconciliationInboxItem.create).toHaveBeenCalled()
     expect(mockedDb.paymentReconciliationInboxItem.createMany).toHaveBeenCalled()
+    const catalogOrder = (lockReconciliationCloseCatalogInTx as jest.Mock).mock.invocationCallOrder[0]
+    const assessmentOrder = (lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]
+    expect(catalogOrder).toBeLessThan(mockedDb.$queryRaw.mock.invocationCallOrder[0])
+    expect(mockedDb.$queryRaw.mock.invocationCallOrder[0]).toBeLessThan(assessmentOrder)
+    expect(assessmentOrder).toBeLessThan(mockedDb.$queryRaw.mock.invocationCallOrder[1])
+    expect(mockedDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ AND: expect.arrayContaining([{ OR: [{ periodId: { in: ["earlier-period", "period-1"] } }] }]) }),
+    }))
     expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
       isolationLevel: "Serializable",
     })

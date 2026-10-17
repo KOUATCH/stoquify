@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-30T09:48:45.929Z",
+  "sourceBefore": {
+    "components/accounting/CloseAssuranceCenter.tsx": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "1f25003eb09230cd76a8945ec53b160a0c7c85ec600215170ad1dc28b80a6054",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/daily-habit/__tests__/daily-habit-digest.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 3 passed, 3 total\nTests:       157 passed, 157 total\nSnapshots:   0 total\nTime:        30.889 s\nRan all test suites within paths \"components/accounting/__tests__/CloseAssuranceCenter.test.tsx\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/accounting/CloseAssuranceCenter.tsx": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "1f25003eb09230cd76a8945ec53b160a0c7c85ec600215170ad1dc28b80a6054",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1"
+  },
+  "sourceStable": true,
+  "passed": true
+}

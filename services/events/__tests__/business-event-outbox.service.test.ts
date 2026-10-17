@@ -1,6 +1,5 @@
 import {
   ApplicationError,
-  NotFoundError,
 } from "@/services/_shared/action-errors"
 
 import {
@@ -9,6 +8,7 @@ import {
   getBusinessEventOutboxReadiness,
   markBusinessEventOutboxDelivered,
   markBusinessEventOutboxFailed,
+  runBusinessEventOutboxWorker,
 } from "../business-event-outbox.service"
 
 function message(overrides: Record<string, unknown> = {}) {
@@ -72,6 +72,7 @@ describe("business event outbox gateway", () => {
         status: "LOCKED",
         attempts: 1,
         lockedBy: "worker-1",
+        lockedAt: now,
       }),
     ])
     expect(client.businessEventOutbox.findMany).toHaveBeenCalledWith(
@@ -129,6 +130,7 @@ describe("business event outbox gateway", () => {
         status: "LOCKED",
         attempts: 1,
         lockedBy: "worker-1",
+        lockedAt: now,
         businessEvent: {
           eventSource: "PROVIDER_WEBHOOK",
           payloadHash: "event-hash",
@@ -144,6 +146,8 @@ describe("business event outbox gateway", () => {
           organizationId: "org-1",
           workerId: "worker-1",
           messageId: "outbox-1",
+          attempts: 1,
+          lockedAt: now,
           now,
         },
         client,
@@ -155,6 +159,8 @@ describe("business event outbox gateway", () => {
         where: expect.objectContaining({
           organizationId: "org-1",
           lockedBy: "worker-1",
+          attempts: 1,
+          lockedAt: now,
         }),
         data: expect.objectContaining({ status: "SENT", processedAt: now }),
       }),
@@ -178,6 +184,7 @@ describe("business event outbox gateway", () => {
         status: "LOCKED",
         attempts: 1,
         lockedBy: "worker-1",
+        lockedAt: now,
         businessEvent: {
           eventSource: "PROVIDER_WEBHOOK",
           payloadHash: "event-hash",
@@ -192,6 +199,8 @@ describe("business event outbox gateway", () => {
         organizationId: "org-1",
         workerId: "worker-1",
         messageId: "outbox-1",
+        attempts: 1,
+        lockedAt: now,
         error: new Error("postgresql://secret@host/database"),
         now,
       },
@@ -222,6 +231,7 @@ describe("business event outbox gateway", () => {
         attempts: 3,
         maxAttempts: 3,
         lockedBy: "worker-1",
+        lockedAt: now,
         businessEvent: {
           eventSource: "PROVIDER_WEBHOOK",
           payloadHash: "event-hash",
@@ -237,6 +247,8 @@ describe("business event outbox gateway", () => {
           organizationId: "org-1",
           workerId: "worker-1",
           messageId: "outbox-1",
+          attempts: 3,
+          lockedAt: now,
           error: new ApplicationError(
             "DATABASE_UNAVAILABLE",
             "Temporary outage.",
@@ -258,7 +270,7 @@ describe("business event outbox gateway", () => {
     )
   })
 
-  it("rejects cross-tenant completion when the scoped lease is absent", async () => {
+  it("reports lost ownership for cross-tenant completion without effects", async () => {
     const client = createClient()
     client.businessEventOutbox.findFirst.mockResolvedValue(null)
 
@@ -268,21 +280,123 @@ describe("business event outbox gateway", () => {
           organizationId: "org-2",
           workerId: "worker-1",
           messageId: "outbox-1",
+          attempts: 1,
+          lockedAt: now,
           now,
         },
         client,
       ),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).resolves.toEqual({ messageId: "outbox-1", status: "LEASE_LOST" })
     expect(client.businessEventOutbox.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           id: "outbox-1",
           organizationId: "org-2",
           lockedBy: "worker-1",
+          attempts: 1,
+          lockedAt: now,
         }),
       }),
     )
     expect(client.businessEventOutbox.updateMany).not.toHaveBeenCalled()
+    expect(client.businessEventAudit.create).not.toHaveBeenCalled()
+  })
+
+  describe.each([
+    ["delivery", markBusinessEventOutboxDelivered],
+    ["failure", markBusinessEventOutboxFailed],
+  ] as const)("exact claim %s", (_label, terminal) => {
+    const input = () => ({ organizationId: "org-1", workerId: "worker-1", messageId: "outbox-1",
+      attempts: 1, lockedAt: now, now, error: new Error("Controlled handler failure") })
+    const leased = () => message({ status: "LOCKED", attempts: 1, lockedAt: now, lockedBy: "worker-1",
+      businessEvent: { eventSource: "SYSTEM", payloadHash: "event-hash", correlationId: "corr-event" } })
+
+    const invalidInputs: Array<[string, Record<string, unknown>]> = [
+      ["missing attempt", { attempts: undefined }], ["zero attempt", { attempts: 0 }],
+      ["negative attempt", { attempts: -1 }], ["fractional attempt", { attempts: 1.5 }],
+      ["unsafe attempt", { attempts: Number.MAX_SAFE_INTEGER + 1 }], ["NaN attempt", { attempts: NaN }],
+      ["missing timestamp", { lockedAt: undefined }], ["null timestamp", { lockedAt: null }],
+      ["string timestamp", { lockedAt: now.toISOString() }], ["invalid timestamp", { lockedAt: new Date(NaN) }],
+    ]
+    it.each(invalidInputs)("rejects %s before starting a transaction", async (_name, override) => {
+      const client = createClient()
+      await expect(terminal({ ...input(), ...override } as ReturnType<typeof input>, client)).rejects.toMatchObject({ code: "VALIDATION_ERROR" })
+      expect(client.$transaction).not.toHaveBeenCalled()
+      expect(client.businessEventOutbox.findFirst).not.toHaveBeenCalled()
+      expect(client.businessEventOutbox.updateMany).not.toHaveBeenCalled()
+      expect(client.businessEventAudit.create).not.toHaveBeenCalled()
+    })
+
+    const mismatchedInputs: Array<[string, Partial<ReturnType<typeof input>>]> = [
+      ["tenant", { organizationId: "org-2" }], ["message", { messageId: "other-message" }],
+      ["worker", { workerId: "other-worker" }], ["attempt", { attempts: 2 }],
+      ["timestamp", { lockedAt: new Date(now.getTime() + 1) }],
+    ]
+    it.each(mismatchedInputs)("does not mutate a lease when %s differs", async (_name, override) => {
+      const client = createClient(), retained = leased()
+      // Match the actual supplied identity, so dropping a predicate makes this
+      // regression exercise a write instead of returning lost ownership.
+      client.businessEventOutbox.findFirst.mockImplementation(async ({ where }) =>
+        Object.entries(where).every(([key, value]) => value instanceof Date
+          ? (retained[key as keyof typeof retained] as Date)?.getTime() === value.getTime()
+          : retained[key as keyof typeof retained] === value) ? retained : null)
+      await expect(terminal({ ...input(), ...override }, client)).resolves.toEqual({ messageId: override.messageId ?? "outbox-1", status: "LEASE_LOST" })
+      expect(client.businessEventOutbox.updateMany).not.toHaveBeenCalled()
+      expect(client.businessEventAudit.create).not.toHaveBeenCalled()
+      expect(retained).toEqual(leased())
+    })
+
+    it("fences a reclaim between the read and update without emitting an audit", async () => {
+      const client = createClient()
+      client.businessEventOutbox.findFirst.mockResolvedValue(leased())
+      client.businessEventOutbox.updateMany.mockResolvedValue({ count: 0 })
+      await expect(terminal(input(), client)).resolves.toEqual({ messageId: "outbox-1", status: "LEASE_LOST" })
+      const expectedIdentity = { id: "outbox-1", organizationId: "org-1", status: "LOCKED", lockedBy: "worker-1", attempts: 1, lockedAt: now }
+      expect(client.businessEventOutbox.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expectedIdentity }))
+      expect(client.businessEventOutbox.updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expectedIdentity }))
+      expect(client.businessEventAudit.create).not.toHaveBeenCalled()
+    })
+
+    it("preserves real storage errors instead of claiming lease loss", async () => {
+      const client = createClient(), failure = new Error("Owned database unavailable")
+      client.businessEventOutbox.findFirst.mockRejectedValue(failure)
+      await expect(terminal(input(), client)).rejects.toBe(failure)
+      expect(client.businessEventOutbox.updateMany).not.toHaveBeenCalled()
+      expect(client.businessEventAudit.create).not.toHaveBeenCalled()
+    })
+
+    it("propagates audit failure from the same transaction as the terminal write", async () => {
+      const client = createClient(), failure = new Error("Owned terminal audit failure")
+      client.businessEventOutbox.findFirst.mockResolvedValue(leased())
+      client.businessEventOutbox.updateMany.mockResolvedValue({ count: 1 })
+      client.businessEventAudit.create.mockRejectedValue(failure)
+      await expect(terminal(input(), client)).rejects.toBe(failure)
+      expect(client.$transaction).toHaveBeenCalledTimes(1)
+      expect(client.businessEventOutbox.updateMany).toHaveBeenCalledTimes(1)
+      expect(client.businessEventAudit.create).toHaveBeenCalledTimes(1)
+      expect(client.businessEventOutbox.updateMany.mock.invocationCallOrder[0]).toBeLessThan(client.businessEventAudit.create.mock.invocationCallOrder[0])
+    })
+  })
+
+  it.each(["success", "failure"])("continues the claimed batch after old-attempt %s loses its lease", async firstOutcome => {
+    const client = createClient()
+    client.businessEventOutbox.findMany.mockResolvedValue([message(), message({ id: "outbox-2", businessEventId: "event-2" })])
+    client.businessEventOutbox.updateMany.mockResolvedValue({ count: 1 })
+    client.businessEventOutbox.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(message({
+      id: "outbox-2", businessEventId: "event-2", status: "LOCKED", attempts: 1, lockedAt: now, lockedBy: "worker-1",
+      businessEvent: { eventSource: "SYSTEM", payloadHash: "second-event-hash", correlationId: "corr-2" },
+    }))
+    const handler = jest.fn(async claimed => { if (firstOutcome === "failure" && claimed.id === "outbox-1") throw new Error("The old handler rejected its reclaimed lease") })
+    await expect(runBusinessEventOutboxWorker({ organizationId: "org-1", workerId: "worker-1", now }, handler, client)).resolves.toEqual([
+      { messageId: "outbox-1", status: "LEASE_LOST" }, { messageId: "outbox-2", status: "SENT", processedAt: now },
+    ])
+    expect(handler.mock.calls.map(([claimed]) => claimed.id)).toEqual(["outbox-1", "outbox-2"])
+    expect(client.businessEventOutbox.findFirst).toHaveBeenNthCalledWith(1, expect.objectContaining({ where: {
+      id: "outbox-1", organizationId: "org-1", status: "LOCKED", lockedBy: "worker-1", attempts: 1, lockedAt: now,
+    } }))
+    expect(client.businessEventOutbox.updateMany).toHaveBeenCalledTimes(3) // Two claims; only the second terminal write.
+    expect(client.businessEventAudit.create).toHaveBeenCalledTimes(1)
+    expect(client.businessEventAudit.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ businessEventId: "event-2", action: "OUTBOX_DELIVERED" }) }))
   })
 
   it("exposes tenant-scoped retry backlog readiness", async () => {

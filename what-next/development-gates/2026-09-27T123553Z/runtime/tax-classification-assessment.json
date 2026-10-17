@@ -1,0 +1,257 @@
+{
+  "generatedAt": "2026-09-27T12:55:29.591Z",
+  "transaction": {
+    "database": "stoquify_replay_next_20260830",
+    "transactionReadOnly": "on",
+    "defaultTransactionReadOnly": "on",
+    "isolation": "repeatable read",
+    "snapshotTime": "2026-09-27T12:54:18.065Z"
+  },
+  "readOnly": true,
+  "summary": {
+    "items": 41,
+    "itemsUsingStoredStandardRate": 41,
+    "taxRows": 4,
+    "activeUnusedZeroRateRows": 2,
+    "units": 22,
+    "activeUnits": 20,
+    "inactiveUnassignedGenericPacks": 2,
+    "inactiveOrMissingAssignedReferences": 0,
+    "productTaxTreatmentsProvenLegallyCorrect": 0,
+    "productTaxTreatmentsProvenLegallyIncorrect": 0,
+    "productTaxTreatmentsRequiringClassificationEvidence": 41,
+    "stockingUnitConfirmations": 4
+  },
+  "classificationFinding": {
+    "id": "PRODUCT_TAX_CLASSIFICATION_UNVERIFIED",
+    "status": "UNVERIFIED_PRODUCT_TREATMENT",
+    "affectedItemIds": [
+      "cmu8qg3bg004tmabswqot2u2d",
+      "rds_org_001_item_001",
+      "rds_org_001_item_002",
+      "rds_org_001_item_003",
+      "rds_org_001_item_004",
+      "rds_org_001_item_005",
+      "rds_org_001_item_006",
+      "rds_org_001_item_007",
+      "rds_org_001_item_008",
+      "rds_org_001_item_009",
+      "rds_org_001_item_010",
+      "rds_org_001_item_011",
+      "rds_org_001_item_012",
+      "rds_org_001_item_013",
+      "rds_org_001_item_014",
+      "rds_org_001_item_015",
+      "rds_org_001_item_016",
+      "rds_org_001_item_017",
+      "rds_org_001_item_018",
+      "rds_org_001_item_019",
+      "rds_org_001_item_020",
+      "rds_org_002_item_001",
+      "rds_org_002_item_002",
+      "rds_org_002_item_003",
+      "rds_org_002_item_004",
+      "rds_org_002_item_005",
+      "rds_org_002_item_006",
+      "rds_org_002_item_007",
+      "rds_org_002_item_008",
+      "rds_org_002_item_009",
+      "rds_org_002_item_010",
+      "rds_org_002_item_011",
+      "rds_org_002_item_012",
+      "rds_org_002_item_013",
+      "rds_org_002_item_014",
+      "rds_org_002_item_015",
+      "rds_org_002_item_016",
+      "rds_org_002_item_017",
+      "rds_org_002_item_018",
+      "rds_org_002_item_019",
+      "rds_org_002_item_020"
+    ],
+    "affectedTaxIds": [
+      "rds_org_001_tax_rate_001",
+      "rds_org_002_tax_rate_001"
+    ],
+    "observed": "All 41 items are assigned to the stored standard VAT row. This is a coherent numeric configuration, not product-specific evidence that every assignment is applicable. Item and TaxRate expose rate references/names/type/activation but no exemption reason, product classification, effective classification version or approval evidence. No such classification was resolved in the inspected POS consumer.",
+    "ownerRoleProposed": "Tax/accounting owner supplies the classification matrix; inventory/catalog owner supplies product specifications; engineering implements evidence-backed mapping and tests.",
+    "userMustProvideIds": false,
+    "localSyntheticEngineeringWork": "Create a documented synthetic classification matrix and development scenarios with explicit provenance. Exercise applicable positive-rate and zero-rate scenarios only as test assumptions. Add validation/provenance support where needed; retain current data until an authorized correction is designed.",
+    "realProductionInputRequired": [
+      "For each extracted item: product composition/processing and packaging, relevant transaction/jurisdiction context, and sale date/effective period.",
+      "Applicable entity registration/tax regime confirmed by its authorized accounting owner.",
+      "Reviewed product-tax treatment, official source/reference and effective dates, including reason/evidence for any special or zero treatment."
+    ],
+    "stageEffect": "Blocks claiming product-specific tax accuracy or production fiscal readiness. No dedicated product-classification enforcement gate was found in the inspected item/POS paths; engineering development can proceed with explicitly synthetic assumptions. Do not change rates from product names alone."
+  },
+  "zeroRateMeaning": {
+    "affectedTaxIds": [
+      "rds_org_001_tax_rate_002",
+      "rds_org_002_tax_rate_002"
+    ],
+    "affectedItemIds": [],
+    "observed": "Two active rows are named Zero-rated VAT and have no assigned items. Their numeric zero is meaningful for a test scenario, but it is not a documented exemption classification. The POS fiscal builder emits taxCode=null whenever the rate is zero, so reason-specific zero treatment is not represented there.",
+    "engineeringWork": "Preserve distinct tax treatment/reason evidence through the item/line/fiscal contract when real zero or special treatment is supported; test that it is not inferred solely from a numeric zero.",
+    "productionInput": "An authorized tax owner must identify the applicable treatment and source evidence before assigning either row to real products."
+  },
+  "unitsMeaningfulness": {
+    "status": "MEANINGFUL_WITH_FOUR_STOCKING_UNIT_CONFIRMATIONS",
+    "observed": "Active units have concrete names, dimensions and positive conversion factors: piece/bottle/can/tube, kilogram/litre, one-kilogram detergent bag, six-bottle pack, sheet and 500-sheet ream. Unassigned Sheet rows are meaningful bases for the ream conversions. Two generic Pack rows are inactive and unused. All assigned references are active; this is a catalog-semantic assessment, not proof that every conversion workflow was exercised.",
+    "referenceFailures": [],
+    "retiredUnitIds": [
+      "rds_org_001_unit_002",
+      "rds_org_002_unit_002"
+    ],
+    "meaningfulConversionUnitIds": [
+      "sysseed_unit_8a32c1f44d3a7f98e43fa063",
+      "sysseed_unit_e2fb854615ca30c0444b6aa8",
+      "sysseed_unit_5c31a35d0af20a905ad27b8a",
+      "sysseed_unit_e729d0f281129a5e09a8693e"
+    ],
+    "confirmationRecords": [
+      {
+        "id": "rds_org_001_item_002",
+        "organizationId": "rds_org_001",
+        "nameEn": "Orange juice 1 L",
+        "nameFr": "Jus d'orange 1 L",
+        "isActive": true,
+        "unitId": "rds_org_001_unit_007",
+        "taxRateId": "rds_org_001_tax_rate_001",
+        "unitName": "Liter",
+        "symbol": "L",
+        "unitType": "VOLUME",
+        "baseUnit": "L",
+        "conversionRate": "1.000000",
+        "unitActive": true,
+        "taxName": "Cameroon standard VAT 19.25%",
+        "taxRate": "19.250",
+        "taxType": "VAT",
+        "taxActive": true
+      },
+      {
+        "id": "rds_org_001_item_013",
+        "organizationId": "rds_org_001",
+        "nameEn": "Mango nectar 1 L",
+        "nameFr": "Nectar de mangue 1 L",
+        "isActive": true,
+        "unitId": "rds_org_001_unit_007",
+        "taxRateId": "rds_org_001_tax_rate_001",
+        "unitName": "Liter",
+        "symbol": "L",
+        "unitType": "VOLUME",
+        "baseUnit": "L",
+        "conversionRate": "1.000000",
+        "unitActive": true,
+        "taxName": "Cameroon standard VAT 19.25%",
+        "taxRate": "19.250",
+        "taxType": "VAT",
+        "taxActive": true
+      },
+      {
+        "id": "rds_org_002_item_002",
+        "organizationId": "rds_org_002",
+        "nameEn": "Orange juice 1 L",
+        "nameFr": "Jus d'orange 1 L",
+        "isActive": true,
+        "unitId": "rds_org_002_unit_007",
+        "taxRateId": "rds_org_002_tax_rate_001",
+        "unitName": "Liter",
+        "symbol": "L",
+        "unitType": "VOLUME",
+        "baseUnit": "L",
+        "conversionRate": "1.000000",
+        "unitActive": true,
+        "taxName": "Cameroon standard VAT 19.25%",
+        "taxRate": "19.250",
+        "taxType": "VAT",
+        "taxActive": true
+      },
+      {
+        "id": "rds_org_002_item_013",
+        "organizationId": "rds_org_002",
+        "nameEn": "Mango nectar 1 L",
+        "nameFr": "Nectar de mangue 1 L",
+        "isActive": true,
+        "unitId": "rds_org_002_unit_007",
+        "taxRateId": "rds_org_002_tax_rate_001",
+        "unitName": "Liter",
+        "symbol": "L",
+        "unitType": "VOLUME",
+        "baseUnit": "L",
+        "conversionRate": "1.000000",
+        "unitActive": true,
+        "taxName": "Cameroon standard VAT 19.25%",
+        "taxRate": "19.250",
+        "taxType": "VAT",
+        "taxActive": true
+      }
+    ],
+    "ownerRoleProposed": "Inventory/catalog manager",
+    "neededInput": "Confirm whether Orange juice 1 L and Mango nectar 1 L are stocked/sold by measured litre or by sealed one-litre package. Their names alone do not decide this. If packages, design a unit conversion and quantity-preserving migration rather than merely changing the unit label.",
+    "localEngineeringWork": "Document the intended synthetic stocking unit and add appropriate conversion/quantity tests. No external legal review is required for this business-unit choice."
+  },
+  "accountingContext": [
+    {
+      "id": "rds_org_001_accounting_settings_001",
+      "organizationId": "rds_org_001",
+      "countryPack": "SYSCOHADA_CM",
+      "taxRegime": "VAT_CM_STANDARD",
+      "countryCode": "CM",
+      "currency": "XAF"
+    },
+    {
+      "id": "rds_org_002_accounting_settings_001",
+      "organizationId": "rds_org_002",
+      "countryPack": "SYSCOHADA_CM",
+      "taxRegime": "VAT_CM_STANDARD",
+      "countryCode": "CM",
+      "currency": "XAF"
+    }
+  ],
+  "consumerContracts": [
+    {
+      "file": "prisma/schema.prisma",
+      "line": 808,
+      "excerpt": "model Item {"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "line": 778,
+      "excerpt": "model TaxRate {"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 1763,
+      "excerpt": "const taxRate = toDecimal(item.taxRate?.rate)"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 379,
+      "excerpt": "const taxAmount = taxable.times(taxRate).div(100).toDecimalPlaces(2)"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 253,
+      "excerpt": "taxCode: taxRateBps > 0 ? \"VAT\" : null,"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 548,
+      "excerpt": "vatResolution = resolveRegulatoryParameter<number>(\"taxes.vat.standardRateBps\", {"
+    },
+    {
+      "file": "services/regulatory/country-packs/cameroon.ts",
+      "line": 209,
+      "excerpt": "standardRateBps: ["
+    },
+    {
+      "file": "services/compliance/fiscal-document.schemas.ts",
+      "line": 46,
+      "excerpt": "taxCode: optionalTrimmedString,"
+    }
+  ],
+  "limitations": [
+    "No tax authority sources were independently reviewed in this task; stored names and source-code country parameters are not legal certification.",
+    "No database writes, application edits, tax reassignments or production approvals occurred.",
+    "All affected IDs are supplied in this report; the user need not rediscover them."
+  ]
+}

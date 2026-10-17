@@ -1,0 +1,142 @@
+{
+  "at": "2026-09-27T18:06:40.308Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "cases": [
+    {
+      "kind": "same request concurrent duplicate",
+      "organizationId": "cmuk4reii0000ma94ekazmonh",
+      "runId": "cmuk4reoe001ama945crvztpw",
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmuk4reoe001ama945crvztpw",
+            "receiptId": "348ffe54-83a8-4a24-816d-e56797ad575e",
+            "preparedAt": "2026-09-27T18:06:41.119Z",
+            "currentStatus": "READY_FOR_SIGNOFF",
+            "replayed": false
+          }
+        },
+        {
+          "error": {
+            "code": "CONFLICT",
+            "message": "Run preparation changed concurrently. Refresh or retry the same request."
+          }
+        }
+      ],
+      "counts": {
+        "receipts": 1,
+        "audits": 1,
+        "observations": 2,
+        "journals": 0
+      },
+      "winningReceipt": "348ffe54-83a8-4a24-816d-e56797ad575e",
+      "passed": true
+    },
+    {
+      "kind": "different reviewers same revision",
+      "organizationId": "cmuk4rf4n0020ma94ozm6iyfc",
+      "runId": "cmuk4rf8u003ama94d5vv4y2e",
+      "readyReads": 2,
+      "results": [
+        {
+          "value": {
+            "runId": "cmuk4rf8u003ama94d5vv4y2e",
+            "receiptId": "dcad4c47-b5e2-4242-9e3f-a914f5a8ff63",
+            "preparedAt": "2026-09-27T18:06:41.755Z",
+            "currentStatus": "READY_FOR_SIGNOFF",
+            "replayed": false
+          }
+        },
+        {
+          "error": {
+            "code": "CONFLICT",
+            "message": "Run preparation changed concurrently. Refresh or retry the same request."
+          }
+        }
+      ],
+      "counts": {
+        "receipts": 1,
+        "audits": 1,
+        "observations": 2,
+        "journals": 0
+      },
+      "winningReceipt": "dcad4c47-b5e2-4242-9e3f-a914f5a8ff63",
+      "passed": true
+    },
+    {
+      "kind": "notification persistence failure rolls back transition receipt and audit",
+      "organizationId": "cmuk4rffq0040ma94x9i8t5iz",
+      "runId": "cmuk4rfhc005ama94e0bazsly",
+      "counts": {
+        "receipts": 1,
+        "audits": 1,
+        "observations": 2,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "23 actual preparations retained across pages and independent signing",
+      "organizationId": "cmuk4rfn80062ma940is73mfi",
+      "runId": "cmuk4rfow007cma94p0tgk3ya",
+      "pageSizes": [
+        20,
+        3
+      ],
+      "receiptIds": [
+        "b4c827b6-1ba6-44de-96f8-78601a59fe79",
+        "72b0a322-3a7b-40df-a1f3-7ce56e7667d1",
+        "06ee5e4c-118c-40a0-8376-389bb62cd5b9",
+        "19712116-e6c4-4548-ac70-ea3011046948",
+        "b077db72-a596-4732-ac54-7f22af37caf3",
+        "b8842c03-4454-48e0-94d2-b514da3ef96d",
+        "ea1ce135-f4bb-42d2-89f1-d8e5d5c39806",
+        "2c55d812-5806-47e3-b0f2-3d607354b2ed",
+        "313f589c-a2d4-454b-869c-6108c1cbc60a",
+        "25b63dc3-c61f-4f1f-9fe3-916be1eb418e",
+        "a6989ef8-afd7-4bc3-8ad0-b594233e5a8c",
+        "a3e920bf-a91b-4367-8e98-704f378be08b",
+        "228d0b6b-5804-442a-9609-8f08630f798b",
+        "bd84feb3-3b49-4f25-a70f-57e2d4231e52",
+        "a3e14d58-05fb-4f80-96b3-af8fef0f0b1a",
+        "5a4fc2b2-97b2-4493-a098-45c7ddc18c3a",
+        "518d0f30-6311-4cc1-bde4-2dd471996ecf",
+        "e1203ad2-118c-4c6a-ba43-ac807210a0b9",
+        "36ac4b69-3f3c-4be9-ae52-deeeedea7ed7",
+        "41885dd6-fd8d-4f50-8c21-bb6d0833831d",
+        "062357ee-6ec5-42b3-8fdd-16ef93d2b62f",
+        "6abd2243-bfde-4298-8150-877d4ceb275e",
+        "581a75dc-ecb6-48cf-9281-fba7fcd55640"
+      ],
+      "tenantAndCursorIsolation": true,
+      "corruptionRejectedAndRestored": true,
+      "earlierReplayKeepsCurrentPointer": true,
+      "signedHistoryRetained": true,
+      "counts": {
+        "receipts": 23,
+        "audits": 23,
+        "observations": 24,
+        "journals": 0
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

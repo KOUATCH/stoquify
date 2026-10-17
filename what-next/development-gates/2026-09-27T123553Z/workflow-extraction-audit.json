@@ -1,0 +1,84 @@
+{
+  "context": {
+    "database": "stoquify_replay_next_20260830",
+    "transaction_read_only": "on",
+    "default_transaction_read_only": "on",
+    "observed_at": "2026-09-27T12:50:14.719Z"
+  },
+  "queries": [
+    {
+      "id": "workflow_StockAdjustment",
+      "sql": "SELECT \"organizationId\",\"locationId\",\"createdById\",\"approvedById\",\"evidenceHash\",\"id\",\"status\",\"reversalOfAdjustmentId\" FROM public.\"stock_adjustments\" ORDER BY \"id\"",
+      "rowCount": 119
+    },
+    {
+      "id": "workflow_StockAdjustmentLine",
+      "sql": "SELECT \"itemId\",\"actualQuantity\",\"id\",\"adjustmentId\" FROM public.\"stock_adjustment_lines\" ORDER BY \"id\"",
+      "rowCount": 119
+    },
+    {
+      "id": "workflow_SupplierPayment",
+      "sql": "SELECT \"id\",\"organizationId\",\"supplierId\",\"bankAccountId\",\"requestedById\",\"approvedById\",\"documentHash\",\"evidenceHash\",\"status\" FROM public.\"supplier_payments\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "workflow_JournalEntry",
+      "sql": "SELECT \"id\",\"journalId\",\"periodId\",\"createdById\",\"organizationId\",\"status\",\"postingBatchId\",\"reversalOfEntryId\" FROM public.\"journal_entries\" ORDER BY \"id\"",
+      "rowCount": 141
+    },
+    {
+      "id": "workflow_JournalEntryLine",
+      "sql": "SELECT \"accountId\",\"debit\",\"credit\",\"id\",\"organizationId\",\"journalEntryId\" FROM public.\"journal_entry_lines\" ORDER BY \"id\"",
+      "rowCount": 368
+    },
+    {
+      "id": "workflow_ClosePackExport",
+      "sql": "SELECT \"closeRunId\",\"contentHash\",\"isCertified\",\"id\",\"organizationId\",\"periodId\" FROM public.\"close_pack_exports\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "workflow_PayrollRun",
+      "sql": "SELECT \"id\",\"payrollPeriodId\",\"version\",\"preparedById\",\"reviewedById\",\"approvedById\",\"organizationId\",\"status\",\"originalRunId\",\"reviewedBusinessEventId\",\"approvedBusinessEventId\",\"emittedBusinessEventId\",\"postedBusinessEventId\" FROM public.\"payroll_runs\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "workflow_PayrollPaymentBatch",
+      "sql": "SELECT \"id\",\"payrollRunId\",\"requestedById\",\"approvedById\",\"releasedById\",\"evidenceHash\",\"bankFileHash\",\"organizationId\",\"status\" FROM public.\"payroll_payment_batches\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "workflow_PayrollPayslip",
+      "sql": "SELECT \"employeeId\",\"id\",\"organizationId\",\"status\",\"payrollRunId\",\"runLineId\",\"emittedBusinessEventId\" FROM public.\"payroll_payslips\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "workflow_POSStation",
+      "sql": "SELECT \"id\",\"currentSessionId\",\"locationId\",\"organizationId\" FROM public.\"pos_terminals\" ORDER BY \"id\"",
+      "rowCount": 25
+    },
+    {
+      "id": "workflow_POSSession",
+      "sql": "SELECT \"userId\",\"organizationId\",\"status\",\"id\",\"terminalId\",\"locationId\" FROM public.\"pos_sessions\" ORDER BY \"id\"",
+      "rowCount": 31
+    },
+    {
+      "id": "workflow_POSCheckoutWorkspace",
+      "sql": "SELECT \"leaseId\",\"sessionId\",\"organizationId\" FROM public.\"pos_checkout_workspaces\" ORDER BY \"sessionId\"",
+      "rowCount": 5
+    },
+    {
+      "id": "workflow_BranchDailyCloseRun",
+      "sql": "SELECT \"locationId\",\"startedById\",\"evidenceHash\",\"id\",\"organizationId\",\"status\" FROM public.\"branch_daily_close_runs\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "workflow_AccountantAccessGrant",
+      "sql": "SELECT \"activeScopeKey\",\"id\",\"organizationId\",\"status\" FROM public.\"accountant_access_grants\" ORDER BY \"id\"",
+      "rowCount": 0
+    }
+  ],
+  "readOnlyVerified": true,
+  "transactionEnded": "ROLLBACK",
+  "mutationStatementsExecuted": 0,
+  "secretFieldsSelected": false
+}

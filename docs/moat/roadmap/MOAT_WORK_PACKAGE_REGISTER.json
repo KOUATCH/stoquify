@@ -1,0 +1,752 @@
+{
+  "programId": "STOQUIFY-MOAT-2026-09-27",
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-30T14:51:20.615Z",
+  "status": "LOCAL_RUNTIME_VERIFIED_PROGRAM_CONDITIONAL",
+  "governingReport": "docs/moat/strategic-moat-opportunities-2026-09-27.md",
+  "runEvidence": "what-next/moat-execution/2026-09-30-run-01",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "principalWorkflow": "M1/M2",
+  "boundedExperiment": "M3-01",
+  "nextPackage": "M2-01",
+  "packages": [
+    {
+      "id": "M0-01",
+      "recommendation": "prerequisite",
+      "phase": "P0",
+      "status": "PREPARATION_COMPLETE",
+      "customerOutcome": "One source-grounded delivery program preserving current owners",
+      "smallestUsefulSlice": "Baseline, capability matrix, traceability and publication",
+      "existingFoundation": "Moat assessment, graph snapshot, workflow modernization and analytics/network registers",
+      "preciseGap": "No integrated moat execution register existed",
+      "responsibleRole": "Principal architect / product program owner",
+      "affectedFilesOrServices": [
+        "docs/moat/roadmap",
+        "what-next/moat-execution/2026-09-27-run-01"
+      ],
+      "dependencies": [],
+      "entryConditions": "Read attached brief, source report, current instructions and working-tree boundaries",
+      "contracts": {
+        "data": "Canonical versioned JSON register and source SHA-256 manifests",
+        "api": "None; internal documentation only",
+        "event": "No business events",
+        "access": "Workspace artifacts; real customer records excluded",
+        "ui": "Six matching Markdown/PDF narrative pairs",
+        "invariants": "Canonical register links existing workflow IDs; six narrative documents are derived views; source evidence is immutable by run",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "Every M1–M4 recommendation has a disposition, owner and dependency path",
+        "Narrative Markdown has matching nonempty PDFs"
+      ],
+      "verification": [
+        "Source baseline and drift manifest",
+        "Publication pair validation"
+      ],
+      "rollout": "Internal review artifacts only",
+      "recoveryAndRollback": "Supersede inaccurate claims with a new dated revision; preserve prior evidence",
+      "effortRange": "1–3 engineer-days plus product review",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Named staffing confirmation unknown",
+      "evidence": [
+        "what-next/moat-execution/2026-09-27-run-01/git-status-before.txt",
+        "what-next/moat-execution/2026-09-27-run-01/source-before.json",
+        "what-next/moat-execution/2026-09-27-run-01/source-final.json",
+        "what-next/moat-execution/2026-09-27-run-01/publication-manifest.json"
+      ],
+      "blockers": [],
+      "nextAction": "Resume this canonical register; do not create a competing program",
+      "existingProgramLinks": [
+        "FA-ACCOUNTANT-ACCESS",
+        "FA-ACCOUNTANT-PORTAL",
+        "FA-CLOSE-EVIDENCE-ACCEPT",
+        "FA-CASH-COMMAND",
+        "PR-17",
+        "NTF-ACCOUNTANT-INVITE/DELIVER",
+        "analytics-network-program"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "ARTIFACTS_PREPARED",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M1-01",
+      "recommendation": "M1",
+      "phase": "P2",
+      "status": "LOCALLY_VERIFIED",
+      "customerOutcome": "An accountant triages submitted evidence across clients and records an authorized review",
+      "smallestUsefulSlice": "Ten-client work desk → reauthorized response detail → existing acceptance → correct client portal",
+      "existingFoundation": "Active mandates, per-client validated queue, acceptance and export services",
+      "preciseGap": "Queue lacked UI consumer; portfolio only cards; portal refresh/export dropped client scope",
+      "responsibleRole": "Accounting backend + frontend + security",
+      "affectedFilesOrServices": [
+        "services/accounting/accountant-work-desk.service.ts",
+        "services/accounting/accountant-work-desk.contracts.ts",
+        "actions/accounting/accountant-work-desk.actions.ts",
+        "components/accounting/AccountantWorkDesk.tsx",
+        "components/accounting/accountant-work-desk-copy.ts",
+        "hooks/useAccountantPortal.ts",
+        "components/accounting/AccountantPortal.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx"
+      ],
+      "dependencies": [
+        "M0-01"
+      ],
+      "entryConditions": "Source-owned queue and protected acceptance contract available; no overlap edits to active payment work",
+      "contracts": {
+        "data": "Redacted AccountantWorkDesk/WorkDetail DTO; no new tables",
+        "api": "getAccountantWorkDeskAction(afterGrantId), getAccountantWorkDetailAction(clientOrganizationId,requestId), acceptAccountantWorkItemAction(existing acceptance payload)",
+        "event": "Existing acceptance service owns close.assurance events; read desk emits no new financial event",
+        "access": "Server actor, audit/review permissions, active client REVIEW grant, home accounting and target close_assurance entitlement; source fresh-auth acceptance",
+        "ui": "Existing accountant portfolio desk; EN/FR, pending/empty/partial/denied/detail/retry; client-and-period portal handoff",
+        "invariants": "List cursor afterGrantId; strict detail client/request; authenticated actor; ten sequential clients; redacted summaries; target close_assurance entitlement; current grant recheck; acceptance reuses source action and correlation key; localized states",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "No request/response body or employee ID in cross-client summary",
+        "Denied/revoked/expired clients omitted; incomplete evidence disclosed",
+        "Detail/action retains client and fresh-auth/replay controls",
+        "Portal refresh/export uses selected client; cache partitioned",
+        "English/French controls, focus and retry behavior pass focused tests"
+      ],
+      "verification": [
+        "115 focused Jest cases plus 72 existing domain cases",
+        "Typecheck exit 0",
+        "Scoped lint exit 0",
+        "Boundary ratchet zero active violations"
+      ],
+      "rollout": "Not deployed; M1-03 runtime checks precede selected-mandate rollout",
+      "recoveryAndRollback": "Remove desk mount/actions/read model; retain portal scope correction and authoritative review records",
+      "effortRange": "Local slice approximately 3–7 engineer-days; full M1 remains 4–8 engineer-weeks hypothesis",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Local runtime prerequisite satisfied on 2026-09-30.",
+      "evidence": [
+        "what-next/moat-execution/2026-09-27-run-01/focused-tests-final.json",
+        "what-next/moat-execution/2026-09-27-run-01/domain-tests.json",
+        "what-next/moat-execution/2026-09-27-run-01/typecheck-final.log",
+        "what-next/moat-execution/2026-09-27-run-01/scoped-lint.log",
+        "what-next/moat-execution/2026-09-27-run-01/service-boundary.json"
+      ],
+      "blockers": [],
+      "nextAction": "M1-03 local runtime passed; continue its operational evidence gates.",
+      "existingProgramLinks": [
+        "FA-ACCOUNTANT-ACCESS",
+        "FA-ACCOUNTANT-PORTAL",
+        "FA-CLOSE-EVIDENCE-ACCEPT"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "PASSED",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M1-02",
+      "recommendation": "M1/prerequisite",
+      "phase": "P1",
+      "status": "PREPARATION_COMPLETE",
+      "customerOutcome": "Operator can rehearse financial onboarding and quantify productive use",
+      "smallestUsefulSlice": "Control-total worksheet, source-mapped outcome reducer and observation forms",
+      "existingFoundation": "Master-data importer, invitation/outbox and missing-evidence source events",
+      "preciseGap": "Master-data imports exclude financial openings; referral counts do not measure repeat work",
+      "responsibleRole": "Data engineer + accountant + customer success analyst",
+      "affectedFilesOrServices": [
+        "what-next/moat-execution/2026-09-27-run-01/pilot-outcomes.mjs",
+        "what-next/moat-execution/2026-09-27-run-01/pilot-outcomes-template.json",
+        "what-next/moat-execution/2026-09-27-run-01/onboarding-control-totals.csv",
+        "what-next/moat-execution/2026-09-27-run-01/customer-observation.csv"
+      ],
+      "dependencies": [
+        "M0-01"
+      ],
+      "entryConditions": "Existing source types and workflow milestones identified",
+      "contracts": {
+        "data": "Consented normalized event worksheet; source refs, cycle IDs, support minutes, control totals per currency/domain",
+        "api": "Offline pilot-outcomes.mjs input JSON to summary JSON; no production endpoint",
+        "event": "Verified invitation delivery and missing-evidence events normalized; no new source truth",
+        "access": "Operator verifies tenant/client consent; no personal evidence copied to repository",
+        "ui": "Onboarding checklist, CSV observation forms and outcome summary",
+        "invariants": "Operator-verified tenant/client event references; consent and onboarding refs; delivery distinct from sent; reviewed request/response chain; distinct business cycles; actual payment ref for paid continuation; exact control totals by currency/domain",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "Offline reducer rejects cross-tenant/unsupported outcomes and conflicting retries",
+        "Templates empty of fabricated customer observations",
+        "Opening operations remain domain-owned and require signed reconciliation"
+      ],
+      "verification": [
+        "3 outcome reducer tests",
+        "Protocol and empty-template inspection"
+      ],
+      "rollout": "Use only consented exports in authorized storage; no product event store added",
+      "recoveryAndRollback": "Correct normalization by versioned re-export; never rewrite source audit history",
+      "effortRange": "2–4 engineer-days preparation; 3–10 days per rehearsal subject to source quality",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Customer data/accountant sign-off unknown",
+      "evidence": [
+        "what-next/moat-execution/2026-09-27-run-01/pilot-outcomes-tests.log",
+        "what-next/moat-execution/2026-09-27-run-01/pilot-outcomes-template.json",
+        "what-next/moat-execution/2026-09-27-run-01/onboarding-control-totals.csv"
+      ],
+      "blockers": [
+        "B4",
+        "B5",
+        "B6"
+      ],
+      "nextAction": "Collect consented samples and perform isolated domain opening rehearsal; automate metrics only after source validation",
+      "existingProgramLinks": [
+        "NTF-ACCOUNTANT-INVITE/DELIVER",
+        "master-data migration owner"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "ARTIFACTS_PREPARED",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M1-03",
+      "recommendation": "M1/M2",
+      "phase": "P2/P3",
+      "status": "LOCAL_RUNTIME_VERIFIED_EXTERNAL_GATES_OPEN",
+      "customerOutcome": "Prove complete client evidence-to-close task on actual runtime boundaries",
+      "smallestUsefulSlice": "Two clients, request/delivery/response/review/payment proof/export with current grants",
+      "existingFoundation": "M1-01 plus existing close, delivery and payment owners",
+      "preciseGap": "Local runtime gates passed; real rail/payment corpus, recipient delivery recovery, reconciled customer inputs and pilot observations remain open.",
+      "responsibleRole": "QA lead + accountant + SRE",
+      "affectedFilesOrServices": [
+        "services/accounting/accountant-work-desk.service.ts",
+        "services/accounting/accountant-work-desk.contracts.ts",
+        "components/accounting/AccountantWorkDesk.tsx",
+        "components/accounting/accountant-work-desk-copy.ts",
+        "components/accounting/AccountantPortfolio.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx"
+      ],
+      "dependencies": [
+        "M1-01",
+        "M1-02",
+        "M2-01"
+      ],
+      "entryConditions": "Owned local browser/database fixtures verified for engineering; customer/rail conditions apply separately to operational completion.",
+      "contracts": {
+        "data": "Two-client runtime fixture, actual request/response/acceptance and close/export evidence",
+        "api": "Existing request, response, acceptance, data-trust export and provider boundaries",
+        "event": "Compare committed event/outbox/source IDs, not UI success messages",
+        "access": "Matrix of expired/revoked/current grants, modules, fresh auth and concurrent commands",
+        "ui": "Complete client task in EN/FR keyboard/browser, including unanswered request and delivery recovery",
+        "invariants": "One client identity retained from list through export; current grant/module/fresh-auth checks; source records and delivery unknown states visible; accepted response not equated to settlement/certification",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "EN/FR keyboard workflow succeeds with two clients and narrow viewport",
+        "Expired/revoked/module-denied reads and writes fail safely",
+        "PostgreSQL concurrent acceptance and retries have one authoritative result",
+        "Actual changed source invalidates/supersedes proof; correct-client export verified",
+        "Close unanswered-request and delivery visibility gaps against pilot task evidence"
+      ],
+      "verification": [
+        "12 PostgreSQL authority/integrity/rollback/concurrency checks passed",
+        "EN/FR Chromium keyboard, narrow viewport, revoked review, two-client reload/download passed",
+        "4 real PostgreSQL ledger/export/invalidation checks passed; certified initial snapshot seeded",
+        "206 Jest tests in 11 suites; typecheck/lint/boundary passed"
+      ],
+      "rollout": "Selected consenting mandates with named support owner",
+      "recoveryAndRollback": "Revoke pilot access/module and preserve histories; correct via owning services",
+      "effortRange": "5–15 engineer-days plus any identified gap fixes",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Real rail corpus, customer inputs/consent, delivery operator and pilot observations not supplied.",
+      "evidence": [
+        "what-next/moat-execution/2026-09-30-run-01/postgres.json",
+        "what-next/moat-execution/2026-09-30-run-01/browser.json",
+        "what-next/moat-execution/2026-09-30-run-01/browser-en.png",
+        "what-next/moat-execution/2026-09-30-run-01/browser-fr.png",
+        "what-next/moat-execution/2026-09-30-run-01/proof-export.json",
+        "what-next/moat-execution/2026-09-30-run-01/checks.json",
+        "what-next/moat-execution/2026-09-30-run-01/regression-tests.json",
+        "what-next/moat-execution/2026-09-30-run-01/service-boundary.json",
+        "what-next/moat-execution/2026-09-30-run-01/source-final.json"
+      ],
+      "blockers": [
+        "B3",
+        "B4",
+        "B5",
+        "B6"
+      ],
+      "nextAction": "Complete selected-rail, customer input, delivery recovery and pilot evidence; retain local verified checkpoint. Screen-reader and backup-restore release checks remain open.",
+      "existingProgramLinks": [
+        "FA-CLOSE-EVIDENCE-ACCEPT",
+        "FA-ACCOUNTANT-PORTAL",
+        "NTF delivery",
+        "PR-17"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "PASSED_REAL_LOCAL_RUNTIME",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      },
+      "dependencyDisposition": {
+        "engineering": "M1-01 available; local runtime completed",
+        "operational": [
+          "M1-02 reconciled inputs and customer onboarding",
+          "M2-01 actual selected rail and permissioned corpus"
+        ]
+      },
+      "acceptanceEvidence": {
+        "bilingualWorkflow": "PASS_LOCAL_BROWSER; screen-reader review open",
+        "currentAuthority": "PASS_LOCAL_POSTGRES_AND_BROWSER",
+        "concurrencyReplay": "PASS_LOCAL_POSTGRES",
+        "changedSourceAndExport": "PASS_LOCAL; certified snapshot initial condition seeded",
+        "unansweredAndDelivery": "VISIBILITY_IMPLEMENTED_VERIFIED; real delivery recovery and pilot validation open"
+      },
+      "report": "docs/moat/roadmap/M1_03_EXECUTION_REPORT.md"
+    },
+    {
+      "id": "M2-01",
+      "recommendation": "M2",
+      "phase": "P1",
+      "status": "EXTERNAL_BLOCKED",
+      "customerOutcome": "Choose a real format/rail based on merchant pain and reliable evidence",
+      "smallestUsefulSlice": "Completed selection dossier with permissioned edge-case corpus",
+      "existingFoundation": "Generic HMAC ingestion and reconciliation exist",
+      "preciseGap": "Named-provider support and operational coverage not established",
+      "responsibleRole": "Merchant treasury + integration owner",
+      "affectedFilesOrServices": [
+        "what-next/moat-execution/2026-09-27-run-01/payment-proof-corpus.csv",
+        "services/payments/adapters/mobile-money-hmac.adapter.ts"
+      ],
+      "dependencies": [
+        "M0-01"
+      ],
+      "entryConditions": "Customer/source permission and integration owner available",
+      "contracts": {
+        "data": "Permissioned original rail/statement samples, currency/timezone, fee/settlement/reversal control totals",
+        "api": "Verified format/protocol selected from customer dossier; deliberately unspecified until evidence",
+        "event": "Distinguish provider acceptance, confirmation, settlement and unknown",
+        "access": "Source use permission, isolated fixture and credential owner before activation",
+        "ui": "Selection dossier and payment-proof corpus; no new live-provider badge",
+        "invariants": "Recorded, ingested, confirmed, settled, fee, reversal and unknown remain distinct; actual protocol version/currency/timezone/identifiers documented",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "Actual statement/rail selected with reason",
+        "Sample control totals, settlement/fee/reversal evidence and operator/contract recorded"
+      ],
+      "verification": [
+        "Review selection dossier and source permission",
+        "Reconcile corpus counts and amounts"
+      ],
+      "rollout": "No live activation from a generic adapter label",
+      "recoveryAndRollback": "Withdraw unsupported selection and preserve corpus provenance",
+      "effortRange": "2–5 engineer-days discovery",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Provider contract/credentials/customer access unknown",
+      "evidence": [],
+      "blockers": [
+        "B3",
+        "B4",
+        "B6"
+      ],
+      "nextAction": "Merchant and integration owner supply dossier defined in validation protocols",
+      "existingProgramLinks": [
+        "PR-17",
+        "provider operations program"
+      ],
+      "maturity": {
+        "implemented": false,
+        "localVerification": "NOT_RUN",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M2-02",
+      "recommendation": "M2",
+      "phase": "P2/P3",
+      "status": "DEPENDENCY_GATED",
+      "customerOutcome": "Reliable selected-rail reconciliation and source-linked close resolution",
+      "smallestUsefulSlice": "One cohort/format with explicit exception ownership and recovery",
+      "existingFoundation": "Existing ingestion, closure, certification and active reconciliation work",
+      "preciseGap": "Sustained real-rail operation and operating economics unverified",
+      "responsibleRole": "Existing PR-17 owner + treasury + SRE",
+      "affectedFilesOrServices": [
+        "services/payments/provider-event.service.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/accounting/close-assurance-pack.service.ts"
+      ],
+      "dependencies": [
+        "M2-01",
+        "M1-02"
+      ],
+      "entryConditions": "Selected permissioned format, operator and isolated fixture",
+      "contracts": {
+        "data": "Existing provider-event/reconciliation/source-ledger/close records; exact amounts and lineage",
+        "api": "Existing ingestion, exception closure, proof invalidation and close-pack services",
+        "event": "Retain idempotent source events/outbox and correction/invalidation lifecycle",
+        "access": "Tenant/rail scope, maker-checker, fresh auth where required; source services retain write authority",
+        "ui": "Existing reconciliation/finance workbench with unresolved-case owner, age and recovery states",
+        "invariants": "Existing idempotency, exact monetary values, maker-checker and owning-domain writes; replay/delivery unknowns; source corrections invalidate/supersede close proof",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "No lost events or unexplained control-total difference",
+        "Every resolution retains lineage and seeded wrong match cannot silently finalize",
+        "Unknown/unmatched cases and support costs measurable",
+        "Recovery and close regeneration demonstrated"
+      ],
+      "verification": [
+        "Selected-rail corpus",
+        "Concurrent/replay/late/fee/reversal tests",
+        "Operational 30-day cohort"
+      ],
+      "rollout": "One merchant cohort and chosen format; expand only after threshold review",
+      "recoveryAndRollback": "Pause ingestion/automation via existing controls; retain unresolved ownership and evidence",
+      "effortRange": "4–8 engineer-weeks complete-scope hypothesis; reuse active implementation",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Provider certification and support delays unknown",
+      "evidence": [
+        "journal-close invalidation cases in focused-tests-final.json"
+      ],
+      "blockers": [
+        "B3",
+        "B6"
+      ],
+      "nextAction": "Resume existing PR-17 integration after dossier acceptance; do not fork reconciliation",
+      "existingProgramLinks": [
+        "PR-17",
+        "FA-CASH-COMMAND"
+      ],
+      "maturity": {
+        "implemented": false,
+        "localVerification": "NOT_RUN",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M3-01",
+      "recommendation": "M3",
+      "phase": "P4 preparation",
+      "status": "LOCALLY_VERIFIED_EXPERIMENT",
+      "customerOutcome": "Explain cash-buffer and lead-time consequences before changing records",
+      "smallestUsefulSlice": "Isolated 13-week base/delay/purchase/transfer calculation with frozen versions",
+      "existingFoundation": "Cash Command and stock/obligation sources exist; source exports can support manual trial",
+      "preciseGap": "General saved scenario/actual lifecycle not established",
+      "responsibleRole": "Finance product + data engineer",
+      "affectedFilesOrServices": [
+        "what-next/moat-execution/2026-09-27-run-01/cash-planning-prototype.mjs",
+        "what-next/moat-execution/2026-09-27-run-01/cash-planning-synthetic-input.json",
+        "what-next/moat-execution/2026-09-27-run-01/cash-planning-prototype.test.mjs"
+      ],
+      "dependencies": [
+        "M0-01"
+      ],
+      "entryConditions": "Synthetic fixture only; real fieldwork requires reconciled consented inputs",
+      "contracts": {
+        "data": "Versioned source-backed single-currency assumptions and later actuals; independent assumption/input hashes",
+        "api": "Offline compareScenarios(input) and CLI with exclusive output filename",
+        "event": "None; prediction output never posts a business event",
+        "access": "Only consented exports in authorized storage; synthetic repository fixture",
+        "ui": "Reviewable JSON scenarios, 13-week balances, buffer breaches, late choices and missing-actual denominators",
+        "invariants": "Single currency; exact minor-unit strings/BigInt; dated obligations/receipts; source-backed choices/lead time/buffer; no DB/network/commands; separate assumption/input hashes; actual denominator explicit",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "13-week exact balances and within-week buffer breach detection",
+        "Mixed currency/invalid date/duplicate/missing provenance rejected",
+        "Assumption hash stable when later actuals added",
+        "Beyond-horizon receipts and late choices flagged; no claims of optimization or real demand"
+      ],
+      "verification": [
+        "5 node:test cases",
+        "Synthetic output labeled as prototype"
+      ],
+      "rollout": "Offline consented experiment only; production feature remains gated",
+      "recoveryAndRollback": "Supersede output version; no authoritative records to roll back",
+      "effortRange": "2–5 engineer-days prototype preparation",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Six weekly merchant cycles and input preparation additional",
+      "evidence": [
+        "what-next/moat-execution/2026-09-27-run-01/prototype-tests.log",
+        "what-next/moat-execution/2026-09-27-run-01/cash-planning-synthetic-output.json"
+      ],
+      "blockers": [
+        "B4",
+        "B5"
+      ],
+      "nextAction": "Run M3 field protocol with eight consenting merchants; preserve frozen versions",
+      "existingProgramLinks": [
+        "FA-CASH-COMMAND",
+        "FA-STOCK-TO-CASH"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "PASSED",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M3-02",
+      "recommendation": "M3",
+      "phase": "P4 conditional build",
+      "status": "VALIDATION_GATED",
+      "customerOutcome": "Persist useful forecasts and evaluate approved choices against actuals",
+      "smallestUsefulSlice": "One proven merchant workflow with immutable scenario versions and approved domain handoff",
+      "existingFoundation": "M3-01 and existing domain owners",
+      "preciseGap": "Repeated decision value and adequate source coverage unproven",
+      "responsibleRole": "Product + Cash Command + inventory/AP owners",
+      "affectedFilesOrServices": [
+        "services/cash-command",
+        "existing inventory/AR/AP approval services"
+      ],
+      "dependencies": [
+        "M3-01"
+      ],
+      "entryConditions": "Six-cycle thresholds pass and opening/obligation coverage reconciled",
+      "contracts": {
+        "data": "Conditional immutable scenario/version/actual schema after data-readiness review",
+        "api": "Conditional Cash Command read model and existing purchase/transfer/payment approval handoffs",
+        "event": "Owning domain decides authoritative event; forecast and proposed decision remain distinct",
+        "access": "Tenant-local planning role and aggregate payroll scope; explicit review before domain mutation",
+        "ui": "Base/scenario comparison, assumptions and later actuals within existing Cash Command",
+        "invariants": "Versioned assumptions/forecast actual comparison; predictions never become ledger facts; existing approval services own mutations",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "6/8 merchants use at least four cycles",
+        "4 consequential decisions",
+        "20% comparable absolute-error improvement",
+        "Production schema/access/recovery plan reviewed after validation"
+      ],
+      "verification": [
+        "Actual cycle worksheets",
+        "Prospective baseline/error cohort",
+        "Then domain integration tests"
+      ],
+      "rollout": "One segment and one currency per plan; no general optimization",
+      "recoveryAndRollback": "Disable scenario creation; preserve prior versions and domain decisions",
+      "effortRange": "8–14 engineer-weeks conditional full-slice estimate",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "At least six observed cycles",
+      "evidence": [],
+      "blockers": [
+        "B4",
+        "B5"
+      ],
+      "nextAction": "Complete field experiment before persistence design is promoted to implementation",
+      "existingProgramLinks": [
+        "FA-CASH-COMMAND"
+      ],
+      "maturity": {
+        "implemented": false,
+        "localVerification": "NOT_RUN",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M4-01",
+      "recommendation": "M4",
+      "phase": "P5 preparation",
+      "status": "PREPARATION_COMPLETE",
+      "customerOutcome": "Ready-to-run single relationship task and delivery/discrepancy contract",
+      "smallestUsefulSlice": "PO date proposal, buyer review and limited decision visibility",
+      "existingFoundation": "Signed supplier envelope/proposals and purchasing review exist",
+      "preciseGap": "Invite delivery and broader discrepancy/remittance chain not proven",
+      "responsibleRole": "Purchasing + integration + privacy + customer success",
+      "affectedFilesOrServices": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "what-next/moat-execution/2026-09-27-run-01/supplier-relationship-observation.csv"
+      ],
+      "dependencies": [
+        "M0-01"
+      ],
+      "entryConditions": "Preparation can proceed without external writes",
+      "contracts": {
+        "data": "One relationship grant, invitation attempt, proposal, buyer decision and discrepancy evidence",
+        "api": "Existing supplier PO token/proposal/review owners; transport contract selected before delivery implementation",
+        "event": "Durable attempt/retry/outbox evidence; invite event alone is not recipient delivery",
+        "access": "Revocable relationship scope; recipient privacy; no supplier authority over AP/stock/payment/bank data",
+        "ui": "Supplier proposal and limited buyer decision; explicit expired/failed/unknown states",
+        "invariants": "Relationship-specific grant/recipient, durable outbox attempt, explicit unknown/failure; idempotent proposal; purchasing retains authority; no supplier bank/AP/stock/payment writes",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "Delivery/retry/revocation/privacy contract documented",
+        "One useful discrepancy type selected provisionally",
+        "Tasks, denominators and stop criteria ready; no claimed activation"
+      ],
+      "verification": [
+        "Protocol and source authority-boundary review"
+      ],
+      "rollout": "Activate only after reachable cohort and principal workflow capacity",
+      "recoveryAndRollback": "Revoke relationship token, stop attempts, preserve proposals and buyer decisions",
+      "effortRange": "2–4 engineer-days preparation; full slice 6–12 engineer-weeks conditional",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Reachability, transport and permissioned task discovery unknown",
+      "evidence": [
+        "what-next/moat-execution/2026-09-27-run-01/supplier-relationship-observation.csv"
+      ],
+      "blockers": [
+        "B6",
+        "B7"
+      ],
+      "nextAction": "Validate known supplier reachability and date-discrepancy need; schedule implementation after M1/M2 decision",
+      "existingProgramLinks": [
+        "supplier PO workflow",
+        "analytics-network-program"
+      ],
+      "maturity": {
+        "implemented": true,
+        "localVerification": "ARTIFACTS_PREPARED",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M4-02",
+      "recommendation": "M4",
+      "phase": "P5 conditional build/fieldwork",
+      "status": "VALIDATION_GATED",
+      "customerOutcome": "Repeat useful supplier collaboration and prove second-relationship benefit",
+      "smallestUsefulSlice": "Reliable one-relationship journey before cross-buyer identity",
+      "existingFoundation": "M4-01 and existing proposal/approval boundaries",
+      "preciseGap": "No repeat-use or genuine relationship-overlap evidence",
+      "responsibleRole": "Purchasing product + privacy + customer success",
+      "affectedFilesOrServices": [
+        "existing supplier invitation/proposal/review owners",
+        "relationship identity design only after evidence"
+      ],
+      "dependencies": [
+        "M4-01"
+      ],
+      "entryConditions": "Principal workflow capacity; three buyers/eight reachable suppliers; successful delivery/task scope",
+      "contracts": {
+        "data": "Repeated eligible tasks and separately granted buyer relationships; identity schema conditional",
+        "api": "Extend existing relationship workflow only after useful single-task proof",
+        "event": "Per-relationship event lineage and retry; no globally visible supplier activity feed",
+        "access": "Identity match never grants another buyer; separate consent and disclosure; revoke one relationship independently",
+        "ui": "Second useful relationship with limited disclosure; no public directory or ratings",
+        "invariants": "Separate revocable relationship grants and safe disclosure; identity linking cannot authorize another buyer; no public network discovery",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "60% second eligible-task completion",
+        "30% median task-time improvement",
+        "Support ceiling met",
+        "Only then three suppliers each serving two buyers with easier second activation"
+      ],
+      "verification": [
+        "Real supplier observation sheets",
+        "Isolation/revocation/delivery recovery tests",
+        "Second-relationship timing"
+      ],
+      "rollout": "Known relationships only; gated overlap cohort later",
+      "recoveryAndRollback": "Revoke individual relationship without affecting other buyers; retain auditable proposals",
+      "effortRange": "6–12 engineer-weeks narrow end-to-end hypothesis; network expansion not estimated",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Repeat transaction timing and reachable cohort unknown",
+      "evidence": [],
+      "blockers": [
+        "B4",
+        "B6",
+        "B7"
+      ],
+      "nextAction": "Single-relationship proof before reusable identity implementation",
+      "existingProgramLinks": [
+        "analytics-network-program",
+        "supplier PO workflow"
+      ],
+      "maturity": {
+        "implemented": false,
+        "localVerification": "NOT_RUN",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    },
+    {
+      "id": "M5-01",
+      "recommendation": "M1/M2/M3/M4",
+      "phase": "P3/P4/P5 decisions",
+      "status": "EXTERNAL_BLOCKED",
+      "customerOutcome": "Investment and release decision based on real customer value and contribution",
+      "smallestUsefulSlice": "Separate opportunity decisions using prepared scorecards",
+      "existingFoundation": "Assessment thresholds and current local artifacts",
+      "preciseGap": "Demand, paid interest, support ceiling and staffing not evidenced",
+      "responsibleRole": "Product owner + release lead + qualified accountant",
+      "affectedFilesOrServices": [
+        "docs/moat/roadmap/MOAT_VALIDATION_PROTOCOLS.md",
+        "what-next/moat-execution/2026-09-27-run-01/customer-observation.csv"
+      ],
+      "dependencies": [
+        "M1-03",
+        "M2-02"
+      ],
+      "entryConditions": "Named operators, authorized participants, consent, baseline, written price/cost ceiling",
+      "contracts": {
+        "data": "Actual cohort denominators, censored/unresolved ages, paid acceptance, support costs and decision log",
+        "api": "Evidence review and offline scorecards; no autonomous release endpoint",
+        "event": "Evidence-backed decision record; no simulated activation counted",
+        "access": "Named decision owner and consented data; accounting/security stop conditions",
+        "ui": "Opportunity-specific continue/redesign/stop scorecard and release checklist",
+        "invariants": "No mock activity passes operational/commercial gates; denominators/dropouts/help disclosed; each opportunity has independent decision",
+        "detailedSpecification": "docs/moat/roadmap/MOAT_EXECUTION_PLAN.md"
+      },
+      "acceptanceCriteria": [
+        "M1 two-close-cycle thresholds met or redesign/stop recorded",
+        "M2 five merchants/30 days/1000 transactions with safety/cost conditions",
+        "M3/M4 pass their own thresholds before expansion",
+        "Release evidence separate from commercial result"
+      ],
+      "verification": [
+        "Cohort source evidence",
+        "Price acceptance/payment/support cost proof",
+        "QA/accountant/SRE review"
+      ],
+      "rollout": "Controlled expansion only after accountable decision",
+      "recoveryAndRollback": "Stop enrollment and unsafe automation; retain support, export and consent obligations",
+      "effortRange": "2–5 product/analysis days per decision plus observation operations",
+      "capacityAssumptions": "Two domain engineers, one frontend engineer, shared QA/design/product, part-time accountant/security/SRE; unconfirmed staffing; one principal workflow plus one experiment",
+      "externalLeadTime": "Two close cycles, 30 payment days, six planning cycles; may exceed 90 days",
+      "evidence": [],
+      "blockers": [
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "B7",
+        "B8"
+      ],
+      "nextAction": "Provide named pilot owners and actual evidence; outreach needs explicit authorization",
+      "existingProgramLinks": [
+        "existing enterprise release gate"
+      ],
+      "maturity": {
+        "implemented": false,
+        "localVerification": "NOT_RUN",
+        "operationalValidation": "NOT_ESTABLISHED",
+        "commercialValidation": "NOT_ESTABLISHED",
+        "released": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "at": "2026-09-30T17:39:46.772Z",
+  "sourceBefore": {
+    "services/accounting/close-assurance-pack.service.ts": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5"
+  },
+  "syntheticOnly": true,
+  "declarationImpact": {
+    "baselineFile": "evidence/inventory-freshness-source-before-acaa82bf-8889-4d00-b86e-1e0c8879d47a.json",
+    "before": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "after": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "changed": [
+      "inventoryAnnexFromResult",
+      "evaluateInventoryAnnexFreshness",
+      "certificationBlockers"
+    ],
+    "allOtherTopLevelDeclarationsExactlyPreserved": true
+  },
+  "passed": false,
+  "error": "The expression evaluated to a falsy value:\n\n  assert.ok(run.accountingPeriodId)\n",
+  "sourceAfter": {
+    "services/accounting/close-assurance-pack.service.ts": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5"
+  },
+  "sourceStable": true
+}

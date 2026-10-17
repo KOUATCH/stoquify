@@ -1,0 +1,2 @@
+const path=require('node:path');
+module.exports={rootDir:path.resolve(__dirname,'../../../../..'),roots:['<rootDir>/services/onboarding/__tests__'],testEnvironment:'node',moduleNameMapper:{'^@/(.*)$':'<rootDir>/$1','^server-only$':'<rootDir>/scripts/server-only-node-shim.js'},transform:{'^.+\\.(js|jsx|ts|tsx)$':'next/dist/build/swc/jest-transformer'},testMatch:['**/opening-readiness.postgres.test.ts'],testTimeout:30000,collectCoverage:false};

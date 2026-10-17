@@ -5,7 +5,8 @@ import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError } from "@/services/_shared/action-errors"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { createAccountingSourceLink } from "@/services/accounting/source-link.service"
-import { recordReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { JournalReversalSnapshotChangedError, lockJournalReversalCatalogInTx, lockJournalReversalClosePeriodsInTx } from "@/services/accounting/journal-reversal-order.service"
 import { assertSensitiveActionAllowed, auditSensitiveActionDecision, evaluateSensitiveAction, type SensitiveActionDecision } from "@/services/controls/sensitive-action.service"
 import { loadVerifiedPostedSuspenseInTx, type SuspenseCorrectionControl } from "./payment-suspense-correction.service"
 import { suspenseResolutionManifestEvidenceInTx } from "./payment-suspense-resolution-evidence.service"
@@ -21,6 +22,7 @@ type Controlled<T> = { value: T; denied?: never } | { denied: SensitiveActionDec
 const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.InputJsonObject
 const nowOf = (control: SuspenseCorrectionControl) => control.now ?? new Date()
 async function transaction<T>(work: (tx: Tx) => Promise<Controlled<T>>) {
+  for (let attempt = 0; ; attempt += 1) {
   try {
     const result = await db.$transaction(work, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
     if (result.denied) {
@@ -30,9 +32,14 @@ async function transaction<T>(work: (tx: Tx) => Promise<Controlled<T>>) {
     }
     return result.value
   } catch (error) {
+    if (error instanceof JournalReversalSnapshotChangedError) {
+      if (attempt < 2) continue
+      throw new ConflictError("Recovery evidence changed concurrently. Refresh or retry the same request.")
+    }
     if (error instanceof Prisma.PrismaClientKnownRequestError && (["P2002", "P2034"].includes(error.code)
       || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code))))) throw new ConflictError("Recovery evidence changed concurrently. Refresh or retry the same request.")
     throw error
+  }
   }
 }
 async function actor(tx: Tx, control: SuspenseCorrectionControl, itemId?: string) {
@@ -111,8 +118,13 @@ export async function reviewSuspenseResolutionRecovery(itemId: string, proposalI
 }
 export async function decideSuspenseResolutionRecovery(input: SuspenseResolutionRecoveryDecision, control: SuspenseCorrectionControl) {
   const command = suspenseResolutionRecoveryDecisionSchema.parse(input)
+  const suppliedControl = control, startedAt = Date.now(), suppliedNow = nowOf(control).getTime()
+  const controlNow = () => new Date(suppliedNow + Math.max(0, Date.now() - startedAt))
   return transaction(async tx => {
+    const control = { ...suppliedControl, now: controlNow() }
+    if (command.decision === "APPROVE") await lockJournalReversalCatalogInTx(tx, control.organizationId, db)
     await actor(tx, control, command.suspenseItemId)
+    control.now = controlNow()
     const row = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: command.proposalId, organizationId: control.organizationId, externalId: command.suspenseItemId, source: "SUSPENSE_POST", status: "PROCESSED" } })
     const proposed = payload(row), draft = suspenseResolutionRecoveryDraftSchema.parse(proposed.draft)
     if (proposed.kind !== "SUSPENSE_RESOLUTION_RECOVERY_PROPOSED_V1" || draft.suspenseItemId !== command.suspenseItemId || typeof proposed.proposedById !== "string" || typeof proposed.clearingPostedById !== "string") throw new ConflictError("Recovery maker evidence requires review.")
@@ -134,6 +146,22 @@ export async function decideSuspenseResolutionRecovery(input: SuspenseResolution
     const current = await preview(tx, draft, control)
     if (suspenseMetadata(current.item.metadata).resolutionRecoveryProposalId !== row!.id || current.financialHash !== proposed.financialHash
       || suspenseEvidenceHash({ proposalHash: row!.payloadHash, currentRevision: current.revision }) !== command.expectedRevision) throw new ConflictError("Recovery evidence changed. Refresh the independent review.")
+    const affectedPeriodIds = command.decision === "APPROVE" ? await lockJournalReversalClosePeriodsInTx(tx, control.organizationId, {
+      originalPeriodId: current.clearing.periodId, reversalPeriodId: current.period.id,
+      originalEntryDate: current.clearing.entryDate, reversalDate: current.date,
+      includeLaterPeriods: current.clearing.lines.some(line => line.account.syscohadaClass?.startsWith("3")),
+      // Close's getPaymentReconciliationDashboardData collector is tenant-wide.
+      includeAllPeriods: true,
+      additionalEvidenceDates: current.item.reconciliationRun ? [current.item.reconciliationRun.businessDate] : [],
+      additionalPeriodIds: current.clearing.postingBatch?.periodId ? [current.clearing.postingBatch.periodId] : [],
+    }, db) : []
+    // Recheck both independent approvals after all waits, advancing even a
+    // caller-supplied control clock rather than extending its freshness.
+    control.now = controlNow()
+    for (const [action, subject] of [["payment.reconciliation.suspense.post", proposed.proposedById], ["accounting.journal.reverse", proposed.clearingPostedById]] as const) {
+      const decision = authorization(control, command.suspenseItemId, action, subject)
+      await auditSensitiveActionDecision(tx, decision); if (!decision.allowed) return { denied: decision }
+    }
     const now = nowOf(control), base = { commandHash, suspenseItemId: current.item.id, proposalId: row!.id, proposedById: proposed.proposedById, approvedById: control.actorId,
       decidedAt: now.toISOString(), reason: command.reason, allocationId: current.proof.allocationId, resolutionDecisionId: current.proof.decisionId,
       resolutionDecisionHash: current.proof.decisionHash, financialHash: current.financialHash, clearingJournalId: current.clearing.id, clearingJournalHash: correctionJournalHash(current.clearing), reviewedRevision: command.expectedRevision }
@@ -167,7 +195,7 @@ export async function decideSuspenseResolutionRecovery(input: SuspenseResolution
     await tx.paymentException.updateMany({ where: { organizationId: control.organizationId, suspenseItemId: current.item.id, status: { not: "DISMISSED" } }, data: { status: "REOPENED", resolvedAt: null } })
     if (run) await tx.reconciliationRun.update({ where: { id: run.id }, data: { status: "NEEDS_REVIEW", signedAt: null, signedById: null, certificateHash: null, certificatePayload: Prisma.JsonNull,
       metadata: json({ ...suspenseMetadata(run.metadata), immutableAfterSignoff: false, signedSourceVersionHash: null, resolutionRecoveryInvalidation: { receiptId, suspenseItemId: current.item.id, at: now.toISOString() } }) } })
-    await recordReversedJournalCloseInvalidationsInTx(tx, control.organizationId, { originalJournalEntryId: clearing.id, reversalJournalEntryId: reversal.id, originalPeriodId: clearing.periodId, reversalPeriodId: current.period.id, reversalDate: current.date, correlationId: receiptId }, { actorId: control.actorId, now })
+    await recordOrderedReversedJournalCloseInvalidationsInTx(tx, control.organizationId, { originalJournalEntryId: clearing.id, reversalJournalEntryId: reversal.id, originalPeriodId: clearing.periodId, reversalPeriodId: current.period.id, reversalDate: current.date, correlationId: receiptId, affectedPeriodIds }, { actorId: control.actorId, now })
     await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: "SUSPENSE_RESOLUTION_RECOVER", resourceType: "SuspenseItem", resourceId: current.item.id, journalEntryId: reversal.id, postingBatchId: batch.id,
       message: "Clearing reversed through independent source review; original suspense posting retained and obligation reopened", metadata: json({ receiptId, decisionId, allocationId: current.proof.allocationId }) } })
     await assertSuspenseResolutionRecoveryInTx(tx, control.organizationId, current.item.id, current.proof.allocationId)

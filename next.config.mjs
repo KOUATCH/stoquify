@@ -7,6 +7,11 @@ const nextDistDir = configuredDistDir || (process.env.NODE_ENV === 'development'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: nextDistDir,
+  typescript: {
+    tsconfigPath: process.env.NODE_ENV === 'development'
+      ? process.env.STOQUIFY_DEV_TSCONFIG || 'tsconfig.json'
+      : 'tsconfig.json',
+  },
   serverExternalPackages: [
     'argon2',
     '@better-auth/core',
@@ -30,6 +35,10 @@ const nextConfig = {
   poweredByHeader: false,
   devIndicators: false,
   webpack: (config, { isServer, dev, webpack }) => {
+    // Keep Fast Refresh's cache in this compiler process. Persisted webpack
+    // packs must not resurrect an older server/client module graph after restart.
+    if (dev) config.cache = { type: 'memory' };
+
     // Exclude server-only password hashing from client-side bundling
     if (!isServer) {
       config.resolve.fallback = {

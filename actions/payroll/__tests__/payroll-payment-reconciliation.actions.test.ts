@@ -54,6 +54,7 @@ jest.mock("@/lib/security/auth-session", () => {
 jest.mock("@/lib/logger", () => ({
   logger: {
     error: jest.fn(),
+    warn: jest.fn(),
   },
 }))
 
@@ -119,9 +120,23 @@ function rbacContext(userId = "controller-1", permissions: string[] = ["payments
 }
 
 describe("payroll payment reconciliation actions", () => {
+  it("rejects manual hash submissions at the browser action boundary", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("controller-1", ["payroll.payments.reconcile"]));
+    const result = await recordPayrollPaymentSettlementEvidenceAction({ payrollPaymentBatchId: "batch-1", evidenceHash: "client-proof", sourceRegisterHash: "client-register", idempotencyKey: "manual" });
+    expect(result.success).toBe(false);
+    expect(mockRecordPayrollPaymentSettlementEvidence).not.toHaveBeenCalled();
+  });
+  it("accepts guided record selection without requiring a client evidence hash", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("controller-1", ["payroll.payments.reconcile"]));
+    const proofSelection = { payrollRunId: "run-1", runVersion: 3, runRevision: "run-revision", matchRecordId: "match-1", matchRevision: "match-revision" };
+    const result = await recordPayrollPaymentSettlementEvidenceAction({ payrollPaymentBatchId: "batch-1", proofSelection, settlementAmount: "100.00", expectedBalanceEventId: null, idempotencyKey: "guided", organizationId: "foreign", sessionId: "forged-session", sessionToken: "forged-token" });
+    expect(result.success).toBe(true);
+    expect(mockRecordPayrollPaymentSettlementEvidence).toHaveBeenCalledWith(expect.objectContaining({ proofSelection, evidenceHash: "GUIDED_RECORDS_V1", organizationId: "org-1", sessionId: "server-session", sessionToken: "server-token" }));
+    expect(mockRequireFreshAuth).toHaveBeenCalled();
+  });
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
+    mockRequireFreshAuth.mockResolvedValue({ claims: { sessionId: "server-session", sessionToken: "server-token", lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
     mockObserveModuleAccess.mockResolvedValue(moduleDecision())
     mockGetPayrollPaymentReconciliation.mockResolvedValue({
       organizationId: "org-1",
@@ -149,6 +164,7 @@ describe("payroll payment reconciliation actions", () => {
 
     expect(result.success).toBe(true)
     expect(mockGetPayrollPaymentReconciliation).toHaveBeenCalledWith({
+      moduleDecision: moduleDecision(),
       organizationId: "org-1",
       actorId: "controller-1",
       actorPermissions: ["payments.reconciliation.read"],
@@ -197,6 +213,9 @@ describe("payroll payment reconciliation actions", () => {
       sourceRegisterHash: "sha256:register",
       matchRecordId: "match-1",
       idempotencyKey: "settlement-key-1",
+      proofSelection: { payrollRunId: "run-1", runVersion: 3, runRevision: "run-revision", matchRecordId: "match-1", matchRevision: "match-revision" },
+      settlementAmount: "100.00",
+      expectedBalanceEventId: null,
     })
 
     expect(result.success).toBe(true)
@@ -206,9 +225,8 @@ describe("payroll payment reconciliation actions", () => {
       actorPermissions: ["payroll.payments.reconcile"],
       payrollPaymentBatchId: "batch-1",
       settlementStatus: "settled",
-      evidenceHash: "sha256:settlement",
-      sourceRegisterHash: "sha256:register",
-      matchRecordId: "match-1",
+      evidenceHash: "GUIDED_RECORDS_V1",
+      proofSelection: expect.objectContaining({ matchRecordId: "match-1" }),
       lastAuthAt: new Date("2026-06-30T11:59:00.000Z"),
       now: expect.any(Date),
     }))
@@ -222,6 +240,8 @@ describe("payroll payment reconciliation actions", () => {
       ["/dashboard/payroll/payments", "page"],
       ["/[locale]/dashboard/payroll/payments", "page"],
     ])
+    expect(mockRecordPayrollPaymentSettlementEvidence.mock.calls[0][0]).not.toHaveProperty("sourceRegisterHash");
+    expect(mockRecordPayrollPaymentSettlementEvidence.mock.calls[0][0]).not.toHaveProperty("matchRecordId");
   })
 
   it("returns a client-safe RBAC denial for reconciliation reads", async () => {
@@ -239,4 +259,11 @@ describe("payroll payment reconciliation actions", () => {
     expect(result).toHaveProperty("correlationId")
     expect(mockGetPayrollPaymentReconciliation).not.toHaveBeenCalled()
   })
+  it("replaces a client module decision with the current read-only entitlement", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext());
+    const decision = moduleDecision({ entitlement: { readOnly: true } });
+    mockObserveModuleAccess.mockResolvedValue(decision);
+    await getPayrollPaymentReconciliationAction({ moduleDecision: { allowed: true, entitlement: { readOnly: false } } });
+    expect(mockGetPayrollPaymentReconciliation).toHaveBeenCalledWith(expect.objectContaining({ moduleDecision: decision }));
+  });
 })

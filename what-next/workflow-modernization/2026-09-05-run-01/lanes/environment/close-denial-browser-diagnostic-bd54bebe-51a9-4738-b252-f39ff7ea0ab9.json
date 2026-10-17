@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-01T01:43:56.987Z",
+  "predecessor": "close-denial-recovery-browser-5dbf54af-742f-4103-a52b-32db77c02caa.json",
+  "predecessorSha256": "45ec78c5d2bbb73ddfb3cc632b75c087bb9f03c276ab44f3c6671bcb6774d304",
+  "fixtures": [
+    {
+      "organizationId": "workflow_close_write_browser-en_a14a08fc-02c6-476d-afb3-9b98fd76db8d",
+      "initialCloseRunId": "cmuov6927009cmapwqhr32y9l",
+      "runs": [
+        {
+          "id": "cmuov7l1700mpmapwic9oyfoi",
+          "status": "BLOCKED",
+          "trustLevel": "T4",
+          "findings": [
+            {
+              "title": "Payment reconciliation evidence unavailable",
+              "detail": "Reconciliation evidence is unavailable for this organization.",
+              "severity": "HIGH"
+            }
+          ]
+        },
+        {
+          "id": "cmuov6927009cmapwqhr32y9l",
+          "status": "BLOCKED",
+          "trustLevel": "T4",
+          "findings": []
+        },
+        {
+          "id": "cmuov6877007amapw597tatgl",
+          "status": "READY",
+          "trustLevel": "T4",
+          "findings": []
+        }
+      ]
+    },
+    {
+      "organizationId": "workflow_close_write_browser-fr_a14a08fc-02c6-476d-afb3-9b98fd76db8d",
+      "initialCloseRunId": "cmuov6bgn00kjmapwcsakf2z3",
+      "runs": [
+        {
+          "id": "cmuov6bgn00kjmapwcsakf2z3",
+          "status": "BLOCKED",
+          "trustLevel": "T4",
+          "findings": []
+        },
+        {
+          "id": "cmuov6aun00ihmapwdw1fbhdj",
+          "status": "READY",
+          "trustLevel": "T4",
+          "findings": []
+        }
+      ]
+    }
+  ]
+}

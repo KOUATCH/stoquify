@@ -1,5 +1,8 @@
 "use client"
 
+import { payrollUiText } from "./payroll-ui-copy"
+import type { Locale } from "@/types/bilingual"
+
 import type { FormEvent } from "react"
 import { useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
@@ -42,14 +45,14 @@ function nextIdempotencyKey(balanceCaseId: string) {
   return `payroll-balance-settlement:${balanceCaseId}:${random}`
 }
 
-export default function PayrollEmployeeBalanceSettlementForm({
+export default function PayrollEmployeeBalanceSettlementForm({ locale = "en",
   balanceCaseId,
   caseNumber,
   employeeId,
   outstandingAmount,
   currency,
   disabled = false,
-}: Props) {
+}: Props & { locale?: Locale }) {
   const router = useRouter()
   const defaultAmount = useMemo(() => numericDefault(outstandingAmount), [outstandingAmount])
   const [settledById, setSettledById] = useState(employeeId)
@@ -91,8 +94,8 @@ export default function PayrollEmployeeBalanceSettlementForm({
         setNotice({
           kind: "success",
           message: response.data.idempotent
-            ? "Settlement evidence was already recorded for this request."
-            : "Settlement evidence recorded.",
+            ? payrollUiText("Settlement evidence was already recorded for this request.", locale)
+            : payrollUiText("Settlement evidence recorded.", locale),
         })
         setIdempotencyKey(nextIdempotencyKey(balanceCaseId))
         setSettlementEvidenceHash("")
@@ -105,7 +108,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
 
       setNotice({
         kind: response.code === "FRESH_AUTH_REQUIRED" ? "fresh-auth" : "error",
-        message: response.error || "Settlement evidence could not be recorded.",
+        message: response.error || payrollUiText("Settlement evidence could not be recorded.", locale),
         correlationId: response.correlationId,
       })
     })
@@ -115,12 +118,12 @@ export default function PayrollEmployeeBalanceSettlementForm({
     <form onSubmit={submitSettlement} className="mt-3 grid gap-2 rounded-lg border border-white/10 bg-white/[0.04] p-3">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-400">
         <LockKeyhole className="h-3.5 w-3.5 text-cyan-200" aria-hidden="true" />
-        <span>Fresh-auth settlement</span>
+        <span>{payrollUiText("Fresh-auth settlement", locale)}</span>
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Settlement amount</span>
+          <span>{payrollUiText("Settlement amount", locale)}</span>
           <input
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
@@ -132,7 +135,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
           />
         </label>
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Settlement date</span>
+          <span>{payrollUiText("Settlement date", locale)}</span>
           <input
             type="date"
             value={settlementDate}
@@ -146,7 +149,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
 
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Method</span>
+          <span>{payrollUiText("Method", locale)}</span>
           <select
             value={settlementMethod}
             onChange={(event) => setSettlementMethod(event.target.value as SettlementMethod)}
@@ -154,12 +157,12 @@ export default function PayrollEmployeeBalanceSettlementForm({
             className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60"
           >
             {settlementMethods.map((method) => (
-              <option key={method.value} value={method.value}>{method.label}</option>
+              <option key={method.value} value={method.value}>{payrollUiText(method.label, locale)}</option>
             ))}
           </select>
         </label>
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Settled by ID</span>
+          <span>{payrollUiText("Settled by ID", locale)}</span>
           <input
             value={settledById}
             onChange={(event) => setSettledById(event.target.value)}
@@ -171,7 +174,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
       </div>
 
       <label className="grid gap-1 text-xs text-slate-400">
-        <span>Evidence hash</span>
+        <span>{payrollUiText("Evidence hash", locale)}</span>
         <input
           value={settlementEvidenceHash}
           onChange={(event) => setSettlementEvidenceHash(event.target.value)}
@@ -184,21 +187,21 @@ export default function PayrollEmployeeBalanceSettlementForm({
 
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Document hash</span>
+          <span>{payrollUiText("Document hash", locale)}</span>
           <input
             value={documentHash}
             onChange={(event) => setDocumentHash(event.target.value)}
-            placeholder="optional"
+            placeholder={payrollUiText("optional", locale)}
             disabled={disabled || isPending}
             className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60"
           />
         </label>
         <label className="grid gap-1 text-xs text-slate-400">
-          <span>Reference</span>
+          <span>{payrollUiText("Reference", locale)}</span>
           <input
             value={reference}
             onChange={(event) => setReference(event.target.value)}
-            placeholder="optional"
+            placeholder={payrollUiText("optional", locale)}
             maxLength={200}
             disabled={disabled || isPending}
             className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60"
@@ -207,7 +210,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
       </div>
 
       <label className="grid gap-1 text-xs text-slate-400">
-        <span>Notes</span>
+        <span>{payrollUiText("Notes", locale)}</span>
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
@@ -221,7 +224,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
       <p className="break-all text-[11px] text-slate-500">{idempotencyKey}</p>
 
       {notice ? (
-        <div className={`flex items-start gap-2 rounded-md border px-3 py-2 text-xs ${notice.kind === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100" : "border-amber-400/30 bg-amber-400/10 text-amber-100"}`}>
+        <div role={notice.kind === "success" ? "status" : "alert"} className={`flex items-start gap-2 rounded-md border px-3 py-2 text-xs ${notice.kind === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100" : "border-amber-400/30 bg-amber-400/10 text-amber-100"}`}>
           {notice.kind === "success" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
           <div className="min-w-0">
             <p className="break-words font-semibold">{notice.message}</p>
@@ -236,8 +239,7 @@ export default function PayrollEmployeeBalanceSettlementForm({
         className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-cyan-300/30 bg-cyan-300/15 px-3 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <LockKeyhole className="h-4 w-4" aria-hidden="true" />}
-        Record settlement
-      </button>
+         {payrollUiText("Record settlement", locale)} </button>
     </form>
   )
 }

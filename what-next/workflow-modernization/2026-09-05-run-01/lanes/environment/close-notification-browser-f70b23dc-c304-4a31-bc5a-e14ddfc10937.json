@@ -1,0 +1,69 @@
+{
+  "at": "2026-09-30T18:48:13.976Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "cases": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "routeReadyMs": 19296,
+      "authMs": 12165,
+      "denialMs": 6821,
+      "pointerRecoveryVerified": true,
+      "noFreshAuthNotificationOverlap": true,
+      "realPasswordVerification": true,
+      "invalidPasswordRecoverable": true,
+      "passwordCleared": true,
+      "keyboardFocusReturned": true,
+      "explicitRetryRequired": true,
+      "localizedGuidanceVisible": true,
+      "noDownloadOrFinancialEffects": true,
+      "retainedAssessmentUnchanged": true,
+      "layout": {
+        "viewport": 1440,
+        "body": 1440
+      },
+      "authScreenshot": "close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-en1440-recovery.png",
+      "screenshot": "close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-en1440.png"
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "routeReadyMs": 11624,
+      "authMs": 9336,
+      "denialMs": 4519,
+      "pointerRecoveryVerified": true,
+      "noFreshAuthNotificationOverlap": true,
+      "realPasswordVerification": true,
+      "invalidPasswordRecoverable": true,
+      "passwordCleared": true,
+      "keyboardFocusReturned": true,
+      "explicitRetryRequired": true,
+      "localizedGuidanceVisible": true,
+      "noDownloadOrFinancialEffects": true,
+      "retainedAssessmentUnchanged": true,
+      "layout": {
+        "viewport": 320,
+        "body": 320
+      },
+      "authScreenshot": "close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-fr320-recovery.png",
+      "screenshot": "close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-fr320.png"
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "sourceStable": true
+}

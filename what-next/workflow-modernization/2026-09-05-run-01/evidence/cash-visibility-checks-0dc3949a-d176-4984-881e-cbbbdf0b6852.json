@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-27T19:37:24.902Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-visibility.service.ts": "10a59e21875f468cbd0daf6384ec886268299da0d4762f75e9e3fc48cd211eb4",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "5a33cc90253052a860f02d9e13dc2b70f75517df270a56f2c7c18dddd828c55f",
+    "components/cash-command/CashCommandDashboard.tsx": "221ac286197a47e3b115e9407cf1d93d0b7b87b5046c388f569c1e84d5078ede",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "cb7baeac8d9597326696dfe8ee642ae235a7a6d0d7d2bfa7e6365a446e843fd3",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       35 passed, 35 total\nSnapshots:   0 total\nTime:        22.323 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/cash-command-visibility.service.ts",
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "components/cash-command/CashCommandDashboard.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-visibility.service.ts": "10a59e21875f468cbd0daf6384ec886268299da0d4762f75e9e3fc48cd211eb4",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "5a33cc90253052a860f02d9e13dc2b70f75517df270a56f2c7c18dddd828c55f",
+    "components/cash-command/CashCommandDashboard.tsx": "221ac286197a47e3b115e9407cf1d93d0b7b87b5046c388f569c1e84d5078ede",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "cb7baeac8d9597326696dfe8ee642ae235a7a6d0d7d2bfa7e6365a446e843fd3",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": true
+}

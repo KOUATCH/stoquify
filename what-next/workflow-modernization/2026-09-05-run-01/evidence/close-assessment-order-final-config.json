@@ -1,0 +1,46 @@
+{
+  "receipts": [
+    "evidence/close-assessment-order-jest-c67b85b5-d494-4d2e-920a-d3b6a01e7f93.json",
+    "evidence/close-assessment-order-typecheck-b724148e-2fb4-4e06-9adc-63ca334899b8.json",
+    "evidence/close-assessment-order-lint-0f258ecc-a177-4236-a6fc-c2718d584ed4.json",
+    "evidence/close-assessment-order-boundary-6da74ccd-60b4-4000-ae9f-1a8148b98dae.json",
+    "evidence/close-assessment-order-ledger-65016596-914a-4673-b0b1-ad4e1ef106c4.json",
+    "lanes/environment/close-unique-current-runtime-0a983805-a93d-4dde-b85e-c1ac85f3314c.json",
+    "lanes/environment/close-unique-current-browser-0c076800-060b-42f9-b34d-416497a45673.json"
+  ],
+  "artifacts": [
+    "CLOSE_ASSESSMENT_ORDER_2026-10-01.md",
+    "evidence/close-assessment-order-scan-2026-10-01.json",
+    "evidence/close-assessment-order-scan-2026-10-01.md",
+    "evidence/close-assessment-order-before-ada2ecf0-8c08-4c9b-bfbe-7231912d8232.json",
+    "evidence/close-assessment-period-ownership-before-70236f18-1f68-4543-b6cb-10f472b2de54.json",
+    "evidence/close-proof-selection-before-c615f27a-c854-4b86-8bcb-96875d1b81e4.json",
+    "evidence/close-order-root-before-1f371171-4e74-43b7-9089-a3bf49180f75/manifest.json",
+    "evidence/close-unique-current-proxy-before-04a189ba.json",
+    "evidence/close-unique-current-browser-helper-before-5fc5ac97.json",
+    "evidence/close-unique-current-browser-wire-before-d3066cf5.json",
+    "lanes/environment/close-unique-current-browser-5fc5ac97-4bff-4fa8-af1e-a1fef20cf11e.json",
+    "lanes/environment/close-unique-current-browser-d3066cf5-e55c-4b37-bbc7-f459b9215b58.json",
+    "lanes/environment/close-unique-current-readonly-333cca19-74f1-421e-86d0-39b38c693c15.json",
+    "lanes/environment/close-unique-current-runtime-04a189ba-dec1-40e5-8673-fbb20b2902bf.json",
+    "lanes/environment/close-unique-current-proxy-readonly-c996975d-5683-4cd7-8624-a514a51a8c65.json",
+    "evidence/close-assessment-order-boundary-6da74ccd-60b4-4000-ae9f-1a8148b98dae-gate.json",
+    "evidence/close-assessment-order-ledger-65016596-914a-4673-b0b1-ad4e1ef106c4-gate.json"
+  ],
+  "verifiedCriteria": [
+    "Unique-current assessment publication and certification serialize on a shared tenant-period boundary; both real PostgreSQL wait orderings and opposite completion order preserve admission.",
+    "Database publication time is read after the lock at millisecond precision; equal/future clock conflicts do not publish a hidden older assessment.",
+    "Historical, tied and independently voided assessments cannot establish current certification; all statuses participate in latest discovery.",
+    "Dashboard and proof selection share a coherent tenant-period snapshot, retain recorded history and omit sibling identifiers.",
+    "Historical draft exports remain permitted; cross-tenant runs and inconsistent related-period ownership are denied.",
+    "Existing certification/source-invalidation serialization passes both orderings after the new period lock. This does not establish safe producer target discovery for unpublished assessments.",
+    "Actual EN desktop and FR 320px browser journeys verify fresh identity, old-ID CONFLICT, latest refresh, preserved unsaved notes, no automatic retry, deliberate keyboard retry and a hash-bound downloaded certification artifact; historical proof and drafts remain unchanged."
+  ],
+  "limitations": [
+    "Source-writer discovery may miss a newly published run; participating-producer period locking and global multi-period ordering remain open.",
+    "Historical missing-evidence replacement still needs authoritative source ID/hash binding.",
+    "Full Cash lifecycle, other producers, delivery/recovery, accessibility and original 17-family modernization remain incomplete.",
+    "Internal synthetic certification is not professional, statutory, security, accessibility or release approval."
+  ],
+  "verificationSummary": "352 tests across 11 suites, 10 actual PostgreSQL checks, EN1440/FR320 browser recovery, changed-file lint, TypeScript and focused static gates passed. Both browser journeys preserved notes, refused the old assessment, refreshed current evidence and required an explicit retry before a verified download. Source, outside-fixture and operation-financial hashes remained stable. Failed harness attempts were diagnosed, corrected and retained without weakening acceptance."
+}

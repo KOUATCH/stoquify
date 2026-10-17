@@ -1,0 +1,152 @@
+- complementary "Navigation du tableau de bord":
+  - link "Accueil du tableau de bord Stoquify":
+    - /url: /fr/dashboard
+    - generic "Stoquify":
+      - generic: q
+      - text: sto
+      - generic: q
+      - text: uify
+      - generic: Enterprise OS
+  - button "Notifications 0":
+    - generic: Notifications
+    - generic: "0"
+  - paragraph: Wilkinson - Feeney 001
+  - generic: Accountant
+  - text: Session
+  - textbox "Rechercher dans la navigation":
+    - /placeholder: Rechercher des modules
+  - generic: Modules
+  - generic "4 Modules": "4"
+  - navigation "Modules du tableau de bord":
+    - region "Finance et contrôles":
+      - generic "Comptabilité, trésorerie, contrôles et conformité": Finance et contrôles
+      - generic: "3"
+      - button "Comptabilité menu" [expanded]:
+        - generic "Comptabilité":
+          - generic: Comptabilité
+          - generic: Grand livre, clôture, rapports et contrôles
+        - generic "9 liens": "9"
+      - link "Vue d’ensemble":
+        - /url: /fr/dashboard/accounting
+        - generic: Vue d’ensemble
+      - link "Accès comptable":
+        - /url: /fr/dashboard/accounting/accountant-access
+        - generic: Accès comptable
+      - link "Portail comptable":
+        - /url: /fr/dashboard/accounting/accountant-portal
+        - generic: Portail comptable
+      - link "Portefeuille comptable":
+        - /url: /fr/dashboard/accounting/accountant-portfolio
+        - generic: Portefeuille comptable
+      - link "Centre de contrôle":
+        - /url: /fr/dashboard/accounting/control-center
+        - generic: Centre de contrôle
+      - link "Journaux":
+        - /url: /fr/dashboard/accounting/journals
+        - generic: Journaux
+      - link "Nouvelle écriture":
+        - /url: /fr/dashboard/accounting/journals/new
+        - generic: Nouvelle écriture
+      - link "Configuration":
+        - /url: /fr/dashboard/accounting/setup
+        - generic: Configuration
+      - link "Balance générale":
+        - /url: /fr/dashboard/accounting/reports/trial-balance
+        - generic: Balance générale
+      - link "Conformité Contrôles fiscaux et preuves de conformité":
+        - /url: /fr/dashboard/compliance
+        - generic: Conformité
+        - generic: Contrôles fiscaux et preuves de conformité
+      - button "Finance menu":
+        - generic "Finance":
+          - generic: Finance
+          - generic: Trésorerie, rentabilité, paiements et rapprochement
+        - generic "14 liens": "14"
+    - region "Gouvernance":
+      - generic "Paramètres, sécurité et administration de la plateforme": Gouvernance
+      - generic: "1"
+      - button "Paramètres menu":
+        - generic "Paramètres":
+          - generic: Paramètres
+          - generic: Entreprise, rôles, emplacements, modules et sécurité
+        - generic "3 liens": "3"
+  - generic: NE
+  - paragraph: Nadia Essomba
+  - paragraph: accountant.rds-org001@stockflow.test
+  - button "Se déconnecter":
+- banner:
+  - paragraph: Accès comptable
+  - paragraph: Finance et contrôles / Comptabilité / Accès comptable
+  - generic: Wilkinson - Feeney 001
+  - generic: Accountant
+  - generic: Session
+  - generic: /
+  - generic: RG_001
+  - combobox "Rechercher une page ou un document"
+  - link "Ouvrir le site web":
+    - /url: /
+  - link "Switch to English":
+    - /url: /en/dashboard/accounting/accountant-access
+    - generic: en
+  - button "Activer le thème clair":
+    - generic: Clair
+  - button "Désactiver le son des notifications" [pressed]:
+  - button "Ouvrir le menu du compte":
+    - generic: Nadia Essomba
+- main:
+  - generic: Consentement du client
+  - heading "Accès comptable" [level=1]
+  - paragraph: Gérez les mandats explicites des comptables, leurs rôles, échéances, justificatifs et révocations.
+  - heading "Inviter un comptable" [level=2]
+  - paragraph: Les utilisateurs existants reçoivent immédiatement l’accès. Les nouveaux comptables reçoivent une invitation liée au consentement et un lien d’inscription par recommandation.
+  - text: Adresse e-mail du comptable
+  - textbox "Adresse e-mail du comptable"
+  - text: Nom du cabinet
+  - textbox "Nom du cabinet"
+  - text: Numéro d’immatriculation du cabinet
+  - textbox "Numéro d’immatriculation du cabinet"
+  - text: Rôle
+  - combobox "Rôle":
+    - option "Lecture seule" [selected]
+    - option "Réviseur"
+    - option "Préparateur"
+  - text: Prise d’effet
+  - textbox "Prise d’effet"
+  - text: Expiration
+  - textbox "Expiration"
+  - text: Empreinte du justificatif de consentement signé
+  - textbox "Empreinte du justificatif de consentement signé":
+    - /placeholder: sha256:…
+  - button "Inviter ou accorder l’accès"
+  - 'searchbox "Rechercher: Autorisations d’accès comptable"'
+  - region "Autorisations d’accès comptable":
+    - table "Autorisations d’accès comptable":
+      - caption: Autorisations d’accès comptable
+      - rowgroup:
+        - row "Cabinet Rôle Statut Échéance Action":
+          - columnheader "Cabinet"
+          - columnheader "Rôle"
+          - columnheader "Statut"
+          - columnheader "Échéance"
+          - columnheader "Action"
+      - rowgroup:
+        - row "Aucune autorisation d’accès comptable.":
+          - cell "Aucune autorisation d’accès comptable."
+  - paragraph: 0 sur 0 enregistrements chargés
+  - navigation "Autorisations d’accès comptable pagination":
+    - paragraph: Lignes par page
+    - combobox "Lignes par page":
+      - generic: "10"
+    - generic: Page 1 sur 1
+    - button "Aller à la première page" [disabled]:
+      - generic: Aller à la première page
+    - button "Aller à la page précédente" [disabled]:
+      - generic: Aller à la page précédente
+    - button "Aller à la page suivante" [disabled]:
+      - generic: Aller à la page suivante
+    - button "Aller à la dernière page" [disabled]:
+      - generic: Aller à la dernière page
+- status
+- alert
+- region "Notifications temporaires"
+- alert

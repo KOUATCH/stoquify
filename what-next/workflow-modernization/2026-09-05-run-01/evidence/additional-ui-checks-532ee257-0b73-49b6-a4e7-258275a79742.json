@@ -1,0 +1,98 @@
+{
+  "startedAt": "2026-09-27T13:16:45.161Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts": "3806fcb2bdce299136bb405dc7e27760498914d6f8ea27b0d189b7a937fda91a",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "actions/payments/__tests__/reconciliation-preparation.actions.test.ts": "3f722317e4302a1fc0cc73c6685a9a45e047ee2e3ce461de2e8244c82849b5cc",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "b40ee1f41144b4591c10066904c1ea341cda10d575923969992fa8c11fdfcfa5",
+    "components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx": "f6904286de5bd9bdac00eaa4b48ae8cb1a867e2db5247e68c2cdba7b80c9b0c4",
+    "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx": "21e76505d8da15724349827dfc84ea7832339057599bcf01a0896e2ebf3420ae",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts": "28965bd2201ba0f8d66021ed14a38697e3cb85c133930755c531e29d7d6ac6b4",
+    "messages/en.json": "93ecd0601ecda2d319eab378432446a5e5b59225f18534f22c3fd661b6670e7b",
+    "messages/fr.json": "9b1ef2d8804b4b7794720df688d9604ea75a324756422118b9b80aed73694b48"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts",
+        "actions/payments/__tests__/reconciliation-preparation.actions.test.ts",
+        "components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx",
+        "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx"
+      ],
+      "startedAt": "2026-09-27T13:16:45.170Z",
+      "endedAt": "2026-09-27T13:16:56.736Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 8 passed, 8 total\nTests:       113 passed, 113 total\nSnapshots:   0 total\nTime:        5.613 s, estimated 7 s\nRan all test suites within paths \"services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts\", \"services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts\", \"services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts\", \"actions/payments/__tests__/reconciliation-preparation.actions.test.ts\", \"components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx\", \"components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/payment-reconciliation-run.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts",
+        "actions/payments/reconciliation-preparation.actions.ts",
+        "actions/payments/__tests__/reconciliation-preparation.actions.test.ts",
+        "components/finance/ReconciliationPreparationWorkbench.tsx",
+        "components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx",
+        "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx",
+        "services/reconciliation/reconciliation-run-preparation.service.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts"
+      ],
+      "startedAt": "2026-09-27T13:16:56.740Z",
+      "endedAt": "2026-09-27T13:17:00.959Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-09-27T13:17:00.960Z",
+      "endedAt": "2026-09-27T13:17:34.533Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts": "3806fcb2bdce299136bb405dc7e27760498914d6f8ea27b0d189b7a937fda91a",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "actions/payments/__tests__/reconciliation-preparation.actions.test.ts": "3f722317e4302a1fc0cc73c6685a9a45e047ee2e3ce461de2e8244c82849b5cc",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "b40ee1f41144b4591c10066904c1ea341cda10d575923969992fa8c11fdfcfa5",
+    "components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx": "f6904286de5bd9bdac00eaa4b48ae8cb1a867e2db5247e68c2cdba7b80c9b0c4",
+    "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx": "21e76505d8da15724349827dfc84ea7832339057599bcf01a0896e2ebf3420ae",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts": "28965bd2201ba0f8d66021ed14a38697e3cb85c133930755c531e29d7d6ac6b4",
+    "messages/en.json": "93ecd0601ecda2d319eab378432446a5e5b59225f18534f22c3fd661b6670e7b",
+    "messages/fr.json": "9b1ef2d8804b4b7794720df688d9604ea75a324756422118b9b80aed73694b48"
+  },
+  "sourceStable": true,
+  "passed": true,
+  "endedAt": "2026-09-27T13:17:34.539Z"
+}

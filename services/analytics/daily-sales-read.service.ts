@@ -25,6 +25,34 @@ function amount(value: Prisma.Decimal | null, scale: number, count = 1): string 
   return value.toFixed(scale)
 }
 
+/** At most 366 saved dates and one order lookup; no report generation or writes.
+ * Saved reports own their day, including saved zero-transaction reports. */
+export async function getLatestDailySalesDay(input: { organizationId: string; locationId: string }) {
+  return db.$transaction(async tx => {
+    const organization = await tx.organization.findFirst({ where: { id: input.organizationId, isActive: true, deletedAt: null }, select: { id: true, timezone: true } })
+    if (!organization) throw new NotFoundError("Organization not found")
+    const location = await tx.location.findFirst({ where: { id: input.locationId, organizationId: organization.id }, select: { id: true } })
+    if (!location) throw new NotFoundError("Report location not found")
+    const today = dailySalesPeriod(undefined, organization.timezone)
+    const fromDate = new Date(today.calendarDate.getTime() - 365 * 86_400_000).toISOString().slice(0, 10)
+    const from = dailySalesPeriod(fromDate, organization.timezone)
+    const reports = await tx.dailySalesReport.findMany({
+      where: { organizationId: organization.id, locationId: location.id, date: { gte: from.calendarDate, lte: today.calendarDate } },
+      select: { date: true, totalTransactions: true }, orderBy: { date: "desc" }, take: 366,
+    })
+    const savedDays = reports.map(report => dailySalesPeriod(report.date.toISOString().slice(0, 10), organization.timezone))
+    const order = await tx.salesOrder.findFirst({
+      where: { organizationId: organization.id, locationId: location.id, deletedAt: null, status: { in: statuses },
+        orderDate: { gte: from.start, lt: today.endExclusive },
+        ...(savedDays.length ? { NOT: { OR: savedDays.map(day => ({ orderDate: { gte: day.start, lt: day.endExclusive } })) } } : {}),
+      }, select: { orderDate: true }, orderBy: [{ orderDate: "desc" }, { id: "desc" }],
+    })
+    const saved = reports.find(report => report.totalTransactions > 0)?.date.toISOString().slice(0, 10)
+    const live = order ? dailySalesPeriod(order.orderDate, organization.timezone).date : undefined
+    return { date: [saved, live].filter((value): value is string => Boolean(value)).sort().at(-1) ?? null, from: fromDate, through: today.date, locationId: location.id }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+}
+
 export async function getDailySalesReadModel(input: DailySalesReadInput): Promise<DailySalesReadModel> {
   return db.$transaction(async tx => {
     const organization = await tx.organization.findFirst({ where: { id: input.organizationId, isActive: true, deletedAt: null }, select: { id: true, currency: true, timezone: true } })

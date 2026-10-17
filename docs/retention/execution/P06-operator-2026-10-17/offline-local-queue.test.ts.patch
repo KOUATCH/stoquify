@@ -1,0 +1,59 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\offline-local-queue.test.ts.before.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\lib\\pos\\__tests__\\offline-local-queue.test.ts"
+index 633bd0ef..23190f55 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\offline-local-queue.test.ts.before.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\lib\\pos\\__tests__\\offline-local-queue.test.ts"	
+@@ -50,6 +50,54 @@ describe("offline local POS queue with browser storage", () => {
+     await new Promise<void>(resolve => server?.close(() => resolve()))
+   })
+ 
++  it("discovers local-only queues without server enrollment and blocks close across sessions", async () => {
++    const result = await page.evaluate(async () => {
++      await window.queue.enqueueOfflineLocalEvent(window.config, { eventType: "OFFLINE_SESSION_EVIDENCE", payload: { private: "never in summary" } })
++      const queues = await window.queue.inspectOfflineLocalQueues({ organizationKey: "org-1", terminalId: "terminal-1" })
++      let blocked = false
++      try { await window.queue.assertNoLocalOfflineWork({ organizationKey: "org-1", terminalId: "terminal-1" }) } catch { blocked = true }
++      return { queues, blocked, foreign: await window.queue.inspectOfflineLocalQueues({ organizationKey: "foreign" }), other: await window.queue.inspectOfflineLocalQueues({ organizationKey: "org-1", terminalId: "other" }) }
++    })
++    expect(result).toMatchObject({ blocked: true, foreign: [], other: [], queues: [{ pendingCount: 1, acknowledgedCount: 0 }] })
++    expect(JSON.stringify(result)).not.toContain("never in summary")
++  })
++
++  it("detects another tab's queue and distinguishes ingestion acknowledgement from financial completion", async () => {
++    const other = await openPage()
++    await other.evaluate(() => window.queue.enqueueOfflineLocalEvent(window.config, { eventType: "OFFLINE_SESSION_EVIDENCE", payload: {} }))
++    expect(await page.evaluate(() => window.queue.inspectOfflineLocalQueues({ organizationKey: "org-1" }))).toMatchObject([{ pendingCount: 1 }])
++    await other.evaluate(async () => {
++      const claim = await window.queue.claimOfflineLocalQueueBatch(window.config)
++      if (claim.skipped) throw new Error("Expected claim")
++      await window.queue.settleOfflineLocalQueueBatch(window.config, claim, { status: "SYNCED", serverBatchId: "ack-only" })
++    })
++    expect(await page.evaluate(() => window.queue.inspectOfflineLocalQueues({ organizationKey: "org-1" }))).toMatchObject([{ pendingCount: 0, acknowledgedCount: 1 }])
++    expect(await page.evaluate(async () => { await window.queue.assertNoLocalOfflineWork({ organizationKey: "org-1" }); return true })).toBe(true)
++  })
++
++  it("fails closed for an orphaned migration marker instead of reporting an empty inventory", async () => {
++    await page.evaluate(() => localStorage.setItem(window.queue.offlineQueueStorageKey(window.config) + ":indexeddb-migrated", "1"))
++    await expect(page.evaluate(() => window.queue.inspectOfflineLocalQueues({ organizationKey: "org-1" }))).rejects.toThrow(/quarantined/)
++  })
++
++  it("quarantines altered payloads during inventory without deleting their evidence", async () => {
++    await page.evaluate(async () => {
++      const entry = await window.queue.enqueueOfflineLocalEvent(window.config, { eventType: "OFFLINE_SESSION_EVIDENCE", payload: { original: true } })
++      await new Promise<void>((resolve, reject) => {
++        const request = indexedDB.open("aqstoqflow-pos-offline-queue", 1)
++        request.onsuccess = () => {
++          const database = request.result, tx = database.transaction("queues", "readwrite"), store = tx.objectStore("queues"), key = window.queue.offlineQueueStorageKey(window.config)
++          const read = store.get(key)
++          read.onsuccess = () => { const record = read.result; record.state.entries[0].event.payload = { altered: true }; store.put(record, key) }
++          tx.oncomplete = () => { database.close(); resolve() }
++          tx.onabort = () => reject(tx.error)
++        }
++      })
++      return entry.queueId
++    })
++    await expect(page.evaluate(() => window.queue.assertNoLocalOfflineWork({ organizationKey: "org-1" }))).rejects.toThrow(/quarantined/)
++  })
++
+   it("P06 preserves unknown evidence through real browser offline and reconnect transitions", async () => {
+     const original = await page.evaluate(() => window.queue.enqueueOfflineLocalEvent(window.config, {
+       eventType: "OFFLINE_SALE_CAPTURED", payload: { sale: "p06-reconnect" },

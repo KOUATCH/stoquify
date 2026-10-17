@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');const root=path.resolve(__dirname,'../../..');
+for(const [relative,from,to] of [
+ ['services/cash-command/cash-command-contracts.ts','actionQueue: { summary: Pick<ActionQueueResult["summary"], "total" | "bySeverity">; filteredOutCount: number }','actionQueue: { summary: Pick<ActionQueueResult["summary"], "total" | "bySeverity">; filteredOutCount: number | null }'],
+ ['components/cash-command/CashCommandDashboard.tsx','data.actionQueue.filteredOutCount > 0','data.actionQueue.filteredOutCount !== null && data.actionQueue.filteredOutCount > 0'],
+ ['services/cash-command/cash-command-visibility.service.ts','actionQueue: { summary: queueSummary, filteredOutCount: 0 }','actionQueue: { summary: queueSummary, filteredOutCount: null }'],
+ ['services/cash-command/cash-command-visibility.service.ts','const state = restrictedCapabilities.length || redactions.length ? "partial" : summary.blockedCount ? "blocked" : freshness.stale ? "stale" : "ready"','const state = summary.blockedCount ? "blocked" : restrictedCapabilities.length || redactions.length ? "partial" : freshness.stale ? "stale" : "ready"'],
+ ['services/cash-command/cash-command-visibility.service.ts','state, evidenceGrade: "operational", trustState: "operational", freshness,','state, evidenceGrade: state === "blocked" ? "blocked" : "operational", trustState: state === "blocked" ? "blocked" : "operational", freshness,'],
+ ['services/cash-command/__tests__/cash-command.service.test.ts','    expect(result.moduleControl).toBeNull()','    expect(result.moduleControl).toBeNull()\n    expect(result.actionQueue.filteredOutCount).toBeNull()'],
+]){const file=path.join(root,relative),raw=fs.readFileSync(file,'utf8');if(!raw.includes(from))throw new Error('Missing anchor '+relative);const pending=file+'.pending-'+crypto.randomUUID();fs.writeFileSync(pending,raw.replace(from,to),{flag:'wx'});fs.renameSync(pending,file);}
+console.log('Hidden queue count remains unavailable, rather than zero');

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { deletePhoto } from "@/actions/storage/photo-upload-actions"
 import { PICTURE_MAX_BYTES, PICTURE_MIME_TYPES } from "@/lib/media/policy"
+import { cn } from "@/lib/utils"
 
 export interface EnhancedImageUploadButtonProps {
   title: string
@@ -114,32 +115,32 @@ export default function EnhancedImageUploadButton({
   }
 
   return (
-    <Card className={className}>
-      <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
+    <Card className={cn("min-w-0 rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-none", className)}>
+      <CardHeader><CardTitle className="break-words text-base font-semibold leading-6">{title}</CardTitle></CardHeader>
       <CardContent className="space-y-4">
-        <p id={id + "-help"} className="text-sm text-muted-foreground">
+        <p id={id + "-help"} className="text-sm leading-6 text-[var(--dash-text-soft)]">
           {t("Images are saved securely online. JPEG, PNG, GIF or WebP, up to 4 MB.", "Les images sont enregistrées en ligne de façon sécurisée. JPEG, PNG, GIF ou WebP, 4 Mo maximum.")}
         </p>
         {imageUrl && <>
           {/* Authenticated media is fetched by the browser with its session cookie. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt={title} className="h-48 w-full rounded-lg object-contain" />
-          <Button type="button" variant="outline" disabled={busy} onClick={remove}>{t("Remove image", "Retirer l’image")}</Button>
+          <img src={imageUrl} alt={title} className="h-48 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] object-contain p-2" />
+          <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={busy} onClick={remove}>{t("Remove image", "Retirer l’image")}</Button>
         </>}
         <label htmlFor={id} className="block text-sm font-medium">{t("Choose image", "Choisir une image")}</label>
         <input ref={fileInput} id={id} type="file" accept={PICTURE_MIME_TYPES.join(",")} disabled={busy}
-          aria-describedby={id + "-help " + id + "-status"} className="block w-full min-w-0 text-sm"
+          aria-describedby={id + "-help " + id + "-status"} className="block w-full min-w-0 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] p-2 text-sm text-[var(--dash-text-soft)] file:me-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-[var(--dash-brand-soft)] file:px-3 file:py-2 file:font-medium file:text-[var(--dash-brand-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-focus)] disabled:opacity-50"
           onChange={(event) => {
             const selected = event.target.files?.[0]
             if (selected) void upload(selected)
             event.target.value = ""
           }} />
-        <div id={id + "-status"} role="status" aria-live="polite">
+        <div id={id + "-status"} role="status" aria-live="polite" className={`text-sm leading-6 ${busy ? "text-[var(--dash-info)]" : "text-[var(--dash-success)]"}`}>
           {busy ? t("Uploading image…", "Envoi de l’image…") : imageUrl && !error ? t("Image ready. Save the form to attach it.", "Image prête. Enregistrez le formulaire pour la joindre.") : null}
         </div>
-        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-        {busy && <Button type="button" variant="outline" onClick={cancel}>{t("Cancel upload", "Annuler l’envoi")}</Button>}
-        {!busy && error && file && <Button type="button" variant="outline" onClick={() => void upload(file)}>{t("Retry upload", "Réessayer l’envoi")}</Button>}
+        {error && <p role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-3 text-sm leading-6 text-[var(--dash-danger)]">{error}</p>}
+        {busy && <Button type="button" variant="outline" className="dashboard-button-secondary" onClick={cancel}>{t("Cancel upload", "Annuler l’envoi")}</Button>}
+        {!busy && error && file && <Button type="button" variant="outline" className="dashboard-button-primary" onClick={() => void upload(file)}>{t("Retry upload", "Réessayer l’envoi")}</Button>}
       </CardContent>
     </Card>
   )

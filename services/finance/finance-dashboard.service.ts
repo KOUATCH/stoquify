@@ -237,9 +237,9 @@ function emptyPayrollForecastProof(input: {
     locationAllocated: false,
     horizonStart: null,
     horizonEnd: null,
-    upcomingNetPayAmount: 0,
-    upcomingStatutoryLiabilityAmount: 0,
-    totalUpcomingAmount: 0,
+    upcomingNetPayAmount: null,
+    upcomingStatutoryLiabilityAmount: null,
+    totalUpcomingAmount: null,
     payrollPeriodCount: 0,
     payrollRunCount: 0,
     paymentBatchCount: 0,
@@ -446,9 +446,9 @@ export type FinancePayrollForecastProof = {
   locationAllocated: false
   horizonStart: string | null
   horizonEnd: string | null
-  upcomingNetPayAmount: number
-  upcomingStatutoryLiabilityAmount: number
-  totalUpcomingAmount: number
+  upcomingNetPayAmount: number | null
+  upcomingStatutoryLiabilityAmount: number | null
+  totalUpcomingAmount: number | null
   payrollPeriodCount: number
   payrollRunCount: number
   paymentBatchCount: number
@@ -987,7 +987,7 @@ export async function getFinanceDashboard(
   }
   const payrollForecastBlocked =
     !payrollForecast.authoritative || payrollForecast.blockerCodes.length > 0
-  if (payrollForecastBlocked || payrollForecast.totalUpcomingAmount > 0) {
+  if (payrollForecastBlocked || (payrollForecast.totalUpcomingAmount !== null && payrollForecast.totalUpcomingAmount > 0)) {
     alerts.push({
       id: "payroll-forecast-proof",
       code: "PAYROLL_FORECAST_PROOF",
@@ -995,7 +995,7 @@ export async function getFinanceDashboard(
       count:
         payrollForecast.blockerCodes.length ||
         payrollForecast.paymentBatchCount + payrollForecast.declarationCount,
-      amount: payrollForecast.totalUpcomingAmount,
+      amount: payrollForecast.totalUpcomingAmount ?? undefined,
       message: payrollForecast.message,
       actionHref: payrollForecast.actionHref,
       blockerCodes: payrollForecast.blockerCodes,

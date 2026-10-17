@@ -443,7 +443,7 @@ describe("manager action center service", () => {
           sourceSnapshotKind: "inventory.loss",
           sourceHash: "inventory-loss-hash",
           requiredPermission: "inventory.levels.read",
-          actionPath: "/dashboard/inventory/losses",
+          actionPath: "/dashboard/inventory/loss-control",
           assignedRole: "manager",
         }),
       ]),
@@ -456,7 +456,7 @@ describe("manager action center service", () => {
     expect(data.actionItems).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          actionPath: "/dashboard/inventory/losses",
+          actionPath: "/dashboard/inventory/loss-control",
           origin: "SIGNAL",
         }),
       ]),
@@ -727,9 +727,9 @@ describe("manager action center service", () => {
         expect.objectContaining({ origin: "SOURCE_COMMAND" }),
       ]),
     )
-    // The real source queue with this role withholds payroll, stock-item and close actions.
+    // Completed payroll history is not a risk. This role withholds stock-item and close actions.
     // The unrelated synthetic actionQueue() fixture does not describe these sources.
-    expect(data.summary.hiddenByPermission).toBe(3)
+    expect(data.summary.hiddenByPermission).toBe(2)
     expect(data.actionItems.some(item => item.actionPath.includes("/payroll"))).toBe(false)
     expect(data.actionItems.some(item => item.actionPath.includes("/inventory/items"))).toBe(false)
     expect(data.actionItems.some(item => item.actionPath.includes("/accounting/close"))).toBe(false)

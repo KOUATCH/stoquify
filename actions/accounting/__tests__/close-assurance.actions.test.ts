@@ -10,6 +10,7 @@ const mockPermissions = [
 ]
 
 jest.mock("@/lib/security/auth-session", () => ({
+  requireSession: jest.fn(async () => ({ claims: { userId: "user-session", tenantId: "org-session", sessionId: "trusted-session-id", sessionToken: "trusted-session-token" } })),
   FreshAuthRequiredError: class FreshAuthRequiredError extends Error {
     constructor() {
       super("Fresh authentication required")
@@ -36,6 +37,8 @@ jest.mock("@/services/_shared/protect", () => ({
         freshAuth: {
           lastAuthAt,
           claims: {
+            sessionId: "trusted-session-id",
+            sessionToken: "trusted-session-token",
             userId: "user-session",
             tenantId: "org-session",
             assuranceOrganizationId: "org-session",
@@ -261,6 +264,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
       },
     )
     expect(mockRevalidatePath).toHaveBeenCalledWith(
@@ -307,6 +311,7 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
       },
     )
     expect(mockRevalidatePath).toHaveBeenCalledWith(
@@ -346,9 +351,12 @@ describe("close assurance actions", () => {
       lastAuthAt: "1900-01-01T00:00:00.000Z",
       now: "1900-01-01T00:00:00.000Z",
       permissions: ["*"],
+      session: { id: "attacker-session", token: "attacker-token" },
+      requireWorkDeskAccess: true,
     })
 
     expect(result.success).toBe(true)
+    expect(JSON.stringify(result)).not.toContain("trusted-session-token")
     expect(mockAcceptMissingCloseEvidenceResponse).toHaveBeenCalledWith(
       "org-session",
       {
@@ -362,6 +370,8 @@ describe("close assurance actions", () => {
       {
         actorId: "user-session",
         actorPermissions: mockPermissions,
+        session: { id: "trusted-session-id", token: "trusted-session-token" },
+        requireWorkDeskAccess: false,
         freshAuth: {
           actorId: "user-session",
           organizationId: "org-session",
@@ -377,6 +387,8 @@ describe("close assurance actions", () => {
 
   it.each([
     ["missing evidence", undefined],
+    ["missing session", freshAuthFixture({ sessionId: "" })],
+    ["missing session token", freshAuthFixture({ sessionToken: "" })],
     ["user identity", freshAuthFixture({ userId: "other-user" })],
     ["tenant identity", freshAuthFixture({ tenantId: "other-org" })],
     [
@@ -585,6 +597,8 @@ function freshAuthFixture(claimOverrides: Record<string, unknown> = {}) {
   return {
     lastAuthAt,
     claims: {
+      sessionId: "trusted-session-id",
+      sessionToken: "trusted-session-token",
       userId: "user-session",
       tenantId: "org-session",
       assuranceOrganizationId: "org-session",

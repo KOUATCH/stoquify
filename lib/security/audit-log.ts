@@ -32,14 +32,16 @@ type SecurityEventInput = {
   userAgent?: string | null
   resource?: string | null
   details?: Record<string, unknown>
+  correlationId?: string
 }
 
 export async function logSecurityEvent(input: SecurityEventInput) {
   if (!input.organizationId) {
-    logger.warn("security event skipped without organization", {
+    logger.warn("security event without organization", {
       type: input.type,
       userId: input.userId,
       resource: input.resource,
+      correlationId: input.correlationId,
     })
     return
   }
@@ -50,7 +52,7 @@ export async function logSecurityEvent(input: SecurityEventInput) {
         entityType: "SecurityEvent",
         entityId: input.resource ?? input.userId ?? "unknown",
         action: input.type,
-        changes: (input.details ?? {}) as Prisma.InputJsonValue,
+        changes: { ...input.details, ...(input.correlationId ? { correlationId: input.correlationId } : {}) } as Prisma.InputJsonValue,
         userId: input.userId ?? undefined,
         organizationId: input.organizationId,
         ipAddress: input.ip ?? undefined,
@@ -64,6 +66,7 @@ export async function logSecurityEvent(input: SecurityEventInput) {
       userId: input.userId,
       organizationId: input.organizationId,
       resource: input.resource,
+      correlationId: input.correlationId,
     })
   }
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { InvoiceLedgerRecoveryWorkbench, invoiceLedgerRecoveryStorageKey } from "../InvoiceLedgerRecoveryWorkbench"
 import { loadInvoiceLedgerRecovery, loadInvoiceLedgerRecoveryHistory, reviewInvoiceLedgerRecovery, submitInvoiceLedgerRecovery } from "@/actions/purchasing/invoice-ledger-recovery.actions"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
@@ -35,10 +35,30 @@ test("unknown response retains an exact request across remount", async () => {
   view.unmount(); show(); fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: mockT("retry") }))
   expect(await screen.findByText(mockT("posted"))).toBeVisible(); expect(submitInvoiceLedgerRecovery).toHaveBeenLastCalledWith(request)
 })
+test.each(["en", "fr"] as const)("explains explicit non-stock setup without claiming posting in %s", async locale => {
+  mockLocale = locale
+  ;(submitInvoiceLedgerRecovery as jest.Mock).mockResolvedValue({ success: true, data: { ...decision, ledgerStatus: "BLOCKED_PENDING_RULES", journalEntryId: null, accountingSourceLinkId: null, blockerCode: "AP_NON_STOCK_TREATMENT_REVIEW" } })
+  show(); await review(); fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: mockT("confirm") }))
+  expect(await screen.findByText(mockT("nonStockTreatmentHelp"))).toBeVisible()
+  expect(screen.getByText(mockT("stillBlocked"))).toBeVisible()
+  expect(screen.queryByText(mockT("posted"))).toBeNull()
+})
 test("a response for a different request is not a posting confirmation", async () => {
   ;(submitInvoiceLedgerRecovery as jest.Mock).mockResolvedValue({ success: true, data: { ...decision, requestReference: "other-request" } })
   show(); await review(); fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: mockT("confirm") }))
   expect(await screen.findByRole("alert")).toHaveTextContent(mockT("unknown")); expect(sessionStorage.getItem(key)).not.toBeNull(); expect(screen.queryByText(mockT("posted"))).toBeNull()
+})
+test("restores review focus after closing while the invoice list is still refreshing", async () => {
+  const refreshed = { success: true, data: { organizationId: "org", actorId: "actor", checkedAt: preview.checkedAt, next: null, invoices: [{ id: "invoice", invoiceNumber: "INV-1", supplierName: "Supplier", total: "2500.00", currency: "XAF", batchStatus: "FAILED" }] } }
+  let finishRefresh!: (value: typeof refreshed) => void
+  ;(loadInvoiceLedgerRecovery as jest.Mock).mockResolvedValueOnce(refreshed).mockImplementationOnce(() => new Promise(resolve => { finishRefresh = resolve }))
+  show(); await screen.findByRole("radio"); const returnButton = screen.getByRole("button", { name: mockT("review") })
+  await review(); fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: mockT("confirm") }))
+  await screen.findByText(mockT("posted")); expect(returnButton).toBeDisabled()
+  fireEvent.click(within(screen.getByRole("dialog")).getAllByRole("button", { name: mockT("close") }).at(-1)!)
+  await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  await act(async () => { finishRefresh(refreshed) })
+  await waitFor(() => expect(returnButton).toHaveFocus())
 })
 test("stale rejection preserves selection and requires another review", async () => {
   ;(submitInvoiceLedgerRecovery as jest.Mock).mockResolvedValue({ success: false, code: "CONFLICT" })

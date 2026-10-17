@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-28T09:15:02.844Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_COMMAND_PROOF_STATE_2026-09-28.md",
+  "sourceHashes": {
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "b80f0615c1bd2fc64f6acc03fe0a19570ed6097b7afab029e6e72abf78f8b5f8",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5"
+  },
+  "aggregateImpact": [
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "2cdb8e86b4b5e6b730cecca1723400ef942070edfbe7291b8dc97a10e67a0bcc",
+      "after": "b80f0615c1bd2fc64f6acc03fe0a19570ed6097b7afab029e6e72abf78f8b5f8"
+    },
+    {
+      "file": "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+      "before": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+      "after": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa"
+    }
+  ],
+  "receipts": [
+    {
+      "file": "evidence/cash-visibility-checks-bddc10b4-7464-45e1-88bd-d1a4bb2aaf2f.json",
+      "sha256": "cfb7577c7e0c92999e48c00e6984bc4aac68a897dea9a2452af17f4abfafbcf4"
+    },
+    {
+      "file": "lanes/environment/cash-proof-state-839a6d9d-9f7d-48c6-ba36-dcd123a78aeb.json",
+      "sha256": "c0c33a3b820f9ec085449e19bf041b31f9d75d9149390ffb247124f6104d451e"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/cash-proof-state-839a6d9d-9f7d-48c6-ba36-dcd123a78aeb-en.png",
+      "sha256": "f524985b8e496c69fcd78d6da2f0d848be5e79fbbe83151f5b9f5eb28bbb4a8a"
+    },
+    {
+      "file": "lanes/environment/cash-proof-state-839a6d9d-9f7d-48c6-ba36-dcd123a78aeb-fr.png",
+      "sha256": "5f006c3283615ac841729e5b16def14b557b267fb682fa78ae02e07a9be62cfe"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "unit_single_proof_drawer_and_reverse_response_order",
+    "unit_scope_withdrawal_and_subject_tenant_response_match",
+    "owned_en_fr_proof_transport_retry_escape_focus_return",
+    "owned_current_proof_permission_revocation_and_no_payment_mutation"
+  ],
+  "remaining": "Cash proof state and payment-proof recovery are corrected and verified. Complete other proof types, pending-close browser races, full dialog localization, contrast and broader accessibility; no complete proof-workflow closure claimed.",
+  "impactRationale": "Only Cash Command proof state/rendering and its component tests changed. No domain projection, service, action, shared drawer, module guard or route source changed. All 35 previous regression cases still pass alongside six new cases; actual payment proof reads and aggregate denial on reload exercised on the current component. Earlier aggregate runtime receipt stays immutable and is reused with this bounded impact review."
+}

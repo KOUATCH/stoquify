@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-27T16:15:17.582Z",
+  "workflow": "PR-10",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "components/finance/ReconciliationSignReview.tsx": "ba40dd0c83ff42cd8f28ce60e37e6ad63f4f4413f6f5cd1318f24c6e359f5054",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "d0a0cc42c171df294bd770ba50302aab588599e0cd301abd282d77c075631a6a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "2b7633b67c57d1f93755b2fbb73155a41310d72926e830aa184ca8a11052b971",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408"
+  },
+  "passed": [
+    {
+      "file": "evidence/sign-authority-checks-e712de2e-bd81-4b81-b805-06111dcb841e.json",
+      "sha256": "34648482bfab81926b4a3146b36cda3ba8095ebd6e1699dd52524b7ad20b51a0"
+    },
+    {
+      "file": "lanes/environment/sign-authority-78678de1-9ace-42fb-815d-44be9bf40acb.json",
+      "sha256": "96a7cfc007d1bf6ada9e1c025d41c159e746d1e190a318033f9f847b651761d4"
+    },
+    {
+      "file": "lanes/environment/sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c.json",
+      "sha256": "985834b0473b0fdf5ddc0b5952d1a3634b78ac34e02ca7a57ba6e768cd8a4408"
+    }
+  ],
+  "reused": [
+    {
+      "file": "lanes/environment/sign-authority-browser-518f0abb-c9f7-46f6-b3e4-6d8c4c5f85c8.json",
+      "state": "ready",
+      "sha256": "36e56ac73e10bd04cd1ab9daec9be0fb78bc699dbac93b5c4c51e65140cd586a",
+      "scope": "Only this English accessibility scan passed. The full historical browser attempt failed; it is not relabelled as passed."
+    },
+    {
+      "file": "lanes/environment/sign-authority-browser-52ea9907-6b7f-4215-97b6-1e16101926aa.json",
+      "state": "signed",
+      "sha256": "b2b9f1ff4346cfc44ec236675f775e5134b41e1a113580ccbfe942a72c38037c",
+      "scope": "Only this English accessibility scan passed. The full historical browser attempt failed; it is not relabelled as passed."
+    }
+  ]
+}

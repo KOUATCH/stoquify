@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { readReceiptReturnStockValuations } from "@/services/purchasing/receipt-return-recognition"
 
 import {
   rebuildInventoryProjectionInputSchema,
@@ -63,9 +64,14 @@ function signedMovementValue(transaction: {
   quantity: Prisma.Decimal
   totalCost: Prisma.Decimal
   unitCost: Prisma.Decimal
-}) {
+}, allocatedValue?: string) {
   const quantity = decimal(transaction.quantity)
   const totalCost = decimal(transaction.totalCost)
+  if (allocatedValue !== undefined) {
+    const value = decimal(allocatedValue)
+    if (value.lt(0) || !value.eq(totalCost)) throw new BusinessRuleError("Retained return movement value disagrees with its source allocation.", "REVIEW_REQUIRED")
+    return quantity.lt(0) ? value.negated() : value
+  }
   const fallbackValue = decimal(transaction.unitCost).times(quantity.abs()).toDecimalPlaces(2)
   const absoluteValue = totalCost.gt(0) ? totalCost : fallbackValue
 
@@ -111,6 +117,9 @@ export async function rebuildInventoryProjection(
         quantity: true,
         unitCost: true,
         totalCost: true,
+        type: true,
+        referenceType: true,
+        referenceId: true,
       },
     }),
     client.inventoryLevel.findMany({
@@ -129,6 +138,9 @@ export async function rebuildInventoryProjection(
       },
     }),
   ])
+
+  const returnIds = [...new Set(transactions.flatMap(transaction => transaction.referenceType === "RETURN" && ["PURCHASE_RETURN", "PURCHASE_RETURN_REVERSAL"].includes(transaction.type) && transaction.referenceId ? [transaction.referenceId] : []))]
+  const returnValuations = returnIds.length ? await readReceiptReturnStockValuations(client, { organizationId: parsed.organizationId, returnIds }) : new Map<string, string>()
 
   const projectionsByKey = new Map<
     string,
@@ -151,7 +163,7 @@ export async function rebuildInventoryProjection(
       }
 
     current.quantityOnHand = current.quantityOnHand.plus(transaction.quantity).toDecimalPlaces(3)
-    current.totalValue = current.totalValue.plus(signedMovementValue(transaction)).toDecimalPlaces(2)
+    current.totalValue = current.totalValue.plus(signedMovementValue(transaction, returnValuations.get(transaction.id))).toDecimalPlaces(2)
     projectionsByKey.set(key(transaction.itemId, transaction.locationId), current)
   }
 

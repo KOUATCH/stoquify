@@ -1,5 +1,22 @@
 # AN-DAILY-DIGEST closure checklist
 
+**Current decision, 2026-09-27: Complete—verified for the existing Digest read workflow.** The earlier checkpoint table below is retained as history. Its residual items are resolved or assigned to their existing source-workflow ownership in the criterion review below; they are not silently removed. [Final verification and source-binding decisions](DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md).
+
+| Final criterion | Closure evidence / scope |
+|---|---|
+| Authoritative outcome | Six produced signal families, actual overdue dates, missing metrics, daily/weekly periods, currencies and independent payroll proof verified in source-truth and 2026-09-27 signal/currency records. No fabricated zero, health or approval. |
+| Personas/prerequisites and authority | Existing payroll, finance, close, inventory, purchasing, core/analytics grant matrices retained with unchanged module/destination guards. Current composition/privacy tests and ten persisted EN/FR owner/manager cases verify changed authority boundaries. |
+| Successful journey and handoff | Seven-workspace/three-mode live application evidence, purchasing/payment/close/payroll/operating and Inventory Loss source entry, Back and current denial records. Source business completion retains its existing workflow ID. |
+| Repeated/concurrent/stale reads | Current two-tenant overlapping EN/FR daily/weekly reads across midnight; expired evidence and refresh tests preserve real blockers. No Digest write or duplicate financial effect exists. |
+| Failure/retry/session recovery | Current actual EN/FR expired-session form recovery and real application query exception, failed retry and restored source view. Physical database outage is not claimed. |
+| History/corrections | Source hashes and records retained; source-date correction reflected on reread; selected workspace/mode survives Back, refresh and login. No Digest export, cancellation or reversal is implemented or represented. |
+| EN/FR | All generated signal-family labels/units and seven workspace/mode states checked; user-authored text preserved. Source-page localization gaps stay explicit in MD-ITEM-01 and payroll source workflows. |
+| Accessibility/responsive | Current 84 contrast/enlargement views plus unchanged 126 mobile/tablet/desktop keyboard/reflow/reduced-motion views. Controlled doubled text, accessible names/roles and browser text exposure verified; native speech/browser-chrome zoom unverified. |
+| Background/operators | Reading produces no financial/event effects; source failures have actionable retry. Disabled agent release is honest. No new worker is introduced. |
+| Guide/regressions/recovery | Current final verification, [operating guide](DAILY_DIGEST_OPERATING_GUIDE.md), source-bound receipts and 159 focused tests, plus current shared-consumer typecheck. Owned environment repair documented; no production activation. |
+
+## Historical checkpoint table
+
 Business lifecycle: authenticated employee opens the daily/weekly role workspace, understands scoped operational truth and its limitations, inspects evidence, continues to an authorized source workflow, and can refresh/recover safely. The existing workflow ID and scope are unchanged. Source business mutations remain separate domain workflows with explicitly tested handoffs.
 
 | Criterion | Existing evidence / exact remaining work | State |
@@ -21,8 +38,10 @@ Current supporting contract: tenant and branch snapshots provide nullable/option
 Review accountability: architecture/backend/data review owns scoped counts and evidence contracts; security owns current permission/module filtering; frontend/UX/localization owns semantic presentation and keyboard/reflow; quality/SRE owns reproducible failure/retry and measurements; purchasing and analytics own overdue meaning; finance/audit verify no posting or approval side effects. New statutory, payroll, POS, billing and provider behavior: not applicable to this read-model correction. Existing full-workflow review responsibilities remain in the root review records.
 
 
-## Bounded remaining acceptance work
+## Historical bounded acceptance work — resolved by the final review above
 
-Keep AN-DAILY-DIGEST active. Close these concrete read-workflow gaps: (1) audit the six signal families actually produced from Digest snapshots and their generated EN/FR labels, numeric units and payroll branches; (2) verify the Inventory Loss action reaches its current authorized destination and rejects current revocation; (3) complete contrast of non-Manager workspace content and text-enlargement checks; (4) bind the existing concurrent-read, expired-session, query-recovery and history evidence to the final changed source, recording any concrete invalidation. Do not require an unlimited Cartesian product of all roles, grants and failures.
+2026-09-27 source audit: the six generated signal families have EN/FR label/unit/source checks. Historical payroll counts no longer invent risk. Recovery, settlement and forecast currency corrections are implemented; incompatible or unproven forecast totals are unavailable, compatible totals use decimal arithmetic and source fingerprints bind withheld evidence. EN/FR disclosure, revoked privacy and independent proof controls are verified. [Forecast correction](FORECAST_CURRENCY_VERIFICATION_2026-09-27.md), [recovery/settlement correction](PAYROLL_CURRENCY_READ_VERIFICATION_2026-09-27.md), [original signal audit](DAILY_DIGEST_SIGNAL_AUDIT_2026-09-27.md). The supporting read contract is resolved for Digest; full source payroll/finance lifecycles remain separate queued workflows.
+
+Keep AN-DAILY-DIGEST active. Close these concrete read-workflow gaps: (1) audit the six signal families actually produced from Digest snapshots and their generated EN/FR labels, numeric units and payroll branches; (2) Inventory Loss handoff and current revocation are now verified in EN/FR, with identity-scoped cache withdrawal and source-record/Back recovery ([record](INVENTORY_LOSS_HANDOFF_VERIFICATION_2026-09-27.md)); (3) complete contrast of non-Manager workspace content and text-enlargement checks; (4) bind the existing concurrent-read, expired-session, query-recovery and history evidence to the final changed source, recording any concrete invalidation. Do not require an unlimited Cartesian product of all roles, grants and failures.
 
 Digest cancellation, posting, reversal and export operations do not exist. Source-history screens and downstream business mutations retain their existing workflow ownership. Item-page localization stays in MD-ITEM-01; enabled governed-agent execution stays in AI-COMMAND/AI-PROPOSAL. Their full platform requirements remain; successful Digest handoffs do not certify their whole lifecycles. Native assistive-technology/zoom verification limits must stay disclosed without inventing a new professional approval gate.

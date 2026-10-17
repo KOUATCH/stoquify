@@ -1,0 +1,96 @@
+{
+  "at": "2026-09-28T08:57:10.589Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "2cdb8e86b4b5e6b730cecca1723400ef942070edfbe7291b8dc97a10e67a0bcc",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [
+    {
+      "state": "allowed",
+      "locale": "en",
+      "visibleBalance": true,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 73573,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-allowed.png"
+    },
+    {
+      "state": "allowed",
+      "locale": "fr",
+      "visibleBalance": true,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 7027,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-allowed.png"
+    },
+    {
+      "state": "permission-revoked",
+      "locale": "en",
+      "visibleBalance": false,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 6938,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-permission-revoked.png"
+    },
+    {
+      "state": "permission-revoked",
+      "locale": "fr",
+      "visibleBalance": false,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 4440,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-permission-revoked.png"
+    },
+    {
+      "state": "module-suspended",
+      "locale": "en",
+      "visibleBalance": false,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 6460,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-module-suspended.png"
+    },
+    {
+      "state": "module-suspended",
+      "locale": "fr",
+      "visibleBalance": false,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 5387,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-module-suspended.png"
+    },
+    {
+      "state": "retained-read",
+      "locale": "en",
+      "visibleBalance": true,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 6204,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-en-retained-read.png"
+    },
+    {
+      "state": "retained-read",
+      "locale": "fr",
+      "visibleBalance": true,
+      "foreignBalanceAbsent": true,
+      "scope": "actual authenticated route and server result",
+      "durationMs": 4417,
+      "screenshot": "cash-visibility-e9ed9334-f743-48a4-b2d1-b460a2b7f9cd-fr-retained-read.png"
+    }
+  ],
+  "noBusinessMutationsDuringReads": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "2cdb8e86b4b5e6b730cecca1723400ef942070edfbe7291b8dc97a10e67a0bcc",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

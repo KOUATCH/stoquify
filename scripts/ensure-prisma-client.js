@@ -6,10 +6,28 @@ const { createHash } = require("crypto")
 const { createRequire } = require("module")
 const { spawnSync } = require("child_process")
 
-// Prisma formats the copied schema. Preserve quoted defaults and comments while
-// ignoring whitespace between tokens.
+// Prisma formats the copied schema, including reordering adjacent block-level
+// attributes. Their declaration order is irrelevant; field order inside an
+// index/unique constraint is not. Preserve quoted values and comments.
 function schemaTokens(schema) {
-  return JSON.stringify(schema.match(/\/\/[^\r\n]*|"(?:\\.|[^"\\])*"|[^\s"]+/g))
+  const tokenize = (value) => value.match(/\/\/[^\r\n]*|"(?:\\.|[^"\\])*"|[^\s"]+/g) || []
+  // Prisma also moves block attributes below fields declared after them.
+  // Preserve field order and only relocate complete, single-line attributes.
+  const fieldsFirst = schema.replace(/(^[ \t]*(?:model|view|type)\s+\w+[ \t]*\{[ \t]*\r?\n)([\s\S]*?)(^[ \t]*\})/gm, (block, header, body, closing) => {
+    const lines = body.split(/\r?\n/)
+    const attributes = lines.filter((line) => /^[ \t]*@@/.test(line))
+    if (!attributes.length || !attributes.every((line) => /^[ \t]*@@\w+\([^\r\n]*\)[ \t]*(?:\/\/[^\r\n]*)?$/.test(line))) return block
+    const fields = lines.filter((line) => !/^[ \t]*@@/.test(line))
+    return header + fields.join("\n") + "\n" + attributes.join("\n") + "\n" + closing
+  })
+  const normalized = fieldsFirst.replace(/^[ \t]*@@[^\r\n]*(?:\r?\n[ \t]*@@[^\r\n]*)*/gm, (block) => {
+    const lines = block.split(/\r?\n/)
+    // Leave multiline/unrecognized declarations untouched rather than guessing
+    // where an attribute ends and accidentally masking a real schema change.
+    if (!lines.every((line) => /^[ \t]*@@\w+\([^\r\n]*\)[ \t]*(?:\/\/[^\r\n]*)?$/.test(line))) return block
+    return lines.map((line) => tokenize(line).join(" ")).sort().join("\n")
+  })
+  return JSON.stringify(tokenize(normalized))
 }
 
 function hashFile(file) {
@@ -59,7 +77,9 @@ function ensureClient(options = {}) {
   }
 
   log("Generating Prisma Client for the current schema and installed version...")
-  const result = (options.spawnSync || spawnSync)(process.execPath, [projectRequire.resolve("prisma"), "generate"], {
+  const prismaPackagePath = projectRequire.resolve("prisma/package.json")
+  const prismaCli = path.resolve(path.dirname(prismaPackagePath), projectRequire("prisma/package.json").bin.prisma)
+  const result = (options.spawnSync || spawnSync)(process.execPath, [prismaCli, "generate"], {
     cwd: root,
     env,
     stdio: "inherit",

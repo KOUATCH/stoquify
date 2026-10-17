@@ -69,6 +69,7 @@ const mappedAccounts = [
   "INPUT_VAT",
   "COGS",
   "INVENTORY",
+  "INVENTORY_VARIANCE",
   "CASH_ON_HAND",
   "CARD_CLEARING",
   "MOBILE_MONEY_CLEARING",

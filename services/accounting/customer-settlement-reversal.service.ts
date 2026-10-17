@@ -42,7 +42,12 @@ import {
 } from "./customer-settlement.schemas";
 import { CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS } from "./customer-settlement.service";
 import { assertBalancedJournalEntry } from "./invariants";
-import { recordReversedJournalCloseInvalidationsInTx } from "./journal-close-invalidation.service";
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "./journal-close-invalidation.service";
+import {
+  JournalReversalSnapshotChangedError,
+  lockJournalReversalCatalogInTx,
+  lockJournalReversalClosePeriodsInTx,
+} from "./journal-reversal-order.service";
 import { getOpenPeriodForDate } from "./periods.service";
 import { createLedgerPostingBatch } from "./posting.service";
 import { createAccountingSourceLink } from "./source-link.service";
@@ -664,16 +669,14 @@ async function postReversalInTx(
     idempotencyKey: string;
     idempotencyPayloadHash: string;
     documentHash: string;
+    period: { id: string };
+    affectedPeriodIds: string[];
     now: Date;
   },
 ): Promise<ReversalPostingResult> {
   const { settlement, originalJournal } = input;
   assertBalancedJournalEntry(originalJournal.lines);
-  const period = await getOpenPeriodForDate(
-    settlement.organizationId,
-    input.reversalDate,
-    tx,
-  );
+  const period = input.period;
   const batch = await createLedgerPostingBatch(
     {
       organizationId: settlement.organizationId,
@@ -816,7 +819,7 @@ async function postReversalInTx(
       }),
     },
   });
-  await recordReversedJournalCloseInvalidationsInTx(
+  await recordOrderedReversedJournalCloseInvalidationsInTx(
     tx,
     settlement.organizationId,
     {
@@ -824,6 +827,7 @@ async function postReversalInTx(
       reversalJournalEntryId: reversal.id,
       originalPeriodId: originalJournal.periodId,
       reversalPeriodId: period.id,
+      affectedPeriodIds: input.affectedPeriodIds,
       reversalDate: input.reversalDate,
       correlationId: postedBatch.id,
       staleReason:
@@ -845,6 +849,7 @@ async function reverseCustomerSettlementInTx(
   control: CustomerSettlementReversalControlContext,
   verifiedLastAuthAt: Date | null,
   now: Date,
+  freshReader: CustomerSettlementClient,
 ) {
   const organizationId = requiredText(control.organizationId, "Organization");
   const actorId = requiredText(control.actorId, "Actor");
@@ -874,13 +879,13 @@ async function reverseCustomerSettlementInTx(
   });
   if (!settlement) throw new NotFoundError("Customer settlement not found");
 
-  const decision = evaluateSensitiveAction({
+  const evaluateDecision = (at: Date) => evaluateSensitiveAction({
     action: "customer.settlement.reverse",
     organizationId,
     actorId,
     actorPermissions: control.actorPermissions,
     lastAuthAt: verifiedLastAuthAt,
-    now,
+    now: at,
     resourceType: "CustomerSettlement",
     resourceId: settlement.id,
     subjectActorId: settlement.receivedById,
@@ -893,6 +898,7 @@ async function reverseCustomerSettlementInTx(
       correlationId: command.parsed.correlationId,
     },
   });
+  const decision = evaluateDecision(now);
   await auditSensitiveActionDecision(tx, decision);
   if (!decision.allowed) return { denied: decision };
 
@@ -978,7 +984,7 @@ async function reverseCustomerSettlementInTx(
         postingPurpose: AccountingPostingPurpose.CUSTOMER_SETTLEMENT,
       },
       include: {
-        lines: { orderBy: { lineNumber: "asc" } },
+        lines: { orderBy: { lineNumber: "asc" }, include: { account: { select: { syscohadaClass: true } } } },
         reversedByEntries: { select: { id: true }, take: 2 },
       },
     }),
@@ -1035,6 +1041,24 @@ async function reverseCustomerSettlementInTx(
     );
   }
 
+  // Match the participating producer order before any compensating source write.
+  // The helper rejects a stale Serializable snapshot instead of hiding new runs.
+  await lockJournalReversalCatalogInTx(tx, organizationId, freshReader);
+  const period = await getOpenPeriodForDate(organizationId, command.reversalDate, tx);
+  const affectedPeriodIds = await lockJournalReversalClosePeriodsInTx(tx, organizationId, {
+    originalPeriodId: originalJournal.periodId,
+    reversalPeriodId: period.id,
+    originalEntryDate: originalJournal.entryDate,
+    reversalDate: command.reversalDate,
+    includeLaterPeriods: originalJournal.lines.some(line => line.account.syscohadaClass?.startsWith("3")),
+  }, freshReader);
+  now = new Date();
+  const postWaitDecision = evaluateDecision(now);
+  if (!postWaitDecision.allowed) {
+    await auditSensitiveActionDecision(tx, postWaitDecision);
+    return { denied: postWaitDecision };
+  }
+
   const reversalLedgerIds: string[] = [];
   for (const allocation of orderedAllocations(settlement)) {
     if (!allocation.customerReceivableDocumentId) {
@@ -1086,6 +1110,8 @@ async function reverseCustomerSettlementInTx(
     idempotencyKey: command.parsed.idempotencyKey,
     idempotencyPayloadHash: command.idempotencyPayloadHash,
     documentHash: command.parsed.documentHash.toLowerCase(),
+    period,
+    affectedPeriodIds,
     now,
   });
   const eventResult = await recordBusinessEventInTx(tx, {
@@ -1218,12 +1244,12 @@ async function runSerializable<T>(
       if (error instanceof ApplicationError) throw error;
       if (isPrismaCode(error, "P2002")) throw error;
       if (
-        isPrismaCode(error, "P2034") &&
+        (isPrismaCode(error, "P2034") || error instanceof JournalReversalSnapshotChangedError) &&
         attempt < CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS
       ) {
         continue;
       }
-      if (isPrismaCode(error, "P2034")) {
+      if (isPrismaCode(error, "P2034") || error instanceof JournalReversalSnapshotChangedError) {
         throw new ConflictError(
           "Customer settlement reversal transaction could not be serialized",
         );
@@ -1279,7 +1305,8 @@ export async function reverseCustomerSettlementWithControls(
         command,
         control,
         verifiedLastAuthAt,
-        now,
+        new Date(),
+        client,
       ),
     );
     if ("denied" in outcome && outcome.denied) {

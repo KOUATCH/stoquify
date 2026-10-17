@@ -63,7 +63,7 @@ import {
   type InventoryLossWorkbenchCopy,
 } from "./inventoryLossWorkbenchCopy";
 
-export function InventoryLossWorkbench() {
+export function InventoryLossWorkbench({ organizationId, actorId }: { organizationId: string; actorId: string }) {
   const locale = useLocale();
   const copy: InventoryLossWorkbenchCopy =
     locale === "fr"
@@ -83,7 +83,7 @@ export function InventoryLossWorkbench() {
     updateFilters,
     resetFilters,
     refetch,
-  } = useInventoryLossWorkbench();
+  } = useInventoryLossWorkbench(organizationId, actorId);
 
   const complete = result?.completeness.state === "complete";
   const partialMessage = result
@@ -361,7 +361,7 @@ export function InventoryLossWorkbench() {
         ) : null}
 
         <LossRecordDrawer
-          record={selectedRecord}
+          record={result?.records.find((record) => record.id === selectedRecord?.id) ?? null}
           locale={locale}
           timezone={result?.period.timezone ?? "UTC"}
           copy={copy}

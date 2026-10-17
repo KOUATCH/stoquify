@@ -1,0 +1,21 @@
+{
+  "name": "baseline-report-gate",
+  "command": [
+    "node",
+    "scripts/report-trust-export-gate.js",
+    "--mode",
+    "fail",
+    "--out",
+    "what-next/platform-remediation/2026-09-30-run-01/baseline-report-gate.md",
+    "--json-out",
+    "what-next/platform-remediation/2026-09-30-run-01/baseline-report-gate.json"
+  ],
+  "startedAt": "2026-09-30T20:25:07.621Z",
+  "endedAt": "2026-09-30T20:25:14.335Z",
+  "code": 1,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 2592,
+  "stderrBytes": 0
+}

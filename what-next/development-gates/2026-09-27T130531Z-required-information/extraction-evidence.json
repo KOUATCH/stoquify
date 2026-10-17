@@ -1,0 +1,416 @@
+{
+  "context": {
+    "database": "stoquify_replay_next_20260830",
+    "observed_at": "2026-09-27T13:09:52.689Z",
+    "transaction_read_only": "on",
+    "default_transaction_read_only": "on",
+    "timezone": "UTC"
+  },
+  "queries": [
+    {
+      "id": "model_Organization",
+      "sql": "SELECT \"id\",\"name\",\"tradeName\",\"slug\",\"country\",\"countryCode\",\"currency\",\"timezone\",\"defaultLocale\",\"requestedModules\",\"isActive\",\"deletedAt\",\"onboardingCompletedAt\",\"inventoryStartDate\",\"createdAt\",\"updatedAt\" FROM public.\"organizations\" ORDER BY \"id\"",
+      "rowCount": 3
+    },
+    {
+      "id": "model_User",
+      "sql": "SELECT \"id\",\"name\",\"email\",\"firstName\",\"lastName\",\"jobTitle\",\"organizationId\",\"isActive\",\"isVerified\",\"emailVerified\",\"isLocked\",\"lockedUntil\",\"mfaEnabledAt\",\"preferredLocale\",\"createdAt\",\"updatedAt\" FROM public.\"users\" ORDER BY \"id\"",
+      "rowCount": 180
+    },
+    {
+      "id": "model_Role",
+      "sql": "SELECT \"id\",\"code\",\"nameEn\",\"nameFr\",\"description\",\"permissions\",\"organizationId\",\"createdAt\",\"updatedAt\" FROM public.\"roles\" ORDER BY \"id\"",
+      "rowCount": 174
+    },
+    {
+      "id": "model_Location",
+      "sql": "SELECT \"id\",\"name\",\"code\",\"type\",\"organizationId\",\"managerId\",\"isActive\",\"isDefault\",\"deletedAt\",\"requiresApproval\",\"allowNegativeStock\",\"createdAt\",\"updatedAt\" FROM public.\"locations\" ORDER BY \"id\"",
+      "rowCount": 27
+    },
+    {
+      "id": "model_PayrollEmployee",
+      "sql": "SELECT \"id\",\"organizationId\",\"userId\",\"employeeNumber\",\"displayName\",\"status\",\"countryCode\",\"locationId\",\"department\",\"jobTitle\",\"deletedAt\",\"hireDate\",\"terminationDate\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_employees\" ORDER BY \"id\"",
+      "rowCount": 144
+    },
+    {
+      "id": "model_HrisOrgUnit",
+      "sql": "SELECT \"id\",\"organizationId\",\"code\",\"name\",\"type\",\"status\",\"parentId\",\"effectiveFrom\",\"effectiveTo\",\"createdAt\",\"updatedAt\" FROM public.\"hris_org_units\" ORDER BY \"id\"",
+      "rowCount": 14
+    },
+    {
+      "id": "model_HrisPosition",
+      "sql": "SELECT \"id\",\"organizationId\",\"orgUnitId\",\"locationId\",\"code\",\"title\",\"status\",\"effectiveFrom\",\"effectiveTo\",\"createdAt\",\"updatedAt\" FROM public.\"hris_positions\" ORDER BY \"id\"",
+      "rowCount": 94
+    },
+    {
+      "id": "model_HrisEmploymentAssignment",
+      "sql": "SELECT \"id\",\"organizationId\",\"employeeId\",\"positionId\",\"orgUnitId\",\"type\",\"status\",\"effectiveFrom\",\"effectiveTo\",\"createdAt\",\"updatedAt\" FROM public.\"hris_employment_assignments\" ORDER BY \"id\"",
+      "rowCount": 94
+    },
+    {
+      "id": "model_HrisManagerDelegation",
+      "sql": "SELECT \"id\",\"organizationId\",\"delegatorEmployeeId\",\"delegateEmployeeId\",\"scopeOrgUnitId\",\"authority\",\"status\",\"effectiveFrom\",\"effectiveTo\",\"approvalEvidenceHash\",\"approvedById\",\"revokedAt\",\"supersedesDelegationId\",\"createdAt\",\"updatedAt\" FROM public.\"hris_manager_delegations\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_OrganizationAccountingSettings",
+      "sql": "SELECT \"id\",\"organizationId\",\"accountingEnabled\",\"setupStatus\",\"countryPack\",\"baseCurrency\",\"fiscalYearStartMonth\",\"fiscalYearStartDay\",\"inventoryValuationPolicy\",\"roundingMode\",\"roundingScale\",\"taxRegime\",\"payrollCnpsFamilyAllowanceSector\",\"payrollCnpsOccupationalRiskGroup\",\"setupCompletedAt\",\"setupCompletedById\",\"createdAt\",\"updatedAt\" FROM public.\"organization_accounting_settings\" ORDER BY \"id\"",
+      "rowCount": 2
+    },
+    {
+      "id": "model_FiscalYear",
+      "sql": "SELECT \"id\",\"organizationId\",\"name\",\"startDate\",\"endDate\",\"status\",\"closedAt\",\"closedById\",\"createdAt\",\"updatedAt\" FROM public.\"fiscal_years\" ORDER BY \"id\"",
+      "rowCount": 2
+    },
+    {
+      "id": "model_AccountingPeriod",
+      "sql": "SELECT \"id\",\"organizationId\",\"fiscalYearId\",\"periodNumber\",\"name\",\"startDate\",\"endDate\",\"status\",\"lockedAt\",\"closedAt\",\"closedById\",\"createdAt\",\"updatedAt\" FROM public.\"accounting_periods\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_AccountantAccessGrant",
+      "sql": "SELECT \"id\",\"organizationId\",\"accountantUserId\",\"accountantFirmName\",\"role\",\"status\",\"consentGrantedById\",\"consentGrantedAt\",\"consentEvidenceHash\",\"effectiveFrom\",\"expiresAt\",\"revokedById\",\"revokedAt\",\"activeScopeKey\",\"createdAt\",\"updatedAt\" FROM public.\"accountant_access_grants\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AccountantReview",
+      "sql": "SELECT \"id\",\"organizationId\",\"periodId\",\"closeRunId\",\"status\",\"reviewerId\",\"openedById\",\"reviewedAt\",\"createdAt\",\"updatedAt\" FROM public.\"accountant_reviews\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_CloseRun",
+      "sql": "SELECT \"id\",\"organizationId\",\"periodId\",\"status\",\"readinessScore\",\"criticalBlockerCount\",\"highBlockerCount\",\"asOf\",\"runById\",\"completedAt\",\"startedAt\",\"voidedAt\",\"createdAt\",\"updatedAt\" FROM public.\"close_runs\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_HrisWorkCalendar",
+      "sql": "SELECT \"id\",\"organizationId\",\"code\",\"name\",\"countryCode\",\"timezone\",\"version\",\"status\",\"effectiveFrom\",\"effectiveTo\",\"sourceHash\",\"reviewedById\",\"reviewedAt\",\"createdAt\",\"updatedAt\" FROM public.\"hris_work_calendars\" ORDER BY \"id\"",
+      "rowCount": 4
+    },
+    {
+      "id": "model_HrisLeavePolicy",
+      "sql": "SELECT \"id\",\"organizationId\",\"code\",\"name\",\"countryCode\",\"version\",\"annualEntitlementMinutes\",\"carryOverLimitMinutes\",\"effectiveFrom\",\"effectiveTo\",\"status\",\"preparedById\",\"approvedById\",\"approvedAt\",\"sourceHash\",\"approvalEvidenceHash\",\"createdAt\",\"updatedAt\" FROM public.\"hris_leave_policies\" ORDER BY \"id\"",
+      "rowCount": 2
+    },
+    {
+      "id": "model_PayrollContract",
+      "sql": "SELECT \"id\",\"organizationId\",\"employeeId\",\"contractNumber\",\"type\",\"status\",\"effectiveFrom\",\"effectiveTo\",\"currency\",\"signedDocumentHash\",\"activatedBusinessEventId\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_contracts\" ORDER BY \"id\"",
+      "rowCount": 118
+    },
+    {
+      "id": "model_ProviderAccount",
+      "sql": "SELECT \"id\",\"organizationId\",\"paymentRailId\",\"providerCode\",\"displayName\",\"status\",\"countryCode\",\"currencyCode\",\"settlementLagDays\",\"archivedAt\",\"settlementLedgerAccountId\",\"suspenseLedgerAccountId\",\"feeLedgerAccountId\",\"legalHoldAt\",\"createdAt\",\"updatedAt\" FROM public.\"provider_accounts\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_ComplianceAdapterConfig",
+      "sql": "SELECT \"id\",\"organizationId\",\"countryCode\",\"authorityChannel\",\"adapterKey\",\"environment\",\"status\",\"countryPackVersion\",\"countryPackResolutionHash\",\"capabilityStatus\",\"credentialReference\",\"credentialExpiresAt\",\"credentialRotatedAt\",\"credentialRotatedById\",\"officialSpecTitle\",\"officialSpecVersion\",\"officialSpecPublishedAt\",\"officialSpecEffectiveFrom\",\"officialSpecReference\",\"officialSpecHash\",\"reviewStatus\",\"reviewedById\",\"reviewedAt\",\"reviewerQualification\",\"reviewerConflictDeclared\",\"reviewEvidenceHash\",\"configHash\",\"createdById\",\"updatedById\",\"approvedById\",\"approvedAt\",\"disabledAt\",\"createdAt\",\"updatedAt\" FROM public.\"compliance_adapter_configs\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_TenantModuleConfiguration",
+      "sql": "SELECT \"organizationId\",\"revision\",\"activeRevision\",\"selectedModules\",\"activeModules\",\"newWorkStoppedModules\",\"legacyUnknownValues\",\"manifestHash\",\"createdAt\",\"updatedAt\" FROM public.\"tenant_module_configurations\" ORDER BY \"organizationId\"",
+      "rowCount": 2
+    },
+    {
+      "id": "model_TenantModuleGrant",
+      "sql": "SELECT \"id\",\"organizationId\",\"moduleSlug\",\"status\",\"source\",\"startsAt\",\"endsAt\",\"readOnly\",\"trial\",\"revision\",\"createdAt\",\"updatedAt\" FROM public.\"tenant_module_grants\" ORDER BY \"id\"",
+      "rowCount": 22
+    },
+    {
+      "id": "model_TenantModuleConfigurationCommand",
+      "sql": "SELECT \"id\",\"organizationId\",\"idempotencyKey\",\"expectedRevision\",\"resultRevision\",\"state\",\"selectedModules\",\"previousModules\",\"previewHash\",\"errorCode\",\"actorId\",\"createdAt\",\"updatedAt\" FROM public.\"tenant_module_configuration_commands\" ORDER BY \"id\"",
+      "rowCount": 2
+    },
+    {
+      "id": "model_TenantModuleLifecycleOperation",
+      "sql": "SELECT \"id\",\"organizationId\",\"commandId\",\"desiredRevision\",\"baseActiveRevision\",\"desiredModules\",\"stopNewWorkModules\",\"authorityHash\",\"state\",\"version\",\"errorCode\",\"actorId\",\"completedAt\",\"leaseUntil\",\"createdAt\",\"updatedAt\" FROM public.\"tenant_module_lifecycle_operations\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_TenantModuleLifecycleStep",
+      "sql": "SELECT \"id\",\"organizationId\",\"operationId\",\"moduleSlug\",\"stepKey\",\"state\",\"code\",\"href\",\"evidenceHash\",\"checkedAt\",\"createdAt\",\"updatedAt\" FROM public.\"tenant_module_lifecycle_steps\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AgentDefinition",
+      "sql": "SELECT \"id\",\"key\",\"name\",\"ownerModuleSlug\",\"status\",\"rolloutMode\",\"riskLevel\",\"allowedToolKeys\",\"allowedSkillKeys\",\"createdAt\",\"updatedAt\" FROM public.\"agent_definitions\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AgentActivationPackage",
+      "sql": "SELECT \"id\",\"organizationId\",\"agentKey\",\"releaseVersion\",\"environment\",\"commitSha\",\"manifestHash\",\"allowedRoleCodes\",\"activationStartsAt\",\"activationEndsAt\",\"state\",\"version\",\"requestedById\",\"activatedById\",\"activatedAt\",\"suspendedAt\",\"retiredAt\",\"retiredById\",\"lastReconciledAt\",\"reconciliationState\",\"alertTransportReady\",\"createdAt\",\"updatedAt\" FROM public.\"agent_activation_packages\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AgentActivationOwner",
+      "sql": "SELECT \"id\",\"packageId\",\"responsibility\",\"primaryUserId\",\"backupUserId\",\"escalationRouteRef\",\"runbookVersion\",\"acceptedAt\",\"validUntil\",\"coverageStartsAt\",\"coverageEndsAt\",\"createdAt\",\"updatedAt\" FROM public.\"agent_activation_owners\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AgentActivationApproval",
+      "sql": "SELECT \"id\",\"packageId\",\"approvalType\",\"decision\",\"approverId\",\"evidenceHash\",\"decidedAt\",\"expiresAt\",\"revokedAt\",\"createdAt\" FROM public.\"agent_activation_approvals\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_AgentPilotCertification",
+      "sql": "SELECT \"id\",\"packageId\",\"commitSha\",\"manifestHash\",\"suiteVersion\",\"ciRunId\",\"result\",\"reportHash\",\"passedAt\",\"expiresAt\",\"createdAt\" FROM public.\"agent_pilot_certifications\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_BranchDailyCloseSignOff",
+      "sql": "SELECT \"id\",\"organizationId\",\"branchDailyCloseRunId\",\"status\",\"signedReadinessSourceHash\",\"signedEvidenceHash\",\"signedEvidenceObservedAt\",\"signedById\",\"signedAt\",\"authAssuranceLevel\",\"freshAuthAt\",\"invalidatedById\",\"invalidatedAt\",\"supersedesSignOffId\",\"createdAt\",\"updatedAt\" FROM public.\"branch_daily_close_sign_offs\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_StockAdjustment",
+      "sql": "SELECT \"organizationId\",\"locationId\",\"createdById\",\"approvedById\",\"evidenceHash\",\"id\",\"status\",\"reversalOfAdjustmentId\",\"adjustmentDate\",\"deletedAt\",\"approvedAt\",\"createdAt\",\"updatedAt\" FROM public.\"stock_adjustments\" ORDER BY \"id\"",
+      "rowCount": 119
+    },
+    {
+      "id": "model_StockAdjustmentLine",
+      "sql": "SELECT \"itemId\",\"actualQuantity\",\"id\",\"adjustmentId\",\"createdAt\",\"updatedAt\" FROM public.\"stock_adjustment_lines\" ORDER BY \"id\"",
+      "rowCount": 119
+    },
+    {
+      "id": "model_SupplierPayment",
+      "sql": "SELECT \"id\",\"organizationId\",\"supplierId\",\"bankAccountId\",\"requestedById\",\"approvedById\",\"documentHash\",\"evidenceHash\",\"status\",\"paymentDate\",\"approvedAt\",\"releasedAt\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"supplier_payments\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_JournalEntry",
+      "sql": "SELECT \"id\",\"journalId\",\"periodId\",\"createdById\",\"organizationId\",\"status\",\"postingBatchId\",\"reversalOfEntryId\",\"entryDate\",\"postedAt\",\"reversedAt\",\"createdAt\",\"updatedAt\" FROM public.\"journal_entries\" ORDER BY \"id\"",
+      "rowCount": 141
+    },
+    {
+      "id": "model_JournalEntryLine",
+      "sql": "SELECT \"accountId\",\"debit\",\"credit\",\"id\",\"organizationId\",\"journalEntryId\",\"createdAt\" FROM public.\"journal_entry_lines\" ORDER BY \"id\"",
+      "rowCount": 368
+    },
+    {
+      "id": "model_ClosePackExport",
+      "sql": "SELECT \"closeRunId\",\"contentHash\",\"isCertified\",\"id\",\"organizationId\",\"periodId\",\"exportedAt\",\"createdAt\",\"updatedAt\" FROM public.\"close_pack_exports\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_PayrollRun",
+      "sql": "SELECT \"id\",\"payrollPeriodId\",\"version\",\"preparedById\",\"reviewedById\",\"approvedById\",\"organizationId\",\"status\",\"originalRunId\",\"reviewedBusinessEventId\",\"approvedBusinessEventId\",\"emittedBusinessEventId\",\"postedBusinessEventId\",\"reviewedAt\",\"approvedAt\",\"emittedAt\",\"postedAt\",\"archivedAt\",\"cancelledAt\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_runs\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_PayrollPaymentBatch",
+      "sql": "SELECT \"id\",\"payrollRunId\",\"requestedById\",\"approvedById\",\"releasedById\",\"evidenceHash\",\"bankFileHash\",\"organizationId\",\"status\",\"paymentDate\",\"approvedAt\",\"releasedAt\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_payment_batches\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_PayrollPayslip",
+      "sql": "SELECT \"employeeId\",\"id\",\"organizationId\",\"status\",\"payrollRunId\",\"runLineId\",\"emittedBusinessEventId\",\"issuedAt\",\"voidedAt\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_payslips\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_POSStation",
+      "sql": "SELECT \"id\",\"currentSessionId\",\"locationId\",\"organizationId\",\"createdAt\",\"updatedAt\" FROM public.\"pos_terminals\" ORDER BY \"id\"",
+      "rowCount": 25
+    },
+    {
+      "id": "model_POSSession",
+      "sql": "SELECT \"userId\",\"organizationId\",\"status\",\"id\",\"terminalId\",\"locationId\",\"startTime\",\"endTime\",\"createdAt\",\"updatedAt\" FROM public.\"pos_sessions\" ORDER BY \"id\"",
+      "rowCount": 31
+    },
+    {
+      "id": "model_POSCheckoutWorkspace",
+      "sql": "SELECT \"leaseId\",\"sessionId\",\"organizationId\",\"leaseExpiresAt\",\"updatedAt\" FROM public.\"pos_checkout_workspaces\" ORDER BY \"sessionId\"",
+      "rowCount": 5
+    },
+    {
+      "id": "model_BranchDailyCloseRun",
+      "sql": "SELECT \"locationId\",\"startedById\",\"evidenceHash\",\"id\",\"organizationId\",\"status\",\"businessDate\",\"periodStart\",\"periodEnd\",\"evidenceObservedAt\",\"startedAt\",\"createdAt\",\"updatedAt\" FROM public.\"branch_daily_close_runs\" ORDER BY \"id\"",
+      "rowCount": 0
+    },
+    {
+      "id": "model_Item",
+      "sql": "SELECT \"id\",\"nameEn\",\"nameFr\",\"isActive\",\"organizationId\",\"unitId\",\"taxRateId\",\"categoryId\",\"brandId\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"items\" ORDER BY \"id\"",
+      "rowCount": 41
+    },
+    {
+      "id": "model_Unit",
+      "sql": "SELECT \"id\",\"symbol\",\"type\",\"nameEn\",\"nameFr\",\"baseUnit\",\"conversionRate\",\"isActive\",\"organizationId\",\"createdAt\",\"updatedAt\" FROM public.\"units\" ORDER BY \"id\"",
+      "rowCount": 22
+    },
+    {
+      "id": "model_TaxRate",
+      "sql": "SELECT \"id\",\"rate\",\"type\",\"nameEn\",\"nameFr\",\"isActive\",\"organizationId\",\"createdAt\",\"updatedAt\" FROM public.\"tax_rates\" ORDER BY \"id\"",
+      "rowCount": 4
+    },
+    {
+      "id": "model_SettlementAccount",
+      "sql": "SELECT \"organizationId\",\"providerAccountId\",\"ledgerAccountId\",\"id\",\"approvedAt\",\"effectiveFrom\",\"effectiveTo\",\"createdAt\",\"updatedAt\" FROM public.\"settlement_accounts\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_PayrollPeriod",
+      "sql": "SELECT \"organizationId\",\"id\",\"periodStart\",\"periodEnd\",\"payDate\",\"status\",\"inputLockedAt\",\"approvedAt\",\"closedAt\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_periods\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_GoodsReceipt",
+      "sql": "SELECT \"purchaseOrderId\",\"locationId\",\"organizationId\",\"receivedById\",\"id\",\"receiptDate\",\"status\",\"finalizedAt\",\"inventoryPostedAt\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"goods_receipts\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_GoodsReceiptLine",
+      "sql": "SELECT \"goodsReceiptId\",\"purchaseOrderLineId\",\"itemId\",\"id\",\"expiryDate\",\"createdAt\",\"updatedAt\" FROM public.\"goods_receipt_lines\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_SalesOrder",
+      "sql": "SELECT \"customerId\",\"locationId\",\"organizationId\",\"createdById\",\"terminalId\",\"sessionId\",\"id\",\"status\",\"orderDate\",\"dueDate\",\"confirmedAt\",\"deliveredAt\",\"deletedAt\",\"createdAt\",\"updatedAt\" FROM public.\"sales_orders\" ORDER BY \"id\"",
+      "rowCount": 34
+    },
+    {
+      "id": "model_SalesOrderLine",
+      "sql": "SELECT \"salesOrderId\",\"itemId\",\"id\",\"createdAt\",\"updatedAt\" FROM public.\"sales_order_lines\" ORDER BY \"id\"",
+      "rowCount": 56
+    },
+    {
+      "id": "model_InventoryTransaction",
+      "sql": "SELECT \"itemId\",\"locationId\",\"organizationId\",\"createdById\",\"reversalOfTransactionId\",\"referenceType\",\"referenceId\",\"id\",\"effectiveAt\",\"recordedAt\",\"createdAt\",\"expiryDate\" FROM public.\"inventory_transactions\" ORDER BY \"id\"",
+      "rowCount": 709
+    },
+    {
+      "id": "model_BusinessEvent",
+      "sql": "SELECT \"organizationId\",\"sourceType\",\"sourceId\",\"id\",\"status\",\"occurredAt\",\"recordedAt\",\"processedAt\",\"failedAt\",\"createdAt\",\"updatedAt\" FROM public.\"business_events\" ORDER BY \"id\"",
+      "rowCount": 663
+    },
+    {
+      "id": "model_BusinessEventOutbox",
+      "sql": "SELECT \"organizationId\",\"businessEventId\",\"id\",\"status\",\"availableAt\",\"lockedAt\",\"processedAt\",\"failedAt\",\"createdAt\",\"updatedAt\" FROM public.\"business_event_outbox\" ORDER BY \"id\"",
+      "rowCount": 143
+    },
+    {
+      "id": "model_POSOfflineEvent",
+      "sql": "SELECT \"organizationId\",\"deviceId\",\"terminalId\",\"locationId\",\"sessionId\",\"syncBatchId\",\"businessEventId\",\"id\",\"capturedAtDevice\",\"receivedAtServer\",\"status\",\"createdAt\",\"updatedAt\" FROM public.\"pos_offline_events\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_ProviderEvent",
+      "sql": "SELECT \"organizationId\",\"providerAccountId\",\"id\",\"status\",\"occurredAt\",\"receivedAt\",\"processedAt\",\"archivedAt\",\"legalHoldAt\",\"createdAt\",\"updatedAt\" FROM public.\"provider_events\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_FiscalDocument",
+      "sql": "SELECT \"organizationId\",\"postingBatchId\",\"journalEntryId\",\"accountingSourceLinkId\",\"sequenceId\",\"originalFiscalDocumentId\",\"sourceType\",\"sourceId\",\"id\",\"status\",\"sourceDate\",\"issueDate\",\"legalNumberAssignedAt\",\"certifiedAt\",\"rejectedAt\",\"reversedAt\",\"createdAt\",\"updatedAt\" FROM public.\"fiscal_documents\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_WorkflowAssuranceCheckDefinition",
+      "sql": "SELECT \"id\",\"createdAt\",\"updatedAt\" FROM public.\"workflow_assurance_check_definitions\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "model_PayrollRunLine",
+      "sql": "SELECT \"organizationId\",\"payrollRunId\",\"employeeId\",\"contractId\",\"attendanceSnapshotId\",\"id\",\"createdAt\",\"updatedAt\" FROM public.\"payroll_run_lines\" ORDER BY \"id\"",
+      "rowCount": 24
+    },
+    {
+      "id": "memberships",
+      "sql": "SELECT \"A\" AS \"roleId\",\"B\" AS \"userId\" FROM public.\"_UserRoles\" ORDER BY \"A\",\"B\"",
+      "rowCount": 180
+    },
+    {
+      "id": "migration_times",
+      "sql": "SELECT migration_name,started_at,finished_at,rolled_back_at FROM public._prisma_migrations ORDER BY migration_name",
+      "rowCount": 87
+    }
+  ],
+  "readOnlyVerified": true,
+  "transactionEnded": "ROLLBACK",
+  "mutationStatementsExecuted": 0,
+  "secretValuesSelected": false,
+  "excludedUserDates": [
+    "verificationTokenExpires",
+    "lastFailedLogin",
+    "lastLogin"
+  ],
+  "membershipColumns": [
+    {
+      "table_name": "_UserRoles",
+      "column_name": "A",
+      "data_type": "text",
+      "udt_name": "text"
+    },
+    {
+      "table_name": "_UserRoles",
+      "column_name": "B",
+      "data_type": "text",
+      "udt_name": "text"
+    }
+  ],
+  "unavailableModels": [],
+  "sourcePriorAudit": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\development-gates\\2026-09-27T123553Z",
+  "counts": {
+    "Organization": 3,
+    "User": 180,
+    "Role": 174,
+    "Location": 27,
+    "PayrollEmployee": 144,
+    "HrisOrgUnit": 14,
+    "HrisPosition": 94,
+    "HrisEmploymentAssignment": 94,
+    "HrisManagerDelegation": 0,
+    "OrganizationAccountingSettings": 2,
+    "FiscalYear": 2,
+    "AccountingPeriod": 24,
+    "AccountantAccessGrant": 0,
+    "AccountantReview": 24,
+    "CloseRun": 24,
+    "HrisWorkCalendar": 4,
+    "HrisLeavePolicy": 2,
+    "PayrollContract": 118,
+    "ProviderAccount": 24,
+    "ComplianceAdapterConfig": 24,
+    "TenantModuleConfiguration": 2,
+    "TenantModuleGrant": 22,
+    "TenantModuleConfigurationCommand": 2,
+    "TenantModuleLifecycleOperation": 0,
+    "TenantModuleLifecycleStep": 0,
+    "AgentDefinition": 0,
+    "AgentActivationPackage": 0,
+    "AgentActivationOwner": 0,
+    "AgentActivationApproval": 0,
+    "AgentPilotCertification": 0,
+    "BranchDailyCloseSignOff": 0,
+    "StockAdjustment": 119,
+    "StockAdjustmentLine": 119,
+    "SupplierPayment": 24,
+    "JournalEntry": 141,
+    "JournalEntryLine": 368,
+    "ClosePackExport": 24,
+    "PayrollRun": 24,
+    "PayrollPaymentBatch": 24,
+    "PayrollPayslip": 24,
+    "POSStation": 25,
+    "POSSession": 31,
+    "POSCheckoutWorkspace": 5,
+    "BranchDailyCloseRun": 0,
+    "Item": 41,
+    "Unit": 22,
+    "TaxRate": 4,
+    "SettlementAccount": 24,
+    "PayrollPeriod": 24,
+    "GoodsReceipt": 24,
+    "GoodsReceiptLine": 24,
+    "SalesOrder": 34,
+    "SalesOrderLine": 56,
+    "InventoryTransaction": 709,
+    "BusinessEvent": 663,
+    "BusinessEventOutbox": 143,
+    "POSOfflineEvent": 24,
+    "ProviderEvent": 24,
+    "FiscalDocument": 24,
+    "WorkflowAssuranceCheckDefinition": 24,
+    "PayrollRunLine": 24,
+    "UserRoles": 180,
+    "Migrations": 87
+  }
+}

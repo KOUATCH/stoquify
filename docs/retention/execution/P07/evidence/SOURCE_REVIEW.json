@@ -1,0 +1,241 @@
+{
+  "at": "2026-10-17T13:25:32.488Z",
+  "graphDate": "2026-08-09",
+  "graphRegenerated": false,
+  "nodes": [
+    {
+      "label": "markAccountingSetupReady()",
+      "file_type": "code",
+      "source_file": "accounting\\accounting-settings.service.ts",
+      "source_location": "L391",
+      "community": 13,
+      "norm_label": "markaccountingsetupready()",
+      "repo": "services",
+      "id": "accounting_accounting_settings_service_markaccountingsetupready"
+    },
+    {
+      "label": "backfillCustomerReceivableDocuments()",
+      "file_type": "code",
+      "source_file": "accounting\\customer-receivable-backfill.service.ts",
+      "source_location": "L105",
+      "community": 146,
+      "norm_label": "backfillcustomerreceivabledocuments()",
+      "repo": "services",
+      "id": "accounting_customer_receivable_backfill_service_backfillcustomerreceivabledocuments"
+    },
+    {
+      "label": "postOpeningStock()",
+      "file_type": "code",
+      "source_file": "inventory\\inventory-stock-event.service.ts",
+      "source_location": "L735",
+      "community": 9,
+      "norm_label": "postopeningstock()",
+      "repo": "services",
+      "id": "inventory_inventory_stock_event_service_postopeningstock"
+    },
+    {
+      "label": "createAPLedgerPosting()",
+      "file_type": "code",
+      "source_file": "purchasing\\ap-control.service.ts",
+      "source_location": "L592",
+      "community": 3,
+      "norm_label": "createapledgerposting()",
+      "repo": "services",
+      "id": "purchasing_ap_control_service_createapledgerposting"
+    },
+    {
+      "label": "approveSupplierInvoice()",
+      "file_type": "code",
+      "source_file": "purchasing\\ap-control.service.ts",
+      "source_location": "L1965",
+      "community": 3,
+      "norm_label": "approvesupplierinvoice()",
+      "repo": "services",
+      "id": "purchasing_ap_control_service_approvesupplierinvoice"
+    },
+    {
+      "label": "normalizeRegistrationOnboarding()",
+      "file_type": "code",
+      "source_file": "users\\user-identity.service.ts",
+      "source_location": "L124",
+      "community": 40,
+      "norm_label": "normalizeregistrationonboarding()",
+      "repo": "services",
+      "id": "users_user_identity_service_normalizeregistrationonboarding"
+    },
+    {
+      "label": "buildRegistrationOnboardingDetails()",
+      "file_type": "code",
+      "source_file": "users\\user-identity.service.ts",
+      "source_location": "L138",
+      "community": 40,
+      "norm_label": "buildregistrationonboardingdetails()",
+      "repo": "services",
+      "id": "users_user_identity_service_buildregistrationonboardingdetails"
+    },
+    {
+      "label": "buildOnboarding()",
+      "file_type": "code",
+      "source_file": "dashboard\\todays-operating-truth.ts",
+      "source_location": "L860",
+      "community": 2,
+      "norm_label": "buildonboarding()",
+      "repo": "components",
+      "id": "dashboard_todays_operating_truth_buildonboarding"
+    },
+    {
+      "label": "markAccountingSetupReadyAction()",
+      "file_type": "code",
+      "source_file": "accounting\\settings.actions.ts",
+      "source_location": "L174",
+      "community": 23,
+      "norm_label": "markaccountingsetupreadyaction()",
+      "repo": "actions",
+      "id": "accounting_settings_actions_markaccountingsetupreadyaction"
+    }
+  ],
+  "predecessors": [
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-contract.ts",
+      "unchanged": true
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-controls.json",
+      "unchanged": true
+    },
+    {
+      "path": "services/onboarding/__tests__/fixtures/opening-position-source.json",
+      "unchanged": true
+    },
+    {
+      "path": "services/onboarding/__tests__/opening-position-contract.test.ts",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/BASELINE_REVALIDATION.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS_FINAL.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INITIAL_STATUS.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INITIAL_WORKTREE.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/INVENTORY_BOUNDARY_RESULTS.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/PRESERVED_ARTIFACT_HASHES.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/SOURCE_MANIFEST.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/VALIDATION.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/evidence/VERIFICATION.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/FIXTURE_MANIFEST.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/OPENING_POSITION_CONTRACT.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P03/RESULT.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/ACCESS_MATRIX.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/ACCESS_RESULTS.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/INITIAL_BASELINE.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/INVENTORY_TEST_BEFORE.txt",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/OWNED_BASELINE.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/RBAC_RESULTS.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/SOURCE_MANIFEST.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/VALIDATION.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/evidence/VERIFICATION.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/RECOVERY_PROTOCOL.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/RESULT.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/retention/execution/P04/TRUST_BLOCKERS.md",
+      "unchanged": true
+    }
+  ],
+  "historical": [
+    {
+      "path": "actions/onboarding/master-data-onboarding.actions.ts",
+      "priorSha256": "972dd5bacf05af7d5563f6c2e52f003d48306906e224fbdd542adfe852abb41b",
+      "baselineSha256": "972dd5bacf05af7d5563f6c2e52f003d48306906e224fbdd542adfe852abb41b",
+      "matches": true
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx",
+      "priorSha256": "69d66a0c1c27b05ad361562de2c00addfdbbd353dca718f9bef48d376f1df9c6",
+      "baselineSha256": "69d66a0c1c27b05ad361562de2c00addfdbbd353dca718f9bef48d376f1df9c6",
+      "matches": true
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "priorSha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+      "baselineSha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+      "matches": true
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "priorSha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "baselineSha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "matches": true
+    }
+  ]
+}

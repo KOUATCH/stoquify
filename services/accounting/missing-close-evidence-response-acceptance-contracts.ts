@@ -32,6 +32,7 @@ export type MissingCloseEvidenceResponseAcceptanceDto = {
   decision: typeof ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision
   findingStatus: typeof ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus
   resolutionNotes: string
+  replacement: { checklistItemId: string; bindingHash: string } | null
   resolvedAt: string
   correlationId: string
   createdAt: string

@@ -1,0 +1,129 @@
+{
+  "at": "2026-09-30T19:40:23.633Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "INVENTORY_DIRECTION_2026-09-30.md",
+  "sourceHashes": {
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/__tests__/inventory-adjustment.service.test.ts": "c975b0175a9151e39a874575a3f448c1d8bd6e7568d8959afeadfbdff1a25c2a",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "services/inventory/__tests__/inventory-adjustment-traceability.test.ts": "4fc9ff8d67eda9aaede849fe6212cb4ec8fd2a6b4fa53fe81806f1567407b85a",
+    "services/accounting/__tests__/posting-rules.service.test.ts": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/control-center.service.test.ts": "c24d14d24b228ec146a0cd208e687486d72d74b2dbc3e9eb724d62e18dcbc89e",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f",
+    "components/accounting/AccountingControlCenter.tsx": "0fc07f84a40c9b4526520594fd69eb3bc3eaf4caf25af4cf9c3578336b29b25b"
+  },
+  "priorImpact": [
+    {
+      "file": "services/inventory/inventory-adjustment.service.ts",
+      "before": "bf0bc688973d99d24c1d150d6c998c0a4fd4fccb2a5138e170aed0613dbc10b7",
+      "after": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+      "priorReview": "evidence/inventory-direction-before-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/__tests__/default-posting-rules.service.test.ts",
+      "before": "3d7b6410eece0e5d97f537f143ea5663470d51de5c4ff4b8a6e2e1ee6f64f6b8",
+      "after": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+      "priorReview": "evidence/inventory-direction-before-2026-09-30.json"
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+      "before": "1b52254495fb3194360da684f3facba764045a669ac6318b43d20c5a924bae26",
+      "after": "c975b0175a9151e39a874575a3f448c1d8bd6e7568d8959afeadfbdff1a25c2a",
+      "priorReview": "evidence/inventory-direction-before-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/default-posting-rules.ts",
+      "before": "b843210bdb2eab90d58703d5011bc3608240de946fe3c8c0a25eb0d050031afe",
+      "after": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+      "priorReview": "evidence/inventory-direction-before-2026-09-30.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "services/inventory/inventory-adjustment.service.ts",
+      "changed": [
+        "postAdjustmentLedgerOrBlock",
+        "postStockAdjustment"
+      ],
+      "added": [
+        "adjustmentRuleSourceAmount"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/default-posting-rules.ts",
+      "changed": [
+        "DEFAULT_POSTING_RULES"
+      ],
+      "added": [
+        "DEFAULT_INVENTORY_POSTING_RULES"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Inventory adjustment now has a directional default, actual gain/loss/mixed posting proof and evidence-backed replay status. Three required purposes still lack operational defaults/applicability reconciliation: CASH_DRAWER_CLOSE, GOODS_RECEIPT and EXPENSE_APPROVAL. Complete their producer/setup contracts, blocked-adjustment ledger recovery, eligible close certification, current-configuration concurrency, native accessibility and representative latency.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "inventory_gross_gain_loss_direction",
+    "inventory_balanced_wrong_value_denial",
+    "inventory_maker_checker_and_no_duplicate_effects",
+    "inventory_replay_retained_posting_truth",
+    "inventory_template_en_fr_control_center"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/inventory-direction-checks-d1ddea86-3132-4313-98a8-fbfb066b8ef6.json",
+      "sha256": "09fc2238ffd564ba637ac42ab2280f0604e74ea71c5bed069d1dcd9674158d9a"
+    },
+    {
+      "file": "lanes/environment/inventory-direction-c67200e9-42a0-46d1-9da9-0a030e45de38.json",
+      "sha256": "cc6b9023d3ea75b2e3ca4094ee695c3d5e2e626a6c483a6e00cc9b22451420fd"
+    },
+    {
+      "file": "lanes/environment/inventory-direction-browser-e40a3527-c5e2-4014-b128-481f3227b588.json",
+      "sha256": "393387055f6844be94358d3845760dba77aefeaa3c52e226ec855373540dafbf"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "INVENTORY_DIRECTION_2026-09-30.md",
+      "sha256": "41781e538016e906baa848566781cbbb2fed58e9c77af60f498600e38ebb46ae"
+    },
+    {
+      "file": "evidence/inventory-direction-before-2026-09-30.json",
+      "sha256": "ce2050a1968bf5cd3fabb22d76e2da93b64febeefeba8a531f151f927de78d19"
+    },
+    {
+      "file": "lanes/environment/verify-inventory-direction.cjs",
+      "sha256": "c2b9c54d85cb6a703b324af98674f803f12adec5aa1b76a58b04167df7646ae4"
+    },
+    {
+      "file": "lanes/environment/verify-inventory-direction-browser.cjs",
+      "sha256": "10399fcff117984db261a2fb16bc3499144ed09691760a923e96f25fb9529a6b"
+    },
+    {
+      "file": "run-inventory-direction-checks.cjs",
+      "sha256": "d5d26f238effa6b73cbb0738cec0967b76c6630d314e819c0e3775c0418b1a93"
+    },
+    {
+      "file": "lanes/environment/inventory-direction-browser-e40a3527-c5e2-4014-b128-481f3227b588-en1440.png",
+      "sha256": "af2ec14fa9ef7df8220e7b4eb7afa94068d99755db114075f7a944449c7ae2b5"
+    },
+    {
+      "file": "lanes/environment/inventory-direction-browser-e40a3527-c5e2-4014-b128-481f3227b588-fr320.png",
+      "sha256": "12a850c1d3731135d2d75e8788d2dcb7704e5f235051b74310a42881c16394ca"
+    }
+  ]
+}

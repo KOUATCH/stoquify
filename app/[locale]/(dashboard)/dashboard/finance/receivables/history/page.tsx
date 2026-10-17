@@ -1,10 +1,12 @@
 import { AROpenItemsHistoryWorkbench } from "@/components/finance/AROpenItemsHistoryWorkbench"
+import { getTranslations } from "next-intl/server"
 
 import { routeByKey, withFinanceSurfaceAccess } from "../../finance-route-access"
 
-export const metadata = {
-  title: "Customer AR history | Stoquify",
-  description: "Customer receivable open-item, allocation, aging, and settlement history.",
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "arHistory" })
+  return { title: `${t("title")} | Stoquify`, description: t("summary") }
 }
 
 export default async function FinanceReceivablesHistoryPage({ params }: { params: Promise<{ locale: string }> }) {

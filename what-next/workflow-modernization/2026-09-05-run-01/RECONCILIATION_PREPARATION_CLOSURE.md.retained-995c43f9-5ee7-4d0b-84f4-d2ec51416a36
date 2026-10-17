@@ -1,0 +1,19 @@
+# PR-19 — reviewed-run preparation
+
+Primary after PR-10's implemented signing workflow closed on 2026-09-27. Keep the existing workflow ID and scope: discover a run, inspect current source/obligation evidence, save a reviewed readiness transition, recover without repeating it, and hand it to an independent signer. Preparation is not signing or financial posting.
+
+| Criterion | Current evidence / next check | Disposition |
+|---|---|---|
+| Discovery and scope | v119 genuine 22-run PostgreSQL pagination and limited-reader EN/FR search/handoff; current run reader retains tenant/provider/rail filters and 20-row cursor pages | Reuse matching source evidence |
+| Readiness, evidence and persistence | v114 and refreshed PR-10 callback/statement recovery → preparation → signing/export; source revision, conditional transition, receipt/audit and notification written transactionally | Substantial evidence; reconcile complete preparation requirements |
+| Actor, permission, module and fresh authentication | Transaction-bound module reads/writes/replay added alongside existing actor/RBAC/fresh-auth checks | Module matrix and both withdrawal orderings verified; [current correction](RECONCILIATION_PREPARATION_MODULE_ACCESS_2026-09-27.md) |
+| Concurrent reviewers and stale preview | Actual simultaneous same-request and different-reviewer transactions read the same revision; one preparation wins, stale and borrowed-key attempts denied, exact winner replay retained | Verified in [reviewers/history milestone](RECONCILIATION_PREPARATION_HISTORY_2026-09-27.md) |
+| Failure and recovery | EN/FR actual response dropped after committed preparation, reload/exact retry, original receipt hash and one audit verified | Committed-response recovery criterion verified; keep notification-operations boundaries explicit |
+| History and retained state | 23 genuine preparations, exact 20/3 pages, tenant/cursor scope, corruption failure and retained history after signing; actual EN/FR paging/failure/reload | Verified; current receipt pointer survives earliest exact replay |
+| Allocation/legacy evidence | Current callback/statement handoff proof plus 30 synthetic legacy final-status cases refused without decision evidence | Preparation refusal verified; missing investigation/legacy repair adapters remain PR-17 engineering requirements |
+| EN/FR and accessibility | Read-only/retry recovery, history failure/paging/reload, corrected history focus, three widths, enlargement and rendered contrast passed | Actual authentication probe confirms focus falls to BODY after success; correct and verify EN/FR authentication/denial. Retain native speech/zoom limits |
+| Guidance and regression | [Preparation operating guide](RECONCILIATION_PREPARATION_OPERATING_GUIDE.md), 91 tests, lint, TypeScript and exact UI change-impact reconstruction | Final criterion/source audit remains |
+
+No supporting workflow is active. PR-10 remains verified only while its recorded source/impact contracts remain valid; any shared preparation change requires proportionate downstream revalidation. Notification scheduling/exhausted-message operations remain with their existing operational IDs. No deployment, live approval, external message or destructive migration is authorized.
+
+The reproduction receipt marks `passed` only because the defect was successfully reproduced. Actual outer write admission was true, then persisted read-only access made it false. The service still offered preparation and created one preparation audit/receipt. It created zero signatures and zero journals. This is a PR-19 engineering defect, not an approval or deployment dependency. PR-10 signing independently rechecks module authority and does not share this bypass.

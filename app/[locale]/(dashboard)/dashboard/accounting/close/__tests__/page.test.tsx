@@ -119,7 +119,9 @@ describe("CloseAssurancePage", () => {
     expect(mockCheckPermission).toHaveBeenCalledWith("accounting.close.read")
     expect(mockGetCloseAssuranceDashboardAction).toHaveBeenCalledWith({})
     expect(screen.getByRole("heading", { name: "Close & Assurance Center" })).toBeInTheDocument()
-    expect(screen.getByText("Close readiness journey")).toBeInTheDocument()
+    // The journey is owned by the live center so period changes and refresh failures cannot leave a stale sibling.
+    expect(screen.queryByText("Close readiness journey")).not.toBeInTheDocument()
+    expect(screen.getByText("Close assurance center")).toBeInTheDocument()
     expect(screen.getByText("period:all")).toBeInTheDocument()
     expect(screen.getByText("data:loaded")).toBeInTheDocument()
   })

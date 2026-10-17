@@ -1,5 +1,6 @@
 import { getAllDashboardData } from "@/actions/dashboard/getDashboardData";
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState";
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState";
 import EnhancedEnterpriseDashboard, {
   type EnterpriseDashboardLabels,
 } from '@/components/dashboard/EnhancedEnterpriseDashboard';
@@ -11,7 +12,10 @@ import { redirect } from "next/navigation";
 
 function isRecoverableDashboardSessionError(error: unknown) {
   if (error instanceof RbacError) {
-    return error.code === "NO_ACTIVE_ORG" || error.code === "FORBIDDEN"
+    // FORBIDDEN also represents ordinary permission denial. Only this existing
+    // RBAC discriminator identifies a stale organization binding.
+    return error.code === "NO_ACTIVE_ORG" ||
+      (error.code === "FORBIDDEN" && error.message === "Session organization is stale")
   }
 
   const message = error instanceof Error ? error.message : ''
@@ -26,24 +30,41 @@ function DashboardSessionRecovery({ locale }: { locale: 'en' | 'fr' }) {
   const copy =
     locale === 'fr'
       ? {
-          title: 'Session a actualiser',
+          title: 'Session à actualiser',
           description:
-            "Votre session pointe vers une organisation qui n'existe plus dans cette base de donnees.",
-          action: 'Se deconnecter',
+            "Votre organisation active n’est pas disponible pour cette session. Reconnectez-vous. Si le problème persiste, contactez votre administrateur.",
+          action: 'Se déconnecter',
         }
       : {
           title: 'Refresh your session',
           description:
-            'Your session points to an organization that no longer exists in this database.',
+            'Your active organization is unavailable for this session. Sign in again. If the problem continues, contact your administrator.',
           action: 'Sign out',
         }
 
   return (
     <DashboardErrorState
+      locale={locale}
       error={copy.description}
       title={copy.title}
       message={copy.description}
       actions={<SessionRecoverySignOutButton label={copy.action} locale={locale} />}
+    />
+  )
+}
+
+function DashboardPermissionDenied({ locale }: { locale: 'en' | 'fr' }) {
+  return (
+    <DashboardRouteState
+      kind="permission_denied"
+      embedded
+      locale={locale}
+      title={locale === 'fr' ? 'Accès au tableau de bord limité' : 'Dashboard access is limited'}
+      message={locale === 'fr'
+        ? 'Vos autorisations actuelles ne permettent pas d’ouvrir ce tableau de bord. Choisissez un espace disponible dans la navigation ou examinez vos accès.'
+        : 'Your current permissions do not allow this dashboard. Choose an available workspace from the navigation or review your access.'}
+      primaryHref={localizePath('/dashboard/access-requests', locale)}
+      primaryLabel={locale === 'fr' ? 'Examiner mes accès' : 'Review my access'}
     />
   )
 }
@@ -69,6 +90,9 @@ export default async function DashboardPage({
     if (isRecoverableDashboardSessionError(error)) {
       return <DashboardSessionRecovery locale={locale} />
     }
+    if (error instanceof RbacError && error.code === "FORBIDDEN") {
+      return <DashboardPermissionDenied locale={locale} />
+    }
 
     throw error
   }
@@ -84,8 +108,14 @@ export default async function DashboardPage({
   try {
     dashboardData = await getAllDashboardData(organizationId)
   } catch (error) {
+    if (error instanceof RbacError && error.code === "UNAUTHENTICATED") {
+      redirect(localizePath("/login", locale))
+    }
     if (isRecoverableDashboardSessionError(error)) {
       return <DashboardSessionRecovery locale={locale} />
+    }
+    if (error instanceof RbacError && error.code === "FORBIDDEN") {
+      return <DashboardPermissionDenied locale={locale} />
     }
 
     throw error

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { renderHook, waitFor } from "@testing-library/react"
+import { act, renderHook, waitFor } from "@testing-library/react"
 
 import { getInventoryLossSummaryAction } from "@/actions/inventory/inventoryLossReadActions"
 
@@ -30,12 +30,11 @@ jest.mock("@/actions/inventory/inventoryLossReadActions", () => ({
 const mockGetInventoryLossSummaryAction =
   getInventoryLossSummaryAction as jest.Mock
 
-function wrapper() {
-  const queryClient = new QueryClient({
+function wrapper(queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
     },
-  })
+  })) {
 
   return function QueryWrapper({ children }: { children: ReactNode }) {
     return (
@@ -164,7 +163,7 @@ describe("useInventoryLossWorkbench helpers", () => {
       },
     })
 
-    renderHook(() => useInventoryLossWorkbench(), {
+    renderHook(() => useInventoryLossWorkbench("org-1", "actor-1"), {
       wrapper: wrapper(),
     })
 
@@ -176,5 +175,71 @@ describe("useInventoryLossWorkbench helpers", () => {
         groupLimit: 10,
       })
     })
+  })
+
+  it.each([401, 403])("withdraws cached records after %i and keeps them hidden through recovery", async status => {
+    const response = { scope: { kind: "TENANT", authorizedLocationIds: null }, data: { records: [{ id: "private-record" }] } }
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: true, data: response })
+    const { result } = renderHook(() => useInventoryLossWorkbench("org-1", "actor-1"), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.response).toEqual(response))
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: false, status, code: status === 401 ? "AUTH_REQUIRED" : "FORBIDDEN", error: "Access changed", retryable: false })
+    await act(async () => { await result.current.refetch() })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.response).toBeUndefined()
+    expect(result.current.result).toBeUndefined()
+    expect(result.current.scope).toBeUndefined()
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: false, status: 500, error: "Recovery unavailable", retryable: false })
+    await act(async () => { await result.current.refetch() })
+    expect(result.current.response).toBeUndefined()
+    let resume!: (value: unknown) => void
+    mockGetInventoryLossSummaryAction.mockImplementation(() => new Promise(resolve => { resume = resolve }))
+    let pending!: ReturnType<typeof result.current.refetch>
+    act(() => { pending = result.current.refetch() })
+    await waitFor(() => expect(result.current.isFetching).toBe(true))
+    expect(result.current.result).toBeUndefined()
+    await act(async () => { resume({ success: true, data: response }); await pending })
+    await waitFor(() => expect(result.current.response).toEqual(response))
+  })
+
+  it("retains prior records with an explicit error after a recoverable server failure", async () => {
+    const response = { scope: { kind: "TENANT", authorizedLocationIds: null }, data: { records: [{ id: "retained-record" }] } }
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: true, data: response })
+    const { result } = renderHook(() => useInventoryLossWorkbench("org-1", "actor-1"), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.response).toEqual(response))
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: false, status: 500, error: "Source unavailable", retryable: false })
+    await act(async () => { await result.current.refetch() })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.response).toEqual(response)
+  })
+
+  it("withdraws every cached period in the rejected identity scope", async () => {
+    const client = new QueryClient()
+    const records = { data: { records: [{ id: "previous-period-private-record" }] } }
+    const previousPeriod = ["inventory-loss-workbench", "org-1", "actor-1", { from: "2026-01-01" }]
+    const otherScope = ["inventory-loss-workbench", "org-2", "actor-2", { from: "2026-01-01" }]
+    client.setQueryData(previousPeriod, records)
+    client.setQueryData(otherScope, records)
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: false, status: 403, code: "FORBIDDEN", error: "Access changed" })
+    const { result } = renderHook(() => useInventoryLossWorkbench("org-1", "actor-1"), { wrapper: wrapper(client) })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(client.getQueryData(previousPeriod)).toBeNull()
+    expect(client.getQueryData(otherScope)).toEqual(records)
+  })
+
+  it.each(["organization", "actor"])("never uses another %s's cached response as placeholder data", async changed => {
+    const original = { scope: { kind: "TENANT", authorizedLocationIds: null }, data: { records: [{ id: "old-private-record" }] } }
+    mockGetInventoryLossSummaryAction.mockResolvedValue({ success: true, data: original })
+    const { result, rerender } = renderHook(({ organizationId, actorId }) => useInventoryLossWorkbench(organizationId, actorId), {
+      initialProps: { organizationId: "org-1", actorId: "actor-1" }, wrapper: wrapper(),
+    })
+    await waitFor(() => expect(result.current.response).toEqual(original))
+    let complete!: (value: unknown) => void
+    mockGetInventoryLossSummaryAction.mockImplementation(() => new Promise(resolve => { complete = resolve }))
+    rerender({ organizationId: changed === "organization" ? "org-2" : "org-1", actorId: changed === "actor" ? "actor-2" : "actor-1" })
+    await waitFor(() => expect(result.current.isFetching).toBe(true))
+    expect(result.current.response).toBeUndefined()
+    const next = { ...original, data: { records: [{ id: "new-private-record" }] } }
+    await act(async () => { complete({ success: true, data: next }) })
+    await waitFor(() => expect(result.current.response).toEqual(next))
   })
 })

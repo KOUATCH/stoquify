@@ -1,0 +1,60 @@
+{
+  "startedAt": "2026-09-27T15:53:36.374Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+  },
+  "cases": [
+    {
+      "name": "read removed after valid preview",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "sign removed after valid preview",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "signer deactivated after preview",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "unknown workspace actor",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "active actor from different organization",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "expired authentication",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "restored independent authority",
+      "signed": true,
+      "certificateHash": "7ab88bc9d99d4082ac445957b4b165e11be6f19d6237306e97bb2d8c218dd04e"
+    },
+    {
+      "name": "read removed before signed replay",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "inactive signed replay",
+      "deniedWithoutBusinessEffects": true
+    },
+    {
+      "name": "restored exact replay",
+      "oneCertificateAuditAndEvent": true,
+      "noJournal": true
+    }
+  ],
+  "organizationId": "cmuk00a0w0000ma1olebu4m3n",
+  "runId": "cmuk00a5v001ama1opfor63c4",
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+  },
+  "sourceStable": true,
+  "endedAt": "2026-09-27T15:53:37.626Z"
+}

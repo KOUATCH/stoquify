@@ -1,0 +1,525 @@
+{
+  "schemaVersion": "stoquify-r00-preparation.v1",
+  "revision": "1.0",
+  "date": "2026-10-07",
+  "status": "DRAFT",
+  "programme": "platform-correctness-roadmap/2026-09-30-run-01",
+  "package": "R00",
+  "productionAuthorized": false,
+  "confirmedContext": [
+    "Cameroon first",
+    "Later CEMAC expansion",
+    "Pre-production test/demo data",
+    "Full phased modernization"
+  ],
+  "decisions": [
+    {
+      "id": "D01",
+      "title": "Product scope and first customers",
+      "exact": "Initial segment, locations, currencies, enabled modules and capability promises",
+      "meaning": "Choose who the first supported product is for and what you will promise them. A country choice alone does not select the customer type or authorize a live launch.",
+      "confirmed": "Cameroon first, later CEMAC expansion, pre-production/demo data and phased implementation are confirmed. Customer sector, entity type, site count, currencies and first-release modules are not yet selected. [S3]",
+      "recommendation": "Proposed: select one defined Cameroon customer cohort and qualify online workflows first. Treat accounting and HR/payroll as separately gated capabilities. Use synthetic demonstrations until the relevant acceptance evidence is available.",
+      "alternatives": "A narrow cohort limits test combinations and support cost. Multiple sectors/sites at launch increase configuration, training and regression coverage. Do not assume every implemented module is promised.",
+      "owner": "Product owner + delivery lead",
+      "review": "QA lead; domain owners for every promised capability",
+      "gate": "R00 before the release-scope baseline; R33 still controls actual release.",
+      "evidence": "Customer needs or pilot brief; entity and location inventory; capability matrix; current package acceptance and exclusions. [S1, S2, S8]",
+      "deferral": "Individual capabilities may be excluded with a reason and owner. The target cohort and explicit release boundary cannot remain ambiguous when R00 is accepted.",
+      "questions": [
+        [
+          "Customer and entity",
+          "Which sector, business/entity type and intended customer cohort?"
+        ],
+        [
+          "Sites and users",
+          "Which locations, number of sites and user roles?"
+        ],
+        [
+          "Currency scope",
+          "Which transaction, functional and reporting currencies? Refer the policy to D02."
+        ],
+        [
+          "Online modules",
+          "Which modules are required for the first cohort? List each."
+        ],
+        [
+          "Regulated capabilities",
+          "Which accounting/payroll/tax outputs are promised, conditional or excluded?"
+        ],
+        [
+          "Delivery boundary",
+          "What is demo only, controlled pilot, later release or out of scope?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D02",
+      "title": "Accounting policy choices",
+      "exact": "Functional currency, rate/rounding, partial-year, close and year-end policies",
+      "meaning": "Agree the accounting rules against which the implementation and reports will be assessed. A green test is not an accountant approving the underlying policy.",
+      "confirmed": "Cameroon is the first jurisdiction. No functional-currency policy, rate source, rounding method, fiscal calendar or close policy has been approved in this pack. [S3, S4]",
+      "recommendation": "Proposed: have the accounting owner and qualified accountant document the policy for the selected entity and reporting framework, using explicit examples. Keep unsupported currency/reporting cases unavailable until mappings and source amounts are verified.",
+      "alternatives": "Single-currency scope reduces conversion cases. Multi-currency scope requires approved rate authority, dates, missing-rate handling and reproducible conversion/rounding. Close-only locking and professionally qualified close have different evidence requirements.",
+      "owner": "Accounting owner + qualified accountant",
+      "review": "Qualified accountant; engineering verifies the implementation against approved examples",
+      "gate": "R02, R06, R07 and R20 before financial implementation acceptance.",
+      "evidence": "Entity/framework applicability; rate-source evidence; calculation examples; fiscal-year setup; journal/report tie-outs; close, reopening and correction controls. [S1, S2, S4]",
+      "deferral": "The detailed policy may remain pending during development, with a named reviewer and due gate. Affected financial outputs cannot be represented as qualified.",
+      "questions": [
+        [
+          "Entity and framework",
+          "What entity/sector and accounting/reporting framework applies?"
+        ],
+        [
+          "Currencies and rates",
+          "Functional/reporting currencies; FX source, rate date and missing-rate rule?"
+        ],
+        [
+          "Rounding",
+          "Precision and rounding method at line, tax, journal and report levels?"
+        ],
+        [
+          "Financial calendar",
+          "Year start/end; first partial year and period boundaries?"
+        ],
+        [
+          "Close and correction",
+          "What blocks close; who locks/reopens; how are corrections and reversals handled?"
+        ],
+        [
+          "Year end",
+          "Required adjustments, opening balances and statements; attach reviewed examples."
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D03",
+      "title": "Offline operating limits",
+      "exact": "Offline devices, storage/eviction, supported tenders, fiscal limits and recovery",
+      "meaning": "Decide whether offline selling is in scope and the exact devices, payments and recovery limits that must be proven before admitting it.",
+      "confirmed": "The current continuation does not qualify a complete offline pilot. No supported device/tender matrix is approved here. [S2, S3]",
+      "recommendation": "Proposed: defer live offline admission until R04/R05 data-conservation evidence and R32 device/pilot criteria pass. Continue controlled engineering tests with synthetic data.",
+      "alternatives": "Online-only admission has a narrower recovery surface. A controlled offline pilot adds device enrollment, storage loss, retries, uncertain payments, fiscal and support obligations. Browser storage alone is not a durability guarantee.",
+      "owner": "POS/product + security + country owner",
+      "review": "Security owner and country owner; QA and support for device/recovery evidence",
+      "gate": "R04/R05 design; finalize before R32 offline admission.",
+      "evidence": "Browser/OS/device matrix; capacity and eviction tests; replay/conservation tests; tender/provider/fiscal review; operator recovery drill. [S1, S2]",
+      "deferral": "If offline is excluded, record that decision and prohibit offline capability promises/admission. Reopen D03 before enabling it; do not mark the capability verified.",
+      "questions": [
+        [
+          "Admission choice",
+          "Defer offline, controlled pilot, or request qualified release?"
+        ],
+        [
+          "Devices",
+          "Exact device models, OS and browser versions; enrollment/revocation owner?"
+        ],
+        [
+          "Storage",
+          "Queue/capacity limits, eviction detection, older-client shutdown and export policy?"
+        ],
+        [
+          "Payments",
+          "Which tenders are allowed offline; how are uncertain outcomes resolved?"
+        ],
+        [
+          "Fiscal limits",
+          "Which local fiscal/numbering restrictions need country review?"
+        ],
+        [
+          "Recovery",
+          "Lost device, interrupted sync, duplicate/lost-response recovery and support steps?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D04",
+      "title": "Access privacy and retention",
+      "exact": "Role matrix, legal holds, retention and HR/workforce disclosure",
+      "meaning": "Specify who can see and change each class of data, what must be retained, and how sensitive workforce information is protected.",
+      "confirmed": "Current work uses test/demo data. No production retention schedule, complete access matrix or employee disclosure policy is approved in this pack. [S3]",
+      "recommendation": "Proposed: use minimum role-based access, explicit employee/manager/accountant scopes and controlled export permissions. Keep payroll details restricted and define legal-hold precedence before adopting deletion schedules.",
+      "alternatives": "Broad convenience access increases disclosure risk and review burden. More granular access requires role testing and support procedures. Retention periods must follow entity/data applicability review, not a guessed universal duration.",
+      "owner": "Privacy/records + HR + AppSec",
+      "review": "Application security; qualified legal/privacy advice for applicable retention and disclosure duties",
+      "gate": "R08, R10, R16 and R28 before enforcement acceptance and sensitive launch.",
+      "evidence": "Data inventory and classification; role/tenant/action matrix; employee disclosure rules; retention and hold sources; export and access-revocation tests. [S1, S2]",
+      "deferral": "Missing policy blocks affected sensitive use or deletion. Record the exact restricted data/actions and reviewer due date; pre-production status alone does not prove every record is synthetic.",
+      "questions": [
+        [
+          "Access matrix",
+          "For each role: view/change/approve/export rights and organization/employee scope?"
+        ],
+        [
+          "Sensitive data",
+          "Who may see salary, identity, health/leave documents and bank details?"
+        ],
+        [
+          "Self service",
+          "What can employees, managers, HR and delegated accountants access?"
+        ],
+        [
+          "Retention",
+          "Schedule by record class, authority source, start trigger and archive owner?"
+        ],
+        [
+          "Holds and deletion",
+          "Who imposes/releases holds; how do holds override deletion and backups?"
+        ],
+        [
+          "Disclosure",
+          "Permitted recipients, purpose, masking, audit trail and revocation process?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D05",
+      "title": "Country review and external authority",
+      "exact": "Named country experts, rule versions, providers and submission authority",
+      "meaning": "Name qualified people to review each regulated capability and identify who can authorize real provider operations or statutory submissions.",
+      "confirmed": "Cameroon-first source research exists, with unresolved current-law interpretation and reviewer requirements. Source discovery is not statutory approval. No expert appointments or provider/submission authority are confirmed here. [S4]",
+      "recommendation": "Proposed: review accounting, tax, payroll/labour, social insurance and fiscal/declaration capabilities separately. Bind each approval to a rule version, applicable entity/employee cases and independent expected examples.",
+      "alternatives": "Prepare exports for authorized human review, or later qualify direct submission through a named provider/authority. These are distinct capabilities; approving one does not authorize the other.",
+      "owner": "Country/integration leads + business approvers",
+      "review": "Qualified Cameroon accounting, tax, payroll/labour and social-insurance expertise as applicable; independent technical reviewer",
+      "gate": "Begin appointments at R00; complete per capability at R18/R19 before activation.",
+      "evidence": "Qualifications and appointments; current source snapshots; rule/version/effective-date map; reviewed fixtures; provider acceptance and submission mandates. [S1, S4, S5, S6]",
+      "deferral": "Record missing experts/sources/providers as unresolved. Keep that regulated capability or real submission unavailable; independent engineering may continue.",
+      "questions": [
+        [
+          "Capability coverage",
+          "Which accounting, payroll, tax, CNPS, fiscal or declaration capabilities?"
+        ],
+        [
+          "Experts",
+          "For each capability: real reviewer, qualification, Cameroon scope and independence?"
+        ],
+        [
+          "Rule versions",
+          "Exact pack/rule version, sources, effective dates and customer applicability?"
+        ],
+        [
+          "Expected results",
+          "Who independently checks normal, boundary and exception examples?"
+        ],
+        [
+          "Providers",
+          "Provider/account/capability and sandbox/live environment; credential reference only?"
+        ],
+        [
+          "Submission mandate",
+          "Who may prepare, approve and execute each real payment or filing?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D06",
+      "title": "Optional feature priorities",
+      "exact": "Which optional lot/landed-cost/assets/budget/cohort features are required",
+      "meaning": "Choose which optional extensions are justified by an actual customer need. A promised optional feature becomes required for that cohort.",
+      "confirmed": "No acceptance of R34–R37 optional capabilities is established by the general modernization request. [S1, S8]",
+      "recommendation": "Proposed: assess each feature independently and defer those without a named customer decision, usable source data and measurable acceptance scenario.",
+      "alternatives": "A bounded extension can satisfy a real sector requirement but adds implementation and assurance work. Deferral protects delivery focus; it also forbids promising that feature for the selected cohort.",
+      "owner": "Product + actual customer + domain owner",
+      "review": "Relevant inventory/accounting/finance/data domain owner",
+      "gate": "R34–R37 before committing implementation capacity; earlier if promised to the first cohort.",
+      "evidence": "Customer requirement, source-data assessment, bounded feature definition, cost/effort review and acceptance example. [S1, S8]",
+      "deferral": "Required / deferred / not applicable must be recorded for each feature, with reason and reassessment trigger. Do not treat all optional features as one yes/no decision.",
+      "questions": [
+        [
+          "Traceability",
+          "Lot/serial/expiry and unit conversion: required, deferred or not applicable; why?"
+        ],
+        [
+          "Inventory economics",
+          "Landed cost and replenishment: scope, customer need and source quality?"
+        ],
+        [
+          "Fixed assets",
+          "Asset subledger/automation: material customer requirement and accounting owner?"
+        ],
+        [
+          "Planning",
+          "Budgets and scenario cash forecasting: decisions supported and data required?"
+        ],
+        [
+          "Customer analysis",
+          "Cohort/retention analytics: business purpose and identity/consent constraints?"
+        ],
+        [
+          "Commitment",
+          "For each accepted feature: cohort, owner, acceptance example, effort and due gate?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D07",
+      "title": "Operational service objectives",
+      "exact": "Deployment workload, latency, error, backlog, cost, RPO/RTO and alert objectives",
+      "meaning": "Agree the operating conditions and measurable service limits before judging operational readiness. RPO means acceptable data-loss window; RTO means acceptable recovery time.",
+      "confirmed": "Current evidence does not qualify a fresh integrated build/package, complete browser journeys or production recovery. No measured production service objectives are approved here. [S2, S3]",
+      "recommendation": "Proposed: first measure representative workloads in a controlled environment, then agree explicit thresholds and measurement windows with product, finance and SRE. Do not publish unmeasured service promises.",
+      "alternatives": "Tighter latency/recovery targets generally require more capacity, recovery automation and support expenditure. A smaller bounded cohort may reduce the initial operating envelope but still needs measured acceptance.",
+      "owner": "SRE + product + finance",
+      "review": "Product owner and finance owner; independent QA/technical evidence review",
+      "gate": "R23/R30 before measuring operational acceptance against agreed limits.",
+      "evidence": "Deployment topology; workload model; reproducible baseline measurements; restore drill; worker/backlog monitoring; alert delivery and cost model. [S1, S2]",
+      "deferral": "Leave unknown thresholds blank with a measurement owner/date. That service promise remains unqualified. Record zero silent event loss, duplicate economic effects and unauthorized access as proposed invariants, not measured achievements.",
+      "questions": [
+        [
+          "Environment and workload",
+          "Hosting/topology; tenant/user concurrency, data volume and peak transactions?"
+        ],
+        [
+          "Latency and errors",
+          "Critical journeys, percentile/window, acceptable latency and error-rate thresholds?"
+        ],
+        [
+          "Workers",
+          "Queue age/backlog/throughput targets and escalation conditions?"
+        ],
+        [
+          "Recovery",
+          "RPO and RTO per service/data class; how will restore be measured?"
+        ],
+        [
+          "Cost and alerts",
+          "Budget, measurement unit/window, alert recipient and escalation response?"
+        ],
+        [
+          "Acceptance method",
+          "Test dataset, duration, observer, evidence location and remeasurement trigger?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "D08",
+      "title": "Pilot admission and observation",
+      "exact": "Pilot cohorts, minimum volume, business-cycle coverage and observation window",
+      "meaning": "Define a fair pilot test in advance: participants, duration, business cycles, acceptance evidence and stop conditions.",
+      "confirmed": "Cameroon is prioritized. No named pilot customer, transaction-volume threshold, observation window or pilot authorization has been confirmed. [S3]",
+      "recommendation": "Proposed: admit a bounded cohort only after its applicable security, data, country and provider gates pass. Agree the pilot criteria before seeing the results; keep online and offline admission distinct.",
+      "alternatives": "A shorter/narrower pilot costs less but cannot demonstrate unobserved business cycles. Broader admission needs more support and evidence. A synthetic rehearsal is useful but does not establish real-customer pilot performance.",
+      "owner": "Release owner + pilot operations",
+      "review": "Product, QA and relevant domain owners; country/provider reviewers for regulated or external capabilities",
+      "gate": "Before R32/R33; criteria must not be invented after results.",
+      "evidence": "Named cohort and permitted capabilities; signed criteria; support/rollback plan; representative business-cycle evidence; gate matrix and independent review. [S1, S2]",
+      "deferral": "Pilot may be deferred while engineering continues. No admission or release approval follows from a draft plan or successful rehearsal.",
+      "questions": [
+        [
+          "Cohort",
+          "Customers/sites/users/devices, contacts and online/offline capabilities?"
+        ],
+        [
+          "Entry criteria",
+          "Which R packages and country/provider approvals must pass first?"
+        ],
+        [
+          "Coverage",
+          "Which sales, returns, close, payroll and reporting cycles must be observed?"
+        ],
+        [
+          "Volume and time",
+          "Minimum volume per workflow, duration/window and who sets the threshold?"
+        ],
+        [
+          "Stop and recovery",
+          "Stop criteria, incident owner, data reconciliation and rollback/support plan?"
+        ],
+        [
+          "Exit authority",
+          "Who reviews results, accepts residual limits and separately authorizes release?"
+        ]
+      ],
+      "status": "AWAITING_HUMAN_VALIDATION",
+      "selectedDecision": null,
+      "decisionMaker": null,
+      "reviewers": [],
+      "outcome": null,
+      "signature": null,
+      "approvalReference": null,
+      "validationTracking": {
+        "namedOwner": null,
+        "dueDate": null,
+        "evidenceReferences": [],
+        "unresolvedItems": [],
+        "operatingRestrictions": [],
+        "resolutionEvidence": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "path": "what-next/platform-correctness-roadmap/2026-09-30-run-01/build-roadmap.cjs",
+      "sha256": "9459eb0b3cf95e755277810501051c039265131a678bacac26d26c9362f085ba"
+    },
+    {
+      "id": "S2",
+      "path": "what-next/platform-remediation/2026-09-30-run-01/execution-register.json",
+      "sha256": "32ffdce8cc47e7088120291585e646d1b01c2763f4ee1bda236142b3996268f2"
+    },
+    {
+      "id": "S3",
+      "path": "what-next/platform-remediation/2026-09-30-run-01/CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+      "sha256": "7eceb561fbf0750462576fbfb01ab3814bc9aca6be1daf9e263bda884390a00a"
+    },
+    {
+      "id": "S4",
+      "path": "what-next/platform-remediation/2026-09-30-run-01/CAMEROON_SOURCE_REFRESH_2026-10-07.md",
+      "sha256": "263ec1c748acbfbe6d3828f2b4f0731480c628dbb60aedcdf9b5dd6267f9cf35"
+    },
+    {
+      "id": "S5",
+      "path": "docs/approval-register/STOQUIFY_APPROVAL_REGISTER_START_HERE_2026-09-03.md",
+      "sha256": "d43775e7330e3e8bbdb92d0af581424713b75e6f625e3bb690a8d41ffdf903ee"
+    },
+    {
+      "id": "S6",
+      "path": "docs/approval-register/STOQUIFY_APPROVAL_REGISTER_OPERATING_GUIDE_2026-09-03.md",
+      "sha256": "a08be01e9d325dbc2d234fb9e6413bfff3c24848079d09f51172c56b7b6029d9"
+    },
+    {
+      "id": "S7",
+      "path": "docs/blockers-and-gates/G1_NAMES_ROLES_AUTHORITY_EVIDENCE_MATRIX_2026-08-19.md",
+      "sha256": "e15d307c602c6327ae1964c2510266e56c293923b7e0c6ac6bb42b4429d0a503"
+    },
+    {
+      "id": "S8",
+      "path": "what-next/platform-correctness-roadmap/2026-09-30-run-01/roadmap-register.json",
+      "sha256": "e34f2c0210ca0d061e22b08baeee96a6f3a2a10ed22e434a984bae6a5e4cc7c5"
+    },
+    {
+      "id": "S9",
+      "path": "docs/system-audit/04_IMPLEMENTATION_ROADMAP.md",
+      "sha256": "2f2fbba522815a0a1640f23fd5f018827c59faccb9d04819754da20ad3c596a9"
+    },
+    {
+      "id": "S10",
+      "path": "docs/blockers-and-gates/cameroon-hris-payroll-authority/templates/TEMPLATE_SOD_COI_DECLARATION_2026-08-19.md",
+      "sha256": "85d980f2ad1e7a4d0f8dbf271a98ded0e0abbd030d91d0fd536705ef5557a507"
+    }
+  ]
+}

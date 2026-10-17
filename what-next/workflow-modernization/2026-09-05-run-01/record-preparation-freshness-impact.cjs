@@ -1,0 +1,25 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=__dirname,repo=path.resolve(root,'../../..'),read=file=>JSON.parse(fs.readFileSync(path.join(root,file))),hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const runtimeFile='lanes/environment/freshness-preparation-impact-95060730-66b8-4160-ad07-78f3e5bc6d65.json',runtime=read(runtimeFile),priorFile='evidence/signing-inventory-freshness-impact-2026-09-30.json',prior=read(priorFile),parentFile='evidence/preparation-closure-2026-09-27.json',parent=read(parentFile);
+assert.ok(runtime.passed&&runtime.sourceStable&&Object.values(runtime.runtime).every(Boolean));assert.equal(parent.sourceHashes[prior.source.file],prior.source.before);assert.equal(runtime.sourceAfter[prior.source.file],prior.source.after);
+for(const [source,expected]of Object.entries(runtime.sourceAfter))assert.equal(hash(path.join(repo,source)),expected);
+const report='CLOSE_INVENTORY_DEPENDENCY_AUDIT_2026-09-30.md',reviewFile='evidence/preparation-inventory-freshness-impact-2026-09-30.json';
+const evidence=[runtimeFile,priorFile,parentFile,report,'lanes/environment/verify-freshness-preparation-impact.cjs'];
+const review={at:new Date().toISOString(),passed:true,workflow:'PR-19',correctedSigningWorkflow:'PR-10',supersedesWorkflowLabelIn:priorFile,parent:parentFile,source:prior.source,sourceHashes:runtime.sourceAfter,report,runtime:runtime.runtime,evidence:evidence.map(file=>({file,sha256:hash(path.join(root,file))}))};
+const target=path.join(root,'reconcile-current-progress.cjs');let s=fs.readFileSync(target,'utf8').replace(/\r\n/g,'\n');assert.ok(!s.includes('const preparationInventoryImpact ='));
+s=s.replace('const root = __dirname;',`const root = __dirname;
+const preparationInventoryImpact = JSON.parse(fs.readFileSync(path.join(root, '${reviewFile}')));
+if (!preparationInventoryImpact.passed || preparationInventoryImpact.workflow !== 'PR-19' || preparationInventoryImpact.correctedSigningWorkflow !== 'PR-10' || JSON.parse(fs.readFileSync(path.join(root, preparationInventoryImpact.parent))).sourceHashes[preparationInventoryImpact.source.file] !== preparationInventoryImpact.source.before) throw new Error('Unbound preparation inventory impact');
+for (const row of preparationInventoryImpact.evidence) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Preparation inventory impact evidence changed');
+for (const [source, expected] of Object.entries(preparationInventoryImpact.sourceHashes)) if (crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') !== expected) throw new Error('Preparation inventory impact source changed');
+function preparationInventoryExpected(source, expected) {
+  if (source !== preparationInventoryImpact.source.file) return expected;
+  if (expected !== preparationInventoryImpact.source.before) throw new Error('Unexpected preparation inventory predecessor');
+  return preparationInventoryImpact.source.after;
+}`);
+const before="!== expected) throw new Error('Preparation closure source changed: ' + source);";assert.ok(s.includes(before));s=s.replace(before,"!== preparationInventoryExpected(source, expected)) throw new Error('Preparation closure source changed: ' + source);");
+const marker="for (const item of [preparationAuthImpactFile, preparationClosureFile,";assert.ok(s.includes(marker));s=s.replace(marker,`preparation.closureReview.inventoryFreshnessDependencyBindingCurrent = true;
+for (const workflow of [preparation, signoff]) for (const item of [preparationInventoryImpact.report, '${reviewFile}']) if (!workflow.evidence.includes(item)) workflow.evidence.push(item);
+${marker}`);
+s=s.replace('The prior signing closure’s changed dependency was separately reverified before rebinding.','The prior signing and preparation closures’ changed dependency was separately reverified before rebinding.');
+fs.writeFileSync(path.join(root,reviewFile),JSON.stringify(review,null,2)+'\n',{flag:'wx'});fs.writeFileSync(target+'.retained-'+crypto.randomUUID(),fs.readFileSync(target),{flag:'wx'});const fd=fs.openSync(target,'r+');try{fs.writeFileSync(fd,s);fs.ftruncateSync(fd,Buffer.byteLength(s))}finally{fs.closeSync(fd)}console.log(JSON.stringify({reviewFile}));

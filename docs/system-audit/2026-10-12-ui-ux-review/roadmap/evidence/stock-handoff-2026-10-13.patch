@@ -1,0 +1,345 @@
+--- a/services/owner-war-room/owner-war-room.service.ts
++++ b/services/owner-war-room/owner-war-room.service.ts
+@@ -6,6 +6,7 @@
+ } from "@/services/bi/bi-contracts"
+ import type {
+   BIActionLink,
++  BIDrillThrough,
+   BIChangeEvent,
+   BICommandZone,
+   BIFreshness,
+@@ -78,6 +79,7 @@
+ 
+ const OWNER_BRIEF_MAX_ACTIONS = 3
+ const ONE_DAY_MS = 24 * 60 * 60 * 1000
++const OWNER_STOCK_WORKSPACE = "/dashboard/inventory/items"
+ 
+ export async function getOwnerWarRoomData(input: OwnerWarRoomInput): Promise<OwnerWarRoomData> {
+   await requireOwnerWarRoomTenantAuthority(input)
+@@ -133,6 +135,7 @@
+   return composeOwnerWarRoomData({
+     organizationId: input.organizationId,
+     organizationName: moduleControl.organizationName,
++    actorPermissions: input.actorPermissions,
+     generatedAt: normalizeNow(input.now).toISOString(),
+     snapshots: {
+       tenantOperating,
+@@ -280,7 +283,7 @@
+           ? "gold"
+           : "spruce",
+       requiredPermission: "inventory.read",
+-      href: "/dashboard/inventory/stock",
++      href: OWNER_STOCK_WORKSPACE,
+       snapshot: inventoryCash,
+     }),
+     card({
+@@ -927,6 +930,7 @@
+     })
+   }
+   if (inventoryCash.metrics.zeroStockLevelCount > 0 || inventoryCash.metrics.negativeStockLevelCount > 0) {
++    const stockAction = ownerStockAction("owner-risk-open-stock-cash-exposure", input.input.actorPermissions)
+     risks.push({
+       id: "owner-risk-stock-cash-exposure",
+       organizationId: input.input.organizationId,
+@@ -945,16 +949,8 @@
+       sourceModules: inventoryCash.sourceModules,
+       blockers: inventoryCash.blockers,
+       redactions: inventoryCash.redactions,
+-      drillThrough: routeDrillThrough("Open stock", "/dashboard/inventory/stock", "inventory.read"),
+-      actionLink: actionLink({
+-        id: "owner-risk-open-stock-cash-exposure",
+-        label: "Open stock",
+-        href: "/dashboard/inventory/stock",
+-        requiredPermission: "inventory.read",
+-        moduleSlug: "inventory",
+-        disabled: false,
+-        disabledReason: null,
+-      }),
++      drillThrough: actionDrillThrough(stockAction),
++      actionLink: stockAction,
+     })
+   }
+ 
+@@ -1042,15 +1038,7 @@
+         unit: "XAF",
+         format: "currency",
+       },
+-      action: actionLink({
+-        id: "owner-zone-open-stock-to-cash",
+-        label: "Open stock",
+-        href: "/dashboard/inventory/stock",
+-        requiredPermission: "inventory.read",
+-        moduleSlug: "inventory",
+-        disabled: false,
+-        disabledReason: null,
+-      }),
++      action: ownerStockAction("owner-zone-open-stock-to-cash", input.actorPermissions),
+     }),
+     zoneFromSnapshot({
+       id: "owner-zone-close-readiness",
+@@ -1142,7 +1130,7 @@
+     provenance,
+     blockers: input.snapshot.blockers,
+     redactions: input.snapshot.redactions,
+-    drillThrough: routeDrillThrough(input.action.label, input.action.href, input.action.requiredPermission),
++    drillThrough: actionDrillThrough(input.action),
+     actionLink: input.action,
+   }
+ 
+@@ -1208,6 +1196,33 @@
+ 
+ function actionLink(input: BIActionLink): BIActionLink {
+   return input
++}
++
++function ownerStockAction(id: string, actorPermissions: readonly string[] = []): BIActionLink {
++  const disabled = !["inventory.read", "inventory.items.read"].every(permission =>
++    hasRbacPermission(actorPermissions, permission),
++  )
++  return {
++    id,
++    label: "Open stock items",
++    href: OWNER_STOCK_WORKSPACE,
++    requiredPermission: "inventory.read",
++    additionalRequiredPermissions: ["inventory.items.read"],
++    moduleSlug: "inventory",
++    disabled,
++    disabledReason: disabled ? "Inventory item access is required to open this workspace." : null,
++  }
++}
++
++function actionDrillThrough(action: BIActionLink): BIDrillThrough {
++  const permissions = {
++    requiredPermission: action.requiredPermission,
++    ...(action.additionalRequiredPermissions ? { additionalRequiredPermissions: action.additionalRequiredPermissions } : {}),
++  }
++  if (action.disabled) {
++    return { available: false, type: "route", label: action.label, ...permissions, unavailableReason: action.disabledReason ?? "This workspace is unavailable." }
++  }
++  return { available: true, type: "route", label: action.label, href: action.href, ...permissions }
+ }
+ 
+ function routeDrillThrough(label: string, href: string, requiredPermission: string) {
+--- a/services/owner-war-room/owner-war-room-contracts.ts
++++ b/services/owner-war-room/owner-war-room-contracts.ts
+@@ -163,6 +163,8 @@
+ export type ComposeOwnerWarRoomInput = {
+   organizationId: string
+   organizationName: string | null
++  /** Server-resolved permissions; omitted context cannot enable stock navigation. */
++  actorPermissions?: readonly string[]
+   generatedAt: string
+   snapshots: OwnerWarRoomSnapshotBundle
+   actionQueue: ActionQueueResult
+--- a/services/owner-war-room/__tests__/owner-war-room.service.test.ts
++++ b/services/owner-war-room/__tests__/owner-war-room.service.test.ts
+@@ -1,4 +1,5 @@
+ import type { ModuleControlCenterData } from "@/services/modules/module-control-contracts"
++import { getInventoryRouteSurfaceByRoute } from "@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access"
+ import type { ActionQueueResult } from "@/services/signals/business-signal-contracts"
+ import type {
+   CloseReadinessMetrics,
+@@ -88,6 +89,50 @@
+ const generatedAt = "2026-06-20T10:00:00.000Z"
+ 
+ describe("owner war room service", () => {
++  it.each([
++    [undefined, false],
++    [[], false],
++    [["inventory.read"], false],
++    [["inventory.items.read"], false],
++    [["inventory.read", "inventory.items.read"], true],
++    [["*"], true],
++  ] as const)("aligns every stock handoff with item access for permissions %j", (actorPermissions, allowed) => {
++    const data = composeOwnerWarRoomData({
++      organizationId: "org-1", organizationName: "Owned", generatedAt, actorPermissions,
++      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
++      actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }),
++    })
++    const risk = data.morningBrief.risks.find(item => item.id === "owner-risk-stock-cash-exposure")!
++    const zone = data.morningBrief.zones.find(item => item.id === "owner-zone-stock-to-cash")!
++    expect(risk).toBeDefined()
++    expect(zone).toBeDefined()
++    expect(data.cards.find(item => item.id === "stock_cash_exposure")?.href).toBe("/dashboard/inventory/items")
++    for (const action of [risk.actionLink!, zone.actions[0], zone.primaryMetric!.actionLink!]) {
++      expect(action).toMatchObject({ href: "/dashboard/inventory/items", requiredPermission: "inventory.read", additionalRequiredPermissions: ["inventory.items.read"], disabled: !allowed })
++      const destination = getInventoryRouteSurfaceByRoute(action.href)
++      expect(destination).toBeDefined()
++      expect([action.requiredPermission, ...action.additionalRequiredPermissions!]).toEqual(expect.arrayContaining(destination!.permissions))
++      expect(action.disabledReason).toBe(allowed ? null : "Inventory item access is required to open this workspace.")
++    }
++    for (const drill of [risk.drillThrough, zone.drillThrough, zone.primaryMetric!.drillThrough]) {
++      expect(drill).toMatchObject({ available: allowed, additionalRequiredPermissions: ["inventory.items.read"] })
++      if (allowed) expect(drill).toHaveProperty("href", "/dashboard/inventory/items")
++      else expect(drill).not.toHaveProperty("href")
++    }
++    // Navigation denial must not relabel or zero the server-authorized summary.
++    expect(zone.primaryMetric).toMatchObject({ value: 450000, evidenceGrade: "operational" })
++    expect(JSON.stringify(data)).not.toContain("/dashboard/inventory/stock")
++  })
++
++  it.each([true, false])("uses current service actor permissions for stock navigation (item access=%s)", async allowed => {
++    mockOwnerWarRoomSources()
++    const result = await getOwnerWarRoomData({
++      organizationId: "org-1", actorId: "owner-1", actorRoleCodes: ["administrator"], now: generatedAt,
++      actorPermissions: ["dashboard.read", "inventory.read", ...(allowed ? ["inventory.items.read"] : [])],
++    })
++    expect(result.morningBrief.zones.find(zone => zone.id === "owner-zone-stock-to-cash")?.actions[0].disabled).toBe(!allowed)
++  })
++
+   it("does not turn an unavailable currency total into zero cash risk", () => {
+     const data = composeOwnerWarRoomData({ organizationId: "org-1", organizationName: "Owned", generatedAt, snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 }), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() }, actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }) })
+     expect(data.cards.find(card => card.id === "cash_at_risk")).toMatchObject({ value: null, tone: "danger" })
+--- a/components/bi/BIBusinessTruthZone.tsx
++++ b/components/bi/BIBusinessTruthZone.tsx
+@@ -1,13 +1,12 @@
+ import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
+-import Link from "next/link"
+-import { ArrowUpRight, EyeOff, LockKeyhole } from "lucide-react"
++import { EyeOff } from "lucide-react"
+ 
++import { BIActionButton } from "@/components/bi/BIActionButton"
+ import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
+ import { BIDrillThroughButton } from "@/components/bi/BIKpiCard"
+ import { BIStateBadge } from "@/components/bi/BIStateBadge"
+ import { BIStateSurface } from "@/components/bi/BIStateSurface"
+ import { Badge } from "@/components/ui/badge"
+-import { Button } from "@/components/ui/button"
+ import {
+   dashboardMutedTextClass,
+   dashboardPanelClass,
+@@ -30,6 +29,13 @@
+   currencyCode = "XAF",
+   className,
+ }: BIBusinessTruthZoneProps) {
++  const visibleActions = zone.actions.slice(0, 3)
++  const drill = zone.drillThrough
++  const repeatedRoute = drill?.type === "route" && visibleActions.some(action =>
++    action.label === drill.label && (drill.available
++      ? !action.disabled && action.href === drill.href
++      : action.disabled && action.disabledReason === drill.unavailableReason),
++  )
+   return (
+     <section className={cn(dashboardPanelClass, "p-4", className)}>
+       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+@@ -60,29 +66,10 @@
+       )}
+ 
+       <div className="mt-4 flex flex-wrap gap-2">
+-        {zone.drillThrough ? <BIDrillThroughButton drillThrough={zone.drillThrough} locale={locale} /> : null}
+-        {zone.actions.slice(0, 3).map((action) =>
+-          action.disabled ? (
+-            <Button
+-              key={action.id}
+-              size="sm"
+-              variant="outline"
+-              disabled
+-              title={action.disabledReason ?? undefined}
+-              className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+-            >
+-              <LockKeyhole className="h-4 w-4" aria-hidden="true" />
+-              {action.label}
+-            </Button>
+-          ) : (
+-            <Button key={action.id} asChild size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+-              <Link href={action.href}>
+-                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+-                {action.label}
+-              </Link>
+-            </Button>
+-          ),
+-        )}
++        {drill && !repeatedRoute ? <BIDrillThroughButton drillThrough={drill} locale={locale} /> : null}
++        {visibleActions.map(action => (
++          <BIActionButton key={action.id} action={action} locale={locale} context={zone.title} />
++        ))}
+       </div>
+ 
+       {zone.blockers.length || zone.redactions.length ? (
+--- a/components/bi/BIKpiCard.tsx
++++ b/components/bi/BIKpiCard.tsx
+@@ -1,4 +1,5 @@
+ import Link from "next/link"
++import { localizePath } from "@/i18n/routing"
+ import { ArrowUpRight, Eye, LockKeyhole, ShieldAlert } from "lucide-react"
+ 
+ import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
+@@ -81,7 +82,7 @@
+                 {card.actionLink.label}
+               </span>
+             ) : (
+-              <Link href={card.actionLink.href}>
++              <Link href={localizePath(card.actionLink.href, biLocale(locale))}>
+                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                 {card.actionLink.label}
+               </Link>
+@@ -131,7 +132,7 @@
+       variant="outline"
+       className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+     >
+-      <Link href={drillThrough.href}>
++      <Link href={localizePath(drillThrough.href, biLocale(locale))}>
+         <Eye className="h-4 w-4" aria-hidden="true" />
+         {drillThrough.label}
+       </Link>
+--- a/components/bi/__tests__/bi-command-primitives.test.tsx
++++ b/components/bi/__tests__/bi-command-primitives.test.tsx
+@@ -41,6 +41,7 @@
+ })
+ 
+ import {
++  BIDrillThroughButton,
+   BIActionPriorityBoard,
+   BIBusinessTruthZone,
+   BICommandBriefHeader,
+@@ -72,6 +73,36 @@
+   stale: false,
+   staleReason: null,
+ }
++
++it.each(["en", "fr"])("renders one localized stock destination when the zone repeats the same route (%s)", locale => {
++  const action = { ...actionLink, label: "Open stock items", href: "/dashboard/inventory/items?location=west#stock" }
++  render(<BIBusinessTruthZone locale={locale} zone={{ ...buildZone(), actions: [action], drillThrough: { available: true, type: "route", label: action.label, href: action.href, requiredPermission: action.requiredPermission } }} />)
++  expect(screen.getAllByRole("link", { name: "Open stock items" })).toHaveLength(1)
++  expect(screen.getByRole("link", { name: "Open stock items" })).toHaveAttribute("href", `/${locale}${action.href}`)
++})
++
++it("shows one visible access explanation and no link when stock action and drill-through are denied", () => {
++  const action = { ...actionLink, label: "Open stock items", disabled: true, disabledReason: "Inventory item access is required." }
++  render(<BIBusinessTruthZone zone={{ ...buildZone(), actions: [action], drillThrough: { available: false, type: "route", label: action.label, requiredPermission: action.requiredPermission, unavailableReason: action.disabledReason } }} />)
++  const button = screen.getByRole("button", { name: action.label })
++  expect(button).toBeDisabled()
++  expect(button).toHaveAccessibleDescription(action.disabledReason)
++  expect(screen.getByText(action.disabledReason)).toBeVisible()
++  expect(screen.queryByRole("link")).not.toBeInTheDocument()
++})
++
++it("retains distinct evidence destinations and localizes their query/anchor", () => {
++  const action = { ...actionLink, href: "/dashboard/inventory/items", label: "Open stock items" }
++  render(<BIBusinessTruthZone locale="fr" zone={{ ...buildZone(), actions: [action], drillThrough: { available: true, type: "route_and_proof", label: "Inspect evidence", href: "/dashboard/inventory/movements?item=one#history", requiredPermission: "inventory.stock.read" } }} />)
++  expect(screen.getAllByRole("link")).toHaveLength(2)
++  expect(screen.getByRole("link", { name: "Inspect evidence" })).toHaveAttribute("href", "/fr/dashboard/inventory/movements?item=one#history")
++})
++
++it("never substitutes a route for an unavailable drill-through", () => {
++  render(<BIDrillThroughButton locale="fr" drillThrough={{ available: false, type: "route", label: "Stock", requiredPermission: "inventory.items.read", unavailableReason: "Access required" }} />)
++  expect(screen.getByRole("button", { name: "Stock" })).toBeDisabled()
++  expect(screen.queryByRole("link")).not.toBeInTheDocument()
++})
+ 
+ const provenance: BIProvenance = {
+   organizationId: "org-1",
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.stock-handoff.config.cjs
+@@ -0,0 +1,11 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Installed SWC transform only. No app configuration, environment or DB setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root,
++  testEnvironment: 'node',
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/services/owner-war-room/__tests__'],
++  testMatch: ['<rootDir>/services/owner-war-room/__tests__/owner-war-room.service.test.ts'],
++  collectCoverage: false,
++})

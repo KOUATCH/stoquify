@@ -5,7 +5,8 @@ import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { createAccountingSourceLink } from "@/services/accounting/source-link.service"
-import { recordReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "@/services/accounting/journal-close-invalidation.service"
+import { JournalReversalSnapshotChangedError, lockJournalReversalCatalogInTx, lockJournalReversalClosePeriodsInTx } from "@/services/accounting/journal-reversal-order.service"
 import { assertSensitiveActionAllowed, auditSensitiveActionDecision, evaluateSensitiveAction, type SensitiveActionDecision } from "@/services/controls/sensitive-action.service"
 import { suspenseCorrectionDraftSchema, suspenseCorrectionProposalSchema, suspenseCorrectionDecisionSchema, suspenseCorrectionHistorySchema, type SuspenseCorrectionDraft, type SuspenseCorrectionProposal, type SuspenseCorrectionDecision, type SuspenseCorrectionHistoryInput } from "./payment-suspense-correction.contracts"
 import { suspenseApprovalKey, suspenseEvidenceHash, suspenseEvidenceRevision, suspenseMetadata, suspensePostingSourceHash } from "./payment-suspense-evidence"
@@ -22,6 +23,7 @@ const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.Inp
 const nowOf = (control: SuspenseCorrectionControl) => control.now ?? new Date()
 
 async function transaction<T>(work: (tx: Tx) => Promise<Controlled<T>>) {
+  for (let attempt = 0; ; attempt += 1) {
   try {
     const result = await db.$transaction(work, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
     if (result.denied) {
@@ -32,11 +34,16 @@ async function transaction<T>(work: (tx: Tx) => Promise<Controlled<T>>) {
     }
     return result.value
   } catch (error) {
+    if (error instanceof JournalReversalSnapshotChangedError) {
+      if (attempt < 2) continue
+      throw new ConflictError("Correction evidence changed concurrently. Refresh or retry the same request.")
+    }
     if (error instanceof Prisma.PrismaClientKnownRequestError && (["P2002", "P2034"].includes(error.code)
       || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code))))) {
       throw new ConflictError("Correction evidence changed concurrently. Refresh or retry the same request.")
     }
     throw error
+  }
   }
 }
 
@@ -160,8 +167,13 @@ export async function reviewSuspenseCorrection(suspenseItemId: string, proposalI
 
 export async function decideSuspenseCorrection(input: SuspenseCorrectionDecision, control: SuspenseCorrectionControl) {
   const command = suspenseCorrectionDecisionSchema.parse(input)
+  const suppliedControl = control, startedAt = Date.now(), suppliedNow = nowOf(control).getTime()
+  const controlNow = () => new Date(suppliedNow + Math.max(0, Date.now() - startedAt))
   return transaction(async tx => {
+    const control = { ...suppliedControl, now: controlNow() }
+    if (command.decision === "APPROVE") await lockJournalReversalCatalogInTx(tx, control.organizationId, db)
     await lockItem(tx, control, command.suspenseItemId)
+    control.now = controlNow()
     const proposal = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: command.proposalId, organizationId: control.organizationId, source: "SUSPENSE_POST", externalId: command.suspenseItemId, status: "PROCESSED" } })
     const proposed = payloadOf(proposal)
     if (proposed.kind !== "SUSPENSE_CORRECTION_PROPOSED_V1" || proposed.suspenseItemId !== command.suspenseItemId || typeof proposed.proposedById !== "string" || typeof proposed.originalPostedById !== "string") throw new ConflictError("Correction maker evidence is invalid.")
@@ -181,6 +193,22 @@ export async function decideSuspenseCorrection(input: SuspenseCorrectionDecision
     const draft = suspenseCorrectionDraftSchema.parse(proposed.draft), current = await preview(tx, draft, control)
     if (suspenseMetadata(current.item.metadata).correctionProposalId !== proposal!.id || current.financialHash !== proposed.financialHash
       || suspenseEvidenceHash({ proposalHash: proposal!.payloadHash, currentRevision: current.revision }) !== command.expectedRevision) throw new ConflictError("Correction evidence changed. Refresh the independent review.")
+    const affectedPeriodIds = command.decision === "APPROVE" ? await lockJournalReversalClosePeriodsInTx(tx, control.organizationId, {
+      originalPeriodId: current.journal.periodId, reversalPeriodId: current.period.id,
+      originalEntryDate: current.journal.entryDate, reversalDate: current.date,
+      includeLaterPeriods: current.journal.lines.some(line => line.account.syscohadaClass?.startsWith("3")),
+      // Close's getPaymentReconciliationDashboardData collector is tenant-wide.
+      includeAllPeriods: true,
+      additionalEvidenceDates: current.item.reconciliationRun ? [current.item.reconciliationRun.businessDate] : [],
+      additionalPeriodIds: current.journal.postingBatch?.periodId ? [current.journal.postingBatch.periodId] : [],
+    }, db) : []
+    // Catalog, source, posting-period and assessment waits consume the same
+    // authentication lifetime. A supplied control clock must advance too.
+    control.now = controlNow()
+    for (const [action, subject] of [["payment.reconciliation.suspense.post", proposed.proposedById], ["accounting.journal.reverse", proposed.originalPostedById]] as const) {
+      const decision = authorize(control, command.suspenseItemId, action, subject)
+      await auditSensitiveActionDecision(tx, decision); if (!decision.allowed) return { denied: decision }
+    }
     const base = { commandHash, suspenseItemId: current.item.id, cycle: current.cycle, proposalId: proposal!.id, proposedById: proposed.proposedById,
       approvedById: control.actorId, decidedAt: nowOf(control).toISOString(), reason: command.reason, reviewedRevision: command.expectedRevision,
       originalJournalId: current.journal.id, originalJournalHash: correctionJournalHash(current.journal), originalApproval: current.originalApproval }
@@ -223,8 +251,8 @@ export async function decideSuspenseCorrection(input: SuspenseCorrectionDecision
     if (run) await tx.reconciliationRun.update({ where: { id: run.id }, data: { status: "NEEDS_REVIEW", signedAt: null, signedById: null,
       certificateHash: null, certificatePayload: Prisma.JsonNull, metadata: json({ ...suspenseMetadata(run.metadata), immutableAfterSignoff: false,
         signedSourceVersionHash: null, correctionInvalidation: { receiptId, suspenseItemId: current.item.id, at: now.toISOString() } }) } })
-    await recordReversedJournalCloseInvalidationsInTx(tx, control.organizationId, { originalJournalEntryId: original.id, reversalJournalEntryId: reversal.id,
-      originalPeriodId: original.periodId, reversalPeriodId: current.period.id, reversalDate: current.date, correlationId: receiptId }, { actorId: control.actorId, now })
+    await recordOrderedReversedJournalCloseInvalidationsInTx(tx, control.organizationId, { originalJournalEntryId: original.id, reversalJournalEntryId: reversal.id,
+      originalPeriodId: original.periodId, reversalPeriodId: current.period.id, reversalDate: current.date, correlationId: receiptId, affectedPeriodIds }, { actorId: control.actorId, now })
     await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: "PAYMENT_SUSPENSE_CORRECTION_APPROVE", resourceType: "SuspenseItem", resourceId: current.item.id,
       postingBatchId: batch.id, journalEntryId: reversal.id, message: "Suspense posting reversed through independent source review; obligation reopened", metadata: json({ receiptId, proposalId: proposal!.id, cycle: current.cycle }) } })
     await assertCompensatedSuspenseCycleInTx(tx, control.organizationId, current.item.id, current.cycle)

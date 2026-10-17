@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-28T10:20:42.996Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts": "9c660fd23ff09717d4cb5ce91d02aa940e5bf174b6e3c2d8ea8f4d3beba816e7",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "actions/payroll/payroll-control.actions.ts": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [],
+  "stage": "stock_cash_buffer en",
+  "passed": false,
+  "error": "locator.press: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('article').filter({ has: getByRole('heading', { name: 'Stock cash buffer', exact: true }) }).first().locator('a[href=\"/en/dashboard/inventory/items\"]').last()\u001b[22m\n\u001b[2m    - locator resolved to <a href=\"/en/dashboard/inventory/items\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3 text-xs rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]\">…</a>\u001b[22m\n\u001b[2m  - elementHandle.press(\"Enter\")\u001b[22m\n\u001b[2m    - navigated to \"http://127.0.0.1:3110/en/dashboard/finance/cash-command\"\u001b[22m\n"
+}

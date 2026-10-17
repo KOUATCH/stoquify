@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-28T09:42:07.772Z",
+  "sourceBefore": {
+    "services/cash-command/__tests__/cash-command.service.test.ts": "aff9900a37cf65079749d7ddd30b0ac2542aca965d35daff8ef75d718a1828f4",
+    "services/cash-command/cash-command.service.ts": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370",
+    "services/cash-command/cash-command-contracts.ts": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956",
+    "services/cash-command/cash-command-visibility.service.ts": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       63 passed, 63 total\nSnapshots:   0 total\nTime:        6.209 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "services/cash-command/cash-command-visibility.service.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/__tests__/cash-command.service.test.ts": "aff9900a37cf65079749d7ddd30b0ac2542aca965d35daff8ef75d718a1828f4",
+    "services/cash-command/cash-command.service.ts": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370",
+    "services/cash-command/cash-command-contracts.ts": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956",
+    "services/cash-command/cash-command-visibility.service.ts": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "sourceStable": true,
+  "passed": true
+}

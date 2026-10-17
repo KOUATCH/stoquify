@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-27T14:33:29.434Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "cases": [],
+  "passed": false,
+  "error": "Business event idempotency key was reused with a different payload.",
+  "stack": [
+    "IdempotencyConflictError: Business event idempotency key was reused with a different payload.",
+    "    at recordIdempotencyConflict (E:\\ohada saas\\Focused projects\\stoquify\\services\\events\\business-event.service.ts:158:9)",
+    "    at async recordBusinessEventInTx (E:\\ohada saas\\Focused projects\\stoquify\\services\\events\\business-event.service.ts:192:7)",
+    "    at async db_1.db.$transaction.isolationLevel (E:\\ohada saas\\Focused projects\\stoquify\\services\\reconciliation\\payment-reconciliation-certification.service.ts:798:9)",
+    "    at async Proxy._transactionWithCallback (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\@prisma+client@6.19.3_prism_1d040ab5215f59f0e27ddee7f0cf082e\\node_modules\\@prisma\\client\\src\\runtime\\getPrismaClient.ts:722:18)"
+  ],
+  "sourceAfter": {
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "f739d0bcdb28720a6a3cfdc22d0d70e1da8181379cabcf2741866b1b9ecf18a0",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "sourceStable": true
+}

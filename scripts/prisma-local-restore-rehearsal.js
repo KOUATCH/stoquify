@@ -328,6 +328,7 @@ async function runRestoreRehearsal(options, dependencies = {}) {
     }
     const ready =
       backup.created &&
+      sourcePopulated &&
       history.summary.status === "ready" &&
       profilesMatch(sourceProfile, restoredProfile) &&
       sourceDiff === restoredDiff &&

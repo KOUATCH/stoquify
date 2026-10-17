@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-30T11:16:39.235Z",
+  "syntheticReleaseFixture": true,
+  "checks": [
+    "sequential_delta_remainder_replay_conflict_and_completion",
+    "concurrent_over_settlement_rejected_without_lost_update",
+    "legacy_unproven_balance_denied",
+    "cross_tenant_batch_denied"
+  ],
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "dcfdf785c330943a4960c7d5b7c092964afa54d7b587849cf32cf06a1b2f1480",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d"
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "dcfdf785c330943a4960c7d5b7c092964afa54d7b587849cf32cf06a1b2f1480",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d"
+  },
+  "sourceStable": true
+}

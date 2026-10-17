@@ -1,0 +1,95 @@
+{
+  "at": "2026-09-30T10:40:49.615Z",
+  "mode": "corrected",
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "checks": [
+    {
+      "subjectType": "reconciliation.run",
+      "grade": "blocked",
+      "blockers": [
+        {
+          "id": "reconciliation-open-exceptions",
+          "detail": "1 payment exception remains open or in review."
+        },
+        {
+          "id": "reconciliation-open-suspense",
+          "detail": "1 suspense item remains open or unresolved."
+        }
+      ],
+      "nodeCount": 22,
+      "durationMs": 55,
+      "noBusinessMutation": true
+    },
+    {
+      "subjectType": "payment.transaction",
+      "grade": "blocked",
+      "blockers": [
+        {
+          "id": "payment-transaction-open-exceptions",
+          "detail": "1 exception(s) remain open for this transaction."
+        },
+        {
+          "id": "payment-transaction-open-suspense",
+          "detail": "1 suspense item(s) remain open for this transaction."
+        }
+      ],
+      "nodeCount": 21,
+      "durationMs": 40,
+      "noBusinessMutation": true
+    },
+    {
+      "subjectType": "close.run",
+      "grade": "blocked",
+      "blockers": [
+        {
+          "id": "close-open-findings",
+          "detail": "1 close assurance finding remains unresolved."
+        },
+        {
+          "id": "close-checklist-failed",
+          "detail": "1 checklist item failed."
+        },
+        {
+          "id": "close-evidence-unavailable",
+          "detail": "1 close evidence item is unavailable."
+        }
+      ],
+      "nodeCount": 61,
+      "durationMs": 50,
+      "noBusinessMutation": true
+    },
+    {
+      "subjectType": "payment.transaction",
+      "grade": "blocked",
+      "blockers": [
+        {
+          "id": "business-events-outside-display",
+          "detail": "1 failed or rejected business event(s) are outside the displayed evidence sample."
+        }
+      ],
+      "nodeCount": 31,
+      "durationMs": 19,
+      "noBusinessMutation": true
+    }
+  ],
+  "resolvedPaymentClear": true,
+  "crossTenantDenied": true,
+  "financialEffects": {
+    "payments": 0,
+    "journals": 0
+  },
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+  },
+  "sourceStable": true,
+  "passed": true
+}

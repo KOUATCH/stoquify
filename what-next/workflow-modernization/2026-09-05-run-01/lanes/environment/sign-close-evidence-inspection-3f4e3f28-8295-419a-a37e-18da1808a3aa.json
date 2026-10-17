@@ -1,0 +1,39 @@
+{
+  "signatureHash": "a03b53b9d67334ae230c65a7d9e19ba06ccbecb46fe1a6f4e8f3def90ecdcede",
+  "runStatus": "SIGNED",
+  "rows": [
+    {
+      "closeRunId": "cmutloa4h02jjmal870o7bjcx",
+      "evidenceType": "RECONCILIATION_CERTIFICATE",
+      "sourceTable": "reconciliation_runs",
+      "sourceLabel": "Reconciliation run 2026-10-04 - SIGNED",
+      "sourceHash": "a03b53b9d67334ae230c65a7d9e19ba06ccbecb46fe1a6f4e8f3def90ecdcede",
+      "provenance": "POSTED"
+    },
+    {
+      "closeRunId": "cmutloa4h02jjmal870o7bjcx",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "ledger_audit_events",
+      "sourceLabel": "PAYMENT_RECONCILIATION_RUN_SIGN - recorded",
+      "sourceHash": null,
+      "provenance": "POSTED"
+    },
+    {
+      "closeRunId": "cmutloa4h02jjmal870o7bjcx",
+      "evidenceType": "AUDIT_LOG",
+      "sourceTable": "audit_logs",
+      "sourceLabel": "PAYMENT_RECONCILIATION_SIGN_CONTROL - allowed",
+      "sourceHash": null,
+      "provenance": "POSTED"
+    }
+  ],
+  "findings": [
+    {
+      "closeRunId": "cmutloa4h02jjmal870o7bjcx",
+      "domain": "PAYMENT_RECONCILIATION",
+      "severity": "HIGH",
+      "title": "Provider statement evidence is missing",
+      "sourceType": "payments.provider-statement-evidence"
+    }
+  ]
+}

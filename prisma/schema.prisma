@@ -174,6 +174,9 @@ model User {
 
   // Role relationships
   roles Role[] @relation("UserRoles")
+  accessRequests AccessRequest[] @relation("AccessRequester")
+  reviewedAccessRequests AccessRequest[] @relation("AccessReviewer")
+  purchaseOrderAuthoringDrafts PurchaseOrderAuthoringDraft[]
 
   // Authentication
   accounts Account[]
@@ -232,7 +235,41 @@ model User {
   @@index([organizationId, isActive])
   @@index([email])
   @@index([phone])
+  @@unique([organizationId, id])
   @@map("users")
+}
+
+
+// Decision and application are separate. History is retained in AuditLog.
+// The migration also enforces one open request per task and state constraints.
+model AccessRequest {
+  id String @id
+  organizationId String
+  requesterId String
+  requester User @relation("AccessRequester", fields: [organizationId, requesterId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "access_requests_requester_fkey")
+  reviewerId String?
+  reviewer User? @relation("AccessReviewer", fields: [organizationId, reviewerId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "access_requests_reviewer_fkey")
+  targetKey String
+  reason String @db.VarChar(400)
+  submissionHash String
+  decision String @default("PENDING")
+  application String @default("NOT_REQUIRED")
+  revision Int @default(1)
+  expiresAt DateTime
+  decidedAt DateTime?
+  appliedAt DateTime?
+  decisionReason String? @db.VarChar(400)
+  selectedRoleIds String[] @default([])
+  memberRevision String?
+  applicationCommandId String?
+  applicationError String?
+  grantAuditId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, requesterId, createdAt, id])
+  @@index([organizationId, decision, createdAt, id])
+  @@map("access_requests")
 }
 
 model Role {
@@ -1404,6 +1441,29 @@ model OnboardingReadinessMilestone {
 // PURCHASE ORDERS
 // ============================================================
 
+// Authoring drafts are not business purchase orders and allocate no document number.
+model PurchaseOrderAuthoringDraft {
+  id String @id
+  organizationId String
+  actorId String
+  actor User @relation(fields: [organizationId, actorId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "po_authoring_actor_fkey")
+  title String @db.VarChar(100)
+  status String @default("ACTIVE")
+  revision Int @default(1)
+  content Json
+  lastSaveHash String
+  commandHash String?
+  preparedAt DateTime?
+  resultOrderId String?
+  resultOrder PurchaseOrder? @relation(fields: [organizationId, resultOrderId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "po_authoring_result_fkey")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId, actorId, createdAt, id], map: "po_authoring_scope_page_idx")
+  @@unique([organizationId, resultOrderId], map: "po_authoring_result_key")
+  @@map("purchase_order_authoring_drafts")
+}
+
 model PurchaseOrder {
   id                   String              @id @default(cuid())
   orderNumber          String // per-org unique, not globally
@@ -1446,6 +1506,7 @@ model PurchaseOrder {
   supplierInvoices         SupplierInvoice[]
   threeWayMatches          ThreeWayMatch[]
   acknowledgementEnvelopes SupplierPoEnvelope[]
+  authoringDrafts PurchaseOrderAuthoringDraft[]
   purchaseReturns          PurchaseReturn[]
   supplierCreditNotes      SupplierCreditNote[]
 
@@ -5698,11 +5759,14 @@ model ProviderAccount {
   reconciliationRuns  ReconciliationRun[]
   paymentExceptions   PaymentException[]
   reconciliationInbox PaymentReconciliationInboxItem[]
+  noActivityEvidence  ReconciliationNoActivityEvidence[]
+  bankBalanceEvidence BankBalanceEvidence[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, providerCode])
+  @@unique([organizationId, id])
   @@unique([organizationId, paymentRailId, externalAccountHash])
   @@index([organizationId, status, currencyCode])
   @@index([paymentRailId, status])
@@ -5838,6 +5902,9 @@ model StatementFile {
   @@index([importedById])
   @@index([correlationId])
   @@map("statement_files")
+  bankBalanceEvidence BankBalanceEvidence[]
+  @@unique([organizationId, id])
+
 }
 
 model StatementLine {
@@ -7176,6 +7243,10 @@ model AccountingPeriod {
   endDate      DateTime
   status       AccountingPeriodStatus @default(OPEN)
 
+  controlVersion Int @default(0)
+  lastControlEventId String?
+  controlEvents PeriodControlEvent[]
+
   lockedAt   DateTime?
   closedAt   DateTime?
   closedById String?
@@ -7190,14 +7261,49 @@ model AccountingPeriod {
   closePackExports     ClosePackExport[]
   accountantReviews    AccountantReview[]
   accountantComments   AccountantComment[]
+  noActivityEvidence   ReconciliationNoActivityEvidence[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, fiscalYearId, periodNumber])
+  @@unique([organizationId, id])
   @@index([organizationId, status, startDate])
   @@index([fiscalYearId])
   @@map("accounting_periods")
+  bankBalanceEvidence BankBalanceEvidence[]
+  balanceSheetEvidence BalanceSheetEvidence[]
+
+}
+
+// Independently reviewed external evidence; empty queries never create this proof.
+model ReconciliationNoActivityEvidence {
+  id                String @id @default(cuid())
+  organizationId    String
+  providerAccountId String
+  periodId          String
+  providerAccount   ProviderAccount @relation(fields: [organizationId, providerAccountId], references: [organizationId, id])
+  period            AccountingPeriod @relation(fields: [organizationId, periodId], references: [organizationId, id])
+  periodStart       DateTime
+  periodEnd         DateTime
+  currencyCode      String
+  sourceReference   String
+  sourceDocumentHash String
+  reason            String
+  evidenceHash      String
+  idempotencyKey    String
+  proposedById      String
+  createdAt         DateTime @default(now())
+  status            String @default("PROPOSED")
+  approvedById      String?
+  approvedAt        DateTime?
+  revokedById       String?
+  revokedAt         DateTime?
+  revocationReason  String?
+
+  @@unique([organizationId, idempotencyKey], map: "reconciliation_no_activity_org_key")
+  @@index([organizationId, providerAccountId, periodId, status], map: "reconciliation_no_activity_scope_idx")
+  @@map("reconciliation_no_activity_evidence")
 }
 
 enum AccountingPeriodStatus {
@@ -7334,6 +7440,27 @@ model CloseRun {
   @@index([runById])
   @@index([correlationId])
   @@map("close_runs")
+}
+
+// Database source triggers and close publication share this tenant revision.
+model CloseSourceRevision {
+  organizationId String @id
+  revision       BigInt @default(0)
+  updatedAt      DateTime @default(now())
+  @@map("close_source_revisions")
+}
+
+// Minimal retained provenance; no raw financial or personal payloads.
+model CloseSourceChange {
+  id             BigInt @id @default(autoincrement())
+  organizationId String
+  revision       BigInt
+  sourceTable    String
+  sourceId       String?
+  operation      String
+  recordedAt     DateTime @default(now())
+  @@unique([organizationId, revision])
+  @@map("close_source_changes")
 }
 
 model CloseChecklistItem {
@@ -7650,12 +7777,14 @@ model ChartOfAccount {
   providerFeeAccounts        ProviderAccount[]   @relation("ProviderFeeLedgerAccount")
   settlementLedgerAccounts   SettlementAccount[] @relation("SettlementLedgerAccount")
   suspenseLedgerItems        SuspenseItem[]      @relation("SuspenseLedgerAccount")
+  balanceSheetEvidence       BalanceSheetEvidence[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, code])
   @@unique([organizationId, mappingKey])
+  @@unique([organizationId, id])
   @@index([organizationId, type, isActive])
   @@index([parentId])
   @@map("chart_of_accounts")
@@ -8165,11 +8294,34 @@ model BusinessEventOutbox {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  closeEvidenceNotification CloseEvidenceNotification?
+
+  @@unique([organizationId, id])
   @@unique([organizationId, channel, idempotencyKey])
   @@index([organizationId, status, availableAt])
   @@index([organizationId, correlationId])
   @@index([businessEventId])
   @@map("business_event_outbox")
+}
+
+// Durable publication of a historical observation, not a read receipt or a
+// grant of access. Current source and actor authority are checked on every read.
+model CloseEvidenceNotification {
+  id             String @id @default(cuid())
+  organizationId String
+  outboxId       String
+  outbox         BusinessEventOutbox @relation(fields: [organizationId, outboxId], references: [organizationId, id], onDelete: Restrict, onUpdate: Restrict, map: "close_evidence_notifications_outbox_fkey")
+  periodId       String
+  findingId      String
+  requestId      String
+  responseId     String?
+  eventName      String
+  payloadHash    String
+  publishedAt    DateTime @default(now())
+
+  @@unique([organizationId, outboxId], map: "close_evidence_notifications_org_outbox_key")
+  @@index([organizationId, periodId, publishedAt, id], map: "close_evidence_notifications_org_period_published_idx")
+  @@map("close_evidence_notifications")
 }
 
 model BusinessEventAudit {
@@ -9932,4 +10084,79 @@ model AgentPilotCertification {
   @@index([packageId, result, expiresAt])
   @@index([commitSha, manifestHash])
   @@map("agent_pilot_certifications")
+}
+
+
+// Independently reviewed statement balance transcription and ledger reconciliation.
+model BankBalanceEvidence {
+  id String @id @default(cuid())
+  organizationId String
+  providerAccountId String
+  providerAccount ProviderAccount @relation(fields: [organizationId, providerAccountId], references: [organizationId, id], onDelete: Restrict)
+  periodId String
+  period AccountingPeriod @relation(fields: [organizationId, periodId], references: [organizationId, id], onDelete: Restrict)
+  statementFileId String
+  statementFile StatementFile @relation(fields: [organizationId, statementFileId], references: [organizationId, id], onDelete: Restrict)
+  input Json
+  snapshot Json
+  evidenceHash String
+  idempotencyKey String
+  proposedById String
+  createdAt DateTime @default(now())
+  status String @default("PROPOSED")
+  approvedById String?
+  approvedAt DateTime?
+  revokedById String?
+  revokedAt DateTime?
+  revocationReason String?
+  @@unique([organizationId, idempotencyKey], map: "bank_balance_org_key")
+  @@index([organizationId, providerAccountId, periodId, createdAt], map: "bank_balance_scope_idx")
+  @@map("bank_balance_evidence")
+}
+
+// Account/currency supporting schedules retained separately from bank proof.
+model BalanceSheetEvidence {
+  id String @id @default(cuid())
+  organizationId String
+  ledgerAccountId String
+  ledgerAccount ChartOfAccount @relation(fields: [organizationId, ledgerAccountId], references: [organizationId, id], onDelete: Restrict)
+  periodId String
+  period AccountingPeriod @relation(fields: [organizationId, periodId], references: [organizationId, id], onDelete: Restrict)
+  currency String
+  input Json
+  snapshot Json
+  evidenceHash String
+  idempotencyKey String
+  proposedById String
+  createdAt DateTime @default(now())
+  status String @default("PROPOSED")
+  approvedById String?
+  approvedAt DateTime?
+  revokedById String?
+  revokedAt DateTime?
+  revocationReason String?
+  @@unique([organizationId, idempotencyKey], map: "balance_sheet_org_key")
+  @@index([organizationId, ledgerAccountId, periodId, currency, createdAt], map: "balance_sheet_scope_idx")
+  @@map("balance_sheet_evidence")
+}
+
+// Retained close/reopen decisions; never rewritten when evidence becomes stale.
+model PeriodControlEvent {
+  id String @id @default(cuid())
+  organizationId String
+  periodId String
+  period AccountingPeriod @relation(fields: [organizationId, periodId], references: [organizationId, id], onDelete: Restrict)
+  version Int
+  operation String
+  fromStatus String
+  toStatus String
+  actorId String
+  reason String
+  idempotencyKey String
+  sourceRevision String
+  approval Json
+  createdAt DateTime @default(now())
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, periodId, version])
+  @@map("period_control_events")
 }

@@ -1,0 +1,1018 @@
+diff --git a/components/ui/groups/inventory/ItemManagement.tsx b/components/ui/groups/inventory/ItemManagement.tsx
+--- a/components/ui/groups/inventory/ItemManagement.tsx
++++ b/components/ui/groups/inventory/ItemManagement.tsx
+@@ -35,8 +35,10 @@
+ import type { UnitDTO } from "@/types/unit"
+ 
+ import { useCreateItem } from "@/hooks/itemsHooks/useItemHooks"
+-import { formatCurrency } from "@/lib/formatCurrency"
++import { inventoryItemsText } from "@/components/inventory/inventory-items-copy"
++import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
+ import { formatDate } from "@/lib/formateDate"
++import { fr } from "date-fns/locale"
+ import { ItemWithInventoryLevelsPayload } from "@/types/itemTypes"
+ import { ItemForm2 } from "./ItemForm2"
+ import { useItemManagement } from "./hooks/useItemManagement"
+@@ -159,6 +161,7 @@
+   initialBrandData: BrandDTO[]
+   initialUnitData: UnitDTO[]
+   initialTaxRateData: TaxRateDTO[]
++  currency?: string
+   initialSearch?: string
+   activeFilterChips?: ActiveFilterChip[]
+   locale?: Locale
+@@ -196,14 +199,14 @@
+         <Checkbox
+           checked={table.getIsAllPageRowsSelected()}
+           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+-          aria-label="Select all"
++          aria-label={inventoryItemsText("Select all", locale)}
+         />
+       ),
+       cell: ({ row }) => (
+         <Checkbox
+           checked={row.getIsSelected()}
+           onCheckedChange={(value) => row.toggleSelected(!!value)}
+-          aria-label="Select row"
++          aria-label={inventoryItemsText("Select row", locale)}
+         />
+       ),
+       enableSorting: false,
+@@ -211,7 +214,7 @@
+     },
+     {
+       accessorKey: "name",
+-      header: "Name",
++      header: inventoryItemsText("Name", locale),
+       cell: ({ row }) => {
+         const item = row.original
+         return (
+@@ -233,7 +236,7 @@
+     },
+     {
+       accessorKey: "costPrice",
+-      header: "Cost",
++      header: inventoryItemsText("Cost", locale),
+       cell: ({ row }) => {
+         const amount = parseFloat(row.getValue("costPrice"))
+         return <span className="font-medium">{formatCurrency(amount)}</span>
+@@ -241,7 +244,7 @@
+     },
+     {
+       accessorKey: "sellingPrice",
+-      header: "Price",
++      header: inventoryItemsText("Price", locale),
+       cell: ({ row }) => {
+         const amount = parseFloat(row.getValue("sellingPrice"))
+         return <span className="font-medium text-green-600">{formatCurrency(amount)}</span>
+@@ -250,7 +253,7 @@
+     {
+       id: "inventoryLevels",
+       accessorFn: (item) => getItemInventorySummary(item).stock,
+-      header: "Stock",
++      header: inventoryItemsText("Stock", locale),
+       cell: ({ row }) => {
+         const { stock: quantity, threshold } = getItemInventorySummary(row.original)
+ 
+@@ -260,7 +263,7 @@
+ 
+         return (
+           <Badge variant={status as any}>
+-            {quantity} in stock
++            {quantity.toLocaleString(locale)} {inventoryItemsText("in stock", locale)}
+           </Badge>
+         )
+       },
+@@ -268,7 +271,7 @@
+     {
+       id: "value",
+       accessorFn: (item) => getItemInventorySummary(item).value,
+-      header: "Total Value",
++      header: inventoryItemsText("Total Value", locale),
+       cell: ({ row }) => {
+         const value = row.getValue<number>("value")
+         return <span className="font-medium">{formatCurrency(value)}</span>
+@@ -276,7 +279,7 @@
+     },
+     {
+       accessorKey: "createdAt",
+-      header: "Date Added",
++      header: inventoryItemsText("Date Added", locale),
+       cell: ({ row }) => {
+         return formatDate(row.getValue("createdAt"))
+       },
+@@ -291,30 +294,30 @@
+           <DropdownMenu>
+             <DropdownMenuTrigger asChild>
+               <Button variant="ghost" className="h-8 w-8 p-0">
+-                <span className="sr-only">Open menu</span>
++                <span className="sr-only">{inventoryItemsText("Open menu", locale)}</span>
+                 <MoreHorizontal className="h-4 w-4" />
+               </Button>
+             </DropdownMenuTrigger>
+             <DropdownMenuContent align="end">
+-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
++              <DropdownMenuLabel>{inventoryItemsText("Actions", locale)}</DropdownMenuLabel>
+               <DropdownMenuItem asChild>
+                 <Link href={`/dashboard/inventory/items/${encodeURIComponent(item.id)}`}>{locale === "fr" ? "Consulter l’article" : "View item"}</Link>
+               </DropdownMenuItem>
+               <DropdownMenuItem
+                 onClick={() => navigator.clipboard.writeText(item.id || "")}
+               >
+-                Copy ID
++                {inventoryItemsText("Copy ID", locale)}
+               </DropdownMenuItem>
+               <DropdownMenuSeparator />
+               <DropdownMenuItem onClick={() => handleEditClick(item)}>
+-                Edit Item
++                {inventoryItemsText("Edit Item", locale)}
+               </DropdownMenuItem>
+               <DropdownMenuItem
+                 onClick={() => handleDeleteClick(item)}
+                 disabled={isBeingDeleted}
+                 className="text-destructive focus:text-destructive"
+               >
+-                {isBeingDeleted ? "Deleting..." : "Delete Item"}
++                {isBeingDeleted ? inventoryItemsText("Deleting...", locale) : inventoryItemsText("Delete Item", locale)}
+               </DropdownMenuItem>
+             </DropdownMenuContent>
+           </DropdownMenu>
+@@ -415,7 +418,7 @@
+   const selectedRows = table.getFilteredSelectedRowModel().rows
+   const filteredRowCount = table.getFilteredRowModel().rows.length
+   const selectedItems = selectedRows.map((row) => row.original)
+-  const tableTitle = title || "Items Management"
++  const tableTitle = title || inventoryItemsText("Items Management", locale)
+ 
+   const handleClearFilters = useCallback(() => {
+     if (hasActiveSearch) {
+@@ -486,7 +489,7 @@
+             <div className="min-w-0">
+               <h2 className="text-lg font-semibold text-[var(--dash-text)]">{tableTitle}</h2>
+               <p className="mt-1 break-words text-sm text-[var(--dash-text-soft)]">
+-                Showing {filteredRowCount.toLocaleString()} of {data.length.toLocaleString()} items
++                {locale === "fr" ? `${filteredRowCount.toLocaleString(locale)} articles affichés sur ${data.length.toLocaleString(locale)}` : `Showing ${filteredRowCount.toLocaleString(locale)} of ${data.length.toLocaleString(locale)} items`}
+               </p>
+             </div>
+           </div>
+@@ -494,7 +497,7 @@
+           <div className="flex flex-wrap items-center gap-2">
+             <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
+               <Sparkles className="me-1 h-3 w-3 text-[var(--dash-spruce)]" />
+-              Live Data
++              {inventoryItemsText("Live Data", locale)}
+             </Badge>
+             <Button
+               variant="outline"
+@@ -504,7 +507,7 @@
+               className="dashboard-button-secondary h-9 rounded-lg"
+             >
+               <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+-              {isLoading ? "Refreshing" : "Refresh"}
++              {isLoading ? inventoryItemsText("Refreshing", locale) : inventoryItemsText("Refresh", locale)}
+             </Button>
+             <Button
+               variant="outline"
+@@ -513,7 +516,7 @@
+               className="dashboard-button-secondary h-9 rounded-lg"
+             >
+               <Download className="mr-2 h-4 w-4" />
+-              Export
++              {inventoryItemsText("Export", locale)}
+             </Button>
+           </div>
+         </div>
+@@ -531,7 +534,7 @@
+             ))}
+             {hasActiveSearch && !hasSearchFilterChip ? (
+               <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
+-                Search: {globalFilter}
++                {inventoryItemsText("Search:", locale)} {globalFilter}
+               </Badge>
+             ) : null}
+             <Button
+@@ -540,7 +543,7 @@
+               onClick={handleClearFilters}
+               className="h-8 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]"
+             >
+-              Clear
++              {inventoryItemsText("Clear", locale)}
+             </Button>
+           </div>
+         ) : null}
+@@ -552,7 +555,8 @@
+           <div className="relative w-full min-w-0 flex-1 lg:min-w-[18rem]">
+             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
+             <Input
+-              placeholder="Search items, SKUs, categories, or brands"
++              aria-label={locale === "fr" ? "Rechercher des articles" : "Search items"}
++              placeholder={inventoryItemsText("Search items, SKUs, categories, or brands", locale)}
+               value={globalFilter ?? ""}
+               onChange={(event) => setGlobalFilter(event.target.value)}
+               className="dashboard-control h-9 w-full rounded-lg pl-9 pr-9"
+@@ -560,7 +564,7 @@
+             {hasActiveSearch ? (
+               <button
+                 type="button"
+-                aria-label="Clear item search"
++                aria-label={inventoryItemsText("Clear item search", locale)}
+                 onClick={() => setGlobalFilter("")}
+                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-1.5 py-0.5 text-xs font-semibold text-[var(--dash-text-faint)] transition hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]"
+               >
+@@ -585,13 +589,13 @@
+               variant="landing"
+             />
+             <Select value={stockFilter} onValueChange={handleStockFilterChange}>
+-              <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
+-                <SelectValue placeholder="Stock status" />
++              <SelectTrigger aria-label={inventoryItemsText("Stock status", locale)} className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
++                <SelectValue placeholder={inventoryItemsText("Stock status", locale)} />
+               </SelectTrigger>
+               <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+                 {STOCK_FILTER_OPTIONS.map((option) => (
+                   <SelectItem key={option.value} value={option.value}>
+-                    {option.label}
++                    {inventoryItemsText(option.label, locale)}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+@@ -600,7 +604,7 @@
+             {selectedRows.length > 0 ? (
+               <>
+                 <Badge variant="outline" className="rounded-lg border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
+-                  {selectedRows.length.toLocaleString()} selected
++                  {selectedRows.length.toLocaleString(locale)} {locale === "fr" ? "sélectionné(s)" : "selected"}
+                 </Badge>
+                 <Button
+                   variant="outline"
+@@ -609,7 +613,7 @@
+                   className="dashboard-button-secondary h-9 rounded-lg"
+                 >
+                   <Download className="mr-2 h-4 w-4" />
+-                  Export Selected
++                  {inventoryItemsText("Export Selected", locale)}
+                 </Button>
+               </>
+             ) : null}
+@@ -618,7 +622,7 @@
+               <DropdownMenuTrigger asChild>
+                 <Button variant="outline" size="sm" className="dashboard-button-secondary h-9 rounded-lg">
+                   <SlidersHorizontal className="mr-2 h-4 w-4" />
+-                  View
++                  {inventoryItemsText("View", locale)}
+                   <ChevronDownIcon className="ml-2 h-4 w-4" />
+                 </Button>
+               </DropdownMenuTrigger>
+@@ -634,7 +638,7 @@
+                         checked={column.getIsVisible()}
+                         onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                       >
+-                        {column.id}
++                        {typeof column.columnDef.header === "string" ? column.columnDef.header : column.id}
+                       </DropdownMenuCheckboxItem>
+                     )
+                   })}
+@@ -737,18 +741,18 @@
+                     </div>
+                     <div>
+                       <h3 className="text-base font-semibold text-[var(--dash-text)]">
+-                        {hasActiveSearch ? "No matching items" : "No inventory items yet"}
++                        {hasActiveSearch ? inventoryItemsText("No matching items", locale) : inventoryItemsText("No inventory items yet", locale)}
+                       </h3>
+                       <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">
+                         {hasActiveSearch
+-                          ? "Try a different search term or clear the filter to see the full catalog."
+-                          : "Create your first item to start tracking pricing, stock health, and inventory value."}
++                          ? inventoryItemsText("Try a different search term or clear the filter to see the full catalog.", locale)
++                          : inventoryItemsText("Create your first item to start tracking pricing, stock health, and inventory value.", locale)}
+                       </p>
+                     </div>
+                     <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                       {hasActiveSearch && (
+                         <Button variant="outline" size="sm" onClick={() => setGlobalFilter("")} className="dashboard-button-secondary rounded-lg">
+-                          Clear Search
++                          {inventoryItemsText("Clear Search", locale)}
+                         </Button>
+                       )}
+                     </div>
+@@ -782,6 +786,7 @@
+     initialSearch = "",
+     activeFilterChips = [],
+     locale = "en",
++    currency = "XAF",
+   }) => {
+     // Validate required props
+     if (!organizationId) {
+@@ -870,13 +875,13 @@
+           const fileName = `Items_${format(new Date(), "yyyy-MM-dd_HH-mm-ss")}.xlsx`
+           XLSX.writeFile(workbook, fileName)
+ 
+-          notify.success("Export successful", {
+-            description: `${filteredItems.length} items exported to ${fileName}`,
++          notify.success(inventoryItemsText("Export successful", locale), {
++            description: locale === "fr" ? `${filteredItems.length} articles exportés vers ${fileName}` : `${filteredItems.length} items exported to ${fileName}`,
+           })
+         } catch (error) {
+           console.error("Export error:", error)
+-          notify.error("Export failed", {
+-            description: error instanceof Error ? error.message : "Unknown error occurred",
++          notify.error(inventoryItemsText("Export failed", locale), {
++            description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
+           })
+         }
+       },
+@@ -901,18 +906,18 @@
+     const handleRefresh = useCallback(async () => {
+       try {
+         await refetch()
+-        notify.success("Items refreshed successfully")
++        notify.success(inventoryItemsText("Items refreshed successfully", locale))
+       } catch (error) {
+-        notify.error("Failed to refresh items")
++        notify.error(inventoryItemsText("Failed to refresh items", locale))
+       }
+-    }, [refetch])
++    }, [refetch, locale])
+ 
+     // Form submission
+     const onSubmit = useCallback(
+       async (data: ItemFormValues) => {
+         if (isImageUploading || createItemMutation.isPending) return
+         if (!itemImageUrl) {
+-          notify.error("Upload an image before saving this item.")
++          notify.error(inventoryItemsText("Upload an image before saving this item.", locale))
+           return
+         }
+         try {
+@@ -933,8 +938,8 @@
+ 
+           await createItemMutation.mutateAsync(newItemData)
+ 
+-          notify.success("Item added successfully", {
+-            description: `${data.name} has been added to your inventory`,
++          notify.success(inventoryItemsText("Item added successfully", locale), {
++            description: locale === "fr" ? `${data.name} a été ajouté à votre stock` : `${data.name} has been added to your inventory`,
+           })
+ 
+           setFormDialogOpen(false)
+@@ -944,8 +949,8 @@
+           await refetch()
+         } catch (error) {
+           console.error("Submit error:", error)
+-          notify.error("Failed to add item", {
+-            description: error instanceof Error ? error.message : "Unknown error occurred",
++          notify.error(inventoryItemsText("Failed to add item", locale), {
++            description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
+           })
+         }
+       },
+@@ -958,24 +963,29 @@
+ 
+       try {
+         await deleteItemMutation.mutateAsync({ id: itemToDelete.id!, organizationId })
+-        notify.success("Item deleted successfully", {
+-          description: `${itemToDelete.name} has been removed from your inventory`,
++        notify.success(inventoryItemsText("Item deleted successfully", locale), {
++          description: locale === "fr" ? `${itemToDelete.name} a été retiré de votre stock` : `${itemToDelete.name} has been removed from your inventory`,
+         })
+         setDeleteDialogOpen(false)
+         setItemToDelete(null)
+         await refetch()
+       } catch (error) {
+         console.error("Delete error:", error)
+-        notify.error("Failed to delete item", {
+-          description: error instanceof Error ? error.message : "Unknown error occurred",
++        notify.error(inventoryItemsText("Failed to delete item", locale), {
++          description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
+         })
+       }
+-    }, [itemToDelete, deleteItemMutation, organizationId, setDeleteDialogOpen, setItemToDelete, refetch])
++    }, [itemToDelete, deleteItemMutation, organizationId, setDeleteDialogOpen, setItemToDelete, refetch, locale])
++
++    const moneyFormatter = useMemo(() => createOrganizationMoneyFormatter({ organizationId, locale, currency }), [organizationId, locale, currency])
++    const formatDisplayDate = useCallback((date: Date | string) => locale === "fr"
++      ? format(typeof date === "string" ? new Date(date) : date, "dd MMM yyyy", { locale: fr })
++      : formatDate(date), [locale])
+ 
+     // Table columns
+     const columns = useMemo(
+-      () => getColumns(formatCurrency, formatDate, handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale),
+-      [handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale]
++      () => getColumns(moneyFormatter.format, formatDisplayDate, handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale),
++      [handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale, moneyFormatter, formatDisplayDate]
+     )
+ 
+     // Error state
+@@ -983,12 +993,12 @@
+       return (
+         <Card className="w-full">
+           <CardHeader>
+-            <CardTitle className="text-destructive">Error Loading Items</CardTitle>
+-            <CardDescription>Failed to load items. Please try refreshing the page.</CardDescription>
++            <CardTitle className="text-destructive">{inventoryItemsText("Error Loading Items", locale)}</CardTitle>
++            <CardDescription>{inventoryItemsText("Failed to load items. Please try refreshing the page.", locale)}</CardDescription>
+           </CardHeader>
+           <CardContent>
+             <Button onClick={handleRefresh} variant="outline">
+-              Try Again
++              {inventoryItemsText("Try Again", locale)}
+             </Button>
+           </CardContent>
+         </Card>
+@@ -1004,7 +1014,7 @@
+           isLoading={isLoading}
+           onRefresh={handleRefresh}
+           onExport={handleExport}
+-          title={title || "Items Management"}
++          title={title || inventoryItemsText("Items Management", locale)}
+           initialSearch={initialSearch}
+           activeFilterChips={activeFilterChips}
+           locale={locale}
+@@ -1014,12 +1024,12 @@
+         <EntityForm
+           open={formDialogOpen}
+           onOpenChange={handleFormDialogClose}
+-          title="Add New Item"
++          title={inventoryItemsText("Add New Item", locale)}
+           form={form}
+           size="lg"
+           onSubmit={onSubmit}
+           isSubmitting={createItemMutation.isPending || isImageUploading}
+-          submitLabel="Add Item"
++          submitLabel={inventoryItemsText("Add Item", locale)}
+         >
+           <ItemForm2
+             form={form}
+@@ -1038,25 +1048,25 @@
+         <ConfirmationDialog
+           open={deleteDialogOpen}
+           onOpenChange={setDeleteDialogOpen}
+-          title="Delete Item"
++          title={inventoryItemsText("Delete Item", locale)}
+           description={
+             itemToDelete ? (
+               <div className="space-y-2">
+                 <p>
+-                  Are you sure you want to delete <strong>{itemToDelete.name}</strong>?
++                  {locale === "fr" ? "Voulez-vous vraiment supprimer " : "Are you sure you want to delete "}<strong>{itemToDelete.name}</strong> ?
+                 </p>
+                 <div className="text-sm text-muted-foreground">
+                   <p>SKU: {itemToDelete.sku}</p>
+-                  <p>This action cannot be undone.</p>
++                  <p>{inventoryItemsText("This action cannot be undone.", locale)}</p>
+                 </div>
+               </div>
+             ) : (
+-              "Are you sure you want to delete this item?"
++              inventoryItemsText("Are you sure you want to delete this item?", locale)
+             )
+           }
+           onConfirm={handleDeleteConfirmation}
+           isConfirming={deleteItemMutation.isPending}
+-          confirmLabel="Delete Item"
++          confirmLabel={inventoryItemsText("Delete Item", locale)}
+           variant="destructive"
+         />
+       </div>
+diff --git a/components/inventory/inventory-items-copy.ts b/components/inventory/inventory-items-copy.ts
+--- a/components/inventory/inventory-items-copy.ts
++++ b/components/inventory/inventory-items-copy.ts
+@@ -1,4 +1,59 @@
+ const french: Record<string, string> = {
++  "Select all": "Tout sélectionner",
++  "Select row": "Sélectionner la ligne",
++  "Name": "Nom",
++  "Cost": "Coût",
++  "Price": "Prix",
++  "Stock": "Stock",
++  "Date Added": "Date d’ajout",
++  "in stock": "en stock",
++  "Open menu": "Ouvrir le menu",
++  "Actions": "Actions",
++  "Copy ID": "Copier l’identifiant",
++  "Edit Item": "Modifier l’article",
++  "Deleting...": "Suppression…",
++  "Delete Item": "Supprimer l’article",
++  "Items Management": "Gestion des articles",
++  "Live Data": "Données disponibles",
++  "Refreshing": "Actualisation…",
++  "Refresh": "Actualiser",
++  "Search:": "Recherche :",
++  "Clear": "Effacer",
++  "Search items, SKUs, categories, or brands": "Rechercher par nom, référence ou prix",
++  "Clear item search": "Effacer la recherche d’articles",
++  "Stock status": "État du stock",
++  "All stock": "Tous les stocks",
++  "In stock": "En stock",
++  "Low stock": "Stock faible",
++  "Out of stock": "Rupture de stock",
++  "Overstock": "Surstock",
++  "Reorder": "À réapprovisionner",
++  "Available": "Disponible",
++  "Reserved": "Réservé",
++  "Export Selected": "Exporter la sélection",
++  "View": "Colonnes",
++  "No matching items": "Aucun article correspondant",
++  "No inventory items yet": "Aucun article en stock",
++  "Try a different search term or clear the filter to see the full catalog.": "Essayez une autre recherche ou effacez le filtre pour consulter le catalogue.",
++  "Create your first item to start tracking pricing, stock health, and inventory value.": "Créez votre premier article pour suivre les prix, l’état des stocks et leur valeur.",
++  "Clear Search": "Effacer la recherche",
++  "Error Loading Items": "Chargement des articles impossible",
++  "Failed to load items. Please try refreshing the page.": "Impossible de charger les articles. Réessayez en actualisant la page.",
++  "Try Again": "Réessayer",
++  "Add New Item": "Ajouter un article",
++  "This action cannot be undone.": "Cette action est irréversible.",
++  "Are you sure you want to delete this item?": "Voulez-vous vraiment supprimer cet article ?",
++  "Export successful": "Export terminé",
++  "Export failed": "Échec de l’export",
++  "Unknown error occurred": "Une erreur inattendue est survenue",
++  "Items refreshed successfully": "Articles actualisés",
++  "Failed to refresh items": "Impossible d’actualiser les articles",
++  "Upload an image before saving this item.": "Ajoutez une image avant d’enregistrer cet article.",
++  "Item added successfully": "Article ajouté",
++  "Failed to add item": "Impossible d’ajouter l’article",
++  "Item deleted successfully": "Article supprimé",
++  "Failed to delete item": "Impossible de supprimer l’article",
++
+   "Items": "Articles", "In Stock Items": "Articles en stock", "Low Stock Items": "Articles en stock faible",
+   "Out of Stock Items": "Articles en rupture", "Overstock Items": "Articles en surstock", "Reorder Candidates": "Articles à réapprovisionner",
+   "Available Stock Items": "Articles disponibles", "Reserved Stock Items": "Articles réservés",
+diff --git a/app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx b/app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx
+--- a/app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx
+@@ -320,6 +320,7 @@
+                 initialUnitData={initialUnitData as never}
+                 initialTaxRateData={initialTaxRateData as never}
+                 locale={locale}
++                currency={moneyFormatter.resolvedOptions().currency}
+               />
+             </div>
+           </Suspense>
+diff --git a/components/payroll/payroll-ui-copy.ts b/components/payroll/payroll-ui-copy.ts
+--- a/components/payroll/payroll-ui-copy.ts
++++ b/components/payroll/payroll-ui-copy.ts
+@@ -1,5 +1,25 @@
+ /** Owned interface copy only. Never apply to source evidence, hashes, IDs or free text. */
+ const french: Record<string, string> = {
++  "Opened event": "Événement d’ouverture",
++  "Journal entry": "Écriture comptable",
++  "Case evidence": "Preuve du dossier",
++  "Case document": "Document du dossier",
++  "Occurred": "Survenu le",
++  "Lifecycle status": "Statut du cycle de traitement",
++  "Lifecycle proof": "Preuve du cycle de traitement",
++  "Adapter contract": "Contrat de l’adaptateur",
++  "Component status": "Statut des rubriques",
++  "Component proof": "Preuve des rubriques",
++  "Payment tx": "Transaction de paiement",
++  "Fresh auth": "Réauthentification",
++  "Proof:": "Preuve :",
++  "Status:": "Statut :",
++  "Authority adapter execution could not be queued from this session.": "Impossible de mettre en file l’exécution de l’adaptateur depuis cette session.",
++  "Authority adapter execution queued.": "Exécution de l’adaptateur de l’organisme mise en file d’attente.",
++  "Authority adapter execution was already queued.": "L’exécution de l’adaptateur de l’organisme est déjà en file d’attente.",
++  "Settlement evidence could not be recorded.": "Impossible d’enregistrer les preuves de règlement.",
++  "Settlement evidence recorded.": "Preuves de règlement enregistrées.",
++  "Settlement evidence was already recorded for this request.": "Les preuves de règlement ont déjà été enregistrées pour cette demande.",
+   "Fresh-auth settlement": "Règlement avec réauthentification", "Settlement amount": "Montant du règlement", "Settlement date": "Date du règlement",
+   "Settled by ID": "Identifiant du responsable du règlement", "Document hash": "Empreinte du document", "optional": "facultatif",
+   "Reference": "Référence", "Notes": "Notes", "Record settlement": "Enregistrer le règlement",
+@@ -184,6 +204,7 @@
+ }
+ 
+ const frenchStatuses: Record<string, string> = {
++  QUEUED: "En file d’attente",
+   READY: "Prêt", BLOCKED: "Bloqué", ACTION_REQUIRED: "Action requise", UNKNOWN: "Inconnu", PENDING: "En attente",
+   NOT_APPLICABLE: "Sans objet", NOT_EVALUATED: "Non évalué", NOT_READY: "Non prêt", MISSING: "Manquant",
+   DRAFT: "Brouillon", PREPARED: "Préparé", CALCULATED: "Calculé", REVIEWED: "Examiné", APPROVED: "Approuvé",
+diff --git a/components/payroll/PayrollProofDrawerButton.tsx b/components/payroll/PayrollProofDrawerButton.tsx
+--- a/components/payroll/PayrollProofDrawerButton.tsx
++++ b/components/payroll/PayrollProofDrawerButton.tsx
+@@ -138,7 +138,7 @@
+                   className="grid gap-2 px-4 py-3 sm:grid-cols-[170px_minmax(0,1fr)]"
+                 >
+                   <dt className="text-xs font-semibold uppercase tracking-normal text-slate-400">
+-                    {row.label}
++                    {payrollUiText(row.label, locale)}
+                   </dt>
+                   <dd className="min-w-0 break-all text-sm text-slate-100">
+                     {displayValue(row.value, locale)}
+diff --git a/components/payroll/PayrollEmployeeBalanceSettlementForm.tsx b/components/payroll/PayrollEmployeeBalanceSettlementForm.tsx
+--- a/components/payroll/PayrollEmployeeBalanceSettlementForm.tsx
++++ b/components/payroll/PayrollEmployeeBalanceSettlementForm.tsx
+@@ -94,8 +94,8 @@
+         setNotice({
+           kind: "success",
+           message: response.data.idempotent
+-            ? "Settlement evidence was already recorded for this request."
+-            : "Settlement evidence recorded.",
++            ? payrollUiText("Settlement evidence was already recorded for this request.", locale)
++            : payrollUiText("Settlement evidence recorded.", locale),
+         })
+         setIdempotencyKey(nextIdempotencyKey(balanceCaseId))
+         setSettlementEvidenceHash("")
+@@ -108,7 +108,7 @@
+ 
+       setNotice({
+         kind: response.code === "FRESH_AUTH_REQUIRED" ? "fresh-auth" : "error",
+-        message: response.error || "Settlement evidence could not be recorded.",
++        message: response.error || payrollUiText("Settlement evidence could not be recorded.", locale),
+         correlationId: response.correlationId,
+       })
+     })
+@@ -224,7 +224,7 @@
+       <p className="break-all text-[11px] text-slate-500">{idempotencyKey}</p>
+ 
+       {notice ? (
+-        <div className={`flex items-start gap-2 rounded-md border px-3 py-2 text-xs ${notice.kind === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100" : "border-amber-400/30 bg-amber-400/10 text-amber-100"}`}>
++        <div role={notice.kind === "success" ? "status" : "alert"} className={`flex items-start gap-2 rounded-md border px-3 py-2 text-xs ${notice.kind === "success" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100" : "border-amber-400/30 bg-amber-400/10 text-amber-100"}`}>
+           {notice.kind === "success" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" /> : <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+           <div className="min-w-0">
+             <p className="break-words font-semibold">{notice.message}</p>
+diff --git a/components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx b/components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx
+--- a/components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx
++++ b/components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { payrollUiText } from "./payroll-ui-copy"
++import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+ import type { Locale } from "@/types/bilingual"
+ 
+ import type { FormEvent } from "react";
+@@ -49,29 +49,29 @@
+ function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
+   return (
+     <span className="inline-flex min-h-7 max-w-full items-center rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 text-xs font-semibold text-slate-100">
+-      <span className="truncate">{value ?? payrollUiText("Pending", locale)}</span>
++      <span className="truncate">{payrollUiText(payrollStatusText(value, locale), locale)}</span>
+     </span>
+   );
+ }
+ 
+-function noticeFromResponse(response: ActionResponse): Notice {
++function noticeFromResponse(response: ActionResponse, locale: Locale): Notice {
+   if (response.success) {
+     const execution = response.data?.execution ?? null;
+     return {
+       kind: "success",
+       message: response.data?.idempotent
+-        ? "Authority adapter execution was already queued."
+-        : "Authority adapter execution queued.",
++        ? payrollUiText("Authority adapter execution was already queued.", locale)
++        : payrollUiText("Authority adapter execution queued.", locale),
+       details: [
+-        execution?.status ? `Status: ${execution.status}` : null,
++        execution?.status ? `${payrollUiText("Status:", locale)} ${payrollStatusText(execution.status, locale)}` : null,
+         execution?.authorityAdapterKey
+-          ? `Adapter: ${execution.authorityAdapterKey}`
++          ? `${payrollUiText("Adapter:", locale)} ${execution.authorityAdapterKey}`
+           : null,
+         execution?.correlationId
+-          ? `Correlation: ${execution.correlationId}`
++          ? `${payrollUiText("Correlation:", locale)} ${execution.correlationId}`
+           : null,
+         execution?.authorityAdapterProofHash
+-          ? `Proof: ${execution.authorityAdapterProofHash}`
++          ? `${payrollUiText("Proof:", locale)} ${execution.authorityAdapterProofHash}`
+           : null,
+       ].filter((item): item is string => Boolean(item)),
+     };
+@@ -81,7 +81,7 @@
+     kind: response.code === "FRESH_AUTH_REQUIRED" ? "fresh-auth" : "error",
+     message:
+       response.error ||
+-      "Authority adapter execution could not be queued from this session.",
++      payrollUiText("Authority adapter execution could not be queued from this session.", locale),
+     correlationId: response.correlationId ?? undefined,
+   };
+ }
+@@ -92,6 +92,7 @@
+ 
+   return (
+     <div
++      role={success ? "status" : "alert"}
+       className={`flex items-start gap-2 rounded-md border px-3 py-2 text-xs ${
+         success
+           ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
+@@ -152,7 +153,7 @@
+         declarationEvidenceId: gate.declarationEvidenceId,
+         idempotencyKey,
+       });
+-      const nextNotice = noticeFromResponse(response);
++      const nextNotice = noticeFromResponse(response, locale);
+       setNotice(nextNotice);
+       if (nextNotice.kind === "success") {
+         setIdempotencyKey(nextKey(declaration.id));
+diff --git a/components/payroll/PayrollPaymentReconciliationWorkbench.tsx b/components/payroll/PayrollPaymentReconciliationWorkbench.tsx
+--- a/components/payroll/PayrollPaymentReconciliationWorkbench.tsx
++++ b/components/payroll/PayrollPaymentReconciliationWorkbench.tsx
+@@ -166,7 +166,7 @@
+           className="grid gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 sm:grid-cols-[132px_minmax(0,1fr)]"
+         >
+           <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+-            {label}
++            {payrollUiText(label, locale)}
+           </span>
+           <span className="min-w-0 break-all text-xs text-slate-200">
+             {value || payrollUiText("Pending", locale)}
+@@ -201,9 +201,9 @@
+   redaction: WorkbenchRedaction,
+ ): PayrollProofDrawerSubject {
+   const sourceLinkRows = batch.proof.sourceLinks.flatMap((link, index) => [
+-    { label: `Source link ${index + 1}`, value: `${link.type}:${link.id}` },
++    { label: `${payrollUiText("Source link", locale)} ${index + 1}`, value: `${link.type}:${link.id}` },
+     {
+-      label: `Source link ${index + 1} hash`,
++      label: `${payrollUiText("Source link", locale)} ${index + 1} ${locale === "fr" ? "— empreinte" : "hash"}`,
+       value: link.documentHash ?? link.evidenceHash ?? link.payloadHash ?? null,
+     },
+   ]);
+diff --git a/components/payroll/PayrollEmployeeBalanceWorkbench.tsx b/components/payroll/PayrollEmployeeBalanceWorkbench.tsx
+--- a/components/payroll/PayrollEmployeeBalanceWorkbench.tsx
++++ b/components/payroll/PayrollEmployeeBalanceWorkbench.tsx
+@@ -111,7 +111,7 @@
+ 
+ function ProofList({ locale = "en", balanceCase }: { balanceCase: BalanceCase } & { locale?: Locale }) {
+   const latest = balanceCase.proof.latestEvent
+-  const rows = [
++  const rows: Array<[string, string | null | undefined]> = [
+     ["Case document", balanceCase.proof.documentHash],
+     ["Case evidence", balanceCase.proof.evidenceHash],
+     ["Ledger batch", balanceCase.proof.ledgerPostingBatchId],
+@@ -125,7 +125,7 @@
+     <div className="grid gap-2">
+       {rows.map(([label, value]) => (
+         <div key={label} className="grid gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 sm:grid-cols-[120px_minmax(0,1fr)]">
+-          <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">{label}</span>
++          <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">{payrollUiText(label, locale)}</span>
+           <span className="min-w-0 break-all text-xs text-slate-200">{value || payrollUiText("Pending", locale)}</span>
+         </div>
+       ))}
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -118,6 +118,7 @@
+ | 2026-10-13 | UX03 | Owner stock handoff repaired with item-access checks; duplicate zone controls removed; 22 mocked service and 47 component tests passed; browser acceptance pending | [Delivery 04](EXECUTION-04.md) |
+ | 2026-10-13 | UX02/UX03 | Owner-generated EN/FR narratives and canonical source copy localized; reconciliation/payroll/settings handoffs aligned; 57 tests passed; EN/FR owner views and 11 destination surfaces inspected under SUPER ADMIN, broader role/journey acceptance open | [Delivery 05](EXECUTION-05.md) |
+ | 2026-10-13 | UX02/UX03 destination follow-up | Owner recommendation and main action aligned; purchase-order pending/loading feedback added; French payroll and inventory interface copy expanded. 152 focused tests passed. French payroll command center rendered; remaining post-change browser/role checks open after repeated browser timeouts | [Delivery 06](EXECUTION-06.md) |
++| 2026-10-13 | UX02/UX03 and inventory follow-up | French inventory table/formatting and payroll proof/outcome labels completed locally; 49 mocked tests and semantic check of 21 production roots passed. Live inventory gap reproduced, but post-change browser acceptance remains blocked by local server connectivity | [Delivery 07](EXECUTION-07.md) |
+ 
+ ### First five changes, in execution order
+ 
+diff --git a/components/payroll/__tests__/followup-localization.test.tsx b/components/payroll/__tests__/followup-localization.test.tsx
+--- /dev/null
++++ b/components/payroll/__tests__/followup-localization.test.tsx
+@@ -0,0 +1,65 @@
++import { fireEvent, render, screen } from "@testing-library/react"
++import SettlementForm from "../PayrollEmployeeBalanceSettlementForm"
++import AuthorityPanel from "../PayrollDeclarationAuthorityExecutionPanel"
++import ProofDrawer from "../PayrollProofDrawerButton"
++import { settlePayrollEmployeeBalanceCaseAction, enqueuePayrollAuthorityAdapterExecutionAction } from "@/actions/payroll/payroll-control.actions"
++const mockRefresh = jest.fn()
++jest.mock("next/navigation", () => ({ useRouter: () => ({ refresh: mockRefresh }) }))
++jest.mock("@/actions/payroll/payroll-control.actions", () => ({ settlePayrollEmployeeBalanceCaseAction: jest.fn(), enqueuePayrollAuthorityAdapterExecutionAction: jest.fn() }))
++jest.mock("lucide-react", () => {
++  const React = require("react")
++  return new Proxy({ __esModule: true }, { get: (target, key) => key in target ? target[key as keyof typeof target] : () => React.createElement("svg", { "aria-hidden": true }) })
++})
++beforeEach(() => jest.clearAllMocks())
++function renderSettlement() {
++  render(<SettlementForm locale="fr" balanceCaseId="case-1" caseNumber="CASE-1" employeeId="employee-1" outstandingAmount="250.00" currency="XAF" />)
++  fireEvent.change(screen.getByLabelText("Empreinte de preuve"), { target: { value: "sha256:source-proof" } })
++  fireEvent.click(screen.getByRole("button", { name: "Enregistrer le règlement" }))
++}
++it.each([
++  [false, "Preuves de règlement enregistrées."],
++  [true, "Les preuves de règlement ont déjà été enregistrées pour cette demande."],
++])("announces French settlement success without altering the payload (%s)", async (idempotent, message) => {
++  ;(settlePayrollEmployeeBalanceCaseAction as jest.Mock).mockResolvedValue({success:true,data:{idempotent}})
++  renderSettlement()
++  expect(await screen.findByRole("status")).toHaveTextContent(message)
++  expect(settlePayrollEmployeeBalanceCaseAction).toHaveBeenCalledWith(expect.objectContaining({balanceCaseId:"case-1",settledById:"employee-1",amount:"250.00",settlementMethod:"CASH",settlementEvidenceHash:"sha256:source-proof"}))
++  expect(mockRefresh).toHaveBeenCalledTimes(1)
++})
++it("retains the exact protected error and correlation ID", async () => {
++  ;(settlePayrollEmployeeBalanceCaseAction as jest.Mock).mockResolvedValue({success:false,code:"FRESH_AUTH_REQUIRED",error:"Protected policy detail",correlationId:"corr-123"})
++  renderSettlement()
++  expect(await screen.findByRole("alert")).toHaveTextContent("Protected policy detail")
++  expect(screen.getByRole("alert")).toHaveTextContent("corr-123")
++  expect(mockRefresh).not.toHaveBeenCalled()
++})
++it("localizes queued status while preserving adapter proof and queue payload", async () => {
++  ;(enqueuePayrollAuthorityAdapterExecutionAction as jest.Mock).mockResolvedValue({success:true,data:{execution:{status:"QUEUED",authorityAdapterKey:"adapter:cm",authorityAdapterProofHash:"sha256:untouched",correlationId:"corr-456"}}})
++  const declaration = {id:"decl-1",adapterExecution:{canEnqueue:true,declarationEvidenceId:"evidence-1",requiredPermission:"payroll.declarations.submit",requiresFreshAuth:true,status:"READY",reason:"Source gate reason"}} as any
++  render(<AuthorityPanel locale="fr" declaration={declaration} />)
++  expect(screen.getByText("Réauthentification")).toBeInTheDocument()
++  expect(screen.getByText("payroll.declarations.submit")).toBeInTheDocument()
++  fireEvent.click(screen.getByRole("button",{name:"Planifier l’exécution de l’adaptateur"}))
++  const notice = await screen.findByRole("status")
++  expect(notice).toHaveTextContent("Exécution de l’adaptateur de l’organisme mise en file d’attente.")
++  expect(notice).toHaveTextContent("Statut : En file d’attente")
++  expect(notice).toHaveTextContent("sha256:untouched")
++  expect(enqueuePayrollAuthorityAdapterExecutionAction).toHaveBeenCalledWith({declarationEvidenceId:"evidence-1",idempotencyKey:expect.stringContaining("payroll-declaration:authority-adapter:decl-1:")})
++})
++it("keeps a denied adapter action unavailable", () => {
++  render(<AuthorityPanel locale="fr" declaration={{id:"decl-2",adapterExecution:{canEnqueue:false,declarationEvidenceId:null,requiredPermission:"payroll.declarations.submit",status:"BLOCKED",reason:"Source gate reason"}} as any} />)
++  expect(screen.queryByRole("button",{name:"Planifier l’exécution de l’adaptateur"})).not.toBeInTheDocument()
++  expect(screen.getByText("Bloqué")).toBeInTheDocument()
++  expect(enqueuePayrollAuthorityAdapterExecutionAction).not.toHaveBeenCalled()
++})
++it("localizes proof labels while keeping source values, titles and unknown labels intact", async () => {
++  const subject = {id:"proof-1",label:"Source record",source:"service/source",status:"RELEASED",rows:[{label:"Batch evidence",value:"sha256:untranslated"},{label:"custom source label",value:"READY"}]}
++  const before = JSON.stringify(subject)
++  render(<ProofDrawer locale="fr" subject={subject} />)
++  fireEvent.click(screen.getByRole("button"))
++  expect(await screen.findByRole("dialog")).toHaveTextContent("Preuve du lot")
++  expect(screen.getByRole("dialog")).toHaveTextContent("sha256:untranslated")
++  expect(screen.getByRole("dialog")).toHaveTextContent("custom source label")
++  expect(screen.getByRole("dialog")).toHaveTextContent("READY")
++  expect(JSON.stringify(subject)).toBe(before)
++})
+diff --git a/components/ui/groups/inventory/__tests__/ItemManagement.localization.test.tsx b/components/ui/groups/inventory/__tests__/ItemManagement.localization.test.tsx
+--- /dev/null
++++ b/components/ui/groups/inventory/__tests__/ItemManagement.localization.test.tsx
+@@ -0,0 +1,67 @@
++import { fireEvent, render, screen } from "@testing-library/react"
++import ItemManagement from "../ItemManagement"
++jest.mock("next-intl/routing",()=>({defineRouting:(value:unknown)=>value}))
++const mockReplace = jest.fn()
++const mockRefetch = jest.fn()
++const mockSetSearch = jest.fn()
++let mockError: Error | null = null
++const mockParams = new URLSearchParams()
++jest.mock("next/navigation", () => ({usePathname:()=>"/fr/dashboard/inventory/items",useRouter:()=>({replace:mockReplace,push:jest.fn()}),useSearchParams:()=>mockParams}))
++jest.mock("@/i18n/navigation", () => ({Link:({children,href,...props}:any)=><a href={href} {...props}>{children}</a>}))
++jest.mock("@/hooks/useAllItemQueries", () => ({useOrgItemsNew:()=>({refetch:mockRefetch,isLoading:false,error:mockError}),useDeleteItem:()=>({isPending:false,mutateAsync:jest.fn()})}))
++jest.mock("@/hooks/itemsHooks/useItemHooks", () => ({useCreateItem:()=>({isPending:false,mutateAsync:jest.fn()})}))
++jest.mock("../ItemForm2", () => ({ItemForm2:()=>null}))
++jest.mock("@/lib/notifications/notify",()=>({notify:{success:jest.fn(),error:jest.fn()}}))
++jest.mock("xlsx",()=>({utils:{},writeFile:jest.fn()}))
++jest.mock("@/components/ui/data-table",()=>({EntityForm:()=>null,ConfirmationDialog:()=>null}))
++jest.mock("@/components/DataTableComponents/DateFilters",()=>({__esModule:true,default:()=>null}))
++jest.mock("@/components/DataTableComponents/DateRangeFilter",()=>({__esModule:true,default:()=>null}))
++jest.mock("@/components/DataTableComponents",()=>({
++ inventoryItemsTableContract:{},
++ useCanonicalTablePreferences:()=>({columnVisibility:{},columnOrder:[],density:"comfortable",setColumnVisibility:jest.fn(),setColumnOrder:jest.fn(),setDensity:jest.fn()}),
++ useCanonicalTableUrlState:()=>({setSearch:mockSetSearch}),
++ createCanonicalTableQuery:()=>({}),createCanonicalTableSelection:()=>({}),
++ CanonicalTableBoundary:({children}:any)=><section>{children}</section>,CanonicalTableDensityControl:()=>null,
++}))
++jest.mock("lucide-react", () => {
++ const React=require("react")
++ return new Proxy({__esModule:true},{get:(target,key)=>key in target?target[key as keyof typeof target]:()=>React.createElement("svg",{"aria-hidden":true})})
++})
++const items = [{id:"item-1",name:"Original product name",sku:"SKU-001",slug:"product",thumbnail:"/item.png",costPrice:12.5,sellingPrice:15,createdAt:new Date("2026-09-19T12:00:00Z"),minStockLevel:1,reorderLevel:1,maxStockLevel:100,inventoryLevels:[{quantityOnHand:4,quantityAvailable:4,quantityReserved:0,totalValue:50,reorderPoint:1}]}] as any
++const props = {title:"Articles",organizationId:"org-1",editingId:"",initialItemData:items,initialCategoryData:[],initialBrandData:[],initialUnitData:[],initialTaxRateData:[]}
++beforeEach(()=>{jest.clearAllMocks();mockError=null})
++it("renders French controls and organization currency while preserving source data",()=>{
++ const before=JSON.stringify(items)
++ render(<ItemManagement {...props} locale="fr" currency="EUR" />)
++ for(const name of ["Nom","Coût","Prix","Date d’ajout","Valeur totale"]) expect(screen.getByRole("button",{name})).toBeInTheDocument()
++ expect(screen.getByRole("textbox",{name:"Rechercher des articles"})).toBeInTheDocument()
++ expect(screen.getByRole("combobox",{name:"État du stock"})).toHaveTextContent("Tous les stocks")
++ expect(screen.getByText("19 sept. 2026")).toBeInTheDocument()
++ expect(screen.getByText((text)=>text.replace(/\s/g," ") === "12,50 €")).toBeInTheDocument()
++ expect(screen.getByText("4 en stock")).toBeInTheDocument()
++ expect(screen.getByRole("link",{name:"Original product name"})).toHaveAttribute("href","/dashboard/inventory/items/item-1")
++ expect(JSON.stringify(items)).toBe(before)
++})
++it("keeps search, clear and selection functional with French labels",()=>{
++ render(<ItemManagement {...props} locale="fr" />)
++ fireEvent.click(screen.getByRole("checkbox",{name:"Sélectionner la ligne"}))
++ expect(screen.getByRole("button",{name:"Exporter la sélection"})).toBeInTheDocument()
++ fireEvent.change(screen.getByRole("textbox",{name:"Rechercher des articles"}),{target:{value:"not-found"}})
++ expect(screen.getByRole("heading",{name:"Aucun article correspondant"})).toBeInTheDocument()
++ fireEvent.click(screen.getByRole("button",{name:"Effacer la recherche d’articles"}))
++ expect(screen.getByRole("link",{name:"Original product name"})).toBeInTheDocument()
++ expect(mockSetSearch).toHaveBeenCalledWith("not-found")
++})
++it("preserves English controls and applies the supplied currency",()=>{
++ render(<ItemManagement {...props} locale="en" currency="USD" />)
++ expect(screen.getByRole("button",{name:"Name"})).toBeInTheDocument()
++ expect(screen.getByRole("button",{name:"Refresh"})).toBeInTheDocument()
++ expect(screen.getByText("$12.50")).toBeInTheDocument()
++})
++it("localizes the recoverable read error",()=>{
++ mockError=new Error("mocked read failure")
++ render(<ItemManagement {...props} locale="fr" />)
++ expect(screen.getByText("Chargement des articles impossible")).toBeInTheDocument()
++ fireEvent.click(screen.getByRole("button",{name:"Réessayer"}))
++ expect(mockRefetch).toHaveBeenCalledTimes(1)
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.followup-localization.config.cjs b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.followup-localization.config.cjs
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.followup-localization.config.cjs
+@@ -0,0 +1,12 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Reviewed: installed transform only; isolated mocked UI, no app env/setup or database.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/components/payroll/__tests__', '<rootDir>/components/ui/groups/inventory/__tests__'],
++  testMatch: ['<rootDir>/components/payroll/__tests__/followup-localization.test.tsx',
++    '<rootDir>/components/ui/groups/inventory/__tests__/ItemManagement.localization.test.tsx'],
++  collectCoverage: false,
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.followup-localization.json b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.followup-localization.json
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.followup-localization.json
+@@ -0,0 +1,33 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": {
++    "incremental": false,
++    "noEmit": true,
++    "plugins": []
++  },
++  "files": [
++    "../../../../services/owner-war-room/owner-war-room.service.ts",
++    "../../../../components/bi/BIActionButton.tsx",
++    "../../../../components/dashboard/DashboardLoadingState.tsx",
++    "../../../../components/payroll/PayrollCommandCenter.tsx",
++    "../../../../components/payroll/PayrollPaymentReconciliationWorkbench.tsx",
++    "../../../../components/payroll/PayrollEmployeeBalanceWorkbench.tsx",
++    "../../../../components/payroll/PayrollRegisterTieOut.tsx",
++    "../../../../components/payroll/PayrollDeclarationWorkbench.tsx",
++    "../../../../components/payroll/PayrollPilotCertificationPanel.tsx",
++    "../../../../components/payroll/PayrollProofDrawerButton.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
++    "../../../../components/inventory/loss/inventoryLossWorkbenchCopy.ts",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx",
++    "../../../../components/payroll/PayrollEmployeeBalanceSettlementForm.tsx",
++    "../../../../components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx",
++    "../../../../components/ui/groups/inventory/ItemManagement.tsx",
++    "../../../../components/inventory/inventory-items-copy.ts",
++    "../../../../components/payroll/payroll-ui-copy.ts"
++  ],
++  "include": [],
++  "exclude": []
++}
+\ No newline at end of file
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-07.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-07.md
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-07.md
+@@ -0,0 +1,45 @@
++# Delivery 07 — inventory table and payroll evidence follow-up
++
++Date: 2026-10-13. Local implementation; no deployment or whole-roadmap completion.
++
++## Completed changes
++
++- The live French inventory catalogue showed a translated page header but English table controls, columns, stock filters, row menus and dates. Localized these controls, selection/export labels, empty/error states and operation notifications. Search and stock selectors now have explicit accessible labels. Column visibility uses readable column headings while retaining original column IDs and keys.
++- Inventory rows now use the existing organization money formatter with the currency already resolved by the server page, matching its summary. French dates and quantities follow the interface locale. The legacy `/dashboard/items` caller retains its prior XAF default; currency propagation to that separate legacy route is not claimed. Item names, SKUs, quantities, value calculations, sorting keys, filter values and exported workbook schemas remain unchanged.
++- Payroll payment and employee-balance proof labels now translate in French, including numbered source-link labels. Proof drawers translate known owned labels and preserve evidence values, IDs, unknown labels, record titles and hashes.
++- Employee-balance settlement and authority-adapter outcome messages now use French interface copy. Success uses a status announcement and failure uses an alert. Known queued/readiness statuses are translated; queued execution is not described as completed execution. Exact protected server error messages, permission identifiers and correlation IDs remain visible.
++
++Applied the existing UIUX orchestration and project UI/UX Pro Max guidance, design master and inventory page contract. This continues UX02/UX03 destination acceptance and a bounded inventory-workbench copy slice. No new visual system was introduced. Existing tree changes were captured before editing in `evidence/delivery-07-baseline.json`.
++
++## Verification
++
++| Evidence class | Result |
++|---|---|
++| Workflow contract | Passed; 198 scripts remain unclassified and were not implicitly approved |
++| Focused mocked component tests | 10 tests passed: EN/FR inventory, organization currency, search/clear/selection, recoverable read error, payroll success/replay, preserved server failure, unchanged queue payload, denied action and proof integrity |
++| Existing mocked payroll regression lane | 39 tests passed in 6 suites |
++| Semantic TypeScript | Passed with normal dependency resolution for 21 production entry files from Deliveries 06–07 and their real imports; no declaration stubs, `noResolve`, emission or incremental build files. This closes the earlier scoped semantic-verification gap; it is not a whole-repository check |
++| Scoped ESLint | Zero errors; one existing `next/no-img-element` warning in the unchanged inventory image element |
++| Financial action source comparison | AST-selected settlement payload and adapter enqueue call unchanged against the task baseline, ignoring line-ending differences |
++| Real database tests / financial mutations | Not run |
++| Build / migration / seed / deployment | Not run |
++
++An initial new inventory test could not load the ESM next-intl routing helper; the isolated test mock was corrected. The broader regression run caught an over-broad label edit in two Metric helpers; it was removed, stable React keys restored, and the final regression/typecheck passed. A proof tuple type now identifies its label as a non-null string without changing values.
++
++Commands were reviewed against `docs/ecc/command-registry.json` and current definitions. Jest uses installed Next/SWC without application configuration or environment loading, explicit roots and mocked protected actions. TypeScript is invoked directly with `noEmit` and `incremental: false`. ESLint uses the existing Next configuration. Results: `evidence/delivery-07-followup-tests.json`, `delivery-07-destination-tests.json`, `delivery-07-typecheck-result.json`, and `delivery-07-control-comparison.json`. Configurations are stored beside this report.
++
++## Browser evidence and remaining acceptance
++
++| Route / context | Current evidence |
++|---|---|
++| `/fr/dashboard/inventory/items`, Edge, SUPER ADMIN, Wilkinson - Feeney 001, dark desktop, no viewport override | Before this delivery's edit, AX inspection confirmed French page/summary, 21 catalogue items and English table labels. This reproduced the gap. No business action was submitted. Current-session viewport dimensions were not captured |
++| `/fr/dashboard/owner-war-room`, same browser | Navigation ended with `ERR_CONNECTION_RESET`; port 3000 had no listening process at the subsequent read-only check |
++| Post-change inventory on temporary loopback port 3001 | Installed Next dev reported ready, but both localhost and the exact 127.0.0.1 address timed out in the browser; one reload after readiness also failed. Not accepted as rendered proof |
++
++Recovery: reviewed `predev`, `dev` and Next configuration. Direct installed Next dev on loopback 3000 failed with OS EACCES both normally and with elevated tool execution. No automatic approval-review rejection occurred. A direct temporary dev server on loopback 3001 reported ready but remained unreachable from Edge. It was stopped through its own execution session. No npm lifecycle hook, Prisma command, migration, seed, firewall change, browser termination or authentication change was performed.
++
++Still open: post-change owner main-action/purchase-order pending feedback; French payroll payments/register/declarations and inventory catalogue/loss rendered acceptance; keyboard and narrow viewports; actual owner/accountant/cashier sessions. Technical evidence and unknown source narratives intentionally remain verbatim. Full program, production performance and actual screen-reader acceptance remain outside this completed slice.
++
++Next executable acceptance step is to restore a reachable application instance and repeat those exact journeys, then continue the roadmap's remaining workbench packages. The code and isolated verification do not depend on a new sign-in request.
++
++Rollback: review and reverse only `evidence/delivery-07-owned.patch` against its recorded baseline. Do not reset files to HEAD. The final manifest records the owned file hashes.
+diff --git a/what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_03_INVENTORY_PAYROLL_FOLLOWUP_REPORT_2026-10-13.md b/what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_03_INVENTORY_PAYROLL_FOLLOWUP_REPORT_2026-10-13.md
+--- /dev/null
++++ b/what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_03_INVENTORY_PAYROLL_FOLLOWUP_REPORT_2026-10-13.md
+@@ -0,0 +1,9 @@
++# UIUX phase 03 — inventory and payroll follow-up
++
++Status: bounded local implementation and mocked/semantic verification complete; phase acceptance remains open.
++
++See [Delivery 07](../../docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-07.md) for changes, browser observations, exact verification scope, controls, gaps and rollback.
++
++French inventory table controls, dates and organization currency display now match the page context. Payroll proof labels and operation feedback are localized, including accessible success/error announcements. 49 mocked component tests passed. Normal semantic TypeScript checking passed for 21 production roots and real dependencies. No database tests, business mutations or deployment occurred.
++
++The pre-change inventory localization gap was observed live in Edge under SUPER ADMIN. Post-change rendered checks remain blocked by local connection reset/timeouts; restricted-role, keyboard and narrow-viewport acceptance is still required. This report does not certify the entire UIUX phase or roadmap.

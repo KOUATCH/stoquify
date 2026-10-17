@@ -1,4 +1,5 @@
 import "server-only"
+import { buildOpeningReadiness, type OpeningReadiness } from "./opening-readiness"
 
 import type { Prisma } from "@prisma/client"
 
@@ -265,6 +266,7 @@ export type MasterDataImportSummary = {
 }
 
 export type MasterDataOnboardingDashboard = {
+  openingReadiness: OpeningReadiness
   organizationId: string
   overallState: "NOT_STARTED" | "IMPORTED" | "RECONCILED" | "BLOCKED" | "WAIVED"
   generatedAt: string
@@ -1149,12 +1151,14 @@ export async function getMasterDataOnboardingDashboard(
     }
   })
   const highRiskBatches = recentBatches.filter((batch) => batch.riskLevel === "HIGH")
+  const summaries = recentBatches.map((batch) => toSummary(batch, false, currentActorId))
   return {
     organizationId,
     overallState: overallReadiness(milestones.map((milestone) => milestone.state)),
     generatedAt: new Date().toISOString(),
     milestones,
-    recentBatches: recentBatches.map((batch) => toSummary(batch, false, currentActorId)),
+    recentBatches: summaries,
+    openingReadiness: buildOpeningReadiness(milestones, summaries),
     adoption: {
       evidenceWindow: "RECENT_12_BATCHES",
       batchCount: recentBatches.length,

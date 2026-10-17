@@ -1,9 +1,9 @@
 {
-  "at": "2026-09-19T16:30:27.355Z",
-  "registerSha256": "e7c86b9c878241be538224891617fec5b2a76093bff35caca3a74de31abb0024",
+  "at": "2026-09-30T20:00:57.694Z",
+  "registerSha256": "6be9daddaed9b635654e5685205e1d2bea96c24cc8b2f8b8509b17250da9bd0b",
   "coverage": {
     "discoveredWorkflows": 270,
-    "completeWorkflowsVerified": 0,
+    "completeWorkflowsVerified": 4,
     "sourceCandidateCounts": {
       "sourceFiles": 2934,
       "tests": 1049,
@@ -19,12 +19,12 @@
     "unmappedEntrySources": 191,
     "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion.",
     "statusCounts": {
-      "Queued": 269,
+      "Queued": 265,
       "In progress": 1,
       "Verification pending": 0,
       "Blocked—engineering": 0,
       "Blocked—external": 0,
-      "Complete—verified": 0
+      "Complete—verified": 4
     }
   },
   "discoveryComplete": false,
@@ -68,8 +68,6 @@
     "FA-CLOSE-PACK",
     "FA-ACCOUNTANT-PORTAL",
     "FA-CASH-HISTORY",
-    "FA-CASH-DRAWER",
-    "FA-CASH-COMMAND",
     "FA-STOCK-TO-CASH",
     "IN-001",
     "IN-002",
@@ -83,7 +81,6 @@
     "IN-010",
     "IN-011",
     "IN-012",
-    "IN-013",
     "IN-014",
     "IN-015",
     "IN-016",
@@ -206,7 +203,10 @@
     "FA-GENERAL-LEDGER",
     "FA-CLOSE-READ",
     "FA-ACCOUNTANT-ACCESS",
+    "FA-CASH-DRAWER",
+    "FA-CASH-COMMAND",
     "FA-ANALYTICS-LEGACY-01",
+    "IN-013",
     "MD-LOC-03",
     "MD-LOC-04",
     "MD-ITEM-01",
@@ -293,6 +293,20 @@
     "PA-032",
     "PA-033",
     "SALES-DAILY-01"
+  ],
+  "independentLocaleAdditions": [
+    {
+      "source": "messages/en.json",
+      "historicalHash": "bedb6ed20d665aaa0344a74aa7278d3c70896cff968f2751bba854a0d403e882",
+      "currentHash": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+      "change": "Only the exact separately bound moduleComposition.catalog and moduleComposition.experience additions plus reconciliation runPreparation, the exact signed-observation inbox label and eight source-review keys, ten withdrawal keys and three specified withdrawal inbox labels plus the exact reopened-run label, source amount-review section, exact moduleUnavailable signing explanation and recorded run-facts label changed; all other dictionary bytes match the original closure."
+    },
+    {
+      "source": "messages/fr.json",
+      "historicalHash": "f2d457fa899b49c88228ffb4472fd3ef2c919ad3a6bd5f9f170526dc05859fd2",
+      "currentHash": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+      "change": "Only the exact separately bound moduleComposition.catalog and moduleComposition.experience additions plus reconciliation runPreparation, the exact signed-observation inbox label and eight source-review keys, ten withdrawal keys and three specified withdrawal inbox labels plus the exact reopened-run label, source amount-review section, exact moduleUnavailable signing explanation and recorded run-facts label changed; all other dictionary bytes match the original closure."
+    }
   ],
   "note": "Runtime labels are discovery aids, not closure evidence. Unmapped count recomputed from existing source reconciliation; discovery remains incomplete."
 }

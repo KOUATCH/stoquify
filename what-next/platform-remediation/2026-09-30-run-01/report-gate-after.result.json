@@ -1,0 +1,21 @@
+{
+  "name": "report-gate-after",
+  "command": [
+    "node",
+    "scripts/report-trust-export-gate.js",
+    "--mode",
+    "fail",
+    "--out",
+    "what-next/platform-remediation/2026-09-30-run-01/report-gate-after.md",
+    "--json-out",
+    "what-next/platform-remediation/2026-09-30-run-01/report-gate-after.json"
+  ],
+  "startedAt": "2026-09-30T20:46:13.600Z",
+  "endedAt": "2026-09-30T20:46:16.744Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 2358,
+  "stderrBytes": 0
+}

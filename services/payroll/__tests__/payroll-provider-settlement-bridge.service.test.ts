@@ -228,6 +228,8 @@ function bridgeInput() {
     payrollPaymentBatchId: "batch-1",
     matchRecordId: "match-1",
     actorId: "controller-1",
+    sessionId: "verified-session",
+    sessionToken: "verified-token",
     actorPermissions: ["payroll.payments.reconcile"],
     approvedById: "approver-1",
     sourceRegisterHash: "sha256:register",
@@ -278,6 +280,8 @@ describe("payroll provider settlement bridge", () => {
     expect(recordSettlement).toHaveBeenCalledWith(
       expect.objectContaining({
         settlementStatus: "settled",
+        sessionId: "verified-session",
+        sessionToken: "verified-token",
         providerEventId: "evt-1",
         providerTransactionId: "momo-tx-1",
         providerReference: "PB-2026-06-0001",

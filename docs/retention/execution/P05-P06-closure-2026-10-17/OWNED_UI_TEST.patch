@@ -1,0 +1,28 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P05-P06-closure-2026-10-17\\ProfessionalPOSSystem.shift-close.before.tsx.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\__tests__\\ProfessionalPOSSystem.shift-close.test.tsx"
+index ceafc060..c5c9ee46 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P05-P06-closure-2026-10-17\\ProfessionalPOSSystem.shift-close.before.tsx.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\__tests__\\ProfessionalPOSSystem.shift-close.test.tsx"	
+@@ -410,6 +410,23 @@ describe("ProfessionalPOSSystem checkout recovery", () => {
+     expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+     expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
+   })
++
++  it("P05 retains original intent and reports uncertainty when the commit response is lost", async () => {
++    const { request, commit } = setupRecovery("NOT_FOUND")
++    const retainedBefore = readPendingSale(sessionStorage, "org-1", "cashier-1")
++    commit.mockRejectedValue(new TypeError("Failed to fetch"))
++    render(<ProfessionalPOSSystem />)
++    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
++    const retry = await screen.findByRole("button", { name: "recovery.retryOriginal" })
++    fireEvent.click(retry)
++    await waitFor(() => expect(mockNotifications.warning).toHaveBeenCalledWith(
++      "recovery.title", "recovery.failed", expect.objectContaining({ category: "sales", priority: "high" }),
++    ))
++    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).toEqual(retainedBefore)
++    expect(retainedBefore?.request.clientCommitId).toBe(request.clientCommitId)
++    expect(mockNotifications.success).not.toHaveBeenCalled()
++    expect(mockNotifications.error).not.toHaveBeenCalledWith("notifications.saleErrorTitle", expect.anything(), expect.anything())
++  })
+ })
+ 
+ describe("ProfessionalPOSSystem shift close", () => {

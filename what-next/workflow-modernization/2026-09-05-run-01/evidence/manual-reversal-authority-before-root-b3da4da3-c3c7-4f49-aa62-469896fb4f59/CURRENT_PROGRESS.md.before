@@ -1,0 +1,23 @@
+# Current progress
+
+Updated 2026-10-01T08:02:51.267Z; HEAD 62a56036a5ac9b37236a20c9b148052199069479, branch codex/migration-control-plane-release-2026-08-29. Shared changes preserved. Register SHA256: ff60be7b28f30497b8b88822dfb99ea040aef2d02b5d108c593fa81dfb442129.
+
+**Position:** 270 workflows, 17 families, 191 unmapped entries; discovery incomplete. Queued 264, In progress 2, Complete—verified 4; other statuses zero. Historical closures have not all been revalidated. No workflow completed or added this checkpoint.
+
+| Priority | Workflow and outcome | Status | Delivered/verified | Remaining closure | Owner/blocker | Next action |
+|---|---|---|---|---|---|---|
+| Primary | FA-CASH-COMMAND: truthful financial actions | In progress | Persisted manual-posting grant authority and retained draft completion | Full authority, source and lifecycle coverage | Engineering; period scope needs user approval | Continue unaffected producer controls |
+| Supporting | FA-CLOSE-PACK: reliable retained evidence | In progress | Posting authority precedes accounting preparation | Earlier-period scope, all producers, delivery | Engineering; two historical scope failures | Apply/reverify exact scope only if approved |
+| Next 1 | PR-17: reconciliation exceptions | Queued | Prior scoped handoffs | Financial/legacy treatment and recovery | Engineering | Reconcile original closure scope |
+| Next 2 | ID-04: invitation redemption | Queued | Prior authority/recipient evidence | Accessibility, onboarding, transport | Identity owner | Verify transport boundary |
+| Next 3 | MC-11: permitted workspace | Queued | Selected route/action boundaries | Cross-domain transport/scanner gaps | Engineering | Preserve guards; improve diagnostics |
+
+**Since the previous report:** Fixed an Accounting entitlement bypass in manual posting. Server action and transaction now enforce writable grants; transaction-held authority rows coordinate with module changes. A final check catches grant expiry during preparation. Stopping creation alone still permits an existing draft's authorized completion. Denial retains an audit without financial effects; failed authority reads cannot grant access.
+
+**Verification:** 196 tests/10 suites, full no-emit TypeScript and four-file lint passed; 9 owned PostgreSQL scenarios passed with stable bound source and observed outside-fixture state. These are authority-boundary checks, not an overall completion percentage. No new browser/EN-FR/accessibility proof is claimed. [Correction, verification and operating guide](MANUAL_POSTING_MODULE_AUTHORITY_2026-10-01.md); [independent review](MANUAL_POSTING_MODULE_REVIEW_2026-10-01.md).
+
+**Unchanged blocker:** Earlier-period Close certification invalidation remains incomplete. The prior actual-database run had seven passes and two failures; those failures are retained, not relabeled. Its raw source binding is now historical where posting changed. Automatic approval review rejected the all-period helper twice for contention risk; it remains unapplied pending explicit user approval. [Exact proposal](MANUAL_POSTING_SCOPE_REVIEW_2026-10-01.md).
+
+**Remaining:** Complete producer scope, draft-created snapshot freshness, purchase-specific recovery, role/session revocation guarantees, interrupted processing and outbox delivery. Full journal UI localization/accessibility, genuine country/payroll prerequisites and production capacity remain open. Grant validity is checked after preparation, not guaranteed against expiry during later SQL waits at eventual commit.
+
+All 17 original workflow families and their backlog remain in the [register](WORKFLOW_REGISTER.json). The other 268 rows, all families and statuses are unchanged. No migration, reset, deployment, live activation, customer payment, external message or X1 clearance occurred. The full goal remains active; an ETA is not reliable.

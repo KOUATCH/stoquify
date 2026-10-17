@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-09-30T20:39:23.209Z",
+  "gateHash": "26a3c06b1bb476d5f210ab7645f884d7603d5e0c3eea60b6ec47d961f1604a6b",
+  "scanSummary": {
+    "generatedAt": "2026-09-30T20:39:23.206Z",
+    "mode": "fail",
+    "status": "blocked",
+    "checkCount": 35,
+    "readyCount": 32,
+    "blockerCount": 3
+  },
+  "blockers": [
+    "customer_settlement_compensating_reversal_foundation",
+    "signed_customer_statement_external_access_foundation",
+    "consented_customer_referral_launch_foundation"
+  ],
+  "captures": [
+    {
+      "name": "hasCustomerSettlementCompensatingReversalFoundation",
+      "clauseCount": 20,
+      "failed": [
+        {
+          "expression": "postingMarkers.every((marker) => postingService.includes(marker))",
+          "ready": false,
+          "missingMarkers": [
+            "original.sourceType===AccountingSourceType.CUSTOMER_SETTLEMENT",
+            "return{sourceOwnedBlocked:trueasconst}"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "hasSignedCustomerStatementExternalAccessFoundation",
+      "clauseCount": 19,
+      "failed": [
+        {
+          "expression": "viewRoute.includes('\"Cache-Control\",\"private,no-store,max-age=0\"')",
+          "ready": false,
+          "missingMarkers": []
+        },
+        {
+          "expression": "actionRoute.includes('actionType!==\"DISPUTE\"&&actionType!==\"PROMISE_TO_PAY\"')",
+          "ready": false,
+          "missingMarkers": []
+        },
+        {
+          "expression": "actionRoute.includes('\"Cache-Control\",\"private,no-store,max-age=0\"')",
+          "ready": false,
+          "missingMarkers": []
+        }
+      ]
+    },
+    {
+      "name": "hasConsentedCustomerReferralLaunchFoundation",
+      "clauseCount": 53,
+      "failed": [
+        {
+          "expression": "statementWorkerMarkers.every((marker) => statementWorker.includes(marker))",
+          "ready": false,
+          "missingMarkers": [
+            "delivery.token.expiresAt.getTime()<=now.getTime()"
+          ]
+        },
+        {
+          "expression": "internalWorkflow.includes(\"queueCustomerStatementDeliveryAction({\")",
+          "ready": false,
+          "missingMarkers": []
+        }
+      ]
+    }
+  ]
+}

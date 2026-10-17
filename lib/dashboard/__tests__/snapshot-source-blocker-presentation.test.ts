@@ -21,6 +21,27 @@ it("translates employee recovery evidence without changing amounts, authority or
 })
 
 it.each([
+  ["tenant-payroll-balance-currency-mismatch", "Employee balance currencies cannot be combined", "Les soldes salariés de devises différentes ne peuvent pas être additionnés"],
+  ["tenant-payroll-settlement-currency-mismatch", "Employee settlement currencies cannot be combined", "Les règlements salariés de devises différentes ne peuvent pas être additionnés"],
+])("preserves currency evidence and unavailable totals for %s", (id, title, frenchTitle) => {
+  const source = blocker({ id, title, detail: "Amounts by currency: 500.00 USD; 500.00 XAF. No conversion evidence establishes a total in XAF.", nextAction: "Review payroll balances and settlements by currency; do not treat them as one converted total." })
+  const before = JSON.stringify(source)
+  expect(presentSnapshotBlocker(source, "fr")).toMatchObject({ title: frenchTitle, detail: "Montants par devise : 500.00 USD; 500.00 XAF. Aucune preuve de conversion ne permet d’établir un total en XAF.", nextAction: "Examinez les soldes et règlements de paie par devise ; ces montants ne constituent pas un total converti." })
+  expect(presentSnapshotBlocker(source, "en")).toBe(source)
+  expect(JSON.stringify(source)).toBe(before)
+  const custom = { ...source, title: "Custom source title", detail: "Private reviewer note", nextAction: "Ask the reviewer" }
+  expect(presentSnapshotBlocker(custom, "fr")).toEqual(custom)
+  expect(presentSnapshotBlocker({ ...source, gate: "unrelated" }, "fr")).toEqual({ ...source, gate: "unrelated" })
+})
+
+it.each([
+  ["2 active employee balance case(s) have 27500.00 XAF outstanding.", "2 dossiers actifs de soldes salariés présentent un montant restant de 27500.00 XAF."],
+  ["2 active employee balance case(s) remain open; a combined currency total is unavailable.", "2 dossiers actifs de soldes salariés restent ouverts ; le total combiné des devises est indisponible."],
+])("explains recovery amount availability: %s", (detail, french) => {
+  expect(presentSnapshotBlocker(blocker({ detail }), "fr").detail).toBe(french)
+})
+
+it.each([
   ["inventory-negative-stock", "inventory_cash", "3 inventory level(s) are below zero and can distort stock-to-cash truth.", "3 niveau(x) de stock sont négatifs et peuvent fausser la lecture des stocks et de la trésorerie."],
   ["payment-critical-exceptions-open", "payment_truth", "4 critical payment exception(s) must be resolved before cash truth can be trusted.", "4 anomalie(s) critique(s) de paiement doivent être résolues avant de pouvoir se fier à la trésorerie affichée."],
   ["close-critical-findings-open", "close_readiness", "5 critical close finding(s) block certification-grade readiness.", "5 constat(s) critique(s) de clôture empêchent la préparation à la certification."],
@@ -51,6 +72,14 @@ it.each([
   expect(presentSnapshotBlocker({ ...source, title: "Updated source title" }, "fr")).toEqual({ ...source, title: "Updated source title" })
 })
 
+it("explains forecast currencies in French without changing source evidence", () => {
+  const source = blocker({ id: "tenant-payroll-finance-forecast-payroll-forecast-currency-mismatch", gate: "payroll_finance_forecast", title: "Payroll forecast currencies cannot be combined", detail: "Forecast source currencies: USD; XAF. No conversion evidence establishes a total in XAF.", nextAction: "Review payment batches and declarations by currency before relying on a combined cash forecast." })
+  expect(presentSnapshotBlocker(source, "fr")).toEqual({ ...source, title: "Les devises des prévisions de paie ne peuvent pas être additionnées", detail: "Devises des sources de prévision : USD; XAF. Aucune preuve de conversion ne permet d’établir un total en XAF.", nextAction: "Examinez les lots de paiement et les déclarations par devise avant de vous fier à une prévision de trésorerie combinée." })
+  expect(presentSnapshotBlocker(source, "en")).toBe(source)
+  const custom = { ...source, title: "Reviewer title", detail: "Reviewer evidence", nextAction: "Reviewer action" }
+  expect(presentSnapshotBlocker(custom, "fr")).toEqual(custom)
+})
+
 it("retains an unrecognized forecast blocker code and custom future evidence", () => {
   const code = "PAYROLL_FORECAST_FUTURE_CONTROL"
   const source = blocker({ id: "tenant-payroll-finance-forecast-payroll-forecast-future-control", gate: "payroll_finance_forecast", title: "Payroll finance forecast is blocked", detail: `Payroll forecast proof failed closed with blocker ${code}.`, nextAction: "Open payroll finance evidence and clear the forecast blocker." })
@@ -70,4 +99,19 @@ it.each([
   const source = blocker({ id, gate, detail })
   expect(presentSnapshotBlocker(source, "fr").detail).toContain(qualification)
   expect(presentSnapshotBlocker({ ...source, detail: "Custom exception" }, "fr").detail).toBe("Custom exception")
+})
+
+it.each([
+  ["close-assessment-order-ambiguous", "Current close assessment is ambiguous", "1 accounting period(s) have multiple latest assessments with the same creation time.", "Review the competing assessments and run Close Assurance again before relying on certification.", "L’évaluation de clôture actuelle est ambiguë", "1 période(s) comptable(s) ont plusieurs dernières évaluations créées au même instant.", "Examinez les évaluations concurrentes et relancez les contrôles de clôture avant de vous fier à la certification."],
+  ["close-assessment-not-current", "Close assessment is historical", "This assessment is not the latest assessment for its accounting period.", "Open the latest close assessment before relying on certification.", "L’évaluation de clôture est historique", "Cette évaluation n’est pas la dernière évaluation de sa période comptable.", "Ouvrez la dernière évaluation de clôture avant de vous fier à la certification."],
+  ["close-assessment-voided", "Close assessment is voided", "This assessment has been voided and cannot establish current certification.", "Run a new close assessment and resolve its controls before requesting certification.", "L’évaluation de clôture est annulée", "Cette évaluation a été annulée et ne peut pas établir la certification actuelle.", "Lancez une nouvelle évaluation de clôture et résolvez ses contrôles avant de demander la certification."],
+])("localizes the canonical selection blocker while retaining custom and unrelated evidence: %s", (id, title, detail, nextAction, frTitle, frDetail, frNextAction) => {
+  const source = blocker({ id, gate: "close_readiness", title, detail, nextAction, sourceTables: ["close_runs"] })
+  const before = JSON.stringify(source)
+  expect(presentSnapshotBlocker(source, "fr")).toEqual({ ...source, title: frTitle, detail: frDetail, nextAction: frNextAction })
+  expect(presentSnapshotBlocker(source, "en")).toBe(source)
+  expect(JSON.stringify(source)).toBe(before)
+  const custom = { ...source, title: "Reviewer title", detail: "Reviewer evidence", nextAction: "Reviewer next action" }
+  expect(presentSnapshotBlocker(custom, "fr")).toEqual(custom)
+  expect(presentSnapshotBlocker({ ...source, gate: "unrelated" }, "fr")).toEqual({ ...source, gate: "unrelated" })
 })

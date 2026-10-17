@@ -52,6 +52,8 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { OfflineSyncStatusStrip } from "@/components/pos/offline/OfflineSyncStatusStrip"
+import { LocalOfflineRecovery, localOfflineCopy } from "@/components/pos/offline/LocalOfflineRecovery"
+import { assertNoLocalOfflineWork } from "@/lib/pos/offline-local-queue"
 import { ReceiptTokenHistoryPanel, type ReceiptTokenSaleSearchItem } from "@/components/pos/ReceiptTokenHistoryPanel"
 import { ReceiptTokenControlStrip, type ReceiptTokenControlItem } from "@/components/pos/ReceiptTokenControlStrip"
 import { currencyFractionDigits } from "@/lib/i18n/organization-money"
@@ -681,13 +683,11 @@ function POSWorkspace() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault()
-        searchRef.current?.focus()
-      }
-      if (event.key === "Escape") {
+      // Let dialogs, browser shortcuts and IME composition retain their own keys.
+      if (event.defaultPrevented || event.isComposing || event.ctrlKey || event.metaKey || event.altKey ||
+          (event.target instanceof Element && event.target.closest('[role="dialog"], [role="alertdialog"]'))) return
+      if (event.key === "Escape" && event.target === searchRef.current) {
         setSearch("")
-        setCustomerSearch("")
         searchRef.current?.focus()
       }
       if (event.key === "F4") {
@@ -845,6 +845,16 @@ function POSWorkspace() {
   async function handleCloseShift() {
     if (!activeShift || !canSubmitCloseShift || parsedCloseBalance === null) return false
 
+    try {
+      if (!organizationId) throw new Error("Current organization unavailable")
+      // Re-read durable local evidence at the command boundary; polling/server
+      // counts alone cannot prove that this browser has no unsent work.
+      await assertNoLocalOfflineWork({ organizationKey: organizationId, locationId: activeShift.locationId, terminalId: activeShift.terminalId })
+    } catch {
+      setCloseShiftError(localOfflineCopy[locale === "fr" ? "fr" : "en"].closeBlocked)
+      return false
+    }
+
     setCloseShiftError(null)
     const pendingId = notifications.info(t("notifications.closeShiftPendingTitle"), t("notifications.closeShiftPendingMessage"), {
       category: "pos",
@@ -862,8 +872,9 @@ function POSWorkspace() {
 
       notifications.removeNotification(pendingId)
       if (error) {
-        setCloseShiftError(error)
-        notifications.error(t("notifications.closeShiftErrorTitle"), error, { category: "pos", priority: "high" })
+        const message = error === "POS_CHECKOUT_OFFLINE_PENDING" ? t("lifecycle.errors.POS_CHECKOUT_OFFLINE_PENDING") : error
+        setCloseShiftError(message)
+        notifications.error(t("notifications.closeShiftErrorTitle"), message, { category: "pos", priority: "high" })
         return false
       }
 
@@ -1089,14 +1100,15 @@ function POSWorkspace() {
   }
 
   function clearPendingCommit() {
-    if (!organizationId || !user?.id) return
+    if (!organizationId || !user?.id) return false
     try {
       removePendingSale(sessionStorage, organizationId, user.id)
       if (pendingCommit) settledCommitIds.current.add(pendingCommit.request.clientCommitId)
       setPendingCommit(null); setCommitRecovery(null); setPendingStorageError(false); setSaleAccessError(false)
       setReviewingChangedCart(false)
       void checkout.refresh()
-    } catch { setPendingStorageError(true) }
+      return true
+    } catch { setPendingStorageError(true); return false }
   }
 
   async function handleCartLifecycle(command: "RESUME" | "PARK", salesOrderId: string) {
@@ -1219,9 +1231,10 @@ function POSWorkspace() {
       }
     } catch (error) {
       notifications.removeNotification(pendingId)
-      notifications.error(
-        t("notifications.saleErrorTitle"),
-        toErrorMessage(error, t("notifications.genericError")),
+      // A lost response cannot establish whether the retained sale committed.
+      notifications.warning(
+        t("recovery.title"),
+        t("recovery.failed"),
         { category: "sales", priority: "high" },
       )
     } finally {
@@ -1356,17 +1369,21 @@ function POSWorkspace() {
     ...(selectedTerminalId ? [activeShiftQuery, cartQuery] : []),
   ]
   const failedReads = requiredReads.filter(query => query.isError)
-  if (failedReads.length) return <DashboardErrorState
+  const localOfflineRecovery = <LocalOfflineRecovery organizationId={organizationId} userId={user?.id}
+    locationId={selectedLocationId} terminalId={selectedTerminalId} sessionId={activeShift?.id}
+    canRead={hasPermission("pos.transactions.read")} canSend={hasPermission("pos.use")} locale={locale === "fr" ? "fr" : "en"} />
+  if (failedReads.length) return <>{localOfflineRecovery}<DashboardErrorState
     locale={locale === "fr" ? "fr" : "en"}
     title={t("readState.failedTitle")}
     message={t("readState.failedMessage")}
     reset={() => { void Promise.all(failedReads.map(query => query.retryRead())) }}
-  />
-  if (requiredReads.some(query => query.isLoading)) return <DashboardRouteState
+  /></>
+  // Catalogue search has its own loading state; keep the scanner input mounted while it loads.
+  if (requiredReads.some(query => query !== catalogQuery && query.isLoading)) return <>{localOfflineRecovery}<DashboardRouteState
     kind="loading" locale={locale === "fr" ? "fr" : "en"}
     title={t("readState.loadingTitle")} message={t("readState.loadingMessage")}
     primaryHref={`/${locale}/dashboard`}
-  />
+  /></>
 
   return (
     <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden text-[var(--dash-text)]", touchMode && "text-base")}>
@@ -1475,12 +1492,13 @@ function POSWorkspace() {
             {!reviewingChangedCart && commitRecovery?.kind === "NOT_FOUND" && pendingCommit?.request.salesOrderId === cart?.id ? <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy || commitSale.isPending} onClick={reviewChangedCart}>{t("recovery.reviewCurrent")}</POSButton> : null}
             {!reviewingChangedCart && commitRecovery?.kind === "CART_CHANGED" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || cartQuery.isFetching || pendingStorageError} onClick={reviewChangedCart}>{t("recovery.reviewChanged")}</POSButton> : null}
             {!reviewingChangedCart && commitRecovery?.kind === "CART_REVIEW_REQUIRED" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || cartQuery.isFetching || pendingStorageError} onClick={reviewChangedCart}>{t("recovery.reviewCurrent")}</POSButton> : null}
-            {commitRecovery?.kind === "RECORDED" || commitRecovery?.kind === "NOT_COMMITTED" ? <POSButton className={posButtonClass} disabled={recoverCommit.isPending || commitSale.isPending} onClick={clearPendingCommit}>{t("recovery.acknowledge")}</POSButton> : null}
+            {commitRecovery?.kind === "RECORDED" || commitRecovery?.kind === "NOT_COMMITTED" ? <POSButton className={posButtonClass} disabled={recoverCommit.isPending || commitSale.isPending} onClick={() => { if (clearPendingCommit()) checkoutFooterRef.current?.focus() }}>{t("recovery.acknowledge")}</POSButton> : null}
           </div>
         </section>
       ) : null}
 
       <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-4 px-3 py-4 pb-12 sm:px-4 lg:px-5">
+        {localOfflineRecovery}
         <OfflineSyncStatusStrip
           className="mt-20 scroll-mt-48"
           access={{ organizationId, userId: user?.id, canRead: hasPermission("pos.transactions.read"), canReview: hasPermission("controls.manage") }}
@@ -1679,20 +1697,24 @@ function POSWorkspace() {
             <section className="min-w-0">
             <div className={cn("mb-3 p-4", posSurfaceClass)}>
               <div className="flex flex-wrap items-center gap-2">
-                <div className="relative min-w-[260px] flex-1">
+                <div className="relative min-w-0 flex-1">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
                   <Input
                     ref={searchRef}
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder={t("search.placeholder")}
+                    aria-label={t("search.placeholder")}
+                    aria-describedby="pos-search-help"
                     className={cn(posFieldClass, "pl-9", touchMode && "h-14 text-base")}
                   />
                 </div>
                 <Badge variant="outline" className={cn("px-3 py-2", posChipClass)}>
                   {t("catalog.showing", { count: visibleCatalogItems.length })}
                 </Badge>
+                {search ? <POSButton type="button" variant="outline" className={posButtonClass} onClick={() => { setSearch(""); searchRef.current?.focus() }}>{t("search.clear")}</POSButton> : null}
               </div>
+              <p id="pos-search-help" className={cn("mt-2 text-xs", posMutedTextClass)}>{t("search.help")}</p>
 
               <div className="mt-3 grid gap-2 md:grid-cols-3 xl:grid-cols-6">
                 <POSButton
@@ -2154,6 +2176,7 @@ function POSWorkspace() {
                                 max={quantityOnHand ?? undefined}
                                 step="1"
                                 value={quantityDrafts[line.id] ?? String(line.quantity)}
+                                aria-label={t("cart.quantityFor", { item: locale === "fr" ? line.nameFr || line.nameEn : line.nameEn })}
                                 disabled={!canEditCart || updateLine.isPending || commitSale.isPending}
                                 aria-invalid={quantityErrors[line.id] || undefined}
                                 aria-describedby={quantityErrors[line.id] ? `pos-quantity-error-${line.id}` : undefined}
@@ -2770,6 +2793,7 @@ function POSWorkspace() {
                 value={customerSearch}
                 onChange={(event) => setCustomerSearch(event.target.value)}
                 placeholder={t("customers.searchPlaceholder")}
+                aria-label={t("customers.searchPlaceholder")}
                 disabled={!selectedLocationId}
                 className={cn(posFieldClass, "pl-9")}
               />

@@ -47,6 +47,16 @@ Maturity labels follow `AQSTOQFLOW_UI_COMPONENT_REGISTRY_2026-06-26.md`:
 - Protected routes may pass unauthenticated HTTP smoke by returning or redirecting to a safe auth state. Authenticated screenshot certification still requires a real browser session or saved Playwright storage state.
 - Screenshot smoke is deliberately small. It is meant to catch blank pages, broken redirects, layout overflow, and first-viewport drift, not pixel-perfect design churn.
 
-## Daily Digest scoped review — 2026-09-19
+## Daily Digest scoped review — 2026-09-27
 
-`/en/dashboard/daily-digest` and `/fr/dashboard/daily-digest`: **partial**. Manager views have current EN desktop / FR 320px rendered contrast, hover and unclipped keyboard-focus evidence. Native screen-reader/zoom and other persona/theme coverage remain. See the [single detailed review](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md). No route certification or unrelated maturity upgrade is implied.
+`/en/dashboard/daily-digest` and `/fr/dashboard/daily-digest`: **existing read workflow verified in the isolated application scope**. All seven workspaces and three modes have EN desktop / FR 320px rendered contrast and doubled-text evidence. The source-bound 126-view mobile/tablet/desktop keyboard/reflow/reduced-motion matrix is retained. Native screen-reader speech, browser-chrome zoom and other themes remain unverified. See the [single current review](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md). No route certification or unrelated maturity upgrade is implied.
+
+## Payroll run/register scoped correction — 2026-09-30
+
+The populated EN/FR payroll run and register routes inherit the authenticated shell's main landmark and use brand-token navigation focus outlines. Scope, source-bound checks and screenshots: [payroll handoff report](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_PAYROLL_LANDMARKS_2026-09-30.md). Maturity remains partial: broader localization, table keyboard/reflow, other route states and native assistive-technology checks remain open.
+
+## Cash Command scoped correction — 2026-09-30
+
+Cash Command inherits the shell main landmark, wraps enlarged status labels and provides localized service-authority denial guidance. Maturity remains partial; contrast, shared denied-state landmarks, native assistive technology and complete financial lifecycles remain open. See the [current correction and exact verification scope](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_ACCESSIBILITY_AND_DENIAL_2026-09-30.md).
+
+Subsequent [rendered text contrast verification](../../../what-next/workflow-modernization/2026-09-05-run-01/CASH_CONTRAST_AND_LATENCY_2026-09-30.md) corrected the enabled primary action and section numbers. All sampled authorized EN desktop/FR mobile text passes, including primary hover/focus text. Other states, non-text contrast and native assistive technology remain open; maturity remains partial.

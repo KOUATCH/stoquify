@@ -1,6 +1,6 @@
 import "server-only";
 
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 import { db } from "@/prisma/db";
 import { ApplicationError } from "@/services/_shared/action-errors";
@@ -168,8 +168,18 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
   let deadLettered = 0;
   const fetchImpl = input?.fetchImpl ?? fetch;
   for (const candidate of candidates) {
+    if (candidate.attemptCount >= MAX_ATTEMPTS) {
+      const exhausted = await db.workflowAssuranceAlertDelivery.updateMany({
+        where: { id: candidate.id, organizationId: candidate.organizationId, status: "PENDING", attemptCount: candidate.attemptCount },
+        data: { status: "DEAD_LETTER", failedAt: now, nextAttemptAt: null, lockedAt: null, lockedBy: null,
+          failureCode: "RETRY_EXHAUSTED", failureReason: "Retry limit reached before lease acquisition." },
+      });
+      if (exhausted.count === 1) { failed += 1; deadLettered += 1; }
+      continue;
+    }
     const claimed = await db.workflowAssuranceAlertDelivery.updateMany({
-      where: { id: candidate.id, status: "PENDING" },
+      where: { id: candidate.id, organizationId: candidate.organizationId, status: "PENDING", attemptCount: candidate.attemptCount,
+        OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }] },
       data: {
         status: "PROCESSING",
         lockedAt: now,
@@ -180,6 +190,10 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
     if (claimed.count !== 1) continue;
 
     const attemptCount = candidate.attemptCount + 1;
+    const lease = { id: candidate.id, organizationId: candidate.organizationId, status: "PROCESSING" as const, lockedBy: workerId, lockedAt: now, attemptCount };
+    // Receiver keys identify one retained delivery, not merely a source hash
+    // that unrelated incidents/tenants can share. Retries reuse this exact key.
+    const idempotencyKey = createHash("sha256").update(JSON.stringify([candidate.organizationId, candidate.id])).digest("hex");
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -187,10 +201,11 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
       try {
         response = await fetchImpl(transport.url, {
           method: "POST",
-          headers: webhookHeaders(candidate.dedupeKey),
+          headers: webhookHeaders(idempotencyKey),
           body: JSON.stringify({
             event: "stoquify.workflow_assurance.incident",
             deliveryId: candidate.id,
+            idempotencyKey,
             dedupeKey: candidate.dedupeKey,
             incident: candidate.incident,
           }),
@@ -208,8 +223,8 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
         );
       }
 
-      await db.workflowAssuranceAlertDelivery.update({
-        where: { id: candidate.id },
+      const acknowledged = await db.workflowAssuranceAlertDelivery.updateMany({
+        where: lease,
         data: {
           status: "DELIVERED",
           deliveredAt: now,
@@ -223,11 +238,11 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
             response.headers.get("x-request-id")?.slice(0, 200) ?? null,
         },
       });
-      delivered += 1;
+      if (acknowledged.count === 1) delivered += 1;
     } catch (error) {
       const exhausted = attemptCount >= MAX_ATTEMPTS;
-      await db.workflowAssuranceAlertDelivery.update({
-        where: { id: candidate.id },
+      const rejected = await db.workflowAssuranceAlertDelivery.updateMany({
+        where: lease,
         data: {
           status: exhausted ? "DEAD_LETTER" : "PENDING",
           failedAt: exhausted ? now : null,
@@ -244,6 +259,7 @@ export async function dispatchWorkflowAssuranceWebhookAlerts(input?: {
           lockedBy: null,
         },
       });
+      if (rejected.count !== 1) continue;
       if (exhausted) {
         failed += 1;
         deadLettered += 1;

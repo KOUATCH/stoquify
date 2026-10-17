@@ -1,0 +1,75 @@
+{
+  "at": "2026-09-30T19:27:51.889Z",
+  "sourceBefore": {
+    "services/inventory/inventory-adjustment.service.ts": "3ccb417a04945cf705489ad9494d5c0a7b7255f1601f28f9245f6e9572facd42",
+    "services/inventory/__tests__/inventory-adjustment.service.test.ts": "4d9b3b572dddfdea4d7b5f86685ae5f9a9f85d9549e63c1ff7ea33aebf778151",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "services/inventory/__tests__/inventory-adjustment-traceability.test.ts": "4fc9ff8d67eda9aaede849fe6212cb4ec8fd2a6b4fa53fe81806f1567407b85a",
+    "services/accounting/__tests__/posting-rules.service.test.ts": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/control-center.service.test.ts": "c24d14d24b228ec146a0cd208e687486d72d74b2dbc3e9eb724d62e18dcbc89e"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+        "services/accounting/__tests__/default-posting-rules.service.test.ts",
+        "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+        "services/inventory/__tests__/inventory-adjustment-traceability.test.ts",
+        "services/accounting/__tests__/posting-rules.service.test.ts",
+        "services/accounting/__tests__/accounting-settings.service.test.ts",
+        "services/accounting/__tests__/control-center.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 7 passed, 7 total\nTests:       56 passed, 56 total\nSnapshots:   0 total\nTime:        7.135 s, estimated 11 s\nRan all test suites within paths \"services/inventory/__tests__/inventory-adjustment.service.test.ts\", \"services/accounting/__tests__/default-posting-rules.service.test.ts\", \"services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts\", \"services/inventory/__tests__/inventory-adjustment-traceability.test.ts\", \"services/accounting/__tests__/posting-rules.service.test.ts\", \"services/accounting/__tests__/accounting-settings.service.test.ts\", \"services/accounting/__tests__/control-center.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/inventory/inventory-adjustment.service.ts",
+        "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+        "services/accounting/default-posting-rules.ts",
+        "services/accounting/__tests__/default-posting-rules.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/inventory/inventory-adjustment.service.ts": "3ccb417a04945cf705489ad9494d5c0a7b7255f1601f28f9245f6e9572facd42",
+    "services/inventory/__tests__/inventory-adjustment.service.test.ts": "4d9b3b572dddfdea4d7b5f86685ae5f9a9f85d9549e63c1ff7ea33aebf778151",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "services/inventory/__tests__/inventory-adjustment-traceability.test.ts": "4fc9ff8d67eda9aaede849fe6212cb4ec8fd2a6b4fa53fe81806f1567407b85a",
+    "services/accounting/__tests__/posting-rules.service.test.ts": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/__tests__/control-center.service.test.ts": "c24d14d24b228ec146a0cd208e687486d72d74b2dbc3e9eb724d62e18dcbc89e"
+  },
+  "sourceStable": true,
+  "passed": true
+}

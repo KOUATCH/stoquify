@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-27T13:54:39.798Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33"
+  },
+  "fixture": {
+    "organizationId": "cmujvrbiy0000matc0koyecz7",
+    "runId": "cmujvrbpe001amatcr3eap2fg",
+    "statementFileId": "cmujvrbtn001fmatch59b042p",
+    "exceptionId": "cmujvrbw7001qmatcrqd7o8la"
+  },
+  "safetyChecksPassed": true,
+  "engineeringGapConfirmed": "A genuine later statement matching an already allocated payment is routed to investigation; no implemented nonfinancial investigation decision can currently admit it to sign-off. Financial clearing correctly refuses this exception type.",
+  "preparation": {
+    "runId": "cmujvrbpe001amatcr3eap2fg",
+    "status": "NEEDS_REVIEW",
+    "canPrepare": false,
+    "revision": null,
+    "blocker": "OPEN_EXCEPTIONS",
+    "counts": null,
+    "asOf": "2026-09-27T13:54:40.808Z"
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33"
+  },
+  "sourceStable": true
+}

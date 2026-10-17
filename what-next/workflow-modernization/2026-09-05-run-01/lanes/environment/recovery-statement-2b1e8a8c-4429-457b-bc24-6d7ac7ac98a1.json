@@ -1,0 +1,34 @@
+{
+  "at": "2026-09-27T13:48:21.770Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33"
+  },
+  "checks": [
+    "Real statement import, exact added match with original retained, fresh preparation, independent signature, certificate export and old-request replay preserve signed state without journals."
+  ],
+  "passed": false,
+  "error": "\nInvalid `db.statementFile.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-statement.cjs:47:26\n\n  44   console.log(JSON.stringify({ statementLifecycle: true }));\n  45 }\n  46 const x = await fixture('statement-file-drift'), imported = await addStatement(x), command = await reviewedCommand(x);\n→ 47 await db.statementFile.update(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"23000\", message: \"Cannot modify immutable payment reconciliation evidence: statement file cmujvj8rf003zma6w0xjj5q52\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })",
+  "stack": [
+    "PrismaClientUnknownRequestError: ",
+    "Invalid `db.statementFile.update()` invocation in",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-statement.cjs:47:26",
+    "",
+    "  44   console.log(JSON.stringify({ statementLifecycle: true }));"
+  ],
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33"
+  },
+  "sourceStable": true
+}

@@ -1,6 +1,7 @@
 import "server-only"
 import { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { resolveInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
 import { BusinessRuleError, ConflictError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
 import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
@@ -38,6 +39,9 @@ async function source(tx: Prisma.TransactionClient, invoiceId: string, scope: In
   if (!approval || approval.eventType !== "purchase.supplier_invoice.posted" || approval.eventSource !== "INTERNAL" || approval.schemaVersion !== 1 || approval.status !== "APPLIED" || !approval.processedAt || approval.payloadHash !== hashBusinessPayload(approval.payload) || approval.sourceType !== "SUPPLIER_INVOICE" || approval.sourceId !== invoice.id || approval.actorId !== invoice.approvedById || approval.postingBatchId !== invoice.ledgerPostingBatchId || approval.occurredAt.getTime() !== invoice.postedAt.getTime() || payload.invoiceId !== invoice.id || payload.supplierId !== invoice.supplierId || payload.invoiceNumber !== invoice.invoiceNumber || payload.total !== invoice.total.toFixed(2) || payload.currency !== invoice.currency || payload.makerId !== invoice.createdById || payload.approverId !== invoice.approvedById || payload.ledgerPostingBatchId !== invoice.ledgerPostingBatchId || record(approval.metadata).makerCheckerVerified !== true) throw evidenceRequired()
   const documentHash = invoice.documentHash ?? `sha256:${hashBusinessPayload({ invoiceId: invoice.id, supplierId: invoice.supplierId, invoiceNumber: invoice.invoiceNumber, total: invoice.total.toFixed(2), currency: invoice.currency })}`
   if (approval.documentHash !== documentHash) throw evidenceRequired()
+  const retainedRecognition = record(invoice.metadata).receiptRecognition
+  if ((retainedRecognition !== undefined || payload.receiptRecognitionHash !== undefined) &&
+    (!retainedRecognition || payload.receiptRecognitionHash !== hashBusinessPayload(retainedRecognition))) throw evidenceRequired()
   const match = invoice.threeWayMatches.find(row => row.id === payload.threeWayMatchId && row.organizationId === scope.organizationId && row.status === payload.matchStatus)
   if (!match || !["MATCHED", "APPROVED_EXCEPTION"].includes(match.status)) throw evidenceRequired()
   if (match.status === "APPROVED_EXCEPTION") {
@@ -60,6 +64,15 @@ async function plan(tx: Prisma.TransactionClient, draft: InvoiceLedgerRecoveryDr
   const organization = await tx.organization.findUniqueOrThrow({ where: { id: scope.organizationId }, select: { currency: true, country: true, accountingSettings: true } })
   if (organization.currency !== invoice.currency) throw evidenceRequired()
   const blockers: InvoiceLedgerRecoveryPreview["blockers"] = []
+  let receiptRecognition: Awaited<ReturnType<typeof resolveInvoiceReceiptRecognition>> | null = null
+  try {
+    receiptRecognition = await resolveInvoiceReceiptRecognition(tx, {
+      organizationId: scope.organizationId, supplierId: invoice.supplierId, invoiceId: invoice.id,
+      currency: invoice.currency, subtotal: invoice.subtotal, total: invoice.total,
+      taxAmount: invoice.taxAmount, lines: invoice.lines,
+      retainedRecognition: record(invoice.metadata).receiptRecognition,
+    })
+  } catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push("BATCH_REVIEW") }
   if (batch.status === "POSTED") blockers.push("ALREADY_POSTED")
   else if (batch.status !== "FAILED" || batch.journalEntries.length || batch.sourceLinks.length || batch.postedAt || batch.reversedAt || typeof record(batch.metadata).apPostingRequestHash !== "string") blockers.push("BATCH_REVIEW")
   const period = await tx.accountingPeriod.findFirst({ where: { organizationId: scope.organizationId, startDate: { lte: invoice.invoiceDate }, endDate: { gte: invoice.invoiceDate } }, orderBy: { startDate: "desc" } })
@@ -73,9 +86,9 @@ async function plan(tx: Prisma.TransactionClient, draft: InvoiceLedgerRecoveryDr
   const journals = await tx.journal.findMany({ where: { organizationId: scope.organizationId, type: "PURCHASE", isDefault: true, isActive: true }, orderBy: { id: "asc" } })
   if (journals.length !== 1) blockers.push("JOURNAL_UNAVAILABLE")
   const accounts = rule ? await tx.chartOfAccount.findMany({ where: { organizationId: scope.organizationId, OR: [{ id: { in: rule.lines.map(line => line.accountId).filter((id): id is string => !!id) } }, { mappingKey: { in: rule.lines.map(line => line.mappingKey).filter((key): key is string => !!key) } }] }, include: { _count: { select: { children: true } } }, orderBy: { id: "asc" } }) : []
-  const revision = hashBusinessPayload({ version: 1, invoice, approval: current.approval, liability: current.liability, batch, organization, country, period, rule, journals, accounts })
+  const revision = hashBusinessPayload({ version: 1, invoice, approval: current.approval, liability: current.liability, batch, receiptRecognition, organization, country, period, rule, journals, accounts })
   const preview: InvoiceLedgerRecoveryPreview = { organizationId: scope.organizationId, actorId: scope.actorId, invoiceId: invoice.id, invoiceNumber: invoice.invoiceNumber, supplierName: invoice.supplier.name, total: invoice.total.toFixed(2), currency: invoice.currency, invoiceDate: invoice.invoiceDate.toISOString(), approvalAt: invoice.postedAt!.toISOString(), approvalEventId: current.approval.id, supplierLiabilityId: current.liability.id, periodName: period?.name ?? null, ruleCode: rule?.code ?? null, journalCode: journals.length === 1 ? journals[0].code : null, countryPackVersion: country.countryPackVersion, blockers, requiresFreshAuth: !fresh, revision, checkedAt: new Date().toISOString() }
-  return { current, batch, period, country, preview }
+  return { current, batch, period, country, receiptRecognition, preview }
 }
 
 export async function previewInvoiceLedgerRecovery(draftInput: InvoiceLedgerRecoveryDraft, scopeInput: InvoiceLedgerRecoveryScope) {
@@ -100,8 +113,8 @@ export async function confirmInvoiceLedgerRecovery(commandInput: InvoiceLedgerRe
     }
     const p = await plan(tx, command, scope, true), { invoice, approval, liability, documentHash } = p.current
     if (p.preview.revision !== command.expectedRevision) throw new ConflictError("Invoice or accounting configuration changed. Review a new preview.")
-    if (p.preview.blockers.length || !p.period) throw new BusinessRuleError("Resolve the displayed accounting conditions before recovery.")
-    const posting = await createAPLedgerPosting(tx, { organizationId: scope.organizationId, periodId: p.period.id, sourceType: "SUPPLIER_INVOICE", sourceId: invoice.id, sourceNumber: invoice.invoiceNumber, sourceDate: invoice.invoiceDate, postingPurpose: "SUPPLIER_INVOICE", journalType: "PURCHASE", journalPrefix: "APINV", actorId: scope.actorId, supplierId: invoice.supplierId, currency: invoice.currency, memo: `Supplier invoice ${invoice.invoiceNumber}`, documentHash, amounts: { sourceAmount: invoice.total, netAmount: invoice.subtotal, grossAmount: invoice.total, taxAmount: invoice.taxAmount, costAmount: invoice.subtotal }, blockerCode: "AP_POSTING_RULE_REVIEW", blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.", metadata: { ...p.country, approvalEventId: approval.id, supplierLiabilityId: liability.id } })
+    if (p.preview.blockers.length || !p.period || !p.receiptRecognition) throw new BusinessRuleError("Resolve the displayed accounting conditions before recovery.")
+    const posting = await createAPLedgerPosting(tx, { organizationId: scope.organizationId, periodId: p.period.id, sourceType: "SUPPLIER_INVOICE", sourceId: invoice.id, sourceNumber: invoice.invoiceNumber, sourceDate: invoice.invoiceDate, postingPurpose: "SUPPLIER_INVOICE", journalType: "PURCHASE", journalPrefix: "APINV", actorId: scope.actorId, supplierId: invoice.supplierId, currency: invoice.currency, memo: `Supplier invoice ${invoice.invoiceNumber}`, documentHash, amounts: p.receiptRecognition.amounts, conditionContext: p.receiptRecognition.conditionContext, blockerCode: "AP_POSTING_RULE_REVIEW", blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.", metadata: { ...p.country, ...(p.receiptRecognition.recognition ? { receiptRecognition: p.receiptRecognition.recognition } : {}), approvalEventId: approval.id, supplierLiabilityId: liability.id } })
     const result = invoiceLedgerRecoveryDecisionSchema.parse({ organizationId: scope.organizationId, actorId: scope.actorId, invoiceId: invoice.id, invoiceNumber: invoice.invoiceNumber, requestReference: command.idempotencyKey, reviewedRevision: command.expectedRevision, recordedAt: new Date().toISOString(), approvalEventId: approval.id, supplierLiabilityId: liability.id, postingBatchId: posting.ledgerBatch.id, ledgerStatus: posting.ledgerStatus, journalEntryId: posting.journalEntryId ?? null, accountingSourceLinkId: posting.accountingSourceLinkId ?? null, blockerCode: posting.blockerCode ?? null, total: invoice.total.toFixed(2), currency: invoice.currency })
     const recorded = await recordBusinessEventInTx(tx, { organizationId: scope.organizationId, eventType: "purchase.supplier_invoice.ledger_recovery_recorded", eventSource: "INTERNAL", schemaVersion: 1, idempotencyKey: eventKey(command.idempotencyKey), actorId: scope.actorId, sourceType: "SUPPLIER_INVOICE", sourceId: invoice.id, postingBatchId: posting.ledgerBatch.id, documentHash, occurredAt: new Date(result.recordedAt), payload: { commandHash, result } })
     await markBusinessEventAppliedInTx(tx, scope.organizationId, recorded.event.id)

@@ -1,0 +1,84 @@
+{
+  "startedAt": "2026-09-27T17:18:42.743Z",
+  "sourceBefore": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "bd4ca1eda65c6826dc92e3d38092bd406df4910b46b28afa7a99a8b579881684",
+    "components/finance/PaymentSuspenseQueue.tsx": "f41fbf539244b51b579a7cdee64ac044adaa65d01f799186f2b1dc9c0e82e701",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "08b45d2261a0107dd290d29b9f1002d1f883fa48e3eb2279716b20aefa36f414",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/usePermissions.ts": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+    "hooks/__tests__/usePermissions.workflow.test.tsx": "1c1ce552e5774805d8cfa034b70d871fa86de6335ab5960a7d0726f72099e267"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+        "components/finance/__tests__/PaymentSuspenseQueue.test.tsx",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "hooks/__tests__/usePermissions.workflow.test.tsx"
+      ],
+      "startedAt": "2026-09-27T17:18:42.757Z",
+      "endedAt": "2026-09-27T17:19:31.285Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       84 passed, 84 total\nSnapshots:   0 total\nTime:        34.523 s, estimated 58 s\nRan all test suites within paths \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\", \"components/finance/__tests__/PaymentSuspenseQueue.test.tsx\", \"components/finance/__tests__/ReconciliationSignReview.test.tsx\", \"hooks/__tests__/usePermissions.workflow.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/__tests__/PaymentSuspenseQueue.test.tsx",
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "lib/auth-client.ts",
+        "hooks/usePermissions.ts",
+        "hooks/__tests__/usePermissions.workflow.test.tsx"
+      ],
+      "startedAt": "2026-09-27T17:19:31.288Z",
+      "endedAt": "2026-09-27T17:19:38.365Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-09-27T17:19:38.366Z",
+      "endedAt": "2026-09-27T17:22:25.952Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "bd4ca1eda65c6826dc92e3d38092bd406df4910b46b28afa7a99a8b579881684",
+    "components/finance/PaymentSuspenseQueue.tsx": "f41fbf539244b51b579a7cdee64ac044adaa65d01f799186f2b1dc9c0e82e701",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "08b45d2261a0107dd290d29b9f1002d1f883fa48e3eb2279716b20aefa36f414",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/usePermissions.ts": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+    "hooks/__tests__/usePermissions.workflow.test.tsx": "1c1ce552e5774805d8cfa034b70d871fa86de6335ab5960a7d0726f72099e267"
+  },
+  "sourceStable": true,
+  "passed": true,
+  "endedAt": "2026-09-27T17:22:25.957Z"
+}

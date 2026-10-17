@@ -868,7 +868,9 @@
         "services/communication/whatsapp-receipt-worker.service.ts:167",
         "services/events/business-event-outbox.service.ts:112",
         "components/customers/CustomerStatementHistory.tsx",
-        "actions/accounting/customer-statement-history.actions.ts:retry"
+        "actions/accounting/customer-statement-history.actions.ts:retry",
+        "scripts/reconciliation-sign-notification-worker.ts",
+        "services/reconciliation/reconciliation-sign-notification.worker.ts"
       ],
       "services": [
         "services/communication/customer-statement-delivery-worker.service.ts",
@@ -905,7 +907,8 @@
         "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
         "Corrupt local command resolution, public recipient revocation races, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
         "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
-        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification."
+        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification.",
+        "Reconciliation signed-event transient retry and lost acknowledgement are verified; general exhausted/invalid-evidence repair and controlled requeue remain engineering work."
       ],
       "completeWorkflowVerified": false
     },
@@ -928,7 +931,9 @@
         "services/communication/whatsapp-receipt-worker.service.ts:393",
         "services/events/business-event-outbox.service.ts:400",
         "app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx:27",
-        "actions/accounting/settings.actions.ts"
+        "actions/accounting/settings.actions.ts",
+        "scripts/reconciliation-sign-notification-worker.ts",
+        "services/reconciliation/reconciliation-sign-notification.worker.ts"
       ],
       "services": [
         "services/accounting/control-center.service.ts",
@@ -956,7 +961,8 @@
       "remaining": [
         "Verify control-center runtime filtering; source confirms route and accounting.setup.manage. Generic outbox counts are not a complete communications console.",
         "Receipt queue summary is exported without a production caller found.",
-        "Add no delivery/read certification without provider callbacks or recipient evidence."
+        "Add no delivery/read certification without provider callbacks or recipient evidence.",
+        "Reconciliation signed-event consumer and one-off CLI are verified; authorized live scheduling and operational monitoring are not installed/verified."
       ]
     }
   ],

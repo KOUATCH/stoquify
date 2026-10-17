@@ -1,0 +1,135 @@
+{
+  "at": "2026-09-30T18:39:14.585Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "CLOSE_AUTH_RECOVERY_2026-09-30.md",
+  "sourceHashes": {
+    "hooks/accounting/useCloseAssurance.ts": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "48ddea38797f16252e762a39dfd56e268fdd2d74c25c272be590803309e76077",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "priorImpact": [
+    {
+      "file": "hooks/accounting/useCloseAssurance.ts",
+      "before": "c2416e47d09fbbbf131ad7ec1d9eb1c05cf9e6e60a10deaf495d5f76b7191b4c",
+      "after": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+      "priorReview": "evidence/close-setup-copy-before-7357ebbe-c6a1-422e-9af1-e0cf5ec1f265.json"
+    },
+    {
+      "file": "components/accounting/CloseAssuranceCenter.tsx",
+      "before": "d96f635a0e2abd0d861e84f078de279978b7c29754971a76a587174888f26218",
+      "after": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+      "priorReview": "evidence/close-step-up-before-76b293f9-f5b4-4162-8160-015c80d30287.json"
+    },
+    {
+      "file": "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+      "before": "1f25003eb09230cd76a8945ec53b160a0c7c85ec600215170ad1dc28b80a6054",
+      "after": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c",
+      "priorReview": "evidence/close-step-up-before-76b293f9-f5b4-4162-8160-015c80d30287.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "hooks/accounting/useCloseAssurance.ts",
+      "changed": [
+        "copy",
+        "unwrap",
+        "useExportClosePack"
+      ],
+      "added": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "components/accounting/CloseAssuranceCenter.tsx",
+      "changed": [
+        "import:react",
+        "copy",
+        "CloseAssuranceCenter"
+      ],
+      "added": [
+        "import:@/actions/security/step-up-auth.actions",
+        "import:@/components/ui/input"
+      ],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Actual accounting setup trust and old READY export gates are corrected. EN/FR close fresh-authentication recovery and setup denial are verified through the real browser with explicit retry and unchanged financial effects. Complete supported posting-rule setup (four required purposes lack defaults), then verify eligible close certification and invalidation/recovery; current-configuration concurrency, native accessibility and production latency remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "close_fresh_auth_code_preserved",
+    "close_identity_recovery_en_fr_keyboard",
+    "close_explicit_retry_after_identity_verification",
+    "close_wrong_password_clearing_and_recovery",
+    "close_setup_denial_localized_no_financial_effects"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/close-setup-copy-checks-e7b7aef3-59a2-4e2f-be0e-520d499b5e3d.json",
+      "sha256": "7476ec5801f58297a80b4b9503285957f584af54dc0bf78b597926dba57b2acd"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add.json",
+      "sha256": "e50e0a51cc387bbfc13da683a0f7c20bea754347a0f8b946da2a0efdcc6fe29b"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CLOSE_AUTH_RECOVERY_2026-09-30.md",
+      "sha256": "b55545a3ba51ffe69078ec81f84ca688a384fc9860f3c544cdb71f1d41d7631a"
+    },
+    {
+      "file": "evidence/accounting-setup-trust-review-2026-09-30.json",
+      "sha256": "897d9e0a08c31c4079db6d974f6a879919794c407e9e8911f604c65f3df2b85e"
+    },
+    {
+      "file": "evidence/close-setup-copy-before-7357ebbe-c6a1-422e-9af1-e0cf5ec1f265.json",
+      "sha256": "7adc21804e1b4489ed63bba638d96c0541bdc8f4b8cf682fb5e00752a798c787"
+    },
+    {
+      "file": "evidence/close-step-up-before-76b293f9-f5b4-4162-8160-015c80d30287.json",
+      "sha256": "a363d7b02fffa6af48392daf8998ed1c89bb4780323103ab5028a671e5d123ab"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-331712bb-ce47-46df-a412-1b7c98d2b580.json",
+      "sha256": "ebb20c882fc276b281891f4496d9f6fb167d41e0f623a313948e7fb4b1b525b0"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-331712bb-ce47-46df-a412-1b7c98d2b580-failed.png",
+      "sha256": "05da86a05c7b6f9223bfadffb968ba1ae5447b8874ad8d7065c70b165742a4ac"
+    },
+    {
+      "file": "run-close-setup-copy-checks.cjs",
+      "sha256": "7f738d89e2f29ca3b786f1020cc50225358ee6b2bc6977c04e9e67efbde14555"
+    },
+    {
+      "file": "lanes/environment/verify-close-setup-denial-browser.cjs",
+      "sha256": "4f53c34f4f5deac005659d56a9d870bc6bc4b1fca286531c7edab2419e6b544a"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-en1440.png",
+      "sha256": "6661abed645ef5ad96ab1bf0d1b1212769d951246335615288c513c138a4226d"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-en1440-recovery.png",
+      "sha256": "f6e380a93e8b353b5985f275192f694137844eead90b5393d5734bf169ef5cf6"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-fr320.png",
+      "sha256": "e7911044bb710e2df1d29a9c128e4c81dff41b53ae0a6accaef130f3fe21e4fd"
+    },
+    {
+      "file": "lanes/environment/close-setup-denial-browser-b02d0644-32c8-420a-8b40-a21f7eab0add-fr320-recovery.png",
+      "sha256": "fc17bf2aee56963f6777747cb21a82d06de9aea7f89bcb107a4460f7985cc0e7"
+    }
+  ]
+}

@@ -227,3 +227,12 @@ describe("PayrollEmployeeBalanceWorkbench", () => {
     expect(mockRefresh).not.toHaveBeenCalled()
   })
 })
+
+it("renders French destination headings without mutating source evidence", () => {
+  const data = workbenchData()
+  const original = JSON.stringify(data)
+  render(<PayrollEmployeeBalanceWorkbench data={data} locale="fr" />)
+  expect(screen.getByRole("heading", { name: "Recouvrement des soldes salariés" })).toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "Périmètre des sources" })).toBeInTheDocument()
+  expect(JSON.stringify(data)).toBe(original)
+})

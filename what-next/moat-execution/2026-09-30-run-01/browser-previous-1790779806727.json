@@ -1,0 +1,108 @@
+{
+  "startedAt": "2026-09-30T14:43:08.219Z",
+  "synthetic": true,
+  "base": "http://127.0.0.1:3110",
+  "checks": [
+    {
+      "name": "en two-client pending and submitted tasks visible",
+      "status": "PASS"
+    },
+    {
+      "name": "en keyboard detail focus and correct client-period portal link",
+      "status": "PASS"
+    },
+    {
+      "name": "en real password step-up then explicit same-command acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "en narrow workdesk does not overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "en revoked grant rejects browser acceptance and clears review data",
+      "status": "PASS"
+    },
+    {
+      "name": "en A downloaded hash",
+      "contentHash": "sha256:c7ce34db651e4e60d028a3606d5be165f984966d04462365ff2d3c0c25a2b3bb",
+      "status": "PASS"
+    },
+    {
+      "name": "en client A portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "en B downloaded hash",
+      "contentHash": "sha256:3a2b45eae8349c17d4fc1d7fd0ebd8fdd9d5d5898f9d6fff96508e9d27da49ea",
+      "status": "PASS"
+    },
+    {
+      "name": "en client B portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "fr two-client pending and submitted tasks visible",
+      "status": "PASS"
+    },
+    {
+      "name": "fr keyboard detail focus and correct client-period portal link",
+      "status": "PASS"
+    },
+    {
+      "name": "fr real password step-up then explicit same-command acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "fr narrow workdesk does not overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "fr revoked grant rejects browser acceptance and clears review data",
+      "status": "PASS"
+    },
+    {
+      "name": "fr A downloaded hash",
+      "contentHash": "sha256:8829a371dbc7e891404661e18d5f2be4745b9f2d115b4b9946ed25f0b2439902",
+      "status": "PASS"
+    },
+    {
+      "name": "fr client A portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    },
+    {
+      "name": "fr B downloaded hash",
+      "contentHash": "sha256:b926d0987ed51669c71c92f44e5acda2d96cb7a12ffb8e0a55f86885e2eb64f1",
+      "status": "PASS"
+    },
+    {
+      "name": "fr client B portal refresh and downloaded export retain scope",
+      "status": "PASS"
+    }
+  ],
+  "fixtureOrganizations": [
+    "cmuo7t7ti0000majkqyan87wq",
+    "cmuo7t813000bmajkmzm3qd79",
+    "cmuo7t893000wmajkibrnfez5"
+  ],
+  "actionCodes": [
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER",
+    "MOAT_REVIEWER"
+  ],
+  "status": "PASS",
+  "completedAt": "2026-09-30T14:45:27.807Z",
+  "sources": {
+    "services/accounting/accountant-work-desk.contracts.ts": "982131dc57be59dd15c610506dc92cabfa93af5f628da78a08a39ef502a8255c",
+    "services/accounting/accountant-work-desk.service.ts": "92b31718d76360d52f05e3967bbe449a044298e080dd6b8d54d254d5179f68f2",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+    "actions/accounting/accountant-work-desk.actions.ts": "2ca7eb97bb4293b86ad81e19c193a3f2294a3ede7a0819f2c3b2d08d5619158e",
+    "components/accounting/AccountantWorkDesk.tsx": "8a851a9885f9b29448236b2f1479408e8d26890ff9e95c74da9e3e00f3b1b15b",
+    "components/accounting/accountant-work-desk-copy.ts": "4939dc768c3a3d4dad6c1160ca61121d0ed6e6eaee52ceef111d3185fa3c10ee",
+    "hooks/useAccountantPortal.ts": "413582bd96fc1c905cb3b02e1f5cf1b22c51e778d35ae23406caf2c5a425c4e4",
+    "components/accounting/AccountantPortal.tsx": "b2083d78d5ff8a822da662e1a8174f830331f7c81bdacac62bee51f2518a8d5d"
+  }
+}

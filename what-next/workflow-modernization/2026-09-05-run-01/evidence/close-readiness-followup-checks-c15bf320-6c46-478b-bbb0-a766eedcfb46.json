@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-30T18:50:30.402Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "4d54eab88a713238c7dd68cc9ecd6513892cc928c2bd81cf7ecb672d832910f3",
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "d94db043140383949dc6f791e726f0852538bf3486973e8746808497a357cd9d",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c",
+    "services/accounting/__tests__/control-center.service.test.ts": "3adfb398d1e5fc8404c770084428edbf7b9c35d68f59d878996a1fd4fec2f9df",
+    "lib/providers/query-provider.tsx": "0631abda1d390721d047f673a0d83115338ba7aab6e35467b903f150f10620d6",
+    "lib/error-handling/crud-notifications.ts": "6228dde317ccebb8c9def2cbefc9680cd65e9ee904cfc73075e0a169a9aced82",
+    "services/accounting/control-center.service.ts": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx",
+        "services/accounting/__tests__/accounting-settings.service.test.ts",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+        "services/accounting/__tests__/control-center.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       41 passed, 41 total\nSnapshots:   0 total\nTime:        28.13 s\nRan all test suites within paths \"hooks/__tests__/useCloseAssurance.export.test.tsx\", \"services/accounting/__tests__/accounting-settings.service.test.ts\", \"components/accounting/__tests__/CloseAssuranceCenter.test.tsx\", \"services/accounting/__tests__/control-center.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "hooks/accounting/useCloseAssurance.ts",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx",
+        "services/accounting/accounting-settings.service.ts",
+        "services/accounting/__tests__/accounting-settings.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "4d54eab88a713238c7dd68cc9ecd6513892cc928c2bd81cf7ecb672d832910f3",
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "d94db043140383949dc6f791e726f0852538bf3486973e8746808497a357cd9d",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c",
+    "services/accounting/__tests__/control-center.service.test.ts": "3adfb398d1e5fc8404c770084428edbf7b9c35d68f59d878996a1fd4fec2f9df",
+    "lib/providers/query-provider.tsx": "0631abda1d390721d047f673a0d83115338ba7aab6e35467b903f150f10620d6",
+    "lib/error-handling/crud-notifications.ts": "6228dde317ccebb8c9def2cbefc9680cd65e9ee904cfc73075e0a169a9aced82",
+    "services/accounting/control-center.service.ts": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227"
+  },
+  "sourceStable": true,
+  "passed": true
+}

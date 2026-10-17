@@ -6,7 +6,7 @@ import type { PurchaseApprovalRequest, PurchaseApprovalPreview } from "./purchas
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 import { logger } from "@/lib/logger"
-import { ReceiveItemsSchema, ResolveGoodsReceiptInspectionSchema, UpdatePurchaseOrderSchema } from "./purchase-order.schemas"
+import { CreatePurchaseOrderSchema, ReceiveItemsSchema, ResolveGoodsReceiptInspectionSchema, UpdatePurchaseOrderSchema } from "./purchase-order.schemas"
 import { purchaseReceivingAuthority, purchaseReceivingScopeSchema, type PurchaseReceivingScope } from "./purchase-receiving-authority"
 import { purchaseQuantitySchema } from "./purchase-quantity"
 import { assertPurchaseOrderEditAuthority, purchaseOrderEditEventKey, purchaseOrderEditRevision, purchaseOrderEditSnapshot, replayPurchaseOrderEdit, type PurchaseOrderEditScope } from "./purchase-order-edit-record"
@@ -25,6 +25,8 @@ import {
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
 import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-event.service"
+import { createReceiptRecognitionSourceInTx, type ReceiptRecognitionSource } from "./receipt-recognition-source"
+import { postReceiptRecognitionInTx } from "./receipt-recognition.service"
 import { Prisma, type GoodsReceiptStatus, type PurchaseOrderStatus } from "@prisma/client"
 import type { Decimal } from "@prisma/client/runtime/library"
 import type {
@@ -385,6 +387,7 @@ async function applyInventoryReceipt(
     receiptId: string
     receiptNumber: string
     receiptLineId: string
+    recognitionSource: ReceiptRecognitionSource
     receivedById?: string | null
     batchNumber?: string | null
     expiryDate?: Date | null
@@ -397,6 +400,9 @@ async function applyInventoryReceipt(
       receiptId: params.receiptId,
       receiptNumber: params.receiptNumber,
       receivedById: params.receivedById,
+      occurredAt: new Date(params.recognitionSource.manifest.effectiveAt),
+      documentHash: params.recognitionSource.sourceHash,
+      receiptRecognitionNotRequired: params.recognitionSource.inventoryValue.eq(0),
       idempotencyKey: `goods-receipt-stock:${params.organizationId}:${params.receiptId}:${params.receiptLineId}`,
       lines: [
         {
@@ -517,16 +523,28 @@ export async function getPurchaseOrderById(id: string, organizationId: string) {
 // ── Create ────────────────────────────────────────────────────────────────────
 
 export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
+  return db.$transaction(tx => createPurchaseOrderInTx(tx, input))
+}
+
+// Internal composition boundary for durable authoring: numbering, reference
+// validation and creation must share the caller's result-receipt transaction.
+export async function createPurchaseOrderInTx(tx: Prisma.TransactionClient, input: CreatePurchaseOrderInput) {
+  input = CreatePurchaseOrderSchema.parse(input)
   input.orderLines.forEach(line => purchaseQuantitySchema.parse(line.quantity))
   logger.info("purchase-order.create", { orgId: input.organizationId, supplierId: input.supplierId })
 
   assertDateRange(input.date, input.expectedDeliveryDate)
   assertUniqueItems(input.orderLines)
 
+  await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "purchasing", operation: "purchasing.order.create" })
+  await tx.$queryRaw`SELECT id FROM suppliers WHERE id = ${input.supplierId} AND "organizationId" = ${input.organizationId} FOR SHARE`
+  await tx.$queryRaw`SELECT id FROM locations WHERE id = ${input.locationId} AND "organizationId" = ${input.organizationId} FOR SHARE`
+  await tx.$queryRaw(Prisma.sql`SELECT id FROM items WHERE "organizationId" = ${input.organizationId} AND id IN (${Prisma.join(input.orderLines.map(line => line.itemId))}) ORDER BY id FOR SHARE`)
+
   const [supplier, location, items] = await Promise.all([
-    db.supplier.findFirst({ where: { id: input.supplierId, organizationId: input.organizationId } }),
-    db.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } }),
-    db.item.findMany({ where: { id: { in: input.orderLines.map(l => l.itemId) }, organizationId: input.organizationId }, select: { id: true } }),
+    tx.supplier.findFirst({ where: { id: input.supplierId, organizationId: input.organizationId, isActive: true, deletedAt: null } }),
+    tx.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId, isActive: true, deletedAt: null } }),
+    tx.item.findMany({ where: { id: { in: input.orderLines.map(l => l.itemId) }, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
   ])
   if (!supplier) throw new NotFoundError("Supplier not found or does not belong to this organisation")
   if (!location) throw new NotFoundError("Delivery location not found or does not belong to this organisation")
@@ -534,13 +552,11 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
 
   const totals      = calcOrderTotals(input.orderLines, input.shippingCost)
 
-  const po = await db.$transaction(async (tx) => {
-    await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "purchasing", operation: "purchasing.order.create" })
     const orderNumber = await allocatePurchaseDocumentNumber(tx, {
       organizationId: input.organizationId,
       documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
     })
-    return tx.purchaseOrder.create({
+    const po = await tx.purchaseOrder.create({
       data: {
         orderNumber,
         organizationId:      input.organizationId,
@@ -576,8 +592,6 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
       },
       include: standardInclude,
     })
-  })
-
   return transformPO(po)
 }
 
@@ -919,6 +933,7 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
   try {
     const result = await transaction(async (tx) => {
       await purchaseReceivingAuthority(tx, scope, "receive")
+      await tx.$queryRaw`SELECT s.id FROM suppliers s JOIN purchase_orders p ON p."supplierId" = s.id WHERE p.id = ${input.purchaseOrderId} AND p."organizationId" = ${input.organizationId} AND s."organizationId" = ${input.organizationId} FOR UPDATE OF s`
       const locked = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT "id"
         FROM "purchase_orders"
@@ -1103,6 +1118,7 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
         },
       })
 
+      const persistedLines = new Map<string, string>()
       for (const item of items) {
         const line = lineMap.get(item.lineId)!
         const unitCost = toN(line.unitCost)
@@ -1120,7 +1136,11 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
             serialNumbers: item.serialNumbers ?? [],
           },
         })
-
+        persistedLines.set(line.id, receiptLine.id)
+      }
+      const recognitionSource = inspectionPassed ? await createReceiptRecognitionSourceInTx(tx, input.organizationId, receipt.id, input.receivedById) : null
+      for (const item of items) {
+        const line = lineMap.get(item.lineId)!, unitCost = toN(line.unitCost)
         if (inspectionPassed) { // Only accepted inspection outcomes may post inventory.
           const lineClaim = await tx.purchaseOrderLine.updateMany({
             where: {
@@ -1136,7 +1156,7 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
             throw new ConflictError("Purchase order receipt quantities changed concurrently. Refresh and retry.")
           }
 
-          await applyInventoryReceipt(tx, {
+          if (recognitionSource!.manifest.lines.find(candidate => candidate.receiptLineId === persistedLines.get(line.id))!.stockTracked) await applyInventoryReceipt(tx, {
             itemId: line.itemId,
             locationId: effectiveLocationId,
             qty: item.receivedQuantity,
@@ -1144,7 +1164,8 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
             organizationId: input.organizationId,
             receiptId: receipt.id,
             receiptNumber,
-            receiptLineId: receiptLine.id,
+            receiptLineId: persistedLines.get(line.id)!,
+            recognitionSource: recognitionSource!,
             receivedById: input.receivedById,
             batchNumber: item.batchNumber ?? null,
             expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
@@ -1171,6 +1192,7 @@ export async function receiveItems(input: ReceiveItemsInput, scopeInput?: Purcha
         include: standardInclude,
       })
       if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
+      if (recognitionSource) await postReceiptRecognitionInTx(tx, { organizationId: input.organizationId, receiptId: receipt.id, actorId: input.receivedById })
       await tx.auditLog.create({ data: { organizationId: input.organizationId, userId: input.receivedById, entityType: "GoodsReceipt", entityId: receipt.id, action: "RECORD_GOODS_RECEIPT", changes: { purchaseOrderId: po.id, receiptNumber, status: receiptStatus, inspectionOutcome: input.inspectionOutcome, payloadHash, requestReference: input.idempotencyKey } } })
       return {
         purchaseOrder,
@@ -1273,6 +1295,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       const authority = await purchaseReceivingAuthority(tx, scope, "resolve")
       const parent = await tx.goodsReceipt.findFirst({ where: { id: input.goodsReceiptId, organizationId: input.organizationId, deletedAt: null }, select: { purchaseOrderId: true } })
       if (!parent) throw new NotFoundError("Goods receipt not found")
+      await tx.$queryRaw`SELECT s.id FROM suppliers s JOIN purchase_orders p ON p."supplierId" = s.id WHERE p.id = ${parent.purchaseOrderId} AND p."organizationId" = ${input.organizationId} AND s."organizationId" = ${input.organizationId} FOR UPDATE OF s`
       await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${parent.purchaseOrderId} AND "organizationId" = ${input.organizationId} FOR UPDATE`
       const lockedReceipt = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT "id"
@@ -1380,6 +1403,10 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
         },
       })
 
+      const receiptStatus: GoodsReceiptStatus = input.decision === "ACCEPT" ? "RECEIVED" : "REJECTED"
+      await tx.goodsReceipt.update({ where: { id: receipt.id }, data: { status: receiptStatus, inventoryPostedAt: input.decision === "ACCEPT" ? resolvedAt : null } })
+      const recognitionSource = input.decision === "ACCEPT" ? await createReceiptRecognitionSourceInTx(tx, input.organizationId, receipt.id, input.resolvedById) : null
+
       if (input.decision === "ACCEPT") {
         const serialNumbers = receipt.lines.flatMap((line) => line.serialNumbers)
         if (new Set(serialNumbers).size !== serialNumbers.length) {
@@ -1436,7 +1463,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
             throw new ConflictError("Purchase order receipt quantities changed concurrently. Refresh and retry.")
           }
 
-          await applyInventoryReceipt(tx, {
+          if (recognitionSource!.manifest.lines.find(candidate => candidate.receiptLineId === line.id)!.stockTracked) await applyInventoryReceipt(tx, {
             itemId: line.itemId,
             locationId: receipt.locationId,
             qty: acceptedQuantity,
@@ -1445,6 +1472,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
             receiptId: receipt.id,
             receiptNumber: receipt.receiptNumber,
             receiptLineId: line.id,
+            recognitionSource: recognitionSource!,
             receivedById: input.resolvedById,
             batchNumber: line.batchNumber,
             expiryDate: line.expiryDate,
@@ -1465,14 +1493,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
         })
       }
 
-      const receiptStatus: GoodsReceiptStatus = input.decision === "ACCEPT" ? "RECEIVED" : "REJECTED"
-      await tx.goodsReceipt.update({
-        where: { id: receipt.id },
-        data: {
-          status: receiptStatus,
-          inventoryPostedAt: input.decision === "ACCEPT" ? resolvedAt : null,
-        },
-      })
+      if (recognitionSource) await postReceiptRecognitionInTx(tx, { organizationId: input.organizationId, receiptId: receipt.id, actorId: input.resolvedById })
 
       await tx.auditLog.create({
         data: {

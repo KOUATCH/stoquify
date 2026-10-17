@@ -13,8 +13,12 @@ import {
   SuspenseStatus,
 } from "@prisma/client"
 
+import { createHash } from "node:crypto"
+
 import { db } from "@/prisma/db"
+import { closeAssessmentSelectionBlocker, deriveCloseAssessmentSelection, readCloseAssessmentOrderInTx } from "@/services/accounting/close-assessment-order.service"
 import { NotFoundError } from "@/services/_shared/action-errors"
+import { MANUAL_ALLOCATION_STATUSES } from "@/services/reconciliation/manual-match-evidence"
 
 import { createProofTrailBlocker } from "./evidence-blockers.service"
 import type {
@@ -114,6 +118,55 @@ function failedEventBlockers(events: Array<{ id: string; status: BusinessEventSt
     )
 }
 
+// Display samples are bounded; assurance checks must cover every related record.
+function severitySummary(groups: Array<{ severity: string; _count: { _all: number } }>) {
+  return {
+    count: groups.reduce((total, group) => total + group._count._all, 0),
+    high: groups.some((group) => group._count._all > 0 && (group.severity === "HIGH" || group.severity === "CRITICAL")),
+  }
+}
+
+async function paymentBlockerSummary(client: DbClient, scope: {
+  organizationId: string
+  reconciliationRunId?: string
+  paymentTransactionId?: string
+}) {
+  const [exceptions, suspense] = await Promise.all([
+    client.paymentException.groupBy({
+      by: ["severity"], where: { ...scope, status: { in: [...OPEN_PAYMENT_EXCEPTION_STATUSES] } }, _count: { _all: true },
+    }),
+    client.suspenseItem.groupBy({
+      by: ["severity"], where: { ...scope, status: { in: [...OPEN_SUSPENSE_STATUSES] } }, _count: { _all: true },
+    }),
+  ])
+  return { exceptions: severitySummary(exceptions), suspense: severitySummary(suspense) }
+}
+
+async function completeEventBlockers(client: DbClient, scope: {
+  organizationId: string
+  sourceType: AccountingSourceType
+  sourceId: string
+}, events: Array<{ id: string; status: BusinessEventStatus; failureMessage: string | null }>) {
+  const blockers = failedEventBlockers(events)
+  const undisplayedCount = await client.businessEvent.count({
+    where: {
+      ...scope,
+      status: { in: [BusinessEventStatus.FAILED, BusinessEventStatus.REJECTED] },
+      id: { notIn: events.map((event) => event.id) },
+    },
+  })
+  if (undisplayedCount > 0) blockers.push(createProofTrailBlocker({
+    id: "business-events-outside-display",
+    severity: "high",
+    gate: "events.business-event",
+    title: "Additional business events failed",
+    detail: `${undisplayedCount} failed or rejected business event(s) are outside the displayed evidence sample.`,
+    sourceTables: ["business_events"],
+    nextAction: "Review the failed business events before trusting this record.",
+  }))
+  return blockers
+}
+
 async function auditSensitiveAccess(
   client: DbClient,
   result: ProofTrailResult,
@@ -207,7 +260,9 @@ async function buildJournalEntryProofTrail(input: ProofTrailInput, client: DbCli
       })
     : []
 
-  const blockers: ProofTrailBlocker[] = [...failedEventBlockers(events)]
+  const blockers: ProofTrailBlocker[] = entry.sourceType && entry.sourceId
+    ? await completeEventBlockers(client, { organizationId: input.organizationId, sourceType: entry.sourceType, sourceId: entry.sourceId }, events)
+    : []
 
   if (entry.status === JournalEntryStatus.VOIDED) {
     blockers.push(
@@ -438,8 +493,9 @@ async function buildReconciliationRunProofTrail(input: ProofTrailInput, client: 
   if (!run) throw new NotFoundError("Reconciliation proof subject not found")
 
   const blockers: ProofTrailBlocker[] = []
-  const openExceptions = run.paymentExceptions.filter((entry) => OPEN_PAYMENT_EXCEPTION_STATUSES.includes(entry.status))
-  const openSuspense = run.suspenseItems.filter((entry) => OPEN_SUSPENSE_STATUSES.includes(entry.status))
+  const { exceptions: openExceptions, suspense: openSuspense } = await paymentBlockerSummary(client, {
+    organizationId: input.organizationId, reconciliationRunId: run.id,
+  })
 
   if (run.status === ReconciliationRunStatus.FAILED || run.status === ReconciliationRunStatus.VOIDED) {
     blockers.push(createProofTrailBlocker({
@@ -452,25 +508,25 @@ async function buildReconciliationRunProofTrail(input: ProofTrailInput, client: 
     }))
   }
 
-  if (openExceptions.length > 0) {
+  if (openExceptions.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "reconciliation-open-exceptions",
-      severity: openExceptions.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      severity: openExceptions.high ? "high" : "medium",
       gate: "payments.reconciliation.exceptions",
       title: "Open payment exceptions remain",
-      detail: `${openExceptions.length} payment exception remains open or in review.`,
+      detail: `${openExceptions.count} payment exception remains open or in review.`,
       sourceTables: ["payment_exceptions"],
       nextAction: "Resolve payment exceptions before relying on this reconciliation.",
     }))
   }
 
-  if (openSuspense.length > 0) {
+  if (openSuspense.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "reconciliation-open-suspense",
-      severity: openSuspense.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      severity: openSuspense.high ? "high" : "medium",
       gate: "payments.reconciliation.suspense",
       title: "Open suspense remains",
-      detail: `${openSuspense.length} suspense item remains open or unresolved.`,
+      detail: `${openSuspense.count} suspense item remains open or unresolved.`,
       sourceTables: ["suspense_items"],
       nextAction: "Resolve or post suspense before sign-off.",
     }))
@@ -675,6 +731,7 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
         },
       },
       matchRecords: {
+        where: { organizationId: input.organizationId },
         select: {
           id: true,
           status: true,
@@ -704,6 +761,21 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
 
   if (!transaction) throw new NotFoundError("Payment transaction proof subject not found")
 
+  // Display history includes proposals and rejected decisions. Only accepted
+  // allocations across the complete history can establish full reconciliation.
+  const matchCoverage = await client.matchRecord.groupBy({
+    by: ["currencyCode"],
+    where: { organizationId: input.organizationId, paymentTransactionId: transaction.id,
+      status: { in: MANUAL_ALLOCATION_STATUSES } },
+    _sum: { amountMatched: true }, _min: { amountMatched: true },
+    _count: { _all: true, amountMatched: true },
+  })
+  const coverage = matchCoverage[0]
+  const fullyMatched = matchCoverage.length === 1 && coverage.currencyCode === transaction.currencyCode &&
+    coverage._count._all === coverage._count.amountMatched && coverage._min.amountMatched?.gt(0) === true &&
+    transaction.amount.gt(0) && coverage._sum.amountMatched?.eq(transaction.amount) === true
+
+
   const eventSourceType = accountingSourceType(transaction.sourceType)
   const events = eventSourceType && transaction.sourceId
     ? await client.businessEvent.findMany({
@@ -718,9 +790,12 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
       })
     : []
 
-  const openExceptions = transaction.paymentExceptions.filter((entry) => OPEN_PAYMENT_EXCEPTION_STATUSES.includes(entry.status))
-  const openSuspense = transaction.suspenseItems.filter((entry) => OPEN_SUSPENSE_STATUSES.includes(entry.status))
-  const blockers: ProofTrailBlocker[] = [...failedEventBlockers(events)]
+  const { exceptions: openExceptions, suspense: openSuspense } = await paymentBlockerSummary(client, {
+    organizationId: input.organizationId, paymentTransactionId: transaction.id,
+  })
+  const blockers: ProofTrailBlocker[] = eventSourceType && transaction.sourceId
+    ? await completeEventBlockers(client, { organizationId: input.organizationId, sourceType: eventSourceType, sourceId: transaction.sourceId }, events)
+    : []
 
   if (transaction.state === PaymentTransactionState.FAILED || transaction.state === PaymentTransactionState.CANCELLED) {
     blockers.push(createProofTrailBlocker({
@@ -757,25 +832,25 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
     }))
   }
 
-  if (openExceptions.length > 0) {
+  if (openExceptions.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "payment-transaction-open-exceptions",
-      severity: openExceptions.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      severity: openExceptions.high ? "high" : "medium",
       gate: "payments.reconciliation.exceptions",
       title: "Open payment exceptions remain",
-      detail: `${openExceptions.length} exception(s) remain open for this transaction.`,
+      detail: `${openExceptions.count} exception(s) remain open for this transaction.`,
       sourceTables: ["payment_exceptions"],
       nextAction: "Resolve payment exceptions before trusting this transaction as reconciled.",
     }))
   }
 
-  if (openSuspense.length > 0) {
+  if (openSuspense.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "payment-transaction-open-suspense",
-      severity: openSuspense.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      severity: openSuspense.high ? "high" : "medium",
       gate: "payments.reconciliation.suspense",
       title: "Open suspense remains",
-      detail: `${openSuspense.length} suspense item(s) remain open for this transaction.`,
+      detail: `${openSuspense.count} suspense item(s) remain open for this transaction.`,
       sourceTables: ["suspense_items"],
       nextAction: "Resolve or post suspense before relying on this transaction proof.",
     }))
@@ -784,7 +859,7 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
   const decision = computePaymentTransactionEvidenceGrade({
     state: transaction.state,
     ledgerPostingBatchStatus: transaction.ledgerPostingBatch?.status,
-    matchRecordCount: transaction.matchRecords.length,
+    fullyMatched,
     blockers,
   })
 
@@ -911,7 +986,7 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
     const blocked = matchRecord.status === "REJECTED" || matchRecord.status === "VOIDED"
     const grade: EvidenceGrade = blocked
       ? "blocked"
-      : matchRecord.status === "APPROVED" || matchRecord.status === "AUTO_MATCHED"
+      : MANUAL_ALLOCATION_STATUSES.some(status => status === matchRecord.status)
         ? "reconciled"
         : "operational"
     nodes.push(node({
@@ -1047,9 +1122,16 @@ async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client:
       : [],
   }, client)
 }
+// Invalidation preserves signed artifacts for history; it revokes current trust.
+function hasStaleCloseEvidence(metadata: Prisma.JsonValue | undefined) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return false
+  const staleState = metadata.staleState
+  return !!staleState && typeof staleState === "object" && !Array.isArray(staleState) && staleState.status === "EVIDENCE_STALE"
+}
+
 async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient) {
   const closeRun = await client.closeRun.findFirst({
-    where: { id: input.subjectId, organizationId: input.organizationId },
+    where: { id: input.subjectId, organizationId: input.organizationId, period: { organizationId: input.organizationId } },
     include: {
       period: { select: { id: true, name: true, status: true, startDate: true, endDate: true } },
       checklistItems: {
@@ -1078,7 +1160,7 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
         take: 20,
       },
       packExports: {
-        select: { id: true, fileType: true, watermarkId: true, isCertified: true, exportedAt: true },
+        select: { id: true, fileType: true, watermarkId: true, isCertified: true, exportedAt: true, metadata: true },
         orderBy: { exportedAt: "desc" },
         take: 10,
       },
@@ -1088,10 +1170,49 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
   if (!closeRun) throw new NotFoundError("Close proof subject not found")
 
   const blockers: ProofTrailBlocker[] = []
-  const openFindings = closeRun.findings.filter((finding) => OPEN_CLOSE_FINDING_STATUSES.includes(finding.status))
-  const failedChecklistItems = closeRun.checklistItems.filter((item) => item.status === CloseChecklistStatus.FAILED)
-  const unavailableEvidenceItems = closeRun.evidenceItems.filter((item) => !item.available)
-  const certifiedPackExportCount = closeRun.packExports.filter((entry) => entry.isCertified).length
+  const scope = { organizationId: input.organizationId, closeRunId: closeRun.id }
+  const [assessmentOrder, findingGroups, checklistGroups, unavailableEvidenceCount, certifiedPackExports] = await Promise.all([
+    readCloseAssessmentOrderInTx(client, input.organizationId, closeRun.periodId),
+    client.closeAssuranceFinding.groupBy({
+      by: ["severity"], where: { ...scope, status: { in: [...OPEN_CLOSE_FINDING_STATUSES] } }, _count: { _all: true },
+    }),
+    client.closeChecklistItem.groupBy({
+      by: ["severity"], where: { ...scope, status: { in: [CloseChecklistStatus.FAILED, CloseChecklistStatus.UNAVAILABLE] } }, _count: { _all: true },
+    }),
+    client.closeEvidenceItem.count({ where: { ...scope, available: false } }),
+    client.closePackExport.findMany({ where: { ...scope, isCertified: true }, select: { metadata: true } }),
+  ])
+  const selection = deriveCloseAssessmentSelection(assessmentOrder, closeRun)
+  const selectionBlocker = closeAssessmentSelectionBlocker(selection)
+  if (selectionBlocker) blockers.push(selectionBlocker)
+  const selectionSourceHash = createHash("sha256").update(JSON.stringify({
+    policy: "unique-latest-created-at-v1", organizationId: input.organizationId, periodId: closeRun.periodId,
+    selected: { id: closeRun.id, createdAt: closeRun.createdAt, status: closeRun.status, voidedAt: closeRun.voidedAt },
+    latest: assessmentOrder.latest, ambiguous: assessmentOrder.ambiguous, state: selection.state,
+  })).digest("hex")
+  // Historical certification survives invalidation; only current exports support the grade.
+  const certifiedPackExportCount = certifiedPackExports.filter(packExport => !hasStaleCloseEvidence(packExport.metadata)).length
+  const staleEvidence = hasStaleCloseEvidence(closeRun.metadata)
+  if (staleEvidence) {
+    blockers.push(createProofTrailBlocker({
+      id: "close-evidence-stale", severity: "high", gate: "accounting.close.evidence",
+      title: "Close certification evidence is stale",
+      detail: "A recorded source change invalidated this close evidence. Retained exports do not certify the current close.",
+      sourceTables: ["close_runs", "close_pack_exports"],
+      nextAction: "Run a new close assessment and resolve its controls before requesting certification.",
+    }))
+  }
+  if (closeRun.status === CloseRunStatus.CERTIFIED && certifiedPackExportCount === 0) {
+    blockers.push(createProofTrailBlocker({
+      id: "close-certified-export-missing", severity: "high", gate: "accounting.close.evidence",
+      title: "Certified close export is missing",
+      detail: "The certified status has no retained certified export evidence.",
+      sourceTables: ["close_runs", "close_pack_exports"],
+      nextAction: "Run a new close assessment and resolve its controls before requesting certification.",
+    }))
+  }
+  const openFindings = severitySummary(findingGroups)
+  const failedChecklistItems = severitySummary(checklistGroups)
 
   if (closeRun.status === CloseRunStatus.BLOCKED || closeRun.status === CloseRunStatus.VOIDED) {
     blockers.push(createProofTrailBlocker({
@@ -1104,36 +1225,36 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
     }))
   }
 
-  if (openFindings.length > 0) {
+  if (openFindings.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "close-open-findings",
-      severity: openFindings.some((finding) => finding.severity === "CRITICAL" || finding.severity === "HIGH") ? "high" : "medium",
+      severity: openFindings.high ? "high" : "medium",
       gate: "accounting.close.findings",
       title: "Close findings remain open",
-      detail: `${openFindings.length} close assurance finding remains unresolved.`,
+      detail: `${openFindings.count} close assurance finding remains unresolved.`,
       sourceTables: ["close_assurance_findings"],
       nextAction: "Resolve or waive open close findings before certification.",
     }))
   }
 
-  if (failedChecklistItems.length > 0) {
+  if (failedChecklistItems.count > 0) {
     blockers.push(createProofTrailBlocker({
       id: "close-checklist-failed",
-      severity: failedChecklistItems.some((item) => item.severity === "CRITICAL" || item.severity === "HIGH") ? "high" : "medium",
+      severity: failedChecklistItems.high ? "high" : "medium",
       gate: "accounting.close.checklist",
-      title: "Close checklist has failed controls",
-      detail: `${failedChecklistItems.length} checklist item failed.`,
+      title: "Close checklist has failed or unavailable controls",
+      detail: `${failedChecklistItems.count} checklist item failed or is unavailable.`,
       sourceTables: ["close_checklist_items"],
     }))
   }
 
-  if (unavailableEvidenceItems.length > 0) {
+  if (unavailableEvidenceCount > 0) {
     blockers.push(createProofTrailBlocker({
       id: "close-evidence-unavailable",
       severity: "high",
       gate: "accounting.close.evidence",
       title: "Close evidence is unavailable",
-      detail: `${unavailableEvidenceItems.length} close evidence item is unavailable.`,
+      detail: `${unavailableEvidenceCount} close evidence item is unavailable.`,
       sourceTables: ["close_evidence_items"],
       nextAction: "Regenerate or attach the missing close evidence.",
     }))
@@ -1171,6 +1292,10 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
         readinessScore: closeRun.readinessScore,
         criticalBlockerCount: closeRun.criticalBlockerCount,
         highBlockerCount: closeRun.highBlockerCount,
+        assessmentState: selection.state,
+        latestAssessmentCreatedAt: selection.latestCreatedAt?.toISOString() ?? null,
+        assessmentOrderAmbiguous: selection.ambiguous,
+        selectionSourceHash,
       },
     }),
   ]
@@ -1178,7 +1303,7 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
 
   closeRun.checklistItems.forEach((item, index) => {
     const itemNodeId = `close-checklist-${index + 1}`
-    const grade: EvidenceGrade = item.status === CloseChecklistStatus.FAILED ? "blocked" : "operational"
+    const grade: EvidenceGrade = item.status === CloseChecklistStatus.FAILED || item.status === CloseChecklistStatus.UNAVAILABLE ? "blocked" : "operational"
     nodes.push(node({
       id: itemNodeId,
       nodeType: "close.checklist_item",
@@ -1265,27 +1390,31 @@ async function buildCloseRunProofTrail(input: ProofTrailInput, client: DbClient)
 
   closeRun.packExports.forEach((packExport, index) => {
     const exportNodeId = `close-pack-export-${index + 1}`
+    const staleExport = packExport.isCertified && (staleEvidence || hasStaleCloseEvidence(packExport.metadata))
+    const retainedExport = packExport.isCertified && selection.state !== "CURRENT" && !staleExport
+    const exportGrade: EvidenceGrade = staleExport || retainedExport ? "blocked" : packExport.isCertified ? "certified" : "operational"
     nodes.push(node({
       id: exportNodeId,
       nodeType: "close.pack_export",
       nodeId: packExport.id,
-      label: packExport.isCertified ? "Certified close pack export" : "Draft close pack export",
+      label: staleExport ? "Invalidated close pack export" : retainedExport ? "Retained certified close pack export" : packExport.isCertified ? "Certified close pack export" : "Draft close pack export",
       moduleSlug: "close",
-      evidenceGrade: packExport.isCertified ? "certified" : "operational",
+      evidenceGrade: exportGrade,
       sourceTable: "close_pack_exports",
       available: true,
       redacted: index === 0,
       metadata: {
         fileType: packExport.fileType,
         exportedAt: packExport.exportedAt.toISOString(),
+        recordedIsCertified: packExport.isCertified,
       },
     }))
     edges.push(edge({
       fromNodeId: exportNodeId,
       toNodeId: subjectNodeId,
-      edgeType: packExport.isCertified ? "certifies" : "source",
-      label: packExport.isCertified ? "Certifies close evidence" : "Exports close pack",
-      evidenceGrade: packExport.isCertified ? "certified" : "operational",
+      edgeType: staleExport || retainedExport ? "source" : packExport.isCertified ? "certifies" : "source",
+      label: staleExport ? "Retains invalidated close evidence" : retainedExport ? "Retains recorded close certification" : packExport.isCertified ? "Certifies close evidence" : "Exports close pack",
+      evidenceGrade: exportGrade,
     }))
   })
 
@@ -1357,6 +1486,10 @@ export async function getProofTrail(input: ProofTrailInput, client: DbClient = d
     case "payment.transaction":
       return buildPaymentTransactionProofTrail(input, client)
     case "close.run":
-      return buildCloseRunProofTrail(input, client)
+      // Supplied transaction clients must provide the same snapshot for the
+      // selected record, assessment order and complete evidence reads.
+      return "$transaction" in client
+        ? client.$transaction(tx => buildCloseRunProofTrail(input, tx), { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+        : buildCloseRunProofTrail(input, client)
   }
 }

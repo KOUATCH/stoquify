@@ -1,4 +1,7 @@
 jest.mock("server-only", () => ({}));
+// Admission has its own real-rule tests; these fixtures isolate queue mechanics.
+jest.mock("../payroll-production-admission", () => ({ assertPayrollProductionAdmissionInTx: jest.fn() }));
+import { assertPayrollProductionAdmissionInTx } from "../payroll-production-admission";
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -225,7 +228,17 @@ function buildTx(evidence = evidenceFixture()) {
 describe("payroll authority adapter execution service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockReset().mockResolvedValue(undefined);
     mockRecordBusinessEventInTx.mockResolvedValue({ event: { id: "event-1" } });
+  });
+
+  it("does not enqueue new authority work when production admission is blocked", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new BusinessRuleError("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
+    await expect(enqueuePayrollAuthorityAdapterExecution({ organizationId: "org-1", declarationEvidenceId: "evidence-1", actorId: "controller-1", idempotencyKey: "blocked-queue", now: "2026-06-30T10:05:00Z" })).rejects.toThrow("PAYROLL_PRODUCTION_ADMISSION_BLOCKED");
+    expect(tx.payrollDeclaration.update).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
 
   it("queues certified authority evidence with idempotency, lease, and redacted proof metadata", async () => {

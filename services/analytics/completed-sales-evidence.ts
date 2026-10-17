@@ -43,7 +43,7 @@ type Sales = Awaited<ReturnType<typeof completedReportSales>>
 
 /** Original sale activity, before subsequent returns/credits. Neither posted profit nor a financial statement.
  * POS references the order; delivery issues reference its lines. Never substitute today's catalogue price. */
-export async function completedSalesEvidence(tx: Prisma.TransactionClient, organizationId: string, orders: Sales) {
+export async function completedSalesEvidence(tx: Prisma.TransactionClient, organizationId: string, orders: Sales, options: { requireOrderTieOut?: boolean; readCostEvidence?: boolean; maxMovements?: number } = {}) {
   const groups = new Map<string, { orderId: string; itemId: string; locationId: string; quantity: Prisma.Decimal; revenue: Prisma.Decimal; net: Prisma.Decimal; cost: Prisma.Decimal; issued: Prisma.Decimal; valid: boolean; name: string; nameFr: string | null; sku: string }>()
   const lineGroups = new Map<string, string>()
   let revenue = zero(), net = zero(), quantity = zero()
@@ -56,14 +56,16 @@ export async function completedSalesEvidence(tx: Prisma.TransactionClient, organ
       group.quantity = group.quantity.plus(qty); group.revenue = group.revenue.plus(gross); group.net = group.net.plus(gross.minus(tax))
       groups.set(key, group); lineGroups.set(line.id, key); lineTotal = lineTotal.plus(gross); lineTax = lineTax.plus(tax)
     }
-    if (!order.lines.length || !lineTotal.eq(reportDecimal(order.total)) || !lineTax.eq(reportDecimal(order.taxAmount))) throw new BusinessRuleError("Recorded sale totals do not match their lines. Review the source record.")
+    if (!order.lines.length || (options.requireOrderTieOut !== false && (!lineTotal.eq(reportDecimal(order.total)) || !lineTax.eq(reportDecimal(order.taxAmount))))) throw new BusinessRuleError("Recorded sale totals do not match their lines. Review the source record.")
     revenue = revenue.plus(lineTotal); net = net.plus(lineTotal.minus(lineTax))
   }
   const refs = [...orders.map(order => order.id), ...lineGroups.keys()]
-  const movements = refs.length ? await tx.inventoryTransaction.findMany({
+  const movements = refs.length && options.readCostEvidence !== false ? await tx.inventoryTransaction.findMany({
     where: { organizationId, type: "SALE", referenceType: "SALES_ORDER", referenceId: { in: refs } },
     select: { referenceId: true, itemId: true, locationId: true, quantity: true, unitCost: true, totalCost: true, timeProvenance: true },
+    ...(options.maxMovements ? { take: options.maxMovements + 1 } : {}),
   }) : []
+  if (options.maxMovements && movements.length > options.maxMovements) throw new BusinessRuleError("Choose a narrower cost evidence scope.")
   for (const movement of movements) {
     const key = lineGroups.get(movement.referenceId!) ?? JSON.stringify([movement.referenceId, movement.itemId]), group = groups.get(key)
     if (!group) {

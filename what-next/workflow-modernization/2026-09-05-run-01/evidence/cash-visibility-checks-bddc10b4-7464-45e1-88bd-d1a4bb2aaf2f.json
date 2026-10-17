@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-28T09:13:30.807Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "b80f0615c1bd2fc64f6acc03fe0a19570ed6097b7afab029e6e72abf78f8b5f8",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       41 passed, 41 total\nSnapshots:   0 total\nTime:        4.437 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/cash-command-visibility.service.ts",
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "components/cash-command/CashCommandDashboard.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "\nE:\\ohada saas\\Focused projects\\stoquify\\components\\cash-command\\CashCommandDashboard.tsx\n  284:53  warning  The ref value 'request.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'request.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps\n\n✖ 1 problem (0 errors, 1 warning)\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "b80f0615c1bd2fc64f6acc03fe0a19570ed6097b7afab029e6e72abf78f8b5f8",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": true
+}

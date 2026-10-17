@@ -85,6 +85,7 @@ describe("workflow assurance webhook delivery", () => {
     ]);
     mockDb.workflowAssuranceAlertDelivery.updateMany
       .mockResolvedValueOnce({ count: 0 })
+      .mockResolvedValueOnce({ count: 1 })
       .mockResolvedValueOnce({ count: 1 });
     mockDb.workflowAssuranceAlertDelivery.update.mockResolvedValue({
       id: "delivery-1",
@@ -103,8 +104,8 @@ describe("workflow assurance webhook delivery", () => {
       failed: 0,
       deadLettered: 0,
     });
-    expect(mockDb.workflowAssuranceAlertDelivery.update).toHaveBeenCalledWith({
-      where: { id: "delivery-1" },
+    expect(mockDb.workflowAssuranceAlertDelivery.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ id: "delivery-1", organizationId: "org-1", status: "PROCESSING", lockedAt: now, attemptCount: 1 }),
       data: expect.objectContaining({
         status: "PENDING",
         failedAt: null,
@@ -115,6 +116,39 @@ describe("workflow assurance webhook delivery", () => {
     });
   });
 
+  it.each(["success", "failure"])("does not acknowledge a lost lease after %s", async outcome => {
+    mockDb.workflowAssuranceAlertDelivery.findMany.mockResolvedValue([deliveryFixture({ attemptCount: 0 })]);
+    mockDb.workflowAssuranceAlertDelivery.updateMany.mockResolvedValueOnce({ count: 0 }).mockResolvedValueOnce({ count: 1 }).mockResolvedValueOnce({ count: 0 });
+    const result = await dispatchWorkflowAssuranceWebhookAlerts({ workerId: "old-worker", fetchImpl: async () => {
+      if (outcome === "failure") throw new Error("old request failed");
+      return new Response("ok");
+    } });
+    expect(result).toMatchObject({ delivered: 0, retried: 0, deadLettered: 0 });
+    expect(mockDb.workflowAssuranceAlertDelivery.updateMany.mock.calls[2][0].where).toMatchObject({ id: "delivery-1", organizationId: "org-1", status: "PROCESSING", lockedBy: "old-worker", attemptCount: 1, lockedAt: expect.any(Date) });
+  });
+
+  it("uses distinct delivery keys for equal source hashes and stable keys on retry", async () => {
+    const keys: string[] = [];
+    for (const id of ["delivery-1", "delivery-2", "delivery-1"]) {
+      mockDb.workflowAssuranceAlertDelivery.findMany.mockResolvedValue([{ ...deliveryFixture({ attemptCount: 0 }), id }]);
+      mockDb.workflowAssuranceAlertDelivery.updateMany.mockResolvedValue({ count: 1 });
+      await dispatchWorkflowAssuranceWebhookAlerts({ fetchImpl: async (_url, init) => {
+        keys.push((init?.headers as Record<string, string>)["idempotency-key"]);
+        expect(JSON.parse(String(init?.body)).idempotencyKey).toBe(keys.at(-1));
+        return new Response("ok");
+      } });
+    }
+    expect(keys[0]).not.toBe(keys[1]); expect(keys[0]).toBe(keys[2]);
+  });
+
+  it("does not send an already exhausted crash retry", async () => {
+    mockDb.workflowAssuranceAlertDelivery.findMany.mockResolvedValue([deliveryFixture({ attemptCount: 5 })]);
+    mockDb.workflowAssuranceAlertDelivery.updateMany.mockResolvedValue({ count: 1 });
+    const fetchImpl = jest.fn();
+    expect(await dispatchWorkflowAssuranceWebhookAlerts({ fetchImpl })).toMatchObject({ failed: 1, deadLettered: 1, delivered: 0 });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("dead-letters an exhausted delivery", async () => {
     const now = new Date("2026-07-24T12:00:00.000Z");
     mockDb.workflowAssuranceAlertDelivery.findMany.mockResolvedValue([
@@ -122,6 +156,7 @@ describe("workflow assurance webhook delivery", () => {
     ]);
     mockDb.workflowAssuranceAlertDelivery.updateMany
       .mockResolvedValueOnce({ count: 0 })
+      .mockResolvedValueOnce({ count: 1 })
       .mockResolvedValueOnce({ count: 1 });
     mockDb.workflowAssuranceAlertDelivery.update.mockResolvedValue({
       id: "delivery-1",
@@ -139,8 +174,8 @@ describe("workflow assurance webhook delivery", () => {
       failed: 1,
       deadLettered: 1,
     });
-    expect(mockDb.workflowAssuranceAlertDelivery.update).toHaveBeenCalledWith({
-      where: { id: "delivery-1" },
+    expect(mockDb.workflowAssuranceAlertDelivery.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ id: "delivery-1", organizationId: "org-1", status: "PROCESSING", lockedAt: now, attemptCount: 5 }),
       data: expect.objectContaining({
         status: "DEAD_LETTER",
         failedAt: now,
@@ -155,6 +190,7 @@ describe("workflow assurance webhook delivery", () => {
 function deliveryFixture(input: { attemptCount: number }) {
   return {
     id: "delivery-1",
+    organizationId: "org-1",
     dedupeKey: "created:sha256:source",
     attemptCount: input.attemptCount,
     incident: {

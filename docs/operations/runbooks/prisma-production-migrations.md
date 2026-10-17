@@ -1,6 +1,6 @@
 # Prisma Production Migrations
 
-This runbook governs automated Prisma migration deployment for Stoquify. The objective is to apply committed migrations before a production application build without allowing local builds, ordinary previews, stale approvals, or unreviewed destructive SQL to mutate a database.
+This runbook governs explicit Prisma schema promotion for Stoquify. A reviewed artifact must be built and verified before the separate schema stage. Local builds, ordinary previews, stale approvals and unreviewed destructive SQL must not mutate a deployment target. See [artifact/schema promotion](../../release/ARTIFACT_SCHEMA_PROMOTION.md).
 
 ## Execution matrix
 
@@ -8,7 +8,7 @@ This runbook governs automated Prisma migration deployment for Stoquify. The obj
 | --- | --- | --- |
 | Local or CI policy check | Verify immutable catalog, scan unmanifested migration delta, and skip deployment | None |
 | Vercel Preview | Scan and skip deployment | None; previews must not share and migrate Production |
-| Vercel Production | Scan and run `prisma migrate deploy` | Non-local PostgreSQL `DATABASE_URL` |
+| Explicit production schema stage | Verify the artifact, serialize promotion, then scan and run `prisma migrate deploy` | Non-local PostgreSQL `DATABASE_URL` and existing gate attestations |
 | Explicit staging | Deploy only with `AQSTOQFLOW_DEPLOY_MIGRATIONS=1` and `AQSTOQFLOW_DATABASE_TARGET=staging` | Non-local PostgreSQL `DATABASE_URL` |
 | Explicit preview | Deploy only with `AQSTOQFLOW_DEPLOY_MIGRATIONS=1` and `AQSTOQFLOW_DATABASE_TARGET=preview-isolated` | Isolated non-production PostgreSQL `DATABASE_URL` |
 
@@ -27,7 +27,7 @@ The gate does not read `.env`. Release credentials must be injected through the 
 9. Confirm the deployment environment owns a non-local PostgreSQL `DATABASE_URL`, target attestation where required, and dedicated release secrets.
 10. The safe deploy preflight queries `_prisma_migrations` read-only, proves applied-history integrity, calculates the exact pending set, and scans destructive risk only in that set.
 11. If the baseline bridge is pending on a database with completed migration history, automation stops with `baseline_bridge_manual_adoption_required`. Follow the controlled existing-database path below.
-12. The build runs the release-secret preflight, safe migration deploy, direct post-deploy history health, lint, and the application build. Any failed check stops publication.
+12. Build and verify the artifact before invoking `release:schema:promote` with its trusted digest. That separate stage retains secret preflight, safe migration deploy and post-deploy history health under a database-wide lock. The hosting provider then promotes the exact verified artifact and performs health checks; it must not rebuild. Provider wiring and rollback behavior remain deployment-specific gates.
 13. Archive the deployment readiness report, catalog result, pre/post history evidence, exact pending set, referenced approvals, and post-deploy smoke evidence.
 
 Prisma documents `migrate deploy` as the production/staging command and recommends running it in CI/CD rather than by temporarily placing a production URL on a developer machine. See [Prisma migrate deploy](https://www.prisma.io/docs/cli/migrate/deploy) and [deploying database changes](https://docs.prisma.io/docs/orm/prisma-client/deployment/deploy-database-changes-with-prisma-migrate).

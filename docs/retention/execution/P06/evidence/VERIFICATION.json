@@ -1,0 +1,193 @@
+{
+  "prompt": "P06",
+  "state": "PARTIAL",
+  "started": "2026-10-16",
+  "resumed": "2026-10-17",
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exit_code": 0,
+    "unclassified_scripts": 196,
+    "dates": [
+      "2026-10-16",
+      "2026-10-17"
+    ],
+    "side_effect_review": "Current package script, absent hooks, registry and fs/path/crypto-only runner inspected. No application commands executed by validator."
+  },
+  "runtime": {
+    "node": "22.17.0",
+    "jest": "30.4.1",
+    "configuration": "jest.retention-offline.config.cjs",
+    "next_project_dir": null
+  },
+  "final_lanes": [
+    {
+      "class": "M",
+      "lane": "service",
+      "date": "2026-10-17",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_SERVICE_FINAL.json",
+      "shell": "C:/Windows/System32/cmd.exe",
+      "evidence": "OFFLINE_SERVICE_FINAL.json",
+      "exit_code": 0,
+      "environment_override": {},
+      "execution_boundary": "Default sandbox",
+      "success": true,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "passed_suites": 1,
+      "failed_suites": 0,
+      "suites": [
+        {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\services\\pos\\__tests__\\offline-sync.service.test.ts",
+          "status": "passed",
+          "cases": 41
+        }
+      ],
+      "limitation": "Mocked Prisma/commit or transport/query/queue collaborators; no real database"
+    },
+    {
+      "class": "M",
+      "lane": "hooks",
+      "date": "2026-10-17",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --env=jsdom --runTestsByPath hooks/posHooks/__tests__/offline-flush-recovery.test.ts hooks/posHooks/__tests__/offline-dashboard-scope.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_HOOK_FINAL.json",
+      "shell": "C:/Windows/System32/cmd.exe",
+      "evidence": "OFFLINE_HOOK_FINAL.json",
+      "exit_code": 0,
+      "environment_override": {},
+      "execution_boundary": "Default sandbox",
+      "success": true,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "passed_suites": 2,
+      "failed_suites": 0,
+      "suites": [
+        {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\hooks\\posHooks\\__tests__\\offline-flush-recovery.test.ts",
+          "status": "passed",
+          "cases": 11
+        },
+        {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\hooks\\posHooks\\__tests__\\offline-dashboard-scope.test.ts",
+          "status": "passed",
+          "cases": 6
+        }
+      ],
+      "limitation": "Mocked Prisma/commit or transport/query/queue collaborators; no real database"
+    },
+    {
+      "class": "B",
+      "lane": "isolated browser storage",
+      "date": "2026-10-17",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath lib/pos/__tests__/offline-local-queue.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_BROWSER_EXPLICIT_CACHE.json",
+      "shell": "PowerShell -> reviewed Python subprocess wrapper",
+      "evidence": "OFFLINE_BROWSER_EXPLICIT_CACHE.json",
+      "exit_code": 0,
+      "environment_override": {
+        "PLAYWRIGHT_BROWSERS_PATH": "C:/Users/J COMPUTER/AppData/Local/ms-playwright"
+      },
+      "execution_boundary": "Escalated isolated localhost fixture after sandbox network denial; no application database",
+      "success": true,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "passed_suites": 1,
+      "failed_suites": 0,
+      "suites": [
+        {
+          "path": "E:\\ohada saas\\Focused projects\\stoquify\\lib\\pos\\__tests__\\offline-local-queue.test.ts",
+          "status": "passed",
+          "cases": 19
+        }
+      ],
+      "limitation": "Isolated real Chromium queue helper; no application/DB/ingestion"
+    }
+  ],
+  "mocked_passed": 58,
+  "isolated_browser_passed": 19,
+  "new_cases": {
+    "mocked_service": 7,
+    "isolated_browser": 1
+  },
+  "earlier_attempts": [
+    {
+      "lane": "browser explicit cache in sandbox",
+      "exit_code": 1,
+      "evidence": "OFFLINE_BROWSER_SANDBOX_DENIED.json",
+      "log": "BROWSER_SANDBOX_DENIED_LOG.txt",
+      "results": "Chromium launched; all 19 cases failed in setup navigating to isolated localhost with ERR_NETWORK_ACCESS_DENIED; no queue assertions ran"
+    },
+    {
+      "lane": "browser default cache",
+      "exit_code": 1,
+      "evidence": "OFFLINE_BROWSER_FINAL.json",
+      "results": "19 cases failed at shared browser launch; Chromium not found in sandbox-specific cache; no browser behavior exercised"
+    },
+    {
+      "lane": "browser cmd cache override attempt",
+      "exit_code": 1,
+      "evidence": "OFFLINE_BROWSER_CACHED.json",
+      "results": "19 cases failed at shared launch; attempted cmd env assignment was ineffective; still resolved sandbox-specific cache"
+    },
+    {
+      "lane": "browser PowerShell direct retry",
+      "exit_code": 1,
+      "results": "Interrupted after no output or result JSON; no behavioral evidence"
+    },
+    {
+      "lane": "Python cmd wrapper launch",
+      "exit_code": 1,
+      "results": "cmd executable quoting failed before Python ran; retried with PowerShell invocation"
+    },
+    {
+      "lanes": [
+        "service",
+        "hooks",
+        "browser"
+      ],
+      "started": "2026-10-16",
+      "exit_code": 1073807364,
+      "results": "No test JSON/output; not passes; termination cause not established",
+      "commands": [
+        "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_SERVICE_RESULTS.json",
+        "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --env=jsdom --runTestsByPath hooks/posHooks/__tests__/offline-flush-recovery.test.ts hooks/posHooks/__tests__/offline-dashboard-scope.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_HOOK_RESULTS.json",
+        "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath lib/pos/__tests__/offline-local-queue.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_BROWSER_RESULTS.json"
+      ]
+    },
+    {
+      "lane": "resumed PowerShell service",
+      "exit_code": 1,
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_SERVICE_RESULTS.json",
+      "results": "Interrupted after no result; not a test pass"
+    },
+    {
+      "lane": "service fixture correction",
+      "exit_code": 1,
+      "passed": 40,
+      "failed": 1,
+      "evidence": "OFFLINE_SERVICE_CMD_RESULTS.json",
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-offline.config.cjs --runInBand --no-cache --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts --json --outputFile docs/retention/execution/P06/evidence/OFFLINE_SERVICE_CMD_RESULTS.json",
+      "reason": "New expired-device fixture used shared update mock that discarded expiry; corrected only the added fixture"
+    }
+  ],
+  "not_run": {
+    "D": "Real DB and complete ingestion/commit/acknowledgement concurrency; P05 prerequisite incomplete",
+    "B_application": "Authenticated application checkout/recovery UI and local-only queue visibility at close",
+    "P": "Provider/authority",
+    "C": "Customer observations/retention",
+    "E": "Qualified expert review",
+    "O": "Operational restore/load/power-loss"
+  },
+  "browser_envelope_evidence": "BROWSER_RUN_LOG.txt, when the fixture emits P06_BROWSER_ENVELOPE; no package-version inference",
+  "observed_browser_envelope": {
+    "version": "149.0.7827.55",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/149.0.7827.55 Safari/537.36",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "fixture": "isolated-localhost-queue",
+    "networkTransition": "offline-to-online",
+    "applicationServer": false
+  }
+}

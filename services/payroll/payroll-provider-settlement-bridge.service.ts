@@ -41,6 +41,9 @@ export const payrollProviderMatchedSettlementInputSchema = z.object({
   payrollPaymentBatchId: idSchema,
   matchRecordId: idSchema,
   actorId: idSchema.optional().nullable(),
+  sessionId: idSchema.optional(),
+  sessionToken: idSchema.optional(),
+  correlationId: idSchema.optional(),
   actorPermissions: z.array(z.string().trim().min(1)).default([]),
   approvedById: idSchema.optional(),
   sourceRegisterHash: hashSchema,
@@ -825,7 +828,9 @@ export async function recordPayrollProviderMatchedSettlement(
       lastAuthAt: parsed.lastAuthAt,
       now: parsed.now,
     });
-    const settlement = await recordSettlement(settlementInput, client);
+    // Interactive authority must be revalidated by the settlement transaction.
+    // A background lease or caller permission array does not grant payroll write authority.
+    const settlement = await recordSettlement({ ...settlementInput, sessionId: parsed.sessionId, sessionToken: parsed.sessionToken, correlationId: parsed.correlationId }, client);
     return {
       status:
         providerOutcome.status === "settled" ? "SETTLED" : "PARTIALLY_SETTLED",

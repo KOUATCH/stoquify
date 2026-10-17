@@ -1,0 +1,47 @@
+{
+  "purchaseApplied": true,
+  "receipts": [
+    "evidence/source-reversal-jest-92a4c4da-0534-4668-9bd7-bc5dc0acf523.json",
+    "evidence/source-reversal-typecheck-cb6a8cc2-bc0d-45e5-8eb9-8c32e67425d2.json",
+    "evidence/source-reversal-lint-12439eb3-97b1-4a77-bc1b-98de1ada50f2.json",
+    "lanes/environment/inventory-adjustment-reversal-runtime-c0e63cf1-03c1-4f1b-8dda-31a537fe0ab0.json",
+    "lanes/environment/journal-suspense-runtime-9e67dd35-c388-4186-9883-f0d42e1e8dec.json",
+    "lanes/environment/purchase-reversal-order-runtime-b4e944ec-722b-4f31-a9bd-8f17a0d6adb5.json"
+  ],
+  "artifacts": [
+    "SOURCE_REVERSAL_ORDER_2026-10-01.md",
+    "PURCHASE_CORRECTION_PREPARATION_REVIEW_2026-10-01.md",
+    "evidence/INDEPENDENT_SUSPENSE_REVERSAL_ORDER_REVIEW_2026-10-01.md",
+    "evidence/INDEPENDENT_PURCHASE_REVERSAL_CANDIDATE_REVIEW_2026-10-01.md",
+    "evidence/inventory-reversal-independent-review-2026-10-01-settlement-runtime-recipe.md",
+    "evidence/INVENTORY_REVERSAL_REVIEW_NOTES_2026-10-01.md",
+    "lanes/environment/verify-source-reversal.cjs",
+    "lanes/environment/inventory-adjustment-reversal-runtime.cjs",
+    "lanes/environment/journal-suspense-runtime.cjs",
+    "lanes/environment/purchase-reversal-order-runtime.cjs",
+    "evidence/source-reversal-before-purchase-39d08eb3-36be-4d4e-aca3-1c08191482b2/candidate-typecheck-12561297-8793-41f2-8fbf-7aa6fb3a3028.json",
+    "evidence/source-reversal-before-purchase-39d08eb3-36be-4d4e-aca3-1c08191482b2/candidate-jest-c953a478-4001-4a82-8e8e-b8fe57b088aa.json",
+    "evidence/source-reversal-before-purchase-39d08eb3-36be-4d4e-aca3-1c08191482b2/candidate-application-4682788d-085d-4b59-95eb-4d6da3d94bdb.json"
+  ],
+  "limitations": [
+    "No whole Cash/Close workflow closure; original lifecycle, authority, delivery, accessibility and external prerequisites remain.",
+    "Inventory and direct purchase service controls retain asserted-actor limitations; purchase action freshness/permissions have focused mocked proof, not a new authenticated browser proof.",
+    "Purchase runtime proves financial/source conservation and prepared lock scope, not purchase-specific publication races, retained certified exports or Cash recovery.",
+    "Manual posting and other ordinary source producers still need complete publication/freshness coordination; global forecast dependencies and outbox delivery remain open.",
+    "Current shared tests do not recertify earlier manual/customer-settlement runtime bindings after shared-helper changes.",
+    "Synthetic preapproved PO setup is not approval workflow evidence; no customer/statutory/release approval or production lock-capacity certification is claimed.",
+    "Existing supplier/invoice lock-order differences remain; no general deadlock-freedom claim."
+  ],
+  "implementationStatus": "Inventory adjustment, both suspense paths and purchase return/credit reversals now prepare complete period scope before effects and invalidate in order; source-owned reversal integration delivered locally.",
+  "runtimeStatus": "631 focused tests, full no-emit TypeScript and 22-file lint pass. Owned PostgreSQL: seven inventory scenarios, two suspense journeys and four purchase scenarios pass with stable source/outside-fixture observations; scope limits retained.",
+  "remaining": "Source-owned reversal corrections now have scoped verification. Ordinary manual posting is the next confirmed producer gap; other writers, broad operating/forecast freshness, interrupted processing and outbox delivery remain open. Purchase-specific publication races and Cash/Close/export recovery still require proof. This does not close the full Cash/Close lifecycle.",
+  "verifiedCriteria": [
+    "Inventory reversal: exact stock/journal compensation and replay, Cash/Close recovery, both publication orderings, late evidence rollback/retry, unsupported inherited isolation and cumulative later/no-run period locks proved in owned PostgreSQL.",
+    "Suspense correction/recovery: all-tenant period scope before writes, retained earlier export invalidation, exact mirrors/replay and financial/source/audit/outbox rollback verified; correction denies expired authority after actual wait and both commands restart stale catalog snapshots.",
+    "Purchase return/credit: applied prepared-scope contract, post-wait action authority, stock handoff and truthful no-journal provenance; PostgreSQL verifies exact ledger/stock/payable compensation, immutable source records, zero-value/unposted outcomes and rollback/replay.",
+    "Combined current source passed 631 focused tests in 22 suites, full no-emit TypeScript and 22-file lint; bound source stable and observed outside-fixture state unchanged in all three runtime receipts."
+  ],
+  "delivered": "Inventory adjustment, suspense correction/recovery and purchase return/credit reversals prepare their full period scope before financial writes. They preserve exact compensation, replay and retained evidence. Suspense covers all tenant periods because Close consumes organization-wide totals. Purchase actions recheck authority after waits. No whole workflow was closed or added.",
+  "verificationSummary": "631 tests in 22 suites, full TypeScript and 22-file lint passed. Owned PostgreSQL checks passed: seven inventory scenarios, two suspense journeys with rollback/authentication/catalog-retry subchecks, and four purchase scenarios. Sources and observed outside-fixture records stayed stable. Initial test-fixture errors, stalled discovery and sandbox write failures are retained; narrowed proof-backed approval resolved the purchase patch rejection.",
+  "nextAction": "Next: complete ordinary manual posting's pre-write scope and actual publication/recovery proof. No user input blocks that local implementation."
+}

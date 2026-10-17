@@ -1,0 +1,36 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\ProfessionalPOSSystem.shift-close.test.tsx.before.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\__tests__\\ProfessionalPOSSystem.shift-close.test.tsx"
+index c5c9ee46..f2e68fe3 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\ProfessionalPOSSystem.shift-close.test.tsx.before.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\__tests__\\ProfessionalPOSSystem.shift-close.test.tsx"	
+@@ -1,5 +1,11 @@
+ import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+ import { readPendingSale, savePendingSale } from "@/lib/pos/pending-sale"
++import { assertNoLocalOfflineWork } from "@/lib/pos/offline-local-queue"
++jest.mock("@/lib/pos/offline-local-queue", () => ({ assertNoLocalOfflineWork: jest.fn().mockResolvedValue(undefined) }))
++jest.mock("@/components/pos/offline/LocalOfflineRecovery", () => ({
++  LocalOfflineRecovery: () => <div data-testid="local-offline-recovery" />,
++  localOfflineCopy: { en: { closeBlocked: "Local offline evidence blocks shift close" }, fr: { closeBlocked: "Preuves hors ligne" } },
++}))
+ jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
+ jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: jest.fn(() => ({
+   ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
+@@ -500,6 +506,19 @@ describe("ProfessionalPOSSystem shift close", () => {
+     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+   })
+ 
++  it.each(["pending evidence", "storage unavailable"])("blocks shift submission when a fresh local check finds %s", async reason => {
++    const close = setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
++    ;(assertNoLocalOfflineWork as jest.Mock).mockRejectedValueOnce(new Error(reason))
++    render(<ProfessionalPOSSystem />)
++    const dialog = openCloseDialog()
++    fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "0" } })
++    fireEvent.click(within(dialog).getByRole("button", { name: "shift.close" }))
++    expect(await screen.findByText("Local offline evidence blocks shift close")).toBeInTheDocument()
++    expect(close).not.toHaveBeenCalled()
++    expect(assertNoLocalOfflineWork).toHaveBeenCalledWith({ organizationKey: "org-1", locationId: "location-1", terminalId: "terminal-1" })
++    expect(screen.getByRole("dialog")).toBeInTheDocument()
++  })
++
+   it.each([
+     { currency: "XAF", expectedBalance: 100.49, closingAmount: "100" },
+     { currency: "XAF", expectedBalance: 0, closingAmount: "0" },

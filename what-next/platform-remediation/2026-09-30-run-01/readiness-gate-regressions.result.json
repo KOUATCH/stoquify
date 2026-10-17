@@ -1,0 +1,22 @@
+{
+  "name": "readiness-gate-regressions",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--runTestsByPath",
+    "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+    "scripts/__tests__/report-trust-export-gate.test.js",
+    "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+    "services/analytics/__tests__/completed-sales-evidence.test.ts",
+    "services/analytics/__tests__/financial-reports.service.test.ts"
+  ],
+  "startedAt": "2026-09-30T20:32:16.423Z",
+  "endedAt": "2026-09-30T20:35:16.826Z",
+  "code": null,
+  "signal": "SIGTERM",
+  "timedOut": true,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 0,
+  "stderrBytes": 0
+}

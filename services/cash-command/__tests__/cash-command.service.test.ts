@@ -1,3 +1,6 @@
+import { localizeCashCommandNavigation } from "../cash-command-navigation"
+import { presentCashCommand } from "../cash-command-presentation"
+jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
 import type { ModuleControlCenterData } from "@/services/modules/module-control-contracts"
 import type { CashDrawerDashboardData } from "@/services/pos/drawer-dashboard.service"
 import type { ActionQueueResult } from "@/services/signals/business-signal-contracts"
@@ -13,6 +16,10 @@ import type {
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    organization: { findFirst: jest.fn() },
+    payment: { aggregate: jest.fn() },
+    payrollEmployeeBalanceCase: { groupBy: jest.fn() },
+    purchaseOrder: { groupBy: jest.fn() },
     paymentTransaction: { findFirst: jest.fn() },
     journalEntry: { findFirst: jest.fn() },
     reconciliationRun: { findFirst: jest.fn() },
@@ -38,6 +45,15 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
   getModuleControlCenterData: jest.fn(),
   observeModuleAccess: jest.fn(),
 }))
+// Keep these read-model fixtures' per-module decisions; the batch's persisted
+// authority and audit equivalence are exercised by its own service tests.
+jest.mock("@/services/modules/module-access-batch.service", () => ({
+  observeModuleReadAccessBatch: async ({ moduleSlugs, ...input }: { moduleSlugs: string[] }) => {
+    const { observeModuleAccess: observe } = jest.requireMock("@/services/modules/module-entitlement.service")
+    return new Map(await Promise.all([...new Set(moduleSlugs)].map(async moduleSlug =>
+      [moduleSlug, await observe({ ...input, moduleSlug, accessIntent: "read", mode: "enforce" })] as const)))
+  },
+}))
 jest.mock("@/services/pos/drawer-dashboard.service", () => ({
   getCashDrawerDashboard: jest.fn(),
 }))
@@ -61,8 +77,9 @@ jest.mock("@/services/snapshots/inventory-loss-snapshot.service", () => ({
 jest.mock("@/services/snapshots/payment-truth-snapshot.service", () => ({
   getPaymentTruthSnapshot: jest.fn(),
 }))
-jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
-  getTenantOperatingSnapshot: jest.fn(),
+jest.mock("@/services/payroll/payroll-finance-forecast.service", () => ({
+  ...jest.requireActual("@/services/payroll/payroll-finance-forecast.service"),
+  getPayrollFinanceForecast: jest.fn(),
 }))
 
 import { auditRbacDecision } from "@/lib/security/rbac"
@@ -80,7 +97,7 @@ import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
 import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
-import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { getPayrollFinanceForecast } from "@/services/payroll/payroll-finance-forecast.service"
 import { db } from "@/prisma/db"
 
 import {
@@ -102,13 +119,53 @@ const mockGetCloseReadinessSnapshot = getCloseReadinessSnapshot as jest.Mock
 const mockGetInventoryCashSnapshot = getInventoryCashSnapshot as jest.Mock
 const mockGetInventoryLossSnapshot = getInventoryLossSnapshot as jest.Mock
 const mockGetPaymentTruthSnapshot = getPaymentTruthSnapshot as jest.Mock
-const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
+const mockGetPayrollFinanceForecast = getPayrollFinanceForecast as jest.Mock
 const mockFindPaymentTransaction = db.paymentTransaction.findFirst as jest.Mock
 const mockFindJournalEntry = db.journalEntry.findFirst as jest.Mock
 const mockFindReconciliationRun = db.reconciliationRun.findFirst as jest.Mock
 const mockFindCloseRun = db.closeRun.findFirst as jest.Mock
 
 describe("cash command service", () => {
+  it.each(["blocked", "operational", "raw", "certified"] as const)("does not turn a zero close counter into an unsupported success (%s)", grade => {
+    const close = closeSnapshot({ blockedCloseRunCount: 0, criticalOpenFindingCount: 0, unavailableEvidenceCount: 0 })
+    close.evidenceGrade = grade
+    close.blockers = []
+    const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF",
+      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: close },
+      drawerDashboard: drawerDashboard(), actionQueue: actionQueue(), moduleControl: moduleControl() })
+    expect(data.trustSignals.find(signal => signal.id === "close_readiness")).toMatchObject({
+      value: grade === "blocked" ? "Review required" : "0",
+      tone: grade === "blocked" ? "danger" : grade === "certified" ? "success" : "info",
+      evidenceGrade: grade,
+    })
+    expect(presentCashCommand(data, "fr").trustSignals.find(signal => signal.id === "close_readiness")?.value)
+      .toBe(grade === "blocked" ? "Examen requis" : "0")
+  })
+  it("keeps missing close setup visible when legacy issue counts are zero", () => {
+    const close = closeSnapshot({ blockedCloseRunCount: 0, criticalOpenFindingCount: 0, unavailableEvidenceCount: 0 })
+    close.evidenceGrade = "raw"
+    close.blockers = [{ id: "close-periods-missing", gate: "close_readiness", severity: "medium", title: "No accounting period covers this snapshot", detail: "Close readiness is partial until accounting periods exist for the selected date range.", sourceTables: ["accounting_periods"] }]
+    const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF",
+      snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: close },
+      drawerDashboard: drawerDashboard(), actionQueue: actionQueue(), moduleControl: moduleControl() })
+    expect(data.trustSignals.find(signal => signal.id === "close_readiness")).toMatchObject({ value: "Review required", tone: "gold" })
+  })
+  it("formats action and forecast dates in UTC even when the server default differs", () => {
+    const OriginalDateTimeFormat = Intl.DateTimeFormat
+    const formatter = jest.spyOn(Intl, "DateTimeFormat").mockImplementation((locale, options) => new OriginalDateTimeFormat(locale, { timeZone: "Pacific/Honolulu", ...options }))
+    try {
+      const queue = actionQueue()
+      queue.actionItems[0].dueAt = "2026-07-01T00:30:00.000Z"
+      const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF",
+        snapshots: { tenantOperating: tenantSnapshot({ payrollFinanceForecast: payrollForecastMetrics({ nextPayDate: "2026-07-01T00:30:00.000Z" }) }), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
+        drawerDashboard: drawerDashboard(), actionQueue: queue, moduleControl: moduleControl() })
+      expect(data.actionsToday.find(item => item.id === queue.actionItems[0].id)?.dueLabel).toBe("Due Jul 1 (UTC)")
+      expect(data.cards.find(card => card.id === "upcoming_payroll_net_pay")?.detail).toContain("Jul 1 (UTC)")
+      const fr = presentCashCommand(data, "fr")
+      expect(fr.actionsToday.find(item => item.id === queue.actionItems[0].id)?.dueLabel).toBe("Échéance : 1 juil. (UTC)")
+      expect(fr.cards.find(card => card.id === "upcoming_payroll_net_pay")?.detail).toContain("1 juil. (UTC)")
+    } finally { formatter.mockRestore() }
+  })
   it("keeps suspense risk visible when the combined currency total is unavailable", () => {
     const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF", snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 }), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() }, drawerDashboard: drawerDashboard(), actionQueue: actionQueue(), moduleControl: moduleControl() })
     expect(data.summary.unreconciledCash).toBeNull()
@@ -197,12 +254,14 @@ describe("cash command service", () => {
     })
     expect(data.changes.map((change) => change.title)).toEqual(
       expect.arrayContaining([
-        "Cash collected moved today",
+        "Cash collected in this period",
         "Unreconciled cash remains open",
         "Drawer risk needs review",
         "Provider risk is visible",
       ]),
     )
+    expect(data.changes.length).toBeGreaterThan(0)
+    expect(data.changes.every(change => change.direction === "observed" && change.previousValue === null)).toBe(true)
     expect(data.actionsToday.map((item) => item.title)).toEqual([
       "Resolve payment suspense",
       "Review drawer risk",
@@ -217,6 +276,24 @@ describe("cash command service", () => {
     )
   })
 
+  it.each([
+    { reasonCode: "PAYROLL_FORECAST_NO_UPCOMING_PERIODS", amount: 0, grade: "operational", state: "empty" },
+    { reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED", amount: 350000, grade: "posted", state: "ready" },
+    { reasonCode: "UNRECOGNIZED_FORECAST_BASIS", amount: 350000, grade: "operational", state: "ready" },
+  ])("derives forecast evidence from its basis: $reasonCode", ({ reasonCode, amount, grade, state }) => {
+    const empty = amount === 0
+    const forecast = payrollForecastMetrics({ reasonCode, upcomingNetPayAmount: amount, upcomingStatutoryLiabilityAmount: amount,
+      totalUpcomingAmount: amount * 2, ...(empty ? { payrollPeriodCount: 0, payrollRunCount: 0, paymentBatchCount: 0, declarationCount: 0,
+        sourceLinkCount: 0, evidenceHashCount: 0, nextPayDate: null, nextDeclarationDueDate: null } : {}) })
+    const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF",
+      snapshots: { tenantOperating: tenantSnapshot({ payrollFinanceForecast: forecast }), paymentTruth: paymentSnapshot(), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() },
+      drawerDashboard: drawerDashboard(), actionQueue: actionQueue(), moduleControl: moduleControl() })
+    for (const id of ["upcoming_payroll_net_pay", "upcoming_statutory_liability"]) {
+      expect(data.cards.find(card => card.id === id)).toMatchObject({ value: amount, state, evidenceGrade: grade, trustState: grade })
+    }
+    expect(data.summary.payrollForecastTotalAmount).toBe(amount * 2)
+  })
+
   it("keeps blocked payroll forecast proof specific to payroll cash planning", () => {
     const tenant = tenantSnapshot({
       payrollFinanceForecast: payrollForecastMetrics({
@@ -224,9 +301,9 @@ describe("cash command service", () => {
         authoritative: false,
         reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
         message: "Upcoming payroll finance forecasts are withheld because payroll proof is incomplete.",
-        upcomingNetPayAmount: 0,
-        upcomingStatutoryLiabilityAmount: 0,
-        totalUpcomingAmount: 0,
+        upcomingNetPayAmount: null,
+        upcomingStatutoryLiabilityAmount: null,
+        totalUpcomingAmount: null,
         blockerCodes: ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING"],
       }),
     })
@@ -273,7 +350,7 @@ describe("cash command service", () => {
     const statutory = data.cards.find((card) => card.id === "upcoming_statutory_liability")
 
     expect(netPay).toMatchObject({
-      value: 0,
+      value: null,
       state: "blocked",
       evidenceGrade: "blocked",
       trustState: "blocked",
@@ -285,19 +362,25 @@ describe("cash command service", () => {
       expect.not.arrayContaining([expect.objectContaining({ gate: "close_readiness" })]),
     )
     expect(statutory).toMatchObject({
-      value: 0,
+      value: null,
       state: "blocked",
       blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
     })
     expect(data.changes.map((change) => change.title)).toEqual(
       expect.arrayContaining(["Payroll forecast proof is blocked"]),
     )
+    expect(data.changes.find(change => change.id === "cash-command-change:upcoming_payroll_net_pay")).toMatchObject({
+      direction: "observed", previousValue: null, currentValue: tenant.metrics.payrollFinanceForecast.blockerCodes.length,
+      unit: "blockers", format: "number",
+    })
     expect(data.risks.map((risk) => risk.title)).toEqual(
       expect.arrayContaining(["Payroll forecast proof"]),
     )
+    expect(data.summary.payrollForecastTotalAmount).toBeNull()
+    expect(data.commandBrief.summary).toContain("total unavailable")
   })
 
-  it("promotes employee balance recovery when payroll balances affect cash planning", () => {
+  it.each([27500, null])("promotes employee balance recovery when its total is %s", amount => {
     const drawer = drawerDashboard()
     drawer.alerts = []
     drawer.summary.liveVariance = 0
@@ -312,7 +395,7 @@ describe("cash command service", () => {
           activeEmployeeBalanceCaseCount: 2,
           openEmployeeBalanceCaseCount: 1,
           partiallySettledEmployeeBalanceCaseCount: 1,
-          employeeBalanceOutstandingAmount: 27500,
+          employeeBalanceOutstandingAmount: amount,
           periodEmployeeBalanceSettlementCount: 3,
           periodEmployeeBalanceSettlementAmount: 12500,
         }),
@@ -335,10 +418,10 @@ describe("cash command service", () => {
 
     expect(data.summary).toMatchObject({
       activeEmployeeBalanceCaseCount: 2,
-      employeeBalanceOutstandingAmount: 27500,
+      employeeBalanceOutstandingAmount: amount,
     })
     expect(data.cards.find((card) => card.id === "employee_balance_recovery")).toMatchObject({
-      value: 27500,
+      value: amount,
       requiredPermission: "payroll.payments.reconcile",
     })
     expect(data.commandBrief.primaryAction).toMatchObject({ href: "/dashboard/payroll/payments" })
@@ -350,7 +433,11 @@ describe("cash command service", () => {
 
 describe("getCashCommandData tenant authority", () => {
   const sourceMocks = (): jest.Mock[] => [
-    mockGetTenantOperatingSnapshot,
+    db.organization.findFirst as jest.Mock,
+    db.payment.aggregate as jest.Mock,
+    db.payrollEmployeeBalanceCase.groupBy as jest.Mock,
+    db.purchaseOrder.groupBy as jest.Mock,
+    mockGetPayrollFinanceForecast,
     mockGetPaymentTruthSnapshot,
     mockGetInventoryCashSnapshot,
     mockGetInventoryLossSnapshot,
@@ -370,7 +457,11 @@ describe("getCashCommandData tenant authority", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAuditRbacDecision.mockResolvedValue(undefined)
-    mockGetTenantOperatingSnapshot.mockResolvedValue(tenantSnapshot())
+    ;(db.organization.findFirst as jest.Mock).mockResolvedValue({ name: "Owned", currency: "XAF" })
+    mockGetPayrollFinanceForecast.mockResolvedValue({ metrics: payrollForecastMetrics(), sourceMaxUpdatedAt: new Date(generatedAt), sourceEvidenceHash: "payroll-hash" })
+    ;(db.payment.aggregate as jest.Mock).mockResolvedValue({ _sum: { amount: 180000 }, _count: { _all: 1 }, _max: { updatedAt: new Date(generatedAt) } })
+    ;(db.payrollEmployeeBalanceCase.groupBy as jest.Mock).mockResolvedValue([{ currency: "XAF", _sum: { outstandingAmount: 120000 }, _count: { _all: 2 }, _max: { updatedAt: new Date(generatedAt) } }])
+    ;(db.purchaseOrder.groupBy as jest.Mock).mockResolvedValue([])
     mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
     mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
     mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
@@ -379,12 +470,429 @@ describe("getCashCommandData tenant authority", () => {
     mockObserveModuleAccess.mockResolvedValue({ allowed: true })
     mockGetInventoryLossSnapshot.mockResolvedValue(inventoryLossSnapshot())
     mockBuildBusinessSignalsFromSnapshots.mockReturnValue([])
-    mockCreateBusinessSignalFromFact.mockReturnValue(null)
+    mockCreateBusinessSignalFromFact.mockImplementation(jest.requireActual("@/services/signals/business-signal-rules.service").createBusinessSignalFromFact)
     mockBuildActionQueue.mockReturnValue(actionQueue())
     mockFindPaymentTransaction.mockResolvedValue(null)
     mockFindJournalEntry.mockResolvedValue(null)
     mockFindReconciliationRun.mockResolvedValue(null)
     mockFindCloseRun.mockResolvedValue(null)
+  })
+
+  it.each([[], ["finance.read"], ["finance.read", "payments.reconciliation.read", "payroll.payments.reconcile", "payroll.command.read", "payroll.declarations.manage", "CASH_DRAWER_READ", "inventory.read", "inventory.items.read", "accounting.close.read", "accounting.journal.read", "purchases.orders.read"]])("localizes only disclosed display fields for permissions %j", async (...permissions) => {
+    const data = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], actorPermissions: ["dashboard.read", ...permissions], now: generatedAt })
+    const original = JSON.stringify(data)
+    const fr = presentCashCommand(localizeCashCommandNavigation(data, "fr"), "fr")
+    expect(presentCashCommand(data, "en")).toBe(data)
+    expect(JSON.stringify(data)).toBe(original)
+    expect(fr.commandBrief.title).toBe("Synthèse de trésorerie")
+    expect(fr.commandBrief.conclusion).toContain("Un indicateur indisponible")
+    expect(fr.summary).toEqual(data.summary)
+    const localized = localizeCashCommandNavigation(data, "fr")
+    // Every changed leaf must be a display string. No identifiers, arrays, values,
+    // permission decisions, source hashes, timestamps or evidence grades may change.
+    function compare(before: unknown, after: unknown, key = "") {
+      if (before === after) return
+      if (typeof before === "string" && typeof after === "string") {
+        expect(["title", "detail", "summary", "conclusion", "label", "disabledReason", "unavailableReason", "nextAction", "nextStep", "reason", "staleReason", "businessImpact", "dueLabel", "ownerLabel", "unit", "value"]).toContain(key)
+        return
+      }
+      expect(typeof after).toBe(typeof before)
+      expect(Object.keys(after as object)).toEqual(Object.keys(before as object))
+      for (const name of Object.keys(before as object)) compare((before as Record<string, unknown>)[name], (after as Record<string, unknown>)[name], name)
+    }
+    compare(localized, fr)
+    for (const card of fr.cards) {
+      expect(card.value).toEqual(data.cards.find(row => row.id === card.id)?.value)
+      expect(card.title).not.toEqual(data.cards.find(row => row.id === card.id)?.title)
+    }
+    if (!data.cards.length) expect(fr.commandBrief.summary).toBe("Aucun indicateur de trésorerie n’est accessible avec vos droits actuels.")
+    else expect(fr.commandBrief.summary).not.toContain("unavailable")
+  })
+
+  it("preserves custom copy and denied proof identity while translating canonical warnings", async () => {
+    const data = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], actorPermissions: ["dashboard.read", "finance.read", "payroll.payments.reconcile", "payroll.command.read"], now: generatedAt })
+    data.cards[0].detail = "PRIVATE CUSTOM TEXT: do not replace this caveat"
+    data.cards[0].freshness = { ...data.cards[0].freshness, state: "stale", stale: true, staleReason: "Source data is 180 minutes old." }
+    data.commandBrief.summary = "Custom source statement"
+    const fr = presentCashCommand(data, "fr")
+    expect(fr.cards[0].detail).toBe(data.cards[0].detail)
+    expect(fr.cards[0].freshness).toEqual({ ...data.cards[0].freshness, staleReason: "Les données sources datent de 180 minutes." })
+    expect(fr.commandBrief.summary).toBe(data.commandBrief.summary)
+    expect(fr.proofSubjects.every(subject => !subject.available && !Object.hasOwn(subject, "subjectId"))).toBe(true)
+    expect(fr.proofSubjects[0]).toMatchObject({ unavailableReason: "Vous n’avez pas l’autorisation de consulter cette preuve." })
+    const before = data.cards.find(card => card.id === "upcoming_payroll_net_pay")!.redactions[0]
+    const after = fr.cards.find(card => card.id === "upcoming_payroll_net_pay")!.redactions[0]
+    expect(after).toMatchObject({ id: before.id, field: before.field, policy: before.policy, reason: expect.stringContaining("Vos droits") })
+  })
+
+  it.each([
+    { name: "missing permission", permissions: ["finance.read"], moduleAllowed: true, expectedRead: false },
+    { name: "suspended module", permissions: ["finance.read", "CASH_DRAWER_READ"], moduleAllowed: false, expectedRead: false },
+    { name: "current read permission", permissions: ["finance.read", "CASH_DRAWER_READ"], moduleAllowed: true, expectedRead: true },
+  ])("admits drawer queries before reading: $name", async ({ permissions, moduleAllowed, expectedRead }) => {
+    mockObserveModuleAccess.mockImplementation(async ({ moduleSlug }) => ({ allowed: moduleSlug !== "cash_drawer" || moduleAllowed, readOnly: true }))
+    const result = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["admin"], actorPermissions: permissions, now: generatedAt })
+    expect(mockGetCashDrawerDashboard).toHaveBeenCalledTimes(expectedRead ? 1 : 0)
+    expect(mockGetModuleControlCenterData).not.toHaveBeenCalled()
+    expect(db.organization.findFirst).toHaveBeenCalledWith({ where: { id: "org-1", isActive: true, deletedAt: null }, select: { name: true, currency: true } })
+    if (permissions.includes("CASH_DRAWER_READ")) {
+      const gateIndex = mockObserveModuleAccess.mock.calls.findIndex(([args]) => args.surface === "cash-command.drawer-source")
+      expect(gateIndex).toBeGreaterThanOrEqual(0)
+      expect(mockObserveModuleAccess.mock.calls[gateIndex][0]).toMatchObject({ organizationId: "org-1", userId: "actor-1", accessIntent: "read", mode: "enforce", audit: true })
+      if (expectedRead) expect(mockObserveModuleAccess.mock.invocationCallOrder[gateIndex]).toBeLessThan(mockGetCashDrawerDashboard.mock.invocationCallOrder[0])
+    }
+    if (!expectedRead) {
+      expect(result.drawerState).toBeNull()
+      expect(result.summary.drawerVariance).toBeNull()
+      expect(result.summary.drawerAlertCount).toBeNull()
+      expect(result.cards.some(card => card.id === "drawer_risk")).toBe(false)
+      expect(result.trustSignals.some(signal => signal.id === "drawer_confidence")).toBe(false)
+      expect(result.restrictedCapabilities).toContainEqual({ id: "drawer_risk", title: "Drawer risk", reason: permissions.includes("CASH_DRAWER_READ") ? "module_unavailable" : "permission_denied" })
+    } else expect(result.drawerState?.drawerCount).toBe(drawerDashboard().summary.drawerCount)
+  })
+
+  it("does not query any sources for an unavailable organization", async () => {
+    ;(db.organization.findFirst as jest.Mock).mockResolvedValueOnce(null)
+    await expect(getCashCommandData({ organizationId: "missing-org", actorId: "actor-1", actorRoleCodes: ["admin"], actorPermissions: ["finance.read", "CASH_DRAWER_READ", "MANAGE_SYSTEM_SETTINGS"] })).rejects.toThrow("Organization is unavailable")
+    for (const query of sourceMocks().filter(query => query !== db.organization.findFirst)) expect(query).not.toHaveBeenCalled()
+  })
+
+  it("keeps a failed drawer or module gate as a failure and retries with fresh admission", async () => {
+    const input = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["admin"], actorPermissions: ["finance.read", "CASH_DRAWER_READ"], now: generatedAt }
+    mockObserveModuleAccess.mockRejectedValueOnce(new Error("module unavailable"))
+    await expect(getCashCommandData(input)).rejects.toThrow("module unavailable")
+    expect(mockGetCashDrawerDashboard).not.toHaveBeenCalled()
+    mockGetCashDrawerDashboard.mockRejectedValueOnce(new Error("drawer source unavailable"))
+    await expect(getCashCommandData(input)).rejects.toThrow("drawer source unavailable")
+    await expect(getCashCommandData(input)).resolves.toMatchObject({ drawerState: { drawerCount: drawerDashboard().summary.drawerCount } })
+    mockGetCashDrawerDashboard.mockClear()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+    expect((await getCashCommandData(input)).drawerState).toBeNull()
+    expect(mockGetCashDrawerDashboard).not.toHaveBeenCalled()
+  })
+
+  it("only queries module diagnostics with the settings permission and never converts their failure to success", async () => {
+    const input = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["admin"], actorPermissions: ["finance.read", "MANAGE_SYSTEM_SETTINGS"], now: generatedAt }
+    const allowed = await getCashCommandData(input)
+    expect(mockGetModuleControlCenterData).toHaveBeenCalledTimes(1)
+    expect(allowed.moduleControl).toMatchObject({ summary: moduleControl().summary })
+    mockGetModuleControlCenterData.mockRejectedValueOnce(new Error("diagnostics unavailable"))
+    await expect(getCashCommandData(input)).rejects.toThrow("diagnostics unavailable")
+    mockGetModuleControlCenterData.mockClear()
+    expect((await getCashCommandData({ ...input, actorPermissions: ["finance.read"] })).moduleControl).toBeNull()
+    expect(mockGetModuleControlCenterData).not.toHaveBeenCalled()
+  })
+
+  it("loads each permitted source once and uses its own provenance", async () => {
+    const payment = paymentSnapshot({ openSuspenseAmount: 456789 })
+    const inventory = inventorySnapshot({ inventoryValue: 234567 })
+    const close = closeSnapshot()
+    mockGetPaymentTruthSnapshot.mockResolvedValueOnce(payment)
+    mockGetInventoryCashSnapshot.mockResolvedValueOnce(inventory)
+    mockGetCloseReadinessSnapshot.mockResolvedValueOnce(close)
+    const result = await getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"],
+      actorPermissions: ["finance.read", "payments.reconciliation.read", "inventory.read", "accounting.close.read"], now: generatedAt,
+    })
+    for (const source of [mockGetPaymentTruthSnapshot, mockGetInventoryCashSnapshot, mockGetCloseReadinessSnapshot]) {
+      expect(source).toHaveBeenCalledTimes(1)
+      expect(source).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", now: new Date(generatedAt) }))
+    }
+    expect(mockGetPayrollFinanceForecast).not.toHaveBeenCalled()
+    expect(result.cards.find(card => card.id === "unreconciled_cash")?.value).toBe(456789)
+    expect(result.cards.find(card => card.id === "stock_cash_buffer")?.value).toBe(234567)
+  })
+
+  it.each([
+    ["payment", mockGetPaymentTruthSnapshot, "payments.reconciliation.read"],
+    ["inventory", mockGetInventoryCashSnapshot, "inventory.read"],
+    ["close", mockGetCloseReadinessSnapshot, "accounting.close.read"],
+  ])("rejects a failed %s source before aggregate construction and permits a fresh retry", async (_name, source, permission) => {
+    const failure = new Error("controlled related source failure")
+    const input = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], actorPermissions: ["finance.read", permission as string], now: generatedAt }
+    ;(source as jest.Mock).mockRejectedValueOnce(failure)
+    await expect(getCashCommandData(input)).rejects.toBe(failure)
+    expect(mockGetPayrollFinanceForecast).not.toHaveBeenCalled()
+    expect(mockBuildBusinessSignalsFromSnapshots).not.toHaveBeenCalled()
+    expect(mockFindPaymentTransaction).not.toHaveBeenCalled()
+    await expect(getCashCommandData(input)).resolves.toMatchObject({ organizationId: "org-1" })
+    expect(source).toHaveBeenCalledTimes(2)
+  })
+
+  it("does not discover or disclose proof identifiers without their read permissions", async () => {
+    mockFindPaymentTransaction.mockResolvedValue({ id: "private-payment-proof" })
+    mockFindJournalEntry.mockResolvedValue({ id: "private-journal-proof" })
+    mockFindReconciliationRun.mockResolvedValue({ id: "private-reconciliation-proof" })
+    mockFindCloseRun.mockResolvedValue({ id: "private-close-proof" })
+    const result = await getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorPermissions: ["finance.read"],
+      actorRoleCodes: ["administrator"], now: generatedAt,
+    })
+    for (const query of [mockFindPaymentTransaction, mockFindJournalEntry, mockFindReconciliationRun, mockFindCloseRun]) {
+      expect(query).not.toHaveBeenCalled()
+    }
+    expect(JSON.stringify(result)).not.toContain("private-")
+    expect(result.proofSubjects.every(subject => !subject.available)).toBe(true)
+  })
+
+  it("checks each proof module before discovery and retains authorized period and tenant scope", async () => {
+    mockObserveModuleAccess.mockImplementation(async ({ moduleSlug }) => ({ allowed: moduleSlug === "accounting" }))
+    mockFindJournalEntry.mockResolvedValue({ id: "posted-owned-journal" })
+    const actorPermissions = ["finance.read", "accounting.journal.read", "payments.reconciliation.read", "accounting.close.read"]
+    const result = await getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorPermissions,
+      actorRoleCodes: ["administrator"], now: generatedAt,
+    })
+    expect(mockFindPaymentTransaction).not.toHaveBeenCalled()
+    expect(mockFindReconciliationRun).not.toHaveBeenCalled()
+    expect(mockFindCloseRun).not.toHaveBeenCalled()
+    expect(mockFindJournalEntry).toHaveBeenCalledWith({
+      where: { organizationId: "org-1", status: "POSTED", entryDate: {
+        gte: new Date("2026-06-24T00:00:00.000Z"), lte: new Date("2026-06-24T23:59:59.999Z"),
+      } }, orderBy: { updatedAt: "desc" }, select: { id: true },
+    })
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-1", userId: "actor-1", actorPermissions, moduleSlug: "accounting",
+      accessIntent: "read", mode: "enforce", audit: true,
+    }))
+    expect(result.proofSubjects.filter(subject => subject.available)).toEqual([
+      expect.objectContaining({ subjectType: "journal.entry", subjectId: "posted-owned-journal" }),
+    ])
+  })
+
+  it("discovers only owned in-period proofs after read admission, including read-only modules", async () => {
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true, readOnly: true })
+    mockFindPaymentTransaction.mockResolvedValue({ id: "payment-owned" })
+    mockFindJournalEntry.mockResolvedValue({ id: "journal-owned" })
+    mockFindReconciliationRun.mockResolvedValue({ id: "reconciliation-owned" })
+    mockFindCloseRun.mockResolvedValue({ id: "close-owned" })
+    const result = await getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.journal.read", "payments.reconciliation.read", "accounting.close.read"],
+    })
+    expect(result.proofSubjects.filter(subject => subject.available)).toHaveLength(4)
+    expect(mockObserveModuleAccess.mock.calls.filter(([args]) => args.surface === "cash-command.proof-discovery")).toHaveLength(3)
+    for (const [args] of mockObserveModuleAccess.mock.calls) expect(args.accessIntent).toBe("read")
+    const range = { gte: new Date("2026-06-24T00:00:00.000Z"), lte: new Date("2026-06-24T23:59:59.999Z") }
+    expect(mockFindPaymentTransaction).toHaveBeenCalledWith(expect.objectContaining({ where: {
+      organizationId: "org-1", OR: [{ occurredAt: range }, { confirmedAt: range }, { settledAt: range }],
+    } }))
+    expect(mockFindReconciliationRun).toHaveBeenCalledWith(expect.objectContaining({ where: {
+      organizationId: "org-1", voidedAt: null, businessDate: range,
+    } }))
+    expect(mockFindCloseRun).toHaveBeenCalledWith(expect.objectContaining({ where: {
+      organizationId: "org-1", period: { organizationId: "org-1", startDate: { lte: range.lte }, endDate: { gte: range.gte } },
+    }, orderBy: [{ createdAt: "desc" }, { id: "desc" }] }))
+  })
+
+  it("discovers the latest assessment without filtering adverse states or promoting recently updated history", async () => {
+    mockFindCloseRun.mockResolvedValue({ id: "latest-voided-assessment" })
+    const result = await getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.close.read"],
+    })
+    expect(mockFindCloseRun).toHaveBeenCalledTimes(1)
+    expect(mockFindCloseRun).toHaveBeenCalledWith({
+      where: {
+        organizationId: "org-1",
+        period: { organizationId: "org-1", startDate: { lte: new Date("2026-06-24T23:59:59.999Z") }, endDate: { gte: new Date("2026-06-24T00:00:00.000Z") } },
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      select: { id: true },
+    })
+    expect(result.proofSubjects).toContainEqual(expect.objectContaining({
+      subjectType: "close.run", subjectId: "latest-voided-assessment", available: true,
+    }))
+  })
+
+  it("does not cache a previous module admission across requests", async () => {
+    mockFindJournalEntry.mockResolvedValue({ id: "previously-visible-journal" })
+    const input = {
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.journal.read"],
+    }
+    expect(JSON.stringify(await getCashCommandData(input))).toContain("previously-visible-journal")
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+    mockFindJournalEntry.mockClear()
+    const denied = await getCashCommandData(input)
+    expect(mockFindJournalEntry).not.toHaveBeenCalled()
+    expect(JSON.stringify(denied)).not.toContain("previously-visible-journal")
+    expect(denied.proofSubjects.find(subject => subject.moduleSlug === "accounting")).toMatchObject({
+      available: false, unavailableReason: "This workspace does not currently allow reading this proof.",
+    })
+  })
+
+  it("does not convert a proof-query exception into an empty or successful result", async () => {
+    mockFindJournalEntry.mockRejectedValue(new Error("controlled proof lookup failure"))
+    await expect(getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.journal.read"],
+    })).rejects.toThrow("controlled proof lookup failure")
+  })
+
+  it("waits for authoritative module admission before touching proof records", async () => {
+    let resolveAdmission!: (value: { allowed: boolean }) => void
+    let admissionStarted!: () => void
+    const started = new Promise<void>(resolve => { admissionStarted = resolve })
+    mockObserveModuleAccess.mockImplementation(({ surface }) => {
+      if (surface !== "cash-command.proof-discovery") return Promise.resolve({ allowed: true })
+      admissionStarted()
+      return new Promise(resolve => { resolveAdmission = resolve })
+    })
+    const pending = getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.journal.read"],
+    })
+    await started
+    expect(mockFindJournalEntry).not.toHaveBeenCalled()
+    resolveAdmission({ allowed: true })
+    await pending
+    expect(mockFindJournalEntry).toHaveBeenCalledTimes(1)
+  })
+
+  it("fails closed when module admission fails", async () => {
+    mockObserveModuleAccess.mockRejectedValue(new Error("controlled module lookup failure"))
+    await expect(getCashCommandData({
+      organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "accounting.journal.read"],
+    })).rejects.toThrow("controlled module lookup failure")
+    expect(mockFindJournalEntry).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { id: "stock_cash_buffer", source: "inventory.read", route: "/dashboard/inventory/items", destination: ["inventory.items.read"] },
+    { id: "employee_balance_recovery", source: "payroll.payments.reconcile", route: "/dashboard/payroll/payments", destination: ["payments.reconciliation.read", "payroll.command.read"] },
+    { id: "upcoming_statutory_liability", source: "payroll.declarations.manage", route: "/dashboard/payroll/declarations", destination: ["payroll.command.read"] },
+  ])("preserves $id aggregate while enforcing destination authority on every representation", async ({ id, source, route, destination }) => {
+    const request = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["admin"], now: generatedAt }
+    const denied = await getCashCommandData({ ...request, actorPermissions: ["finance.read", source] })
+    const card = denied.cards.find(row => row.id === id)!
+    expect(card).toBeDefined()
+    expect(card.actionLink).toMatchObject({ href: route, disabled: true, disabledReason: expect.any(String) })
+    expect(card.drillThrough).toMatchObject({ available: false, unavailableReason: expect.any(String) })
+    for (const row of [...denied.changes, ...denied.risks].filter(row => row.actionLink?.href === route)) {
+      expect(row.actionLink?.disabled).toBe(true)
+      expect(row.drillThrough?.available).toBe(false)
+    }
+    expect(denied.commandBrief.primaryAction?.href).not.toBe(route)
+    expect(denied.actionsToday.some(row => row.actionLink.href === route)).toBe(false)
+    const allowed = await getCashCommandData({ ...request, actorPermissions: ["finance.read", source, ...destination] })
+    const admitted = allowed.cards.find(row => row.id === id)!
+    expect(admitted.value).toBe(card.value)
+    expect(admitted.actionLink).toMatchObject({ href: route, disabled: false })
+    // Each required destination permission matters independently.
+    for (const missing of destination) {
+      const again = await getCashCommandData({ ...request, actorPermissions: ["finance.read", source, ...destination.filter(value => value !== missing)] })
+      expect(again.cards.find(row => row.id === id)?.actionLink?.disabled).toBe(true)
+    }
+    for (const locale of ["en", "fr"] as const) {
+      const localized = localizeCashCommandNavigation(allowed, locale)
+      const localizedCard = localized.cards.find(row => row.id === id)!
+      expect(localizedCard.actionLink?.href).toBe("/" + locale + route)
+      expect(localizedCard.provenance).toEqual(admitted.provenance)
+      expect(localized.summary).toEqual(allowed.summary)
+      for (const row of [...localized.changes, ...localized.risks]) {
+        if (row.actionLink) expect(row.actionLink.href).toMatch(new RegExp("^/" + locale + "/"))
+        if (row.drillThrough?.available && row.drillThrough.href) expect(row.drillThrough.href).toMatch(new RegExp("^/" + locale + "/"))
+      }
+      const localizedDenied = localizeCashCommandNavigation(denied, locale).cards.find(row => row.id === id)!
+      expect(localizedDenied.actionLink?.disabledReason).toContain(locale === "fr" ? "vos droits actuels" : "your current access")
+    }
+  })
+
+  it.each(["finance.cash-drawer.read", "CASH_DRAWER_READ"])("preserves canonical and legacy drawer read access: %s", async destination => {
+    const request = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["admin"], now: generatedAt }
+    const sourcePermissions = ["dashboard.read"]
+    const route = "/dashboard/finance/cash-drawer"
+    const denied = await getCashCommandData({ ...request, actorPermissions: sourcePermissions })
+    expect(denied.cards.some(row => row.id === "drawer_risk")).toBe(false)
+    expect(denied.commandBrief.primaryAction?.href).not.toBe(route)
+    expect(denied.actionsToday.some(row => row.actionLink.href === route)).toBe(false)
+    expect([...denied.changes, ...denied.risks].some(row => row.actionLink?.href === route)).toBe(false)
+    const admitted = await getCashCommandData({ ...request, actorPermissions: [...sourcePermissions, destination] })
+    expect(admitted.cards.find(row => row.id === "drawer_risk")).toMatchObject({ actionLink: { href: route, disabled: false } })
+    expect(admitted.drawerState).not.toBeNull()
+    const revoked = await getCashCommandData({ ...request, actorPermissions: sourcePermissions })
+    expect(revoked.cards.some(row => row.id === "drawer_risk")).toBe(false)
+  })
+
+  it("withholds every denied aggregate representation, not just its action link", async () => {
+    const result = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1",
+      actorRoleCodes: ["administrator"], actorPermissions: ["finance.read"], now: generatedAt })
+    expect(result.summary.upcomingPayrollNetPayAmount).toBeNull()
+    expect(result.summary.upcomingStatutoryLiabilityAmount).toBeNull()
+    expect(result.summary.payrollForecastTotalAmount).toBeNull()
+    expect(result.summary.openSuspenseCount).toBeNull()
+    expect(result.summary.activeEmployeeBalanceCaseCount).toBeNull()
+    expect(result.summary.cashCollected).toBe(180000)
+    expect(result.cards.map(card => card.id)).toEqual(["cash_collected"])
+    expect(result.drawerState).toBeNull()
+    expect(result.moduleControl).toBeNull()
+    expect(result.actionQueue.filteredOutCount).toBeNull()
+    const encoded = JSON.stringify(result)
+    for (const privateValue of ["350000", "90000", "440000", "tenant-hash", "payment-hash", "inventory-hash", "close-hash", "suspense_items"]) {
+      expect(encoded).not.toContain(privateValue)
+    }
+    expect(result.commandBrief.state).toBe("partial")
+  })
+
+  it("keeps payment and declaration payroll permissions separate", async () => {
+    const result = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1",
+      actorRoleCodes: ["administrator"], actorPermissions: ["dashboard.read", "payroll.payments.reconcile"], now: generatedAt })
+    expect(result.summary.upcomingPayrollNetPayAmount).toBe(350000)
+    expect(result.summary.upcomingStatutoryLiabilityAmount).toBeNull()
+    expect(result.summary.payrollForecastTotalAmount).toBeNull()
+    expect(JSON.stringify(result)).not.toContain("90000")
+    expect(JSON.stringify(result)).not.toContain("440000")
+  })
+
+  it("withholds aggregates when their module read admission is denied", async () => {
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+    const result = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1",
+      actorRoleCodes: ["administrator"], actorPermissions: ["finance.read"], now: generatedAt })
+    expect(result.cards).toEqual([])
+    expect(result.summary.cashCollected).toBeNull()
+    expect(result.commandBrief.summary).not.toContain("180000")
+    expect(result.commandBrief.state).toBe("partial")
+  })
+
+  it("does not let changes in denied sources alter the disclosed response", async () => {
+    const input = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], actorPermissions: ["finance.read"], now: generatedAt }
+    const before = await getCashCommandData(input)
+    const hidden = tenantSnapshot({ activeEmployeeBalanceCaseCount: 98765, employeeBalanceOutstandingAmount: 778899,
+      payrollFinanceForecast: payrollForecastMetrics({ upcomingNetPayAmount: 1234567, upcomingStatutoryLiabilityAmount: 7654321, totalUpcomingAmount: 8888888,
+        nextPayDate: "2099-01-01", nextDeclarationDueDate: "2099-02-01", message: "PRIVATE FORECAST MESSAGE" }) })
+    hidden.sourceHash = "PRIVATE SOURCE HASH"
+    hidden.status = "blocked"
+    hidden.evidenceGrade = "blocked"
+    hidden.freshness = freshness({ sourceMaxUpdatedAt: "2099-01-01", stale: true, staleReason: "PRIVATE TIMING" })
+    hidden.blockers = [{ id: "private-blocker", gate: "payroll_finance_forecast", severity: "critical", title: "PRIVATE TITLE", detail: "PRIVATE DETAIL", sourceTables: ["private_table"] }]
+    mockGetPayrollFinanceForecast.mockResolvedValue({ metrics: hidden.metrics.payrollFinanceForecast, sourceMaxUpdatedAt: new Date("2099-01-01"), sourceEvidenceHash: hidden.sourceHash })
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot({ openSuspenseAmount: 332211, openSuspenseCount: 93, pendingTransactionCount: 44 }))
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot({ inventoryValue: 554433 }))
+    const queue = actionQueue(); queue.summary.total = 54321; queue.filteredOutCount = 87654
+    mockBuildActionQueue.mockReturnValue(queue)
+    expect(await getCashCommandData(input)).toEqual(before)
+  })
+
+  it("preserves explicitly permitted full-domain values and source evidence", async () => {
+    const result = await getCashCommandData({ organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt,
+      actorPermissions: ["finance.read", "payments.reconciliation.read", "CASH_DRAWER_READ", "inventory.read", "payroll.payments.reconcile", "payroll.declarations.manage", "accounting.close.read", "accounting.journal.read", "MANAGE_SYSTEM_SETTINGS"] })
+    expect(result.summary.upcomingPayrollNetPayAmount).toBe(350000)
+    expect(result.summary.upcomingStatutoryLiabilityAmount).toBe(90000)
+    expect(result.summary.payrollForecastTotalAmount).toBe(440000)
+    expect(result.cards).toHaveLength(9)
+    expect(result.cards.find(card => card.id === "cash_collected")?.provenance).toMatchObject({ sourceKind: "cash.collected", sourceHash: expect.any(String), sourceModules: ["finance"] })
+    expect(result.drawerState).not.toBeNull()
+    expect(result.moduleControl).not.toBeNull()
+  })
+
+  it("re-evaluates domain permissions after a previously allowed response", async () => {
+    const input = { organizationId: "org-1", actorId: "actor-1", actorRoleCodes: ["administrator"], now: generatedAt }
+    expect((await getCashCommandData({ ...input, actorPermissions: ["finance.read", "payroll.payments.reconcile"] })).summary.upcomingPayrollNetPayAmount).toBe(350000)
+    const denied = await getCashCommandData({ ...input, actorPermissions: ["finance.read"] })
+    expect(denied.summary.upcomingPayrollNetPayAmount).toBeNull()
+    expect(JSON.stringify(denied)).not.toContain("350000")
   })
 
   it.each([
@@ -476,18 +984,18 @@ describe("getCashCommandData tenant authority", () => {
 
     expect(result.organizationId).toBe("org-1")
     expect(mockAuditRbacDecision).not.toHaveBeenCalled()
-    expect(mockGetTenantOperatingSnapshot).toHaveBeenCalledTimes(1)
-    expect(mockGetPaymentTruthSnapshot).toHaveBeenCalledTimes(1)
-    expect(mockGetInventoryCashSnapshot).toHaveBeenCalledTimes(1)
-    expect(mockGetCloseReadinessSnapshot).toHaveBeenCalledTimes(1)
-    expect(mockGetCashDrawerDashboard).toHaveBeenCalledTimes(1)
-    expect(mockGetModuleControlCenterData).toHaveBeenCalledTimes(1)
-    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetPayrollFinanceForecast).not.toHaveBeenCalled()
+    expect(mockGetPaymentTruthSnapshot).not.toHaveBeenCalled()
+    expect(mockGetInventoryCashSnapshot).not.toHaveBeenCalled()
+    expect(mockGetCloseReadinessSnapshot).not.toHaveBeenCalled()
+    expect(mockGetCashDrawerDashboard).not.toHaveBeenCalled()
+    expect(mockGetModuleControlCenterData).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess.mock.calls.filter(([args]) => args.surface === "cash-command.source")).toHaveLength(actorPermissions.includes("finance.read") ? 1 : 0)
     expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
-    expect(mockFindPaymentTransaction).toHaveBeenCalledTimes(1)
-    expect(mockFindJournalEntry).toHaveBeenCalledTimes(1)
-    expect(mockFindReconciliationRun).toHaveBeenCalledTimes(1)
-    expect(mockFindCloseRun).toHaveBeenCalledTimes(1)
+    expect(mockFindPaymentTransaction).not.toHaveBeenCalled()
+    expect(mockFindJournalEntry).not.toHaveBeenCalled()
+    expect(mockFindReconciliationRun).not.toHaveBeenCalled()
+    expect(mockFindCloseRun).not.toHaveBeenCalled()
   })
 
   it("adds one tenant-wide Inventory Loss action for an entitled administrator", async () => {
@@ -519,7 +1027,7 @@ describe("getCashCommandData tenant authority", () => {
       now: generatedAt,
     })
 
-    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockObserveModuleAccess.mock.calls.filter(([args]) => args.surface === "cash-command.inventory-loss")).toHaveLength(1)
     expect(mockObserveModuleAccess).toHaveBeenCalledWith({
       organizationId: "org-1",
       userId: "actor-1",
@@ -556,7 +1064,7 @@ describe("getCashCommandData tenant authority", () => {
         expect.objectContaining({
           title: "Recorded inventory loss needs review",
           actionLink: expect.objectContaining({
-            href: "/dashboard/inventory/losses",
+            href: "/dashboard/inventory/loss-control",
             requiredPermission: "inventory.levels.read",
             moduleSlug: "inventory",
           }),
@@ -579,13 +1087,13 @@ describe("getCashCommandData tenant authority", () => {
     })
 
     expect(result.organizationId).toBe("org-1")
-    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockObserveModuleAccess.mock.calls.filter(([args]) => args.surface === "cash-command.inventory-loss")).toHaveLength(1)
     expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
     expect(result.actionsToday).not.toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           actionLink: expect.objectContaining({
-            href: "/dashboard/inventory/losses",
+            href: "/dashboard/inventory/loss-control",
           }),
         }),
       ]),

@@ -1,0 +1,141 @@
+{
+  "generatedAt": "2026-09-30T20:58:49.084Z",
+  "status": "READY",
+  "ready": true,
+  "source": {
+    "databaseRef": "db-85b3c42dd313",
+    "targetClass": "local",
+    "databaseNameRetained": false
+  },
+  "backup": {
+    "created": true,
+    "byteLength": 2165735,
+    "sha256": "75666410ccc5025055d88d6876c6ea9191894695f96ba7560bea53b133d74c4b",
+    "temporaryDumpRetained": false
+  },
+  "restore": {
+    "databaseName": "stoquify_restore_local_remediation_20260930_run01",
+    "databaseCreated": true,
+    "databaseRetained": true,
+    "cleanupReady": true
+  },
+  "history": {
+    "ready": true,
+    "repositoryCount": 87,
+    "completedCount": 87,
+    "blockerCount": 0
+  },
+  "schemaDiff": {
+    "match": true,
+    "sourceSha256": "bc6bde503763d8c8d0063ca7c50731f89a56afc43a6717727d24add1dc6f6593",
+    "restoredSha256": "bc6bde503763d8c8d0063ca7c50731f89a56afc43a6717727d24add1dc6f6593"
+  },
+  "dataProfile": {
+    "match": true,
+    "sourcePopulated": true,
+    "source": [
+      {
+        "table": "organizations",
+        "present": true,
+        "rowCount": "3"
+      },
+      {
+        "table": "users",
+        "present": true,
+        "rowCount": "180"
+      },
+      {
+        "table": "accounts",
+        "present": true,
+        "rowCount": "111"
+      },
+      {
+        "table": "sessions",
+        "present": true,
+        "rowCount": "65"
+      },
+      {
+        "table": "chart_of_accounts",
+        "present": true,
+        "rowCount": "36"
+      },
+      {
+        "table": "journals",
+        "present": true,
+        "rowCount": "16"
+      },
+      {
+        "table": "journal_entries",
+        "present": true,
+        "rowCount": "141"
+      },
+      {
+        "table": "fiscal_years",
+        "present": true,
+        "rowCount": "2"
+      },
+      {
+        "table": "accounting_periods",
+        "present": true,
+        "rowCount": "24"
+      }
+    ],
+    "restored": [
+      {
+        "table": "organizations",
+        "present": true,
+        "rowCount": "3"
+      },
+      {
+        "table": "users",
+        "present": true,
+        "rowCount": "180"
+      },
+      {
+        "table": "accounts",
+        "present": true,
+        "rowCount": "111"
+      },
+      {
+        "table": "sessions",
+        "present": true,
+        "rowCount": "65"
+      },
+      {
+        "table": "chart_of_accounts",
+        "present": true,
+        "rowCount": "36"
+      },
+      {
+        "table": "journals",
+        "present": true,
+        "rowCount": "16"
+      },
+      {
+        "table": "journal_entries",
+        "present": true,
+        "rowCount": "141"
+      },
+      {
+        "table": "fiscal_years",
+        "present": true,
+        "rowCount": "2"
+      },
+      {
+        "table": "accounting_periods",
+        "present": true,
+        "rowCount": "24"
+      }
+    ]
+  },
+  "migrateStatus": {
+    "ready": true,
+    "exitCode": 0
+  },
+  "safety": {
+    "sourceMutationAttempted": false,
+    "resolveAttempted": false,
+    "resetAttempted": false,
+    "secretsRetained": false
+  }
+}

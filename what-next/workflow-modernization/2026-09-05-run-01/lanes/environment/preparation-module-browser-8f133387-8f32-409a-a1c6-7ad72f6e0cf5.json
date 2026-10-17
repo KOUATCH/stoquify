@@ -1,0 +1,474 @@
+{
+  "at": "2026-09-27T18:01:41.408Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "e6824d861835ed34cc2335ffa2bc054ed0d5ec38b95eb978a7703a4758beb5f7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "translationBefore": {
+    "en": "65d424ea8d9f610c5a3a7afdba32030376881a56a62dd2ca8ebf101cb7bd9066",
+    "fr": "21940a8c660a5d5a6830a6fcca1f8f296d8b890e3a07a611edc2d4d9ce953ac6"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmuk4l08o0000maoc16law5ze",
+      "runId": "cmuk4l0j3001amaocga9hqhf5",
+      "screenshots": [
+        "preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5-en-rendered-contrast-320.png",
+        "preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5-en-rendered-contrast-1440.png"
+      ],
+      "errors": [],
+      "entryMs": 10747,
+      "previewScan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "tags": [
+              "cat.color",
+              "wcag2aa",
+              "wcag143",
+              "TTv5",
+              "TT13.c",
+              "EN-301-549",
+              "EN-9.1.4.3",
+              "ACT",
+              "RGAAv4",
+              "RGAA-3.2.1"
+            ],
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+            "nodes": [
+              {
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "data": {
+                      "fontSize": "10.5pt (14px)",
+                      "fontWeight": "normal",
+                      "messageKey": "pseudoContent",
+                      "expectedContrastRatio": "4.5:1"
+                    },
+                    "relatedNodes": [
+                      {
+                        "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                        "target": [
+                          ".dashboard-landing-theme"
+                        ]
+                      }
+                    ],
+                    "impact": "serious",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": [],
+                "impact": "serious",
+                "html": "<p>Reconciliation is read-only or its required capabilities are unavailable. Ask your workspace administrator to review access, then refresh this review before retrying preparation.</p>",
+                "target": [
+                  "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+              },
+              {
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "data": {
+                      "fontSize": "10.5pt (14px)",
+                      "fontWeight": "normal",
+                      "messageKey": "pseudoContent",
+                      "expectedContrastRatio": "4.5:1"
+                    },
+                    "relatedNodes": [
+                      {
+                        "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                        "target": [
+                          ".dashboard-landing-theme"
+                        ]
+                      }
+                    ],
+                    "impact": "serious",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": [],
+                "impact": "serious",
+                "html": "<p>Checked at 9/27/2026, 7:01:55 PM</p>",
+                "target": [
+                  "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+              }
+            ]
+          }
+        ]
+      },
+      "scope": "read-only preview rendered contrast only",
+      "renderedContrast": [
+        {
+          "width": 320,
+          "measured": [
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+              ],
+              "text": "Reconciliation is read-only or its required capabilities are unavailable. Ask your workspace administrator to review access, then refresh th",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 54,
+                "y": 4757,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+              ],
+              "text": "Checked at 9/27/2026, 7:01:55 PM",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 54,
+                "y": 4889,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "measured": [
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+              ],
+              "text": "Reconciliation is read-only or its required capabilities are unavailable. Ask your workspace administrator to review access, then refresh th",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 346,
+                "y": 2570,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+              ],
+              "text": "Checked at 9/27/2026, 7:01:55 PM",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 346,
+                "y": 2622,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        }
+      ],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "organizationId": "cmuk4lil10021maocyi8tgj9u",
+      "runId": "cmuk4linr003bmaocdgbyn1ty",
+      "screenshots": [
+        "preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5-fr-rendered-contrast-320.png",
+        "preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5-fr-rendered-contrast-1440.png"
+      ],
+      "errors": [],
+      "entryMs": 11304,
+      "previewScan": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "tags": [
+              "cat.color",
+              "wcag2aa",
+              "wcag143",
+              "TTv5",
+              "TT13.c",
+              "EN-301-549",
+              "EN-9.1.4.3",
+              "ACT",
+              "RGAAv4",
+              "RGAA-3.2.1"
+            ],
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+            "nodes": [
+              {
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "data": {
+                      "fontSize": "10.5pt (14px)",
+                      "fontWeight": "normal",
+                      "messageKey": "pseudoContent",
+                      "expectedContrastRatio": "4.5:1"
+                    },
+                    "relatedNodes": [
+                      {
+                        "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                        "target": [
+                          ".dashboard-landing-theme"
+                        ]
+                      }
+                    ],
+                    "impact": "serious",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": [],
+                "impact": "serious",
+                "html": "<p>Le rapprochement est en lecture seule ou ses fonctionnalités requises sont indisponibles. Demandez à votre administrateur de vérifier les accès, puis actualisez cet examen avant de réessayer la préparation.</p>",
+                "target": [
+                  "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+              },
+              {
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "data": {
+                      "fontSize": "10.5pt (14px)",
+                      "fontWeight": "normal",
+                      "messageKey": "pseudoContent",
+                      "expectedContrastRatio": "4.5:1"
+                    },
+                    "relatedNodes": [
+                      {
+                        "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                        "target": [
+                          ".dashboard-landing-theme"
+                        ]
+                      }
+                    ],
+                    "impact": "serious",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": [],
+                "impact": "serious",
+                "html": "<p>Vérifié le 27/09/2026 19:02:18</p>",
+                "target": [
+                  "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element"
+              }
+            ]
+          }
+        ]
+      },
+      "scope": "read-only preview rendered contrast only",
+      "renderedContrast": [
+        {
+          "width": 320,
+          "measured": [
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+              ],
+              "text": "Le rapprochement est en lecture seule ou ses fonctionnalités requises sont indisponibles. Demandez à votre administrateur de vérifier les ac",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 54,
+                "y": 4979,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+              ],
+              "text": "Vérifié le 27/09/2026 19:02:18",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 54,
+                "y": 5131,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        },
+        {
+          "width": 1440,
+          "measured": [
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(1)"
+              ],
+              "text": "Le rapprochement est en lecture seule ou ses fonctionnalités requises sont indisponibles. Demandez à votre administrateur de vérifier les ac",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 346,
+                "y": 2642,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div[data-owned-preparation-preview=\"true\"] > p:nth-child(2)"
+              ],
+              "text": "Vérifié le 27/09/2026 19:02:18",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 346,
+                "y": 2694,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "e6824d861835ed34cc2335ffa2bc054ed0d5ec38b95eb978a7703a4758beb5f7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "translationAfter": {
+    "en": "65d424ea8d9f610c5a3a7afdba32030376881a56a62dd2ca8ebf101cb7bd9066",
+    "fr": "21940a8c660a5d5a6830a6fcca1f8f296d8b890e3a07a611edc2d4d9ce953ac6"
+  },
+  "sourceStable": true,
+  "translationStable": true
+}

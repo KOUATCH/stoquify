@@ -1,0 +1,21 @@
+# Current progress
+
+Updated 2026-10-04T08:49:21.321Z; branch codex/migration-control-plane-release-2026-08-29, HEAD 62a56036a5ac9b37236a20c9b148052199069479. Register SHA256: 60a25d43a5f62e2d249ae3478e62368c2b45521ce73e35ec9f1236c900770d52. Shared changes preserved.
+
+**Position:** 270 workflows /17 families; discovery incomplete; 191 unmapped entries. Queued 264; In progress 2; Complete—verified 4; other statuses zero. Three previously failed purchase/Close criteria completed; one passing criterion revalidated. No workflow closure or denominator change.
+
+| Priority | Workflow and outcome | Status | Delivered and verified | Remaining closure | Owner; next action |
+|---|---|---|---|---|---|
+| Primary | FA-CASH-COMMAND: truthful financial actions | In progress | Actual settled purchase corrections and current Cash recovery | All producers, current authority and complete recovery | Engineering; signing versus new-assessment publication |
+| Supporting | FA-CLOSE-PACK: trustworthy retained evidence | In progress | Four purchase recovery criteria; retained history and notification recovery | Other producer/race boundaries, scheduler deployment, accessibility | Engineering; verify signing/publication orderings |
+| Next 1 | PR-17: reconciliation exceptions | Queued | Prior scoped handoffs | Financial/legacy treatment and recovery | Engineering; reconcile original closure scope |
+| Next 2 | ID-04: invitation redemption | Queued | Prior authority/recipient evidence | Accessibility, onboarding and transport | Engineering; verify transport |
+| Next 3 | MC-11: permitted workspace | Queued | Selected route/action boundaries | Cross-domain transport and scanner gaps | Engineering; preserve guards and improve diagnostics |
+
+**Since the previous report:** Connected the existing payment request, independent approval, execution and separate cash-recipient evidence review to the original purchase/Close recovery verifier. Actual services settled the initial 17,500 XAF obligation. Credit reversal reopened exactly 7,500 XAF; a new payment/review settled it before genuine reassessment and certified export. Return reversal independently invalidated and recovered current proof. Original exports and history remain intact. No product, schema or UI change was required, and no workflow was discovered, reopened or closed.
+
+**Verification:** All four original cases passed on the owned loopback database: sequential credit/return recovery, both actual PostgreSQL publication-blocking orders, and late post-invalidation rollback followed by a new-transaction retry and exact replay. All 210 source bindings, observed outside-fixture records and separate outside payment/evidence fingerprints are unchanged. Both new harness files passed syntax checks. Full TypeScript/Jest/browser suites were not repeated for this verification-only change. [Detailed evidence and operating guidance](PURCHASE_CLOSE_SETTLED_RECOVERY_2026-10-04.md) retains the failed fixture attempt and passing receipt.
+
+**Changed plan:** The first attempt passed a fixture-only helper into a strict service schema. Correcting that scope projection preserved product validation. Previously missing positive recovery is now established for this bounded current-period cash journey. Next inspect and verify signing versus new Close-assessment publication, an existing explicitly unverified Cash/Close boundary; retain completed PR-10 status unless evidence demonstrates a regression.
+
+**Remaining:** Other producers/cumulative periods, bank lifecycle and external evidence, broader authority/interruption cases, authorized worker scheduling/service deployment and representative capacity, native assistive technology and actual zoom. Country-treatment warnings remain; application certification on synthetic inputs is not statutory approval or a real payment. Prior development-route latency remains unresolved. No migration, production deployment, live approval/payment, external message or X1 clearance occurred. The previously auto-review-rejected all-period manual-posting helper remains unapplied pending its existing approval request. All 17 families remain in the [register](WORKFLOW_REGISTER.json). Full goal stays active; ETA is not reliable.

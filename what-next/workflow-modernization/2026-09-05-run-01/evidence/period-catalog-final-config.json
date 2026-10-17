@@ -1,0 +1,31 @@
+{
+  "receipts": [
+    "evidence/period-catalog-jest-f333ea31-ca50-4a68-bf37-87988638b900.json",
+    "evidence/period-catalog-typecheck-1a5a9298-0f51-4bc4-9c04-5e6af34fa2d6.json",
+    "evidence/period-catalog-lint-c92e9fb3-c328-46c6-a0dc-7d28d4859538.json",
+    "lanes/environment/period-catalog-runtime-ee99cc13-372b-4c55-ba1d-0e623fbc4688.json"
+  ],
+  "artifacts": [
+    "PERIOD_CATALOG_ORDER_2026-10-01.md",
+    "evidence/period-catalog-before-ba70a26d-61b4-4771-90aa-744a43178e1e.json",
+    "evidence/capture-period-catalog-before.cjs",
+    "lanes/environment/verify-period-catalog.cjs",
+    "lanes/environment/period-catalog-runtime.cjs"
+  ],
+  "verificationSummary": "338 focused tests in 11 suites, full existing no-emit TypeScript and eight-file lint passed. Seven actual PostgreSQL scenarios passed: exact predecessor reproduction, both count/creation orders, creation rollback/independent retry, compatible readers/tenant separation/no-monthly creation, and both period-close contention orders. Retained exports, exact count replay, source stability and unchanged operation financial/outside-fixture fingerprints were verified.",
+  "verifiedCriteria": [
+    "Zero-variance count admission takes a shared tenant period-catalog lock before posting-period selection and row locks, preserving Read Committed checks and complete sorted assessment locks.",
+    "The existing online fiscal-calendar creator takes the matching exclusive transaction lock before all writes, including no-monthly requests; fiscal clipping and audit behavior remain unchanged.",
+    "Exact saved predecessor reproduces stale evidence for a newly created period; both current database commit orders show actual blocking and complete committed-period visibility or post-count fresh evidence.",
+    "Actual fiscal/period writes roll back after injected failure and an independent connection can retry without partial records; compatible shared readers and independent tenants remain available.",
+    "Real count/period-close contention preserves OPEN validation and current-assurance closure checks in both orders, without stale success or lost retained exports.",
+    "338 focused regressions, existing typecheck and changed-file lint pass; exact count replay, export contents and operation financial/outside-fixture fingerprints remain intact."
+  ],
+  "limitations": [
+    "Only existing online fiscal creation and zero-variance count scope discovery participate. Other producers, journal reversal, arbitrary inherited lock order and direct offline scripts remain separate boundaries.",
+    "New-period assessment readiness was real READY/T3 or invalidated BLOCKED/T3, not invented T4 or customer/statutory approval. Fiscal creation's uncertain committed response is not made idempotent by this locking correction.",
+    "No UI change, fresh browser screenshot, full accessibility, production performance or external delivery proof is claimed.",
+    "Full-register discovery/source reconciliation, complete Cash/Close lifecycle and genuine country/payroll prerequisites remain incomplete. Both workflows stay In progress.",
+    "No migration, seed, production deployment, live activation, real payment, external message or X1 clearance occurred."
+  ]
+}

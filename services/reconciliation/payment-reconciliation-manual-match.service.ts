@@ -7,6 +7,7 @@ import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.
 import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 import { MANUAL_ALLOCATION_STATUSES, getManualRemainingAmounts, manualMatchAmount as amount, validateManualMatchEvidence } from "./manual-match-evidence"
+import { lockReconciliationPaymentSourcesInTx } from "./reconciliation-source-locks"
 
 type ControlContext = { actorPermissions: readonly string[]; lastAuthAt?: Date | number | string | null; now?: Date | number | string | null }
 export type ProposeManualMatchInput = {
@@ -78,6 +79,7 @@ async function loadEvidence(tx: Prisma.TransactionClient, input: {
 }) {
   if (Boolean(input.providerEventId) === Boolean(input.statementLineId)) throw new BusinessRuleError("Manual match requires exactly one provider event or statement line.")
   const scope = { organizationId: input.organizationId, providerAccountId: input.providerAccountId }
+  await lockReconciliationPaymentSourcesInTx(tx, { ...scope, paymentTransactionId: input.paymentTransactionId })
   const [provider, payment, event, line] = await Promise.all([
     tx.providerAccount.findFirst({ where: { id: input.providerAccountId, organizationId: input.organizationId }, select: { id: true, currencyCode: true, status: true, archivedAt: true } }),
     tx.paymentTransaction.findFirst({ where: { ...scope, id: input.paymentTransactionId }, select: { id: true, amount: true, currencyCode: true, direction: true, state: true, providerTransactionId: true, providerReference: true } }),

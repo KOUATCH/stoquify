@@ -1,0 +1,90 @@
+{
+  "at": "2026-09-28T10:11:14.988Z",
+  "sourceBefore": {
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "checks": [
+    {
+      "unavailableProviderVerified": true,
+      "kind": "incomplete-posting-proof",
+      "aggregateEquivalent": true,
+      "independentMetricsEquivalent": true,
+      "reads": [
+        {
+          "model": "PayrollPeriod",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollRun",
+          "operation": "findMany"
+        },
+        {
+          "model": "AccountingSourceLink",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollPeriod",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollRun",
+          "operation": "findMany"
+        },
+        {
+          "model": "AccountingSourceLink",
+          "operation": "findMany"
+        }
+      ],
+      "total": null,
+      "blockerCodes": [
+        "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING",
+        "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING",
+        "PAYROLL_FORECAST_LEDGER_PROOF_MISSING",
+        "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING",
+        "PAYROLL_FORECAST_PROVIDER_PROOF_MISSING",
+        "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"
+      ]
+    },
+    {
+      "unavailableProviderVerified": true,
+      "kind": "successful-empty-source",
+      "aggregateEquivalent": true,
+      "independentMetricsEquivalent": true,
+      "reads": [
+        {
+          "model": "PayrollPeriod",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollRun",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollPeriod",
+          "operation": "findMany"
+        },
+        {
+          "model": "PayrollRun",
+          "operation": "findMany"
+        }
+      ],
+      "total": 0,
+      "blockerCodes": []
+    }
+  ],
+  "purpose": "Read-only equivalence of retained algorithm, existing tenant integration and independently callable payroll calculation",
+  "readOnlyGuardEnforced": true,
+  "sourceAfter": {
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true,
+  "passed": true
+}

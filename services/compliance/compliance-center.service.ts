@@ -25,8 +25,8 @@ type CompliancePayrollForecastReadiness = {
   authoritative: boolean
   reasonCode: string
   message: string
-  upcomingStatutoryLiabilityAmount: number
-  totalUpcomingAmount: number
+  upcomingStatutoryLiabilityAmount: number | null
+  totalUpcomingAmount: number | null
   declarationCount: number
   nextDeclarationDueDate: string | null
   blockerCodes: string[]

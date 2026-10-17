@@ -1,0 +1,67 @@
+# Roadmap execution report
+
+**Task:** establish a comprehensive roadmap for complete execution of the assessment proposals. **Workspace:** `E:\ohada saas\Focused projects\stoquify`. **Classification:** planning/documentation.
+
+## Work completed in this publication
+
+- Applied aqstoqflow-prompt-architect and the repository roadmap/report-publisher workflow.
+- Read the saved audit, findings, verification/rechecks, capability and BI coverage, schema/ownership context and the earlier W00–W11 sequence.
+- Inspected current verification script definitions, relevant Jest/TypeScript/Next configuration context, publisher source and graph navigation. No new complete system audit is claimed.
+- Expanded the proposals into 38 packages with owners/reviewers, dependencies, acceptance evidence, data/control implications, effort bands and explicit activation gates.
+- Mapped all 14 findings, 29 capabilities, 19 KPIs and 22 review lenses; added decisions, six integrated journeys, first-cycle actions, migration/rollback and evidence contracts.
+- Preserved the prior September 12 publication: ten files copied into `what-next/platform-correctness-roadmap/2026-09-30-run-01/previous-publication/` and hash-verified before replacement.
+- Authored the five current Markdown reports and validated planning structure. PDF publication status appears below.
+
+## Commands and actual results
+
+| Action / command | Result |
+| --- | --- |
+| PowerShell Get-Content / rg / selected package script and graph reads | Completed relevant read-only planning inspection. |
+| Initial sandboxed archive creation/copy | Failed with filesystem access denied before reports were overwritten. The same bounded workspace copy succeeded through the approved escalation path. |
+| Archive copy + SHA-256 comparison | PASS: 10 previous files preserved and matched. |
+| Initial planning path validation | Detected a sidebar path written as a directory; corrected to the existing config/sidebar.ts file before generating reports. |
+| PDF inspection runtime discovery | PyMuPDF was unavailable; bundled pypdf and pypdfium2 are available for inspection. The approved publisher remains the PDF generator. |
+| node what-next/platform-correctness-roadmap/2026-09-30-run-01/build-roadmap.cjs | PASS: 38 complete packages, all 14/29/19/22 coverage sets, acyclic dependencies, existing inspection paths and unchanged original audit hashes. |
+| node .agents/skills/docs-report-publisher/scripts/publish_reports.mjs prompt-execution | PASS in recorded publication; final report revision is republished and checked against its updated hashes. |
+| node what-next/platform-correctness-roadmap/2026-09-30-run-01/validate-publication.cjs | PASS in recorded publication: exact five Markdown/PDF pairs, valid nonempty PDF headers, unchanged Markdown and original audit evidence, retained archive. Final revision is rechecked. |
+| Application unit/integration/typecheck/build/browser/DB/provider verification | NOT RUN in this roadmap-only task; scheduled under R01 and subsequent packages. |
+| Skill quick_validate.py | NOT APPLICABLE: no skill was created or changed. Old skill-validation results were archived as history, not inherited as current blockers. |
+
+
+## Changed files and boundaries
+
+Updated only the five publication Markdown reports and their generated PDFs, plus supporting planning data, generation/validation scripts, manifests, QA artifacts and preserved reports under `what-next/platform-correctness-roadmap/2026-09-30-run-01/`. No application, test, configuration, schema, migration, skill or production file was intentionally changed by this planning task. No database query, data mutation, feature activation, external message, payment or regulatory submission was performed for roadmap generation.
+
+The original audit files are protected by a source-hash baseline. The generator validates all listed impacted paths exist; those paths identify future work ownership, not files changed now. Existing unrelated work remains outside this task.
+
+## Historical baseline, not current verification
+
+Initial audit: **3,173 passed / 23 failed assertions across 326 suites**, using an audit-specific adapter. Later overlapping rechecks: people 552 passed / 15 failed; finance 677 / 3; supplement 112 / 0; changed UI 8 / 0. Thus **18 failed assertions remained in the last affected-cohort rechecks**; these results must not be added to the initial totals. Eight structural gates passed and two were blocked. Typecheck timed out after 420 seconds; the browser could not connect. None of those commands was rerun as part of this roadmap publication.
+
+The original assessment remains the source for reproduced defects and local database observations. A new implementation run must refresh it against the selected candidate before using a finding as current truth or marking it resolved.
+
+## Current outcome and limits
+
+Planning structure validation passed. The publication pipeline has produced the five pairs successfully; the final manifest records the exact current source/PDF hashes after the final rerender. Remediation implementation has not started as part of this request. All 38 packages remain PROPOSED, including external qualification and conditional extensions. No delivery dates, legal/accounting approval or production readiness are asserted.
+
+Named staffing, product/currency/offline policies, external access, expert qualification, actual historical-data impact and deployment/pilot targets remain execution prerequisites D01–D08. These did not prevent completing the requested roadmap.
+
+## Evidence retained
+
+- [Planning validation](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-roadmap/2026-09-30-run-01/plan-validation.json>)
+- [Publication validation](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-roadmap/2026-09-30-run-01/publication-validation.json>)
+- [Original audit hash baseline](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-roadmap/2026-09-30-run-01/source-baseline.json>)
+- [Previous publication](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-roadmap/2026-09-30-run-01/previous-publication>)
+- [Planning data](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-roadmap/2026-09-30-run-01/roadmap-data.cjs>)
+
+- [executive-assessment.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/executive-assessment.md>)
+- [findings.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/findings.md>)
+- [schema-assessment.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/schema-assessment.md>)
+- [capability-coverage.csv](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/capability-coverage.csv>)
+- [architecture-and-workflows.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/architecture-and-workflows.md>)
+- [bi-capability-matrix.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/bi-capability-matrix.md>)
+- [review-lens-register.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/review-lens-register.md>)
+- [verification-summary.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/verification-summary.md>)
+- [concurrent-changes-and-rechecks.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/concurrent-changes-and-rechecks.md>)
+- [remediation-roadmap.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/remediation-roadmap.md>)
+- [evidence-index.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/evidence-index.md>)

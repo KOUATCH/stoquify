@@ -1,0 +1,621 @@
+{
+  "purpose": "Synthetic proof read and transport recovery; no financial processing",
+  "at": "2026-09-28T09:25:01.186Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Proof Trail",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Evidence chain, blockers, redactions, and next actions for the selected record.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "Fresh",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Evidence Nodes",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "from",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Evidence Edges",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "No proof blockers were returned for this record.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "Sensitive proof access was audited.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-1440-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-1440.png"
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Piste de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Chaîne de preuve, blocages, masquages et prochaines actions pour le document sélectionné.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "À jour",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Éléments de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "depuis",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Liens entre les preuves",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Aucun blocage de preuve n’a été renvoyé pour ce document.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "L’accès aux preuves sensibles a été journalisé.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-1440-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-1440.png"
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Proof Trail",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Evidence chain, blockers, redactions, and next actions for the selected record.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "Fresh",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Evidence Nodes",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "from",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Evidence Edges",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "No proof blockers were returned for this record.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "Sensitive proof access was audited.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-768-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-768.png"
+    },
+    {
+      "locale": "fr",
+      "width": 768,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Piste de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Chaîne de preuve, blocages, masquages et prochaines actions pour le document sélectionné.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "À jour",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Éléments de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "depuis",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Liens entre les preuves",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Aucun blocage de preuve n’a été renvoyé pour ce document.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "L’accès aux preuves sensibles a été journalisé.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-768-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-768.png"
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Proof Trail",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Evidence chain, blockers, redactions, and next actions for the selected record.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "Fresh",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Evidence Nodes",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Raw",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "from",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Evidence Edges",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "No proof blockers were returned for this record.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "Sensitive proof access was audited.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-320-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-en-320.png"
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "visual": {
+        "background": "rgb(21, 32, 39)",
+        "foreground": "rgb(247, 250, 248)",
+        "animationName": "none",
+        "overlayAnimationName": "none",
+        "rows": [
+          {
+            "text": "Piste de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Chaîne de preuve, blocages, masquages et prochaines actions pour le document sélectionné.",
+            "ratio": 8.03452566524406
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.778941297752202
+          },
+          {
+            "text": "À jour",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "payments",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+            "ratio": 7.281296839223256
+          },
+          {
+            "text": "Éléments de preuve",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+            "ratio": 14.724985365778192
+          },
+          {
+            "text": "Brut",
+            "ratio": 6.926193997934455
+          },
+          {
+            "text": "payment.transaction",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "depuis",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "payment_transactions",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": ".",
+            "ratio": 7.505289274687793
+          },
+          {
+            "text": "Liens entre les preuves",
+            "ratio": 15.763319508642054
+          },
+          {
+            "text": "Aucun blocage de preuve n’a été renvoyé pour ce document.",
+            "ratio": 12.109448127315611
+          },
+          {
+            "text": "L’accès aux preuves sensibles a été journalisé.",
+            "ratio": 7.505289274687793
+          }
+        ]
+      },
+      "enlarged": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-320-enlarged.png",
+      "controlledTextEnlargement": 2,
+      "keyboardContainment": true,
+      "oneDrawer": true,
+      "keyboardEscapeAndFocusReturn": true,
+      "transportRetry": true,
+      "realProofResponse": true,
+      "revokedProofAbsent": true,
+      "screenshot": "proof-portal-fd60a0ea-c222-44c3-97be-1e092ab490cc-fr-320.png"
+    }
+  ],
+  "stage": "fr current permission revocation",
+  "transportAborted": true,
+  "actionStatus": 200,
+  "actionRedirect": false,
+  "actionContainsSubject": true,
+  "actionIncludesPage": true,
+  "lastVisual": {
+    "background": "rgb(21, 32, 39)",
+    "foreground": "rgb(247, 250, 248)",
+    "animationName": "none",
+    "overlayAnimationName": "none",
+    "rows": [
+      {
+        "text": "Piste de preuve",
+        "ratio": 15.763319508642054
+      },
+      {
+        "text": "Chaîne de preuve, blocages, masquages et prochaines actions pour le document sélectionné.",
+        "ratio": 8.03452566524406
+      },
+      {
+        "text": "Brut",
+        "ratio": 6.778941297752202
+      },
+      {
+        "text": "À jour",
+        "ratio": 7.281296839223256
+      },
+      {
+        "text": "payments",
+        "ratio": 7.281296839223256
+      },
+      {
+        "text": "Payment transaction exists but has not reached confirmation or reconciliation.",
+        "ratio": 7.281296839223256
+      },
+      {
+        "text": "Éléments de preuve",
+        "ratio": 15.763319508642054
+      },
+      {
+        "text": "Payment transaction cmul1keuv000nmaoc5sb9s72s",
+        "ratio": 14.724985365778192
+      },
+      {
+        "text": "Brut",
+        "ratio": 6.926193997934455
+      },
+      {
+        "text": "payment.transaction",
+        "ratio": 7.505289274687793
+      },
+      {
+        "text": "depuis",
+        "ratio": 7.505289274687793
+      },
+      {
+        "text": "payment_transactions",
+        "ratio": 7.505289274687793
+      },
+      {
+        "text": ".",
+        "ratio": 7.505289274687793
+      },
+      {
+        "text": "Liens entre les preuves",
+        "ratio": 15.763319508642054
+      },
+      {
+        "text": "Aucun blocage de preuve n’a été renvoyé pour ce document.",
+        "ratio": 12.109448127315611
+      },
+      {
+        "text": "L’accès aux preuves sensibles a été journalisé.",
+        "ratio": 7.505289274687793
+      }
+    ]
+  },
+  "noPaymentMutation": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "sourceStable": true
+}

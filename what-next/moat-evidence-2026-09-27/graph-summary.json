@@ -1,0 +1,135 @@
+[
+  {
+    "graph": "actions",
+    "nodes": 1044,
+    "edges": 1284,
+    "examples": [
+      {
+        "label": "getAccountantPortfolioAction()",
+        "file_type": "code",
+        "source_file": "accounting\\accountant-access.actions.ts",
+        "source_location": "L46",
+        "id": "accounting_accountant_access_actions_getaccountantportfolioaction",
+        "community": 58,
+        "norm_label": "getaccountantportfolioaction()"
+      },
+      {
+        "label": "getPaymentReconciliationWorkbenchAction()",
+        "file_type": "code",
+        "source_file": "payments\\reconciliation-workbench.actions.ts",
+        "source_location": "L35",
+        "id": "payments_reconciliation_workbench_actions_getpaymentreconciliationworkbenchaction",
+        "community": 132,
+        "norm_label": "getpaymentreconciliationworkbenchaction()"
+      }
+    ]
+  },
+  {
+    "graph": "app",
+    "nodes": 622,
+    "edges": 472,
+    "examples": [
+      {
+        "label": "AccountantPortfolioPage()",
+        "file_type": "code",
+        "source_file": "[locale]\\(dashboard)\\dashboard\\accounting\\accountant-portfolio\\page.tsx",
+        "source_location": "L8",
+        "id": "accountant_portfolio_page_accountantportfoliopage",
+        "community": 75,
+        "norm_label": "accountantportfoliopage()"
+      },
+      {
+        "label": "CashCommandPage()",
+        "file_type": "code",
+        "source_file": "[locale]\\(dashboard)\\dashboard\\finance\\cash-command\\page.tsx",
+        "source_location": "L31",
+        "community": 38,
+        "norm_label": "cashcommandpage()",
+        "id": "cash_command_page_cashcommandpage"
+      }
+    ]
+  },
+  {
+    "graph": "components",
+    "nodes": 1173,
+    "edges": 1089,
+    "examples": [
+      {
+        "label": "AccountantPortfolio.tsx",
+        "file_type": "code",
+        "source_file": "accounting\\AccountantPortfolio.tsx",
+        "source_location": "L1",
+        "id": "accounting_accountantportfolio_tsx",
+        "community": 140,
+        "norm_label": "accountantportfolio.tsx"
+      },
+      {
+        "label": "AccountantPortfolio()",
+        "file_type": "code",
+        "source_file": "accounting\\AccountantPortfolio.tsx",
+        "source_location": "L6",
+        "id": "accounting_accountantportfolio_accountantportfolio",
+        "community": 140,
+        "norm_label": "accountantportfolio()"
+      },
+      {
+        "label": "CashCommandDashboard.tsx",
+        "file_type": "code",
+        "source_file": "cash-command\\CashCommandDashboard.tsx",
+        "source_location": "L1",
+        "id": "cash_command_cashcommanddashboard_tsx",
+        "community": 0,
+        "norm_label": "cashcommanddashboard.tsx"
+      },
+      {
+        "label": "openProofSubject()",
+        "file_type": "code",
+        "source_file": "cash-command\\CashCommandDashboard.tsx",
+        "source_location": "L135",
+        "id": "cash_command_cashcommanddashboard_openproofsubject",
+        "community": 0,
+        "norm_label": "openproofsubject()"
+      },
+      {
+        "label": "cn()",
+        "file_type": "code",
+        "source_file": "cash-command\\CashCommandDashboard.tsx",
+        "source_location": "L230",
+        "id": "cash_command_cashcommanddashboard_cn",
+        "community": 0,
+        "norm_label": "cn()"
+      }
+    ]
+  },
+  {
+    "graph": "hooks",
+    "nodes": 308,
+    "edges": 321,
+    "examples": [
+      {
+        "label": "usePaymentReconciliationWorkbench.ts",
+        "file_type": "code",
+        "source_file": "payments\\usePaymentReconciliationWorkbench.ts",
+        "source_location": "L1",
+        "id": "payments_usepaymentreconciliationworkbench_ts",
+        "community": 40,
+        "norm_label": "usepaymentreconciliationworkbench.ts"
+      },
+      {
+        "label": "usePaymentReconciliationWorkbench()",
+        "file_type": "code",
+        "source_file": "payments\\usePaymentReconciliationWorkbench.ts",
+        "source_location": "L20",
+        "id": "payments_usepaymentreconciliationworkbench_usepaymentreconciliationworkbench",
+        "community": 40,
+        "norm_label": "usepaymentreconciliationworkbench()"
+      }
+    ]
+  },
+  {
+    "graph": "types",
+    "nodes": 72,
+    "edges": 36,
+    "examples": []
+  }
+]

@@ -84,7 +84,7 @@ describe("Sales route", () => {
   })
 
   it("enforces sales RBAC and observes sales module access before rendering the dashboard", async () => {
-    render(await SalesPage())
+    render(await SalesPage({}))
 
     expect(mockRequirePermission).toHaveBeenCalledWith("sales.read", {
       resource: "SalesDashboard",
@@ -107,7 +107,7 @@ describe("Sales route", () => {
     getLocale.mockResolvedValue("fr")
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
-    render(await SalesPage())
+    render(await SalesPage({}))
 
     expect(screen.getByRole("heading", { name: "Sales dashboard is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
@@ -119,7 +119,7 @@ describe("Sales route", () => {
   it("fails closed before module observation when no active organization is available", async () => {
     mockRequirePermission.mockRejectedValue(new RbacError("No active organization", "NO_ACTIVE_ORG", 403))
 
-    render(await SalesPage())
+    render(await SalesPage({}))
 
     expect(screen.getByRole("heading", { name: "Sales dashboard needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")

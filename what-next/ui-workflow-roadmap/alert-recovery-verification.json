@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-04",
+  "packages": ["UX16", "UX17"],
+  "scope": "Current alert-scan checkpoint recovery; generic provider/payment queue excluded",
+  "sourceManifest": "alert-recovery-source-hashes.json",
+  "tests": { "report": "alert-recovery-jest.json", "session": 51956, "suitesPassed": 10, "testsPassed": 134, "exitCode": 0 },
+  "typecheck": { "session": 47306, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "exitCode": 0, "laterChange": "Workbench test wrapper only; scoped ESLint passed afterward" },
+  "eslint": { "exitCode": 0, "warnings": 0, "scope": "Recovery product and focused tests; final workbench test wrapper rechecked" },
+  "flags": { "RECONCILIATION_ALERT_RECOVERY_ENABLED": "default false; not enabled" },
+  "migrationRequired": false,
+  "databaseConcurrencyVerified": false,
+  "liveRecoveryExecuted": false,
+  "browser": { "environment": "http://localhost:3000", "paths": ["/en/dashboard/finance/reconciliation", "/fr/dashboard/finance/reconciliation"], "account": "super.admin.rds-org001@stockflow.test", "authenticatedWorkbenchLoaded": true, "processedNotificationDiagnosticsVisible": true, "recordedScanAvailable": false, "recoveryPanelVerified": false },
+  "operatingDecision": "Existing scan checkpoint selected from source evidence; optional preference unanswered and D08 acceptance pending",
+  "remaining": ["Disposable PostgreSQL races and rollback", "Lock performance", "Populated and restricted-role browser tasks", "Accessibility", "D08 operating acceptance", "Pilot and handover"],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

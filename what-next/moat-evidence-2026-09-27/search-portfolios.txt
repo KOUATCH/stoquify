@@ -1,0 +1,25 @@
+services\end-of-day-close\end-of-day-close-review.service.ts:279:        outboxMessages: [],
+services\end-of-day-close\branch-daily-close-sign-off.service.ts:351:          outboxMessages: [],
+actions\agents\command-agent.actions.ts:64:        outboxMessages: [],
+services\compliance\country-adapter-pilot.service.ts:543:      outboxMessages: [],
+services\compliance\certification-outbox.service.ts:928:      outboxMessages: [],
+actions\accounting\accountant-access.actions.ts:5:  getAccountantPortfolio,
+actions\accounting\accountant-access.actions.ts:43:  async (_input, ctx) => getAccountantPortfolio(ctx.userId),
+actions\accounting\accountant-access.actions.ts:46:export async function getAccountantPortfolioAction(input: unknown = {}) {
+services\accounting\accountant-access.service.ts:467:export async function getAccountantPortfolio(
+services\accounting\customer-receivable-lifecycle.service.ts:240:    outboxMessages: [],
+services\accounting\customer-receivable-document.service.ts:445:      outboxMessages: [],
+services\accounting\customer-statement-recipient-action.service.ts:373:    outboxMessages: [],
+services\accounting\customer-statement.service.ts:649:    outboxMessages: [],
+services\accounting\missing-close-evidence-accountant-review-queue-contracts.ts:25:  workflowState: "AWAITING_ACCOUNTANT_REVIEW"
+services\accounting\missing-close-evidence-accountant-review-queue.service.ts:468:          workflowState: "AWAITING_ACCOUNTANT_REVIEW",
+app\[locale]\(dashboard)\dashboard\accounting\accountant-portfolio\page.tsx:3:import { getAccountantPortfolioAction } from "@/actions/accounting/accountant-access.actions"
+app\[locale]\(dashboard)\dashboard\accounting\accountant-portfolio\page.tsx:11:  const response = await getAccountantPortfolioAction()
+services\purchase-order\purchase-order.service.ts:675:      payload: { entityType: "PurchaseOrder", commandHash, expectedRevision: input.expectedRevision, result }, outboxMessages: [],
+services\purchase-order\purchase-order.service.ts:770:      payload: { entityType: "PurchaseOrder", commandHash, reason: request.reason ?? null, result }, outboxMessages: [] })
+services\purchase-order\purchase-order.service.ts:839:      payload: { entityType: "PurchaseOrder", commandHash, result }, outboxMessages: [] })
+services\purchase-order\supplier-po-acknowledgement.service.ts:447:    outboxMessages: [],
+services\purchase-order\supplier-po-acknowledgement.service.ts:624:      outboxMessages: [],
+services\purchase-order\supplier-po-acknowledgement.service.ts:1061:      outboxMessages: [],
+services\purchase-order\supplier-po-acknowledgement.service.ts:1240:      outboxMessages: [],
+services\purchase-order\supplier-po-acknowledgement.service.ts:1315:      payload: { organizationId, actorId: revokedById, ...parsed }, occurredAt: now, actorId: actor.id, sourceType: "SUPPLIER_PO_ACKNOWLEDGEMENT", sourceId: existing.id, documentHash: existing.envelopeContentHash, outboxMessages: [] })

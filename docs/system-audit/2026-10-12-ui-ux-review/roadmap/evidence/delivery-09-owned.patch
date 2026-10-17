@@ -1,0 +1,260 @@
+--- a/components/bi/BIWhatChangedStrip.tsx
++++ b/components/bi/BIWhatChangedStrip.tsx
+@@ -71,7 +71,7 @@
+                 <div className="shrink-0 text-left text-xs text-[var(--dash-text-soft)] lg:text-right">
+                   {change.direction === "observed" ? (
+                     <>
+-                      <p className="font-medium text-[var(--dash-text)]">{change.unit === "risk" ? observedCopy.score : observedCopy.value}: {change.currentValue ?? t.none}{change.unit && change.unit !== "risk" ? ` ${change.unit}` : ""}</p>
++                      <p className="font-medium text-[var(--dash-text)]">{change.unit === "risk" ? observedCopy.score : observedCopy.value}: {change.currentValue ?? t.none}{change.unit && change.unit !== "risk" ? ` ${displayUnit(change.unit, locale)}` : ""}</p>
+                       <p>{observedCopy.unavailable}</p>
+                     </>
+                   ) : <p className="font-medium text-[var(--dash-text)]">{formatChangeValue(change.previousValue, change.currentValue, change.unit, locale)}</p>}
+@@ -112,7 +112,14 @@
+ function formatChangeValue(previousValue: number | string | null, currentValue: number | string | null, unit: string | null, locale: string) {
+   const previous = previousValue ?? biCopy[biLocale(locale)].none
+   const current = currentValue ?? biCopy[biLocale(locale)].none
+-  return `${previous} -> ${current}${unit ? ` ${unit}` : ""}`
++  return `${previous} -> ${current}${unit ? ` ${displayUnit(unit, locale)}` : ""}`
++}
++
++function displayUnit(unit: string, locale: string) {
++  const labels: Record<string, string> = biLocale(locale) === "fr"
++    ? { items: "éléments", orders: "commandes", score: "points" }
++    : { score: "points" }
++  return Object.prototype.hasOwnProperty.call(labels, unit) ? labels[unit] : unit
+ }
+ 
+ function formatDateTime(value: string, locale: string, timeZone: string) {
+--- a/components/owner-war-room/OwnerWarRoomDashboard.tsx
++++ b/components/owner-war-room/OwnerWarRoomDashboard.tsx
+@@ -496,7 +496,13 @@
+                         </div>
+                         <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                           <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+-                            {item.assignedRole}
++                            {locale === "fr" ? {
++                              owner: "Dirigeant", accountant: "Comptable", finance: "Finance", stockkeeper: "Gestionnaire de stock",
++                              purchasing: "Achats", payroll: "Paie", manager: "Responsable",
++                            }[item.assignedRole] : {
++                              owner: "Owner", accountant: "Accountant", finance: "Finance", stockkeeper: "Stockkeeper",
++                              purchasing: "Purchasing", payroll: "Payroll", manager: "Manager",
++                            }[item.assignedRole]}
+                           </Badge>
+                           <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+                             {item.requiredPermission}
+--- a/components/payroll/payroll-ui-copy.ts
++++ b/components/payroll/payroll-ui-copy.ts
+@@ -200,10 +200,14 @@
+ }
+ 
+ export function payrollUiText(text: string, locale: string): string {
++  if (locale === "fr" && text === "No evidence hash") return "Aucune empreinte de preuve"
++  if (locale === "fr" && text === "No payload hash") return "Aucune empreinte du contenu"
+   return locale === "fr" && Object.prototype.hasOwnProperty.call(french, text) ? french[text] : text
+ }
+ 
+ const frenchStatuses: Record<string, string> = {
++  MISMATCH: "Écart constaté",
++  MANUAL_EVIDENCE: "Preuves manuelles", ADAPTER_SUPPORTED: "Adaptateur pris en charge",
+   QUEUED: "En file d’attente",
+   READY: "Prêt", BLOCKED: "Bloqué", ACTION_REQUIRED: "Action requise", UNKNOWN: "Inconnu", PENDING: "En attente",
+   NOT_APPLICABLE: "Sans objet", NOT_EVALUATED: "Non évalué", NOT_READY: "Non prêt", MISSING: "Manquant",
+@@ -223,5 +227,7 @@
+ export function payrollStatusText(value: string | null | undefined, locale: string): string {
+   const raw = value ?? "Pending"
+   const key = raw.toUpperCase()
++  if (locale !== "fr" && key === "MANUAL_EVIDENCE") return "Manual evidence"
++  if (locale !== "fr" && key === "ADAPTER_SUPPORTED") return "Adapter supported"
+   return locale === "fr" && Object.prototype.hasOwnProperty.call(frenchStatuses, key) ? frenchStatuses[key] : raw
+ }
+--- a/components/bi/__tests__/bi-command-primitives.test.tsx
++++ b/components/bi/__tests__/bi-command-primitives.test.tsx
+@@ -351,8 +351,19 @@
+     expect(screen.getByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).toBeVisible()
+     expect(container.textContent).not.toContain("->")
+     rerender(<BIWhatChangedStrip changes={[{ ...buildChange(), previousValue: 10, currentValue: 15, unit: "items" }]} locale={locale} />)
+-    expect(screen.getByText("10 -> 15 items")).toBeVisible()
++    expect(screen.getByText(locale === "fr" ? "10 -> 15 éléments" : "10 -> 15 items")).toBeVisible()
+     expect(screen.queryByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).not.toBeInTheDocument()
++  })
++  it.each(["items", "orders", "score", "XAF", "source-unit", "constructor"])("localizes only known change units: %s", unit => {
++    const change = { ...buildChange(), unit, currentValue: 75 }
++    const before = JSON.stringify(change)
++    const label = ({ items: "éléments", orders: "commandes", score: "points" } as Record<string, string>)[unit]
++    const expected = ["items", "orders", "score"].includes(unit) ? label : unit
++    const { rerender } = render(<BIWhatChangedStrip changes={[change]} locale="fr" />)
++    expect(screen.getByText(`10 -> 75 ${expected}`)).toBeVisible()
++    rerender(<BIWhatChangedStrip changes={[{ ...change, direction: "observed", previousValue: null }]} locale="fr" />)
++    expect(screen.getByText(`Valeur actuelle: 75 ${expected}`)).toBeVisible()
++    expect(JSON.stringify(change)).toBe(before)
+   })
+   it("localizes French brief metadata, evidence and mode controls without changing the target", () => {
+     const onModeChange = jest.fn()
+--- a/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx
++++ b/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx
+@@ -382,6 +382,24 @@
+ 
+ const copyFiltered = "Certaines actions sont masquées selon vos droits d’accès."
+ 
++it.each(["en", "fr"])("presents role labels without changing action authority in %s", locale => {
++  const data = buildData()
++  data.actionQueue.actionItems = [{
++    id: "role-action", organizationId: "org-1", signalId: "signal-1", signalType: "purchase_order_receiving_delay",
++    title: "Review receipt", nextStep: "Inspect source proof", actionPath: "/dashboard/purchase-orders",
++    requiredPermission: "purchase.order.read", status: "open", severity: "high", severityScore: 75,
++    assignedRole: "purchasing", assigneeId: null, createdAt: generatedAt, updatedAt: generatedAt, dueAt: generatedAt,
++    resolvedAt: null, dismissedAt: null, evidenceGrade: "blocked", redactions: [], blockers: [],
++  }]
++  const before = JSON.stringify(data.actionQueue)
++  render(<OwnerWarRoomDashboard data={data} locale={locale} title="Owner" subtitle="Overview" />)
++  fireEvent.click(screen.getByRole("button", { name: locale === "fr" ? "Pilotage" : "Command", exact: true }))
++  expect(screen.getByText(locale === "fr" ? "Achats" : "Purchasing")).toBeVisible()
++  expect(screen.getByText("purchase.order.read")).toBeVisible()
++  expect(screen.getByRole("link", { name: /Review receipt/ })).toHaveAttribute("href", `/${locale}/dashboard/purchase-orders`)
++  expect(JSON.stringify(data.actionQueue)).toBe(before)
++})
++
+ it("retains all four attention counts and uses localized, descriptive priority links", () => {
+   const data = buildData()
+   const { container } = render(<OwnerWarRoomDashboard data={data} locale="fr" title="Pilotage" subtitle="Vue propriétaire" />)
+--- a/components/payroll/__tests__/destination-localization.test.tsx
++++ b/components/payroll/__tests__/destination-localization.test.tsx
+@@ -53,6 +53,13 @@
+   expect(payrollStatusText("SETTLED", "fr")).toBe("Réglé")
+   expect(payrollStatusText("RELEASED", "en")).toBe("RELEASED")
+   expect(payrollStatusText("custom status", "fr")).toBe("custom status")
++  expect(payrollStatusText("MANUAL_EVIDENCE", "fr")).toBe("Preuves manuelles")
++  expect(payrollStatusText("MISMATCH", "fr")).toBe("Écart constaté")
++  expect(payrollUiText("No evidence hash", "fr")).toBe("Aucune empreinte de preuve")
++  expect(payrollUiText("No payload hash", "fr")).toBe("Aucune empreinte du contenu")
++  expect(payrollStatusText("ADAPTER_SUPPORTED", "fr")).toBe("Adaptateur pris en charge")
++  expect(payrollStatusText("MANUAL_EVIDENCE", "en")).toBe("Manual evidence")
++  expect(payrollStatusText("ADAPTER_SUPPORTED", "en")).toBe("Adapter supported")
+   expect(inventoryItemsText("Inventory Items", "fr")).toBe("Articles en stock")
+   expect(inventoryItemsText("Inventory Items", "en")).toBe("Inventory Items")
+   expect(inventoryItemsText("constructor", "fr")).toBe("constructor")
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -120,6 +120,7 @@
+ | 2026-10-13 | UX02/UX03 destination follow-up | Owner recommendation and main action aligned; purchase-order pending/loading feedback added; French payroll and inventory interface copy expanded. 152 focused tests passed. French payroll command center rendered; remaining post-change browser/role checks open after repeated browser timeouts | [Delivery 06](EXECUTION-06.md) |
+ | 2026-10-13 | UX02/UX03 and inventory follow-up | French inventory table/formatting and payroll proof/outcome labels completed locally; 49 mocked tests and semantic check of 21 production roots passed. Live inventory gap reproduced, but post-change browser acceptance remains blocked by local server connectivity | [Delivery 07](EXECUTION-07.md) |
+ | 2026-10-13 | UX02/UX03 rendered acceptance | Cash-variance default route repaired; owner metadata/proof defaults localized; payroll drawer close/focus fixed. 132 mocked tests, 23-root semantic check and scoped lint passed. Local browser recovered; owner/purchase-order handoff and French payroll/inventory destinations checked under SUPER ADMIN. Restricted-role and broader responsive/theme acceptance remain open | [Delivery 08](EXECUTION-08.md) |
++| 2026-10-13 | UX02/UX03 labels and responsive acceptance | Localized known change units, owner role labels and declaration evidence modes; enabled inventory's named keyboard-focusable table scroll area. 108 mocked tests, scoped semantic TypeScript and lint passed. Reconciliation populated under SUPER ADMIN; measured owner/declaration/inventory phone and tablet containment plus keyboard menu focus. Restricted-role sessions unavailable; dev-runtime recovery and full state/theme matrix tracked separately | [Delivery 09](EXECUTION-09.md) |
+ 
+ ### First five changes, in execution order
+ 
+--- a/components/ui/groups/inventory/ItemManagement.tsx
++++ b/components/ui/groups/inventory/ItemManagement.tsx
+@@ -666,7 +666,7 @@
+           state={isLoading ? "loading" : table.getFilteredRowModel().rows.length === 0 ? (globalFilter || stockFilter !== "all" ? "no-results" : "empty") : "ready"}
+           density={density}
+         >
+-        <Table className="min-w-[920px]">
++        <Table className="min-w-[920px]" scrollRegionLabel={locale === "fr" ? "Tableau des articles de stock" : "Stock items table"}>
+           <TableHeader className="sticky top-0 z-10 bg-[rgba(16,27,32,0.94)] backdrop-blur">
+             {table.getHeaderGroups().map((headerGroup) => (
+               <TableRow key={headerGroup.id}>
+--- a/components/payroll/PayrollRegisterTieOut.tsx
++++ b/components/payroll/PayrollRegisterTieOut.tsx
+@@ -306,7 +306,7 @@
+                   </td>
+                   <td className="px-4 py-3">
+                     <p className="break-words text-slate-100">{row.payslipNumber ?? payrollUiText("Missing", locale)}</p>
+-                    <p className="mt-1 text-xs text-slate-500">{row.payslipStatus}</p>
++                    <p className="mt-1 text-xs text-slate-500">{row.payslipStatus ? payrollStatusText(row.payslipStatus, locale) : row.payslipStatus}</p>
+                   </td>
+                   <td className="px-4 py-3 font-semibold text-white">{money(row.amounts.netPayableAmount, row.amounts.currency)}</td>
+                   <td className="px-4 py-3 font-semibold text-white">{money(row.amounts.allocatedAmount, row.amounts.currency)}</td>
+@@ -351,7 +351,7 @@
+               <div key={batch.id} className="grid gap-3 px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                 <div className="min-w-0">
+                   <p className="break-words text-sm font-semibold text-white">{batch.batchNumber}</p>
+-                  <p className="mt-1 break-all text-xs text-slate-500">{batch.evidenceHash ?? batch.bankFileHash ?? "No evidence hash"}</p>
++                  <p className="mt-1 break-all text-xs text-slate-500">{batch.evidenceHash ?? batch.bankFileHash ?? payrollUiText("No evidence hash", locale)}</p>
+                 </div>
+                 <Badge locale={locale} value={batch.status} />
+               </div>
+@@ -368,7 +368,7 @@
+               <div key={declaration.id} className="grid gap-3 px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                 <div className="min-w-0">
+                   <p className="break-words text-sm font-semibold text-white">{declaration.authority} / {declaration.declarationType}</p>
+-                  <p className="mt-1 break-all text-xs text-slate-500">{declaration.payloadHash ?? "No payload hash"}</p>
++                  <p className="mt-1 break-all text-xs text-slate-500">{declaration.payloadHash ?? payrollUiText("No payload hash", locale)}</p>
+                 </div>
+                 <Badge locale={locale} value={declaration.status} />
+               </div>
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-09.md
+@@ -0,0 +1,60 @@
++# Delivery 09 — technical labels and reconciliation acceptance
++
++Date: 2026-10-13. This is a bounded continuation of UX02/UX03, not completion of the full program.
++
++## Implemented
++
++- The shared change/observation strip translates known `items` and `orders` units in French and presents `score` as points. Unknown units, currencies, source values, observation-versus-comparison semantics and provenance remain unchanged. It does not convert a score to a percentage.
++- The owner action queue presents readable EN/FR role names. The action's original assigned role, permission key, destination and source record are unchanged.
++- Payroll declaration evidence modes display `Preuves manuelles` / `Adaptateur pris en charge`, with readable English equivalents. The original enum still controls behavior and tone; unknown statuses remain verbatim. Adapter support is not described as submitted or accepted evidence.
++- Responsive inspection found that the inventory table's inner horizontal scroll area lacked a name and tab stop. Enabled the existing shared Table `scrollRegionLabel` option, with EN/FR labels. No shared primitive, column, sorting, filter, selection or transaction behavior changed.
++- The payroll register's additional live copy gaps now use existing presentation helpers: known payslip status, `MISMATCH`, and missing evidence/content-hash fallback text. Actual hashes, null/empty payslip values and source blocker narratives are preserved.
++
++Preserved the current observation semantics introduced elsewhere in the dirty working tree. The baseline captures existing contents before this delivery. No server business logic, authority, module activation, financial submission or source evidence changed.
++
++## Verification
++
++| Class | Result |
++|---|---|
++| Workflow contract | Passed; 198 unclassified scripts remain outside the approved manifest |
++| Mocked command-center/owner components | 59 tests passed across 5 suites |
++| Mocked payroll destination regressions | 39 tests passed across 6 suites |
++| Mocked payroll/inventory follow-up | 10 tests passed across 2 suites |
++| Semantic TypeScript | Passed, 23 production roots with real dependency resolution; no emission or incremental metadata |
++| Scoped ESLint | Zero errors across five changed production files; existing inventory `next/no-img-element` warning remains |
++| Real database, transaction and concurrency tests | Not run |
++| Build, migration, seed, deployment | Not run |
++
++Used installed Jest with `jest.command-center.config.cjs`, `jest.destination-localization.config.cjs` and `jest.followup-localization.config.cjs`, `--runInBand --no-cache --json`. These configurations omit application Next/environment loading and mock protected actions. TypeScript used `tsconfig.owner-handoff.json`; ESLint used the existing Next rules. Reviewed current configurations and the command registry before running these checks. Evidence is in `evidence/delivery-09-*-tests.json` and `delivery-09-typecheck-result.json`.
++
++UI/UX Pro Max focused search: `responsive data table overflow labels`, source `ux-guidelines.csv`, categories Responsive/Table Handling, Accessibility/Form Labels and Layout/Overflow Hidden. Applied as a review checklist: contain wide tables, retain associated labels, and measure overflow rather than hiding content. These are compatible with current Next 15 / Tailwind 3. No generated palette or replacement design master was used.
++
++## Browser and role evidence
++
++See the final acceptance notes below. All inspected business routes used the existing Edge SUPER ADMIN session, French locale and Wilkinson - Feeney 001. Read navigation can produce normal authorization audit logs; no business transactions were submitted.
++
++- Reconciliation rendered a populated workbench at `/fr/dashboard/finance/reconciliation`, including the trust banner, durable proof, runs, rail failures and suspense review. Disabled controls remained disabled. Desktop document width and scroll width both measured 1523px. This closes the prior content-arrival gap for this role/context, not production reliability certification.
++- Phone calibration: the tool's first 390×844 request produced a measured 487px inner width. A smaller override produced **390×844 CSS inner viewport**, with 371px document width and scroll width (the remainder is the scrollbar). The reconciliation header, filters and section links wrapped without page-level horizontal overflow. The mobile navigation opened with `Ouvrir le menu de navigation`, focused `Fermer la navigation`, and showed the French navigation heading. Escape was sent, but focus restoration was not conclusively observed before the next viewport change.
++- Tablet: measured inner viewport 787×900, document width and scroll width 768px. The French recoverable error panel fit the content column. The initial populated page later changed to a load error; retry led to the global English not-found screen. Server diagnostics recorded a missing compiled reconciliation page, cache rename ENOENT failures and stale server-action identifiers. This is a development-runtime failure, not a verified permission denial or a responsive-layout defect.
++- Recovery used installed Next directly on loopback port 3002 with `NEXT_DIST_DIR=.next-ui09-readonly`, skipping npm's `predev` Prisma helper and avoiding shared `.next-dev` output. No cache deletion, firewall changes, browser termination or authentication changes were used.
++- Connected-browser inventory exposed Edge only, plus empty in-app/MCP surfaces. Chrome accountant and Firefox cashier sessions were not exposed. Requested connection/sign-in through the browser without requesting credentials. SUPER ADMIN does not substitute for owner, accountant or cashier acceptance.
++
++## Remaining acceptance
++
++Restricted-role journeys, actual screen-reader checks and full denied/stale/error matrices require further evidence. Page containment is not exhaustive responsive table-cell, dialog or transactional acceptance. Tests do not certify those checks. Additional rendered results from this delivery follow.
++
++### Isolated-server acceptance
++
++- `/fr/dashboard/owner-war-room`, port 3002: source labels `éléments` and `points` rendered in the summary. Pilotage showed `Comptable` and `Achats` alongside unchanged permission keys. Both the 787×900 tablet viewport (768px client width) and 390×844 phone viewport (371px client width) had matching document scroll/client widths. Phone screenshot confirmed wrapped modes, visible warning/provenance, and a readable full-width recommendation action. This is populated/stale/blocked SUPER ADMIN evidence.
++- On the recovered owner page, mobile menu opened, Escape dismissed the dialog, and focus returned to `Ouvrir le menu de navigation` (confirmed through the DOM after the close transition). This closes the earlier focus-observation gap for this context.
++- `/fr/dashboard/payroll/declarations`, port 3002: `Preuves manuelles` rendered next to `Action requise`. Phone 390×844 and tablet 787×900 both had equal document scroll/client widths (371px and 768px respectively). Header, lifecycle and source-scope headings remained French. Only manual-evidence mode was available live; adapter-supported copy is unit-tested.
++- `/fr/dashboard/inventory/items`, port 3002: populated catalogue fit both phone and tablet document widths. The 1040px table remained within a horizontally scrollable area (312px phone / 457px tablet), rather than widening the page. Enter opened the first row menu with `Consulter l’article`, `Modifier l’article`, `Supprimer l’article`; Escape closed it and returned focus to `Ouvrir le menu`. No menu action was submitted. After the accessibility fix, `Tableau des articles de stock` was exposed as a region with tabindex 0; keyboard focus on that region was confirmed. An ArrowRight was sent, but the subsequent scroll measurement timed out and then the viewport was reset, so actual horizontal keyboard displacement is not certified.
++- `/fr/dashboard/finance/reconciliation`, port 3002: the populated workbench eventually rendered after cold compilation/client loading. Its tablet 787×900 viewport had 768px document and scroll width, closing the populated tablet gap. This confirms recovery by isolated development output; it does not prove the previous failed retry now works or establish deployed performance.
++- Reconciliation theme check: activating the light preference set the document root to `light` while the authenticated wrapper remained `dashboard-landing-theme dark`, as required by the design master. Tablet containment remained intact. Restored the previous dark preference and cleared the temporary viewport override. This checks the approved boundary, not a second authenticated light design.
++- Next's isolated dev startup automatically added a TypeScript include and generated route reference. Removed only its `.next-ui09-readonly/types/**/*.ts` include afterward and restored the generated route reference to the configured normal `.next-dev` location. No other configuration was intentionally edited. The isolated server remains running on loopback 3002 for review; logs/cache are local runtime artifacts, excluded from the owned source patch.
++- `/fr/dashboard/payroll/payments`, port 3002: loaded `Rapprochement des paiements` at both 390×844 and 787×900; document scroll/client widths matched at 371px and 768px. These measurements establish page containment, not exhaustive table-cell or dialog coverage at each size. The proof drawer's French close/Escape behavior was verified separately in Delivery 08.
++- `/fr/dashboard/payroll/register`, port 3002: populated register loaded at both 390×844 and 787×900 with equal scroll/client widths (371px/768px). Source blocker narratives remain English verbatim; the interface's additional known status/hash fallback labels were corrected after observing this page.
++- `/fr/dashboard/inventory/loss-control`, port 3002: `Contrôle des pertes de stock` and the French `Aucune perte de stock enregistrée` empty state loaded. Phone 390×844 and tablet 787×900 document scroll/client widths matched at 371px/768px. Restored the normal viewport after this last responsive check. Browser automation timeouts during compilation required re-binding the same tab; no route denial was inferred from those tool failures.
++- Final register revisit confirmed `Écart constaté`, `Aucune empreinte de preuve`, `Aucune empreinte du contenu` and `Brouillon` in rendered page text. Final document width was 1523px and root theme `dark`. Kept the tab available for the pending role-session handoff.
++
++Rollback uses only `evidence/delivery-09-owned.patch` against `delivery-09-baseline.json`; do not reset dirty files to HEAD. `delivery-09-files.json` records final owned hashes. Raw server logs are local diagnostic material, not publication artifacts.
+--- /dev/null
++++ b/what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_03_LABELS_RESPONSIVE_REPORT_2026-10-13.md
+@@ -0,0 +1,9 @@
++# Phase 03 continuation — labels and responsive acceptance
++
++Implemented presentation-only unit labels, owner action roles, payroll declaration evidence modes and register status/hash fallback copy, plus the existing named/focusable scroll-region option on the inventory table. Preserved server-owned values, action authority and custom source text. Changed five production files plus focused tests; captured pre-edit contents in Delivery 09's baseline.
++
++108 mocked tests, semantic TypeScript for 23 production roots and scoped ESLint passed (one existing inventory image warning). Reconciliation populated successfully under SUPER ADMIN and fit a measured 390×844 phone viewport. Tablet testing exposed a dev compiled-page/cache error; a separate dev cache restored owner checks. Owner and declaration labels, owner/declaration/inventory tablet/phone containment, and navigation/row-menu Escape/focus return were verified.
++
++Detailed changed-file manifest, command review, browser context, remaining role gaps and rollback: [Delivery 09](../../docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-09.md). Read the final acceptance notes there for subsequent checks.
++
++Next: finish Phase 03 role and responsive acceptance using connected owner/accountant/cashier sessions; then proceed to the next scoped roadmap package. This slice does not certify all roles, all states, actual screen readers, deployed performance or the complete phase. No transaction submission, migration, seed, build or deployment was performed. Ordinary read guards can audit navigation.

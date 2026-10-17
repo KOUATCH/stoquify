@@ -431,3 +431,13 @@ describe("PayrollDeclarationWorkbench", () => {
     expect(screen.getByText("Forbidden")).toBeInTheDocument();
   });
 });
+
+
+it("renders French destination headings without mutating source evidence", () => {
+  const data = workbenchData()
+  const original = JSON.stringify(data)
+  render(<PayrollDeclarationWorkbench data={data} locale="fr" />)
+  expect(screen.getByRole("heading", { name: "Suivi des preuves de déclaration" })).toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "Cycle des déclarations" })).toBeInTheDocument()
+  expect(JSON.stringify(data)).toBe(original)
+})

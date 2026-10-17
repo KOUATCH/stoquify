@@ -1,5 +1,6 @@
 "use server"
 
+import { inventoryItemsText } from "@/components/inventory/inventory-items-copy"
 import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-access"
 import getOrgBrands from "@/actions/brands/getOrgBrands"
 import getOrgCategories from "@/actions/categories/getOrgCategories"
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableLoading } from "@/components/ui/data-table"
 import ItemManagement from "@/components/ui/groups/inventory/ItemManagement"
+import { getItemInventorySummary, summarizeInventoryItems } from "@/components/ui/groups/inventory/item-inventory-summary"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
@@ -83,24 +85,10 @@ function normalizeStockFilter(input: unknown): StockStatusFilter {
   return "all"
 }
 
-function getItemStockSnapshot(item: ItemWithInventoryLevelsPayload) {
-  const stock = item.inventoryLevels.reduce((total, level) => total + (Number(level.quantityOnHand) || 0), 0)
-  const available = item.inventoryLevels.reduce((total, level) => total + (Number(level.quantityAvailable) || 0), 0)
-  const reserved = item.inventoryLevels.reduce((total, level) => total + (Number(level.quantityReserved) || 0), 0)
-  const reorderPoint = item.inventoryLevels.reduce(
-    (highest, level) => Math.max(highest, Number(level.reorderPoint) || 0),
-    0,
-  )
-  const threshold = Math.max(Number(item.minStockLevel) || 0, Number(item.reorderLevel) || 0, reorderPoint)
-  const maxStock = Number(item.maxStockLevel) || 0
-
-  return { stock, available, reserved, threshold, maxStock }
-}
-
 function matchesStockFilter(item: ItemWithInventoryLevelsPayload, filter: StockStatusFilter) {
   if (filter === "all") return true
 
-  const { stock, available, reserved, threshold, maxStock } = getItemStockSnapshot(item)
+  const { stock, available, reserved, threshold, maxStock } = getItemInventorySummary(item)
 
   if (filter === "in-stock") return stock > 0 && stock > threshold && !(maxStock > 0 && stock >= maxStock)
   if (filter === "low-stock") return stock > 0 && stock <= threshold
@@ -137,8 +125,8 @@ async function ItemsPageImpl(props: {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
               <AlertTriangle className="h-8 w-8 text-[var(--dash-danger)]" />
             </div>
-            <h3 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">Organization Required</h3>
-            <p className="text-sm text-[var(--dash-text-soft)]">No organization found for the current user.</p>
+            <h3 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">{inventoryItemsText("Organization Required", locale)}</h3>
+            <p className="text-sm text-[var(--dash-text-soft)]">{inventoryItemsText("No organization found for the current user.", locale)}</p>
           </div>
         </div>
       </div>
@@ -190,85 +178,67 @@ async function ItemsPageImpl(props: {
   const activeFilterChips = [
     ...(stockFilter === "all" ? [] : [{
       id: "stock-status",
-      label: stockFilterLabels[stockFilter],
+      label: inventoryItemsText(stockFilterLabels[stockFilter], locale),
       queryParam: "stock",
     }]),
     ...(q ? [{
       id: "search",
-      label: `Search: ${q}`,
+      label: `${locale === "fr" ? "Recherche" : "Search"}: ${q}`,
       queryParam: "q",
     }] : []),
   ]
 
 
-  const totalValue = initialItemData.reduce((sum, item) => {
-    const qty = Number(item.inventoryLevels?.[0]?.quantityOnHand) || 0
-    const val = (Number(item.sellingPrice) || 0) * qty
-    return sum + (Number.isNaN(val) ? 0 : val)
-  }, 0)
-
-  const totalProfit = initialItemData.reduce((sum, item) => {
-    const qty = Number(item.inventoryLevels?.[0]?.quantityOnHand) || 0
-    const profit = ((Number(item.sellingPrice) || 0) - (Number(item.costPrice) || 0)) * qty
-    return sum + (Number.isNaN(profit) ? 0 : profit)
-  }, 0)
-
-  const lowStockCount = initialItemData.filter(
-    (item) => (Number(item.inventoryLevels?.[0]?.quantityOnHand) || 0) < 10,
-  ).length
-
-  const outOfStockCount = initialItemData.filter(
-    (item) => (Number(item.inventoryLevels?.[0]?.quantityOnHand) || 0) === 0,
-  ).length
+  const { totalValue, totalProfit, lowStockCount, outOfStockCount } = summarizeInventoryItems(filteredItemData)
 
   const statsCards = [
     {
-      label: "Total Items",
+      label: inventoryItemsText("Total Items", locale),
       value: totalItems.toString(),
       Icon: Package,
       accent: "var(--dash-brand)",
       soft: "var(--dash-brand-soft)",
-      sub: "Active products",
+      sub: inventoryItemsText("Active products", locale),
     },
     {
-      label: "Total Value",
+      label: inventoryItemsText("Total Value", locale),
       value: moneyFormatter.format(totalValue),
       Icon: DollarSign,
       accent: "var(--dash-info)",
       soft: "var(--dash-info-soft)",
-      sub: "Inventory worth",
+      sub: inventoryItemsText("Cost across all locations", locale),
     },
     {
-      label: "Low Stock",
+      label: inventoryItemsText("Low Stock", locale),
       value: lowStockCount.toString(),
       Icon: AlertTriangle,
       accent: "var(--dash-warning)",
       soft: "var(--dash-warning-soft)",
-      sub: "Need attention",
+      sub: inventoryItemsText("Need attention", locale),
     },
     {
-      label: "Out of Stock",
+      label: inventoryItemsText("Out of Stock", locale),
       value: outOfStockCount.toString(),
       Icon: ShoppingCart,
       accent: "var(--dash-danger)",
       soft: "var(--dash-danger-soft)",
-      sub: "Unavailable",
+      sub: inventoryItemsText("Unavailable", locale),
     },
     {
-      label: "Categories",
+      label: inventoryItemsText("Categories", locale),
       value: initialCategoryData.length.toString(),
       Icon: Target,
       accent: "var(--dash-gold)",
       soft: "var(--dash-gold-soft)",
-      sub: "Product groups",
+      sub: inventoryItemsText("Product groups", locale),
     },
     {
-      label: "Profit Potential",
+      label: inventoryItemsText("Profit Potential", locale),
       value: moneyFormatter.format(totalProfit),
       Icon: TrendingUp,
       accent: "var(--dash-success)",
       soft: "var(--dash-success-soft)",
-      sub: "Total potential",
+      sub: inventoryItemsText("Sales less inventory cost", locale),
     },
   ]
 
@@ -280,31 +250,27 @@ async function ItemsPageImpl(props: {
           <div className="min-w-0 max-w-3xl">
             <div className="dashboard-eyebrow mb-4">
               <span className="dashboard-live-dot" />
-              Inventory workspace
-            </div>
+              {inventoryItemsText("Inventory workspace", locale)}</div>
             <div className="flex min-w-0 items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
                 <Package className="h-6 w-6 text-[var(--dash-brand-strong)]" />
               </div>
               <div className="min-w-0">
                 <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">
-                  Inventory Items
-                </h1>
+                  {inventoryItemsText("Inventory Items", locale)}</h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">
-                  Manage your product catalog, pricing, stock health, and item workflows from one focused table.
-                </p>
+                  {inventoryItemsText("Manage your product catalog, pricing, stock health, and item workflows from one focused table.", locale)}</p>
               </div>
             </div>
           </div>
           <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <Button variant="outline" size="sm" className="dashboard-button-secondary hidden h-10 rounded-lg sm:inline-flex">
               <FileText className="h-4 w-4" />
-              Export
-            </Button>
+              {inventoryItemsText("Export", locale)}</Button>
             <Button asChild size="sm" className="dashboard-button-create h-10 w-full rounded-lg px-4 sm:w-auto">
               <Link href="/dashboard/inventory/items/create">
                 <Plus className="h-4 w-4" />
-                <span>Add Item</span>
+                <span>{inventoryItemsText("Add Item", locale)}</span>
               </Link>
             </Button>
           </div>
@@ -340,10 +306,10 @@ async function ItemsPageImpl(props: {
 
         {/* Main Items Management */}
         <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-          <Suspense fallback={<div className="p-8"><TableLoading title="Loading inventory data..." /></div>}>
+          <Suspense fallback={<div className="p-8"><TableLoading title={inventoryItemsText("Loading inventory data...", locale)} /></div>}>
             <div className="min-w-0 overflow-hidden">
               <ItemManagement
-                title={stockFilterLabels[stockFilter]}
+                title={inventoryItemsText(stockFilterLabels[stockFilter], locale)}
                 activeFilterChips={activeFilterChips}
                 initialSearch={q}
                 editingId=""
@@ -354,6 +320,7 @@ async function ItemsPageImpl(props: {
                 initialUnitData={initialUnitData as never}
                 initialTaxRateData={initialTaxRateData as never}
                 locale={locale}
+                currency={moneyFormatter.resolvedOptions().currency}
               />
             </div>
           </Suspense>

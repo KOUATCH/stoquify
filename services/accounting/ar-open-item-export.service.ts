@@ -3,7 +3,9 @@ import "server-only"
 import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { Prisma } from "@prisma/client"
+import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import {
   getCustomerAROpenItems,
   type AROpenItem,
@@ -71,7 +73,7 @@ function normalizeNow(value: Date | undefined) {
 
 function safeCsvValue(value: unknown) {
   const text = value === null || value === undefined ? "" : String(value)
-  const formulaSafe = /^[=+\-@]/.test(text) ? `'${text}` : text
+  const formulaSafe = /^[\s\u0000-\u001f]*[=+@-]/u.test(text) ? `'${text}` : text
   return `"${formulaSafe.replace(/"/g, '""')}"`
 }
 
@@ -102,6 +104,8 @@ function itemRow(item: AROpenItem) {
 }
 
 export function buildAROpenItemsExportCsv(input: {
+  organizationId?: string
+  customerId?: string
   watermarkId: string
   generatedAt: string
   filtersHash: string
@@ -112,6 +116,10 @@ export function buildAROpenItemsExportCsv(input: {
 }) {
   const manifest = [
     csvRow(["manifest", "stoquify_customer_ar_open_items"]),
+    csvRow(["organization_id", input.organizationId ?? ""]),
+    csvRow(["customer_id_filter", input.customerId ?? "all"]),
+    csvRow(["row_count", input.items.length]),
+    csvRow(["scope", "All retained AR invoice records in the selected customer/as-of scope, including settled records; not the visible dashboard page."]),
     csvRow(["watermark_id", input.watermarkId]),
     csvRow(["generated_at", input.generatedAt]),
     csvRow(["as_of", input.asOf]),
@@ -144,6 +152,7 @@ export async function prepareAROpenItemsExport(
   input: AROpenItemsExportCommand,
 ): Promise<AROpenItemsExportResult> {
   const now = normalizeNow(input.now)
+  if (!hasAnyRbacPermission(input.actorPermissions, ["finance.receivables.read", "finance.read"]) || !hasAnyRbacPermission(input.actorPermissions, ["finance.reports.export", "reports.export"])) throw new ForbiddenError("AR read and report export permissions are required.")
 
   return db.$transaction(async (tx) => {
     const result = await getCustomerAROpenItems({
@@ -206,6 +215,8 @@ export async function prepareAROpenItemsExport(
 
     const generatedAt = now.toISOString()
     const content = buildAROpenItemsExportCsv({
+      organizationId: input.organizationId,
+      customerId: input.filters?.customerId,
       watermarkId,
       generatedAt,
       filtersHash,
@@ -229,5 +240,5 @@ export async function prepareAROpenItemsExport(
       recordedThrough: result.recordedThrough,
       summariesByCurrency: result.summariesByCurrency,
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }

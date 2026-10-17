@@ -72,10 +72,14 @@ export function computeCloseRunEvidenceGrade(input: {
   }
 
   if (
-    input.status === CloseRunStatus.CERTIFIED ||
-    (input.status === CloseRunStatus.EXPORTED && input.certifiedPackExportCount > 0)
+    (input.status === CloseRunStatus.CERTIFIED || input.status === CloseRunStatus.EXPORTED) &&
+    input.certifiedPackExportCount > 0
   ) {
     return { grade: "certified", reason: "Close run has explicit certification or certified close-pack export evidence." }
+  }
+
+  if (input.status === CloseRunStatus.CERTIFIED) {
+    return { grade: "blocked", reason: "Close certification is missing its certified export evidence." }
   }
 
   if (input.status === CloseRunStatus.READY || input.status === CloseRunStatus.EXPORTED) {
@@ -87,14 +91,14 @@ export function computeCloseRunEvidenceGrade(input: {
 export function computePaymentTransactionEvidenceGrade(input: {
   state: PaymentTransactionState
   ledgerPostingBatchStatus?: LedgerPostingBatchStatus | null
-  matchRecordCount: number
+  fullyMatched: boolean
   blockers: ProofTrailBlocker[]
 }): EvidenceGradeDecision {
   if (hasBlockingProofTrailBlocker(input.blockers)) {
     return { grade: "blocked", reason: "Payment transaction has unresolved proof blockers." }
   }
 
-  if (input.matchRecordCount > 0 && (input.state === PaymentTransactionState.CONFIRMED || input.state === PaymentTransactionState.SETTLED)) {
+  if (input.fullyMatched && (input.state === PaymentTransactionState.CONFIRMED || input.state === PaymentTransactionState.SETTLED)) {
     return { grade: "reconciled", reason: "Payment transaction is matched against provider or statement evidence." }
   }
 

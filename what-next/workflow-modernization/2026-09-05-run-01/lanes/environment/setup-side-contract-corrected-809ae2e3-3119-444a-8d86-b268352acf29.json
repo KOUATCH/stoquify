@@ -1,0 +1,63 @@
+{
+  "at": "2026-09-30T18:50:20.684Z",
+  "scope": "Service contract with isolated in-memory read adapter; no database writes",
+  "sourceHashes": {
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354"
+  },
+  "cases": [
+    {
+      "sides": [
+        "DEBIT",
+        "DEBIT"
+      ],
+      "issueCount": 13,
+      "issues": [
+        "Missing active balanced posting rule scaffold for SALE_COMPLETION",
+        "Missing active balanced posting rule scaffold for PAYMENT_RECEIPT",
+        "Missing active balanced posting rule scaffold for REFUND",
+        "Missing active balanced posting rule scaffold for VOID",
+        "Missing active balanced posting rule scaffold for CASH_DRAWER_CLOSE",
+        "Missing active balanced posting rule scaffold for GOODS_RECEIPT",
+        "Missing active balanced posting rule scaffold for SUPPLIER_INVOICE",
+        "Missing active balanced posting rule scaffold for SUPPLIER_PAYMENT",
+        "Missing active balanced posting rule scaffold for PURCHASE_RETURN",
+        "Missing active balanced posting rule scaffold for SUPPLIER_CREDIT_NOTE",
+        "Missing active balanced posting rule scaffold for CUSTOMER_SETTLEMENT",
+        "Missing active balanced posting rule scaffold for EXPENSE_APPROVAL",
+        "Missing active balanced posting rule scaffold for INVENTORY_ADJUSTMENT"
+      ]
+    },
+    {
+      "sides": [
+        "CREDIT",
+        "CREDIT"
+      ],
+      "issueCount": 13,
+      "issues": [
+        "Missing active balanced posting rule scaffold for SALE_COMPLETION",
+        "Missing active balanced posting rule scaffold for PAYMENT_RECEIPT",
+        "Missing active balanced posting rule scaffold for REFUND",
+        "Missing active balanced posting rule scaffold for VOID",
+        "Missing active balanced posting rule scaffold for CASH_DRAWER_CLOSE",
+        "Missing active balanced posting rule scaffold for GOODS_RECEIPT",
+        "Missing active balanced posting rule scaffold for SUPPLIER_INVOICE",
+        "Missing active balanced posting rule scaffold for SUPPLIER_PAYMENT",
+        "Missing active balanced posting rule scaffold for PURCHASE_RETURN",
+        "Missing active balanced posting rule scaffold for SUPPLIER_CREDIT_NOTE",
+        "Missing active balanced posting rule scaffold for CUSTOMER_SETTLEMENT",
+        "Missing active balanced posting rule scaffold for EXPENSE_APPROVAL",
+        "Missing active balanced posting rule scaffold for INVENTORY_ADJUSTMENT"
+      ]
+    },
+    {
+      "sides": [
+        "DEBIT",
+        "CREDIT"
+      ],
+      "issueCount": 0,
+      "issues": []
+    }
+  ],
+  "passed": true,
+  "sourceStable": true
+}

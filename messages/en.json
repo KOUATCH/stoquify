@@ -1,4 +1,205 @@
 {
+  "salesAttention": {
+    "title": "Needs attention",
+    "refresh": "Refresh findings",
+    "basis": "Scope: {location}. Receivables and stock are current; saved cash reports use the selected dates. Order filters apply only to selling products. Order: overdue balances, cash variances, then stock thresholds.",
+    "loading": "Checking available sources…",
+    "refreshing": "Refreshing findings; previous check times remain visible.",
+    "partial": "Assessment is partial.",
+    "receivablesGap": "Receivable evidence is unavailable, restricted, or has no documents.",
+    "cashGap": "Saved cash reports do not cover every selected location and day, or cannot be read.",
+    "stockGap": "Stock evidence is incomplete, unavailable, or restricted.",
+    "empty": "No findings in the available evidence. This does not establish that every source is healthy.",
+    "more": "View {count} additional findings",
+    "destinations": "Receivables opens the organization-wide history; product details may show other locations. Cash links open the exact saved day and location. Use Back to return to this sales scope.",
+    "finding": "Review",
+    "scope": "Location",
+    "checked": "Checked",
+    "recorded": "Recorded",
+    "finalized": "Finalized report",
+    "provisional": "Provisional report",
+    "unknownUnit": "unit unavailable",
+    "overdueTitle": "Overdue customer balances",
+    "overdueReason": "{amount} {currency} remains open past its due date in the current receivable lifecycle.",
+    "overdueLink": "Open receivable history",
+    "cashTitle": "Recorded cash variance",
+    "cashReason": "Saved report for {date}, {location}: variance {amount} {currency}. Investigate the recorded difference; it is not an estimated loss.",
+    "cashLink": "Open this daily report",
+    "stockTitle": "Stock threshold reached: {name}",
+    "stockReason": "Available to sell: {amount} {unit}. This product sold in the selected period and is at or below its recorded stock threshold, or has no available stock.",
+    "stockLink": "Review product"
+  },
+  "salesExport": {
+    "download": "Export summary and trend (CSV)",
+    "preparing": "Preparing export…",
+    "basis": "Refreshes the sales summary and daily trend, then downloads the same values. Includes period, location, status, channel, currency and timezone. Record search, pagination and finance/product panels are excluded.",
+    "freshAuth": "Recent authentication is required. Sign in again, return to this report and retry the export.",
+    "failed": "Export unavailable. Check your access and refresh the report before retrying.",
+    "done": "CSV prepared from the refreshed report."
+  },
+  "salesInsights": {
+    "creditIssued": "Credit recorded on orders in the selected sales period: {amount}. Uses the sales status and channel filters. This is original credit issued, not a receipt or the remaining balance; it is excluded from receipt shares and net collections.",
+    "collections": "Collections",
+    "receivables": "Current receivables",
+    "products": "Product performance",
+    "refresh": "Refresh panel",
+    "loading": "Loading evidence…",
+    "failed": "This panel is unavailable. Retry, or select a shorter period or a single location. Other sales information remains available.",
+    "restricted": "You do not have permission to view this information.",
+    "refreshing": "Refreshing — the previous check time remains visible.",
+    "unavailable": "Unavailable",
+    "checked": "Checked {time} · {timezone}",
+    "collectionsBasis": "Receipts processed from {start} to {end}, in the selected location scope. Sales date, status, channel and record search do not filter this panel. Today is partial.",
+    "collectionsCoverage": "Confirmed cash, card, mobile money, transfer and cheque records, including allocated later settlements. Credit, store credit, mixed placeholders, pending and cancelled payments are excluded. Net is the recorded receipt total less processed refunds and settlement reversals; it is not a bank balance or reconciled cash flow.",
+    "receipts": "Recorded receipts",
+    "refunds": "Processed refunds",
+    "reversals": "Settlement reversals",
+    "net": "Net recorded collections",
+    "missingTimes": "{count} receipt, refund or reversal records in this location scope have no effective date and cannot be assigned to a period. They are excluded; net is unavailable.",
+    "noReceipts": "No dated receipts were found for this period.",
+    "methods": "Receipt methods",
+    "denominator": "Shares of recorded receipts: {amount}",
+    "method": "Method",
+    "amount": "Amount",
+    "share": "Share",
+    "paymentMethod": {
+      "CASH": "Cash",
+      "CARD": "Card",
+      "MOBILE_MONEY": "Mobile money",
+      "BANK_TRANSFER": "Bank transfer",
+      "CHEQUE": "Cheque"
+    },
+    "paymentsLink": "Open payments workspace",
+    "receivablesBasis": "Current posted receivables for the selected location scope, across all invoice dates. The sales period, status, channel and record search do not apply.",
+    "noReceivables": "No posted receivable documents found. This does not establish that all sales have been posted.",
+    "outstanding": "Outstanding · {count} open documents",
+    "overdue": "Overdue",
+    "receivablesCoverage": "Latest effective lifecycle balances include settlements and reversals. Overdue follows the recorded due date and complete days past due. Unposted sales are outside this coverage; currencies are kept separate.",
+    "receivablesLink": "Open receivables workspace",
+    "productsBasis": "Original sale lines in the selected sales period, location, status and channel, including inactive products and products sold only in the comparison period. Subsequent returns and credits are not deducted. Record search does not apply.",
+    "tieout": "Line value {lines} · Order value {orders} · Difference {difference}",
+    "stockBasis": "Current stock snapshot — {checked}. Available quantity excludes reservations. Missing or inconsistent stock records are unavailable.",
+    "stockRestricted": "Current stock is restricted by your inventory permissions.",
+    "marginBasis": "Contribution is line value less line tax and evidenced original stock-issue cost. It excludes order-level charges and subsequent returns/credits. Incomplete historical costs make contribution and margin unavailable.",
+    "marginRestricted": "Contribution and margin are restricted by your finance permissions.",
+    "noProducts": "No products in this period or its comparison period.",
+    "unitFilter": "Unit",
+    "allUnits": "All units",
+    "sort": "Sort descending",
+    "value": "Line value",
+    "quantity": "Quantity sold",
+    "quantityHelp": "Select a single known unit to compare quantities. Different or unknown units cannot be ranked together.",
+    "searchProducts": "Search products by name or SKU",
+    "clearProductSearch": "Clear product search",
+    "productSearchHelp": "{count} matching products. Search and unit filters affect this table only; report totals remain unchanged.",
+    "noMatchingProducts": "No matching products. Clear the search or change the unit filter.",
+    "product": "Product",
+    "change": "Value change",
+    "available": "Available now",
+    "stockStatus": "Stock status",
+    "contribution": "Original contribution",
+    "margin": "Margin",
+    "inactive": "Inactive",
+    "unknownUnit": "unit unknown",
+    "stock": {
+      "unknown": "Unavailable",
+      "out": "Out of stock",
+      "low": "Low stock",
+      "in": "In stock"
+    },
+    "costMissing": "{count} sale groups lack complete cost evidence",
+    "previous": "Previous products",
+    "next": "Next products",
+    "page": "Page {page} of {count}"
+  },
+  "salesPerformance": {
+    "views": "Sales views",
+    "daily": "Daily report",
+    "performance": "Sales performance",
+    "description": "Completed and delivered orders, with comparable periods and inspectable records.",
+    "refresh": "Refresh from first page",
+    "periods": "Reporting period",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "7d": "Last 7 days",
+    "month": "This month",
+    "start": "Start date",
+    "end": "End date",
+    "location": "Location",
+    "allLocations": "All locations",
+    "status": "Order status",
+    "bothStatuses": "Completed and delivered",
+    "channel": "Channel",
+    "allChannels": "All channels",
+    "COMPLETED": "Completed",
+    "DELIVERED": "Delivered",
+    "POS": "POS",
+    "DELIVERY": "Delivery",
+    "apply": "Apply filters",
+    "rangeHelp": "Up to 366 days, ending today or earlier. Location, status and channel filter sales totals, trend, records and products. Collections and current receivables explain their separate scopes below.",
+    "organizationRequired": "Select an organization to view sales.",
+    "invalid": "This report link has invalid filters.",
+    "loading": "Loading sales…",
+    "denied": "You do not have permission to read this report.",
+    "failed": "The report could not be loaded. Check the date range or reset the filters, then retry.",
+    "reset": "Reset filters",
+    "refreshing": "Refreshing the current scope. Figures retain their original checked time.",
+    "checked": "Checked {time}",
+    "window": "Period: {start} to {end} (end excluded).",
+    "partial": "Current day is partial.",
+    "comparisonWindow": "Comparison: {start} to {end} (end excluded).",
+    "comparisonUnavailable": "Equivalent comparison time is unavailable because of a local clock transition.",
+    "basis": "How this report is calculated",
+    "meaning": "Current recorded COMPLETED/DELIVERED status, using order date in the organization timezone. Values are recorded order totals including tax and order-level charges/discounts; they are not collected cash or posted revenue. Saved daily reports are not mixed into this view. Later returns and credits are not deducted.",
+    "coverage": "Zero means no matching orders currently recorded in this system, not proof of complete historical coverage. Deleted records are excluded. Percentage change is unavailable when the comparison baseline is zero or negative.",
+    "value": "Recorded sales value",
+    "count": "Orders",
+    "average": "Average order value",
+    "unavailable": "Not available",
+    "change": "Change: {absolute} · {percent}",
+    "inspect": "Inspect sales records",
+    "empty": "No completed or delivered orders match this period and population.",
+    "trend": "Daily sales trend",
+    "trendSummary": "{count} recorded orders total {value} across {days} calendar days.",
+    "trendChart": "Recorded order value by local calendar day",
+    "tableHelp": "Select a chart point or a date in the table to inspect that day. The table provides exact values; the line shows relative movement.",
+    "trendTable": "Daily values and date selection",
+    "date": "Date and time",
+    "records": "Sales records",
+    "livePages": "Newest first, with order ID as tie-breaker. Each page reads current data; this is not a frozen export. Refresh returns to the first page.",
+    "previousPage": "Previous page",
+    "pageRecords": "{count} rows shown",
+    "search": "Order number or customer name — records only",
+    "searchOrders": "Order number — records only",
+    "searchButton": "Search records",
+    "clearSearch": "Clear search",
+    "searchHelp": "Search narrows only the records below; cards and trend retain the population filters.",
+    "noRecords": "No sales records match these record filters.",
+    "number": "Order number",
+    "customer": "Customer",
+    "paymentStatus": "Recorded payment status",
+    "restrictedCustomer": "Customer unavailable or restricted",
+    "firstPage": "First page",
+    "nextPage": "Next page",
+    "close": "Close",
+    "detail": "Sales record",
+    "detailMeaning": "Read-only source amounts and recorded statuses. Payment status is not proof of settlement or an outstanding balance.",
+    "detailFailed": "This record is unavailable or you no longer have access.",
+    "payment": {
+      "PENDING": "Pending",
+      "PARTIAL": "Partially paid",
+      "PAID": "Paid",
+      "REFUNDED": "Refunded",
+      "CANCELLED": "Cancelled"
+    },
+    "amount": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax",
+      "shipping": "Shipping",
+      "total": "Order total"
+    }
+  },
   "dailyDigestAccess": {
     "signIn": "Sign in",
     "UNAUTHENTICATED": {
@@ -504,6 +705,25 @@
     "title": "Daily sales",
     "description": "Review recorded sales for a location and calendar day.",
     "refresh": "Refresh",
+    "refreshing": "Refreshing this report; the figures below were checked at the time shown.",
+    "dayShortcuts": "Choose a reporting day",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "changeDate": "Change date",
+    "changeLocation": "Change location",
+    "openPos": "Open POS",
+    "latestDay": "Latest day with activity",
+    "latestWindow": "Searches this location’s last 366 calendar days, including today. Saved reports take precedence.",
+    "latestLoading": "Looking for the latest day with recorded transactions…",
+    "latestEmpty": "No activity was found in the last 366 days for this location. You can choose an older date manually.",
+    "latestFailed": "The activity search could not be completed. Try again or choose a date manually.",
+    "invalidScope": "This report link contains an invalid date, location or view. Reset the filters to continue.",
+    "resetScope": "Reset report filters",
+    "selectedLocationUnavailable": "Selected location unavailable",
+    "calculation": "How this is calculated",
+    "orderSummary": "Recorded order value; not collected cash or posted revenue.",
+    "savedSummary": "Saved report figures; finalization does not prove posting or cash-session closure.",
+    "quantityMeaning": "Recorded quantity adds source quantities and may combine different units. It is not a normalized physical volume.",
     "date": "Reporting day",
     "location": "Location",
     "locationUnavailable": "No report location available",
@@ -558,6 +778,24 @@
     }
   },
   "moduleComposition": {
+    "experience": {
+      "title": "Modules & workspace",
+      "subtitle": "Choose your capabilities, review their impact, and put your workspace to work.",
+      "activeCount": "Capabilities in current workspace: {count}",
+      "unsaved": "Draft changes to review",
+      "currentDraft": "Draft matches the saved configuration",
+      "stateDetails": "Configuration details",
+      "configurationSource": "Configuration source",
+      "draftHint": "Your choices are a proposal. Review access, connections and setup before applying.",
+      "selectionChanges": "{added} added · {removed} removed from your choices",
+      "stopChanges": "New-work controls changed: {count}",
+      "stoppedCount": "New work stopped: {count}",
+      "scopeChanged": "Setup scope changed",
+      "scopeMissing": "Scopes to choose: {count}",
+      "scopeChosen": "Review selected scope",
+      "operations": "Operations",
+      "openWorkspace": "Open workspace"
+    },
     "accountingCreate": {
       "loadFailedTitle": "Accounting setup could not be loaded",
       "loadFailedDescription": "The account or journal lookup failed. Retry loading before entering a new draft.",
@@ -627,6 +865,29 @@
       "insights": "Insights & content"
     },
     "catalogTitle": "Choose your capabilities",
+    "catalog": {
+      "viewDraft": "View your draft",
+      "selectedFilter": "Selected",
+      "selectedHint": "Includes automatically required connections.",
+      "results": "Showing {count} of {total} capabilities. Filters do not change your draft.",
+      "groupCount": "{count} shown",
+      "notSelected": "Not in draft",
+      "workspace": "Workspace",
+      "outsideWorkspace": "Not included",
+      "access": "Access",
+      "setup": "Setup",
+      "setupSandbox": "Sandbox only — not production ready",
+      "details": "Details",
+      "detailsFor": " for {module}",
+      "noConnections": "No additional capability connections required.",
+      "explicitConnection": "Removing your explicit choice keeps this capability as a required connection.",
+      "setupHint": "Setup reflects the last check. Review configuration checks the current draft; workspace setup does not certify business readiness.",
+      "explicitCount": "Explicit choices: {count}",
+      "connectionCount": "Required connections: {count}",
+      "yourChoices": "Your selections ({count})",
+      "restrictions": "Known restrictions ({count})",
+      "reviewHint": "These are draft hints based on the latest loaded information. Review configuration checks access, connections and setup before you can apply."
+    },
     "catalogHint": "Required connections are included automatically. Your current access remains protected.",
     "selected": "Selected in draft",
     "required": "Required connection",
@@ -1547,6 +1808,19 @@
     }
   },
   "financeSurfaces": {
+    "workQueue": {
+      "title": "Next actions",
+      "summaryScope": "This operational overview uses limited source lists, so totals and aging may be incomplete. Use the document workflows below to check balances and due dates before acting.",
+      "receivablesTitle": "Review open receivables",
+      "receivablesHelp": "Inspect open documents and aging before choosing a collection action. Recent receipts below are payment activity, not the list of unpaid receivables.",
+      "receivablesAction": "Open receivable items",
+      "payablesTitle": "Review invoices and blockers",
+      "payablesHelp": "Open the AP workbench to inspect invoices, supporting evidence and required approvals. A recorded disbursement does not establish reconciliation.",
+      "payablesAction": "Open AP workbench",
+      "scope": "The destination uses its own filters and permissions; this page’s period and location are not carried over.",
+      "balanceScope": "{count} organization-wide balances shown, limited to 8 counterparties and independent of the selected period or location. This is not a complete overdue invoice list. Payment terms are not days overdue.",
+      "recentScope": "This table filters recent loaded payment activity, not all transactions for the selected reporting period."
+    },
     "empty": {
       "alerts": "No route-specific finance risk signals were found for this scope.",
       "receivables": "No customer receivable balances were found for this scope.",
@@ -1693,10 +1967,20 @@
   },
   "paymentReconciliationWorkbench": {
     "exceptionClosure": {
+      "withdrawalReason": "Why should the earlier source approval be withdrawn?",
+      "withdrawalConsequences": "Approval withdraws the earlier nonfinancial source decision, reopens the investigation, and requires fresh run preparation and sign-off. It retains the earlier approval and any signed certificate. Payments, allocations and journals are unchanged.",
+      "withdrawalPreview": "Review withdrawal",
+      "withdrawalHint": "The existing decision remains in effect until an independent reviewer approves withdrawal.",
+      "withdrawalPropose": "Propose withdrawal",
+      "withdrawalApprove": "Approve withdrawal and reopen",
+      "withdrawalIndependent": "Approval requires another authorized reviewer who did not make or recover the source, approve the earlier decision, or sign the current certificate.",
+      "withdrawalEvidence": "Earlier source decision to withdraw: {id}",
+      "withdrawalCertificate": "Certificate retained as historical evidence: {hash}",
+      "withdrawalRecords": {"PROPOSED":"Source withdrawal proposed","APPROVED":"Source approval withdrawn","REJECTED":"Source withdrawal rejected"},
       "open": "Review exception cases",
       "title": "Exception cases and decisions",
       "requestOperation": "Retained request: {operation}",
-      "description": "Find open cases, review retained financial treatment and request an independent exception decision.",
+      "description": "Find open cases, review source or financial evidence and request an independent exception decision.",
       "openCases": "Open cases",
       "allCases": "All cases and history",
       "refresh": "Refresh current records",
@@ -1707,17 +1991,22 @@
       "empty": "No cases match this view.",
       "case": "Exception {id}",
       "financialPath": "Financial review is supported. Source linkage and completed treatment still require verification.",
+      "sourcePath": "Review late evidence that corroborates a retained allocation. Exact identity and independent approval are required.",
+      "sourceEvidence": "Corroborating evidence: {amount} {currency}. The original allocation is retained.",
+      "sourceIdentity": "Source: {source}. Retained match: {match}. Payment: {payment}.",
+      "sourceConsequences": "Approval resolves this unposted investigation without creating a payment, allocation or journal. Fresh run preparation and sign-off remain required.",
+      "sourceIndependent": "The proposer, run maker, original matcher and source-recovery operators cannot approve this source decision.",
       "investigation": "This case requires its source or security investigation. Financial clearing alone cannot close it.",
       "inspect": "Open case",
       "previous": "Previous page",
       "next": "Next page",
       "close": "Close exception cases",
       "currentState": "Current case state: {state}",
-      "consequences": "An approved exception decision retains the financial treatment. The reconciliation run still requires review and sign-off.",
+      "consequences": "An approved decision preserves existing allocations and financial records. The reconciliation run still requires review and sign-off.",
       "reason": "Why should this exception be closed?",
       "preview": "Verify current closure evidence",
       "financialEvidence": "Financial decision: {id}",
-      "proposalHint": "The source and financial evidence are verified for this preview. Submit your reason for independent review.",
+      "proposalHint": "The applicable evidence checks passed for this preview. Review the records and submit your reason for an independent decision.",
       "alreadyClosed": "This case is already closed. Retained history remains available.",
       "propose": "Submit closure proposal",
       "history": "Retained decisions",
@@ -1758,6 +2047,16 @@
       }
     },
     "signReview": {
+      "moduleUnavailable": "The current module grants allow viewing this run, but not signing it. Ask your module administrator to review reconciliation, finance and accounting write access.",
+      "amounts": {
+        "explanation": "Gross amounts by source and currency, including incoming and outgoing records. Callbacks and statements can describe the same payment: do not add these categories. Matched amounts are allocations; unresolved suspense excludes resolved and written-off cases. These are not net balances.",
+        "payments": "Internal payment records",
+        "providerEvents": "Provider callback evidence",
+        "statementLines": "Statement evidence",
+        "matched": "Matched allocations",
+        "unresolvedSuspense": "Unresolved suspense cases",
+        "unavailable": "Current amount unavailable; review the source evidence."
+      },
       "managerHandoff": "Open the reconciliation workspace to review current evidence, sign and recover interrupted requests.",
       "open": "Review for signing",
       "title": "Independent reconciliation sign-off",
@@ -1821,7 +2120,7 @@
       "preview": "Check preparation requirements",
       "previewTitle": "Current preparation requirements",
       "ready": "The checked requirements are satisfied. Preparation will record this review; an independent signer must still review and sign.",
-      "authRequired": "Confirm your password, then explicitly retry your saved preparation request.",
+      "authRequired": "Confirm your password, then explicitly retry your saved request.",
       "stale": "The run or its evidence changed. Reload and review it again. Keep the same request when recovering an uncertain result.",
       "storage": "The local draft cannot be read or saved. Submission is paused. Reload records and reset the local draft to continue.",
       "confirm": "Prepare for independent sign-off",
@@ -1830,10 +2129,10 @@
       "refresh": "Refresh run and history",
       "saved": "Preparation receipt {receipt} is retained. Current status: {status}.",
       "savedRefreshFailed": "Preparation receipt {receipt} was saved, but current records could not be refreshed. Reload before proceeding.",
-      "history": "Preparation history",
+      "history": "Preparation and source-recovery history",
       "historyExplanation": "These are retained reviews. A historical receipt does not establish current readiness or sign-off.",
       "historyFailed": "Current history could not be loaded. Any displayed history is from the previous successful read.",
-      "emptyHistory": "No preparation reviews have been recorded for this run.",
+      "emptyHistory": "No preparation or source-recovery records exist for this run.",
       "receipt": "Preparation receipt: {id}",
       "actor": "Prepared by: {id}",
       "states": {
@@ -1848,6 +2147,7 @@
       },
       "blockers": {
         "RUN_STATE_REQUIRED": "This run cannot be prepared in its current state. Signed corrections require the source recovery workflow; unfinished runs need their existing processing or recovery steps.",
+        "MODULE_WRITE_REQUIRED": "Reconciliation is read-only or its required capabilities are unavailable. Ask your workspace administrator to review access, then refresh this review before retrying preparation.",
         "PROVIDER_SETUP_REQUIRED": "Ask the provider administrator to verify the active rail, provider mappings and effective approved settlement account.",
         "ACCOUNTING_PERIOD_REQUIRED": "Ask the accounting administrator to verify the open period covering this run and its period assignment.",
         "EXTERNAL_EVIDENCE_REQUIRED": "Import the authorized provider events or statement evidence for this period. Resolving exceptions alone does not supply external evidence.",
@@ -1855,7 +2155,8 @@
         "OPEN_SUSPENSE": "Complete the outstanding suspense treatment and independent financial decision.",
         "MISSING_LEDGER_LINK": "A posted suspense item is missing its ledger link. Review its source and posting evidence.",
         "LEDGER_REVIEW_REQUIRED": "The ledger evidence requires review. Ask the accounting reviewer to inspect the original posting and clearing.",
-        "SOURCE_EVIDENCE_REVIEW_REQUIRED": "The source or retained decision evidence requires review. Resolve its provenance before preparing this run."
+        "SOURCE_EVIDENCE_REVIEW_REQUIRED": "The source or retained decision evidence requires review. Resolve its provenance before preparing this run.",
+        "UNRECONCILED_SOURCES": "Additional payment or provider evidence is not covered by this run. Preparation and signing are blocked. Ask the reconciliation owner to review the additional sources; existing matches and records must be retained."
       },
       "counts": {
         "paymentTransactionCount": "Internal payments",
@@ -1865,6 +2166,27 @@
         "matchRecordCount": "Matches",
         "exceptionCount": "Retained exceptions",
         "suspenseCount": "Retained suspense records"
+      },
+      "additional": {
+        "signedConsequences": "This run is signed. Incorporating these later sources preserves its current certificate as historical evidence and reopens the run. Fresh preparation and an independent signature are required; this action does not post journals.",
+        "retainedCertificate": "Certificate retained in history: {hash}",
+        "title": "Review additional sources",
+        "description": "Review newly captured payments, provider events and statement lines for this existing run. Existing matches and decisions are retained. New exceptions may need resolution, and fresh preparation and independent signing are required.",
+        "preview": "Review additional sources",
+        "ready": "Additional sources are available. Incorporating them will match only unallocated evidence and return this run to review. It does not sign the run or post money.",
+        "empty": "No unallocated additional sources were found. Evidence already claimed by another match or exception must use its existing review or correction workflow.",
+        "confirm": "Incorporate reviewed sources",
+        "pending": "An exact source-recovery request is saved. Retry it to recover its outcome, or reload records before discarding it.",
+        "retry": "Retry saved source recovery",
+        "saved": "Source-recovery receipt {receipt} is retained. Current status: {status}. Review exceptions and prepare the run again before independent signing.",
+        "savedRefreshFailed": "Source-recovery receipt {receipt} was saved, but current records could not refresh. Reload before proceeding.",
+        "receipt": "Source-recovery receipt: {id}",
+        "actor": "Sources incorporated by: {id}",
+        "counts": {
+          "payments": "Additional internal payments",
+          "providerEvents": "Additional provider events",
+          "statementLines": "Additional statement lines"
+        }
       }
     },
     "exceptionLink": {
@@ -1949,7 +2271,7 @@
       "storage": "The saved request cannot be read or stored in this browser. Restore access to session storage before exporting."
     },
     "title": "Payment reconciliation workbench",
-    "subtitle": "Rail-level payment assurance, duplicate provider-reference alerts, and suspense-ready exception queues.",
+    "subtitle": "Review payment evidence, duplicate references and items requiring investigation by payment method.",
     "updated": "Updated {time}",
     "common": {
       "notAvailable": "Not available",
@@ -1957,15 +2279,32 @@
       "no": "No"
     },
     "certification": {
-      "title": "Durable evidence kernel",
-      "description": "Provider events, statement lines, reconciliation runs, exception queues, and suspense requests are now read from the durable reconciliation model.",
+      "title": "Recorded reconciliation evidence",
+      "description": "Review recorded provider events, statement lines, reconciliation runs, exceptions and suspense requests. Recorded evidence does not by itself confirm settlement or sign-off.",
+      "providerStatuses": {
+        "DRAFT": "Draft",
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended",
+        "ARCHIVED": "Archived",
+        "UNMAPPED": "Setup required"
+      },
+      "runStatuses": {
+        "DRAFT": "Draft",
+        "RUNNING": "In progress",
+        "NEEDS_REVIEW": "Needs review",
+        "BLOCKED": "Blocked",
+        "READY_FOR_SIGNOFF": "Awaiting sign-off",
+        "SIGNED": "Signed",
+        "FAILED": "Failed",
+        "VOIDED": "Voided"
+      },
       "asOf": "As of {time}",
       "closeBlocked": "{count} review signals across exceptions, suspense and unsigned runs. Related records can refer to the same case; period-close and sign-off controls decide whether the selected work can proceed.",
       "emptyProviderAccounts": "No active provider account is configured yet.",
       "emptyRuns": "No durable reconciliation runs have been created yet.",
       "providerAccounts": "Provider accounts",
       "signoffQueue": "Sign-off queue",
-      "runFacts": "{matches} match(es), {exceptions} exception(s), suspense {suspense}",
+      "runFacts": "Recorded at matching: {matches} matches · {exceptions} exceptions. Open sign-off review for current amounts.",
       "statuses": {
         "NO_EVIDENCE": "No evidence",
         "READY_FOR_RUN": "Evidence available for a run",
@@ -2007,7 +2346,7 @@
       }
     },
     "trustBanner": {
-      "title": "Payment trust banner",
+      "title": "Payment evidence overview",
       "description": "Across this workspace, all dates. Lists show recent items; amounts remain in their original currencies.",
       "providerEvidence": "Provider evidence",
       "statementEvidence": "Statement evidence",
@@ -2022,7 +2361,7 @@
     },
     "statementImport": {
       "title": "Provider statement intake",
-      "description": "Import tenant-scoped CSV or JSON statement evidence. File and line hashes prevent duplicate ingestion.",
+      "description": "Import CSV or JSON statements for this organization. Duplicate files and lines are detected before import.",
       "noActiveAccount": "Configure an active provider account before importing statement evidence.",
       "accountLabel": "Provider account",
       "accountPlaceholder": "Select a provider account",
@@ -2039,6 +2378,10 @@
       "lineCount": "{count} line(s)",
       "statuses": {
         "IMPORTED": "Imported",
+        "PROCESSING": "Processing",
+        "PROCESSED": "Processed",
+        "REJECTED": "Rejected",
+        "ARCHIVED": "Archived",
         "DUPLICATE_FILE": "Duplicate file",
         "DUPLICATE_LINE": "Duplicate line"
       },
@@ -2358,6 +2701,9 @@
       "empty": "No reconciliation inbox item has been delivered yet.",
       "due": "Due {time}",
       "types": {
+        "payment_reconciliation_exception_source_withdrawal_proposed": "Source approval withdrawal proposed — independent review required",
+        "payment_reconciliation_exception_source_withdrawal_rejected": "Source withdrawal rejected — previous approval retained",
+        "payment_reconciliation_exception_source_withdrawn": "Source approval withdrawn — investigation reopened",
         "payment_reconciliation_exception_created": "Exception created",
         "payment_reconciliation_exception_assigned": "Exception assigned",
         "payment_reconciliation_exception_link_repaired": "Exception source link repaired — run review required",
@@ -2372,6 +2718,8 @@
         "payment_reconciliation_manual_match_approved": "Manual match approved",
         "payment_reconciliation_manual_match_rejected": "Manual match rejected",
         "payment_reconciliation_run_failed": "Reconciliation run failed",
+        "payment_reconciliation_run_reopened": "Signed reconciliation reopened — fresh review required",
+        "payment_reconciliation_run_signed": "Reconciliation signature recorded",
         "payment_reconciliation_run_ready_for_signoff": "Ready for sign-off",
         "payment_reconciliation_period_close_blocked": "Close conditions require review",
         "payment_reconciliation_suspense_reclassification_proposed": "Suspense reclassification proposed",
@@ -2438,15 +2786,15 @@
       "suspense": "{count} suspense-ready item(s)"
     },
     "sections": {
-      "runs": "Run summaries",
-      "runsDescription": "Per-rail capture-readiness runs generated from existing payment evidence.",
+      "runs": "Summaries by payment method",
+      "runsDescription": "Diagnostic summaries from captured payments for the selected period.",
       "assurance": "Reconciliation assurance",
       "assuranceDescription": "Coverage and source maturity for the selected period.",
-      "failureGroups": "Failure groups by rail",
+      "failureGroups": "Issues by payment method",
       "failureGroupsDescription": "Exception clusters grouped by payment rail and failure type.",
       "duplicates": "Duplicate provider-reference alerts",
       "duplicatesDescription": "Provider references that appear on more than one captured payment.",
-      "suspense": "Suspense-ready reconciliation failures",
+      "suspense": "Items to review for suspense",
       "suspenseDescription": "Failures classified with 47x suspense hints and evidence references."
     },
     "summary": {
@@ -2456,9 +2804,15 @@
       "providerReferenceCoverage": "Provider reference coverage"
     },
     "rails": {
+      "CASH": "Cash",
       "CARD": "Card",
       "MOBILE_MONEY": "Mobile money",
-      "BANK_TRANSFER": "Bank transfer"
+      "BANK_TRANSFER": "Bank transfer",
+      "WALLET": "Wallet",
+      "QR": "QR payment",
+      "CHEQUE": "Cheque",
+      "INTERNAL_TRANSFER": "Internal transfer",
+      "OTHER": "Other"
     },
     "statuses": {
       "clean": "Clean",
@@ -2717,7 +3071,7 @@
         "POS_CHECKOUT_OWNED_ELSEWHERE": "This register is open in another tab. Close that tab, then check register access. Recovery may take up to one minute.",
         "POS_CHECKOUT_OWNERSHIP_REQUIRED": "Register ownership expired. Check register access before continuing.",
         "POS_CHECKOUT_RECOVERY_REQUIRED": "A sale attempt needs verification. Use Resolve previous attempt before changing this cart.",
-        "POS_CHECKOUT_OFFLINE_PENDING": "Offline sales need reconciliation. Open the offline sync review before parking or closing this shift.",
+        "POS_CHECKOUT_OFFLINE_PENDING": "Offline sales need reconciliation before you can resume or park this cart, or close the shift. Open Review conflicts in the offline sync panel. Your cart is preserved.",
         "POS_CHECKOUT_SHIFT_UNAVAILABLE": "This shift is no longer active. Refresh and open your current shift.",
         "POS_CHECKOUT_STOCK_CHANGED": "Some items are unavailable or stock has changed. Your cart is preserved; check stock before resuming.",
         "POS_CHECKOUT_PARK_FIRST": "Park the current cart before resuming a saved cart.",
@@ -2964,7 +3318,9 @@
       "noSale": "No-sale"
     },
     "search": {
-      "placeholder": "Scan barcode or search SKU, item, or category"
+      "placeholder": "Scan barcode or search SKU, item, or category",
+      "clear": "Clear search",
+      "help": "Search by name, SKU or barcode. F4: customer · F8: tender amount · Escape: clear product search. Shortcuts pause while a dialog is open."
     },
     "view": {
       "grid": "Grid",
@@ -2990,7 +3346,8 @@
       "walkIn": "Walk-in customer",
       "empty": "Scan or select an item to start a persisted draft sale.",
       "lines": "{count} lines",
-      "removeLine": "Remove {item} from cart"
+      "removeLine": "Remove {item} from cart",
+      "quantityFor": "Quantity for {item}"
     },
     "totals": {
       "subtotal": "Subtotal",
@@ -3184,7 +3541,7 @@
     "common": {
       "cancel": "Cancel"
     },
-    "hotkeys": "Ctrl/Cmd K search - F4 customer - F8 tender - Esc clear"
+    "hotkeys": "F4 customer - F8 tender - Esc clear product search"
   },
   "landingPreview": {
     "founderJourney": {
@@ -5172,6 +5529,7 @@
     },
     "table": {
       "caption": "Supplier AP events",
+      "evidence": "Evidence",
       "details": "Details",
       "nextPage": "Next page",
       "noNextPage": "No more rows",
@@ -5194,8 +5552,8 @@
       "emptyFilteredTitle": "No AP history matches these filters",
       "emptyFilteredMessage": "Adjust the dates or lane.",
       "errorTitle": "AP history could not load",
-      "partialTitle": "Partial proof scope",
-      "partialMessage": "Amounts without consistent evidence are unavailable. Accounting certification and reconstruction of historical balances are separate from this operational view.",
+      "partialTitle": "Operational history",
+      "partialMessage": "Document amounts are shown separately from recognized payables. Amounts with inconsistent evidence remain unavailable. This view is not a certified close or a historical balance statement.",
       "permissionTitle": "Permission required",
       "permissionMessage": "You need supplier/AP history access.",
       "noOrgTitle": "No active organization",
@@ -5205,8 +5563,14 @@
       "refreshHistory": "Refresh from the first page"
     },
     "proof": {
-      "unavailableTitle": "Proof pending",
-      "unavailableMessage": "Proof drawers and certified close evidence are not attached to this view yet."
+      "scopeTitle": "Not certified",
+      "accountingScope": "Accounting certification",
+      "unavailableTitle": "Evidence hash not recorded",
+      "draftNotPosted": "Draft — not posted",
+      "needsReview": "Evidence needs review",
+      "notRecorded": "Not recorded",
+      "bankDetailsProtected": "Bank details protected",
+      "unavailableMessage": "Drafts are not posted. Close certification is not included."
     },
     "lanes": {
       "invoice": "Invoice",
@@ -5273,6 +5637,23 @@
       "preparing": "Generating file…",
       "verifyDownload": "Confirm password and download",
       "download": "Download CSV"
+    },
+    "sourceTypes": {
+      "SUPPLIER_INVOICE": "Supplier invoice",
+      "SUPPLIER_PAYMENT": "Supplier payment"
+    },
+    "sources": {
+      "invoices": "Supplier invoices",
+      "payments": "Supplier payments"
+    },
+    "paymentStates": {
+      "DRAFT": "Draft",
+      "APPROVED": "Approved",
+      "RELEASED": "Released",
+      "POSTED": "Posted",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed",
+      "unknown": "Status unavailable"
     }
   },
   "arHistory": {
@@ -5283,7 +5664,7 @@
     "filters": {
       "title": "Filter AR history",
       "detail": "Use the as-of date to inspect customer receivable state at a point in time.",
-      "searchPlaceholder": "Search is not enabled yet",
+      "searchPlaceholder": "Search receivables",
       "searchLabel": "Search",
       "type": "State",
       "allTypes": "All receivables",
@@ -5320,16 +5701,33 @@
       "emptyFilteredTitle": "No AR history matches these filters",
       "emptyFilteredMessage": "Adjust the as-of date.",
       "errorTitle": "AR history could not load",
-      "partialTitle": "Operational proof scope",
-      "partialMessage": "This page shows open-item receivable history. Certified close evidence remains a release review step.",
+      "partialTitle": "Operational history",
+      "partialMessage": "This page shows receivable records and allocations. Posting does not certify the accounting close.",
       "permissionTitle": "Permission required",
       "permissionMessage": "You need receivables history access.",
       "noOrgTitle": "No active organization",
       "noOrgMessage": "Select an organization to view AR history."
     },
     "proof": {
-      "unavailableTitle": "Proof pending",
-      "unavailableMessage": "Certified AR close evidence is not attached to this view yet."
+      "unavailableTitle": "Not certified",
+      "unavailableMessage": "Posting status is shown per item. Close certification is not included.",
+      "posted": "Posted receivable",
+      "operational": "Operational record",
+      "statusUnavailable": "Evidence status unavailable"
+    },
+    "status": {
+      "open": "Open",
+      "partial": "Partially settled",
+      "settled": "Settled",
+      "cancelled": "Cancelled",
+      "voided": "Voided"
+    },
+    "aging": {
+      "current": "Current",
+      "1-30": "1–30 days overdue",
+      "31-60": "31–60 days overdue",
+      "61-90": "61–90 days overdue",
+      "90+": "Over 90 days overdue"
     },
     "kpis": {
       "items": "Items",
@@ -5354,7 +5752,8 @@
       "daysPastDue": "Days past due",
       "bucket": "Aging bucket",
       "evidenceGrade": "Evidence grade",
-      "noAllocations": "No allocations yet"
+      "noAllocations": "No allocations yet",
+      "documentType": "Customer receivable document"
     },
     "snapshot": {
       "asOf": "As of",
@@ -5362,6 +5761,18 @@
     },
     "exportStatus": {
       "ready": "Controlled export downloaded."
+    },
+    "allocationTypes": {
+      "SALE": "Sale",
+      "PURCHASE": "Purchase",
+      "PAYMENT": "Payment",
+      "PAYMENT_REVERSAL": "Payment reversal",
+      "REFUND": "Refund",
+      "CREDIT_NOTE": "Credit note",
+      "DEBIT_NOTE": "Debit note",
+      "ADJUSTMENT": "Adjustment",
+      "OPENING_BALANCE": "Opening balance",
+      "WRITE_OFF": "Write-off"
     }
   },
   "supplierPoAcknowledgement": {
@@ -6003,7 +6414,7 @@
     "holdEffect": "The receipt will be held. These goods remain unavailable to inventory until the inspection is resolved.",
     "rejectEffect": "The held goods will remain unavailable to inventory. Record any supplier return through the applicable return process.",
     "receiveEffect": "The goods will be added to inventory through the stock service. Accounting remains a separate verified handoff and may require configuration or review.",
-    "accountingNext": "Give this receipt number to the purchasing or accounting owner to resolve the AP/stock posting setup. This receipt alone does not prove a journal posting.",
+    "accountingNext": "An authorized finance operator can review and retry accounting from this receipt history after resolving the displayed posting conditions. A received item alone does not prove a journal posting.",
     "inventoryEvidence": "This order records received quantities. Open Receipt history for verified stock movements and the separate accounting status.",
     "status": {
       "HELD": "Held for inspection",
@@ -6025,15 +6436,78 @@
     },
     "accounting": {
       "not_started": "Accounting: no stock posting started for this disposition",
+      "not_required": "Accounting: no tracked stock value requires a journal",
       "review_required": "Accounting: review required — no journal posting confirmed",
-      "posted": "Accounting: linked posting batch recorded as posted",
+      "posted": "Accounting: journal and retained receipt source verified",
       "unverified": "Accounting: posting outcome unverified"
+    },
+    "accountingRecovery": {
+      "returnsTitle": "Related return accounting",
+      "returnsHelp": "These existing stock returns are included in the same recovery. Entries use their original dates; zero-value returns retain verified evidence without a journal. If any required posting fails, the entire recovery rolls back.",
+      "returnReference": "Return reference",
+      "returnJournal": "Purchase journal",
+      "returnsRecorded": "Related return accounting verified",
+      "noJournalRequired": "No journal is required for this return’s zero allocated value.",
+      "returnBlockers": {
+        "PERIOD_UNAVAILABLE": "The original return period must be uniquely identified and open. Recovery will not move it to another date.",
+        "RULE_UNAVAILABLE": "A valid purchase-return posting rule is required at the original return date.",
+        "JOURNAL_UNAVAILABLE": "Configure exactly one active default purchase journal before recovering this return."
+      },
+      "review": "Review / retry accounting",
+      "reviewTitle": "Review receipt accounting",
+      "reviewHelp": "Review the retained receipt and current accounting configuration. Changes after this review require a new preview.",
+      "recoverTitle": "Recover a retained accounting request",
+      "recorded": "Accounting recovery recorded",
+      "preserved": "Existing receipt quantities and stock movements are preserved. Recovery uses the original accounting date and never repeats receiving.",
+      "effectiveAt": "Original accounting date",
+      "period": "Accounting period",
+      "rule": "Posting rule",
+      "journal": "Inventory journal",
+      "source": "Retained source reference",
+      "checked": "Checked",
+      "missing": "Unavailable",
+      "conditions": "Accounting conditions to resolve",
+      "confirm": "Confirm accounting recovery",
+      "working": "Checking / recording accounting…",
+      "close": "Close",
+      "request": "Request reference",
+      "recordedAt": "Recorded at",
+      "journalReference": "Journal entry reference",
+      "posted": "This recovery recorded a posted journal with verified receipt evidence.",
+      "stillBlocked": "This recovery retained an accounting blocker. Ask the accounting owner to correct the receipt posting rule and accounts, then review again.",
+      "password": "Verify your password",
+      "passwordHelp": "Password verification is required for this financial action. Your password is never saved with the request.",
+      "passwordFailed": "Password verification failed. Check your password and try again.",
+      "freshRequired": "Verify your password to continue the same accounting request.",
+      "pending": "A retained accounting request needs an outcome check. Recover the same request before starting another.",
+      "retry": "Recover this accounting request",
+      "unknown": "The accounting outcome could not be confirmed. Keep and retry the same request.",
+      "denied": "Current access is unavailable. Sign in again or ask your administrator to check your finance posting role.",
+      "evidence": "The retained receipt or posting evidence needs accounting review. Do not create a new request to bypass missing evidence.",
+      "stale": "Receipt evidence or accounting configuration changed. Review a new preview before continuing.",
+      "conflict": "This request reference belongs to different recorded work. Ask the accounting owner to reconcile it.",
+      "invalid": "This request is invalid. Refresh the receipt and review it again.",
+      "loadFailed": "Current accounting conditions could not be loaded. Retry the review.",
+      "storage": "The browser could not retain this request safely. Keep this page open and restore browser storage before continuing.",
+      "blockers": {
+        "LEGACY_SOURCE": "This historical receipt has no retained recognition source. It cannot be automatically accrued. Ask the accounting owner to reconcile its existing invoice and journal evidence.",
+        "RETURN_UNAVAILABLE": "Resolve the accounting conditions for every related return listed below before recovering this receipt.",
+        "SOURCE_UNVERIFIED": "Receipt source, invoice or return evidence requires accounting review before recognition.",
+        "STOCK_UNVERIFIED": "The retained stock movements could not be verified. Resolve the receipt evidence first.",
+        "ALREADY_POSTED": "The retained receipt already has a verified posted journal. No new recovery is needed.",
+        "NOT_REQUIRED": "This receipt has no tracked stock value requiring a journal. No accounting recovery is needed.",
+        "BATCH_REVIEW": "The existing posting batch or journal evidence needs accounting review.",
+        "PERIOD_UNAVAILABLE": "The original accounting period is closed, missing, overlapping or inconsistent with the receipt batch. Ask the accounting owner to resolve it; recovery will not move the receipt to another date.",
+        "RULE_UNAVAILABLE": "An applicable receipt posting rule with valid accounts is required for the original accounting date.",
+        "JOURNAL_UNAVAILABLE": "Configure exactly one active default inventory journal before retrying."
+      }
     },
     "proposed": "After confirmation: {status}",
     "draftStorage": "Your entries are kept on this page, but browser storage is unavailable. Keep this page open while resolving the problem.",
     "evidenceUnverified": "Saved receiving evidence could not be verified. Keep this request reference and ask the purchasing administrator to reconcile it before starting another receipt."
   },
   "invoiceLedgerRecovery": {
+    "nonStockTreatmentHelp": "Ask the accounting owner to choose the accounting treatment for the non-stock receipt lines and configure an explicit posting rule to an appropriate asset or expense account. These amounts cannot default to inventory. Then reopen this invoice, review the updated setup and retry; its original approval and payable remain recorded.",
     "title": "Recover invoice posting",
     "back": "Back to accounts payable",
     "intro": "Review blocked supplier invoice postings, confirm their accounting setup and retain a clear record of each recovery.",

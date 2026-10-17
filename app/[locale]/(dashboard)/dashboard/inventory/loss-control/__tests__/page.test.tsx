@@ -6,7 +6,7 @@ import InventoryLossControlPage from "../page"
 
 jest.mock("@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access", () => ({
   routeByKey: jest.fn(() => ({ key: "inventory-test" })),
-  withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
+  withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1", userId: "actor-1" }, "en")),
 }))
 
 jest.mock("@/config/useAuth", () => ({
@@ -16,8 +16,8 @@ jest.mock("@/config/useAuth", () => ({
 jest.mock(
   "@/components/inventory/loss/InventoryLossWorkbench",
   () => ({
-    InventoryLossWorkbench: () => (
-      <section>Inventory loss workbench</section>
+    InventoryLossWorkbench: ({ organizationId, actorId }: { organizationId: string; actorId: string }) => (
+      <section data-organization={organizationId} data-actor={actorId}>Inventory loss workbench</section>
     ),
   }),
 )
@@ -39,6 +39,8 @@ describe("InventoryLossControlPage", () => {
     expect(
       screen.getByText("Inventory loss workbench"),
     ).toBeInTheDocument()
+    expect(screen.getByText("Inventory loss workbench")).toHaveAttribute("data-organization", "org-1")
+    expect(screen.getByText("Inventory loss workbench")).toHaveAttribute("data-actor", "actor-1")
   })
 
   it("stops before rendering when route permission is denied", async () => {

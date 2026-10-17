@@ -1,0 +1,15 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+let source=fs.readFileSync(path.join(__dirname,'verify-cash-navigation.cjs'),'utf8');
+const start=source.indexOf(' const cases=['),end=source.indexOf(' for(const item of cases.filter',start);assert.ok(start>0&&end>start);
+source=source.slice(0,start)+` const cases=['finance.cash-drawer.read','finance.read'].map((permission,index)=>({id:'drawer_risk',caseId:'drawer-'+index,title:'Drawer risk',source:'CASH_DRAWER_READ',destination:[permission],route:'/dashboard/finance/cash-drawer',heading:'unused'}));
+`+source.slice(end);
+source=source.replace("cases.filter(row=>process.argv[2]!=='payroll'||row.id!=='stock_cash_buffer')","cases");
+source=source.replace("const minimal=['finance.read','dashboard.read',item.source]","const minimal=['dashboard.read',item.source]");
+source=source.replace("result.stage=item.id+' '+locale;","result.stage=item.caseId+' '+locale;");
+source=source.replaceAll("+'-'+item.id+'-'","+'-'+item.caseId+'-'");
+source=source.replace("name:item.heading,exact:true","name:JSON.parse(fs.readFileSync(path.join(f.root,'messages/'+locale+'.json'))).cashDrawerDashboard.title,exact:true");
+source=source.replace("reducedMotion:'reduce'","reducedMotion:'reduce',timezoneId:process.argv[2]==='timezone'?'America/New_York':'Europe/Paris'");
+source=source.replace("id:item.id,locale,aggregatePreserved", "id:item.id,destinationPermission:item.destination[0],locale,aggregatePreserved");
+source=source.replaceAll("cash-navigation-","cash-drawer-");
+source=source.replace("const files=[","const files=['actions/pos/drawer-dashboard.actions.ts','hooks/posHooks/useDrawerDashboard.ts','app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts','components/pos/CashDrawerManagementDashboard.tsx',");
+fs.writeFileSync(path.join(__dirname,'verify-cash-drawer.cjs'),source,{flag:'wx'});

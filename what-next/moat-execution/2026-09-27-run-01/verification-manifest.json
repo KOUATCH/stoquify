@@ -1,0 +1,72 @@
+{
+  "run": "what-next/moat-execution/2026-09-27-run-01",
+  "recordedAt": "2026-09-27T19:39:14.041Z",
+  "jest": {
+    "focused": {
+      "passed": 115,
+      "failed": 0,
+      "suites": 10
+    },
+    "domain": {
+      "passed": 72,
+      "failed": 0,
+      "suites": 1
+    }
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "log": "typecheck-final.log"
+  },
+  "lint": {
+    "scope": "changed services/actions/desk/copy/hook/routes",
+    "exitCode": 0,
+    "log": "scoped-lint.log"
+  },
+  "boundary": {
+    "exitCode": 0,
+    "activeViolations": 0,
+    "ratchetFailed": false
+  },
+  "prototype": {
+    "command": "node --test what-next/moat-execution/2026-09-27-run-01/cash-planning-prototype.test.mjs",
+    "passed": 5,
+    "exitCode": 0
+  },
+  "outcomes": {
+    "command": "node --test what-next/moat-execution/2026-09-27-run-01/pilot-outcomes.test.mjs",
+    "passed": 3,
+    "exitCode": 0
+  },
+  "browser": {
+    "status": "BLOCKED",
+    "attempts": 2,
+    "reason": "cua.getState timed out before tab enumeration"
+  },
+  "database": {
+    "status": "NOT_RUN",
+    "reason": "No authorized isolated test target identified"
+  },
+  "provider": {
+    "status": "NOT_RUN",
+    "reason": "No actual rail/format selected"
+  },
+  "customer": {
+    "status": "NOT_RUN",
+    "reason": "No consented participants/outreach authorization"
+  },
+  "initialFailures": [
+    "1/98 focused tests failed due to Next Link observer in jsdom; repaired test boundary mock",
+    "Typecheck route callback locale signature; implementation corrected"
+  ],
+  "publication": {
+    "status": "PASSED",
+    "publisherExitCode": 0,
+    "pairs": 6,
+    "manifest": "publication-manifest.json"
+  },
+  "portalLint": {
+    "exitCode": 0,
+    "log": "portal-lint.log"
+  }
+}

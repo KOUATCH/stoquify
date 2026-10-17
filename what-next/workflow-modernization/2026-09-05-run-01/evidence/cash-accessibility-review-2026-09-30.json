@@ -1,0 +1,158 @@
+{
+  "at": "2026-09-30T15:39:34.757Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_ACCESSIBILITY_AND_DENIAL_2026-09-30.md",
+  "sourceHashes": {
+    "components/cash-command/CashCommandDashboard.tsx": "3c7130bc83ada53cc17bd81c0e53ca57858e412167492303a0d2d52fe6ed7f23",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8"
+  },
+  "priorReview": "evidence/cash-source-copy-review-2026-09-30.json",
+  "priorImpact": [
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28",
+      "after": "3c7130bc83ada53cc17bd81c0e53ca57858e412167492303a0d2d52fe6ed7f23"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+      "before": "9911d46e47231f510f2152c5a8b9dc4ac7d94cd03f1f2d67dd06cff2cd6cf39e",
+      "after": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx",
+      "before": "7565128a3eaf3ae237aa8b7f432758240dc0467901aad3a03696233e3eeacf51",
+      "after": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "cash_service_authority_denial_localized_without_hiding_source_errors",
+    "cash_authorized_landmarks_keyboard_modes_sections_and_doubled_text_en_fr_three_widths"
+  ],
+  "receipts": [
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4.json",
+      "sha256": "1be6642878fcf636a3c544dfb2303e976a3606129bcbc512bba1a85f457abe6a"
+    },
+    {
+      "file": "evidence/cash-accessibility-checks-d92264cc-b571-4f58-90bd-54577c578359.json",
+      "sha256": "252f4f905a866328d7528f767080b45a9a2246f60ff530ad97782c5e2920f80f"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-f98dbf3b-fe56-401a-875d-05cd26214205.json",
+      "sha256": "e34c1f051ad5b8e9b5a48d4b74b07dc0f37121cadaa77fde45836cf42ab784a8"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-c7d1566a-11c3-433e-bef0-d96d4724811e.json",
+      "sha256": "dfe1f4f3a24e4a4d0ea1da84f6d9de4568410b6da533822d70d21d28c01d5b4b"
+    },
+    {
+      "file": "lanes/environment/cash-source-diagnostic-9f2a6327-21a5-4cae-a269-9b7239323bc5.json",
+      "sha256": "6ec78233337952296b20db0b7e295eef50b8782ab6cf4d6684f340544e6f71fe"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8eb63c5e-c715-4c85-aa79-4ce6546cb189.json",
+      "sha256": "8129995eb8cf4d0b3fc4e7a4f08afb736566f2956934b70f3af1b3c60b5b9de0"
+    },
+    {
+      "file": "evidence/cash-accessibility-checks-d4d83330-b278-43bf-aa21-c5b3bfa4a70a.json",
+      "sha256": "26523341d997200ab486cb44469dac0303bc65884c3a94f1c00746ab537a80fa"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CASH_ACCESSIBILITY_AND_DENIAL_2026-09-30.md",
+      "sha256": "3fbd79991196b7eb0523c5b9d79c952705cb65edb4082310463b4a68480f9fc8"
+    },
+    {
+      "file": "run-cash-accessibility-checks.cjs",
+      "sha256": "f3e4b82d248a76b70ff8722c195eacd42c329d5586759888b4a6a0f7b390691f"
+    },
+    {
+      "file": "lanes/environment/verify-cash-accessibility.cjs",
+      "sha256": "ee3f6ee68969d6e563b222bb1517d64509c1c798a4ba38f0203f0ee5660bbe8b"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-320-text1.png",
+      "sha256": "6ea3445f121d662e12969cb185385d371196a2a6a2b73cf6cea56ff2e1e4d2eb"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-320-text2.png",
+      "sha256": "0681a7d395c194bf5d1dccbed86192e24ea2d4d40c83b1f24c1ef86895c28bab"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-768-text1.png",
+      "sha256": "0b6741ddcb4475620fd3fd3ff5eabfa809bf64e26e061e1f1d0836d8a88af3f9"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-768-text2.png",
+      "sha256": "53d0a4b9f04fda45e339aa8f016480ac5f13c6575730498f1883f29e84557d30"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-1440-text1.png",
+      "sha256": "f04de50ace9533fc1b7e0b69d5965da388cf2ad1b313216d5a8fbd76bc0a7f2c"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-en-1440-text2.png",
+      "sha256": "3c8145db9a9eb7352a1a641cceac6f916d4234a8f160a3783034cf38272a9a65"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-320-text1.png",
+      "sha256": "34cbbe53894d2da99487f24d45477a0de89902f6778c9e74a6765c76b8587021"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-320-text2.png",
+      "sha256": "d2ff283b11bb1672d49e97b04d06c6161de3dd51cd161211ab836b1c1bb4a0b6"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-768-text1.png",
+      "sha256": "67ee03a939740a25782e15ab09407bd30dee03e0408c36eb2c339e2a2c90e7bf"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-768-text2.png",
+      "sha256": "909d4ff73733f3dfa5f8ad3ccc2b6a7963748f9ee69932a2ccb14f157f4aee5d"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-1440-text1.png",
+      "sha256": "9391304cce296189feb7814c564b4b2373c4a05519e0f7bab47f5b4cb4604a8e"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-fr-1440-text2.png",
+      "sha256": "596523f2aa8b152cfc348fb5e6f53fb7ab62d019ae2f964b81887526f2cd57ef"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-denied-en.png",
+      "sha256": "f86d6f44f83835fc4a49a96bde305d9436a61fbd9afb1d5c9b689bde69b0181e"
+    },
+    {
+      "file": "lanes/environment/cash-accessibility-8435969f-4880-4d8e-b29f-064f5f737fe4-denied-fr.png",
+      "sha256": "96bc402b4a6e764c0314d73599268e95eefd9525de31acfd7b852cbcc07f92e8"
+    }
+  ],
+  "remaining": [
+    "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish contrast, native screen-reader/browser zoom and remaining payroll route/state/table accessibility. Authorized Cash EN/FR 320/768/1440 now has one main/content h1, working keyboard modes/section links, no tested text/control clipping or horizontal overflow at normal/doubled text. Localized service denial verified separately; shared denied-state landmark remains open.",
+    "Complete route-latency investigation against a recorded baseline or approved budget. The original truncated shell hydration trace remains unattributed; investigate any recurrence. The reproduced date mismatch is corrected.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "limits": [
+    "Color contrast remains incomplete in automated scan",
+    "No native screen-reader or browser zoom certification",
+    "Shared denied-state landmark structure remains open",
+    "Existing statutory and financial lifecycle requirements remain",
+    "No permission or monetary service change"
+  ]
+}

@@ -1,0 +1,318 @@
+[
+  {
+    "id": "P01",
+    "num": 1,
+    "title": "Establish the source baseline and bounded pilot scope",
+    "owner": "Product and engineering leads",
+    "mapping": "R01–R12; M0",
+    "deps": [],
+    "file": "01_BASELINE_AND_PILOT_SCOPE.md"
+  },
+  {
+    "id": "P02",
+    "num": 2,
+    "title": "Implement a minimal outcome-measurement slice",
+    "owner": "Product/analytics engineer",
+    "mapping": "R01",
+    "deps": [
+      "P01"
+    ],
+    "file": "02_OUTCOME_METRICS_FIRST_SLICE.md"
+  },
+  {
+    "id": "P03",
+    "num": 3,
+    "title": "Map cutover ownership and build reconciled synthetic fixtures",
+    "owner": "Onboarding/domain engineer with accountant reviewer",
+    "mapping": "R03; M1 preparation",
+    "deps": [
+      "P01"
+    ],
+    "file": "03_OPENING_POSITION_FIXTURES.md"
+  },
+  {
+    "id": "P04",
+    "num": 4,
+    "title": "Establish access and recovery prerequisites",
+    "owner": "Platform/security engineer",
+    "mapping": "R06; Gate A foundation",
+    "deps": [
+      "P01"
+    ],
+    "file": "04_ACCESS_AND_RECOVERY_FOUNDATION.md"
+  },
+  {
+    "id": "P05",
+    "num": 5,
+    "title": "Fix one bounded checkout uncertainty/replay path",
+    "owner": "POS/backend engineer",
+    "mapping": "R02; M2 first slice",
+    "deps": [
+      "P01",
+      "P04"
+    ],
+    "file": "05_CHECKOUT_UNCERTAINTY_RECOVERY.md"
+  },
+  {
+    "id": "P06",
+    "num": 6,
+    "title": "Verify and harden one offline recovery envelope",
+    "owner": "Offline/POS engineer",
+    "mapping": "R02/R04; M2 preparation",
+    "deps": [
+      "P04",
+      "P05"
+    ],
+    "file": "06_OFFLINE_REPLAY_FIRST_SLICE.md"
+  },
+  {
+    "id": "P07",
+    "num": 7,
+    "title": "Connect master import to opening-readiness guidance",
+    "owner": "Onboarding/full-stack engineer",
+    "mapping": "R03/R04; M1 preparation",
+    "deps": [
+      "P03",
+      "P04"
+    ],
+    "file": "07_GUIDED_SETUP_FIRST_SLICE.md"
+  },
+  {
+    "id": "P08",
+    "num": 8,
+    "title": "Improve cashier recovery and manager discrepancy work",
+    "owner": "Frontend/workflow designer",
+    "mapping": "R04/R11; M3 first slice",
+    "deps": [
+      "P05",
+      "P07"
+    ],
+    "file": "08_CASHIER_MANAGER_USABILITY.md"
+  },
+  {
+    "id": "P09",
+    "num": 9,
+    "title": "Define and test the authorized archive contract",
+    "owner": "Data/export engineer",
+    "mapping": "R07/R08; M5 preparation",
+    "deps": [
+      "P01",
+      "P04"
+    ],
+    "file": "09_PORTABILITY_CONTRACT.md"
+  },
+  {
+    "id": "P10",
+    "num": 10,
+    "title": "Define commercial lifecycle and support policy",
+    "owner": "Product/commercial owner with support and legal review",
+    "mapping": "R08",
+    "deps": [
+      "P01",
+      "P04",
+      "P09"
+    ],
+    "file": "10_COMMERCIAL_LIFECYCLE_AND_SUPPORT.md"
+  },
+  {
+    "id": "P11",
+    "num": 11,
+    "title": "Define reviewed country scope and provider prerequisites",
+    "owner": "Country/domain and integration leads",
+    "mapping": "R09/R10/R12",
+    "deps": [
+      "P01",
+      "P03"
+    ],
+    "file": "11_COUNTRY_PROVIDER_PREREQUISITES.md"
+  },
+  {
+    "id": "P12",
+    "num": 12,
+    "title": "Evaluate the first-month checkpoint and order the next slices",
+    "owner": "Programme/product lead with engineering and QA",
+    "mapping": "M0; R01–R10",
+    "deps": [
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11"
+    ],
+    "file": "12_DAY_30_CHECKPOINT.md"
+  },
+  {
+    "id": "P13",
+    "num": 13,
+    "title": "Complete the bounded opening-position journey",
+    "owner": "Onboarding/domain engineer with accountant",
+    "mapping": "R03; M1",
+    "deps": [
+      "P03",
+      "P04",
+      "P07",
+      "P11",
+      "P12"
+    ],
+    "file": "13_COMPLETE_RECONCILED_CUTOVER.md"
+  },
+  {
+    "id": "P14",
+    "num": 14,
+    "title": "Verify and complete the pilot daily operating loop",
+    "owner": "Domain/backend and QA leads",
+    "mapping": "R02/R04; M2/M3",
+    "deps": [
+      "P05",
+      "P06",
+      "P08",
+      "P12",
+      "P13"
+    ],
+    "file": "14_COMPLETE_DAILY_OPERATING_LOOP.md"
+  },
+  {
+    "id": "P15",
+    "num": 15,
+    "title": "Implement and verify a repeatable accountant close journey",
+    "owner": "Finance-product engineer with accountant",
+    "mapping": "R05; M4 preparation",
+    "deps": [
+      "P04",
+      "P11",
+      "P13",
+      "P14"
+    ],
+    "file": "15_ACCOUNTANT_CLOSE_JOURNEY.md"
+  },
+  {
+    "id": "P16",
+    "num": 16,
+    "title": "Implement a complete authorized archive for the pilot scope",
+    "owner": "Data/export engineer",
+    "mapping": "R07/R08; M5 technical proof",
+    "deps": [
+      "P04",
+      "P09",
+      "P10",
+      "P13",
+      "P15"
+    ],
+    "file": "16_AUTHORIZED_ARCHIVE_IMPLEMENTATION.md"
+  },
+  {
+    "id": "P17",
+    "num": 17,
+    "title": "Rehearse recovery and implement the minimum service controls",
+    "owner": "Platform/operations and support leads",
+    "mapping": "R06/R08; Gate A/B foundations",
+    "deps": [
+      "P04",
+      "P10",
+      "P12",
+      "P14"
+    ],
+    "file": "17_RECOVERY_AND_SERVICE_READINESS.md"
+  },
+  {
+    "id": "P18",
+    "num": 18,
+    "title": "Evaluate Gate A and prepare a supervised pilot packet",
+    "owner": "Product/engineering gate owners with accountant",
+    "mapping": "Gate A; M1–M3",
+    "deps": [
+      "P02",
+      "P11",
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P17"
+    ],
+    "file": "18_PILOT_ENTRY_GATE.md"
+  },
+  {
+    "id": "P19",
+    "num": 19,
+    "title": "Evaluate repeated customer value and Gate B",
+    "owner": "Product/CS, engineering and accountant",
+    "mapping": "R01/R05/R07/R08; M4/M5; Gate B",
+    "deps": [
+      "P18"
+    ],
+    "file": "19_PILOT_OBSERVATION_AND_PAID_GATE.md"
+  },
+  {
+    "id": "P20",
+    "num": 20,
+    "title": "Implement one evidence-backed provider capability",
+    "owner": "Integration engineer and provider-operations owner",
+    "mapping": "R09",
+    "deps": [
+      "P11",
+      "P14",
+      "P19"
+    ],
+    "file": "20_ONE_PROVIDER_INTEGRATION.md"
+  },
+  {
+    "id": "P21",
+    "num": 21,
+    "title": "Deliver one independently reviewed local capability",
+    "owner": "Country/domain engineer with qualified reviewer",
+    "mapping": "R10",
+    "deps": [
+      "P11",
+      "P15",
+      "P19"
+    ],
+    "file": "21_REVIEWED_COUNTRY_CAPABILITY.md"
+  },
+  {
+    "id": "P22",
+    "num": 22,
+    "title": "Improve demonstrated team value and commercial fit",
+    "owner": "Product/adoption and full-stack leads",
+    "mapping": "R01/R04/R08/R11",
+    "deps": [
+      "P02",
+      "P08",
+      "P10",
+      "P15",
+      "P19"
+    ],
+    "file": "22_REPEATED_TEAM_VALUE.md"
+  },
+  {
+    "id": "P23",
+    "num": 23,
+    "title": "Evaluate repeatable onboarding and wider rollout",
+    "owner": "Engineering/operations, product and support owners",
+    "mapping": "Gate C",
+    "deps": [
+      "P16",
+      "P17",
+      "P19",
+      "P22"
+    ],
+    "file": "23_WIDER_ROLLOUT_GATE.md"
+  },
+  {
+    "id": "P24",
+    "num": 24,
+    "title": "Evaluate one country or sector expansion and Gate D",
+    "owner": "Product/programme lead with local domain expertise",
+    "mapping": "R12; Gate D",
+    "deps": [
+      "P11",
+      "P23"
+    ],
+    "file": "24_CONDITIONAL_EXPANSION.md"
+  }
+]

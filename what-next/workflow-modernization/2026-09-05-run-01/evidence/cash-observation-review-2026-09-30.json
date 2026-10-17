@@ -1,0 +1,137 @@
+{
+  "at": "2026-09-30T09:19:12.995Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_COMMAND_OBSERVATIONS_AND_FORECAST_2026-09-30.md",
+  "sourceHashes": {
+    "services/cash-command/cash-command.service.ts": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/ui/sheet.tsx": "0c460d439d977a50efbd6e6faf741293d0cbcab32eb09f0fc3c2903ecaa6ccf2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/_shared/__tests__/protect.test.ts": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "df859b20aa127159d80e7fb1e015fa0598a2c75b14cf904e3ff3a795e7cf0251",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/evidence/proof-trail.service.ts": "b6919f2c4b384bd6755063dc8ac4c8305d4603bbdfd6510fdca703bbfee7e035",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "80a29913e0b60b152415fd6e71353c45e926029f0df3f7c9378d08af17fd5501",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts": "9c660fd23ff09717d4cb5ce91d02aa940e5bf174b6e3c2d8ea8f4d3beba816e7",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "actions/payroll/payroll-control.actions.ts": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71",
+    "actions/pos/drawer-dashboard.actions.ts": "d92847a55e816a276764a38b12c0713c4878edf17d98fb7b1246e4208bc031e8",
+    "hooks/posHooks/useDrawerDashboard.ts": "67d7c33b20b084eeca250615070512045a325779ebedc507f16d22af191369f8",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "components/pos/CashDrawerManagementDashboard.tsx": "e81550d6fc74a7687ee815b82d9609f531e3a839eddcbd48765230a398015871",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BIWhatChangedStrip.tsx": "7d30e3d3ac48a72f44e36a33f48c9a297a41114d080a562c10add1f2656f51e7",
+    "components/bi/BIKpiCard.tsx": "9aa1c770aefc75c85762d70bc95d33dae3b02cf57e3e05da4e6d0988692c239e"
+  },
+  "priorImpact": [
+    {
+      "file": "services/cash-command/cash-command.service.ts",
+      "before": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+      "after": "fe02d0b847988065293f8fe7f0f9e9f2d75084088e73e9e177109165a4c79add"
+    },
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "ce1cc23ac86c387026fe46e85e806e000e5c66073e1e5a5e3621014b50b9c057",
+      "after": "28628ceb7f8aec680524a25b9b1b5c7a0d33d9824ec3803763e10e46d3aedc93"
+    },
+    {
+      "file": "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+      "before": "cf0418eef3e2375ebca28aaee9f819dae3eed451400e1d3846c9fe2e7da77a98",
+      "after": "df859b20aa127159d80e7fb1e015fa0598a2c75b14cf904e3ff3a795e7cf0251"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command.service.test.ts",
+      "before": "a3866bbcd1639f737679a54fddab47893febc495409930d86368972d4df0e97a",
+      "after": "73daee95572444511b79c23ebf460d464f4d3c9bda9c24a916ed89666cbd7984"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "cash_observations_do_not_claim_unmeasured_change",
+    "empty_cash_observation_scope_does_not_claim_no_risk_en_fr",
+    "empty_payroll_horizon_operational_not_posted",
+    "payroll_observation_blocker_count_not_currency",
+    "owned_empty_incomplete_out_of_horizon_and_denied_forecast_en_fr"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/cash-navigation-checks-ae1ce0fd-4113-45cb-aaf7-095a52ac2022.json",
+      "sha256": "847edb1559216c51f2a8d201107a6e8b02e01eff18dff200b1cda360bdfa8b9b"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b.json",
+      "sha256": "9853e8d4f6c8565b272406304c741d211723991e26c3770451b2dabaa8c5300a"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-92627a82-6b64-4f51-84f1-cc69bcf72a74.json",
+      "sha256": "41dd9e2e3930f0513349af2b9d6b9575139c611cd59abd02385ea40b663658d5"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-empty-en.png",
+      "sha256": "6bd4a7417b979370a7f07dc62aec5347b5b301e06459112416ff3ff530cf91f4"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-empty-fr.png",
+      "sha256": "f2680b3327fdf71df4b39032881c297c6b11c51a9018194aedb5892e043368ed"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-incomplete-en.png",
+      "sha256": "0c91d24ddc7e6ca9c1ffc5ece0d8f61b27fc99845bd30cd39d18ee1a1fccddfa"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-incomplete-fr.png",
+      "sha256": "a389223dd195bf848d17935f699be9ad438c4a779f0104d369a5f2a1292b8fcc"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-out-of-horizon-en.png",
+      "sha256": "bae89bb27c1477f3bb3d50030532944b1b4a92c8a9fd81c029c10cfc9e7cac0e"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-out-of-horizon-fr.png",
+      "sha256": "cf24f2586d826497d543b5de9156960a532617b846d068705b95c9943029eabc"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-denied-en.png",
+      "sha256": "e25667f36d782e779fa70120c0953206567e35ad7a27de447d8e2c97d2a72f82"
+    },
+    {
+      "file": "lanes/environment/cash-evidence-40e8fd30-10a0-4716-b529-26ba5ee5ec9b-denied-fr.png",
+      "sha256": "8185e96602b74d03151ab6b37ccc1b4e3a71acc230265dbd44c0c3f010817ae0"
+    }
+  ],
+  "remaining": [
+    "Finish remaining finance/action-queue handoffs and full server-authored EN/FR copy.",
+    "Verify remaining proof subjects, genuine posted payroll lifecycle and full accessibility/latency requirements. The original truncated shell hydration trace cannot be conclusively attributed to the reproduced date defect; investigate any recurrence."
+  ]
+}

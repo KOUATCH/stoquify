@@ -2,6 +2,8 @@
 
 The entire attached workflow modernization assignment remains active. The prior prompt-refinement and module-composition goals are separate and do not establish this work's completion.
 
+Current closure update, 2026-09-27: **4 of 270 discovered workflows are Complete—verified**: AN-DAILY-DIGEST, PR-10, PR-19 and ID-05. Discovery remains incomplete; 191 source entries are unmapped. [Signing criterion/source audit](RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md), [bound evidence](evidence/signoff-closure-2026-09-27.json), [preparation final audit](RECONCILIATION_PREPARATION_FINAL_AUDIT_2026-09-27.md), [password final audit](PASSWORD_CHANGE_FINAL_AUDIT_2026-09-27.md), [current progress and active Cash Command](CURRENT_PROGRESS.md). Historical counts below remain historical.
+
 | Required outcome | Current assessment |
 | --- | --- |
 | Complete inventory reconciled against pages/actions/APIs/services/background paths | In progress; source candidates indexed, semantic workflows and secondary actions still being reconciled. |
@@ -1293,3 +1295,4 @@ Missing close scores remain null; each KPI retains its own source availability, 
 41 tests/four suites, three-file lint, typecheck and EN/FR actual missing-score/contained-badge verification at 1440/768/320 passed. No selected business effects. Next: actual receiving-delay semantics, urgency/freshness, remaining localization and full lifecycle verification.
 
 Coverage: 270 provisional workflows / 0 fully verified / 191 unmapped sources. Whole-platform completion remains false.
+tion remains false.

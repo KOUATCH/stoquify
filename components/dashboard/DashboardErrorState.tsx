@@ -20,6 +20,7 @@ export function DashboardErrorState({
   dashboardHref,
   dashboardLabel,
   actions,
+  embedded = false,
 }: {
   error?: DashboardRouteError | string | null
   reset?: () => void
@@ -30,7 +31,10 @@ export function DashboardErrorState({
   dashboardHref?: string
   dashboardLabel?: string
   actions?: ReactNode
+  /** The authenticated dashboard shell already owns the main landmark. */
+  embedded?: boolean
 }) {
+  const Root = embedded ? "div" : "main"
   const copy = dashboardSharedCopy[locale ?? dashboardLocale(dashboardHref)].error
   useEffect(() => {
     if (error) {
@@ -48,7 +52,7 @@ export function DashboardErrorState({
   }
 
   return (
-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)] text-[var(--dash-text)]">
+    <Root className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)] text-[var(--dash-text)]">
       <div className="dashboard-landing-content mx-auto flex min-h-screen w-full max-w-[1920px] items-center justify-center px-4 py-8 md:px-6 lg:px-8">
         <section className="dashboard-glass-panel flex max-w-lg flex-col items-center gap-3 rounded-lg p-6 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
@@ -78,6 +82,6 @@ export function DashboardErrorState({
           </div>
         </section>
       </div>
-    </main>
+    </Root>
   )
 }

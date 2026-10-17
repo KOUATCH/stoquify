@@ -1,0 +1,179 @@
+{
+  "run": "8fb85d0e-91ec-4a30-b1fe-76179361628e",
+  "at": "2026-09-30T21:27:56.368Z",
+  "sourcesBefore": {
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-invoice-capacity.cjs": "0b7d54a6a7b9745564259dcf0c4afc73060ec7530a6a76f07609ebe0c5955eb0"
+  },
+  "checks": [
+    {
+      "name": "Uninvoiced returns reduce actual source availability and prevent overbilling with no denied effects",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-uninvoiced",
+      "invoiceId": "cmuoma0vd003lmabom4tdyqqk",
+      "netReturnedUninvoiced": "3.000",
+      "correctionCapacityExcludingOwnReservation": "7.000",
+      "returnAccounting": "FAILED_SETUP_BLOCKER",
+      "elapsedMs": 4662
+    },
+    {
+      "name": "A prepared invoice invalidated by a later return is denied then actually corrected and independently approved",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-later-return",
+      "invoiceId": "cmuoma2qz006xmaboipuik2og",
+      "totalAfterCorrection": "17500.00",
+      "liabilities": 1,
+      "balances": {
+        "INVENTORY": "17500.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-17500.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "returnAccounting": "FAILED_SETUP_BLOCKER",
+      "elapsedMs": 8927
+    },
+    {
+      "name": "A changed return quantity invalidates a previously reviewed preparation even when its invoice still fits",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-stale-preparation",
+      "staleRejectedWithoutInvoice": true,
+      "elapsedMs": 2919
+    },
+    {
+      "name": "An invoiced return does not subtract already-reserved quantity twice",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-invoiced-return",
+      "invoiceIds": [
+        "cmuomae1900fimabosbageaj3",
+        "cmuomajpc00hbmabozaikz9vu"
+      ],
+      "capacityAfterInvoicedReturn": "4.000",
+      "balances": {
+        "INVENTORY": "15000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-15000.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "returnAccounting": "FAILED_SETUP_BLOCKER",
+      "elapsedMs": 12232
+    },
+    {
+      "name": "A mixed return subtracts only its uninvoiced portion",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-mixed-return",
+      "invoiceIds": [
+        "cmuomam8400knmaboqltub8e0",
+        "cmuomaoe900mgmaboertu19le"
+      ],
+      "invoicedReturn": "6.000",
+      "uninvoicedReturn": "2.000",
+      "elapsedMs": 5917
+    },
+    {
+      "name": "An exact full return reversal and its replay restore capacity once before another partial return",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-reversed-return",
+      "originalReturnId": "6da01e6b-0e9f-4f2b-b4b9-49580d767a7d",
+      "reversalId": "82398694-cb68-4dee-9e3f-36575dfea8bf",
+      "capacity": "8.000",
+      "stockQuantity": "8.000",
+      "journalCount": 0,
+      "elapsedMs": 5369
+    },
+    {
+      "name": "Fractional returns and repeated invoice lines reserve exact remaining receipt capacity",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-fractional",
+      "invoiceId": "cmuomau6500v4mabo3uopf2hh",
+      "total": "500.00",
+      "reserved": "0.200",
+      "returned": "0.100",
+      "elapsedMs": 2026
+    },
+    {
+      "name": "Concurrent return and preparation never let an invoice exceed post-return approval capacity",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-concurrent",
+      "preparation": "rejected",
+      "approvalBlocked": true,
+      "returnCommitted": true,
+      "elapsedMs": 2460
+    },
+    {
+      "name": "A recognized receipt with a return retains the separate accounting review requirement",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-recognized-restriction",
+      "invoiceId": "cmuomaxtg012wmabo586ihpwm",
+      "recognizedReceiptIsKernelFixture": true,
+      "accountingBlockerPreserved": true,
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "-25000.00",
+        "ACCOUNTS_PAYABLE": "0.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "elapsedMs": 3134
+    },
+    {
+      "name": "A posted receipt stock replay preserves accounting while altered and novel stock commands are rejected",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-986983c2-54a9-420d-b2d8-b8cf2f04162b-capacity-posted-stock-replay",
+      "receiptId": "cmuomaz62015bmabotnvtf3dm",
+      "postingBatchId": "cmuomaz75015hmabo1gcznr6b",
+      "exactReplayUnchanged": true,
+      "mismatchRejectedWithConflictEvidence": true,
+      "novelStockEventRejected": true,
+      "receiptRecognitionIsKernelFixture": true,
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "-25000.00",
+        "ACCOUNTS_PAYABLE": "0.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "elapsedMs": 1797
+    }
+  ],
+  "scope": "Owned localhost PostgreSQL; real receiving, return/reversal, invoice preparation/correction/independent approval services. Trusted fixture sessions and synthetic accounting setup. Return accounting remains setup-blocked. Receipt recognition is used only in one explicitly labelled canonical-kernel fixture, never claimed as production receipt posting. No migrations, real payments or external messages.",
+  "productionReceiptProducerImplemented": false,
+  "originalBefore": "f0ebcdd74b20e33d761e767673b876110ef95bebc0a29f47472c8dec60519c1c",
+  "passed": true,
+  "originalAfter": "f0ebcdd74b20e33d761e767673b876110ef95bebc0a29f47472c8dec60519c1c",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-invoice-capacity.cjs": "0b7d54a6a7b9745564259dcf0c4afc73060ec7530a6a76f07609ebe0c5955eb0"
+  },
+  "sourceStable": true
+}

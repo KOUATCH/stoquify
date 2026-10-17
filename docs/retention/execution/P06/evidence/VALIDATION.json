@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-17T08:59:13.802743+00:00",
+  "artifact_validation": "PASS",
+  "p06_status": "PARTIAL \u2014 predecessor and real DB/application-browser proof incomplete",
+  "checks": {
+    "head_unchanged": true,
+    "prior_artifacts_unchanged": true,
+    "selected_production_sources_unchanged": true,
+    "test_original_bytes_preserved": true,
+    "only_p06_status_row_changed": true,
+    "baseline_status_snapshot_matches": true,
+    "links_resolve": true
+  },
+  "prior_artifacts_checked": 105,
+  "prior_artifact_drift": [],
+  "unowned_selected_drift": [],
+  "test_preservation": {
+    "services/pos/__tests__/offline-sync.service.test.ts": true,
+    "lib/pos/__tests__/offline-local-queue.test.ts": true
+  },
+  "broken_links": [],
+  "limitation": "Scoped artifact/source integrity only; does not execute or certify application tests."
+}

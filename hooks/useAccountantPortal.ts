@@ -11,6 +11,7 @@ import { useNotifications } from "@/components/notifications/NotificationProvide
 import type { Locale } from "@/types/bilingual"
 
 type AccountantPortalFilters = {
+  clientOrganizationId?: string
   periodId?: string | null
   startDate?: string | Date | null
   endDate?: string | Date | null
@@ -45,14 +46,17 @@ export const accountantPortalKeys = {
     [
       ...accountantPortalKeys.all,
       "dashboard",
+      filters.clientOrganizationId ?? "home",
       filters.periodId ?? "current",
       filters.startDate ? String(filters.startDate) : "open",
       filters.endDate ? String(filters.endDate) : "open",
+      filters.limit ?? 12,
     ] as const,
 }
 
 export function useAccountantPortal(options: UseAccountantPortalOptions = {}) {
   const filters: AccountantPortalFilters = {
+    clientOrganizationId: options.clientOrganizationId,
     periodId: options.periodId,
     startDate: options.startDate,
     endDate: options.endDate,

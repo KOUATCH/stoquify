@@ -19,7 +19,12 @@ import { createCustomerLedgerEntry } from "../customer-ledger.service";
 import {
   recordCustomerReceivableSettlementReversedInTx,
 } from "../customer-receivable-lifecycle.service";
-import { recordReversedJournalCloseInvalidationsInTx } from "../journal-close-invalidation.service";
+import { recordOrderedReversedJournalCloseInvalidationsInTx } from "../journal-close-invalidation.service";
+import {
+  JournalReversalSnapshotChangedError,
+  lockJournalReversalCatalogInTx,
+  lockJournalReversalClosePeriodsInTx,
+} from "../journal-reversal-order.service";
 import { getOpenPeriodForDate } from "../periods.service";
 import { createLedgerPostingBatch } from "../posting.service";
 import { createAccountingSourceLink } from "../source-link.service";
@@ -40,7 +45,12 @@ jest.mock("../customer-receivable-lifecycle.service", () => ({
   recordCustomerReceivableSettlementReversedInTx: jest.fn(),
 }));
 jest.mock("../journal-close-invalidation.service", () => ({
-  recordReversedJournalCloseInvalidationsInTx: jest.fn(),
+  recordOrderedReversedJournalCloseInvalidationsInTx: jest.fn(),
+}));
+jest.mock("../journal-reversal-order.service", () => ({
+  JournalReversalSnapshotChangedError: class JournalReversalSnapshotChangedError extends Error {},
+  lockJournalReversalCatalogInTx: jest.fn(),
+  lockJournalReversalClosePeriodsInTx: jest.fn(),
 }));
 jest.mock("../periods.service", () => ({
   getOpenPeriodForDate: jest.fn(),
@@ -62,9 +72,11 @@ const mockRecordReceivableSettlementReversed = jest.mocked(
   recordCustomerReceivableSettlementReversedInTx,
 );
 const mockRecordCloseInvalidations = jest.mocked(
-  recordReversedJournalCloseInvalidationsInTx,
+  recordOrderedReversedJournalCloseInvalidationsInTx,
 );
 const mockGetOpenPeriodForDate = jest.mocked(getOpenPeriodForDate);
+const mockLockReversalCatalog = jest.mocked(lockJournalReversalCatalogInTx);
+const mockLockReversalPeriods = jest.mocked(lockJournalReversalClosePeriodsInTx);
 const mockCreateLedgerPostingBatch = jest.mocked(createLedgerPostingBatch);
 const mockCreateAccountingSourceLink = jest.mocked(createAccountingSourceLink);
 const mockHashBusinessPayload = jest.mocked(hashBusinessPayload);
@@ -278,6 +290,7 @@ function originalJournal(status = JournalEntryStatus.POSTED) {
       {
         lineNumber: 1,
         accountId: "cash-account",
+        account: { syscohadaClass: "5" },
         debit: new Prisma.Decimal("100.00"),
         credit: new Prisma.Decimal(0),
         baseDebit: new Prisma.Decimal("100.00"),
@@ -295,6 +308,7 @@ function originalJournal(status = JournalEntryStatus.POSTED) {
       {
         lineNumber: 2,
         accountId: "ar-account",
+        account: { syscohadaClass: "4" },
         debit: new Prisma.Decimal(0),
         credit: new Prisma.Decimal("100.00"),
         baseDebit: new Prisma.Decimal(0),
@@ -411,6 +425,8 @@ beforeEach(() => {
   jest.clearAllMocks();
   jest.useFakeTimers();
   jest.setSystemTime(NOW);
+  mockLockReversalCatalog.mockReset().mockResolvedValue(undefined);
+  mockLockReversalPeriods.mockReset().mockResolvedValue(["period-original", "period-reversal"]);
   mockHashBusinessPayload.mockReturnValue("f".repeat(64));
   mockRecordReceivableSettlementReversed.mockResolvedValue({
     state: { id: "receivable-state" },
@@ -576,6 +592,9 @@ describe("customer settlement compensating reversal", () => {
     );
 
     expect(result.replayed).toBe(true);
+    expect(mockLockReversalCatalog).not.toHaveBeenCalled();
+    expect(mockLockReversalPeriods).not.toHaveBeenCalled();
+    expect(mockGetOpenPeriodForDate).not.toHaveBeenCalled();
     expect(mockCreateCustomerLedgerEntry).not.toHaveBeenCalled();
     expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled();
     expect(tx.customerSettlement.updateMany).not.toHaveBeenCalled();
@@ -752,6 +771,154 @@ describe("customer settlement compensating reversal", () => {
     expect(tx.auditLog.create).not.toHaveBeenCalledWith({
       data: expect.objectContaining({ action: "CUSTOMER_SETTLEMENT_REVERSED" }),
     });
+  });
+
+  it("locks the catalog and complete Close scope before compensation and reuses the resolved period", async () => {
+    const { tx, client } = buildHarness();
+    const affectedPeriodIds = ["period-original", "period-overlap", "period-reversal"];
+    mockLockReversalPeriods.mockResolvedValueOnce(affectedPeriodIds);
+
+    await reverseCustomerSettlementWithControls(INPUT, control(), client as never);
+
+    expect(mockLockReversalCatalog).toHaveBeenCalledWith(tx, "org-1", client);
+    expect(mockGetOpenPeriodForDate).toHaveBeenCalledTimes(1);
+    expect(mockLockReversalPeriods).toHaveBeenCalledWith(tx, "org-1", {
+      originalPeriodId: "period-original",
+      reversalPeriodId: "period-reversal",
+      originalEntryDate: originalJournal().entryDate,
+      reversalDate: REVERSAL_DATE,
+      includeLaterPeriods: false,
+    }, client);
+    expect(mockLockReversalCatalog.mock.invocationCallOrder[0]).toBeLessThan(mockGetOpenPeriodForDate.mock.invocationCallOrder[0]);
+    expect(mockGetOpenPeriodForDate.mock.invocationCallOrder[0]).toBeLessThan(mockLockReversalPeriods.mock.invocationCallOrder[0]);
+    expect(mockLockReversalPeriods.mock.invocationCallOrder[0]).toBeLessThan(mockCreateCustomerLedgerEntry.mock.invocationCallOrder[0]);
+    expect(mockRecordCloseInvalidations).toHaveBeenCalledWith(tx, "org-1", expect.objectContaining({
+      originalJournalEntryId: "journal-original", reversalJournalEntryId: "journal-reversal", affectedPeriodIds,
+    }), expect.objectContaining({ actorId: "actor-2" }));
+  });
+
+  it("includes later periods for original class-3 lines while preserving their exact financial mirror", async () => {
+    const { tx, client } = buildHarness();
+    const original = originalJournal();
+    original.lines[0].account.syscohadaClass = "31";
+    tx.journalEntry.findFirst.mockReset().mockResolvedValueOnce(original).mockResolvedValueOnce(null);
+
+    await reverseCustomerSettlementWithControls(INPUT, control(), client as never);
+
+    expect(mockLockReversalPeriods).toHaveBeenCalledWith(tx, "org-1", expect.objectContaining({
+      originalEntryDate: original.entryDate, includeLaterPeriods: true,
+    }), client);
+    expect(tx.journalEntry.create.mock.calls[0][0].data.lines.create[0]).toMatchObject({
+      accountId: original.lines[0].accountId,
+      debit: original.lines[0].credit, credit: original.lines[0].debit,
+      baseDebit: original.lines[0].baseCredit, baseCredit: original.lines[0].baseDebit,
+    });
+  });
+
+  it.each(["catalog", "periods"] as const)("retries a %s visibility mismatch before financial effects", async phase => {
+    const first = buildHarness();
+    const second = buildHarness();
+    const client = first.client;
+    client.$transaction.mockReset()
+      .mockImplementationOnce(async work => work(first.tx))
+      .mockImplementationOnce(async work => work(second.tx));
+    const changed = new JournalReversalSnapshotChangedError();
+    if (phase === "catalog") mockLockReversalCatalog.mockRejectedValueOnce(changed);
+    else mockLockReversalPeriods.mockRejectedValueOnce(changed);
+
+    const result = await reverseCustomerSettlementWithControls(INPUT, control(), client as never);
+
+    expect(result.replayed).toBe(false);
+    expect(client.$transaction).toHaveBeenCalledTimes(2);
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      expect(client.$transaction).toHaveBeenNthCalledWith(attempt, expect.any(Function), { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    }
+    expect(first.tx.customerSettlementAllocation.updateMany).not.toHaveBeenCalled();
+    expect(first.tx.journalEntry.create).not.toHaveBeenCalled();
+    expect(first.tx.customerSettlement.updateMany).not.toHaveBeenCalled();
+    expect(mockCreateCustomerLedgerEntry).toHaveBeenCalledTimes(2);
+    expect(second.tx.customerSettlement.updateMany).toHaveBeenCalledTimes(1);
+    expect(mockRecordCloseInvalidations).toHaveBeenCalledTimes(1);
+    expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails closed after the bounded snapshot mismatch budget without compensation", async () => {
+    const attempts = Array.from({ length: CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS }, () => buildHarness());
+    const client = attempts[0].client;
+    client.$transaction.mockReset();
+    for (const attempt of attempts) client.$transaction.mockImplementationOnce(async work => work(attempt.tx));
+    mockLockReversalPeriods.mockRejectedValue(new JournalReversalSnapshotChangedError());
+
+    await expect(reverseCustomerSettlementWithControls(INPUT, control(), client as never)).rejects.toMatchObject({ code: "CONFLICT" });
+
+    expect(client.$transaction).toHaveBeenCalledTimes(CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS);
+    expect(mockCreateCustomerLedgerEntry).not.toHaveBeenCalled();
+    expect(mockCreateLedgerPostingBatch).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+    expect(mockRecordCloseInvalidations).not.toHaveBeenCalled();
+    for (const { tx } of attempts) {
+      expect(tx.customerSettlementAllocation.updateMany).not.toHaveBeenCalled();
+      expect(tx.customerSettlement.updateMany).not.toHaveBeenCalled();
+      expect(tx.journalEntry.create).not.toHaveBeenCalled();
+    }
+  });
+
+  it("rechecks fresh authentication after the Close lock wait before any compensation", async () => {
+    const { tx, client } = buildHarness();
+    mockLockReversalPeriods.mockImplementationOnce(async () => {
+      jest.setSystemTime(new Date(NOW.getTime() + 301_000));
+      return ["period-original", "period-reversal"];
+    });
+
+    await expect(reverseCustomerSettlementWithControls(INPUT, control(), client as never)).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" });
+
+    expect(client.$transaction).toHaveBeenCalledTimes(1);
+    expect(mockCreateCustomerLedgerEntry).not.toHaveBeenCalled();
+    expect(tx.customerSettlementAllocation.updateMany).not.toHaveBeenCalled();
+    expect(tx.journalEntry.create).not.toHaveBeenCalled();
+    expect(mockRecordCloseInvalidations).not.toHaveBeenCalled();
+    expect(tx.auditLog.create).toHaveBeenCalledWith({ data: expect.objectContaining({
+      action: "CUSTOMER_SETTLEMENT_REVERSE_CONTROL_DENIED",
+      changes: expect.objectContaining({ reasonCode: "FRESH_AUTH_REQUIRED" }),
+    }) });
+  });
+
+  it("uses fresh attempt time after a visibility retry and refuses expired authority", async () => {
+    const first = buildHarness();
+    const second = buildHarness();
+    const client = first.client;
+    client.$transaction.mockReset()
+      .mockImplementationOnce(async work => work(first.tx))
+      .mockImplementationOnce(async work => work(second.tx));
+    mockLockReversalCatalog.mockImplementationOnce(async () => {
+      jest.setSystemTime(new Date(NOW.getTime() + 301_000));
+      throw new JournalReversalSnapshotChangedError();
+    });
+
+    await expect(reverseCustomerSettlementWithControls(INPUT, control(), client as never)).rejects.toMatchObject({ code: "FRESH_AUTH_REQUIRED" });
+
+    expect(client.$transaction).toHaveBeenCalledTimes(2);
+    expect(mockLockReversalCatalog).toHaveBeenCalledTimes(1);
+    expect(mockLockReversalPeriods).not.toHaveBeenCalled();
+    expect(mockCreateCustomerLedgerEntry).not.toHaveBeenCalled();
+    expect(second.tx.auditLog.create).toHaveBeenCalledWith({ data: expect.objectContaining({
+      action: "CUSTOMER_SETTLEMENT_REVERSE_CONTROL_DENIED",
+      changes: expect.objectContaining({ reasonCode: "FRESH_AUTH_REQUIRED" }),
+    }) });
+  });
+
+  it("does not retry unexpected Close preparation failures or expose their details", async () => {
+    const { tx, client } = buildHarness();
+    mockLockReversalPeriods.mockRejectedValueOnce(new Error("private database diagnostic"));
+
+    await expect(reverseCustomerSettlementWithControls(INPUT, control(), client as never)).rejects.toMatchObject({
+      code: "INTERNAL_ERROR", message: "Customer settlement reversal transaction failed.",
+    });
+
+    expect(client.$transaction).toHaveBeenCalledTimes(1);
+    expect(mockCreateCustomerLedgerEntry).not.toHaveBeenCalled();
+    expect(tx.customerSettlement.updateMany).not.toHaveBeenCalled();
+    expect(mockRecordCloseInvalidations).not.toHaveBeenCalled();
   });
 
   it("retries bounded serialization conflicts", async () => {

@@ -1,0 +1,75 @@
+{
+  "startedAt": "2026-09-30T14:43:49.397Z",
+  "target": "stoquify_local_registration_20260906_01",
+  "synthetic": true,
+  "liveProvider": false,
+  "checks": [
+    {
+      "name": "two-client authorized projection and private bodies excluded",
+      "status": "PASS"
+    },
+    {
+      "name": "cross-client request cannot be opened",
+      "status": "PASS"
+    },
+    {
+      "name": "expired and revoked mandates fail current reads and acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "read-only mandate blocks review",
+      "status": "PASS"
+    },
+    {
+      "name": "target module denied blocks reads and acceptance preflight",
+      "status": "PASS"
+    },
+    {
+      "name": "stale identity confirmation rejects acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "read-only client module permits read and blocks review write",
+      "status": "PASS"
+    },
+    {
+      "name": "cross-client response rejected without a new acceptance",
+      "status": "PASS"
+    },
+    {
+      "name": "unanswered request tracks notification state and rejects corrupted source",
+      "status": "PASS"
+    },
+    {
+      "name": "transaction failure after acceptance insert rolls back source state",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrent identical commands yield one authoritative acceptance and event",
+      "status": "PASS"
+    },
+    {
+      "name": "concurrent distinct commands cannot accept the same response twice",
+      "status": "PASS"
+    }
+  ],
+  "fixtureOrganizations": [
+    "cmuo7u3v00000ma80dknpzdlm",
+    "cmuo7u42m000bma80f3mukqyj",
+    "cmuo7u4ad000wma80oxt5gu0j"
+  ],
+  "acceptanceId": "cmuo7u8ue003ama808d21s3e9",
+  "status": "PASS",
+  "completedAt": "2026-09-30T14:43:57.611Z",
+  "sources": {
+    "services/accounting/accountant-work-desk.contracts.ts": "982131dc57be59dd15c610506dc92cabfa93af5f628da78a08a39ef502a8255c",
+    "services/accounting/accountant-work-desk.service.ts": "92b31718d76360d52f05e3967bbe449a044298e080dd6b8d54d254d5179f68f2",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+    "actions/accounting/accountant-work-desk.actions.ts": "2ca7eb97bb4293b86ad81e19c193a3f2294a3ede7a0819f2c3b2d08d5619158e",
+    "components/accounting/AccountantWorkDesk.tsx": "f8231335ac192920c6ccec667f9a9d21fc578fa4bcaf7af7dcb23f14b665feb7",
+    "components/accounting/accountant-work-desk-copy.ts": "4939dc768c3a3d4dad6c1160ca61121d0ed6e6eaee52ceef111d3185fa3c10ee",
+    "hooks/useAccountantPortal.ts": "413582bd96fc1c905cb3b02e1f5cf1b22c51e778d35ae23406caf2c5a425c4e4",
+    "components/accounting/AccountantPortal.tsx": "b2083d78d5ff8a822da662e1a8174f830331f7c81bdacac62bee51f2518a8d5d"
+  }
+}

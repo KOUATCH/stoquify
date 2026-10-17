@@ -1,0 +1,294 @@
+import type {
+  EvidenceGrade,
+  ProofTrailBlockerSeverity,
+} from "@/services/evidence/evidence-contracts";
+
+export const SNAPSHOT_KINDS = [
+  "tenant.operating",
+  "branch.operating",
+  "payment.truth",
+  "inventory.cash",
+  "inventory.loss",
+  "close.readiness",
+] as const;
+
+export type SnapshotKind = (typeof SNAPSHOT_KINDS)[number];
+
+export type SnapshotStatus =
+  | "fresh"
+  | "stale"
+  | "partial"
+  | "blocked"
+  | "building"
+  | "failed"
+  | "empty";
+
+export type SnapshotUiState =
+  | "loading"
+  | "empty"
+  | "fresh"
+  | "stale"
+  | "partial"
+  | "blocked"
+  | "redacted"
+  | "permission_denied"
+  | "module_unavailable"
+  | "safe_error";
+
+export type SnapshotSourceModule =
+  | "accounting"
+  | "close"
+  | "compliance"
+  | "dashboard"
+  | "finance"
+  | "hris"
+  | "inventory"
+  | "payments"
+  | "payroll"
+  | "pos"
+  | "purchasing"
+  | "sales";
+
+export type SnapshotBlocker = {
+  id: string;
+  severity: ProofTrailBlockerSeverity;
+  gate: string;
+  title: string;
+  detail: string;
+  sourceTables: string[];
+  nextAction?: string;
+};
+
+export type SnapshotRedaction = {
+  id: string;
+  field: string;
+  reason: string;
+  policy: string;
+};
+
+export type SnapshotFreshness = {
+  generatedAt: string;
+  sourceMaxUpdatedAt: string | null;
+  maxAgeMinutes: number;
+  stale: boolean;
+  staleReason: string | null;
+};
+
+export type SnapshotResult<TMetrics> = {
+  kind: SnapshotKind;
+  organizationId: string;
+  locationId: string | null;
+  periodStart: string;
+  periodEnd: string;
+  status: SnapshotStatus;
+  uiState: SnapshotUiState;
+  evidenceGrade: EvidenceGrade;
+  freshness: SnapshotFreshness;
+  sourceHash: string;
+  generatedAt: string;
+  sourceModules: SnapshotSourceModule[];
+  metrics: TMetrics;
+  blockers: SnapshotBlocker[];
+  redactions: SnapshotRedaction[];
+};
+
+export type SnapshotScopeInput = {
+  organizationId: string;
+  locationId?: string | null;
+  periodStart?: Date | string | null;
+  periodEnd?: Date | string | null;
+  now?: Date | string | null;
+  maxAgeMinutes?: number | null;
+};
+
+export type NormalizedSnapshotScope = {
+  organizationId: string;
+  locationId: string | null;
+  periodStart: Date;
+  periodEnd: Date;
+  now: Date;
+  maxAgeMinutes: number;
+};
+
+export type PaymentTruthMetrics = {
+  providerAccountCount: number;
+  activeProviderAccountCount: number;
+  recentRunCount: number;
+  readyForSignoffCount: number;
+  signedRunCount: number;
+  openExceptionCount: number;
+  criticalExceptionCount: number;
+  openSuspenseCount: number;
+  /** Organization-currency total; null when source currencies cannot be combined without conversion evidence. */
+  openSuspenseAmount: number | null;
+  suspenseCurrencyCode?: string;
+  openSuspenseByCurrency?: { currencyCode: string; amount: number; count: number }[];
+  pendingTransactionCount: number;
+};
+
+export type InventoryCashMetrics = {
+  trackedItemCount: number;
+  inventoryLevelCount: number;
+  quantityOnHand: number;
+  quantityAvailable: number;
+  quantityReserved: number;
+  quantityInTransit: number;
+  quantityOnOrder: number;
+  inventoryValue: number;
+  zeroStockLevelCount: number;
+  negativeStockLevelCount: number;
+  periodTransactionCount: number;
+  periodAdjustmentCount: number;
+  periodTransferCount: number;
+};
+
+export type InventoryLossMetrics = {
+  lossLineCount: number;
+  adjustmentCount: number;
+  totalLossValue: number;
+  currency: string;
+  countVarianceLineCount: number;
+  damagedLineCount: number;
+  expiredLineCount: number;
+  recordedTheftCategoryLineCount: number;
+  writeOffLineCount: number;
+  evidenceCoveredLineCount: number;
+  evidenceCoveragePercent: number;
+  valuationCoveredLineCount: number;
+  valuationCoveragePercent: number;
+  approvalAttributedLineCount: number;
+  approvalCoveragePercent: number;
+  missingEvidenceLineCount: number;
+  missingValuationLineCount: number;
+  missingApprovalAttributionLineCount: number;
+  sourceTruncated: boolean;
+};
+
+export type CloseReadinessMetrics = {
+  accountingPeriodCount: number;
+  openPeriodCount: number;
+  recentCloseRunCount: number;
+  certifiedCloseRunCount: number;
+  blockedCloseRunCount: number;
+  averageReadinessScore: number | null;
+  openFindingCount: number;
+  criticalOpenFindingCount: number;
+  unavailableEvidenceCount: number;
+};
+
+export type BranchOperatingMetrics = {
+  locationActive: boolean;
+  completedSalesCount: number;
+  completedSalesRevenue: number;
+  cashCollected: number;
+  inventoryValue: number;
+  inventoryTransactionCount: number;
+  pendingPurchaseOrderCount: number;
+  /** Absent/null on older or unavailable snapshots; never infer delay from pending count. */
+  overduePurchaseOrderCount?: number | null;
+  openTransferCount: number;
+  postedJournalLineCount: number;
+  posShiftCount: number;
+  closedPosShiftCount: number;
+  payrollEmployeeAtLocationCount: number;
+  frozenAttendanceSnapshotCount: number;
+  approvedPayrollRunLineCount: number;
+  unallocatedPayrollRunLineCount: number;
+  payrollGrossAmount: number;
+  payrollEmployerChargeAmount: number;
+  payrollNetPayAmount: number;
+  payrollAllocatedCostAmount: number;
+  payrollProfitContribution: number | null;
+};
+
+export type PayrollFinanceForecastEvidenceStatus =
+  | "AUTHORITATIVE"
+  | "NON_AUTHORITATIVE";
+
+export type PayrollFinanceForecastMetrics = {
+  status: PayrollFinanceForecastEvidenceStatus;
+  authoritative: boolean;
+  reasonCode: string;
+  message: string;
+  horizonStart: string;
+  horizonEnd: string;
+  upcomingNetPayAmount: number | null;
+  upcomingStatutoryLiabilityAmount: number | null;
+  totalUpcomingAmount: number | null;
+  currencyCode?: string;
+  sourceCurrencies?: string[];
+  payrollPeriodCount: number;
+  payrollRunCount: number;
+  paymentBatchCount: number;
+  declarationCount: number;
+  sourceLinkCount: number;
+  evidenceHashCount: number;
+  certifiedInputRunCount: number;
+  certifiedInputProofHashCount: number;
+  registerToLedgerRunCount: number;
+  nextPayDate: string | null;
+  nextDeclarationDueDate: string | null;
+  personLevelAmountsRedacted: true;
+  blockerCodes: string[];
+};
+
+export type TenantOperatingMetrics = {
+  activeLocationCount: number;
+  completedSalesCount: number;
+  completedSalesRevenue: number;
+  cashCollected: number;
+  pendingPurchaseOrderCount: number;
+  /** Pending orders whose stored expected delivery timestamp precedes snapshot time. */
+  overduePurchaseOrderCount?: number | null;
+  approvedOrPaidPayrollRunCount: number;
+  activeEmployeeBalanceCaseCount: number;
+  openEmployeeBalanceCaseCount: number;
+  partiallySettledEmployeeBalanceCaseCount: number;
+  /** Organization-currency total; unavailable without conversion evidence for foreign currencies. */
+  employeeBalanceOutstandingAmount: number | null;
+  employeeBalanceCurrencyCode?: string;
+  employeeBalanceOutstandingByCurrency?: { currencyCode: string; amount: number; count: number }[];
+  periodEmployeeBalanceSettlementCount: number;
+  periodEmployeeBalanceSettlementAmount: number | null;
+  periodEmployeeBalanceSettlementByCurrency?: { currencyCode: string; amount: number; count: number }[];
+  postedJournalEntryCount: number;
+  sourceLinkCount: number;
+  payrollFinanceForecast: PayrollFinanceForecastMetrics;
+  paymentTruth: PaymentTruthMetrics;
+  inventoryCash: InventoryCashMetrics;
+  closeReadiness: CloseReadinessMetrics;
+};
+
+export type SnapshotBuildRunMetrics = {
+  requestedSnapshotCount: number;
+  completedSnapshotCount: number;
+  blockedSnapshotCount: number;
+  partialSnapshotCount: number;
+  staleSnapshotCount: number;
+  failedSnapshotCount: number;
+};
+
+export type SnapshotBuildRunResult = {
+  buildId: string;
+  organizationId: string;
+  locationId: string | null;
+  periodStart: string;
+  periodEnd: string;
+  status: Exclude<SnapshotStatus, "empty" | "building">;
+  evidenceGrade: EvidenceGrade;
+  sourceHash: string;
+  generatedAt: string;
+  metrics: SnapshotBuildRunMetrics;
+  snapshots: Array<
+    | SnapshotResult<TenantOperatingMetrics>
+    | SnapshotResult<BranchOperatingMetrics>
+    | SnapshotResult<PaymentTruthMetrics>
+    | SnapshotResult<InventoryCashMetrics>
+    | SnapshotResult<InventoryLossMetrics>
+    | SnapshotResult<CloseReadinessMetrics>
+  >;
+  blockers: SnapshotBlocker[];
+  redactions: SnapshotRedaction[];
+};
+
+export const DEFAULT_SNAPSHOT_MAX_AGE_MINUTES = 24 * 60;

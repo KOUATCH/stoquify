@@ -1,10 +1,19 @@
 jest.mock("server-only", () => ({}))
+jest.mock("../reconciliation-close-order.service", () => ({
+  ...jest.requireActual("../reconciliation-close-order.service"),
+  lockReconciliationCloseCatalogInTx: jest.fn(), lockReconciliationClosePeriodsInTx: jest.fn(),
+}))
+jest.mock("@/services/accounting/close-assurance-pack.service", () => ({ recordCloseCertificationInvalidationsForSourceInTx: jest.fn() }))
 jest.mock("@/lib/security/auth-session", () => ({ FreshAuthRequiredError: class extends Error {} }))
 jest.mock("@/prisma/db", () => ({ db: { $transaction: jest.fn() } }))
 jest.mock("../payment-reconciliation-certification.service", () => ({ loadRunForCertification: jest.fn(), validateReconciliationRunEvidenceInTx: jest.fn() }))
 jest.mock("../payment-reconciliation-notifications", () => ({ publishPaymentReconciliationNotification: jest.fn() }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({ evaluateModuleAccessInTx: jest.fn() }))
 
 import { db } from "@/prisma/db"
+import { lockReconciliationClosePeriodsInTx } from "../reconciliation-close-order.service"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { loadRunForCertification, validateReconciliationRunEvidenceInTx } from "../payment-reconciliation-certification.service"
 import { previewReconciliationPreparation, prepareReconciliationRun, readReconciliationPreparation } from "../reconciliation-run-preparation.service"
@@ -14,10 +23,12 @@ import { reconciliationPreparationSchema } from "../reconciliation-run-preparati
 const now = new Date("2026-09-13T10:00:00Z")
 const control = { organizationId: "org", actorId: "operator", actorPermissions: ["payments.reconciliation.read", "accounting.journal.read", "payments.reconciliation.run"], now, lastAuthAt: now }
 let run: any, evidence: any, rows: any[], audits: any[]
-const tx: any = { user: { findFirst: jest.fn() }, reconciliationRun: { updateMany: jest.fn(), findMany: jest.fn(), count: jest.fn() },
+const tx: any = { auditLog: { create: jest.fn() }, user: { findFirst: jest.fn() }, reconciliationRun: { updateMany: jest.fn(), findMany: jest.fn(), count: jest.fn() },
   paymentReconciliationInboxItem: { findFirst: jest.fn(), create: jest.fn(), findMany: jest.fn(), count: jest.fn() }, ledgerAuditEvent: { findFirst: jest.fn(), create: jest.fn() } }
 beforeEach(() => {
   jest.resetAllMocks(); rows = []; audits = []
+  ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockResolvedValue(["earlier-period", "period"])
+  ;(evaluateModuleAccessInTx as jest.Mock).mockResolvedValue({ allowed: true })
   run = { id: "run", organizationId: "org", runById: "maker", status: "NEEDS_REVIEW", updatedAt: now, metadata: { retained: true },
     signedAt: null, signedById: null, certificateHash: null, certificatePayload: null, businessDate: now, accountingPeriodId: "period", providerAccount: { status: "ACTIVE", displayName: "Provider", currencyCode: "XAF" } }
   evidence = { period: { id: "period" }, sourceEvidence: { version: 1, sourceHash: "a".repeat(64), counts: { providerEventCount: 1, exceptionCount: 1 } } }
@@ -33,18 +44,32 @@ beforeEach(() => {
   tx.paymentReconciliationInboxItem.findFirst.mockImplementation(async ({ where }) => rows.find(row => Object.entries(where).every(([k, v]) => row[k] === v)) ?? null)
   tx.ledgerAuditEvent.create.mockImplementation(async ({ data }) => { audits.push(data); return data })
   tx.ledgerAuditEvent.findFirst.mockImplementation(async ({ where }) => audits.find(a => a.organizationId === where.organizationId && a.resourceId === where.resourceId && a.actorId === where.actorId && a.action === where.action && a.metadata.receiptId === where.metadata.equals) ?? null)
-  tx.paymentReconciliationInboxItem.findMany.mockImplementation(async () => rows.map(row => ({ id: row.id, createdAt: now })))
+  tx.paymentReconciliationInboxItem.findMany.mockImplementation(async () => rows.map(row => ({ id: row.id, createdAt: now, idempotencyKey: row.idempotencyKey })))
   tx.paymentReconciliationInboxItem.count.mockImplementation(async () => rows.length)
 })
 async function command() {
   const p = await previewReconciliationPreparation({ runId: "run" }, control)
   return { runId: "run", reason: "Reviewed source and all closed obligations", expectedRevision: p.revision!, idempotencyKey: "01386bb6-b3bd-4985-9f43-c83206764fbb" }
 }
+it("refuses authentication that expires during Close lock waits before any transition", async () => {
+  const input = await command(), clock = jest.spyOn(Date, "now").mockReturnValue(1000)
+  ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockImplementation(async () => { clock.mockReturnValue(301001); return ["period"] })
+  try {
+    await expect(prepareReconciliationRun(input, control)).rejects.toBeInstanceOf(Error)
+    expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+    expect(recordCloseCertificationInvalidationsForSourceInTx).not.toHaveBeenCalled()
+    expect(rows).toHaveLength(0)
+  } finally { clock.mockRestore() }
+})
 it("prepares only the reviewed revision and retains proof for independent signing", async () => {
   const input = await command(); expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
   const result = await prepareReconciliationRun(input, control)
   expect(result).toMatchObject({ currentStatus: "READY_FOR_SIGNOFF", replayed: false })
   expect(rows).toHaveLength(1); expect(audits).toHaveLength(1)
+  expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledWith(tx, "org", expect.objectContaining({
+    sourceCode: "PAYMENT_RECONCILIATION_PREPARED", sourceId: "run", periodIds: ["earlier-period", "period"],
+  }), expect.objectContaining({ actorId: "operator" }))
+  expect((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(tx.reconciliationRun.updateMany.mock.invocationCallOrder[0])
   expect(run.metadata.retained).toBe(true); expect(rows[0].payloadSummary.beforeRun.status).toBe("NEEDS_REVIEW")
   await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "signer")).resolves.toBeUndefined()
   await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "operator")).rejects.toMatchObject({ code: "FORBIDDEN" })
@@ -62,6 +87,7 @@ it.each(["NEEDS_REVIEW", "SIGNED"])("replays the retained request without restor
   run.status = status
   expect(await prepareReconciliationRun(input, control)).toMatchObject({ receiptId: first.receiptId, currentStatus: status, replayed: true })
   expect(tx.reconciliationRun.updateMany).toHaveBeenCalledTimes(1); expect(rows).toHaveLength(1)
+  expect(recordCloseCertificationInvalidationsForSourceInTx).toHaveBeenCalledTimes(1)
   await expect(prepareReconciliationRun({ ...input, reason: "Changed request using the same key" }, control)).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" })
 })
 it.each(["audit", "payload", "scope", "timestamp"])("refuses corrupted %s preparation evidence", async change => {
@@ -130,7 +156,7 @@ it.each(["missing-permission", "inactive"])("denies run discovery for %s before 
 it("retains redacted preparation history after reopening and refuses tampered audit", async () => {
   await prepareReconciliationRun(await command(), control); run.status = "NEEDS_REVIEW"
   const page = await readReconciliationPreparation({ kind: "history", runId: "run" }, control)
-  expect(page).toMatchObject({ kind: "history", total: 1, run: { status: "NEEDS_REVIEW" }, records: [{ preparedById: "operator" }] })
+  expect(page).toMatchObject({ kind: "history", total: 1, run: { status: "NEEDS_REVIEW" }, records: [{ kind: "PREPARATION", actorId: "operator" }] })
   expect(JSON.stringify(page)).not.toMatch(/beforeRun|requestHash|afterRunHash|sourceHash|reviewedRevision/)
   audits.length = 0
   await expect(readReconciliationPreparation({ kind: "history", runId: "run" }, control)).rejects.toMatchObject({ code: "CONFLICT" })
@@ -139,4 +165,31 @@ it("rejects client authority injection and malformed revision/key/reason", async
   const input = await command()
   for (const extra of [{ organizationId: "foreign" }, { actorId: "signer" }, { expectedRevision: "invalid" }, { idempotencyKey: "invalid" }, { reason: " " }])
     expect(reconciliationPreparationSchema.safeParse({ ...input, ...extra }).success).toBe(false)
+})
+it("denies withdrawn module writes before creating a receipt and commits its denial audit", async () => {
+  const input = await command()
+  ;(evaluateModuleAccessInTx as jest.Mock).mockResolvedValue({ allowed: false, moduleSlug: "payment_reconciliation", accessIntent: "write", result: "deny", reason: "read_only", missingDependencies: [], rbacWildcardPresent: false })
+  ;(loadRunForCertification as jest.Mock).mockClear()
+  await expect(prepareReconciliationRun(input, control)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(loadRunForCertification).not.toHaveBeenCalled()
+  expect(rows).toHaveLength(0); expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  expect(tx.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "MODULE_ENTITLEMENT_ENFORCED", entityId: "payment_reconciliation:prepare:run" }) }))
+  expect(await (db.$transaction as jest.Mock).mock.results.at(-1)!.value).toEqual({ moduleDenied: true })
+})
+it("rechecks write eligibility before returning a retained preparation replay", async () => {
+  const input = await command(); await prepareReconciliationRun(input, control)
+  ;(evaluateModuleAccessInTx as jest.Mock).mockResolvedValue({ allowed: false, missingDependencies: [] })
+  await expect(prepareReconciliationRun(input, control)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(tx.reconciliationRun.updateMany).toHaveBeenCalledTimes(1); expect(rows).toHaveLength(1)
+})
+it("explains read-only preparation while withholding a signable revision", async () => {
+  ;(evaluateModuleAccessInTx as jest.Mock).mockImplementation(async (_tx, input) => ({ allowed: input.accessIntent === "read" }))
+  expect(await previewReconciliationPreparation({ runId: "run" }, control)).toMatchObject({ canPrepare: false, revision: null, counts: null, blocker: "MODULE_WRITE_REQUIRED" })
+  expect(validateReconciliationRunEvidenceInTx).not.toHaveBeenCalled()
+})
+it("withdraws preview and discovery before private reads when module read access is denied", async () => {
+  ;(evaluateModuleAccessInTx as jest.Mock).mockResolvedValue({ allowed: false })
+  await expect(previewReconciliationPreparation({ runId: "run" }, control)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(readReconciliationPreparation({ kind: "runs" }, control)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(loadRunForCertification).not.toHaveBeenCalled(); expect(tx.reconciliationRun.findMany).not.toHaveBeenCalled()
 })

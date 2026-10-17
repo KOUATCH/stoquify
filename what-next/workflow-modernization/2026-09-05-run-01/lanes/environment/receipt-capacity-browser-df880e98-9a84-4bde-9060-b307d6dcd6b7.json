@@ -1,0 +1,188 @@
+{
+  "run": "df880e98-9a84-4bde-9060-b307d6dcd6b7",
+  "at": "2026-09-30T21:39:06.776Z",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs": "f09c2f2adc6fc4cbbbba23d0a42db11c8666b5273972eb5e2bf610a6e6ca22ab"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "kind": "preparation",
+      "stages": [],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en1440-preparation-available-seven.png",
+          "sha256": "eea948f870893a01c76dffab1bb31f09b4f2a6695c4e38b22e8da000fb570492"
+        },
+        {
+          "stage": "failure",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en1440-preparation-failure.png",
+          "sha256": "e48f1215266372d9b0807292b6040f0674f0ae3af8f6bee9be6c06fa477fb43b"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "routeAndDraftMs": 18250,
+      "sourceLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"The selected receipts, currency or accounting period cannot support this invoice. Check receiving, the remaining quantity and accounting setup.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "kind": "correction",
+      "stages": [],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en1440-correction-available-seven.png",
+          "sha256": "d09aa01053b43e6a35d01ca9b98ee239b468f8f15b11abcad57f2b0c4e5d9ff8"
+        },
+        {
+          "stage": "failure",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en1440-correction-failure.png",
+          "sha256": "31a68575b1fc75c6258e60a2d09e198b57e094571e4738c8c84bc763ec99118c"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "routeAndDraftMs": 11160,
+      "sourceLayout": {
+        "viewport": 1440,
+        "documentWidth": 1440
+      },
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"This source cannot be corrected here. Resolve any active exception first; ask accounting to review closed periods, unsupported currency, missing receipts, or existing approvals, payments and adjustments. Your draft is preserved.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "kind": "preparation",
+      "stages": [],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr320-preparation-available-seven.png",
+          "sha256": "ccb906c273e5830a4a9ff46f28ef1a8197063b673c4374c9fe40b70478a4a562"
+        },
+        {
+          "stage": "failure",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr320-preparation-failure.png",
+          "sha256": "1e57f3acdfa1b23b86042169ccbfe47f4efb598d2e15541d6c7f87d26202de3a"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "routeAndDraftMs": 10359,
+      "sourceLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Les réceptions, la devise ou la période comptable ne permettent pas cette préparation. Vérifiez la réception, les quantités restantes et le paramétrage comptable.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "kind": "correction",
+      "stages": [],
+      "screenshots": [
+        {
+          "stage": "available-seven",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr320-correction-available-seven.png",
+          "sha256": "4a7377a4975b75eaf41e385c23ba368ba0a0fdcab1e2fad2e900dd22a76d3c84"
+        },
+        {
+          "stage": "failure",
+          "file": "receipt-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr320-correction-failure.png",
+          "sha256": "f3b653356963305b1856dfba108d101ee33f655dec41fdf9db024ad798a5c2e6"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "routeAndDraftMs": 11714,
+      "sourceLayout": {
+        "viewport": 320,
+        "documentWidth": 320
+      },
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Cette source ne peut pas être corrigée ici. Résolvez toute dérogation active ; demandez au service comptable de vérifier les périodes fermées, la devise non prise en charge, les réceptions manquantes ou les approbations, paiements et ajustements existants. Votre brouillon est conservé.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    }
+  ],
+  "scope": "Owned localhost PostgreSQL and actual localhost:3110 application. Actual reviewed receiving and purchase-return domain effects; normal credential sign-in. New preparation and correction after returns, EN desktop and FR narrow mobile, keyboard/dialog/focus/overflow and actual persisted invoice quantities. No fabricated receipt journal, invoice approval, supplier liability, payment, external message, migration or certification.",
+  "productionReceiptProducerImplemented": false,
+  "originalBefore": "691d6aabba9e3de4abbc6d3a0c22d8b1b98d28121a0e87aa0bc3904b55442cfa",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs": "f09c2f2adc6fc4cbbbba23d0a42db11c8666b5273972eb5e2bf610a6e6ca22ab"
+  },
+  "sourceStable": true,
+  "fixtureOrganizations": [
+    "workflow_supplier_ack_en_receipt-handoff-fb03d050-cc3b-4e8a-9d2d-b1a5db5d8392-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en-preparation",
+    "workflow_supplier_ack_en_receipt-handoff-fb03d050-cc3b-4e8a-9d2d-b1a5db5d8392-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-en-correction",
+    "workflow_supplier_ack_fr_receipt-handoff-fb03d050-cc3b-4e8a-9d2d-b1a5db5d8392-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr-preparation",
+    "workflow_supplier_ack_fr_receipt-handoff-fb03d050-cc3b-4e8a-9d2d-b1a5db5d8392-capacity-browser-df880e98-9a84-4bde-9060-b307d6dcd6b7-fr-correction"
+  ],
+  "passed": false
+}

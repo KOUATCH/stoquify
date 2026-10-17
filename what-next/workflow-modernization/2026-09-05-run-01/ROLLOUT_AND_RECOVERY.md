@@ -1,3 +1,5 @@
+Current signing closure: [criterion/source audit](RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md), [operating and recovery guide](RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md). [CURRENT_PROGRESS.md](CURRENT_PROGRESS.md) identifies the active workflow and current totals; earlier checkpoints below retain their original scope.
+
 # Rollout and recovery — not a release approval
 
 This run is local implementation and isolated verification. No production deployment, customer activation, live payments, external mail or schema migration has been performed. The existing owned 3107 app and synthetic database are revalidated by the environment lane; port3000 and the prototype are not targeted.

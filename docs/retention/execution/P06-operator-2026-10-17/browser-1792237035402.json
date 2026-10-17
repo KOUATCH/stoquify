@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-17T11:37:15.402Z",
+  "steps": [
+    "Never-uploaded evidence visible; local close prevented before any close action",
+    "Actual authenticated signed ingestion committed; response lost; immutable evidence remains UNCERTAIN",
+    "Reload/reconnect and keyboard retry acknowledge the same event once; no sale/payment/stock/ledger effects"
+  ],
+  "fixture": "org-full-pos-94411b0e-7c41-4365-9624-1cb480dabef6",
+  "origin": "http://127.0.0.1:3187",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "before": {
+    "commits": 0,
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "stock": "5",
+    "shift": "ACTIVE"
+  },
+  "dropProof": {
+    "id": "cmvcbocde004kma08ag30cnc7",
+    "status": "PENDING_REPLAY",
+    "payloadHash": "acdff2f85ebc0e0f5d21bdbbe95b783b77068c0a18e47437cd953ef00d6559ab"
+  },
+  "status": "FAIL",
+  "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /AUTH_REQUIRED|Unauthorized|AUTHENTICATION_REQUIRED|Authentication required|Authentication is required/i. Input:\n\n':N1792237109944.0056\\n' +\n  '0:{\"a\":\"$@1\",\"f\":\"\",\"b\":\"development\"}\\n' +\n  '1:E{\"digest\":\"1746709314@E80\",\"name\":\"Error\",\"message\":\"Invalid Server Actions request.\",\"stack\":[],\"env\":\"Server\"}\\n'\n\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\browser-operator.cjs:111:12)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:453:9)\n    at process.callbackTrampoline (node:internal/async_hooks:130:17)"
+}

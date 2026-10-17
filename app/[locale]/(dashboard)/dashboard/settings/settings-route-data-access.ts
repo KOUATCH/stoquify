@@ -104,6 +104,24 @@ export const settingsRouteCatalog: SettingsRouteSurface[] = [
     permissions: ["communication.notifications.read"],
   },
   {
+    key: "settings-delivery-issues",
+    route: "/dashboard/settings/delivery-issues",
+    resource: "DeliveryIssues",
+    title: "Delivery issues",
+    titleFr: "Problèmes de livraison",
+    // The shell is shared; adapters check complete source permissions and modules.
+    permissions: ["accounting.exports.create", "users.read"],
+    permissionMode: "any",
+  },
+  {
+    key: "settings-audit",
+    route: "/dashboard/settings/audit",
+    resource: "AuditExplorer",
+    title: "Audit explorer",
+    titleFr: "Explorateur d’audit",
+    permissions: ["controls.audit.read"],
+  },
+  {
     key: "settings-organization",
     route: "/dashboard/settings/organization",
     resource: "SettingsOrganization",

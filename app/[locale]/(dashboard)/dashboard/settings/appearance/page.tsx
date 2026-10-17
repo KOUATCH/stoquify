@@ -5,7 +5,7 @@ import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Appearance Settings | Stoquify",
-  description: "Review and update the active dashboard theme mode.",
+  description: "Review the dashboard appearance and choose a theme preference for other pages.",
 }
 
 async function AppearanceSettingsPageImpl({

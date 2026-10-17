@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-27T15:21:43.783Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-retained-signature.ts": "27be9cf3a176c57d99b7b28f4649c7415204621e985b814adf5ff93c6a243397",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "507ee463435a8a5b12d80c1c2fda147f26cd3943182a63c7bb848d1a9a0d877e",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "messages/en.json": "a50171fe948c991cc33b380dc9dc4ec8e5c2e921185042d05c5288295c504fbb",
+    "messages/fr.json": "995a8d5ef469d15e3f9672f5d8af4c80fc5b3998a2735e7f68512321ee6f2fb4"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "signed-additional-browser-df406d7c-a9cd-4300-9962-c8abe9941d30-en-failed.png"
+      ],
+      "errors": [],
+      "entryMs": 41569,
+      "error": "locator.selectOption: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Runs to show', { exact: true })\u001b[22m\n",
+      "stack": [
+        "locator.selectOption: Timeout 60000ms exceeded.",
+        "Call log:",
+        "\u001b[2m  - waiting for getByLabel('Runs to show', { exact: true })\u001b[22m",
+        "",
+        "    at journey (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-signed-additional-browser.cjs:36:46)"
+      ],
+      "failureText": "Payment reconciliation workbench\n\nRail-level payment assurance, duplicate provider-reference alerts, and suspense-ready exception queues.\n\nWorkflow registration Sign ordering signed-browser-en-df406d7c-a9cd-4300-9962-c8abe9941d30 f6896829-9d3d-4d09-a77d-c90559dc490f\nSep 1 - Sep 27\nCaptured payment read model\nUpdated Sep 27, 04:23 PM\nLocation\nAll locations\nPeriod\nMonth to date\nRefresh\n01\nDurable evidence kernel\n02\nRun summaries\n03\nFailure groups by rail\n04\nSuspense-ready reconciliation failures\nPAYMENT TRUST BANNER\n\nAcross this workspace, all dates. Lists show recent items; amounts remain in their original currencies.\n\nSigned runs retained\nPROVIDER EVIDENCE\nAvailable\nSTATEMENT EVIDENCE\nMissing\nSIGNED RUNS\n1\nOPEN SUSPENSE\n0\nCRITICAL EXCEPTIONS\n0\nNEEDS ATTENTION\n0\nFRESHNESS\nSep 27, 04:23 PM\nDurable evidence kernel\nProvider events, statement lines, reconciliation runs, exception queues, and suspense requests are now read from the durable reconciliation model.\nSigned runs retained\nAs of Sep 27, 04:23 PM\nActive provider accounts\n1\nRecent runs\n1\nReady for sign-off\n0\nOpen exceptions\n0\nOpen suspense\nNo unresolved suspense amount.\nPROVIDER STATEMENT INTAKE\n\nImport tenant-scoped CSV or JSON statement evidence. File and line hashes prevent duplicate ingestion.\n\nOwned request ordering / XAF\nRequired columns: amount and date; transaction, reference, direction, fee, and currency are supported.\nImport statement\nRECENT STATEMENT EVIDENCE\n\nNo statement file has been imported yet.\n\nMANUAL MATCH REVIEW\n\nCompare payment evidence and propose the amount to match. A different authorized person rev"
+    }
+  ],
+  "passed": false,
+  "error": "locator.selectOption: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Runs to show', { exact: true })\u001b[22m\n",
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-retained-signature.ts": "27be9cf3a176c57d99b7b28f4649c7415204621e985b814adf5ff93c6a243397",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "458b24a96dad9216699eba613a77cb3b5853262b0193ef908e087d65acced9cf",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "507ee463435a8a5b12d80c1c2fda147f26cd3943182a63c7bb848d1a9a0d877e",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "messages/en.json": "a50171fe948c991cc33b380dc9dc4ec8e5c2e921185042d05c5288295c504fbb",
+    "messages/fr.json": "995a8d5ef469d15e3f9672f5d8af4c80fc5b3998a2735e7f68512321ee6f2fb4"
+  },
+  "sourceStable": true
+}

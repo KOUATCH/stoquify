@@ -1,3 +1,11 @@
+jest.mock("../balance-sheet-close.service", () => ({ readBalanceSheetClose: jest.fn() }));
+import { readBalanceSheetClose } from "../balance-sheet-close.service";
+jest.mock("@/services/reconciliation/bank-balance-close.service", () => ({ readBankBalanceClose: jest.fn() }));
+import { readBankBalanceClose } from "@/services/reconciliation/bank-balance-close.service";
+jest.mock("../close-payable-balances.service", () => ({ ...jest.requireActual("../close-payable-balances.service"), readClosePayableBalances: jest.fn() }));
+import { readClosePayableBalances } from "../close-payable-balances.service";
+jest.mock("@/services/reconciliation/account-close-coverage.service", () => ({ readAccountCloseCoverage: jest.fn().mockResolvedValue({ version: 1, accounts: [], requiredAccountCount: 0, coveredAccountCount: 0, blockedAccountCount: 0 }) }));
+import { readAccountCloseCoverage } from "@/services/reconciliation/account-close-coverage.service";
 jest.mock("@/prisma/db", () => {
   const dbMock = {
     $transaction: jest.fn(),
@@ -45,6 +53,9 @@ jest.mock("@/prisma/db", () => {
   dbMock.$transaction = jest.fn((callback) => callback(dbMock));
   return { db: dbMock };
 });
+
+jest.mock("@/services/purchasing/payment-reconciliation-proof-summary", () => ({ readSupplierPaymentReconciliationProofsInTx: jest.fn() }));
+import { readSupplierPaymentReconciliationProofsInTx } from "@/services/purchasing/payment-reconciliation-proof-summary";
 
 import {
   AccountingPeriodStatus,
@@ -107,6 +118,10 @@ const now = new Date("2026-06-15T12:00:00.000Z");
 
 function seedCleanTrustData() {
   jest.clearAllMocks();
+  jest.mocked(readBankBalanceClose).mockResolvedValue({ version: 1, scopeHash: "scope", accounts: [], requiredAccountCount: 0, blockedAccountCount: 0, reconciledAccountCount: 0 });
+  jest.mocked(readBalanceSheetClose).mockResolvedValue({ version: 1, scopeHash: "scope", accounts: [], requiredAccountCount: 0, blockedAccountCount: 0, reconciledAccountCount: 0 });
+  jest.mocked(readClosePayableBalances).mockResolvedValue({ version: 1, organizationId: "org-1", economicThrough: now.toISOString(), recordedThrough: now.toISOString(), evidenceHash: "payable-hash", normalUnpaidCount: 0, settledCount: 0, exceptionCount: 0, balances: [], currencies: [] });
+  (readAccountCloseCoverage as jest.Mock).mockResolvedValue({ version: 1, accounts: [], requiredAccountCount: 0, coveredAccountCount: 0, blockedAccountCount: 0 });
   mockDb.$transaction.mockImplementation((callback) => callback(mockDb));
   mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({
     accountingEnabled: true,
@@ -205,6 +220,39 @@ function seedCleanTrustData() {
 describe("accountant data trust service", () => {
   beforeEach(() => {
     seedCleanTrustData();
+    jest.mocked(readSupplierPaymentReconciliationProofsInTx).mockResolvedValue([]);
+  });
+
+  it("refuses certification when a resolved supplier payment has unverifiable source proof", async () => {
+    jest.mocked(readSupplierPaymentReconciliationProofsInTx).mockRejectedValue(new Error("original receipt changed"));
+    await expect(getAccountantPortalData({ organizationId: "org-1" }, db, now)).rejects.toThrow("original receipt changed");
+  });
+
+  it("resolves period dates before queries and keeps late-arriving evidence inside the cutoff", async () => {
+    const cutoff = new Date("2026-07-05T12:00:00Z");
+    const result = await getAccountantPortalData({ organizationId: "org-1", periodId: "period-1" }, db, cutoff);
+    expect(result.source.closeScope).toMatchObject({ periodId: "period-1", recordedThrough: cutoff.toISOString() });
+    expect(result.source.scopeHash).toBe(result.source.closeScope?.scopeHash);
+    expect(mockDb.statementLine.count).toHaveBeenCalledWith({ where: expect.objectContaining({
+      organizationId: "org-1", occurredAt: { gte: new Date("2026-06-01"), lte: new Date("2026-06-30T23:59:59.999Z") }, createdAt: { lte: cutoff },
+    }) });
+    expect(mockDb.ledgerPostingBatch.count.mock.calls[0][0].where.createdAt).toEqual({ lte: cutoff });
+    expect(mockDb.payrollRun.count.mock.calls[0][0].where.AND[0].payrollPeriod.organizationId).toBe("org-1");
+    expect(readClosePayableBalances).toHaveBeenCalledWith(db, { organizationId: "org-1", economicThrough: new Date("2026-06-30T23:59:59.999Z"), recordedThrough: cutoff });
+  });
+
+  it("rejects foreign periods and conflicting dates before financial queries", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValueOnce(null);
+    await expect(getAccountantPortalData({ organizationId: "org-1", periodId: "foreign" }, db, now)).rejects.toThrow("not found");
+    expect(mockDb.journalEntryLine.aggregate).not.toHaveBeenCalled();
+    await expect(getAccountantPortalData({ organizationId: "org-1", periodId: "period-1", startDate: "2026-07-01" }, db, now)).rejects.toThrow("conflict");
+    expect(mockDb.journalEntryLine.aggregate).not.toHaveBeenCalled();
+  });
+
+  it("labels organization-wide controls separately", async () => {
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: false, setupStatus: "NOT_STARTED" });
+    const result = await getAccountantPortalData({ organizationId: "org-1", periodId: "period-1" }, db, now);
+    expect(result.blockers.find(row => row.id === "accounting-setup-not-locked")?.scope).toBe("ORGANIZATION");
   });
 
   it("certifies clean ledger-backed evidence at T4", async () => {
@@ -223,6 +271,74 @@ describe("accountant data trust service", () => {
       amount: "120000.00",
       provenance: "POSTED",
     });
+  });
+
+  it("blocks bank balance gaps even when transaction matching coverage is complete", async () => {
+    jest.mocked(readBankBalanceClose).mockResolvedValue({ version: 1, scopeHash: "scope", requiredAccountCount: 1, reconciledAccountCount: 0, blockedAccountCount: 1,
+      accounts: [{ providerAccountId: "bank", accountName: "Bank", currency: "XAF", status: "BLOCKED", reason: "Bank balance evidence is missing.", evidenceId: null, evidenceHash: null, approvedById: null, approvedAt: null, snapshot: null }] });
+    const result = await getAccountantPortalData({ organizationId: "org-1", periodId: "period-1" }, db, now);
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toContainEqual(expect.objectContaining({ id: "bank-balance:bank", severity: "high" }));
+    expect(result.moduleEvidence.find(row => row.module === "payments")?.status).toBe("blocked");
+  });
+
+  it("blocks balance-sheet gaps despite a balanced trial balance and retains separate currency evidence", async () => {
+    jest.mocked(readBalanceSheetClose).mockResolvedValue({ version: 1, scopeHash: "scope", requiredAccountCount: 1, reconciledAccountCount: 0, blockedAccountCount: 1,
+      accounts: [{ ledgerAccountId: "ap", accountCode: "401", accountName: "Payables", currency: "XAF", status: "BLOCKED", reason: "Supporting schedule is missing.", evidenceId: null, evidenceHash: null, approvedById: null, approvedAt: null, snapshot: null }] });
+    const result = await getAccountantPortalData({ organizationId: "org-1", periodId: "period-1" }, db, now);
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toContainEqual(expect.objectContaining({ id: "balance-sheet:ap:XAF", severity: "high" }));
+    expect(result.moduleEvidence.find(row => row.module === "ledger")?.status).toBe("blocked");
+    expect(result.balanceSheetReconciliation?.blockedAccountCount).toBe(1);
+  });
+
+  it("keeps normal unpaid AP visible without reducing trust or blocking certification", async () => {
+    const empty = await jest.mocked(readClosePayableBalances)({} as never, {} as never);
+    jest.mocked(readClosePayableBalances).mockResolvedValue({ ...empty, normalUnpaidCount: 1,
+      balances: [{ invoiceId: "invoice-1", currency: "XAF", classification: "NORMAL_UNPAID", outstanding: "125.50", maturity: "OVERDUE", reasons: [] }],
+      currencies: [{ currency: "XAF", normalUnpaid: "125.50", overdue: "125.50", exceptionCount: 0 }],
+    });
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now);
+    expect(result.certificate.level).toBe("T4");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(true);
+    expect(result.blockers).toEqual([]);
+    expect(result.moduleEvidence.find(row => row.module === "purchasing")?.status).toBe("ready");
+    expect(result.payableBalances?.normalUnpaidCount).toBe(1);
+  });
+
+  it("blocks AP exceptions independently of normal unpaid amounts", async () => {
+    const empty = await jest.mocked(readClosePayableBalances)({} as never, {} as never);
+    jest.mocked(readClosePayableBalances).mockResolvedValue({ ...empty, exceptionCount: 1,
+      balances: [{ invoiceId: "disputed", currency: "XAF", classification: "EXCEPTION", outstanding: null, maturity: "NOT_DUE", reasons: ["DISPUTED_INVOICE"] }],
+    });
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now);
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.moduleEvidence.find(row => row.module === "purchasing")?.status).toBe("blocked");
+    expect(result.blockers).toContainEqual(expect.objectContaining({ id: "supplier-invoice-exception:disputed", severity: "high" }));
+  });
+
+  it.each(["NOT_STARTED", "IN_PROGRESS", null])("blocks enabled accounting with incomplete setup %s", async (setupStatus) => {
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: true, setupStatus });
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now);
+    expect(result.certificate.level).toBe("T2");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toEqual(expect.arrayContaining([expect.objectContaining({ gate: "accounting.setup.ready", severity: "high" })]));
+    expect(result.moduleEvidence.find(row => row.module === "ledger")?.status).toBe("blocked");
+  });
+
+  it.each(["READY", "LOCKED"])("accepts completed and enabled setup %s", async (setupStatus) => {
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: true, setupStatus });
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now);
+    expect(result.certificate.level).toBe("T4");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(true);
+    expect(result.blockers.some(row => row.gate === "accounting.setup.ready")).toBe(false);
+  });
+
+  it("blocks disabled accounting even with retained completed setup", async () => {
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: false, setupStatus: "READY" });
+    const result = await getAccountantPortalData({ organizationId: "org-1" }, db, now);
+    expect(result.certificate.level).toBe("T2");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
   });
 
   it("blocks emitted-unposted and missing post-cutover transition proof while disclosing legacy evidence", async () => {
@@ -359,6 +475,7 @@ describe("accountant data trust service", () => {
     expect(result.verdict).toBe("CERTIFIED");
     expect(result.contentHash).toMatch(/^sha256:/);
     expect(result.content).toContain("AQSTOQFLOW_ACCOUNTANT_TRUST_PACK");
+    expect(JSON.parse(result.content).payableBalances).toMatchObject({ version: 1, organizationId: "org-1", evidenceHash: "payable-hash" });
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -864,6 +981,17 @@ describe("accountant data trust service", () => {
         }),
       ]),
     );
+  });
+
+  it("blocks per-account coverage even when aggregate statement and signature counts are positive", async () => {
+    seedCleanTrustData();
+    const coverage = { version: 1, requiredAccountCount: 2, coveredAccountCount: 1, blockedAccountCount: 1, accounts: [{ providerAccountId: "missing-bank", accountName: "Bank B", currencyCode: "XAF", status: "BLOCKED", startDate: "2026-06-01", endDate: "2026-06-30", reasons: ["NO_ACTIVITY_EVIDENCE_REQUIRED"] }] };
+    (readAccountCloseCoverage as jest.Mock).mockResolvedValue(coverage);
+    const result = await getAccountantPortalData({ organizationId: "org-1", periodId: "period-1" }, db, now);
+    expect(result.accountReconciliationCoverage).toEqual(coverage);
+    expect(result.blockers).toEqual(expect.arrayContaining([expect.objectContaining({ id: "provider-account-coverage:missing-bank", severity: "high" })]));
+    expect(result.moduleEvidence).toEqual(expect.arrayContaining([expect.objectContaining({ module: "payments", status: "blocked" })]));
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
   });
 
   it("surfaces offline POS sync blockers in accountant trust evidence", async () => {

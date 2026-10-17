@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { DEFAULT_INVENTORY_POSTING_RULES } from "@/services/accounting/default-posting-rules"
 
 import {
   postStockAdjustment,
@@ -311,6 +312,90 @@ describe("requestManualItemStockAdjustment", () => {
 })
 
 describe("postStockAdjustment", () => {
+  function arrangePosting(deltas: number[], mutate?: (lines: any[]) => void) {
+    const record = adjustment()
+    record.lines = deltas.map((delta, index) => ({
+      ...record.lines[0], id: `line-${index}`, itemId: `item-${index + 1}`,
+      actualQuantity: decimal(10 + delta), adjustedQuantity: decimal(delta),
+      item: { ...record.lines[0].item, id: `item-${index + 1}` },
+    }))
+    mockedDb.stockAdjustment.findFirst.mockResolvedValue(record)
+    mockedDb.inventoryLevel.findMany.mockResolvedValue(deltas.map((_, index) => inventoryLevel({ id: `level-${index}`, itemId: `item-${index + 1}` })))
+    const accounts = ["INVENTORY", "INVENTORY_VARIANCE"].map(mappingKey => ({
+      id: mappingKey, code: mappingKey, mappingKey, organizationId: "org-1", isActive: true,
+      currency: "XAF", deletedAt: null, _count: { children: 0 },
+    }))
+    mockedDb.chartOfAccount.findMany.mockResolvedValue(accounts)
+    mockedDb.chartOfAccount.findFirst.mockImplementation(async ({ where }) => accounts.find(a => a.mappingKey === where.mappingKey || a.id === where.id))
+    const template = DEFAULT_INVENTORY_POSTING_RULES[0]
+    const lines = template.lines.map(line => ({ ...line, accountId: null, multiplier: decimal(1), dimensions: null }))
+    mutate?.(lines)
+    mockedDb.postingRule.findFirst.mockResolvedValue({ ...template, id: "directional-rule", lines })
+    mockedDb.journal.findFirst.mockResolvedValue({ id: "inventory-journal" })
+    mockedDb.journalEntry.count.mockResolvedValue(0)
+    mockedDb.journalEntry.create.mockResolvedValue({ id: "journal-entry-1" })
+    mockedDb.accountingSourceLink.findFirst.mockResolvedValue(null)
+    mockedDb.accountingSourceLink.create.mockResolvedValue({ id: "source-link-1" })
+  }
+
+  it.each([
+    { deltas: [2], debit: "200", credit: "0", count: 2 },
+    { deltas: [-2], debit: "0", credit: "200", count: 2 },
+    { deltas: [3, -2], debit: "300", credit: "200", count: 4 },
+    { deltas: [2, -2], debit: "200", credit: "200", count: 4 },
+  ])("posts gains/losses independently for $deltas", async ({ deltas, debit, credit, count }) => {
+    arrangePosting(deltas)
+    const result = await postStockAdjustment({ organizationId: "org-1", adjustmentId: "adjustment-1", approvedById: "approver-1" })
+    expect(result.ledger.status).toBe("POSTED")
+    const lines = mockedDb.journalEntry.create.mock.calls[0][0].data.lines.create
+    expect(lines).toHaveLength(count)
+    const inventory = lines.filter((line: any) => line.accountId === "INVENTORY")
+    expect(inventory.reduce((sum: Prisma.Decimal, line: any) => sum.plus(line.debit), decimal(0)).toString()).toBe(debit)
+    expect(inventory.reduce((sum: Prisma.Decimal, line: any) => sum.plus(line.credit), decimal(0)).toString()).toBe(credit)
+    expect(mockedDb.accountingSourceLink.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ organizationId: "org-1", sourceId: "adjustment-1", journalEntryId: "journal-entry-1" }) }))
+  })
+
+  it.each([
+    { label: "unknown condition", change: (lines: any[]) => { lines[0].condition = { paymentMethod: "CASH" } } },
+    { label: "invalid direction", change: (lines: any[]) => { lines[0].condition = { adjustmentDirection: "GAIN" } } },
+    { label: "array condition", change: (lines: any[]) => { lines[0].condition = [] } },
+    { label: "reversed inventory leg", change: (lines: any[]) => { for (const line of lines) line.side = line.side === "DEBIT" ? "CREDIT" : "DEBIT" } },
+    { label: "balanced double value", change: (lines: any[]) => { for (const line of lines) line.multiplier = decimal(2) } },
+    { label: "unfiltered mixed rule", change: (lines: any[]) => { for (const line of lines) line.condition = null } },
+  ])("retains a blocker without a journal for $label", async ({ change }) => {
+    arrangePosting([3, -2], change)
+    const result = await postStockAdjustment({ organizationId: "org-1", adjustmentId: "adjustment-1", approvedById: "approver-1" })
+    expect(result.ledger).toMatchObject({ status: "BLOCKED", blockerCode: "POSTING_RULE_FAILED" })
+    expect(mockedDb.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockedDb.accountingSourceLink.create).not.toHaveBeenCalled()
+  })
+
+  it("preserves a correctly valued unconditional legacy loss rule", async () => {
+    arrangePosting([-2], lines => { lines.splice(0, 2); for (const line of lines) line.condition = null })
+    const result = await postStockAdjustment({ organizationId: "org-1", adjustmentId: "adjustment-1", approvedById: "approver-1" })
+    expect(result.ledger.status).toBe("POSTED")
+  })
+
+  it.each(["posted", "failed", "reversed", "missing_link", "missing_journal", "duplicate_journal", "pending_event"])("replays retained %s evidence without new effects", async scenario => {
+    mockedDb.stockAdjustment.findFirst.mockResolvedValue(adjustment({ status: "COMPLETED", approvedById: "approver-1", ledgerPostingBatchId: "posting-batch-1" }))
+    mockedDb.businessEvent.findUnique.mockResolvedValue({ id: "original-event", sourceType: "STOCK_ADJUSTMENT", sourceId: "adjustment-1", status: scenario === "pending_event" ? "PENDING" : "APPLIED" })
+    mockedDb.ledgerPostingBatch.findFirst.mockResolvedValue({
+      id: "posting-batch-1", status: scenario === "failed" ? "FAILED" : scenario === "reversed" ? "REVERSED" : "POSTED",
+      journalEntries: scenario === "missing_journal" ? [] : scenario === "duplicate_journal" ? [{ id: "entry-1" }, { id: "entry-2" }] : [{ id: "entry-1" }],
+      sourceLinks: scenario === "missing_link" ? [] : [{ journalEntryId: "entry-1" }],
+      errorMessage: scenario === "failed" ? "Retained failure" : null,
+    })
+    const result = await postStockAdjustment({ organizationId: "org-1", adjustmentId: "adjustment-1", approvedById: "approver-1" })
+    expect(result.replayed).toBe(true)
+    expect(result.ledger.status).toBe(scenario === "posted" ? "POSTED" : "BLOCKED")
+    if (scenario === "posted") expect(result.ledger).toMatchObject({ journalEntryId: "entry-1", postingBatchId: "posting-batch-1" })
+    if (scenario === "failed") expect(result.ledger.message).toBe("Retained failure")
+    expect(mockedDb.ledgerPostingBatch.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { organizationId: "org-1", id: "posting-batch-1", sourceType: "STOCK_ADJUSTMENT", sourceId: "adjustment-1", postingPurpose: "INVENTORY_ADJUSTMENT" } }))
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockedDb.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  })
+
   it("posts stock movement, records the event, and creates an explicit ledger blocker when posting rules are missing", async () => {
     arrangeCertifiedCloseTarget()
     const result = await postStockAdjustment({

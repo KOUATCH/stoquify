@@ -1,4 +1,5 @@
 import type { SVGProps } from "react"
+jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
 import { fireEvent, render, screen } from "@testing-library/react"
 import { renderToStaticMarkup } from "react-dom/server"
 
@@ -32,6 +33,7 @@ jest.mock("lucide-react", () => {
     Loader2: createIcon("Loader2"),
     LockKeyhole: createIcon("LockKeyhole"),
     PackageOpen: createIcon("PackageOpen"),
+    RefreshCw: createIcon("RefreshCw"),
     ShieldAlert: createIcon("ShieldAlert"),
     ShieldCheck: createIcon("ShieldCheck"),
     TimerReset: createIcon("TimerReset"),
@@ -40,6 +42,7 @@ jest.mock("lucide-react", () => {
 })
 
 import {
+  BIDrillThroughButton,
   BIActionPriorityBoard,
   BIBusinessTruthZone,
   BICommandBriefHeader,
@@ -71,6 +74,36 @@ const freshness: BIFreshness = {
   stale: false,
   staleReason: null,
 }
+
+it.each(["en", "fr"])("renders one localized stock destination when the zone repeats the same route (%s)", locale => {
+  const action = { ...actionLink, label: "Open stock items", href: "/dashboard/inventory/items?location=west#stock" }
+  render(<BIBusinessTruthZone locale={locale} zone={{ ...buildZone(), actions: [action], drillThrough: { available: true, type: "route", label: action.label, href: action.href, requiredPermission: action.requiredPermission } }} />)
+  expect(screen.getAllByRole("link", { name: "Open stock items" })).toHaveLength(1)
+  expect(screen.getByRole("link", { name: "Open stock items" })).toHaveAttribute("href", `/${locale}${action.href}`)
+})
+
+it("shows one visible access explanation and no link when stock action and drill-through are denied", () => {
+  const action = { ...actionLink, label: "Open stock items", disabled: true, disabledReason: "Inventory item access is required." }
+  render(<BIBusinessTruthZone zone={{ ...buildZone(), actions: [action], drillThrough: { available: false, type: "route", label: action.label, requiredPermission: action.requiredPermission, unavailableReason: action.disabledReason } }} />)
+  const button = screen.getByRole("button", { name: action.label })
+  expect(button).toBeDisabled()
+  expect(button).toHaveAccessibleDescription(action.disabledReason)
+  expect(screen.getByText(action.disabledReason)).toBeVisible()
+  expect(screen.queryByRole("link")).not.toBeInTheDocument()
+})
+
+it("retains distinct evidence destinations and localizes their query/anchor", () => {
+  const action = { ...actionLink, href: "/dashboard/inventory/items", label: "Open stock items" }
+  render(<BIBusinessTruthZone locale="fr" zone={{ ...buildZone(), actions: [action], drillThrough: { available: true, type: "route_and_proof", label: "Inspect evidence", href: "/dashboard/inventory/movements?item=one#history", requiredPermission: "inventory.stock.read" } }} />)
+  expect(screen.getAllByRole("link")).toHaveLength(2)
+  expect(screen.getByRole("link", { name: "Inspect evidence" })).toHaveAttribute("href", "/fr/dashboard/inventory/movements?item=one#history")
+})
+
+it("never substitutes a route for an unavailable drill-through", () => {
+  render(<BIDrillThroughButton locale="fr" drillThrough={{ available: false, type: "route", label: "Stock", requiredPermission: "inventory.items.read", unavailableReason: "Access required" }} />)
+  expect(screen.getByRole("button", { name: "Stock" })).toBeDisabled()
+  expect(screen.queryByRole("link")).not.toBeInTheDocument()
+})
 
 const provenance: BIProvenance = {
   organizationId: "org-1",
@@ -318,8 +351,19 @@ describe("BI command primitives", () => {
     expect(screen.getByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).toBeVisible()
     expect(container.textContent).not.toContain("->")
     rerender(<BIWhatChangedStrip changes={[{ ...buildChange(), previousValue: 10, currentValue: 15, unit: "items" }]} locale={locale} />)
-    expect(screen.getByText("10 -> 15 items")).toBeVisible()
+    expect(screen.getByText(locale === "fr" ? "10 -> 15 éléments" : "10 -> 15 items")).toBeVisible()
     expect(screen.queryByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).not.toBeInTheDocument()
+  })
+  it.each(["items", "orders", "score", "XAF", "source-unit", "constructor"])("localizes only known change units: %s", unit => {
+    const change = { ...buildChange(), unit, currentValue: 75 }
+    const before = JSON.stringify(change)
+    const label = ({ items: "éléments", orders: "commandes", score: "points" } as Record<string, string>)[unit]
+    const expected = ["items", "orders", "score"].includes(unit) ? label : unit
+    const { rerender } = render(<BIWhatChangedStrip changes={[change]} locale="fr" />)
+    expect(screen.getByText(`10 -> 75 ${expected}`)).toBeVisible()
+    rerender(<BIWhatChangedStrip changes={[{ ...change, direction: "observed", previousValue: null }]} locale="fr" />)
+    expect(screen.getByText(`Valeur actuelle: 75 ${expected}`)).toBeVisible()
+    expect(JSON.stringify(change)).toBe(before)
   })
   it("localizes French brief metadata, evidence and mode controls without changing the target", () => {
     const onModeChange = jest.fn()
@@ -401,6 +445,15 @@ describe("BI command primitives", () => {
     expect(container.querySelector('[aria-busy="true"]')).not.toBeNull()
   })
 
+  it("localizes the shared action empty state and full trust legend when explicitly requested", () => {
+    render(<><BIActionPriorityBoard items={[]} locale="fr" /><BITrustLegend locale="fr" /></>)
+    expect(screen.getByText("Aucune action visible à traiter")).toBeVisible()
+    expect(screen.getByRole("heading", { name: "Légende des niveaux de preuve" })).toBeVisible()
+    expect(screen.getByText("Rattaché à une preuve de comptabilisation.")).toBeVisible()
+    expect(screen.getByText("Accès refusé")).toBeVisible()
+    expect(screen.queryByText("Permission denied")).not.toBeInTheDocument()
+  })
+
   it("renders changes, empty states, action blockers, business truth, and risk ranking", () => {
     render(
       <>
@@ -447,6 +500,12 @@ describe("BI command primitives", () => {
     expect(screen.queryByText(locale === "en" ? "Now" : "Maintenant")).not.toBeInTheDocument()
   })
 
+  it.each(["en", "fr"])("localizes watch urgency without changing the risk assessment in %s", locale => {
+    render(<BIRiskOpportunityRadar risks={[{ ...buildRisk(), severity: "low", urgency: "watch" }]} locale={locale} />)
+    expect(screen.getByText(locale === "fr" ? "à surveiller" : "watch")).toBeVisible()
+    expect(screen.getByText(locale === "fr" ? "faible" : "low")).toBeVisible()
+  })
+
   it("handles proof drawer available and unavailable states without computing access", () => {
     const onOpenSubject = jest.fn()
 
@@ -489,4 +548,20 @@ describe("BI command primitives", () => {
     expect(screen.getByText("Permission required")).toBeInTheDocument()
     expect(screen.getAllByText("Module unavailable")).toHaveLength(2)
   })
+})
+
+it("localizes missing proof and loading defaults in French", () => {
+  const view = render(<BIProofDrawerHost locale="fr" subject={null} proofTrail={null} />)
+  const missing = screen.getByRole("button",{name:"Voir les preuves"})
+  expect(missing).toBeDisabled()
+  expect(missing).toHaveAttribute("title","Aucune source de preuve n’a été fournie.")
+  view.rerender(<BIProofDrawerHost locale="fr" subject={availableSubject} proofTrail={null} isLoading />)
+  expect(screen.getByRole("button",{name:"Chargement des preuves"})).toBeDisabled()
+  expect(screen.getByRole("button",{name:"Chargement des preuves"})).toHaveAttribute("aria-busy","true")
+})
+it("preserves custom proof labels and server denial reasons", () => {
+  const view = render(<BIProofDrawerHost locale="fr" subject={availableSubject} proofTrail={null} isLoading loadingLabel="Custom pending evidence" />)
+  expect(screen.getByRole("button",{name:"Custom pending evidence"})).toBeDisabled()
+  view.rerender(<BIProofDrawerHost locale="fr" subject={{...availableSubject,available:false,label:"Custom blocked label",unavailableReason:"Protected denial detail"}} proofTrail={null} />)
+  expect(screen.getByRole("button",{name:"Custom blocked label"})).toHaveAttribute("title","Protected denial detail")
 })

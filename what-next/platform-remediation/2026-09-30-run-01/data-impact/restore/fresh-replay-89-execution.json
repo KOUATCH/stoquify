@@ -1,0 +1,34 @@
+{
+  "startedAt": "2026-09-30T21:31:14.819Z",
+  "databaseName": "stoquify_replay_remediation_20260930_run01",
+  "createdByThisRun": true,
+  "sourceDatabaseTouched": false,
+  "stages": [
+    {
+      "label": "prisma migrate deploy",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:31:41.089Z"
+    },
+    {
+      "label": "prisma migrate deploy",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:31:52.657Z"
+    },
+    {
+      "label": "fresh replay certification",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:32:03.541Z"
+    }
+  ],
+  "result": {
+    "status": "ready",
+    "mode": "create",
+    "databaseName": "stoquify_replay_remediation_20260930_run01",
+    "deployCount": 2,
+    "certificationStatus": "passed",
+    "databaseUrlRetained": false
+  },
+  "status": "FRESH_MIGRATION_REPLAY_AND_REPEAT_DEPLOY_PASSED",
+  "databaseRemoved": true,
+  "completedAt": "2026-09-30T21:32:13.727Z"
+}

@@ -31,6 +31,7 @@ function line(descriptor: ReturnType<typeof account>, debit: number, credit: num
     accountId: descriptor.id, account: descriptor,
     organizationId: options.organizationId ?? "org-1",
     debit: new Prisma.Decimal(debit), credit: new Prisma.Decimal(credit),
+    baseDebit: new Prisma.Decimal(debit), baseCredit: new Prisma.Decimal(credit),
     journalEntry: {
       organizationId: options.organizationId ?? "org-1", periodId: options.periodId ?? "period-1",
       status: options.status ?? JournalEntryStatus.POSTED,

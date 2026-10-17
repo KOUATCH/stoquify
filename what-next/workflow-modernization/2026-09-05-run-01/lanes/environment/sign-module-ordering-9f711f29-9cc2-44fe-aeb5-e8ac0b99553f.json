@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-27T16:24:48.714Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "cases": [
+    {
+      "order": "withdrawal holds authority lock before signing",
+      "organizationId": "cmuk14eud0000maokbyyzdzhu",
+      "runId": "cmuk14ezc001amaokc7d4b8t7",
+      "observedLock": {
+        "wait_event_type": "Lock",
+        "wait_event": "transactionid"
+      },
+      "transactionErrors": [
+        {
+          "code": "P2010",
+          "sqlState": "40001"
+        }
+      ],
+      "sign": {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "Reconciliation module write access is unavailable."
+        }
+      },
+      "noSignature": true
+    },
+    {
+      "order": "signing holds authority lock before withdrawal",
+      "organizationId": "cmuk14f8o001zmaokfwysu6dh",
+      "runId": "cmuk14fc20039maok3qufxb12",
+      "observedLock": {
+        "wait_event_type": "Lock",
+        "wait_event": "transactionid"
+      },
+      "signed": {
+        "runId": "cmuk14fc20039maok3qufxb12",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "a018c03585d3a06354daa20fda11adafa8d984dcf0bc4e60a2c5df8924df6b81",
+        "sourceVersionHash": "sha256:02ff0fe48e9bf27c1b11b9c4a5c94efbc0e8c48b88c94ebcf927a4bbb3f6f45b",
+        "signedAt": "2026-09-27T16:24:49.934Z",
+        "correlationId": "ab8ed1c2-0057-496b-9354-713fe51daf71"
+      },
+      "onePreWithdrawalSignatureAndSubsequentDenial": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

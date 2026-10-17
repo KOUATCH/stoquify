@@ -151,4 +151,22 @@ describe("dashboard layout RBAC shell", () => {
     await expect(DashboardLayout({ children: <div>protected child</div>, params: Promise.resolve({ locale: "en" }) })).rejects.toThrow("navigation unavailable")
     expect(screen.queryByText("protected child")).not.toBeInTheDocument()
   })
+
+  it.each([
+    ["en", "Skip to main content"],
+    ["fr", "Aller au contenu principal"],
+  ])("provides a localized navigation bypass in %s", async (locale, label) => {
+    mockGetSession.mockResolvedValue(session())
+    mockRequireRbacContext.mockResolvedValue(rbacContext())
+
+    const { container } = render(await DashboardLayout({
+      children: <button>Page action</button>, params: Promise.resolve({ locale }),
+    }))
+    const skip = screen.getByRole("link", { name: label })
+    const main = screen.getByRole("main")
+    expect(container.querySelector("a, button, input, select, textarea")).toBe(skip)
+    expect(skip).toHaveAttribute("href", `#${main.id}`)
+    expect(main).toHaveAttribute("tabindex", "-1")
+    expect(main).toContainElement(screen.getByRole("button", { name: "Page action" }))
+  })
 })

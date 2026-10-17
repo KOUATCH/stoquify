@@ -663,4 +663,48 @@ describe("inventory history background export service", () => {
     )).rejects.toThrow("payload integrity check failed")
     expect(job.payloadHash).not.toBe(hashBusinessPayload(job.payload))
   })
+
+  it.each([
+    ["different tenant", { organizationId: "org-2" }],
+    ["different actor", { actorId: "controller-2" }],
+    ["removed export permission", { actorPermissions: ["inventory.levels.read"] }],
+    ["removed inventory permission", { actorPermissions: ["reports.export"] }],
+    ["expired token", { now: new Date(NOW.getTime() + 60_000) }],
+  ])("P04 denies a previously issued download after %s without reading artifacts", async (_label, change) => {
+    const store = new ExportStore()
+    mockedReadHistory.mockResolvedValue(page([row("tx-1")], null))
+    const queued = await enqueueInventoryHistoryBackgroundExport(request(), options(store))
+    await processInventoryHistoryBackgroundExportJob(
+      { organizationId: "org-1", jobId: queued.jobId, workerId: "fixture-worker", now: NOW },
+      options(store),
+    )
+    const grant = await createInventoryHistoryExportDownloadGrant({
+      organizationId: "org-1", actorId: "controller-1",
+      actorPermissions: ["reports.export", "inventory.levels.read"],
+      jobId: queued.jobId, lastAuthAt: NOW, now: NOW, grantSeconds: 60,
+    }, options(store))
+    const readsBefore = store.artifactReads
+    await expect(streamInventoryHistoryExportDownload({
+      organizationId: "org-1", actorId: "controller-1",
+      actorPermissions: ["reports.export", "inventory.levels.read"],
+      token: grant.token, now: NOW, ...change,
+    }, options(store))).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(store.artifactReads).toBe(readsBefore)
+  })
+
+  it("P04 hides another tenant's export job and refuses its worker claim", async () => {
+    const store = new ExportStore()
+    mockedReadHistory.mockResolvedValue(page([row("tx-1")], null))
+    const queued = await enqueueInventoryHistoryBackgroundExport(request(), options(store))
+    await expect(getInventoryHistoryBackgroundExportStatus({
+      organizationId: "org-2", actorPermissions: ["reports.export", "inventory.levels.read"],
+      jobId: queued.jobId, now: NOW,
+    }, options(store))).rejects.toMatchObject({ code: "NOT_FOUND" })
+    const readsBefore = mockedReadHistory.mock.calls.length
+    await expect(processInventoryHistoryBackgroundExportJob({
+      organizationId: "org-2", jobId: queued.jobId, workerId: "fixture-worker", now: NOW,
+    }, options(store))).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockedReadHistory).toHaveBeenCalledTimes(readsBefore)
+    expect(store.artifactReads).toBe(0)
+  })
 })

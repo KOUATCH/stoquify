@@ -1,0 +1,77 @@
+# Execution findings and risks
+
+**Planning date:** 30 September 2026. **Scope:** roadmap preparation from the saved assessment.
+
+The source assessment is the **30 September 2026 audit**, with baseline commit `62a56036a5ac9b37236a20c9b148052199069479` plus its captured dirty working tree. The audit observed 15 concurrent file changes and performed bounded rechecks. Findings are historical evidence to revalidate in R00/R01, not a fresh assessment of every current file. This roadmap is **planning completed; remediation not executed in this publication**.
+
+## Status interpretation
+
+**Implemented foundations:** source-owned services, approval/evidence patterns, locks, read-model provenance and many tenant controls were observed in the audit. These support focused remediation; they are not proof every workflow is complete.
+
+**Partial:** finalized workflow proof, professional close integration, database/retention assurance, BI connection and operational readiness. **Missing or not established:** complete cash-flow reporting, current authenticated/accessibility proof and some optional asset/planning/inventory extensions. “Not established” is an evidence limit, not proof no implementation exists anywhere.
+
+**Risky:** reproduced financial/correction/offline defects F01–F04/F06–F09. **Intentionally deferred/restricted:** production offline replay and unsupported statutory capabilities; optional R34–R37 await an explicit product decision. **Blocked:** qualified country/provider review and release evidence unavailable at the audit cutoff. Application status was not freshly retested during this planning task.
+
+## Findings and closure requirements
+
+| ID / severity | Assessment status | Issue | Packages |
+| --- | --- | --- | --- |
+| F01 / P1 | Risky / reproduced | Incorrect FX base amounts and mixed nominal statement totals | R02 R09 R27 |
+| F02 / P1 | Risky / reproduced | Generic reversal bypasses source-owned POS correction | R03 R09 R12 R13 R14 |
+| F03 / P1 | Risky / reproduced | Concurrent local queue writes lose acknowledged events; corrupt JSON can reset facts | R04 R32 |
+| F04 / P1 | Risky / reproduced | Restart strands persisted SYNCING events | R05 R24 R32 |
+| F05 / P1 | Intentionally restricted | Offline replay is test-authorized only | R32 R33 |
+| F06 / P1 | Risky / reproduced | Period close omits broader assurance readiness | R07 R12 R31 |
+| F07 / P1 | Risky / reproduced | Locked accounting functional currency remains mutable | R02 R09 |
+| F08 / P2 | Risky / reproduced | Fiscal period can precede partial-month year start | R06 R09 R20 |
+| F09 / P2 | Risky / reproduced | General-ledger running balance omits opening balance | R06 R09 R27 |
+| F10 / P2 | Partial / defense gap | Older ledger database protections, tenant-reference and retention evidence incomplete | R08 R09 R10 R16 |
+| F11 / P1 | Blocked qualification | Country and external provider/authority readiness incomplete | R18 R19 R17 R33 |
+| F12 / P2 | Partial / missing capability | Financial BI and several optional professional/decision-support capabilities incomplete | R20 R25 R26 R27 R28 R34 R35 R36 R37 |
+| F13 / P2 | Partial / verification blocked | Runner/typecheck limitations, stale tests and unresolved readiness clauses | R00 R01 R13 R22 R31 |
+| F14 / P2 | Partial / operations unverified | Stale runbooks and missing current recovery/deployment proof | R23 R30 R31 R33 |
+
+
+| ID | Evidence required to close |
+| --- | --- |
+| F01 | Independent nominal/base/rate fixtures; corrected source/report tie-outs; historical impact disposition. |
+| F02 | Generic bypass denied; owner correction reconciles all source, stock, cash and GL effects exactly once. |
+| F03 | Multi-tab atomic persistence, quarantine and safe migration; real-device conservation evidence. |
+| F04 | Interrupted-send/commit/restart resolves using original identities with no duplicate economic effects. |
+| F05 | Qualified devices/tenders/fiscal scope, controlled admission, observed pilot and obligation-preserving rollback. |
+| F06 | Shared eligibility and concurrency proof; explicit lock-only/qualified-close states and invalidation. |
+| F07 | History-aware server policy blocks relabeling; affected-data review and safe correction disposition. |
+| F08 | Boundary policy, no out-of-year intervals, safe disposition of any existing anomalous periods. |
+| F09 | Opening + movement = closing across cutoff, currency and paginated views. |
+| F10 | Valid writer inventory, adversarial SQL/tenant tests, safe upgrade and approved retention/legal holds. |
+| F11 | Dated expert-reviewed capability versions, accepted integration evidence and bounded release claims. |
+| F12 | KPI source contracts and independent totals; optional scope either accepted and implemented or explicitly deferred. |
+| F13 | Ordinary completed verification; each gate clause resolved with behavior evidence, no control weakening. |
+| F14 | Current isolated restore/upgrade, deployed schedules/alerts, workload/SLO evidence and trained owners. |
+
+
+## Verification and evidence risk
+
+Initial audit: **3,173 passed / 23 failed assertions across 326 suites**, using an audit-specific adapter. Later overlapping rechecks: people 552 passed / 15 failed; finance 677 / 3; supplement 112 / 0; changed UI 8 / 0. Thus **18 failed assertions remained in the last affected-cohort rechecks**; these results must not be added to the initial totals. Eight structural gates passed and two were blocked. Typecheck timed out after 420 seconds; the browser could not connect. None of those commands was rerun as part of this roadmap publication.
+
+Normal Jest and an audit adapter are different evidence classes. Mocked unit tests cannot establish PostgreSQL lock behavior; read-only draft-data arithmetic cannot prove payment, reconciliation or payroll finalization. Passing text scanners cannot prove runtime safety. Table/column-name parity cannot establish full schema/privilege parity. A locally restored database cannot prove deployed disaster recovery. Country pack PUBLISHED cannot establish every tax/payroll/fiscal capability is qualified.
+
+## Execution risks and treatments
+
+| Risk | Consequence | Treatment / owner |
+| --- | --- | --- |
+| Concurrent work changes the evidence basis | A fix or test result can be attributed to the wrong revision. | R00/R31 fingerprints, isolated evidence windows, preserve unrelated changes; delivery/QA. |
+| Fixing tests by weakening controls | False confidence and unauthorized or unqualified operation. | R01 behavior-led triage; statutory/RBAC restrictions remain enforced; QA/domain owners. |
+| Historical repair inferred from a repro | Unnecessary or incorrect changes to financial history. | R09 read-only discovery, dry-run, independent review, append-only corrections; accountant/data lead. |
+| Offline storage assumptions | Acknowledged data may be lost on eviction, corruption or upgrade. | R04/R05 explicit durability limits, transactional storage, recoverable migration; offline lead. |
+| Country/provider waiting hidden in schedule | Engineering completion mistaken for legal/operational readiness. | R18/R19 per-capability blockers and early qualified review; country/integration owners. |
+| BI precedes corrected sources | Attractive reports publish economically wrong results. | R25–R28 source contracts and independent tie-outs; BI/accounting owners. |
+| Unbounded ERP expansion | Core defects remain while unrelated features consume capacity. | D06/R34–R37 bounded customer decisions; product owner. |
+| Runbook/build command mutates an unintended target | Data or release impact during verification. | Inspect scripts; isolated targets; npm run build:app instead of root build for application-only validation; SRE. |
+| Missing staff or independent reviewers | Unrealistic dates and self-approved financial conclusions. | Assign roles in R00, re-estimate effort and reviewer capacity; delivery lead. |
+| Report publication overwrites older evidence | Previous skill-creation record lost. | Ten older files were copied and SHA-256 checked before publication; retained archive. |
+
+
+## Applicable and excluded scope
+
+All 22 source-audit review lenses apply to the roadmap and have package mappings in the detailed plan. Actual production deployment, live provider or authority submission, legal certification and use of sensitive tenant records are **not applicable to this planning execution**. They remain scoped, separately authorized future activities where needed. Manufacturing, multi-entity consolidation and predictive employee scoring are not established requirements; they are not inserted into the core roadmap.

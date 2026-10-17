@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-30T14:36:23.364Z",
+  "sourceBefore": {
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/__tests__/payroll-run-workbench.service.test.ts": "56e78077799caab0c1896cf07da102725215cec6d36050651ad79d00431c47ce",
+    "services/payroll/__tests__/payroll-completion.service.test.ts": "e86974fbe1534de4b1fc21d2fcdb53731dff68446c26dc67bb075194b102058c",
+    "services/payroll/__tests__/payroll-payment-evidence.service.test.ts": "6035f5ef84389d6b557c1cf9a9bcf7400717254d29be00b8dcf09ef900461998",
+    "services/payroll/__tests__/certified-input-proof.test.ts": "4a43afb60e9dc5bd08a52dcc004798e596a56be3555ff89d99203af9deb2728e",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/payroll/__tests__/payroll-run-workbench.service.test.ts",
+        "services/payroll/__tests__/payroll-completion.service.test.ts",
+        "services/payroll/__tests__/payroll-payment-evidence.service.test.ts",
+        "services/payroll/__tests__/certified-input-proof.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       33 passed, 33 total\nSnapshots:   0 total\nTime:        7.89 s\nRan all test suites within paths \"services/payroll/__tests__/payroll-run-workbench.service.test.ts\", \"services/payroll/__tests__/payroll-completion.service.test.ts\", \"services/payroll/__tests__/payroll-payment-evidence.service.test.ts\", \"services/payroll/__tests__/certified-input-proof.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/payroll/payroll-control.service.ts",
+        "components/payroll/PayrollRunWorkbench.tsx",
+        "services/payroll/__tests__/payroll-run-workbench.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "services/payroll/__tests__/payroll-run-workbench.service.test.ts": "56e78077799caab0c1896cf07da102725215cec6d36050651ad79d00431c47ce",
+    "services/payroll/__tests__/payroll-completion.service.test.ts": "e86974fbe1534de4b1fc21d2fcdb53731dff68446c26dc67bb075194b102058c",
+    "services/payroll/__tests__/payroll-payment-evidence.service.test.ts": "6035f5ef84389d6b557c1cf9a9bcf7400717254d29be00b8dcf09ef900461998",
+    "services/payroll/__tests__/certified-input-proof.test.ts": "4a43afb60e9dc5bd08a52dcc004798e596a56be3555ff89d99203af9deb2728e",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true,
+  "passed": true
+}

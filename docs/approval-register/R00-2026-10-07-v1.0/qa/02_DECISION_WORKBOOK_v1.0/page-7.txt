@@ -1,0 +1,25 @@
+STOQUIFY | R00 | DRAFT - AWAITING HUMAN VALIDATION
+R00 WORKBOOK | v1.0 | 7 October 2026 | 7
+D04 Access privacy and retention
+Canonical definition: Role matrix, legal holds, retention and HR/workforce disclosure. [S1]
+Specify who can see and change each class of data, what must be retained, and how sensitive workforce
+information is protected.
+Already confirmed
+Current work uses test/demo data. No production retention schedule, complete access matrix or employee
+disclosure policy is approved in this pack. [S3]
+Proposal for your review
+Proposed: use minimum role-based access, explicit employee/manager/accountant scopes and controlled export
+permissions. Keep payroll details restricted and define legal-hold precedence before adopting deletion schedules.
+Alternatives and consequences
+Broad convenience access increases disclosure risk and review burden. More granular access requires role testing
+and support procedures. Retention periods must follow entity/data applicability review, not a guessed universal
+duration.
+Evidence to inspect
+Data inventory and classification; role/tenant/action matrix; employee disclosure rules; retention and hold
+sources; export and access-revocation tests. [S1, S2]
+Decision timing and deferral
+Missing policy blocks affected sensitive use or deletion. Record the exact restricted data/actions and reviewer due
+date; pre-production status alone does not prove every record is synthetic.
+Accountable roles: Privacy/records + HR + AppSec. Review: Application security; qualified legal/privacy advice for
+applicable retention and disclosure duties.
+Due gate: R08, R10, R16 and R28 before enforcement acceptance and sensitive launch.

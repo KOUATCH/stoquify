@@ -4,11 +4,11 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowRight, Boxes, Check, CheckCircle2, CircleDot, FileClock, History, Layers3, Link2, Loader2, LockKeyhole, RefreshCw, Search, ShieldCheck, SlidersHorizontal, Store, BriefcaseBusiness, AlertTriangle } from "lucide-react"
+import { ArrowRight, Boxes, Check, CheckCircle2, FileClock, History, Layers3, Link2, Loader2, LockKeyhole, RefreshCw, Search, ShieldCheck, SlidersHorizontal, Store, BriefcaseBusiness, AlertTriangle } from "lucide-react"
 
 import { applyModuleCompositionAction, getModuleCompositionAction, getModuleCompositionHistoryAction, previewModuleCompositionAction, reopenModuleCompositionAction, resumeModuleCompositionAction, saveModuleCompositionDraftAction } from "@/actions/modules/module-composition.actions"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
-import { CommandBriefHeader, RouteStatePanel, dashboardToneClass, type DashboardTone } from "@/components/dashboard/primitives"
+import { RouteStatePanel, dashboardToneClass, type DashboardTone } from "@/components/dashboard/primitives"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -81,10 +81,13 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
   const [selected, setSelected] = useState<CommercialModuleSlug[]>(initialData.selectedModules)
   const [stopped, setStopped] = useState<CommercialModuleSlug[]>(initialData.newWorkStoppedModules)
   const [setupInputs, setSetupInputs] = useState(initialData.setupInputs)
-  const [draftEdited, setDraftEdited] = useState(false)
   const [tab, setTab] = useState("build")
   const [query, setQuery] = useState("")
   const [category, setCategory] = useState<Category>("all")
+  const [selectedOnly, setSelectedOnly] = useState(false)
+  const selectedFilter = useRef<HTMLButtonElement>(null)
+  const searchInput = useRef<HTMLInputElement>(null)
+  const stopDisclosure = useRef<HTMLDetailsElement>(null)
   const [preview, setPreview] = useState<ModuleCompositionPreview | null>(null)
   const [reviewOpen, setReviewOpen] = useState(false)
   const [pending, setPending] = useState<Pending>(null)
@@ -101,6 +104,7 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
   const [draftChallenge, setDraftChallenge] = useState<DraftChallenge | null>(null)
   const draftOrigin = useRef<HTMLButtonElement | null>(null)
   const reviewButton = useRef<HTMLButtonElement>(null)
+  const reviewHeading = useRef<HTMLHeadingElement>(null)
   const resumeButton = useRef<HTMLButtonElement>(null)
   const lifecycleHeading = useRef<HTMLHeadingElement>(null)
   const panelHeading = useRef<HTMLHeadingElement>(null)
@@ -146,7 +150,6 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
           const scope = saved.setupInputs
           setSetupInputs({ ...("payrollPeriodId" in scope && typeof scope.payrollPeriodId === "string" ? { payrollPeriodId: scope.payrollPeriodId } : {}), ...("complianceAdapterId" in scope && typeof scope.complianceAdapterId === "string" ? { complianceAdapterId: scope.complianceAdapterId } : {}) })
         }
-        setDraftEdited(true)
         setNotice({ key: "draftRestored", kind: "info" })
       }
     } catch { /* Browser storage is optional; the server draft remains available. */ }
@@ -162,19 +165,41 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
 
   const filtered = data.catalog.filter(item => {
     if (item.core) return false
+    if (selectedOnly && !hints.resolved.has(item.slug)) return false
     if (category !== "all" && !categoryModules[category].includes(item.slug)) return false
     const words = `${moduleName(item.slug)} ${t(`modules.${item.slug}.description`)}`.toLocaleLowerCase(locale)
     return words.includes(query.trim().toLocaleLowerCase(locale))
   })
   const foundations = data.catalog.filter(item => item.core)
-  const businessCount = data.catalog.filter(item => !item.core && hints.resolved.has(item.slug)).length
-  const connections = [...hints.requiredBy].filter(([slug]) => !selected.includes(slug))
+  const explicitChoices = data.catalog.filter(item => !item.core && selected.includes(item.slug))
+  const connections = [...hints.requiredBy].filter(([slug]) => !selected.includes(slug) && !foundations.some(item => item.slug === slug))
+  const unavailable = (item: CompositionCatalogItem) => !item.available || item.status === "internal" || item.status === "deprecated"
+  const setupNotes = (item: CompositionCatalogItem) => item.requirements.filter(step => step.status !== "SUCCEEDED" || step.code === "COMPLIANCE_SANDBOX_VERIFIED")
+  const setupLabel = (item: CompositionCatalogItem) => item.requirements.some(step => step.status !== "SUCCEEDED")
+    ? "setup.required" : item.requirements.some(step => step.code === "COMPLIANCE_SANDBOX_VERIFIED") ? "catalog.setupSandbox" : `setup.${item.setup.status}`
+  const cautions = (item: CompositionCatalogItem) => [
+    ...(unavailable(item) ? [t("status.unavailable")] : []),
+    ...(!item.eligible || item.grantStatus === "read_only" ? [t(`status.${item.grantStatus ?? "none"}`)] : []),
+    ...(setupNotes(item).length || item.setup.status !== "ready" ? [t(setupLabel(item))] : []),
+  ]
+  const restrictedChoices = data.catalog.filter(item => !item.core && hints.resolved.has(item.slug) && cautions(item).length)
+  const clearFilters = () => { setQuery(""); setCategory("all"); setSelectedOnly(false); searchInput.current?.focus() }
   const history = [...new Map([...data.drafts, ...data.history].map(entry => [entry.id, entry])).values()]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id))
   const serverHistoryIds = new Set([...initialData.drafts, ...initialData.history].map(entry => entry.id))
   const hasEarlierHistory = history.some(entry => !serverHistoryIds.has(entry.id))
   const activePreparation = data.lifecycle && !["ACTIVE", "RETAINED"].includes(data.lifecycle.state)
-  const journeyStep = reviewOpen && preview ? "review" : activePreparation ? "prepare" : tab === "workspace" ? "work" : draftEdited ? "configure" : "choose"
+  const hasChanges = !sameSelection(selected, data.selectedModules) || !sameSelection(stopped, data.newWorkStoppedModules) || !sameSetup(setupInputs, data.setupInputs)
+  const missingScopes = Number(hints.resolved.has("payroll") && !setupInputs.payrollPeriodId) + Number(hints.resolved.has("compliance") && !setupInputs.complianceAdapterId)
+  const addedChoices = explicitChoices.filter(item => !data.selectedModules.includes(item.slug))
+  const removedChoices = data.selectedModules.filter(slug => !selected.includes(slug) && !foundations.some(item => item.slug === slug))
+  const stopChanges = [...new Set([...stopped, ...data.newWorkStoppedModules])].filter(slug => stopped.includes(slug) !== data.newWorkStoppedModules.includes(slug))
+  function showOperationControls() {
+    if (!stopDisclosure.current) return
+    stopDisclosure.current.open = true
+    stopDisclosure.current.querySelector("summary")?.focus()
+    stopDisclosure.current.scrollIntoView({ block: "start" })
+  }
 
   async function loadOlderHistory() {
     if (busy || !data.historyNextCursor) return
@@ -196,7 +221,6 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
 
   function editSelection(value: CommercialModuleSlug[]) {
     setSelected(value)
-    setDraftEdited(true)
     setPreview(null)
     setNeedsFreshAuth(false)
     setApplyFailed(false)
@@ -308,7 +332,6 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
     setSelected(result.data.selectedModules)
     setStopped(result.data.newWorkStoppedModules)
     setSetupInputs(result.data.setupInputs)
-    setDraftEdited(false)
     setPreview(null)
     setNeedsFreshAuth(false)
     setResumeAuth(false)
@@ -435,16 +458,26 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
     </div>
   }
 
-  return <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden", styles.workbench)} data-testid="module-composition-workbench" data-hydrated={draftReady} data-configuring={tab === "build"} aria-busy={!draftReady}>
-    <div className="dashboard-landing-content mx-auto flex w-full min-w-0 max-w-[88rem] flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8">
-      <CommandBriefHeader title={t("title")} summary={t("subtitle")} eyebrow={t("eyebrow")} state={{ label: t(data.source === "legacy" ? "legacy" : "durable"), tone: "info", icon: Layers3 }} metadata={[{ label: t("organization"), value: data.organizationName }, { label: t("lifecycle.desiredRevision"), value: String(data.revision) }, { label: t("lifecycle.activeRevision"), value: String(data.activeRevision) }, { label: t("lifecycle.observed"), value: formatTime(data.generatedAt) }]} actions={[{ label: t(pending === "refresh" ? "refreshing" : "refresh"), icon: RefreshCw, onClick: () => void refresh(), disabled: busy, variant: "secondary" }]} />
-
+  return <div className={cn("dashboard-landing-theme min-h-screen", styles.workbench)} data-testid="module-composition-workbench" data-hydrated={draftReady} data-configuring={tab === "build"} aria-busy={!draftReady}>
+    <div className={cn("dashboard-landing-content", styles.content)}>
+      <header className={styles.pageHeader}>
+        <div><p className={styles.eyebrow}>{data.organizationName}</p><h1>{t("experience.title")}</h1><p className={styles.introduction}>{t("experience.subtitle")}</p></div>
+        <Button type="button" variant="outline" className="dashboard-button-secondary min-h-11 whitespace-normal" disabled={busy} onClick={() => void refresh()}><RefreshCw className={cn("h-4 w-4", pending === "refresh" && "animate-spin")} aria-hidden="true" />{t(pending === "refresh" ? "refreshing" : "refresh")}</Button>
+      </header>
+      <div className={styles.contextBar}>
+        <p className={styles.currentState}><span className={styles.stateDot} aria-hidden="true" />{t("experience.activeCount", { count: data.activeModules.filter(slug => !foundations.some(item => item.slug === slug)).length })}</p>
+        <p role="status" aria-live="polite">{t(hasChanges ? "experience.unsaved" : "experience.currentDraft")}</p>
+        {data.newWorkStoppedModules.length ? <p className="text-[var(--dash-warning)]">{t("experience.stoppedCount", { count: data.newWorkStoppedModules.length })}</p> : null}
+        <details className={styles.contextDetails}><summary>{t("experience.stateDetails")}</summary><dl>
+          <div><dt>{t("organization")}</dt><dd>{data.organizationName}</dd></div><div><dt>{t("experience.configurationSource")}</dt><dd>{t(data.source === "legacy" ? "legacy" : "durable")}</dd></div>
+          <div><dt>{t("lifecycle.desiredRevision")}</dt><dd>{data.revision}</dd></div><div><dt>{t("lifecycle.activeRevision")}</dt><dd>{data.activeRevision}</dd></div><div><dt>{t("lifecycle.observed")}</dt><dd>{formatTime(data.generatedAt)}</dd></div>
+        </dl></details>
+      </div>
       {!reviewOpen ? noticePanel() : null}
-      <ol aria-label={t("lifecycle.journey")} className={styles.journey}>{["choose", "configure", "review", "prepare", "work"].map((step, index) => <li key={step} className={styles.step} aria-current={step === journeyStep ? "step" : undefined}><span className={styles.stepNumber}>{index + 1}</span>{t(`steps.${step}`)}</li>)}</ol>
-      {data.lifecycle ? <section className={styles.card} aria-labelledby="module-lifecycle-title" data-testid="module-lifecycle">
+      {data.lifecycle ? <section className={cn(styles.card, styles.preparation)} aria-labelledby="module-lifecycle-title" data-testid="module-lifecycle">
         <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 ref={lifecycleHeading} tabIndex={-1} id="module-lifecycle-title" className="text-lg font-semibold">{t("lifecycle.title")}</h2><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t(activePreparation ? "lifecycle.previousWorkspace" : data.lifecycle.state === "RETAINED" ? "lifecycle.retainedHint" : "lifecycle.completeHint")}</p></div><Badge variant="outline" className={dashboardToneClass(data.lifecycle.state === "ACTIVE" ? "success" : data.lifecycle.state === "FAILED" ? "danger" : data.lifecycle.state === "RETAINED" ? "gold" : "info")}>{t(`historyStates.${data.lifecycle.state}`)}</Badge></div>
         <p role="status" aria-live="polite" className="mt-3 text-sm">{t(`historyStates.${data.lifecycle.state}`)} · {t("lifecycle.revisions", { desired: data.lifecycle.desiredRevision, active: data.lifecycle.activeRevision })} · {t("updated", { time: formatTime(data.lifecycle.updatedAt) })}</p>
-        <div className="mt-4">{requirementsPanel(data.lifecycle.steps, true)}</div>
+        <div className={styles.preparationSteps}>{requirementsPanel(data.lifecycle.steps, true)}</div>
         {data.lifecycle.canResume ? <div className="mt-4"><Button ref={resumeButton} type="button" disabled={busy} className="dashboard-button-primary h-auto min-h-11 whitespace-normal" onClick={() => void resumePreparation()}><RefreshCw aria-hidden="true" />{t(pending === "resume" ? "lifecycle.resuming" : "lifecycle.resume")}</Button><p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{t("lifecycle.resumeHint")}</p></div> : activePreparation ? <p className="mt-4 text-sm leading-6 text-[var(--dash-text-soft)]">{t("lifecycle.noResume")}</p> : null}
         <details className="mt-3 text-xs text-[var(--dash-text-soft)]"><summary className="cursor-pointer">{t("record")}</summary><p className="mt-2 break-all">{data.lifecycle.id}</p></details>
       </section> : null}
@@ -456,17 +489,107 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
         </TabsList>
 
         <TabsContent value="build" className="mt-5 space-y-5">
-          <section aria-labelledby="module-recipes-title">
-            <h2 id="module-recipes-title" className="text-lg font-semibold">{t("recipesTitle")}</h2>
+          <div className={styles.layout}>
+            <section aria-labelledby="module-catalog-title" className="min-w-0 space-y-4">
+              <div><h2 id="module-catalog-title" className="text-lg font-semibold">{t("catalogTitle")}</h2><p className="mt-1 text-sm leading-6 text-[var(--dash-text-soft)]">{t("catalogHint")}</p></div>
+          <details className={styles.presets}>
+            <summary id="module-recipes-title" className="text-sm font-semibold">{t("recipesTitle")}</summary>
             <p className="mt-1 text-sm text-[var(--dash-text-soft)]">{t("recipesHint")}</p>
-            <div className="mt-3 grid gap-3 md:grid-cols-3">{(["retailer", "services", "current"] as const).map(recipe => {
+            <div className={styles.recipeGrid}>{(["retailer", "services", "current"] as const).map(recipe => {
               const selection = recipe === "current" ? data.selectedModules : presets[recipe]
               const Icon = recipe === "retailer" ? Store : recipe === "services" ? BriefcaseBusiness : Layers3
-              return <button type="button" key={recipe} className={styles.recipe} disabled={busy} aria-pressed={sameSelection(selected, selection)} onClick={() => editSelection(selection)}><Icon className="mb-3 h-5 w-5 text-[var(--dash-brand-strong)]" aria-hidden="true" /><span className="block font-semibold">{t(`recipes.${recipe}.title`)}</span><span className="mt-1 block text-sm leading-6 text-[var(--dash-text-soft)]">{t(`recipes.${recipe}.description`)}</span></button>
+              return <button type="button" key={recipe} className={styles.recipe} disabled={busy} aria-pressed={sameSelection(selected, selection)} onClick={() => editSelection(selection)}><Icon className="h-5 w-5 shrink-0 text-[var(--dash-brand-strong)]" aria-hidden="true" /><span><span className="block text-sm font-semibold">{t(`recipes.${recipe}.title`)}</span><span className="mt-1 block text-xs leading-5 text-[var(--dash-text-soft)]">{t(`recipes.${recipe}.description`)}</span></span></button>
             })}</div>
-          </section>
+          </details>
 
-          <details className={styles.card}>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label className="min-w-0 flex-1 text-xs font-semibold" htmlFor="module-search">{t("search")}<span className="relative mt-2 block"><Search className="absolute left-3 top-3 h-4 w-4 text-[var(--dash-text-soft)]" aria-hidden="true" /><Input ref={searchInput} id="module-search" value={query} disabled={!draftReady} onChange={event => setQuery(event.target.value)} placeholder={t("searchPlaceholder")} className="dashboard-control h-11 pl-9" /></span></label>
+                <label className="text-xs font-semibold sm:max-w-[14rem]" htmlFor="module-category">{t("filter")}<select id="module-category" value={category} disabled={!draftReady} onChange={event => setCategory(event.target.value as Category)} className="dashboard-control mt-2 block h-11 w-full rounded-md px-3 text-sm">{categories.map(value => <option key={value} value={value}>{t(`categories.${value}`)}</option>)}</select></label>
+              </div>
+              <div className={styles.catalogToolbar}>
+                <Button ref={selectedFilter} type="button" variant="outline" disabled={!draftReady} aria-pressed={selectedOnly} aria-describedby="module-selected-filter-hint" className={cn("dashboard-button-secondary", styles.selectedFilter)} onClick={() => setSelectedOnly(value => !value)}><Check className="h-4 w-4" aria-hidden="true" />{t("catalog.selectedFilter")}</Button>
+                <p id="module-selected-filter-hint" className="text-xs text-[var(--dash-text-soft)]">{t("catalog.selectedHint")}</p>
+                {filtered.length > 0 && (query || category !== "all" || selectedOnly) ? <Button type="button" variant="ghost" className={styles.clearFilters} onClick={clearFilters}>{t("clearSearch")}</Button> : null}
+              </div>
+              <a href="#module-draft-title" className={styles.draftJump}>{t("catalog.viewDraft")} · {t("catalog.explicitCount", { count: explicitChoices.length })}</a>
+              <p role="status" aria-atomic="true" className="text-xs text-[var(--dash-text-soft)]">{t("catalog.results", { count: filtered.length, total: data.catalog.length - foundations.length })}</p>
+              {filtered.length ? <div className={styles.catalog}>{categories.filter(group => group !== "all").map(group => {
+                const items = filtered.filter(item => categoryModules[group].includes(item.slug))
+                if (!items.length) return null
+                return <section key={group} aria-labelledby={`module-group-${group}`} className={styles.catalogGroup}>
+                  <div className={styles.groupHeading}><h3 id={`module-group-${group}`} className="font-semibold">{t(`categories.${group}`)}</h3><span className="text-xs text-[var(--dash-text-soft)]">{t("catalog.groupCount", { count: items.length })}</span></div>
+                  {items.map(item => {
+                const explicit = selected.includes(item.slug)
+                const required = !explicit && hints.resolved.has(item.slug)
+                const checked = hints.resolved.has(item.slug)
+                const dependents = [...(hints.requiredBy.get(item.slug) ?? [])]
+                const isUnavailable = unavailable(item)
+                const notes = setupNotes(item)
+                const dependencies = item.dependencies.filter(dependency => dependency.dependencyType === "required")
+                return <article key={item.slug} className={styles.capabilityRow} data-selected={checked} data-testid={`module-card-${item.slug}`}>
+                  <div className={styles.rowMain}>
+                    <span className={styles.selectionControl}><Checkbox id={`module-${item.slug}`} className="h-6 w-6" checked={checked} disabled={busy || required || (isUnavailable && !explicit)} aria-describedby={`module-description-${item.slug} module-context-${item.slug}`} onCheckedChange={value => {
+                      editSelection(value === true ? [...selected, item.slug] : selected.filter(slug => slug !== item.slug))
+                      // A removed row disappears in Selected view; keep keyboard focus on a stable control.
+                      if (selectedOnly && value !== true && !dependents.length) selectedFilter.current?.focus()
+                    }} /></span>
+                    <div className="min-w-0"><label htmlFor={`module-${item.slug}`} className={styles.capabilityName}>{moduleName(item.slug)}</label><p id={`module-description-${item.slug}`} className="text-sm leading-6 text-[var(--dash-text-soft)]">{t(`modules.${item.slug}.description`)}</p></div>
+                    <span className={styles.draftState}>{required ? <Link2 className="h-4 w-4 shrink-0" aria-hidden="true" /> : checked ? <Check className="h-4 w-4 shrink-0" aria-hidden="true" /> : null}{t(required ? "required" : checked ? "selected" : "catalog.notSelected")}</span>
+                  </div>
+                  <div id={`module-context-${item.slug}`} className={styles.rowContext}>
+                    <dl className={styles.rowFacts}>
+                      <div><dt>{t("catalog.workspace")}</dt><dd>{t(data.activeModules.includes(item.slug) ? "current" : "catalog.outsideWorkspace")}</dd></div>
+                      <div><dt>{t("catalog.access")}</dt><dd className={!item.eligible || item.grantStatus === "read_only" ? "text-[var(--dash-warning)]" : undefined}>{t(`status.${item.grantStatus ?? "none"}`)}</dd></div>
+                      <div><dt>{t("catalog.setup")}</dt><dd>{t(setupLabel(item))}</dd></div>
+                      {data.newWorkStoppedModules.includes(item.slug) ? <div className="text-[var(--dash-warning)]"><dt>{t("experience.operations")}</dt><dd>{t("stop.current")}</dd></div> : null}
+                    </dl>
+                    {required ? <p className="text-xs leading-5 text-[var(--dash-text-muted)]">{t("requiredBy", { modules: moduleNames(dependents) })} {t("removeDependency", { modules: moduleNames(dependents) })}</p> : null}
+                    {item.requirements.some(step => step.code === "COMPLIANCE_SANDBOX_VERIFIED") ? <p className="text-xs leading-5 text-[var(--dash-text-soft)]">{t("lifecycle.requirements.COMPLIANCE_SANDBOX_VERIFIED")}</p> : null}
+                    {isUnavailable ? <p className="text-xs leading-5 text-[var(--dash-warning)]">{t("issues.CATALOG_UNAVAILABLE")}</p> : !item.eligible ? <p className="text-xs leading-5 text-[var(--dash-warning)]">{t("issues.ELIGIBILITY_REQUIRED")}</p> : null}
+                  </div>
+                  <details className={styles.rowDetails}>
+                    <summary>{t("catalog.details")}<span className="sr-only">{t("catalog.detailsFor", { module: moduleName(item.slug) })}</span></summary>
+                    <div className="space-y-3 pb-2 text-xs leading-5 text-[var(--dash-text-soft)]">
+                      {dependencies.length ? <p>{t("connections")}: {moduleNames(dependencies.map(dependency => dependency.dependsOnSlug))}</p> : <p>{t("catalog.noConnections")}</p>}
+                      {explicit && dependents.length ? <p>{t("requiredBy", { modules: moduleNames(dependents) })} {t("catalog.explicitConnection")}</p> : null}
+                      {notes.map(step => <p key={step.stepKey}>{step.code !== "COMPLIANCE_SANDBOX_VERIFIED" ? t(`lifecycle.requirements.${step.code}`) : null}{step.href ? <Link href={href(step.href)} className={styles.setupLink}>{t("setupLink")}</Link> : null}</p>)}
+                      {!notes.length && item.setup.status !== "ready" ? <p>{t(`issues.${item.setup.code}`)}{item.setup.href ? <Link href={href(item.setup.href)} className={styles.setupLink}>{t("setupLink")}</Link> : null}</p> : null}
+                      <p>{t("catalog.setupHint")}</p>
+                    </div>
+                  </details>
+                </article>
+                  })}
+                </section>
+              })}</div> : <RouteStatePanel kind="empty" title={t("emptySearch")} message={t("emptySearchHint")} action={{ label: t("clearSearch"), onClick: clearFilters }} />}
+              <details className={styles.card}><summary className="cursor-pointer text-sm font-semibold">{t("futureTitle")}</summary><p className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">{t("future")}</p></details>
+            </section>
+
+            <aside className={cn(styles.card, styles.summary)} aria-labelledby="module-draft-title">
+              <div className="flex items-center gap-2"><Layers3 className="h-5 w-5 text-[var(--dash-brand-strong)]" aria-hidden="true" /><h2 id="module-draft-title" tabIndex={-1} className="font-semibold">{t("summary")}</h2></div>
+              <div className={styles.draftCounts} aria-live="polite" aria-atomic="true">
+                <p className="text-xl font-semibold">{t("catalog.explicitCount", { count: explicitChoices.length })}</p>
+                <p>{t("catalog.connectionCount", { count: connections.length })}</p>
+                <p>{t("foundationCount", { count: foundations.length })}</p>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-[var(--dash-text-soft)]">{t("experience.draftHint")}</p>
+              {hasChanges ? <div className={styles.changeSummary} data-testid="module-draft-changes"><p>{t("experience.selectionChanges", { added: addedChoices.length, removed: removedChoices.length })}</p>{stopChanges.length ? <p className="text-[var(--dash-warning)]">{t("experience.stopChanges", { count: stopChanges.length })}</p> : null}{!sameSetup(setupInputs, data.setupInputs) ? <p>{t("experience.scopeChanged")}</p> : null}</div> : null}
+              <Button ref={reviewButton} type="button" className={cn(activePreparation ? "dashboard-button-secondary mt-4" : "dashboard-button-primary mt-4", styles.summaryAction, styles.reviewAction)} disabled={busy} onClick={() => void review()}>{pending === "preview" ? <Loader2 className="animate-spin" aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}{t(pending === "preview" ? "reviewing" : "review")}</Button>
+              <Button type="button" variant="outline" className={cn("dashboard-button-secondary mt-2", styles.summaryAction)} disabled={busy} onClick={event => { draftOrigin.current = event.currentTarget; void saveDraft() }}><FileClock aria-hidden="true" />{t(pending === "save" ? "saving" : "saveDraft")}</Button>
+              {busy ? <p role="status" className="mt-3 text-xs leading-5 text-[var(--dash-text-soft)]">{t("pendingHint")}</p> : null}
+          {hints.resolved.has("payroll") || hints.resolved.has("compliance") ? <details className={styles.scopeDetails}><summary id="module-scope-title">{t("scopes.title")}<span>{t(missingScopes ? "experience.scopeMissing" : "experience.scopeChosen", { count: missingScopes })}</span></summary><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("scopes.hint")}</p><div className="mt-4 grid gap-5">
+            {hints.resolved.has("payroll") ? <div><label className="text-sm font-semibold" htmlFor="module-payroll-period">{t("scopes.payroll")}</label><select id="module-payroll-period" value={setupInputs.payrollPeriodId ?? ""} disabled={busy} onChange={event => editSetup({ ...setupInputs, payrollPeriodId: event.target.value || undefined })} className="dashboard-control mt-2 block min-h-11 w-full min-w-0 rounded-md px-3 py-2 text-sm"><option value="">{t("scopes.choosePeriod")}</option>{setupInputs.payrollPeriodId && !data.availablePayrollPeriods.some(period => period.id === setupInputs.payrollPeriodId) ? <option value={setupInputs.payrollPeriodId} disabled>{t("scopes.unavailable")}</option> : null}{data.availablePayrollPeriods.map(period => <option key={period.id} value={period.id}>{period.name} · {period.countryCode} · {formatDate(period.periodStart)}–{formatDate(period.periodEnd)} · {t("scopes.payDate", { date: formatDate(period.payDate) })}</option>)}</select><p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{t(data.availablePayrollPeriods.length ? "scopes.periodHint" : "scopes.noPeriods")}</p><Link href={href("/dashboard/payroll")} className="mt-2 inline-block text-sm underline underline-offset-4">{t("scopes.openPayroll")}</Link></div> : null}
+            {hints.resolved.has("compliance") ? <div><label className="text-sm font-semibold" htmlFor="module-compliance-adapter">{t("scopes.compliance")}</label><select id="module-compliance-adapter" value={setupInputs.complianceAdapterId ?? ""} disabled={busy} onChange={event => editSetup({ ...setupInputs, complianceAdapterId: event.target.value || undefined })} className="dashboard-control mt-2 block min-h-11 w-full min-w-0 rounded-md px-3 py-2 text-sm"><option value="">{t("scopes.chooseAdapter")}</option>{setupInputs.complianceAdapterId && !data.availableComplianceAdapters.some(adapter => adapter.id === setupInputs.complianceAdapterId) ? <option value={setupInputs.complianceAdapterId} disabled>{t("scopes.unavailable")}</option> : null}{data.availableComplianceAdapters.map(adapter => <option key={adapter.id} value={adapter.id}>{adapter.countryCode} · {adapter.authorityChannel} · {t(adapter.environment.toLowerCase() === "sandbox" ? "scopes.sandbox" : adapter.environment.toLowerCase() === "production" ? "scopes.production" : "scopes.otherEnvironment")}</option>)}</select><p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{t(data.availableComplianceAdapters.length ? "scopes.adapterHint" : "scopes.noAdapters")}</p><Link href={href("/dashboard/compliance")} className="mt-2 inline-block text-sm underline underline-offset-4">{t("scopes.openCompliance")}</Link></div> : null}
+          </div><p className="mt-4 text-xs leading-5 text-[var(--dash-text-soft)]">{t("scopes.refreshHint")}</p></details> : null}
+              <details className={styles.summaryDetails}><summary>{t("catalog.yourChoices", { count: explicitChoices.length })}</summary>{listModules(explicitChoices.map(item => item.slug))}</details>
+              {connections.length ? <details className={styles.summaryDetails}><summary>{t("catalog.connectionCount", { count: connections.length })}</summary><ul className="mt-3 space-y-3">{connections.map(([slug, dependents]) => <li key={slug} className="text-sm"><span className="font-semibold">{moduleName(slug)}</span><span className="mt-1 block text-xs leading-5 text-[var(--dash-text-soft)]">{t("requiredBy", { modules: moduleNames([...dependents]) })}</span></li>)}</ul></details> : null}
+              <details className={styles.summaryDetails}><summary>{t("shared")}</summary>{listModules(foundations.map(item => item.slug))}</details>
+              {restrictedChoices.length ? <div className={styles.draftCautions}><h3 className="text-sm font-semibold">{t("catalog.restrictions", { count: restrictedChoices.length })}</h3><ul className="mt-3 space-y-2">{restrictedChoices.map(item => <li key={item.slug} className="text-xs leading-5"><span className="font-semibold">{moduleName(item.slug)}</span><span className="ml-1 text-[var(--dash-text-soft)]">{cautions(item).join(" · ")}</span></li>)}</ul></div> : null}
+              <Button type="button" variant="ghost" className={styles.operationsLink} disabled={busy} onClick={showOperationControls}><ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />{t("stop.title")}</Button>
+              <p className="mt-3 text-xs leading-5 text-[var(--dash-text-soft)]">{t("catalog.reviewHint")}</p>
+              <p className="mt-5 border-t border-[var(--dash-border-subtle)] pt-4 text-xs leading-5 text-[var(--dash-text-soft)]">{t("noPurchase")}</p>
+            </aside>
+          </div>
+          <details ref={stopDisclosure} id="module-operation-controls" className={cn(styles.card, styles.operations)}>
             <summary className="cursor-pointer font-semibold">{t("stop.title")}</summary>
             <p id="module-stop-hint" className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.hint")}</p>
             <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.resumeHint")}</p>
@@ -476,60 +599,11 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
               return <div key={item.slug} className="rounded-lg border border-[var(--dash-border-subtle)] p-3 text-sm leading-6"><div className="flex items-start gap-3"><Checkbox id={`stop-${item.slug}`} className="mt-1 h-5 w-5 shrink-0" checked={chosen} disabled={busy || (!option?.supported && !chosen)} aria-describedby={`stop-context-${item.slug}`} onCheckedChange={value => editStopped(value === true ? [...stopped, item.slug] : stopped.filter(slug => slug !== item.slug))} /><label htmlFor={`stop-${item.slug}`}>{t("stop.option", { module: moduleName(item.slug) })}</label></div><div id={`stop-context-${item.slug}`} className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{option?.supported && item.slug === "accounting" ? <p>{t("stop.accountingScope")}</p> : null}{!option?.supported ? <p>{t(option?.unsupportedReason === "OFFLINE_CONTINUATION_UNAVAILABLE" ? "stop.unsupportedOffline" : "stop.unsupported")}</p> : null}{data.newWorkStoppedModules.includes(item.slug) ? <p className="text-[var(--dash-gold)]">{t("stop.current")}</p> : null}</div></div>
             })}</fieldset>
           </details>
-
-          {hints.resolved.has("payroll") || hints.resolved.has("compliance") ? <section className={styles.card} aria-labelledby="module-scope-title"><h2 id="module-scope-title" className="font-semibold">{t("scopes.title")}</h2><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("scopes.hint")}</p><div className="mt-4 grid gap-5 sm:grid-cols-2">
-            {hints.resolved.has("payroll") ? <div><label className="text-sm font-semibold" htmlFor="module-payroll-period">{t("scopes.payroll")}</label><select id="module-payroll-period" value={setupInputs.payrollPeriodId ?? ""} disabled={busy} onChange={event => editSetup({ ...setupInputs, payrollPeriodId: event.target.value || undefined })} className="dashboard-control mt-2 block min-h-11 w-full min-w-0 rounded-md px-3 py-2 text-sm"><option value="">{t("scopes.choosePeriod")}</option>{setupInputs.payrollPeriodId && !data.availablePayrollPeriods.some(period => period.id === setupInputs.payrollPeriodId) ? <option value={setupInputs.payrollPeriodId} disabled>{t("scopes.unavailable")}</option> : null}{data.availablePayrollPeriods.map(period => <option key={period.id} value={period.id}>{period.name} · {period.countryCode} · {formatDate(period.periodStart)}–{formatDate(period.periodEnd)} · {t("scopes.payDate", { date: formatDate(period.payDate) })}</option>)}</select><p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{t(data.availablePayrollPeriods.length ? "scopes.periodHint" : "scopes.noPeriods")}</p><Link href={href("/dashboard/payroll")} className="mt-2 inline-block text-sm underline underline-offset-4">{t("scopes.openPayroll")}</Link></div> : null}
-            {hints.resolved.has("compliance") ? <div><label className="text-sm font-semibold" htmlFor="module-compliance-adapter">{t("scopes.compliance")}</label><select id="module-compliance-adapter" value={setupInputs.complianceAdapterId ?? ""} disabled={busy} onChange={event => editSetup({ ...setupInputs, complianceAdapterId: event.target.value || undefined })} className="dashboard-control mt-2 block min-h-11 w-full min-w-0 rounded-md px-3 py-2 text-sm"><option value="">{t("scopes.chooseAdapter")}</option>{setupInputs.complianceAdapterId && !data.availableComplianceAdapters.some(adapter => adapter.id === setupInputs.complianceAdapterId) ? <option value={setupInputs.complianceAdapterId} disabled>{t("scopes.unavailable")}</option> : null}{data.availableComplianceAdapters.map(adapter => <option key={adapter.id} value={adapter.id}>{adapter.countryCode} · {adapter.authorityChannel} · {t(adapter.environment.toLowerCase() === "sandbox" ? "scopes.sandbox" : adapter.environment.toLowerCase() === "production" ? "scopes.production" : "scopes.otherEnvironment")}</option>)}</select><p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">{t(data.availableComplianceAdapters.length ? "scopes.adapterHint" : "scopes.noAdapters")}</p><Link href={href("/dashboard/compliance")} className="mt-2 inline-block text-sm underline underline-offset-4">{t("scopes.openCompliance")}</Link></div> : null}
-          </div><p className="mt-4 text-xs leading-5 text-[var(--dash-text-soft)]">{t("scopes.refreshHint")}</p></section> : null}
-
-          <div className={styles.layout}>
-            <section aria-labelledby="module-catalog-title" className="min-w-0 space-y-4">
-              <div><h2 id="module-catalog-title" className="text-lg font-semibold">{t("catalogTitle")}</h2><p className="mt-1 text-sm leading-6 text-[var(--dash-text-soft)]">{t("catalogHint")}</p></div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <label className="min-w-0 flex-1 text-xs font-semibold" htmlFor="module-search">{t("search")}<span className="relative mt-2 block"><Search className="absolute left-3 top-3 h-4 w-4 text-[var(--dash-text-soft)]" aria-hidden="true" /><Input id="module-search" value={query} disabled={!draftReady} onChange={event => setQuery(event.target.value)} placeholder={t("searchPlaceholder")} className="dashboard-control h-11 pl-9" /></span></label>
-                <label className="text-xs font-semibold sm:max-w-[14rem]" htmlFor="module-category">{t("filter")}<select id="module-category" value={category} disabled={!draftReady} onChange={event => setCategory(event.target.value as Category)} className="dashboard-control mt-2 block h-11 w-full rounded-md px-3 text-sm">{categories.map(value => <option key={value} value={value}>{t(`categories.${value}`)}</option>)}</select></label>
-              </div>
-              {filtered.length ? <div className={styles.catalog}>{filtered.map(item => {
-                const explicit = selected.includes(item.slug)
-                const required = !explicit && hints.resolved.has(item.slug)
-                const checked = hints.resolved.has(item.slug)
-                const dependents = [...(hints.requiredBy.get(item.slug) ?? [])]
-                const unavailable = !item.available || item.status === "internal" || item.status === "deprecated"
-                return <article key={item.slug} className={styles.card} data-selected={checked} data-testid={`module-card-${item.slug}`}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0"><label htmlFor={`module-${item.slug}`} className="cursor-pointer text-base font-semibold">{moduleName(item.slug)}</label><p id={`module-description-${item.slug}`} className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t(`modules.${item.slug}.description`)}</p></div>
-                    <Checkbox id={`module-${item.slug}`} className="mt-1 h-5 w-5 shrink-0" checked={checked} disabled={busy || required || (unavailable && !explicit)} aria-describedby={`module-description-${item.slug} module-context-${item.slug}`} onCheckedChange={value => editSelection(value === true ? [...selected, item.slug] : selected.filter(slug => slug !== item.slug))} />
-                  </div>
-                  <div id={`module-context-${item.slug}`} className="mt-4 space-y-2">
-                    <div className="flex flex-wrap gap-2"><Badge variant="outline" className={dashboardToneClass(checked ? "brand" : "muted")}>{required ? <Link2 className="mr-1 h-3 w-3" aria-hidden="true" /> : checked ? <Check className="mr-1 h-3 w-3" aria-hidden="true" /> : <CircleDot className="mr-1 h-3 w-3" aria-hidden="true" />}{t(required ? "required" : checked ? "selected" : unavailable ? "status.unavailable" : "available")}</Badge><Badge variant="outline" className={dashboardToneClass(item.eligible ? "info" : "warning")}>{t(`status.${item.grantStatus ?? "none"}`)}</Badge></div>
-                    {data.activeModules.includes(item.slug) ? <p className="text-xs text-[var(--dash-text-soft)]">{t("current")}</p> : null}
-                    {required ? <p className="text-xs leading-5 text-[var(--dash-text-muted)]">{t("requiredBy", { modules: moduleNames(dependents) })} {t("removeDependency", { modules: moduleNames(dependents) })}</p> : null}
-                    {item.dependencies.filter(dependency => dependency.dependencyType === "required").length ? <p className="text-xs leading-5 text-[var(--dash-text-soft)]">{t("connections")}: {moduleNames(item.dependencies.filter(dependency => dependency.dependencyType === "required").map(dependency => dependency.dependsOnSlug))}</p> : null}
-                    {item.requirements.filter(step => step.status !== "SUCCEEDED" || step.code === "COMPLIANCE_SANDBOX_VERIFIED").map(step => <p key={step.stepKey} className="text-xs leading-5 text-[var(--dash-text-soft)]">{t(`lifecycle.requirements.${step.code}`)}{step.href ? <> · <Link href={href(step.href)} className="underline underline-offset-4">{t("setupLink")}</Link></> : null}</p>)}
-                    {unavailable ? <p className="text-xs leading-5 text-[var(--dash-warning)]">{t("issues.CATALOG_UNAVAILABLE")}</p> : !item.eligible ? <p className="text-xs leading-5 text-[var(--dash-warning)]">{t("issues.ELIGIBILITY_REQUIRED")}</p> : null}
-                  </div>
-                </article>
-              })}</div> : <RouteStatePanel kind="empty" title={t("emptySearch")} message={t("emptySearchHint")} action={{ label: t("clearSearch"), onClick: () => { setQuery(""); setCategory("all") } }} />}
-              <details className={styles.card}><summary className="cursor-pointer text-sm font-semibold">{t("futureTitle")}</summary><p className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">{t("future")}</p></details>
-            </section>
-
-            <aside className={cn(styles.card, styles.summary)} aria-labelledby="module-draft-title">
-              <div className="flex items-center gap-2"><Layers3 className="h-5 w-5 text-[var(--dash-brand-strong)]" aria-hidden="true" /><h2 id="module-draft-title" className="font-semibold">{t("summary")}</h2></div>
-              <p className="mt-4 text-xl font-semibold" aria-live="polite">{t("capabilityCount", { count: businessCount })}</p><p className="mt-1 text-xs text-[var(--dash-text-soft)]">{t("foundationCount", { count: foundations.length })}</p>
-              <p className="mt-4 text-sm leading-6 text-[var(--dash-text-soft)]">{t("draftHint")}</p>
-              <Button ref={reviewButton} type="button" className={cn("dashboard-button-primary mt-4", styles.summaryAction, styles.reviewAction)} disabled={busy} onClick={() => void review()}>{pending === "preview" ? <Loader2 className="animate-spin" aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}{t(pending === "preview" ? "reviewing" : "review")}</Button>
-              <Button type="button" variant="outline" className={cn("dashboard-button-secondary mt-2", styles.summaryAction)} disabled={busy} onClick={event => { draftOrigin.current = event.currentTarget; void saveDraft() }}><FileClock aria-hidden="true" />{t(pending === "save" ? "saving" : "saveDraft")}</Button>
-              {busy ? <p role="status" className="mt-3 text-xs leading-5 text-[var(--dash-text-soft)]">{t("pendingHint")}</p> : null}
-              <div className="mt-5 border-t border-[var(--dash-border-subtle)] pt-4"><h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-soft)]">{t("shared")}</h3>{listModules(foundations.map(item => item.slug))}</div>
-              {connections.length ? <div className="mt-5 border-t border-[var(--dash-border-subtle)] pt-4"><h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--dash-text-soft)]">{t("connections")}</h3><ul className="mt-3 space-y-3">{connections.map(([slug, dependents]) => <li key={slug} className="text-sm"><span className="font-semibold">{moduleName(slug)}</span><span className="mt-1 block text-xs leading-5 text-[var(--dash-text-soft)]">{t("requiredBy", { modules: moduleNames([...dependents]) })}</span></li>)}</ul></div> : null}
-              <p className="mt-5 border-t border-[var(--dash-border-subtle)] pt-4 text-xs leading-5 text-[var(--dash-text-soft)]">{t("noPurchase")}</p>
-            </aside>
-          </div>
         </TabsContent>
 
         <TabsContent value="workspace" className="mt-5 space-y-4">
           <div><h2 ref={panelHeading} tabIndex={-1} className="text-xl font-semibold outline-none">{t("workspaceTitle")}</h2><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("workspaceHint")}</p></div>
-          {data.workspace.length ? <div className={styles.workspaceGrid}>{data.workspace.map(destination => <Link key={`${destination.moduleSlug}-${destination.href}`} href={href(destination.href)} className={styles.workspaceLink} aria-label={t("open", { module: moduleName(destination.moduleSlug) })}><Boxes className="h-5 w-5 text-[var(--dash-brand-strong)]" aria-hidden="true" /><span className="font-semibold">{moduleName(destination.moduleSlug)}</span>{data.newWorkStoppedModules.includes(destination.moduleSlug) ? <><Badge variant="outline" className={dashboardToneClass("gold")}>{t("stop.current")}</Badge><span className="text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.workspaceHint")}</span></> : <span className="text-sm leading-6 text-[var(--dash-text-soft)]">{t(`modules.${destination.moduleSlug}.description`)}</span>}<ArrowRight className="mt-auto h-4 w-4 text-[var(--dash-brand-strong)]" aria-hidden="true" /></Link>)}</div> : <RouteStatePanel kind="permission_denied" title={t("workspaceEmpty")} message={t("workspaceEmptyHint")} />}
+          {data.workspace.length ? <div className={styles.workspaceGrid}>{data.workspace.map(destination => <Link key={`${destination.moduleSlug}-${destination.href}`} href={href(destination.href)} className={styles.workspaceLink} aria-label={t("open", { module: moduleName(destination.moduleSlug) })}><Boxes className="h-5 w-5 text-[var(--dash-brand-strong)]" aria-hidden="true" /><span className="font-semibold">{moduleName(destination.moduleSlug)}</span>{data.newWorkStoppedModules.includes(destination.moduleSlug) ? <><Badge variant="outline" className={dashboardToneClass("gold")}>{t("stop.current")}</Badge><span className="text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.workspaceHint")}</span></> : <span className="text-sm leading-6 text-[var(--dash-text-soft)]">{t(`modules.${destination.moduleSlug}.description`)}</span>}<span className={styles.destinationAction}>{t("experience.openWorkspace")}<ArrowRight className="h-4 w-4" aria-hidden="true" /></span></Link>)}</div> : <RouteStatePanel kind="permission_denied" title={t("workspaceEmpty")} message={t("workspaceEmptyHint")} />}
           <p className="text-sm leading-6 text-[var(--dash-text-soft)]">{t("retained")}</p>
           {data.newWorkStoppedModules.length ? <section className={styles.card} aria-labelledby="module-retained-title"><h3 id="module-retained-title" className="font-semibold">{t("stop.retainedTitle")}</h3><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.retainedHint")}</p><ul className="mt-3 grid gap-3">{data.newWorkStoppedModules.map(slug => <li key={slug} className="flex flex-wrap items-center justify-between gap-3 text-sm"><span>{moduleName(slug)}</span><div className="flex flex-wrap items-center gap-3">{data.retainedWorkspace.filter(destination => destination.moduleSlug === slug).map(destination => <Link key={destination.href} href={href(destination.href)} className="underline underline-offset-4">{t("stop.openRecords", { module: moduleName(slug) })}</Link>)}<Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-11 whitespace-normal" disabled={busy} onClick={() => { setStopped(stopped.filter(item => item !== slug)); editSelection([...new Set([...selected, slug])]); setTab("build"); setNotice({ key: "stop.reactivationDraft", kind: "info" }) }}>{t("stop.reactivate", { module: moduleName(slug) })}</Button></div></li>)}</ul></section> : null}
         </TabsContent>
@@ -537,7 +611,7 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
         <TabsContent value="history" className="mt-5 space-y-4">
           <div><h2 className="text-xl font-semibold">{t("historyTitle")}</h2><p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{t("historyHint")}</p></div>
           {hasEarlierHistory ? <p className="text-sm leading-6 text-[var(--dash-text-soft)]">{t("historySnapshot")}</p> : null}
-          {history.length ? <ol className="grid gap-3">{history.map(entry => <li key={entry.id} id={`module-history-${entry.id}`} tabIndex={-1} className={cn(styles.card, "focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]")}>
+          {history.length ? <ol className={styles.historyList}>{history.map(entry => <li key={entry.id} id={`module-history-${entry.id}`} tabIndex={-1} className={cn(styles.card, "focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]")}>
             <div className="flex flex-wrap items-start justify-between gap-3"><div><Badge variant="outline" className={dashboardToneClass(entry.state === "ACTIVE" ? "success" : entry.state === "FAILED" ? "danger" : entry.state === "RETAINED" ? "gold" : "info")}>{entry.state === "ACTIVE" ? <CheckCircle2 className="mr-1 h-3.5 w-3.5" aria-hidden="true" /> : <FileClock className="mr-1 h-3.5 w-3.5" aria-hidden="true" />}{t(`historyStates.${entry.state}`)}</Badge><p className="mt-2 text-sm">{t("revision", { revision: entry.revision })} · <time dateTime={entry.createdAt}>{formatTime(entry.createdAt)}</time></p></div><Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-11 whitespace-normal py-2 text-left" disabled={busy} onClick={event => { draftOrigin.current = event.currentTarget; void reopen(entry) }}><History aria-hidden="true" />{t(pending === "reopen" ? "reopening" : "reopen")}</Button></div>
             <p className="mt-3 text-sm leading-6"><span className="text-[var(--dash-text-soft)]">{t("configuration")}: </span>{moduleNames(entry.selectedModules) || t("none")}</p>
             {entry.stopNewWorkModules.length ? <p className="mt-2 text-sm leading-6"><span className="text-[var(--dash-text-soft)]">{t("stop.recordedStops")}: </span>{moduleNames(entry.stopNewWorkModules)}</p> : null}
@@ -553,12 +627,13 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
     </div>
 
     <Dialog open={reviewOpen} onOpenChange={open => { if (!busy) setReviewOpen(open) }}>
-      <DialogContent className={cn("dark", styles.dialog)} closeLabel={t("close")} data-testid="configuration-review" onEscapeKeyDown={event => { if (busy) event.preventDefault() }} onInteractOutside={event => { if (busy) event.preventDefault() }} onCloseAutoFocus={event => { event.preventDefault(); if (draftOrigin.current?.isConnected) draftOrigin.current.focus(); else if (resumeAuth) resumeButton.current?.focus(); else if (tab === "workspace") panelHeading.current?.focus(); else if (activePreparation && !preview) lifecycleHeading.current?.focus(); else reviewButton.current?.focus() }}>
-        <DialogHeader><DialogTitle className="pr-6 text-xl">{t(draftChallenge ? `draftAuth.${draftChallenge.kind}Title` : resumeAuth ? "lifecycle.resumeTitle" : "reviewTitle")}</DialogTitle><DialogDescription className="text-[var(--dash-text-soft)]">{t(draftChallenge ? "draftAuth.hint" : resumeAuth ? "lifecycle.resumeHint" : "reviewDescription")}</DialogDescription></DialogHeader>
+      <DialogContent className={styles.dialog} closeLabel={t("close")} closeDisabled={busy} onOpenAutoFocus={event => { event.preventDefault(); reviewHeading.current?.focus() }} data-testid="configuration-review" onEscapeKeyDown={event => { if (busy) event.preventDefault() }} onInteractOutside={event => { if (busy) event.preventDefault() }} onCloseAutoFocus={event => { event.preventDefault(); if (draftOrigin.current?.isConnected) draftOrigin.current.focus(); else if (resumeAuth) resumeButton.current?.focus(); else if (tab === "workspace") panelHeading.current?.focus(); else if (activePreparation && !preview) lifecycleHeading.current?.focus(); else reviewButton.current?.focus() }}>
+        <DialogHeader className={styles.reviewHeader}><DialogTitle ref={reviewHeading} tabIndex={-1} className="text-xl leading-7">{t(draftChallenge ? `draftAuth.${draftChallenge.kind}Title` : resumeAuth ? "lifecycle.resumeTitle" : "reviewTitle")}</DialogTitle><DialogDescription className="text-[var(--dash-text-soft)]">{t(draftChallenge ? "draftAuth.hint" : resumeAuth ? "lifecycle.resumeHint" : "reviewDescription")}</DialogDescription></DialogHeader>
+        <div className={styles.reviewBody}>
         {noticePanel(true)}
         {preview ? <>
           <p className="flex items-center gap-2 text-xs text-[var(--dash-info)]"><ShieldCheck className="h-4 w-4" aria-hidden="true" />{t("checked", { revision: preview.revision })} · {formatTime(preview.generatedAt)}</p>
-          <div className={styles.impact}>{(["additions", "kept", "removed"] as const).map(key => <section className={styles.card} key={key}><h3 className="text-sm font-semibold">{t(key)}</h3>{listModules(key === "removed" ? preview.removedFromWorkspace : preview[key])}</section>)}</div>
+          <div className={styles.impact}>{(["additions", "kept", "removed"] as const).map(key => <section className={styles.card} key={key}><h3 className={styles.impactTitle}>{t(key)}<span>{(key === "removed" ? preview.removedFromWorkspace : preview[key]).length}</span></h3>{listModules(key === "removed" ? preview.removedFromWorkspace : preview[key])}</section>)}</div>
           <div className="rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] p-3 text-sm leading-6"><p>{t("retained")}</p><details className="mt-2"><summary className="cursor-pointer font-semibold">{t("accessKept")} ({preview.preservedAccess.length})</summary>{listModules(preview.preservedAccess)}</details></div>
           {preview.stopImpact.impacts.length || preview.stopImpact.resumed.length ? <section aria-labelledby="module-stop-impact" className="space-y-3"><h3 id="module-stop-impact" className="font-semibold">{t("stop.impactTitle")}</h3><p className="text-sm leading-6 text-[var(--dash-text-soft)]">{t("stop.timing")}</p>
             {preview.stopImpact.impacts.map(impact => <article className={styles.card} key={impact.moduleSlug} data-testid={`stop-impact-${impact.moduleSlug}`}><h4 className="font-semibold">{moduleName(impact.moduleSlug)}</h4><p className={cn("mt-2 text-sm leading-6", impact.supported ? "text-[var(--dash-text-soft)]" : "text-[var(--dash-danger)]")}>{t(impact.supported ? "stop.supported" : impact.unsupportedReason === "OFFLINE_CONTINUATION_UNAVAILABLE" ? "stop.unsupportedOffline" : "stop.unsupported")}</p>
@@ -581,7 +656,8 @@ export function ModuleCompositionWorkbench({ initialData, userId }: { initialDat
           {preview.requirements.length ? <section aria-labelledby="module-setup-preview"><h3 id="module-setup-preview" className="mb-3 font-semibold">{t("lifecycle.requirementsTitle")}</h3><p className="mb-3 text-sm leading-6 text-[var(--dash-text-soft)]">{t("lifecycle.requirementsHint")}</p>{requirementsPanel(preview.requirements)}</section> : null}
         </> : !resumeAuth && !draftChallenge ? <RouteStatePanel kind="stale_data" title={t("conflict")} message={t("draftHint")} /> : null}
         {needsFreshAuth ? <form onSubmit={event => void verifyAndApply(event)} className="rounded-lg border border-[var(--dash-brand)] p-4"><p className="mb-3 flex items-start gap-2 text-sm"><LockKeyhole className="h-4 w-4 shrink-0" aria-hidden="true" />{t(draftChallenge ? "draftAuth.freshAuth" : resumeAuth ? "lifecycle.freshAuth" : "freshAuth")}</p><label className="text-sm font-semibold" htmlFor="module-step-up-password">{t("password")}</label><Input id="module-step-up-password" autoComplete="current-password" name="password" type="password" required disabled={busy} className="dashboard-control mt-2 h-11" /><Button type="submit" disabled={busy || (!draftChallenge && (resumeAuth ? !data.lifecycle?.canResume : !preview?.canApply || !preview.stopImpact.canStop))} className="dashboard-button-primary mt-3 h-auto min-h-11 w-full whitespace-normal">{busy ? <Loader2 className="animate-spin" aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}{t(pending === "verify" ? "verifying" : pending === "apply" ? "applying" : draftChallenge ? `draftAuth.${draftChallenge.kind}Verify` : resumeAuth ? "lifecycle.verifyResume" : "verify")}</Button></form> : null}
-        <DialogFooter className="gap-2"><Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-11 whitespace-normal" disabled={busy} onClick={() => setReviewOpen(false)}>{t(draftChallenge ? "close" : resumeAuth ? "lifecycle.backToPreparation" : "cancel")}</Button>{!needsFreshAuth && draftChallenge ? <Button type="button" disabled={busy} className="dashboard-button-primary h-auto min-h-11 whitespace-normal" onClick={() => void retryDraftChallenge(draftChallenge)}>{t("draftAuth.retry")}</Button> : !needsFreshAuth && preview ? <Button type="button" disabled={busy || !preview.canApply || !preview.stopImpact.canStop} className="dashboard-button-primary h-auto min-h-11 whitespace-normal" onClick={() => void applyReviewed()}>{pending === "apply" ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Check aria-hidden="true" />}{t(pending === "apply" ? "applying" : applyFailed ? "retry" : "activate")}</Button> : null}</DialogFooter>
+        </div>
+        <DialogFooter className={styles.reviewFooter}><Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-11 whitespace-normal" disabled={busy} onClick={() => setReviewOpen(false)}>{t(draftChallenge ? "close" : resumeAuth ? "lifecycle.backToPreparation" : "cancel")}</Button>{!needsFreshAuth && draftChallenge ? <Button type="button" disabled={busy} className="dashboard-button-primary h-auto min-h-11 whitespace-normal" onClick={() => void retryDraftChallenge(draftChallenge)}>{t("draftAuth.retry")}</Button> : !needsFreshAuth && preview ? <Button type="button" disabled={busy || !preview.canApply || !preview.stopImpact.canStop} className="dashboard-button-primary h-auto min-h-11 whitespace-normal" onClick={() => void applyReviewed()}>{pending === "apply" ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Check aria-hidden="true" />}{t(pending === "apply" ? "applying" : applyFailed ? "retry" : "activate")}</Button> : null}</DialogFooter>
         {busy ? <p role="status" aria-live="polite" className="text-sm text-[var(--dash-text-soft)]">{t(pending === "apply" ? "applying" : pending === "verify" ? "verifying" : "pendingHint")}</p> : null}
       </DialogContent>
     </Dialog>

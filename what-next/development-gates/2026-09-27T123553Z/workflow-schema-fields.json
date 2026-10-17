@@ -1,0 +1,1730 @@
+[
+  {
+    "model": "StockAdjustment",
+    "table": "stock_adjustments",
+    "fields": [
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Location",
+            "from": [
+              "locationId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "createdById",
+        "column": "createdById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "createdById"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "approvedById"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AdjustmentStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "SUBMITTED",
+          "APPROVED",
+          "COMPLETED",
+          "CANCELLED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "reversalOfAdjustmentId",
+        "column": "reversalOfAdjustmentId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": true,
+        "relations": [
+          {
+            "target": "StockAdjustment",
+            "from": [
+              "reversalOfAdjustmentId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "adjustmentNumber"
+      ]
+    ]
+  },
+  {
+    "model": "StockAdjustmentLine",
+    "table": "stock_adjustment_lines",
+    "fields": [
+      {
+        "name": "itemId",
+        "column": "itemId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Item",
+            "from": [
+              "itemId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "actualQuantity",
+        "column": "actualQuantity",
+        "type": "Decimal",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "adjustmentId",
+        "column": "adjustmentId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "StockAdjustment",
+            "from": [
+              "adjustmentId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "SupplierPayment",
+    "table": "supplier_payments",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "supplierId",
+        "column": "supplierId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Supplier",
+            "from": [
+              "supplierId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "bankAccountId",
+        "column": "bankAccountId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "SupplierBankAccount",
+            "from": [
+              "bankAccountId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "requestedById",
+        "column": "requestedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "documentHash",
+        "column": "documentHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "SupplierPaymentStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "APPROVED",
+          "RELEASED",
+          "POSTED",
+          "CANCELLED",
+          "FAILED"
+        ],
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "paymentNumber"
+      ],
+      [
+        "organizationId",
+        "idempotencyKey"
+      ]
+    ]
+  },
+  {
+    "model": "JournalEntry",
+    "table": "journal_entries",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "journalId",
+        "column": "journalId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Journal",
+            "from": [
+              "journalId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "periodId",
+        "column": "periodId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AccountingPeriod",
+            "from": [
+              "periodId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "createdById",
+        "column": "createdById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "JournalEntryStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "POSTED",
+          "REVERSED",
+          "VOIDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "postingBatchId",
+        "column": "postingBatchId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "LedgerPostingBatch",
+            "from": [
+              "postingBatchId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "reversalOfEntryId",
+        "column": "reversalOfEntryId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "JournalEntry",
+            "from": [
+              "reversalOfEntryId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "entryNumber"
+      ]
+    ]
+  },
+  {
+    "model": "JournalEntryLine",
+    "table": "journal_entry_lines",
+    "fields": [
+      {
+        "name": "accountId",
+        "column": "accountId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "ChartOfAccount",
+            "from": [
+              "accountId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "debit",
+        "column": "debit",
+        "type": "Decimal",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "credit",
+        "column": "credit",
+        "type": "Decimal",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "journalEntryId",
+        "column": "journalEntryId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "JournalEntry",
+            "from": [
+              "journalEntryId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "journalEntryId",
+        "lineNumber"
+      ]
+    ]
+  },
+  {
+    "model": "ClosePackExport",
+    "table": "close_pack_exports",
+    "fields": [
+      {
+        "name": "closeRunId",
+        "column": "closeRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "CloseRun",
+            "from": [
+              "closeRunId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "contentHash",
+        "column": "contentHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "isCertified",
+        "column": "isCertified",
+        "type": "Boolean",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "periodId",
+        "column": "periodId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "AccountingPeriod",
+            "from": [
+              "periodId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "closeRunId",
+        "contentHash"
+      ]
+    ]
+  },
+  {
+    "model": "PayrollRun",
+    "table": "payroll_runs",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "payrollPeriodId",
+        "column": "payrollPeriodId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollPeriod",
+            "from": [
+              "payrollPeriodId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "version",
+        "column": "version",
+        "type": "Int",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "preparedById",
+        "column": "preparedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "reviewedById",
+        "column": "reviewedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "reviewedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "approvedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "emittedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          },
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "postedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "PayrollRunStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "CALCULATED",
+          "REVIEWED",
+          "APPROVED",
+          "EMITTED",
+          "PAID",
+          "POSTED",
+          "ARCHIVED",
+          "CANCELLED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "originalRunId",
+        "column": "originalRunId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollRun",
+            "from": [
+              "originalRunId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "reviewedBusinessEventId",
+        "column": "reviewedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "reviewedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "approvedBusinessEventId",
+        "column": "approvedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "approvedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "emittedBusinessEventId",
+        "column": "emittedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "emittedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "postedBusinessEventId",
+        "column": "postedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "postedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "runNumber"
+      ],
+      [
+        "organizationId",
+        "idempotencyKey"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "PayrollPaymentBatch",
+    "table": "payroll_payment_batches",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "payrollRunId",
+        "column": "payrollRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollRun",
+            "from": [
+              "payrollRunId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "requestedById",
+        "column": "requestedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "approvedById",
+        "column": "approvedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "releasedById",
+        "column": "releasedById",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "bankFileHash",
+        "column": "bankFileHash",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "PayrollPaymentBatchStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "APPROVED",
+          "RELEASED",
+          "PARTIALLY_SETTLED",
+          "SETTLED",
+          "FAILED",
+          "CANCELLED"
+        ],
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "batchNumber"
+      ],
+      [
+        "organizationId",
+        "idempotencyKey"
+      ]
+    ]
+  },
+  {
+    "model": "PayrollPayslip",
+    "table": "payroll_payslips",
+    "fields": [
+      {
+        "name": "employeeId",
+        "column": "employeeId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollEmployee",
+            "from": [
+              "employeeId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          },
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "emittedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "PayrollPayslipStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "DRAFT",
+          "EMITTED",
+          "CORRECTED",
+          "VOIDED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "payrollRunId",
+        "column": "payrollRunId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "PayrollRun",
+            "from": [
+              "payrollRunId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "runLineId",
+        "column": "runLineId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": true,
+        "relations": [
+          {
+            "target": "PayrollRunLine",
+            "from": [
+              "runLineId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "emittedBusinessEventId",
+        "column": "emittedBusinessEventId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "BusinessEvent",
+            "from": [
+              "organizationId",
+              "emittedBusinessEventId"
+            ],
+            "to": [
+              "organizationId",
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "payslipNumber"
+      ]
+    ]
+  },
+  {
+    "model": "POSStation",
+    "table": "pos_terminals",
+    "fields": [
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "currentSessionId",
+        "column": "currentSessionId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": true,
+        "relations": [
+          {
+            "target": "POSSession",
+            "from": [
+              "currentSessionId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Location",
+            "from": [
+              "locationId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "terminalNumber"
+      ]
+    ]
+  },
+  {
+    "model": "POSSession",
+    "table": "pos_sessions",
+    "fields": [
+      {
+        "name": "userId",
+        "column": "userId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "userId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "POSSessionStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "SUSPENDED",
+          "CLOSED",
+          "RECONCILED"
+        ],
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "terminalId",
+        "column": "terminalId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "POSStation",
+            "from": [
+              "terminalId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Location",
+            "from": [
+              "locationId"
+            ],
+            "to": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "sessionNumber"
+      ]
+    ]
+  },
+  {
+    "model": "POSCheckoutWorkspace",
+    "table": "pos_checkout_workspaces",
+    "fields": [
+      {
+        "name": "leaseId",
+        "column": "leaseId",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "sessionId",
+        "column": "sessionId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": [
+          {
+            "target": "POSSession",
+            "from": [
+              "sessionId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  },
+  {
+    "model": "BranchDailyCloseRun",
+    "table": "branch_daily_close_runs",
+    "fields": [
+      {
+        "name": "locationId",
+        "column": "locationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Location",
+            "from": [
+              "locationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "startedById",
+        "column": "startedById",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "User",
+            "from": [
+              "startedById"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Restrict"
+          }
+        ]
+      },
+      {
+        "name": "evidenceHash",
+        "column": "evidenceHash",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "BranchDailyCloseRunStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "IN_REVIEW",
+          "BLOCKED"
+        ],
+        "relations": []
+      }
+    ],
+    "uniqueFields": [
+      [
+        "organizationId",
+        "locationId",
+        "businessDate"
+      ],
+      [
+        "organizationId",
+        "idempotencyKey"
+      ],
+      [
+        "organizationId",
+        "id"
+      ]
+    ]
+  },
+  {
+    "model": "AccountantAccessGrant",
+    "table": "accountant_access_grants",
+    "fields": [
+      {
+        "name": "activeScopeKey",
+        "column": "activeScopeKey",
+        "type": "String",
+        "list": false,
+        "required": false,
+        "id": false,
+        "unique": true,
+        "relations": []
+      },
+      {
+        "name": "id",
+        "column": "id",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": true,
+        "unique": false,
+        "relations": []
+      },
+      {
+        "name": "organizationId",
+        "column": "organizationId",
+        "type": "String",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "relations": [
+          {
+            "target": "Organization",
+            "from": [
+              "organizationId"
+            ],
+            "to": [
+              "id"
+            ],
+            "onDelete": "Cascade"
+          }
+        ]
+      },
+      {
+        "name": "status",
+        "column": "status",
+        "type": "AccountantAccessStatus",
+        "list": false,
+        "required": true,
+        "id": false,
+        "unique": false,
+        "allowedValues": [
+          "ACTIVE",
+          "REVOKED"
+        ],
+        "relations": []
+      }
+    ],
+    "uniqueFields": []
+  }
+]

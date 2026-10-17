@@ -1,0 +1,571 @@
+{
+  "at": "2026-09-27T17:35:20.922Z",
+  "workflow": "PR-10",
+  "completeWorkflowVerified": true,
+  "scope": "Implemented independent reconciliation sign-off and verified connected handoffs; not whole-platform completion, deployment or professional certification.",
+  "sourceHashes": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "components/finance/PaymentSuspenseQueue.tsx": "f41fbf539244b51b579a7cdee64ac044adaa65d01f799186f2b1dc9c0e82e701",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "bd4ca1eda65c6826dc92e3d38092bd406df4910b46b28afa7a99a8b579881684",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "08b45d2261a0107dd290d29b9f1002d1f883fa48e3eb2279716b20aefa36f414",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "hooks/usePermissions.ts": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+    "hooks/__tests__/usePermissions.workflow.test.tsx": "1c1ce552e5774805d8cfa034b70d871fa86de6335ab5960a7d0726f72099e267",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/__tests__/reconciliation-amount-summary.test.ts": "7a2efe1b242f3ab613cd5698a9b0a81720751762981fcfb8ed58a27e0db17b3b",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "507ee463435a8a5b12d80c1c2fda147f26cd3943182a63c7bb848d1a9a0d877e",
+    "services/reconciliation/__tests__/reconciliation-retained-signature.test.ts": "a6fa4882c4af52a398bfe5517313055fac734e27d6b3a683a41853498ccd7851",
+    "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx": "e57e837dfeac6a173bbcee9dca8e658e35afff1062bcb91b360adf28d6cfc556",
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "3d4cdb89367ff45f32947c424b4121e3b80aa5c63dfdf768d83c9c7d5cdd36eb",
+    "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts": "e0671691b27e8f54ea6eaeafb74d13dc23a786c1158920aafff5518a3c5eccf4",
+    "scripts/reconciliation-sign-notification-worker.ts": "0374a10ed06a6ded55bf57f92869fa3a42285613132e8387b7dccfaceee76788",
+    "scripts/__tests__/reconciliation-sign-notification-worker.test.ts": "abe008069d27ae3402015f6024c562aae4181ad63762349c7013b387b498df01",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx": "b4f5cebab7ee6ff0d2a728f08a8454f8283c32a9ca0ad13c3d139a647bb9e736",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts": "4cb0f4ee413aa537c52aa26f3d892f794c66a30b29142da0ecef5923b1e29e1f",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts": "91cfa47bb50a0f3639d0667866ce672512b78a1b9f05838e687d7d355afa3bc4",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "services/manager-action-center/manager-action-center.service.ts": "22e540252787d31c08ac7e5e7c31eb97dc53ce9d65b069ebba185e828e167286",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/server-authz.ts": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "translations": [
+    {
+      "file": "messages/en.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "352a0b8fd9c0bc771d35fff872f1b9d412c77fd4af30a625065f06006b4d91fe",
+      "dictionaryExceptIndependentCatalogueSha256": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee"
+    },
+    {
+      "file": "messages/fr.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "4eae7cb27d21c66aea83ae9d33e3c89f7b65f7179dcca5edaf1d7c311197b25a",
+      "dictionaryExceptIndependentCatalogueSha256": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "entry_and_personas",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "authoritative_signature_and_full_population_amounts",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "tenant_actor_operation_and_entitlement",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "review_commit_provider_period_and_source_boundaries",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "concurrency_and_duplicate_effects",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "authentication_interruption_and_exact_recovery",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "source_correction_and_retained_obligations",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "durable_inbox_handoff_history_and_export",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "en_fr_keyboard_responsive_contrast_and_reflow",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "measured_entry_diagnosis_and_correction",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    },
+    {
+      "id": "current_guidance_and_proportionate_regression",
+      "disposition": "verified",
+      "explanation": "See the corresponding evidence row in RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md."
+    }
+  ],
+  "receipts": [
+    {
+      "file": "lanes/environment/sign-final-boundaries-cf170f99-a12e-4db5-9db0-09acff80d0da.json",
+      "sha256": "330077f49dcb9faf8a61ed67e7bdd47fd7e8558c74851b0ab6a5d038c8b84963"
+    },
+    {
+      "file": "lanes/environment/signed-source-boundaries-59920dd2-fd0c-46a3-93ae-a066b2442c4a.json",
+      "sha256": "9bc42c27c0476f5c43f3777b7e914e764bc4f73d2bf75913b02649498c78a138"
+    },
+    {
+      "file": "lanes/environment/sign-notification-3b67f933-09b1-453b-9240-9f39fa945369.json",
+      "sha256": "ed5af29097d41521dbc1c37b03b02404c0a8bc0869d52f23e4152c6682a2b5f2"
+    },
+    {
+      "file": "lanes/environment/sign-module-boundary-b7f296a3-c567-4e7c-a8c1-45d0dd41d3db.json",
+      "sha256": "bee4dca0bb5f9ea23164c02b78a59cf3c034ae828f7d15cb122b56bed0d2d364"
+    },
+    {
+      "file": "lanes/environment/sign-module-ordering-9f711f29-9cc2-44fe-aeb5-e8ac0b99553f.json",
+      "sha256": "33600da677c23d5deb37e5e7344084a2ef9fe03c6a9125ba458cdc4573a2e451"
+    },
+    {
+      "file": "lanes/environment/signoff-request-order-20cdb246-bf04-42de-aecb-a48cb3ad94bd.json",
+      "sha256": "140de414639989ba06fec0c3be81c83ae2b29bb29ba1421cf6a6fcf5d7149f54"
+    },
+    {
+      "file": "lanes/environment/sign-module-browser-5b024f4d-92fc-4ea7-a6b5-2734cdee56e5.json",
+      "sha256": "294c1bf871d81c470d799791085f26c5c76e5095fd6b567f2fe7638eb1c0a769"
+    },
+    {
+      "file": "lanes/environment/sign-entry-profile-2d6a4d8a-c992-4b2b-9b86-79079e20e912.json",
+      "sha256": "46affbc8360dedcdb81283b4324402ed7f93f62b53598a7f90076384347db501"
+    },
+    {
+      "file": "evidence/sign-entry-checks-45b48b8f-7057-4adb-9028-0ce9e7acdf3f.json",
+      "sha256": "f1bde3586ca97a2a018a52e412582dd3e1f25afdbc591ab8b72953ded612a554"
+    },
+    {
+      "file": "evidence/sign-focus-checks-c0474747-2572-45ad-9f0a-b76c81bd84b1.json",
+      "sha256": "0197cbd7b4d12dae36a968f15e1b74184599ca81159fa0c878635d3aec543355"
+    },
+    {
+      "file": "evidence/reconciliation-amount-checks-b3f6071d-b2f8-49d5-bea9-7a8d5ca008e7.json",
+      "sha256": "24f32852d8db5c6c49b8d36e4da71da63132127161b139c7b93fb2e73fa89bdb"
+    },
+    {
+      "file": "lanes/environment/reconciliation-amount-lifecycle-2e784ff3-b085-4c0e-84b2-465cd0b3499d.json",
+      "sha256": "3c8d01b99230cf4d29d24f225d701673e7dfe63283c2a80ce485582e51741658"
+    },
+    {
+      "file": "lanes/environment/reconciliation-amount-volume-1c9cb7b4-38e6-4835-92df-05010de4a72d.json",
+      "sha256": "648dfd4a5fad819cd6937a4e5e9f8f688a3e2146f6858fae4f4baeca86a1c246"
+    },
+    {
+      "file": "evidence/signed-additional-checks-d128bf7f-2362-4f0a-85fd-b58665fce620.json",
+      "sha256": "1df992ab567761d1ff0fb0b31eda0faec37764b27281c9f97e720ee5e92e2cfb"
+    },
+    {
+      "file": "evidence/sign-notification-checks-ac7189f6-8b0c-48fd-bb5c-03349d663052.json",
+      "sha256": "748010cb876ca5d0f6ddcc3935bc8710f0489ea9c0dc997f35bf33e10d0dc163"
+    },
+    {
+      "file": "evidence/sign-notification-cli-f9469c6a-4552-4c57-b550-581e9d84217f.json",
+      "sha256": "758e928b636f86d9f1c3eac476acaea6e745633afeda9d8c9bba5fc8441534ca"
+    },
+    {
+      "file": "lanes/environment/sign-notification-browser-40c48c10-4020-4dee-9610-c57f9f2a2d6b.json",
+      "sha256": "77177cf35003d7c78a9f448be2842cae9fccde0c697ef3256d2951c2dbe11bf5"
+    },
+    {
+      "file": "lanes/environment/sign-auth-error-browser-5e77b952-01ad-4592-a1ec-e75feb85b1f7.json",
+      "sha256": "0639cd8a4b83990854f5d52bb359c56483b80eed195d0daf9c3bcee5cc96723f"
+    },
+    {
+      "file": "lanes/environment/sign-auth-error-browser-404bafd0-ad17-4e3a-b08d-6e5e97adb6d8.json",
+      "sha256": "cf3abcd78a90a4dc0d2bfe034c26f3661baaeec9d8af0c2dce39e8cba75f097f"
+    }
+  ],
+  "applicability": [
+    {
+      "file": "lanes/environment/sign-final-boundaries-cf170f99-a12e-4db5-9db0-09acff80d0da.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/reconciliation-retained-signature.ts",
+        "services/accounting/periods.service.ts",
+        "services/modules/module-entitlement.service.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/signed-source-boundaries-59920dd2-fd0c-46a3-93ae-a066b2442c4a.json",
+      "unchanged": [
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/reconciliation-retained-signature.ts",
+        "services/reconciliation/reconciliation-run-preparation.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-notification-3b67f933-09b1-453b-9240-9f39fa945369.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-sign-notification.worker.ts",
+        "services/events/business-event-outbox.service.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-module-boundary-b7f296a3-c567-4e7c-a8c1-45d0dd41d3db.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts",
+        "actions/payments/reconciliation.actions.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-module-ordering-9f711f29-9cc2-44fe-aeb5-e8ac0b99553f.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/signoff-request-order-20cdb246-bf04-42de-aecb-a48cb3ad94bd.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/payment-reconciliation-run.service.ts"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-module-browser-5b024f4d-92fc-4ea7-a6b5-2734cdee56e5.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts",
+        "actions/payments/reconciliation.actions.ts",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.module.css",
+        "components/finance/ReconciliationCertificateExportPanel.tsx"
+      ],
+      "superseded": [
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-entry-profile-2d6a4d8a-c992-4b2b-9b86-79079e20e912.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts",
+        "actions/payments/reconciliation.actions.ts",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/ReconciliationSignReview.module.css",
+        "components/finance/ReconciliationCertificateExportPanel.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "hooks/payments/usePaymentReconciliationWorkbench.ts",
+        "hooks/payments/usePaymentReconciliationDashboard.ts",
+        "lib/auth-client.ts",
+        "components/finance/PaymentSuspenseQueue.tsx"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/sign-entry-checks-45b48b8f-7057-4adb-9028-0ce9e7acdf3f.json",
+      "unchanged": [
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+        "components/finance/PaymentSuspenseQueue.tsx",
+        "components/finance/__tests__/PaymentSuspenseQueue.test.tsx",
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "lib/auth-client.ts",
+        "hooks/usePermissions.ts",
+        "hooks/__tests__/usePermissions.workflow.test.tsx"
+      ],
+      "superseded": [],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/sign-focus-checks-c0474747-2572-45ad-9f0a-b76c81bd84b1.json",
+      "unchanged": [
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "actions/payments/reconciliation.actions.ts",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.module.css",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts"
+      ],
+      "superseded": [
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/reconciliation-amount-checks-b3f6071d-b2f8-49d5-bea9-7a8d5ca008e7.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-amount-summary.ts",
+        "services/reconciliation/__tests__/reconciliation-amount-summary.test.ts",
+        "services/reconciliation/reconciliation-retained-signature.ts",
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/reconciliation-run-preparation.service.ts",
+        "components/finance/ReconciliationPreparationWorkbench.tsx",
+        "services/reconciliation/__tests__/reconciliation-retained-signature.test.ts",
+        "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx",
+        "services/reconciliation/payment-source-decision-withdrawal.ts",
+        "services/reconciliation/payment-exception-closure.contracts.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts",
+        "services/reconciliation/payment-corroborating-source-evidence.ts",
+        "services/reconciliation/payment-exception-closure-evidence.service.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts",
+        "components/finance/PaymentExceptionClosurePanel.tsx"
+      ],
+      "superseded": [
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "components/finance/__tests__/ReconciliationSignReview.test.tsx",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/reconciliation-amount-lifecycle-2e784ff3-b085-4c0e-84b2-465cd0b3499d.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-amount-summary.ts",
+        "services/reconciliation/reconciliation-retained-signature.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/payment-corroborating-source-evidence.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/reconciliation/payment-exception-closure-evidence.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/reconciliation-run-preparation.service.ts"
+      ],
+      "superseded": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/reconciliation-amount-volume-1c9cb7b4-38e6-4835-92df-05010de4a72d.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-amount-summary.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts"
+      ],
+      "superseded": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/signed-additional-checks-d128bf7f-2362-4f0a-85fd-b58665fce620.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/reconciliation-run-preparation.service.ts",
+        "components/finance/ReconciliationPreparationWorkbench.tsx",
+        "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx",
+        "services/reconciliation/payment-source-decision-withdrawal.ts",
+        "services/reconciliation/payment-exception-closure.contracts.ts",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts",
+        "services/reconciliation/payment-corroborating-source-evidence.ts",
+        "services/reconciliation/payment-exception-closure-evidence.service.ts",
+        "services/reconciliation/payment-exception-closure.service.ts",
+        "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts",
+        "components/finance/PaymentExceptionClosurePanel.tsx"
+      ],
+      "superseded": [
+        "services/reconciliation/reconciliation-retained-signature.ts",
+        "services/reconciliation/__tests__/reconciliation-retained-signature.test.ts",
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/reconciliation/payment-reconciliation-evidence.service.ts",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/sign-notification-checks-ac7189f6-8b0c-48fd-bb5c-03349d663052.json",
+      "unchanged": [
+        "services/reconciliation/reconciliation-sign-notification.worker.ts",
+        "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts",
+        "scripts/reconciliation-sign-notification-worker.ts",
+        "scripts/__tests__/reconciliation-sign-notification-worker.test.ts"
+      ],
+      "superseded": [
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "evidence/sign-notification-cli-f9469c6a-4552-4c57-b550-581e9d84217f.json",
+      "unchanged": [],
+      "superseded": [],
+      "sourceStableAtExecution": null
+    },
+    {
+      "file": "lanes/environment/sign-notification-browser-40c48c10-4020-4dee-9610-c57f9f2a2d6b.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/reconciliation/reconciliation-sign-notification.worker.ts"
+      ],
+      "superseded": [
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": true
+    },
+    {
+      "file": "lanes/environment/sign-auth-error-browser-5e77b952-01ad-4592-a1ec-e75feb85b1f7.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts",
+        "actions/payments/reconciliation.actions.ts",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.module.css",
+        "components/finance/ReconciliationCertificateExportPanel.tsx"
+      ],
+      "superseded": [
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "messages/en.json",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": false
+    },
+    {
+      "file": "lanes/environment/sign-auth-error-browser-404bafd0-ad17-4e3a-b08d-6e5e97adb6d8.json",
+      "unchanged": [
+        "services/reconciliation/payment-reconciliation-certification.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-catalog.service.ts",
+        "actions/payments/reconciliation.actions.ts",
+        "actions/payments/reconciliation-sign-review.actions.ts",
+        "components/finance/ReconciliationSignReview.tsx",
+        "components/finance/ReconciliationSignReview.module.css",
+        "components/finance/ReconciliationCertificateExportPanel.tsx",
+        "messages/en.json"
+      ],
+      "superseded": [
+        "components/finance/PaymentReconciliationWorkbench.tsx",
+        "messages/fr.json"
+      ],
+      "sourceStableAtExecution": false
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md",
+      "sha256": "84c484bfbc3dc0b90a1cd40222834b40202a23587d2cb1a9a051b089c3aec768"
+    },
+    {
+      "file": "RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md",
+      "sha256": "829e31468e801919644e21cf7a53d0d0dc8638852dd3c1b8d7602be925865d0b"
+    },
+    {
+      "file": "evidence/sign-auth-focus-impact.json",
+      "sha256": "b36c8a009324c49e4269f8e11d9e02e4be12674a9ff6a64743821acb228dee05"
+    },
+    {
+      "file": "evidence/sign-auth-copy-impact.json",
+      "sha256": "1fd9239ca4d24b031f6eb35cb14bf7a1e6d72ffa801ab394fc2fcc0390845afc"
+    },
+    {
+      "file": "evidence/sign-entry-independent-catalog-edit.json",
+      "sha256": "6316dbe339e572cba3212b701ff9c670b50ff44bba611a0f8c2b0cc3540eb0ee"
+    },
+    {
+      "file": "evidence/sign-entry-source-change.json",
+      "sha256": "9a117e442a700bba8a5c1420119e3858e5231f3da34e8e60a620c28c35b66e1d"
+    },
+    {
+      "file": "evidence/reconciliation-amount-current-bindings.json",
+      "sha256": "4e1970f1d16cdb910ca39fcda1766ef9442a472154a65aa2ecd8cd2806b5939a"
+    },
+    {
+      "file": "evidence/source-withdrawal-current-bindings-d24f1f18-581f-4464-9d6b-41f51a4df10f.json",
+      "sha256": "b1ff6b4eafd002e1d9f34b101733b624cd9aa194286854f73fe4dd67b0c98f0b"
+    },
+    {
+      "file": "evidence/manager-sign-v117.json",
+      "sha256": "156df703fdda11d6715234faec6bb742f98df015e5e1e810daddd5d4e95203c0"
+    }
+  ],
+  "managerTypeOnlyImpact": {
+    "file": "services/manager-action-center/manager-action-center.service.ts",
+    "historicalHash": "678a321e4266fa49e6b73d8dacf6b28553d9786aa867afdb896bb76d8e6c55ae",
+    "currentHash": "22e540252787d31c08ac7e5e7c31eb97dc53ce9d65b069ebba185e828e167286",
+    "exactRemovedText": "| null from managerKpi value type; reconstruction asserted"
+  },
+  "verificationLimits": [
+    "Native screen-reader speech and browser-chrome zoom not exercised; semantic, keyboard, rendered contrast, responsive and controlled enlargement checks verified.",
+    "Production-scale latency, release build/deployment and live scheduler installation unverified.",
+    "General exhausted/invalid-message recovery and notification monitoring remain with NTF-DELIVERY-RECOVERY and NTF-DELIVERY-MONITOR; signed-event transaction/consumer/backoff handoff verified."
+  ]
+}

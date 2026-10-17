@@ -1,0 +1,433 @@
+{
+  "at": "2026-09-27T18:43:56.640Z",
+  "workflow": "PR-19",
+  "status": "Complete—verified",
+  "completeWorkflowVerified": true,
+  "criteria": [
+    {
+      "id": "discovery_scope",
+      "finding": "Actual 22-run tenant-scoped list, two pages, search/empty, limited reader and EN/FR signer handoff.",
+      "evidence": [
+        "lanes/environment/run-discovery-v119-be499740-2115-4d8b-a1be-5ae19b408bd8.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "authoritative_transition",
+      "finding": "Source revision, readiness transition, retained receipt, audit and readiness observation commit together; preparation creates no journal.",
+      "evidence": [
+        "lanes/environment/run-preparation-v114-ae8b96b0-19e.json",
+        "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "current_authority",
+      "finding": "Active actor, tenant/object, permission, module validity/dependencies/read-only, fresh authentication and both module withdrawal orders.",
+      "evidence": [
+        "lanes/environment/preparation-module-boundary-c205af1f-641e-48c3-bbcb-f6d37b2c5be8.json",
+        "lanes/environment/preparation-module-ordering-8fb31772-bcba-4f54-ab70-0ed6e565b96e.json",
+        "lanes/environment/run-preparation-v114-ae8b96b0-19e.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "concurrency_idempotency",
+      "finding": "Same-command and distinct-reviewer races yield one transition; stale/borrowed keys denied; exact replay retains original receipt and current status.",
+      "evidence": [
+        "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json",
+        "lanes/environment/run-preparation-v114-ae8b96b0-19e.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "failure_recovery",
+      "finding": "Audit/notification failures roll back; EN/FR dropped committed response survives reload/exact retry with one audit and no duplicate effect.",
+      "evidence": [
+        "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json",
+        "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5.json",
+        "lanes/environment/run-preparation-v114-ae8b96b0-19e.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "retained_history",
+      "finding": "23 genuine preparations, 20/3 paging, foreign tenant/cursor denial, corrupt receipt failed read, signed history and old replay pointer stability.",
+      "evidence": [
+        "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json",
+        "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "financial_and_source_handoff",
+      "finding": "Actual clearing/exception closure, independent signature/export and reversal; callback/statement recovery; missing external and legacy decision proof refuse preparation.",
+      "evidence": [
+        "lanes/environment/run-preparation-v114-ae8b96b0-19e.json",
+        "lanes/environment/signed-source-boundaries-21987f3a-d9e3-482f-9c3a-7d7bceb2cd9b.json",
+        "lanes/environment/preparation-legacy-evidence-d87fb8e5-d96b-48d5-8241-0739681963c1.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "localized_accessible_recovery",
+      "finding": "Actual EN/FR three widths, keyboard/focus, semantics, reduced motion, contrast and controlled enlargement; auth success does not submit; errors clear/refocus password.",
+      "evidence": [
+        "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5.json",
+        "lanes/environment/run-discovery-v119-be499740-2115-4d8b-a1be-5ae19b408bd8.json",
+        "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691.json",
+        "lanes/environment/preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5.json"
+      ],
+      "disposition": "verified"
+    },
+    {
+      "id": "regression_and_operations",
+      "finding": "96 focused tests, changed-file lint, full TypeScript, exact impact chain and current operator/rollout guidance.",
+      "evidence": [
+        "evidence/preparation-module-checks-05b6bb7a-fa34-452b-b3b5-0b100f3f3ef4.json"
+      ],
+      "disposition": "verified"
+    }
+  ],
+  "sourceHashes": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/events/business-event-outbox.service.ts": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "37a1a0c4b357ff58912d050b6cd6f5736cfe84b8fb366dd6ef8bea44fcedb6b9",
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "components/finance/PaymentSuspenseQueue.tsx": "f41fbf539244b51b579a7cdee64ac044adaa65d01f799186f2b1dc9c0e82e701",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "bd4ca1eda65c6826dc92e3d38092bd406df4910b46b28afa7a99a8b579881684",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "08b45d2261a0107dd290d29b9f1002d1f883fa48e3eb2279716b20aefa36f414",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "hooks/usePermissions.ts": "970331fd552b6fdacef3c7a2bd35be62728870f576f1c50d3b80289f2497402e",
+    "hooks/__tests__/usePermissions.workflow.test.tsx": "1c1ce552e5774805d8cfa034b70d871fa86de6335ab5960a7d0726f72099e267",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/__tests__/reconciliation-amount-summary.test.ts": "7a2efe1b242f3ab613cd5698a9b0a81720751762981fcfb8ed58a27e0db17b3b",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "02102d158be30b13bbc6283429dbc67264f4ec49075274a02689c3f9a962739c",
+    "services/reconciliation/__tests__/reconciliation-retained-signature.test.ts": "a6fa4882c4af52a398bfe5517313055fac734e27d6b3a683a41853498ccd7851",
+    "components/finance/__tests__/ReconciliationAdditionalSourcesReview.test.tsx": "e57e837dfeac6a173bbcee9dca8e658e35afff1062bcb91b360adf28d6cfc556",
+    "services/reconciliation/payment-source-decision-withdrawal.ts": "21538ed6f2baad55beea5161ff846931b421fef600c1eceab16eda8312238dc2",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "4bb2ac4bd66bf50b3804cf26c11a07e7b952dc23d2059cf8237624c08cc4b13d",
+    "services/reconciliation/__tests__/payment-source-decision-withdrawal.test.ts": "5c9445f968381e8f39f4196a7b128c4d858f285a26aa4d889ac9ac6e1e6ef837",
+    "services/reconciliation/payment-corroborating-source-evidence.ts": "a52147e6f42abb4c58642f3c98c0d60ceb7db4645122371a9166d63d363bb1d1",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "5ba1303e7fb7825fc1596d8842e4820521bdd017f91be11cd8136ff4db2d6f0e",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/__tests__/payment-corroborating-source-evidence.test.ts": "49769c447b4fdccc88a275340961c965fb56f2645f0dfecdcb59c27e0d1be009",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "3d4cdb89367ff45f32947c424b4121e3b80aa5c63dfdf768d83c9c7d5cdd36eb",
+    "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts": "e0671691b27e8f54ea6eaeafb74d13dc23a786c1158920aafff5518a3c5eccf4",
+    "scripts/reconciliation-sign-notification-worker.ts": "0374a10ed06a6ded55bf57f92869fa3a42285613132e8387b7dccfaceee76788",
+    "scripts/__tests__/reconciliation-sign-notification-worker.test.ts": "abe008069d27ae3402015f6024c562aae4181ad63762349c7013b387b498df01",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx": "b4f5cebab7ee6ff0d2a728f08a8454f8283c32a9ca0ad13c3d139a647bb9e736",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts": "4cb0f4ee413aa537c52aa26f3d892f794c66a30b29142da0ecef5923b1e29e1f",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts": "91cfa47bb50a0f3639d0667866ce672512b78a1b9f05838e687d7d355afa3bc4",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "services/manager-action-center/manager-action-center.service.ts": "22e540252787d31c08ac7e5e7c31eb97dc53ce9d65b069ebba185e828e167286",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/server-authz.ts": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts": "e7dd73d15ce62ced14bf1895e6c1468c0ba4d24c8eb1ee95f57b0116fb817ead",
+    "components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx": "440584d15173f87496ba6ba399198c77043327b1dc4b9f9d8c47643b3a453bb0",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "actions/payments/__tests__/reconciliation-preparation.actions.test.ts": "3f722317e4302a1fc0cc73c6685a9a45e047ee2e3ce461de2e8244c82849b5cc"
+  },
+  "translations": [
+    {
+      "file": "messages/en.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "65d424ea8d9f610c5a3a7afdba32030376881a56a62dd2ca8ebf101cb7bd9066"
+    },
+    {
+      "file": "messages/fr.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "21940a8c660a5d5a6830a6fcca1f8f296d8b890e3a07a611edc2d4d9ce953ac6"
+    }
+  ],
+  "receipts": [
+    {
+      "file": "evidence/signoff-closure-2026-09-27.json",
+      "sha256": "5fd10960708a31aceece8b5a9ebc504f4ad4c93c7255ef65bff19caad6802ac0"
+    },
+    {
+      "file": "evidence/preparation-module-checks-489b6628-2364-42a6-808d-aa6f7daa96aa.json",
+      "sha256": "129481aaffbe30fd867d188c9bc9f56adb6cc4f8cafb476ab0e2c46b3230eb4c"
+    },
+    {
+      "file": "lanes/environment/preparation-module-boundary-c205af1f-641e-48c3-bbcb-f6d37b2c5be8.json",
+      "sha256": "f7ccae2fec064f3b286b9ea030fabb097278aa634c8866b977dbbc68d8df5879"
+    },
+    {
+      "file": "lanes/environment/preparation-module-ordering-8fb31772-bcba-4f54-ab70-0ed6e565b96e.json",
+      "sha256": "7278d06f95ddc4d1887b9a7fda0a95c3c20769d5aed4b282bc69ac28be4a4626"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1.json",
+      "sha256": "20dda90c88e038e6f28f10a16cb4e536215f69c74294af2416f3f1efb304673e"
+    },
+    {
+      "file": "lanes/environment/signed-source-boundaries-21987f3a-d9e3-482f-9c3a-7d7bceb2cd9b.json",
+      "sha256": "ab3e890db3038c3c653ce32fc593efa73904a6b09819e1ea2ed15ca71ba43ca8"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-320.png",
+      "sha256": "b22ea62487275a675bb6967964d51b34bf1085d5f44ed2b7fbad5a93b4502124"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-768.png",
+      "sha256": "c61319bf68642e6d9ed1e68d571b0acd32aa985df3e872426dafbb7f1370114e"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-1440.png",
+      "sha256": "1710b832809e82c0c6fb01b6acad900d0714e271d61a2cbda973b3ae9ea2fb5a"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-text-enlargement.png",
+      "sha256": "d94fb3e7151f48d2dbe4d59a7a8f5fdb95ee241d3fbb7f12800491761cba7c82"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-recovered-history-320.png",
+      "sha256": "22622bf5c5f852477a4dfca0b46bef9f7963f48b21ee866543e6971524cfa300"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-320.png",
+      "sha256": "1c3f497304e60b1d13e1cab62d93b2f2c01d3a064eef4be4d532fd79def02bf1"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-768.png",
+      "sha256": "1aa47b6e2a367217d96a307b1ee10cda9ef55e19463c5c2af7aff089926716a5"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-1440.png",
+      "sha256": "07f355d0ec55be87f7e386926f62af3058c3d2f4182ce38bd5ff6e46f0244325"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-text-enlargement.png",
+      "sha256": "01eec6a593773005842f3b95e8f1bb7f0b180ad78b31a416b428dd09cf61c213"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-recovered-history-320.png",
+      "sha256": "87def181eba0cbe53fc0728ac18a6430b61b20e0b14cac4a0ea1425fc7a778ed"
+    },
+    {
+      "file": "evidence/preparation-module-impact-2026-09-27.json",
+      "sha256": "19bc435f2298208dfc59679e6e17798417ffa91f9eb11808bf7b781007360b11"
+    },
+    {
+      "file": "evidence/preparation-module-checks-adab195d-ec4d-4933-bdde-ba8d123077a7.json",
+      "sha256": "cf85fcb30ff218643739c188ffea351b749db84c8f25fac8f1612a5f42411800"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691.json",
+      "sha256": "97ebb653a7a9b076a24174970e456de829cd15e31d9c6bbcae6296654b48b40f"
+    },
+    {
+      "file": "lanes/environment/preparation-legacy-evidence-d87fb8e5-d96b-48d5-8241-0739681963c1.json",
+      "sha256": "3bcdff88392c28de24f5fc6016fc74915205d1cfbed5508132d3faffd771182f"
+    },
+    {
+      "file": "lanes/environment/preparation-reviewers-history-862f06cb-b70b-4bc2-9fb7-b0287798f3dd.json",
+      "sha256": "7a97cd891aee1abce3a3df6b1a1ef9f0270bc0a1f0abfc9916f716f3f6196ee8"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-320.png",
+      "sha256": "fe8815332edd43c215b512339279e5786e903136a946ce4ae2cd46e45760e124"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-768.png",
+      "sha256": "b4be40ce2f762bf9ca81783c534a72d7589c64b51e0167a1159fc44922d1e49a"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-failed-history-1440.png",
+      "sha256": "4e1e3027f7e889daba204890bb39bfb90fce06130fa6caba3bd700702964843a"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-en-enlarged-history.png",
+      "sha256": "af5c3a4f4c09e592fdeabdc075857e978d17e8f526107927ef66fcfc95e6c059"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-320.png",
+      "sha256": "2d998b25eb2791be3d60d1c313924c15d679a42981ac7109c9a333cff9ed8e75"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-768.png",
+      "sha256": "91e120c69beb294661290589c5aa2448cf1a45898ca4add8f7196abefe9ffca1"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-failed-history-1440.png",
+      "sha256": "da66fb4a03e04e9a034d4236e883de3091bb3959c56b0d02f506179e1b41131e"
+    },
+    {
+      "file": "lanes/environment/preparation-history-browser-ac641882-33a0-4698-9cf1-3a33d76af691-fr-enlarged-history.png",
+      "sha256": "eef5c5543411baf12e36ffaf64603eaffa8cc0336d7921dba03dc1e3d445e46a"
+    },
+    {
+      "file": "evidence/preparation-history-impact-2026-09-27.json",
+      "sha256": "c3c9c1e86037cf62d95e3fe7db31e70665f10d784af9751e08c484501d570a1e"
+    },
+    {
+      "file": "evidence/preparation-module-checks-05b6bb7a-fa34-452b-b3b5-0b100f3f3ef4.json",
+      "sha256": "68a437a1138afca3e1d3ae9deb606567d644af1bf37152028fbd9ef561c4f239"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5.json",
+      "sha256": "b5e081de3ab2cd45c39720e5b82673c29d33773755e9a42ba918df905111119d"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-be499740-2115-4d8b-a1be-5ae19b408bd8.json",
+      "sha256": "661d42338341285a6a38f7dd3e2074a666542d357e30af8d8b5e2a94c85f80c0"
+    },
+    {
+      "file": "lanes/environment/run-preparation-v114-ae8b96b0-19e.json",
+      "sha256": "25f3bec9782e3d4076cff38f217e8ad2757f2f8c1fa6623738def3150b121ba2"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-read-only-320.png",
+      "sha256": "5dfbd1496e82036eed346322f16d171b0d6a1c06f782b0e0f374162b2c4a546c"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-read-only-768.png",
+      "sha256": "6f69288041856c307c89bbdfe6de764d5e966277b98d019dd4eddc0a7062d332"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-read-only-1440.png",
+      "sha256": "70f140c2d6962ed1ea5aca744470b83528d55b220f59115eae5d62b763fb7478"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-read-only-text-enlargement.png",
+      "sha256": "2c8e266ec6344be49591fedbe1ce40dfad205c5e7445c7714aeef99fe7e1f739"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-authentication-error-320.png",
+      "sha256": "3bf947ca7d711ab91188f022f3e4d18ab0abf3a7cbb31a0347a06d108b10eab1"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-authentication-error-768.png",
+      "sha256": "f6c43a93855181a16f70746d87840330311af946a10a41d49fea11d786b83b6a"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-authentication-error-1440.png",
+      "sha256": "cb3610603ec5a5dd6abbde6c4687db31aeb3942670ac64c269ba7dc5a13ae109"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-authentication-error-enlarged.png",
+      "sha256": "0be7e6a353cf0e450beecc64ca56a2730c8f306b514b097ed0c463638693103d"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-authenticated-retry-focus.png",
+      "sha256": "a65547826a24c184c2365dec89206ae8eab7151dfee1b340dcfd52688ec6a450"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-en-recovered-history-320.png",
+      "sha256": "890aa4447a9fb9b9b18c87382438b5a2df40bf4291dd627f33e8f0a6d7af35e5"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-read-only-320.png",
+      "sha256": "84b63c09cf122de55e90fd2638510e367d8d1123d6c618764da1a345f24c442a"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-read-only-768.png",
+      "sha256": "e9a8b3e257412d700b2ceeccfdeb6e04949823ba97f11cb9cc2f217290f18385"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-read-only-1440.png",
+      "sha256": "a4d7eff2bc7f4e8f135fca470087653102e592a4454613ef443776c6af1dfb18"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-read-only-text-enlargement.png",
+      "sha256": "3bd0e1d4172ec6328e987062dc0b87b98594d4d0576addc944e39c7f6006ac4b"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-authentication-error-320.png",
+      "sha256": "490a2656c6d5ea689c009807b9d25d50360223f5c587821af3126cfb372534c4"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-authentication-error-768.png",
+      "sha256": "7972f075544e846c50d9f5bd30af64cb1cb1470ced84fa4776054d0314fe67ba"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-authentication-error-1440.png",
+      "sha256": "49ec6d22e5fc8ee6679ce53408f082046bde884882c63403bf1715c10db0e4d6"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-authentication-error-enlarged.png",
+      "sha256": "c4593d5593a99a9f41e0f5f830c3101f2ab97ec969cd1a8b90a0554844b480a8"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-authenticated-retry-focus.png",
+      "sha256": "1ed4a70674bde882fd1355643b87ef4425681bb181fb54e85bb90171255ae989"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-797651cb-ba3e-4cd3-91e0-9685636ca6c5-fr-recovered-history-320.png",
+      "sha256": "4cea25014335cdf1a01ee9a394d28d492c10432aac0de9ec5b6394752b5b569c"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-en-320-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "620ee896079389f59848fbb61baf63821dd7f181fd3406e074556190fe81ff4f"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-en-768-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "d184eba82d975081d527ba3b0495772174777faf85bcdf20227aa692472a7e91"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-en-1440-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "4f6498926c5b1e6d880635617bc7193b47b2928ffbbfca1fb349e90336ffc4ec"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-fr-320-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "153566e9cfca7b593d1348cdac640d5a004b5cfea8ca561dd377c7f6a8ea7c46"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-fr-768-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "47c3ac50922501ae35c3e2a7393e4746b3ed901d9fe35ad8eda25c1a5a090697"
+    },
+    {
+      "file": "lanes/environment/run-discovery-v119-fr-1440-be499740-2115-4d8b-a1be-5ae19b408bd8.png",
+      "sha256": "a41d888a2fa31d67791ba995226318c04f400c74d70deb0301032876f7a99db9"
+    },
+    {
+      "file": "evidence/preparation-auth-impact-2026-09-27.json",
+      "sha256": "a2b9e2eda75f74c16a8b39a95033b3d008bdd9576c9dc1010c809e96a8ae8717"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5.json",
+      "sha256": "0bf1342ca0bdac6f6a6a5365cabc9d1618b34053115bdc7674803ece94adcaae"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "RECONCILIATION_PREPARATION_FINAL_AUDIT_2026-09-27.md",
+      "sha256": "b48d8ee9aa282a2bb1019f808e4c0d78facd916b6beeaa8f653ffb1c8211fcae"
+    },
+    {
+      "file": "RECONCILIATION_PREPARATION_OPERATING_GUIDE.md",
+      "sha256": "69eb0d6abf11a6a969b4cfb08013b99a5c9c8f6a3f892cc11d574c5bcfd874e5"
+    }
+  ],
+  "scope": "Implemented reviewed-run preparation: discover, review, persist readiness, retry, inspect retained history and hand off to independent signing. No financial effect is inferred from preparation.",
+  "verificationLimits": [
+    "Native screen-reader speech and browser-chrome zoom are unverified; keyboard, accessible semantics, rendered contrast, responsive reflow and controlled text enlargement are verified.",
+    "Local synthetic database and development browser only; no production latency, deployment, release or professional certification.",
+    "Missing investigation/legacy repair adapters remain PR-17 engineering work; the current preparation prerequisite rejects missing proof.",
+    "Readiness records are durable in-app observations. Live scheduling and exhausted-message repair remain separately registered notification operations; no external delivery claim."
+  ]
+}

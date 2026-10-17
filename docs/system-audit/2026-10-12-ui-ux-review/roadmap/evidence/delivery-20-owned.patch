@@ -1,0 +1,172 @@
+--- a/app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
+@@ -42,6 +42,25 @@
+   await checkPermission("accounting.journal.read")
+ 
+   const { locale } = await params
++  const copy = locale === "fr" ? {
++    eyebrow: "Écriture manuelle", title: "Nouvelle écriture comptable",
++    description: "Préparez un brouillon équilibré entre débits et crédits avant de le comptabiliser dans le grand livre.",
++    queue: "Liste des écritures", panel: "Saisie manuelle",
++    eligibility: "Seuls les comptes imputables sans sous-comptes et les journaux autorisant la saisie manuelle sont affichés.",
++    created: "Brouillon d’écriture créé", journal: "Journal", selectJournal: "Sélectionner un journal",
++    date: "Date de l’écriture", currency: "Devise", reference: "Référence", memo: "Libellé",
++    lines: "Lignes de l’écriture", account: "Compte", descriptionColumn: "Description",
++    debit: "Débit", credit: "Crédit", selectAccount: "Sélectionner un compte",
++  } : {
++    eyebrow: "Manual journal", title: "New Journal Entry",
++    description: "Enter a balanced debit and credit draft before posting it to the ledger.",
++    queue: "Journal queue", panel: "Manual entry",
++    eligibility: "Only postable leaf accounts and manual journals are shown.",
++    created: "Journal draft created", journal: "Journal", selectJournal: "Select journal",
++    date: "Entry date", currency: "Currency", reference: "Reference", memo: "Memo",
++    lines: "Journal entry lines", account: "Account", descriptionColumn: "Description",
++    debit: "Debit", credit: "Credit", selectAccount: "Select account",
++  }
+   const t = await getTranslations({ locale, namespace: "moduleComposition.accountingCreate" })
+   const resolvedSearchParams = searchParams ? await searchParams : {}
+   const [accountsResponse, journalsResponse] = await Promise.all([
+@@ -78,24 +97,24 @@
+ 
+   return (
+     <AccountingPageShell
+-      eyebrow="Manual journal"
+-      title="New Journal Entry"
+-      description="Enter a balanced debit and credit draft before posting it to the ledger."
++      eyebrow={copy.eyebrow}
++      title={copy.title}
++      description={copy.description}
+       icon={FilePlus2}
+       actions={
+         <AccountingLinkButton href="/dashboard/accounting/journals" variant="outline">
+           <Scale className="h-4 w-4" />
+-          <span>Journal queue</span>
++          <span>{copy.queue}</span>
+         </AccountingLinkButton>
+       }
+     >
+       <AccountingMessage error={resolvedSearchParams.error} notice={resolvedSearchParams.notice} />
+ 
+       <AccountingPanel
+-        title="Manual entry"
++        title={copy.panel}
+         description={
+           accountsResponse.success && journalsResponse.success
+-            ? "Only postable leaf accounts and manual journals are shown."
++            ? copy.eligibility
+             : t("loadFailedDescription")
+         }
+       >
+@@ -106,47 +125,47 @@
+           <AccountingMessage notice={t("emptySetup")} />
+         </div> : <ManualJournalDraftForm submitAction={createEntry}
+           queueHref={`/${locale}/dashboard/accounting/journals`}
+-          successHref={`/${locale}/dashboard/accounting/journals?notice=${encodeURIComponent("Journal draft created")}`}
++          successHref={`/${locale}/dashboard/accounting/journals?notice=${encodeURIComponent(copy.created)}`}
+           labels={{ stoppedTitle: t("stoppedTitle"), stoppedDescription: t("stoppedDescription"), reviewAccess: t("reviewAccess"), openQueue: t("openQueue"), failedTitle: t("failedTitle"), connectionFailure: t("connectionFailure"), creating: t("creating"), createDraft: t("createDraft") }}>
+           <div className="grid gap-4 lg:grid-cols-4">
+             <label className="space-y-2 text-sm lg:col-span-2">
+-              <span className="text-[var(--dash-text-soft)]">Journal</span>
++              <span className="text-[var(--dash-text-soft)]">{copy.journal}</span>
+               <select name="journalId" required className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]">
+-                <option value="">Select journal</option>
++                <option value="">{copy.selectJournal}</option>
+                 {manualJournals.map((journal) => (
+                   <option key={journal.id} value={journal.id}>{journal.code} - {journal.nameEn}</option>
+                 ))}
+               </select>
+             </label>
+             <label className="space-y-2 text-sm">
+-              <span className="text-[var(--dash-text-soft)]">Entry date</span>
++              <span className="text-[var(--dash-text-soft)]">{copy.date}</span>
+               <input name="entryDate" type="date" defaultValue={today} required className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
+             </label>
+             <label className="space-y-2 text-sm">
+-              <span className="text-[var(--dash-text-soft)]">Currency</span>
++              <span className="text-[var(--dash-text-soft)]">{copy.currency}</span>
+               <input name="currency" maxLength={3} defaultValue="XAF" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
+             </label>
+           </div>
+ 
+           <div className="grid gap-4 lg:grid-cols-2">
+             <label className="space-y-2 text-sm">
+-              <span className="text-[var(--dash-text-soft)]">Reference</span>
++              <span className="text-[var(--dash-text-soft)]">{copy.reference}</span>
+               <input name="reference" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
+             </label>
+             <label className="space-y-2 text-sm">
+-              <span className="text-[var(--dash-text-soft)]">Memo</span>
++              <span className="text-[var(--dash-text-soft)]">{copy.memo}</span>
+               <input name="memo" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
+             </label>
+           </div>
+ 
+-          <div className="overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)]">
++          <div role="region" aria-label={copy.lines} tabIndex={0} className="overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]">
+             <table className="dashboard-table-base w-full min-w-[900px] text-sm">
+               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
+                 <tr>
+-                  <th className="px-4 py-3">Account</th>
+-                  <th className="px-4 py-3">Description</th>
+-                  <th className="px-4 py-3 text-right">Debit</th>
+-                  <th className="px-4 py-3 text-right">Credit</th>
++                  <th scope="col" className="px-4 py-3">{copy.account}</th>
++                  <th scope="col" className="px-4 py-3">{copy.descriptionColumn}</th>
++                  <th scope="col" className="px-4 py-3 text-right">{copy.debit}</th>
++                  <th scope="col" className="px-4 py-3 text-right">{copy.credit}</th>
+                 </tr>
+               </thead>
+               <tbody>
+@@ -154,7 +173,7 @@
+                   <tr key={index} className="border-b border-[var(--dash-border-subtle)]">
+                     <td className="px-4 py-3">
+                       <select aria-label={`${locale === "fr" ? "Compte — ligne" : "Account — line"} ${index + 1}`} name={`accountId-${index}`} className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]">
+-                        <option value="">Select account</option>
++                        <option value="">{copy.selectAccount}</option>
+                         {postableAccounts.map((account) => (
+                           <option key={account.id} value={account.id}>{account.code} - {account.nameEn}</option>
+                         ))}
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**16 October — Delivery 20:** native ArrowRight scrolling on the French Accountant overview reached its full 808px range at a 320px viewport while retaining focus. Reverse scrolling remains unverified after browser detachment. Continued source review found and fixed the manual journal form's unnamed scroll container and remaining French interface labels; business controls remain intact. Post-change journal browser acceptance is open. See [Delivery 20](EXECUTION-20.md).
++
+ **16 October — Delivery 19:** viewport recovery and live French portfolio refresh-focus checks passed in the Accountant session. French accounting overview now localizes headings/actions, setup and journal states, dates and shared table controls. Six mocked tests, scoped TypeScript and lint passed. EN/FR overview and journals navigation/pagination checked; narrow document containment passed. Horizontal table arrow scrolling remains unconfirmed; Owner/Cashier and broader accessibility acceptance remain open. See [Delivery 19](EXECUTION-19.md).
+ 
+ **16 October — Delivery 18:** Accountant trial-balance phone amounts are reachable, filters wrap and sorting exposes its direction; desktop frozen identities and full-report totals remain intact. French portfolio loading/empty states checked. Refresh focus loss fixed with duplicate-load prevention; final live focus check and viewport restoration were interrupted by browser timeouts. All 23 mocked tests, scoped TypeScript and lint passed. Owner/Cashier sessions and broader accessibility acceptance remain open. See [Delivery 18](EXECUTION-18.md).
+--- a/app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx
+@@ -155,6 +155,30 @@
+     expect(screen.getByText("Ready")).toBeInTheDocument()
+   })
+ 
++  it.each(["en", "fr"])("names a focusable line scroll region and its columns in %s", async locale => {
++    render(await NewJournalEntryPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
++    const region = screen.getByRole("region", { name: locale === "fr" ? "Lignes de l’écriture" : "Journal entry lines" })
++    expect(region).toHaveAttribute("tabindex", "0")
++    region.focus()
++    expect(region).toHaveFocus()
++    expect(region.querySelectorAll("th[scope='col']")).toHaveLength(4)
++    expect(screen.getByRole("columnheader", { name: locale === "fr" ? "Débit" : "Debit" })).toBeInTheDocument()
++    expect(screen.getByLabelText(locale === "fr" ? "Date de l’écriture" : "Entry date")).toHaveAttribute("type", "date")
++    expect(screen.getByLabelText(locale === "fr" ? "Devise" : "Currency")).toHaveValue("XAF")
++    expect(screen.getByRole("heading", { name: locale === "fr" ? "Nouvelle écriture comptable" : "New Journal Entry" })).toBeInTheDocument()
++    expect(screen.getByRole("option", { name: locale === "fr" ? "Sélectionner un journal" : "Select journal" })).toBeInTheDocument()
++    expect(createManualJournalEntryAction).not.toHaveBeenCalled()
++  })
++
++  it("uses a French success notice only after confirmed draft creation", async () => {
++    ;(createManualJournalEntryAction as jest.Mock).mockResolvedValue({ success: true })
++    const { container } = render(await NewJournalEntryPage({ params: Promise.resolve({ locale: "fr" }), searchParams: Promise.resolve({}) }))
++    fillDraft(container)
++    fireEvent.submit(container.querySelector("form")!)
++    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/fr/dashboard/accounting/journals?notice=${encodeURIComponent("Brouillon d’écriture créé")}`))
++    expect(createManualJournalEntryAction).toHaveBeenCalledTimes(1)
++  })
++
+   it("stops before setup data access when create permission is denied", async () => {
+     mockCheckPermission.mockRejectedValueOnce(new Error("Forbidden"))
+ 

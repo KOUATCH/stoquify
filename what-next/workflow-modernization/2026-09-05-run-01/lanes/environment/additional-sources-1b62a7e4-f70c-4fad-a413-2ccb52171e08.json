@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-27T13:08:21.158Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "4c42e11a6b49169606b0fb3def3678ed4f24db95322d934bb65ca4ff1b9a2aa9",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "e874f4f12d9f6ac53d71b124e7625bc7c2eb23ea1d2a854179556cb471de02bf",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "checks": [
+    "Permissions, inactive/foreign actor and tenant, stale authentication and stale revision refuse without effects.",
+    "Late audit failure rolls back matches, run totals, recovery receipt and notifications.",
+    "Concurrent recovery and response-loss retry retain one receipt/audit, preserve original match and add the exact pair once without journals.",
+    "Fresh preparation required; recovery actor cannot sign; independent signature succeeds; old recovery retry leaves signed state intact.",
+    "A new callback sharing a retained payment reference becomes manual review, never a second automatic allocation or a false missing-payment claim."
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "4c42e11a6b49169606b0fb3def3678ed4f24db95322d934bb65ca4ff1b9a2aa9",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "e874f4f12d9f6ac53d71b124e7625bc7c2eb23ea1d2a854179556cb471de02bf",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e"
+  },
+  "sourceStable": true
+}

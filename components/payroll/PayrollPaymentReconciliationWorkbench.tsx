@@ -1,5 +1,7 @@
 "use client";
 
+import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -24,6 +26,7 @@ import {
   useHrPayrollTable,
 } from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollPaymentSettlementForm from "./PayrollPaymentSettlementForm";
+import { payrollSettlementCopy } from "./payroll-settlement-copy";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
 } from "./PayrollProofDrawerButton";
@@ -79,19 +82,19 @@ function statusTone(value: string | null | undefined) {
   return "border-slate-400/30 bg-slate-400/10 text-slate-100";
 }
 
-function Badge({ value }: { value: string | null | undefined }) {
+function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
   return (
     <span
       className={`inline-flex min-h-7 max-w-full items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${statusTone(value)}`}
     >
-      <span className="truncate">{value ?? "Pending"}</span>
+      <span className="truncate">{payrollStatusText(value, locale)}</span>
     </span>
   );
 }
 
-function dateLabel(value: string | null | undefined) {
-  if (!value) return "Pending";
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(
+function dateLabel(value: string | null | undefined, locale: Locale = "en") {
+  if (!value) return payrollUiText("Pending", locale);
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
     new Date(value),
   );
 }
@@ -128,15 +131,14 @@ function Metric({
   );
 }
 
-function ErrorPanel({ message }: { message: string }) {
+function ErrorPanel({ locale = "en", message }: { message: string } & { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-rose-400/30 bg-rose-950/30 p-5 text-rose-50">
       <div className="flex items-start gap-3">
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
         <div className="min-w-0">
           <h1 className="text-base font-semibold">
-            Payroll payment reconciliation unavailable
-          </h1>
+             {payrollUiText("Payroll payment reconciliation unavailable", locale)} </h1>
           <p className="mt-1 break-words text-sm text-rose-100">{message}</p>
         </div>
       </div>
@@ -144,20 +146,18 @@ function ErrorPanel({ message }: { message: string }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ locale = "en" }: { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05] p-5 text-slate-200">
       <h1 className="text-base font-semibold text-white">
-        Payroll payment reconciliation
-      </h1>
+         {payrollUiText("Payroll payment reconciliation", locale)} </h1>
       <p className="mt-1 text-sm text-slate-400">
-        No payroll payment batches are available for reconciliation.
-      </p>
+         {payrollUiText("No payroll payment batches are available for reconciliation.", locale)} </p>
     </section>
   );
 }
 
-function ProofGrid({ rows }: { rows: ProofRow[] }) {
+function ProofGrid({ locale = "en", rows }: { rows: ProofRow[] } & { locale?: Locale }) {
   return (
     <div className="grid gap-2">
       {rows.map(([label, value]) => (
@@ -166,10 +166,10 @@ function ProofGrid({ rows }: { rows: ProofRow[] }) {
           className="grid gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 sm:grid-cols-[132px_minmax(0,1fr)]"
         >
           <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-            {label}
+            {payrollUiText(label, locale)}
           </span>
           <span className="min-w-0 break-all text-xs text-slate-200">
-            {value || "Pending"}
+            {value || payrollUiText("Pending", locale)}
           </span>
         </div>
       ))}
@@ -201,9 +201,9 @@ function paymentProofSubject(
   redaction: WorkbenchRedaction,
 ): PayrollProofDrawerSubject {
   const sourceLinkRows = batch.proof.sourceLinks.flatMap((link, index) => [
-    { label: `Source link ${index + 1}`, value: `${link.type}:${link.id}` },
+    { label: `${payrollUiText("Source link", locale)} ${index + 1}`, value: `${link.type}:${link.id}` },
     {
-      label: `Source link ${index + 1} hash`,
+      label: `${payrollUiText("Source link", locale)} ${index + 1} ${locale === "fr" ? "— empreinte" : "hash"}`,
       value: link.documentHash ?? link.evidenceHash ?? link.payloadHash ?? null,
     },
   ]);
@@ -216,127 +216,127 @@ function paymentProofSubject(
     source: "services/payroll/payment-reconciliation.service.ts",
     href: localizePath("/dashboard/finance/reconciliation", locale),
     rows: [
-      { label: "Run", value: batch.runNumber },
-      { label: "Period", value: batch.periodName },
-      { label: "Status", value: batch.status },
-      { label: "Reconciliation", value: batch.reconciliationStatus },
-      { label: "Amount", value: `${batch.amount} ${batch.currency}` },
-      { label: "Method", value: batch.method },
-      { label: "Payment date", value: batch.paymentDate },
-      { label: "Batch evidence", value: batch.evidenceHash },
-      { label: "Batch document", value: batch.documentHash },
-      { label: "Bank file", value: batch.bankFileHash },
-      { label: "Ledger batch", value: batch.ledgerPostingBatchId },
-      { label: "Posted event", value: batch.postedBusinessEventId },
-      { label: "Payment transaction", value: batch.paymentTransactionId },
+      { label: payrollUiText("Run", locale), value: batch.runNumber },
+      { label: payrollUiText("Period", locale), value: batch.periodName },
+      { label: payrollUiText("Status", locale), value: batch.status },
+      { label: payrollUiText("Reconciliation", locale), value: batch.reconciliationStatus },
+      { label: payrollUiText("Amount", locale), value: `${batch.amount} ${batch.currency}` },
+      { label: payrollUiText("Method", locale), value: batch.method },
+      { label: payrollUiText("Payment date", locale), value: batch.paymentDate },
+      { label: payrollUiText("Batch evidence", locale), value: batch.evidenceHash },
+      { label: payrollUiText("Batch document", locale), value: batch.documentHash },
+      { label: payrollUiText("Bank file", locale), value: batch.bankFileHash },
+      { label: payrollUiText("Ledger batch", locale), value: batch.ledgerPostingBatchId },
+      { label: payrollUiText("Posted event", locale), value: batch.postedBusinessEventId },
+      { label: payrollUiText("Payment transaction", locale), value: batch.paymentTransactionId },
       {
-        label: "Provider account",
+        label: payrollUiText("Provider account", locale),
         value: batch.paymentTransaction?.providerAccountName ?? null,
       },
       {
-        label: "Provider reference",
+        label: payrollUiText("Provider reference", locale),
         value: batch.paymentTransaction?.providerReference ?? null,
       },
       {
-        label: "Provider transaction",
+        label: payrollUiText("Provider transaction", locale),
         value: batch.paymentTransaction?.providerTransactionId ?? null,
       },
       {
-        label: "Payload hash",
+        label: payrollUiText("Payload hash", locale),
         value: batch.paymentTransaction?.payloadHash ?? null,
       },
       {
-        label: "Provider occurred",
+        label: payrollUiText("Provider occurred", locale),
         value: batch.paymentTransaction?.occurredAt ?? null,
       },
       {
-        label: "Provider confirmed",
+        label: payrollUiText("Provider confirmed", locale),
         value: batch.paymentTransaction?.confirmedAt ?? null,
       },
-      { label: "Register source", value: batch.proof.payrollRegisterSource },
+      { label: payrollUiText("Register source", locale), value: batch.proof.payrollRegisterSource },
       {
-        label: "Provider evidence required",
+        label: payrollUiText("Provider evidence required", locale),
         value: batch.proof.providerEvidenceRequired,
       },
       {
-        label: "Component register proof",
+        label: payrollUiText("Component register proof", locale),
         value: batch.proof.componentRegisterProofHash,
       },
       {
-        label: "Component register status",
+        label: payrollUiText("Component register status", locale),
         value: batch.proof.componentRegisterProofStatus,
       },
       {
-        label: "Component mapping proof",
+        label: payrollUiText("Component mapping proof", locale),
         value: batch.proof.payrollComponentMappingHash,
       },
       {
-        label: "Component mapping status",
+        label: payrollUiText("Component mapping status", locale),
         value: batch.proof.payrollComponentMappingStatus,
       },
       {
-        label: "YTD policy proof",
+        label: payrollUiText("YTD policy proof", locale),
         value: batch.proof.yearToDatePolicyHash,
       },
       {
-        label: "YTD accumulator proofs",
+        label: payrollUiText("YTD accumulator proofs", locale),
         value: batch.proof.yearToDateAccumulatorHashes.join(", ") || null,
       },
       {
-        label: "Provider adapter proof",
+        label: payrollUiText("Provider adapter proof", locale),
         value: batch.proof.paymentAdapterProofHash,
       },
       {
-        label: "Provider adapter contract",
+        label: payrollUiText("Provider adapter contract", locale),
         value: batch.proof.paymentProviderAdapterContractHash,
       },
       {
-        label: "Provider adapter status",
+        label: payrollUiText("Provider adapter status", locale),
         value: batch.proof.paymentAdapterStatus,
       },
       {
-        label: "Provider adapter key",
+        label: payrollUiText("Provider adapter key", locale),
         value: batch.proof.paymentProviderAdapterKey,
       },
       {
-        label: "Adapter chaos proof",
+        label: payrollUiText("Adapter chaos proof", locale),
         value: batch.proof.adapterChaosReleaseGateHash,
       },
       {
-        label: "Production automation",
+        label: payrollUiText("Production automation", locale),
         value: batch.proof.productionPaymentAutomationSupported,
       },
       {
-        label: "Latest settlement proof",
+        label: payrollUiText("Latest settlement proof", locale),
         value: batch.proof.latestSettlementEvidenceHash,
       },
       {
-        label: "Latest register proof",
+        label: payrollUiText("Latest register proof", locale),
         value: batch.proof.latestSettlementSourceRegisterHash,
       },
       {
-        label: "Settlement lifecycle proof",
+        label: payrollUiText("Settlement lifecycle proof", locale),
         value: batch.proof.latestSettlementLifecycleContractHash,
       },
       {
-        label: "Settlement lifecycle status",
+        label: payrollUiText("Settlement lifecycle status", locale),
         value: batch.proof.latestSettlementLifecycleStatus,
       },
       {
-        label: "Settlement lifecycle close impact",
+        label: payrollUiText("Settlement lifecycle close impact", locale),
         value: batch.proof.latestSettlementLifecycleCloseImpact,
       },
       {
-        label: "Settlement business event",
+        label: payrollUiText("Settlement business event", locale),
         value: batch.proof.latestSettlementBusinessEventId,
       },
       {
-        label: "Settlement updated",
+        label: payrollUiText("Settlement updated", locale),
         value: batch.proof.latestSettlementAt,
       },
-      { label: "Close impact", value: batch.proof.closeImpactSourceCode },
-      { label: "Matches", value: batch.matches.length },
-      { label: "Exceptions", value: batch.exceptions.length },
+      { label: payrollUiText("Close impact", locale), value: batch.proof.closeImpactSourceCode },
+      { label: payrollUiText("Matches", locale), value: batch.matches.length },
+      { label: payrollUiText("Exceptions", locale), value: batch.exceptions.length },
       ...sourceLinkRows,
     ],
     blockers: batch.exceptions.map((exception) => ({
@@ -367,24 +367,17 @@ function paymentProofSubject(
   };
 }
 function settlementAllowed(batch: Batch) {
-  return (
+  return batch.settlement.canRecord && (
     batch.derivedState === "READY_TO_SETTLE" ||
     batch.derivedState === "PARTIALLY_SETTLED"
   );
 }
 
-function firstMatchedProviderEvent(batch: Batch) {
-  return (
-    batch.matches.find(
-      (match) => match.providerEventId || match.statementLineId,
-    ) ?? null
-  );
-}
 
-function SourceLinks({ batch }: { batch: Batch }) {
+function SourceLinks({ locale = "en", batch }: { batch: Batch } & { locale?: Locale }) {
   const links = batch.proof.sourceLinks.slice(0, 6);
   if (!links.length)
-    return <p className="text-xs text-slate-500">No source links returned.</p>;
+    return <p className="text-xs text-slate-500">{payrollUiText("No source links returned.", locale)}</p>;
 
   return (
     <div className="grid gap-2">
@@ -414,17 +407,17 @@ function SourceLinks({ batch }: { batch: Batch }) {
   );
 }
 
-function BatchSettlementControl({ batch }: { batch: Batch }) {
-  const match = firstMatchedProviderEvent(batch);
+function BatchSettlementControl({ batch, locale }: { batch: Batch; locale: Locale }) {
+  const copy = payrollSettlementCopy(locale);
 
   if (!settlementAllowed(batch)) {
     return (
       <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
         <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-          Next action
+          {copy.next}
         </p>
         <p className="mt-2 break-words text-sm text-slate-200">
-          {batch.nextAction}
+          {batch.settlement.availability === "unavailable" ? copy.unavailable : !batch.settlement.canRecord && batch.settlement.remainingAmount !== "0.00" ? copy.restricted : batch.nextAction}
         </p>
       </div>
     );
@@ -432,28 +425,17 @@ function BatchSettlementControl({ batch }: { batch: Batch }) {
 
   return (
     <div>
-      <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-3 text-xs text-emerald-100">
-        Provider evidence is matched. Record settlement proof with source
-        register evidence and fresh authentication.
+      <div className="rounded-lg border border-[var(--dash-info)] bg-[var(--dash-info-soft)] p-3 text-xs text-[var(--dash-text)]">
+        {copy.ready}
       </div>
       <PayrollPaymentSettlementForm
         payrollPaymentBatchId={batch.id}
         batchNumber={batch.batchNumber}
-        amount={batch.amount}
+        amount={batch.settlement.remainingAmount!}
+        balanceRevision={batch.settlement.revision}
+        locale={locale}
         currency={batch.currency}
-        defaultMatchRecordId={match?.id ?? null}
-        defaultProviderAccountId={
-          batch.paymentTransaction?.providerAccountId ?? null
-        }
-        defaultProviderTransactionId={
-          batch.paymentTransaction?.providerTransactionId ?? null
-        }
-        defaultProviderReference={
-          batch.paymentTransaction?.providerReference ?? null
-        }
-        defaultProviderEventId={match?.providerEventId ?? null}
-        defaultStatementLineId={match?.statementLineId ?? null}
-        defaultStatementFileHash={match?.statementFileHash ?? null}
+        proofOptions={batch.proofOptions}
       />
     </div>
   );
@@ -469,35 +451,32 @@ export default function PayrollPaymentReconciliationWorkbench({
     searchText: (batch) => JSON.stringify(batch),
     dateValue: (batch) => batch.paymentDate,
     sortOptions: [
-      { key: "batch", label: "Batch", value: (batch) => batch.batchNumber },
-      { key: "payment-date", label: "Payment date", value: (batch) => batch.paymentDate },
-      { key: "amount", label: "Amount", value: (batch) => Number(batch.amount) },
-      { key: "status", label: "Status", value: (batch) => batch.derivedState },
-      { key: "exceptions", label: "Exceptions", value: (batch) => batch.exceptions.length },
+      { key: "batch", label: payrollUiText("Batch", locale), value: (batch) => batch.batchNumber },
+      { key: "payment-date", label: payrollUiText("Payment date", locale), value: (batch) => batch.paymentDate },
+      { key: "amount", label: payrollUiText("Amount", locale), value: (batch) => Number(batch.amount) },
+      { key: "status", label: payrollUiText("Status", locale), value: (batch) => batch.derivedState },
+      { key: "exceptions", label: payrollUiText("Exceptions", locale), value: (batch) => batch.exceptions.length },
     ],
   });
 
-  if (error) return <ErrorPanel message={error} />;
-  if (!data) return <EmptyState />;
+  if (error) return <ErrorPanel locale={locale} message={error} />;
+  if (!data) return <EmptyState locale={locale} />;
 
   return (
     <section className="flex min-w-0 flex-col gap-4 text-slate-100">
       <div className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">
-            Payroll payments
-          </p>
+             {payrollUiText("Payroll payments", locale)} </p>
           <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-            Payment reconciliation
-          </h1>
+             {payrollUiText("Payment reconciliation", locale)} </h1>
           <p className="mt-2 max-w-4xl text-sm text-slate-300">
-            Released payment batches, provider and statement proof, ledger
-            tie-out, settlement actions, and close-impact evidence as of{" "}
-            {dateLabel(data.asOf)}.
+             {payrollUiText("Released payment batches, provider and statement proof, ledger tie-out, settlement actions, and close-impact evidence as of", locale)}{" "}
+            {dateLabel(data.asOf, locale)}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge
+          <Badge locale={locale}
             value={
               data.summary.exceptionOpen > 0
                 ? "EXCEPTION_OPEN"
@@ -506,56 +485,54 @@ export default function PayrollPaymentReconciliationWorkbench({
                   : "READY"
             }
           />
-          <Badge value={data.redaction.amounts.mode} />
-          <Badge value={data.redaction.providerReferences.mode} />
+          <Badge locale={locale} value={data.redaction.amounts.mode} />
+          <Badge locale={locale} value={data.redaction.providerReferences.mode} />
           <Link
             href={localizePath("/dashboard/finance/reconciliation", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Finance recon
-          </Link>
+             {payrollUiText("Finance recon", locale)} </Link>
           <Link
             href={localizePath("/dashboard/payroll/register", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Register
-          </Link>
+             {payrollUiText("Register", locale)} </Link>
         </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <Metric
-          label="Batches"
+          label={payrollUiText("Batches", locale)}
           value={data.summary.batchCount}
           icon={WalletCards}
           tone="bg-sky-400/12 text-sky-200"
         />
         <Metric
-          label="Awaiting proof"
+          label={payrollUiText("Awaiting proof", locale)}
           value={data.summary.awaitingProviderEvidence}
           icon={ReceiptText}
           tone="bg-amber-400/12 text-amber-200"
         />
         <Metric
-          label="Exceptions"
+          label={payrollUiText("Exceptions", locale)}
           value={data.summary.exceptionOpen}
           icon={AlertTriangle}
           tone="bg-rose-400/12 text-rose-200"
         />
         <Metric
-          label="Ready"
+          label={payrollUiText("Ready", locale)}
           value={data.summary.readyToSettle}
           icon={BadgeCheck}
           tone="bg-emerald-400/12 text-emerald-200"
         />
         <Metric
-          label="Partial"
+          label={payrollUiText("Partial", locale)}
           value={data.summary.partiallySettled}
           icon={Banknote}
           tone="bg-cyan-400/12 text-cyan-200"
         />
         <Metric
-          label="Settled"
+          label={payrollUiText("Settled", locale)}
           value={data.summary.settled}
           icon={ShieldCheck}
           tone="bg-violet-400/12 text-violet-200"
@@ -565,27 +542,23 @@ export default function PayrollPaymentReconciliationWorkbench({
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <FileText className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-white">Payment batches</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Payment batches", locale)}</h2>
         </div>
-        <HrPayrollTableControls table={batchTable} locale={locale} tableLabel="payment batches" />
+        <HrPayrollTableControls table={batchTable} locale={locale} tableLabel={payrollUiText("payment batches", locale)} />
         <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1440px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
-                <th className="w-[220px] px-4 py-3 font-semibold">Batch</th>
+                <th className="w-[220px] px-4 py-3 font-semibold">{payrollUiText("Batch", locale)}</th>
                 <th className="w-[220px] px-4 py-3 font-semibold">
-                  Amount and method
-                </th>
+                   {payrollUiText("Amount and method", locale)} </th>
                 <th className="w-[260px] px-4 py-3 font-semibold">
-                  Payment transaction
-                </th>
-                <th className="w-[320px] px-4 py-3 font-semibold">Proof</th>
+                   {payrollUiText("Payment transaction", locale)} </th>
+                <th className="w-[320px] px-4 py-3 font-semibold">{payrollUiText("Proof", locale)}</th>
                 <th className="w-[280px] px-4 py-3 font-semibold">
-                  Matches and exceptions
-                </th>
+                   {payrollUiText("Matches and exceptions", locale)} </th>
                 <th className="w-[320px] px-4 py-3 font-semibold">
-                  Settlement
-                </th>
+                   {payrollUiText("Settlement", locale)} </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -603,42 +576,41 @@ export default function PayrollPaymentReconciliationWorkbench({
                         {batch.periodName}
                       </p>
                       <p className="mt-1 text-xs text-slate-500">
-                        Pay date {dateLabel(batch.paymentDate)}
+                         {payrollUiText("Pay date", locale)} {dateLabel(batch.paymentDate, locale)}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <Badge value={batch.status} />
-                        <Badge value={batch.derivedState} />
+                        <Badge locale={locale} value={batch.status} />
+                        <Badge locale={locale} value={batch.derivedState} />
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-xs text-slate-500">Amount</p>
+                      <p className="text-xs text-slate-500">{payrollUiText("Amount", locale)}</p>
                       <p className="break-words font-semibold text-white">
                         {batch.amount} {batch.currency}
                       </p>
-                      <p className="mt-2 text-xs text-slate-500">Method</p>
+                      <p className="mt-2 text-xs text-slate-500">{payrollUiText("Method", locale)}</p>
                       <p className="break-words text-sm text-slate-200">
                         {batch.method}
                       </p>
                       <p className="mt-2 text-xs text-slate-500">
-                        Reconciliation
-                      </p>
+                         {payrollUiText("Reconciliation", locale)} </p>
                       <p className="break-words text-sm text-slate-200">
-                        {batch.reconciliationStatus ?? "Pending"}
+                        {batch.reconciliationStatus ?? payrollUiText("Pending", locale)}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       {batch.paymentTransaction ? (
                         <div className="grid gap-2">
                           <div className="flex flex-wrap gap-2">
-                            <Badge value={batch.paymentTransaction.state} />
-                            <Badge
+                            <Badge locale={locale} value={batch.paymentTransaction.state} />
+                            <Badge locale={locale}
                               value={
                                 batch.paymentTransaction.providerAccountName ??
                                 "No provider"
                               }
                             />
                           </div>
-                          <ProofGrid
+                          <ProofGrid locale={locale}
                             rows={[
                               [
                                 "Provider ref",
@@ -662,17 +634,16 @@ export default function PayrollPaymentReconciliationWorkbench({
                         </div>
                       ) : (
                         <p className="rounded-md border border-rose-400/20 bg-rose-400/10 px-3 py-2 text-xs text-rose-100">
-                          No payment transaction is linked.
-                        </p>
+                           {payrollUiText("No payment transaction is linked.", locale)} </p>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <ProofGrid rows={proofRows(batch)} />
+                      <ProofGrid locale={locale} rows={proofRows(batch)} />
                       <div className="mt-3 rounded-md border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs text-cyan-100">
-                        Register source: {batch.proof.payrollRegisterSource}
+                         {payrollUiText("Register source:", locale)} {batch.proof.payrollRegisterSource}
                       </div>
                       <div className="mt-3">
-                        <PayrollProofDrawerButton
+                        <PayrollProofDrawerButton locale={locale}
                           subject={paymentProofSubject(
                             batch,
                             locale,
@@ -685,8 +656,7 @@ export default function PayrollPaymentReconciliationWorkbench({
                       <div className="grid gap-3">
                         <div>
                           <p className="mb-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
-                            Matches
-                          </p>
+                             {payrollUiText("Matches", locale)} </p>
                           {batch.matches.length ? (
                             <div className="grid gap-2">
                               {batch.matches.map((match) => (
@@ -695,14 +665,14 @@ export default function PayrollPaymentReconciliationWorkbench({
                                   className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2"
                                 >
                                   <div className="flex flex-wrap gap-2">
-                                    <Badge value={match.status} />
-                                    <Badge value={match.rule} />
+                                    <Badge locale={locale} value={match.status} />
+                                    <Badge locale={locale} value={match.rule} />
                                   </div>
                                   <p className="mt-2 break-all text-xs text-slate-300">
                                     {match.id}
                                   </p>
                                   <p className="mt-1 text-xs text-slate-500">
-                                    {match.amountMatched ?? "No amount"} at{" "}
+                                    {match.amountMatched ?? "No amount"}  {payrollUiText("at", locale)}{" "}
                                     {match.confidence}%
                                   </p>
                                 </div>
@@ -710,14 +680,12 @@ export default function PayrollPaymentReconciliationWorkbench({
                             </div>
                           ) : (
                             <p className="text-xs text-slate-500">
-                              No matches returned.
-                            </p>
+                               {payrollUiText("No matches returned.", locale)} </p>
                           )}
                         </div>
                         <div>
                           <p className="mb-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
-                            Exceptions
-                          </p>
+                             {payrollUiText("Exceptions", locale)} </p>
                           {batch.exceptions.length ? (
                             <div className="grid gap-2">
                               {batch.exceptions.map((exception) => (
@@ -731,23 +699,21 @@ export default function PayrollPaymentReconciliationWorkbench({
                             </div>
                           ) : (
                             <p className="text-xs text-slate-500">
-                              No open exceptions returned.
-                            </p>
+                               {payrollUiText("No open exceptions returned.", locale)} </p>
                           )}
                         </div>
-                        <SourceLinks batch={batch} />
+                        <SourceLinks locale={locale} batch={batch} />
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <BatchSettlementControl batch={batch} />
+                      <BatchSettlementControl batch={batch} locale={locale} />
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td className="px-4 py-6 text-sm text-slate-400" colSpan={6}>
-                    No payroll payment batches match this scope.
-                  </td>
+                     {payrollUiText("No payroll payment batches match this scope.", locale)} </td>
                 </tr>
               )}
             </tbody>
@@ -759,29 +725,26 @@ export default function PayrollPaymentReconciliationWorkbench({
       <div className="rounded-lg border border-white/10 bg-white/[0.05] p-4">
         <div className="flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-white">Evidence policy</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Evidence policy", locale)}</h2>
         </div>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Amounts
-            </p>
+               {payrollUiText("Amounts", locale)} </p>
             <p className="mt-1 text-sm text-slate-100">
               {data.redaction.amounts.policy}
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Provider refs
-            </p>
+               {payrollUiText("Provider refs", locale)} </p>
             <p className="mt-1 text-sm text-slate-100">
               {data.redaction.providerReferences.policy}
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Close impact
-            </p>
+               {payrollUiText("Close impact", locale)} </p>
             <p className="mt-1 text-sm text-slate-100">
               PAYROLL_PAYMENT_RECONCILED
             </p>
@@ -790,9 +753,7 @@ export default function PayrollPaymentReconciliationWorkbench({
         <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
           <Landmark className="h-3.5 w-3.5" aria-hidden="true" />
           <span>
-            Settlement changes stale close evidence until accounting
-            re-certifies the updated proof.
-          </span>
+             {payrollUiText("Settlement changes stale close evidence until accounting re-certifies the updated proof.", locale)} </span>
         </div>
       </div>
     </section>

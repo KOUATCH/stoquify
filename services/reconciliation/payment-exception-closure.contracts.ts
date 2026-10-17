@@ -2,7 +2,7 @@ import { z } from "zod"
 
 const id = z.string().trim().min(1).max(191)
 const revision = z.string().regex(/^sha256:[a-f0-9]{64}$/)
-export const exceptionClosureReadSchema = z.object({ exceptionId: id }).strict()
+export const exceptionClosureReadSchema = z.object({ exceptionId: id, purpose: z.literal("REOPEN_SOURCE").optional() }).strict()
 const cursor = z.object({ createdAt: z.string().datetime(), id }).strict().nullable().optional()
 export const exceptionClosureCasesSchema = z.object({ view: z.enum(["OPEN", "ALL"]).default("OPEN"), suspenseItemId: id.optional(), cursor }).strict()
 export const exceptionClosureHistorySchema = exceptionClosureReadSchema.extend({ cursor }).strict()

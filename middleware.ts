@@ -7,6 +7,8 @@ import {
 } from "@/i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
 import { DASHBOARD_REQUEST_PATH_HEADER } from "@/lib/security/dashboard-session-recovery";
+import { TrafficLimiter, trafficIdentity } from "@/lib/security/traffic-limiter";
+import { cspPilot, CSP_NONCE_HEADER, reportOnlyBaseline } from "@/lib/security/csp-pilot";
 
 const scriptSrc =
   process.env.NODE_ENV === "production"
@@ -55,32 +57,14 @@ function applySecurityHeaders(response: NextResponse, pathname = ""): NextRespon
   return response
 }
 
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
-
-function rateLimit(ip: string, maxRequests = 100, windowMs = 60000): boolean {
-  const now = Date.now()
-  const clientData = rateLimitStore.get(ip)
-
-  if (!clientData || now > clientData.resetTime) {
-    rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs })
-    return true
-  }
-
-  if (clientData.count >= maxRequests) return false
-  clientData.count++
-  return true
-}
-
-function getClientIP(request: NextRequest): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    request.headers.get("x-real-ip") ||
-    "127.0.0.1"
-  )
-}
+const trafficLimiter = new TrafficLimiter()
 
 function getLocaleRequestHeaders(req: NextRequest, locale: string): Headers {
   const headers = new Headers(req.headers)
+  // Never let a caller choose the renderer's nonce or CSP.
+  headers.delete(CSP_NONCE_HEADER)
+  headers.delete("content-security-policy")
+  headers.delete("content-security-policy-report-only")
   headers.set("X-NEXT-INTL-LOCALE", locale)
   // Overwrite incoming values: server layouts need the actual requested page
   // when an existing session cookie turns out to be expired or revoked.
@@ -92,14 +76,30 @@ function getLocaleRequestHeaders(req: NextRequest, locale: string): Headers {
 }
 
 function nextWithLocale(req: NextRequest, locale: string): NextResponse {
+  const headers = getLocaleRequestHeaders(req, locale)
+  const pilot = cspPilot(req.nextUrl.pathname, process.env.STOQUIFY_CSP_MODE, process.env.NODE_ENV === "production")
+  if (pilot) {
+    headers.set(CSP_NONCE_HEADER, pilot.nonce)
+    // Next reads the request CSP to nonce framework scripts, including in
+    // report-only mode. The browser receives the chosen response policy below.
+    headers.set("content-security-policy", pilot.policy)
+  }
   const response = NextResponse.next({
-    request: { headers: getLocaleRequestHeaders(req, locale) },
+    request: { headers },
   })
   response.cookies.set(LOCALE_COOKIE, locale, {
     maxAge: 60 * 60 * 24 * 365,
     path: "/",
   })
-  return applySecurityHeaders(response, req.nextUrl.pathname)
+  applySecurityHeaders(response, req.nextUrl.pathname)
+  if (pilot) {
+    if (pilot.header === "Content-Security-Policy-Report-Only") {
+      response.headers.set("Content-Security-Policy", reportOnlyBaseline(securityHeaders["Content-Security-Policy"], pilot.nonce))
+    }
+    response.headers.set(pilot.header, pilot.policy)
+    response.headers.set("Cache-Control", "private, no-store, max-age=0")
+  }
+  return response
 }
 
 function redirectWithLocaleCookie(
@@ -125,7 +125,6 @@ export default function middleware(req: NextRequest) {
   const pathLocale = getLocaleFromPathname(pathname)
   const locale = pathLocale ?? pickLocale(req.cookies.get(LOCALE_COOKIE)?.value)
   const path = stripLocale(pathname)
-  const clientIP = getClientIP(req)
   const authenticated = isAuthenticated(req)
 
   const isAuthRoute =
@@ -157,10 +156,11 @@ export default function middleware(req: NextRequest) {
     )
   }
 
-  if (!isAuthRoute && !rateLimit(clientIP, 200, 60000)) {
+  const traffic = !isAuthRoute ? trafficLimiter.check(trafficIdentity(req.headers, process.env.STOQUIFY_TRAFFIC_IP_HEADER)) : null
+  if (traffic && !traffic.allowed) {
     const response = new NextResponse(
       JSON.stringify({ error: "Too many requests" }),
-      { status: 429, headers: { "content-type": "application/json" } }
+      { status: 429, headers: { "content-type": "application/json", "Retry-After": String(traffic.retryAfter), "Cache-Control": "private, no-store" } }
     )
     return applySecurityHeaders(response, pathname)
   }

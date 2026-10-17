@@ -170,7 +170,7 @@ async function CreateItemPageImpl() {
               <Button
                 type="submit"
                 variant="outline"
-                className="!rounded-lg !border !border-[var(--dash-border-subtle)] !bg-[rgba(24,38,45,0.66)] !text-[var(--dash-text-muted)] hover:!border-[var(--dash-brand)] hover:!bg-[var(--dash-brand-soft)] hover:!text-[var(--dash-text)]"
+                className="dashboard-button-secondary rounded-lg"
               >
                 <ArrowLeft className="me-2 h-4 w-4" />
                 Back to Items

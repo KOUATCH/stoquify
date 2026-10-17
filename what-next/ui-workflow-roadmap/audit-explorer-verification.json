@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-04",
+  "scope": ["UX10", "UX11"],
+  "status": "implemented_with_open_acceptance_gates",
+  "sourceManifest": "audit-explorer-source-hashes.json",
+  "tests": {"report": "audit-explorer-jest.json", "suitesPassed": 5, "testsPassed": 50, "exitCode": 0},
+  "relatedRegression": {"report": "delivery-issues-jest.json", "suitesPassed": 7, "testsPassed": 84, "reason": "Equivalent database-native invitation cursor correction"},
+  "typecheck": {"session": 89072, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false", "exitCode": 0},
+  "eslintExitCode": 0,
+  "diffWhitespaceExitCode": 0,
+  "browser": {
+    "environment": "http://localhost:3000",
+    "account": "super.admin.rds-org001@stockflow.test",
+    "organizationLabel": "Wilkinson - Feeney 001",
+    "verified": ["Populated stock-adjustment events", "Actor/date/action/entity filters", "Safe details opened with Enter", "English and French presentation"],
+    "pagination": {"firstPageRows": 25, "secondPageRows": 18, "overlap": 0, "sameUpperBound": true, "upperBoundRendered": "Sep 27, 2026, 11:29 AM UTC", "concurrentInsertsTested": false},
+    "correctedDefect": "Original raw Date tuple comparison repeated page one; persisted database tuple comparison verified with zero overlap.",
+    "screenshot": "C:/Users/J COMPUTER/.codex/visualizations/2026/10/04/01a10672-554e-77c3-bc80-19e54163cb72/audit-explorer-fr.jpg"
+  },
+  "remaining": ["Privacy and retention acceptance", "Restricted-role browser verification", "Real concurrent/backfilled-event database tests", "Large-volume query plans", "Member-access incident reconstruction", "Source handoff acceptance", "Mobile and screen reader", "Pilot and ownership"],
+  "releaseComplete": false,
+  "roadmapComplete": false
+}

@@ -1,0 +1,103 @@
+{
+  "startedAt": "2026-09-30T21:17:54.261Z",
+  "target": "verified retained local restore",
+  "sourceMutationAttempted": false,
+  "recordIdentifiersEmitted": false,
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "producerSha256": "9bf27629187dacbbb201f87dc61ac14d74335cc52873b43ee14e764b551e5001",
+  "sql": "WITH journal_facts AS (\n  SELECT j.id, j.\"sourceType\"::text AS source_type,\n    EXISTS(SELECT 1 FROM journal_entry_lines l WHERE l.\"journalEntryId\"=j.id AND (l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)) AS missing_base,\n    (j.\"entryDate\"<p.\"startDate\" OR j.\"entryDate\">p.\"endDate\") AS outside_period,\n    COALESCE(b.metadata->>'seed'='true',false) AS batch_seed_marker,\n    EXISTS(SELECT 1 FROM accounting_source_links s WHERE s.\"journalEntryId\"=j.id AND s.metadata->>'seed'='true') AS source_link_seed_marker,\n    EXISTS(SELECT 1 FROM ledger_audit_events a WHERE a.\"journalEntryId\"=j.id AND a.action='SEED_POSTED_SALE_JOURNAL') AS seed_posted_audit_marker,\n    COALESCE(j.memo LIKE 'Seed sale recognition %',false) AS seed_memo_pattern,\n    (SELECT COUNT(*) FROM journal_entry_lines l WHERE l.\"journalEntryId\"=j.id) AS lines,\n    (SELECT COUNT(*) FROM journal_entry_lines l WHERE l.\"journalEntryId\"=j.id AND (l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)) AS missing_base_lines\n  FROM journal_entries j JOIN accounting_periods p ON p.id=j.\"periodId\"\n  LEFT JOIN ledger_posting_batches b ON b.id=j.\"postingBatchId\"\n  WHERE j.status::text IN ('POSTED','REVERSED'))\nSELECT COALESCE(source_type,'UNCLASSIFIED') AS source_type, missing_base, outside_period,\n  batch_seed_marker, source_link_seed_marker, seed_posted_audit_marker, seed_memo_pattern,\n  COUNT(*)::text AS journal_count, SUM(lines)::text AS line_count, SUM(missing_base_lines)::text AS missing_base_lines\nFROM journal_facts GROUP BY source_type,missing_base,outside_period,batch_seed_marker,source_link_seed_marker,seed_posted_audit_marker,seed_memo_pattern\nORDER BY 1,2,3,4,5,6,7",
+  "snapshot": {
+    "as_of": "2026-09-30T21:17:54.499Z",
+    "read_only": "on",
+    "isolation": "repeatable read"
+  },
+  "rows": [
+    {
+      "source_type": "OPENING_BALANCE",
+      "missing_base": false,
+      "outside_period": false,
+      "batch_seed_marker": false,
+      "source_link_seed_marker": false,
+      "seed_posted_audit_marker": false,
+      "seed_memo_pattern": false,
+      "journal_count": "2",
+      "line_count": "4",
+      "missing_base_lines": "0"
+    },
+    {
+      "source_type": "POS_PAYMENT",
+      "missing_base": false,
+      "outside_period": false,
+      "batch_seed_marker": false,
+      "source_link_seed_marker": false,
+      "seed_posted_audit_marker": false,
+      "seed_memo_pattern": false,
+      "journal_count": "6",
+      "line_count": "12",
+      "missing_base_lines": "0"
+    },
+    {
+      "source_type": "POS_SALE",
+      "missing_base": false,
+      "outside_period": false,
+      "batch_seed_marker": false,
+      "source_link_seed_marker": false,
+      "seed_posted_audit_marker": false,
+      "seed_memo_pattern": false,
+      "journal_count": "6",
+      "line_count": "30",
+      "missing_base_lines": "0"
+    },
+    {
+      "source_type": "POS_SALE",
+      "missing_base": true,
+      "outside_period": false,
+      "batch_seed_marker": true,
+      "source_link_seed_marker": true,
+      "seed_posted_audit_marker": true,
+      "seed_memo_pattern": true,
+      "journal_count": "2",
+      "line_count": "10",
+      "missing_base_lines": "10"
+    },
+    {
+      "source_type": "POS_SALE",
+      "missing_base": true,
+      "outside_period": true,
+      "batch_seed_marker": true,
+      "source_link_seed_marker": true,
+      "seed_posted_audit_marker": true,
+      "seed_memo_pattern": true,
+      "journal_count": "22",
+      "line_count": "110",
+      "missing_base_lines": "110"
+    },
+    {
+      "source_type": "STOCK_ADJUSTMENT",
+      "missing_base": false,
+      "outside_period": false,
+      "batch_seed_marker": false,
+      "source_link_seed_marker": false,
+      "seed_posted_audit_marker": false,
+      "seed_memo_pattern": false,
+      "journal_count": "95",
+      "line_count": "190",
+      "missing_base_lines": "0"
+    },
+    {
+      "source_type": "UNCLASSIFIED",
+      "missing_base": false,
+      "outside_period": false,
+      "batch_seed_marker": false,
+      "source_link_seed_marker": false,
+      "seed_posted_audit_marker": false,
+      "seed_memo_pattern": false,
+      "journal_count": "4",
+      "line_count": "8",
+      "missing_base_lines": "0"
+    }
+  ],
+  "status": "EXECUTED",
+  "readOnlyTransactionClosed": true,
+  "completedAt": "2026-09-30T21:17:54.615Z"
+}

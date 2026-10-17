@@ -508,6 +508,7 @@ export type ProofBadgeState =
 
 export type ProofBadgeProps = {
   state: ProofBadgeState
+  wrap?: boolean
   label?: string
   source?: string
   sourceCount?: number
@@ -520,6 +521,7 @@ export type ProofBadgeProps = {
 
 export function ProofBadge({
   state,
+  wrap = false,
   label,
   source,
   sourceCount,
@@ -534,13 +536,14 @@ export function ProofBadge({
     "inline-flex min-h-7 max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]",
     dashboardToneClass(tone),
+    wrap && "flex-wrap",
     className,
   )
   const content = (
     <>
       <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      <span className="truncate">{label ?? proofStateLabels[state]}</span>
-      {source ? <span className="truncate text-[var(--dash-text-soft)]">/ {source}</span> : null}
+      <span className={wrap ? "whitespace-normal break-words" : "truncate"}>{label ?? proofStateLabels[state]}</span>
+      {source ? <span className={cn(wrap ? "whitespace-normal break-words" : "truncate", "text-[var(--dash-text-soft)]")}>/ {source}</span> : null}
       {typeof sourceCount === "number" ? (
         <span className="whitespace-nowrap text-[var(--dash-text-soft)]">
           / {sourceCount} source{sourceCount === 1 ? "" : "s"}

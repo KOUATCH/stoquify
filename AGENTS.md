@@ -1,22 +1,23 @@
 # Codex Skills and Commands
 
+## Shared Stoquify workflow
+
+For nontrivial work, read [docs/ecc/WORKFLOW.md](docs/ecc/WORKFLOW.md). It routes engineering, security, database, UI and release work to current project controls. Use [docs/ecc/skill-routing.md](docs/ecc/skill-routing.md) to select relevant skills by qualified source; do not load every installed skill.
+
+Before executing a verification script, inspect its current definition and [docs/ecc/command-registry.json](docs/ecc/command-registry.json). `npm run build` compiles without schema promotion but loads application configuration and writes build output; it is not a read-only check. `release:schema:promote` is the separate mutating migration stage. Unclassified commands require side-effect review, not an assumption of safety. Start with `npm run agent:workflow:check`; this validates the contract and does not run application/database commands.
+
+For UI work, read [design-system/stoquify/MASTER.md](design-system/stoquify/MASTER.md) and the relevant page contract. They reference the existing UI constitution, component registry and implemented tokens. Generic skill recommendations do not override business controls or approved design decisions.
+
+Report source inspection, mocked unit tests, real database tests and rendered/browser checks separately. Passing one does not certify another. Preserve unrelated working-tree edits; stage only explicitly owned files/hunks when a commit is requested.
+
 ## Skills Integration
 
-### graphify
-- **graphify** (`~/.Codex/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
-When the user types `/graphify`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run graphify skill"`, and `prompt: "Execute the graphify skill on the current directory following the instructions in ~/.Codex/skills/graphify/SKILL.md"` before doing anything else.
+- `/graphify`: discover and read the installed skill through the current harness catalog. Its previously declared user-level path was absent at the 2026-10-07 audit. If still unavailable, report the missing capability and use existing `graphify-out/` evidence for read-only analysis; do not install or regenerate implicitly.
+- `/test-gen`: discover and read the installed skill. Its former user-level path was absent at audit. If missing, state the limitation and use existing repository test patterns within the requested scope; do not claim the missing skill ran.
+- `/enterprise-error-handling` or `/skill enterprise-error-handling`: resolve the available skill and follow it within the requested scope. Reuse safe-action errors, correlation, transaction and worker recovery controls before introducing new infrastructure.
+- `/enterprise-error-handling-complete`: discover the skill first; its previously declared path was absent at audit. Report missing dependencies rather than pretending to invoke them. This trigger does not bypass production-data or deployment boundaries.
 
-### test-gen
-- **test-gen** (`~/.Codex/skills/test-gen/SKILL.md`) - automated test generation for code files. Trigger: `/test-gen`
-When the user types `/test-gen`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run test-gen skill"`, and `prompt: "Execute the test-gen skill on the current directory or specified files following the instructions in ~/.Codex/skills/test-gen/SKILL.md. Generate comprehensive unit tests for the selected code."` before doing anything else.
-
-### enterprise-error-handling
-- **enterprise-error-handling** (`~/.Codex/skills/enterprise-error-handling/SKILL.md`) - comprehensive error handling system for enterprise applications. Trigger: `/enterprise-error-handling`
-When the user types `/enterprise-error-handling` or `/skill enterprise-error-handling`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run enterprise error handling skill"`, and `prompt: "Execute the enterprise error handling skill following the instructions in ~/.Codex/skills/enterprise-error-handling/SKILL.md. Implement enterprise-grade error handling patterns including error classification, resilient database operations, financial transaction safety, monitoring, and comprehensive error management systems."` before doing anything else.
-
-### enterprise-error-handling-complete
-- **enterprise-error-handling-complete** (`~/.Codex/skills/enterprise-error-handling-complete/SKILL.md`) - complete end-to-end enterprise error handling implementation with systematic methodology, financial safety, database resilience, real-time monitoring, and production readiness. Trigger: `/enterprise-error-handling-complete`
-When the user types `/enterprise-error-handling-complete` or `/skill enterprise-error-handling-complete`, invoke the Task tool with `subagent_type: "general-purpose"`, `description: "Run complete enterprise error handling implementation"`, and `prompt: "Execute the comprehensive enterprise error handling implementation skill following the instructions in ~/.Codex/skills/enterprise-error-handling-complete/SKILL.md. Implement complete enterprise-grade error handling including: 1) Critical financial operation protection with ACID guarantees, 2) Database resilience with circuit breaker patterns, 3) Real-time system monitoring and alerting, 4) Client error boundaries for React components, 5) Systematic migration planning for remaining operations, 6) Production-ready validation and testing frameworks. This is the complete implementation that goes beyond foundation to full production deployment."` before doing anything else.
+Use the actual delegation API exposed by the active harness only when the user or an applicable skill/instruction requests delegation. Do not assume a tool named `Task` exists.
 
 # Code Architecture Analysis
 
@@ -24,13 +25,14 @@ When answering questions about code architecture, dependencies, file relationshi
 
 1. **Check for existing knowledge graphs** in `graphify-out/` directory
 2. **Read relevant graph files** to enhance architectural insights:
-   - `graph_components.json` - UI components architecture (1,623 nodes, 502 communities)
-   - `graph_actions.json` - Server actions & business logic (1,242 nodes, 245 communities)
-   - `graph_app.json` - Next.js routes & pages (689 nodes, 209 communities)
-   - `graph_hooks.json` - React hooks & data fetching (671 nodes, 137 communities)
-   - `graph_types.json` - TypeScript type definitions (69 nodes, 35 communities)
+   - `graph_components.json` - UI components architecture
+   - `graph_actions.json` - Server actions & business logic
+   - `graph_app.json` - Next.js routes & pages
+   - `graph_hooks.json` - React hooks & data fetching
+   - `graph_types.json` - TypeScript type definitions
 3. **Use graph data** to provide accurate dependency analysis, component relationships, and architectural insights
 4. **Reference specific nodes/communities** when explaining code relationships
+5. **Check freshness and current source** before behavioral claims; dated graphs and counts are not a live coverage guarantee.
 
 **When to use graphs:**
 - Code refactoring questions

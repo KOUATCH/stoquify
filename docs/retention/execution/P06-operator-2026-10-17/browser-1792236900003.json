@@ -1,0 +1,30 @@
+{
+  "utc": "2026-10-17T11:35:00.003Z",
+  "steps": [
+    "Never-uploaded evidence visible; local close prevented before any close action",
+    "Actual authenticated signed ingestion committed; response lost; immutable evidence remains UNCERTAIN"
+  ],
+  "fixture": "org-full-pos-c2f37714-0c8f-448a-9591-b00bfbd1eef0",
+  "origin": "http://127.0.0.1:3187",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "before": {
+    "commits": 0,
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "stock": "5",
+    "shift": "ACTIVE"
+  },
+  "dropProof": {
+    "id": "cmvcbl98h002pma08xqdw2d1c",
+    "status": "PENDING_REPLAY",
+    "payloadHash": "d226d80071b24f8b0a07b07252c932bccbb533f10a2fa34ec41e4447b28bc247"
+  },
+  "status": "FAIL",
+  "error": "Error: expect(locator).toBeEnabled() failed\n\nLocator:  getByTestId('local-offline-queue').filter({ hasText: 'cmvcb63kv0013maw4qitmsmpz' }).getByRole('button', { name: 'Send retained evidence' })\nExpected: enabled\nReceived: disabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.enabled\" with timeout 5000ms\n  - waiting for getByTestId('local-offline-queue').filter({ hasText: 'cmvcb63kv0013maw4qitmsmpz' }).getByRole('button', { name: 'Send retained evidence' })\n    14 × locator resolved to <button disabled type=\"button\" class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground px-4 h-auto min-h-11 whitespace-normal py-2\">Send retained evidence</button>\n       - unexpected value \"disabled\"\n\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright-core\\lib\\coreBundle.js:3172:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12877:57)\n    at Object.toBeEnabled (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12867:23)\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P06-operator-2026-10-17\\browser-operator.cjs:98:24)"
+}

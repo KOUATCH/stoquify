@@ -2,7 +2,7 @@
 
 import { requirePermission } from "@/lib/security/rbac"
 import { err, ok } from "@/services/_shared/action-response"
-import { acquirePOSCheckout, changePOSCheckoutCart, retainLegacyPOSCheckout } from "@/services/pos/checkout.service"
+import { acquirePOSCheckout, changePOSCheckoutCart, renewPOSCheckout, retainLegacyPOSCheckout } from "@/services/pos/checkout.service"
 import { checkoutCartCommandSchema, checkoutWorkspaceSchema, commitSaleSchema } from "@/services/pos/pos.schemas"
 
 export async function retainLegacyPOSCheckoutAction(input: unknown) {
@@ -19,6 +19,15 @@ export async function acquirePOSCheckoutAction(input: unknown) {
     const parsed = checkoutWorkspaceSchema.parse(input)
     const { orgId, userId } = await requirePermission("pos.use", { resource: "POSSession", resourceId: parsed.sessionId })
     return ok(await acquirePOSCheckout({ ...parsed, organizationId: orgId, userId }))
+  } catch (error) { return err(error) }
+}
+
+export async function renewPOSCheckoutAction(input: unknown) {
+  try {
+    const parsed = checkoutWorkspaceSchema.parse(input)
+    const { orgId, userId } = await requirePermission("pos.use", { resource: "POSSession", resourceId: parsed.sessionId })
+    await renewPOSCheckout({ ...parsed, organizationId: orgId, userId })
+    return ok(null)
   } catch (error) { return err(error) }
 }
 

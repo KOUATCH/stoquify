@@ -664,18 +664,19 @@
       "sideEffects": [
         "Read-only observations"
       ],
-      "implementationStatus": "interactive_read",
+      "implementationStatus": "identity_scoped_cache_and_denial_withdrawal_corrected",
       "reviewStatus": "source_trace_complete_for_initial_inventory",
-      "runtimeStatus": "not_executed_in_this_discovery",
+      "runtimeStatus": "en_fr_read_handoff_drawer_revocation_and_read_only_recovery_verified",
       "evidence": [
         "components/inventory/loss/InventoryLossWorkbench.tsx",
         "hooks/useInventoryLossWorkbench.ts",
         "actions/inventory/inventoryLossReadActions.ts",
-        "services/inventory/inventory-loss-read.service.ts"
+        "services/inventory/inventory-loss-read.service.ts",
+        "../../INVENTORY_LOSS_HANDOFF_VERIFICATION_2026-09-27.md"
       ],
       "remaining": [
-        "No mutation controls in this workbench; do not label the full count/adjustment workflow interactive.",
-        "Existing EN/FR copy and partial/error states are source-reviewed only; current runtime/accessibility not verified here."
+        "Complete broader period/history, localization, contrast and text-enlargement review; current evidence covers EN desktop/FR mobile handoff and current permission/module denial.",
+        "Stock-count and adjustment approval/posting remain separate workflows; this workbench is read-only."
       ]
     },
     {

@@ -35,6 +35,20 @@ describe("DashboardRouteState", () => {
     expect(screen.getByText(/server-side permissions/)).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Back to dashboard" })).toHaveAttribute("href", "/en/dashboard")
     expect(screen.getByRole("link", { name: "Contact admin" })).toHaveAttribute("href", "/en/dashboard/settings/users")
+    expect(screen.getAllByRole("main")).toHaveLength(1)
+  })
+
+  it("uses the existing dashboard main landmark when embedded", () => {
+    render(
+      <main aria-label="Dashboard">
+        <DashboardRouteState embedded kind="permission_denied" primaryHref="/fr/dashboard" />
+      </main>,
+    )
+
+    expect(screen.getAllByRole("main")).toHaveLength(1)
+    expect(screen.getByRole("main", { name: "Dashboard" })).toBeVisible()
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute("href", "/fr/dashboard")
   })
 
   it("renders not-found and loading states from shared dashboard copy", () => {

@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-28T09:44:36.624Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370",
+    "services/cash-command/cash-command-visibility.service.ts": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366",
+    "services/cash-command/cash-command-contracts.ts": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [],
+  "stage": "allowed",
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n    diagnostics: 0,\n+   drawer: 0\n-   drawer: 1\n  }\n",
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "65fcef1b31973130b9e04089181f2d0025e0c51e1660bcc051418817fab61370",
+    "services/cash-command/cash-command-visibility.service.ts": "e4f4c094dd223207b3290dbfca1df29dfa953fac1b860c7e9ba13c4d72922366",
+    "services/cash-command/cash-command-contracts.ts": "4883afc241015c8d1d78ce60c926ad094b72bd747a12f5ac043666d900fff956",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

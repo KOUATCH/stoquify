@@ -95,6 +95,8 @@ export type ParsedReconcileInventoryClass3Input = z.output<
 
 export const createStockAdjustmentLineInputSchema = z.object({
   itemId: requiredId,
+  batchNumber: z.string().trim().min(1).optional(),
+  expiryDate: z.date().optional(),
   systemQuantity: decimalInput.optional(),
   actualQuantity: decimalInput.optional(),
   adjustedQuantity: decimalInput,

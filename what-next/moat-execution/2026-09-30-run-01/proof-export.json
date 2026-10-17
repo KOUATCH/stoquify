@@ -1,0 +1,51 @@
+{
+  "startedAt": "2026-09-30T14:35:54.682Z",
+  "synthetic": true,
+  "liveProvider": false,
+  "checks": [
+    {
+      "name": "empty ledger cannot be exported as certified evidence",
+      "status": "PASS"
+    },
+    {
+      "name": "two real PostgreSQL trust exports retain correct client and ledger source",
+      "status": "PASS"
+    },
+    {
+      "name": "actual journal posting invalidates seeded snapshot and creates durable proof",
+      "status": "PASS"
+    },
+    {
+      "name": "new accountant export reflects changed source and preserves old immutable download",
+      "status": "PASS"
+    }
+  ],
+  "fixtureOrganizations": [
+    "cmuo7jxd40000mas8zvvnaqt4",
+    "cmuo7jxm9000bmas8yuwg0i43",
+    "cmuo7jxte000wmas81b8wnujy"
+  ],
+  "invalidation": {
+    "closePackExportId": "cmuo7jzf6003emas865itw6e3",
+    "businessEventId": "cmuo7jznm0043mas8nvfb0rkr",
+    "sourceJournalId": "cmuo7jzgu003omas85xohwr4b",
+    "initialCondition": "SEEDED_CERTIFIED_SNAPSHOT_ONLY"
+  },
+  "exports": {
+    "before": "sha256:a3e2327cc69b47ae079eb93f4544e49fbe8390f61e33afc38982199cf706658e",
+    "after": "sha256:70ef2896c830b71f7d57e1eeb4b45d750f276229298fa833d31128c9df351544"
+  },
+  "status": "PASS",
+  "completedAt": "2026-09-30T14:35:58.769Z",
+  "sources": {
+    "services/accounting/accountant-work-desk.contracts.ts": "982131dc57be59dd15c610506dc92cabfa93af5f628da78a08a39ef502a8255c",
+    "services/accounting/accountant-work-desk.service.ts": "92b31718d76360d52f05e3967bbe449a044298e080dd6b8d54d254d5179f68f2",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+    "actions/accounting/accountant-work-desk.actions.ts": "2ca7eb97bb4293b86ad81e19c193a3f2294a3ede7a0819f2c3b2d08d5619158e",
+    "components/accounting/AccountantWorkDesk.tsx": "f8231335ac192920c6ccec667f9a9d21fc578fa4bcaf7af7dcb23f14b665feb7",
+    "components/accounting/accountant-work-desk-copy.ts": "1c0ca747b6705cb45a27b1f8c716042a115b52af340af295accf620af6357574",
+    "hooks/useAccountantPortal.ts": "413582bd96fc1c905cb3b02e1f5cf1b22c51e778d35ae23406caf2c5a425c4e4",
+    "components/accounting/AccountantPortal.tsx": "b2083d78d5ff8a822da662e1a8174f830331f7c81bdacac62bee51f2518a8d5d"
+  }
+}

@@ -1,0 +1,105 @@
+===================================================================
+--- services/accounting/posting.service.ts@reviewed
++++ services/accounting/posting.service.ts@current
+@@ -262,11 +262,27 @@
+     if (!entry) throw new NotFoundError("Journal entry not found")
+     if (entry.status !== JournalEntryStatus.DRAFT) {
+       throw new BusinessRuleError("Only draft journal entries can be posted")
+     }
+-
+     const period = await getOpenPeriodForDate(organizationId, entry.entryDate, tx)
+     if (period.id !== entry.periodId) throw new BusinessRuleError("Journal accounting period changed. Review the entry before posting.")
++    if (entry.sourceType !== AccountingSourceType.MANUAL) {
++      throw new BusinessRuleError("Source-owned journals must be posted through their source workflow")
++    }
++
++    // Revalidate persisted drafts, including drafts created before the FX fix.
++    // An invalid historical draft needs an explicit correction; posting must
++    // not silently rewrite its economic evidence.
++    for (const line of entry.lines) {
++      const rate = line.exchangeRate
++      if (!rate?.isFinite() || rate.lte(0) ||
++        !line.baseDebit?.eq(line.debit.times(rate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP)) ||
++        !line.baseCredit?.eq(line.credit.times(rate).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP))) {
++        throw new BusinessRuleError("Journal base amounts do not match the recorded exchange rate. Correct the draft before posting.")
++      }
++    }
++    assertBalancedJournalEntry(entry.lines.map((line) => ({ debit: line.baseDebit, credit: line.baseCredit, currency: entry.currency })))
++
+     assertBalancedJournalEntry(entry.lines)
+     await assertEntryAccountsPostable(
+       organizationId,
+       entry.lines.map((line) => line.accountId),
+@@ -416,9 +432,11 @@
+     })
+     await auditSensitiveActionDecision(tx, controlDecision)
+     if (!controlDecision.allowed) return { denied: controlDecision }
+ 
+-    if (original.sourceType === AccountingSourceType.CUSTOMER_SETTLEMENT || original.sourceType === AccountingSourceType.PAYMENT_SUSPENSE) {
++    // Only manual journals belong to this correction command. Domain-owned
++    // entries must compensate their source effects (stock, cash and obligations).
++    if (original.sourceType !== AccountingSourceType.MANUAL) {
+       await tx.auditLog.create({
+         data: {
+           organizationId,
+           entityType: "JournalEntry",
+@@ -448,10 +466,16 @@
+     if (original.reversedByEntries.length > 0) {
+       throw new BusinessRuleError("Journal entry has already been reversed")
+     }
+ 
++    const originalLines = original.lines.map((line) => {
++      if (line.baseDebit === null || line.baseCredit === null) {
++        throw new BusinessRuleError("Functional-currency evidence is missing from the original journal. Review the historical entry before reversing it.")
++      }
++      return { ...line, baseDebit: line.baseDebit, baseCredit: line.baseCredit }
++    })
+     const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)
+-    assertBalancedJournalEntry(original.lines)
++    assertBalancedJournalEntry(originalLines)
+ 
+     const batch = await createLedgerPostingBatch(
+       {
+         organizationId,
+@@ -492,9 +516,9 @@
+         postedAt: now,
+         postedById: actorId,
+         createdById: actorId,
+         lines: {
+-          create: original.lines.map((line, index) => {
++          create: originalLines.map((line, index) => {
+             const debit = toDecimal(line.debit)
+             const credit = toDecimal(line.credit)
+ 
+             return {
+@@ -505,10 +529,10 @@
+               debit: credit,
+               credit: debit,
+               currency: normalizeCurrency(line.currency),
+               exchangeRate: line.exchangeRate,
+-              baseDebit: toDecimal(line.baseCredit ?? line.credit),
+-              baseCredit: toDecimal(line.baseDebit ?? line.debit),
++              baseDebit: toDecimal(line.baseCredit),
++              baseCredit: toDecimal(line.baseDebit),
+               locationId: line.locationId,
+               customerId: line.customerId,
+               supplierId: line.supplierId,
+               itemId: line.itemId,
+@@ -568,13 +592,15 @@
+ 
+     return { value: reversal }
+   })
+ 
+-  if ("sourceOwnedBlocked" in result && result.sourceOwnedBlocked) {
++  if ("sourceOwnedBlocked" in result) {
+     throw new BusinessRuleError(
+       result.sourceOwnedBlocked === AccountingSourceType.PAYMENT_SUSPENSE
+         ? "Payment suspense correction requires a linked source workflow, which is not yet available. No journal was reversed."
+-        : "Customer settlement journals must be reversed through the customer settlement source command",
++        : result.sourceOwnedBlocked === AccountingSourceType.CUSTOMER_SETTLEMENT
++          ? "Customer settlement journals must be reversed through the customer settlement source command"
++          : `${result.sourceOwnedBlocked ?? "Unattributed"} journals require a source-owned correction workflow. No journal was reversed.`,
+     )
+   }
+ 
+   if ("denied" in result && result.denied) {

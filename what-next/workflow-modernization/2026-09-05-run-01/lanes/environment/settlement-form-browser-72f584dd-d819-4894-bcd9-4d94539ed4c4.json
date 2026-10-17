@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-30T11:43:46.472Z",
+  "syntheticReleaseFixtures": true,
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "f17c270301f38c1b6901bccf43dc0f8ecc3d20f7b6ad706d432b337fee48f024",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "defaultRemainder": true,
+      "staleRevisionDenied": true,
+      "redactedBalance": true,
+      "freshAuthentication": true,
+      "noAutomaticSettlementAfterAuthentication": true,
+      "lostAcknowledgementReplay": true,
+      "eventCount": 2,
+      "explicitUpdatedBalanceReview": true,
+      "writePermissionRevoked": true,
+      "noFormOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "settlement-form-72f584dd-d819-4894-bcd9-4d94539ed4c4-en.png"
+    },
+    {
+      "locale": "fr",
+      "defaultRemainder": true,
+      "staleRevisionDenied": true,
+      "redactedBalance": true,
+      "freshAuthentication": true,
+      "noAutomaticSettlementAfterAuthentication": true,
+      "lostAcknowledgementReplay": true,
+      "eventCount": 2,
+      "explicitUpdatedBalanceReview": true,
+      "writePermissionRevoked": true,
+      "noFormOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "settlement-form-72f584dd-d819-4894-bcd9-4d94539ed4c4-fr.png"
+    }
+  ],
+  "stage": "fr lost acknowledgement",
+  "actionDiagnostic": {
+    "status": 200,
+    "codes": [],
+    "errors": [
+      "$undefined",
+      "$undefined",
+      "$2f",
+      "$20",
+      "$35",
+      "$undefined",
+      "$undefined",
+      "L'action n'a pas abouti. Votre brouillon est préservé. Réessayez.",
+      "La preuve de transaction paiement n'a pas pu etre chargee en securite.",
+      "$undefined",
+      "$cf"
+    ]
+  },
+  "passed": true,
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "f17c270301f38c1b6901bccf43dc0f8ecc3d20f7b6ad706d432b337fee48f024",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51"
+  },
+  "sourceStable": true
+}

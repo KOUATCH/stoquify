@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-04T10:14:30.698Z",
+  "report": "SUSPENSE_RESOLUTION_CLOSE_2026-10-04.md",
+  "registerBefore": "5accaf47914242982858e2363c2f725fc1e82d5cafd82d879bd4ada21178eacf",
+  "registerAfter": "4cd74cd95c616352ad5e380a0accdb4b36af25c0d18c37b9497f8194daf00416",
+  "progressBefore": "57171c903bf42c5299568cdeac7f8ed5da4425063d52d20fd0e1679b8a899331",
+  "counts": {
+    "Queued": 264,
+    "Complete—verified": 4,
+    "In progress": 2
+  },
+  "bindings": {
+    "evidence/suspense-resolution-close-jest-3edeece1-7782-4a16-83ba-3243f8bbbc7b.json": "e9e72364ae2a34d1b07937f6ac61ad7ad38c2f0d5b2d868ee9ec12a15ad9b1c7",
+    "evidence/suspense-resolution-close-typecheck-36053f43-5114-4dbc-85e5-cc79705b6dad.json": "f967ad140bd3034422fd6ca1ca7dd6d1682f7904a90cf534b831c70ccc50c30f",
+    "evidence/suspense-resolution-close-lint-52055280-ce17-40b1-ae55-0b0d2c224148.json": "13b8211ec8e9fa037bcba17f5d662aeddb48916259fd91b5d21c4721c51f2673",
+    "lanes/environment/suspense-resolution-close-acceptance-c7166888-b5aa-4aee-a804-a7938802d7c7.json": "c1fd2e897d785e24d27b7d313f6e7ee29ee7d3da0ae6d7705e4d75f7dcc5dcf2",
+    "lanes/environment/suspense-resolution-close-remaining-acceptance-b488b195-7de2-47c0-9a3a-549e64d13e9e.json": "6705c0be7b9d5d58870b6fcf2f6974dcdc46f3a437400d0b3bb739f141a2d33f",
+    "SUSPENSE_RESOLUTION_CLOSE_2026-10-04.md": "82b125a3c7b76dd37a539abd8caaab4ef20090cf9e215f0f895199e9a9f35c8d",
+    "SUSPENSE_RESOLUTION_CLOSE_CHECKLIST_2026-10-04.md": "4e6e6ff2f4957620697782b0485393a770db4509c78993f82a3f67651b50d902",
+    "lanes/environment/suspense-resolution-close-baseline-75af51ab-7bf5-435a-899d-ac64ab48fb97.json": "35bfc2451cdfeefbbe80e2e78b8ff82b569342b6227be96d1f28a14bef9ea6ff",
+    "lanes/environment/suspense-resolution-close-acceptance-e1c23c01-1d53-46ec-9027-bd859841f1ab.json": "a329f767234657279598d7944d0d129a66b1ec2f22edf948296a9f9f87dbbf12",
+    "evidence/suspense-resolution-close-jest-8bf97612-cd78-43cd-9acb-d194eb84996a.json": "a35439a390d562b6c6decb49c3bcfb7fa56d8d27de3b67166f905d8f2745a2b1",
+    "evidence/suspense-resolution-close-jest-c17ea488-2260-49c6-ba63-19eb58a0ecfe.json": "312b782f9391eb16f3f84e4ac5ef76dc9c01ed95bc62009ed7e2c2659ec36d38"
+  },
+  "currentReceipts": {
+    "jest": "evidence/suspense-resolution-close-jest-3edeece1-7782-4a16-83ba-3243f8bbbc7b.json",
+    "typecheck": "evidence/suspense-resolution-close-typecheck-36053f43-5114-4dbc-85e5-cc79705b6dad.json",
+    "lint": "evidence/suspense-resolution-close-lint-52055280-ce17-40b1-ae55-0b0d2c224148.json",
+    "first": "lanes/environment/suspense-resolution-close-acceptance-c7166888-b5aa-4aee-a804-a7938802d7c7.json",
+    "remaining": "lanes/environment/suspense-resolution-close-remaining-acceptance-b488b195-7de2-47c0-9a3a-549e64d13e9e.json"
+  },
+  "uniqueBoundSourceFiles": 270,
+  "verifiedRuntimeCases": [
+    "resolution-prior-period-inflight-publication",
+    "exact-replay-retained-allocation-and-conflicting-command",
+    "rejected-resolution-preserves-open-source",
+    "old-snapshot-new-publication-restarts",
+    "creator-first-actual-postgresql-blocking",
+    "producer-first-actual-postgresql-blocking",
+    "denied-actor-tenant-revision-and-expired-authentication",
+    "late-resolution-close-rollback-and-new-transaction-retry",
+    "simultaneous-identical-decision-single-allocation"
+  ],
+  "originalAcceptancePassed": false,
+  "correctedRemainingPassed": true,
+  "reproducedDefectsCorrected": 1,
+  "workflowClosures": 0,
+  "goalComplete": false,
+  "finalizedAt": "2026-10-04T10:14:56.548Z",
+  "progressAfter": "d68109c6fb240ed07531c44ca92ef12bb039bf51e89352c05cb2bcab0145f1cb",
+  "passed": true
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": [
+    "next-env.d.ts",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
+    "components/finance/AROpenItemsHistoryWorkbench.tsx",
+    "components/purchasing/APHistoryWorkbench.tsx",
+    "services/finance/open-items-dashboard*.ts",
+    "actions/finance/open-items-dashboard.actions.ts",
+    "hooks/finance/useOpenItemsDashboard.ts",
+    "components/finance/OpenItemsDashboard.tsx",
+    "services/purchasing/ap-history-financial.ts",
+    "services/analytics/sales-collections.service.ts"
+  ]
+}

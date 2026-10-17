@@ -1,4 +1,5 @@
 import "server-only";
+import { assertPayrollProductionAdmissionInTx } from "./payroll-production-admission";
 
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -696,6 +697,8 @@ export async function enqueuePayrollAuthorityAdapterExecution(
         idempotent: true,
       };
     }
+
+    await assertPayrollProductionAdmissionInTx(tx, parsed.organizationId, evidence.declaration.payrollRunId);
 
     const execution = buildExecutionRecord({
       evidence,

@@ -6,7 +6,7 @@ import { routeByKey, withAssuranceSurfaceAccess } from "../../../assurance-route
 import { getAssuranceIncidentDetailData } from "@/services/assurance/assurance-control-tower.service"
 
 export const metadata: Metadata = {
-  title: "Workflow Assurance Incident | Kontava",
+  title: "Workflow Assurance Incident | Stoquify",
   description: "Proof-linked workflow assurance incident detail.",
 }
 

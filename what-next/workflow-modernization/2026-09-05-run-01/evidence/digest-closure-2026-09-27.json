@@ -1,0 +1,138 @@
+{
+  "at": "2026-09-27T12:28:01.787Z",
+  "workflow": "AN-DAILY-DIGEST",
+  "status": "Complete—verified",
+  "scope": "Existing role-scoped Digest read, inspection, recovery and authorized source handoff lifecycle; downstream operations retain their existing workflow ownership.",
+  "evidence": [
+    {
+      "file": "lanes/environment/digest-accessibility-8bbef2cb-cb76-4a0a-af74-5c7299757830.json",
+      "sha256": "999edcf270f2a9bacf37a29b097e521f76beb3722db92c401c15f1f465c69004",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-session-854ba5d2-6326-45c5-b8e9-62f0777a1a2b.json",
+      "sha256": "858ebcd86cf67b87716422d1a2826b67d3123c47e9ea2c82d0ab44347aa40d1e",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-clock-377cfb34-c7df-4dbb-abff-5453ce4a811e.json",
+      "sha256": "e77bde4473a12d05e838d12db17b8e8008598bea0e30d121ceee4fa48a391d84",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-query-73430841-83f3-4b7e-b5ea-b8518ab3bef2.json",
+      "sha256": "88620281b5b15682d53ef5bc0e0e5c9aebc675f2764338735ab98f89309f2486",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-handoff-0743f682-4209-46b5-b2bc-fd2a5f9c474c.json",
+      "sha256": "66373edbc6275f5af60b188dc19a0838839e13d4137aed36cc5d7ad365864979",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-loss-handoff-4e4a6872-1362-45dc-80e5-b3575f01c730.json",
+      "sha256": "f3c5e18707bd3023a893fd5d3f6680e699055e88b230326751458ca33a83e6f2",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d.json",
+      "sha256": "eaf900bc39895ef401a34e8fbcc4746c5f4543addbeb76538cb10c8d90383f0a",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-payroll-currency-d56949df-9d23-4501-b220-68f4e5847fda.json",
+      "sha256": "73b946921a43a3e7e206cf3070547b5a2e1f5209d9c1845747edb1ca4172ce41",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "lanes/environment/digest-forecast-currency-5d3ecb41-9807-4363-9a73-70f8dc739b7c.json",
+      "sha256": "a0122e423e658cb0143ddac174910a18ddcee5593fcd2590c66527eae4796c70",
+      "sourceStableDuringRun": true
+    },
+    {
+      "file": "evidence/digest-reflow-final.json",
+      "sha256": "9f1c6c9405696b7947f4428b332f93b8599032593c929f644ddc9fc4978b97d9",
+      "sourceStableDuringRun": null
+    }
+  ],
+  "sourceHashes": {
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "components/daily-habit/DailyHabitDigestDashboard.module.css": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/ui/button.tsx": "5bc624855cdeadbcde67dcd15ce7ef02bda974571021aef7d4579c7b2fcad1b7",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BIKpiCard.tsx": "9aa1c770aefc75c85762d70bc95d33dae3b02cf57e3e05da4e6d0988692c239e",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/measure-rendered-contrast.cjs": "c24549a012dc5701630fc0fa550a0459a6b0c13acbd5c2352c4c06d8d72cb27c",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "6a586a6ddb750c4aa94c57c591d28f674731b28f83a95939bf00a522821a3f04",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "middleware.ts": "11309f67e74e3556a0f819eb7d5507beb29c4337bdea89327138fe51038b7d5a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "components/auth/EnhancedLoginForm.tsx": "9c3a2052e0bf93bafbf9988077b33055d565c53727cf92755d5d111f72afb232",
+    "lib/auth-server.ts": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+    "lib/security/dashboard-session-recovery.ts": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs": "79b62535eaa6adf252a331a55547b0359ac1891dd5a94558bdc90067378d0088",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "242fdf517ce2cbf9a1881f84d212a1ebeb8e73a9724f06c191befd73c4c75cb2",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "bedb6ed20d665aaa0344a74aa7278d3c70896cff968f2751bba854a0d403e882",
+    "messages/fr.json": "f2d457fa899b49c88228ffb4472fd3ef2c919ad3a6bd5f9f170526dc05859fd2",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "hooks/useInventoryLossWorkbench.ts": "29cb6b1b2812ce61e8516aecb2178d987846715994ad190073b6b187a7bd1512",
+    "components/inventory/loss/InventoryLossWorkbench.tsx": "75c4cdedacb49225883f7cb71ba9edf0a3ebb14b32f3702a4f7478bcedd84417",
+    "actions/inventory/inventoryLossReadActions.ts": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16",
+    "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx": "5e8c5a91d0706a0c0e97997a2b996a5a27d6528a05698c30ae80c2b6d945ab30",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "120b514da2a60e19681fdf35cf883643646ef9791939a726fa8efc2251e55d88",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d"
+  },
+  "earlierReceiptChanges": [
+    {
+      "file": "lanes/environment/digest-loss-handoff-4e4a6872-1362-45dc-80e5-b3575f01c730.json",
+      "changed": [
+        "services/signals/business-signal-rules.service.ts"
+      ]
+    },
+    {
+      "file": "lanes/environment/digest-payroll-history-5b7cc927-be91-4d6d-8dfc-95433737952d.json",
+      "changed": [
+        "services/signals/business-signal-rules.service.ts",
+        "services/snapshots/tenant-operating-snapshot.service.ts"
+      ]
+    },
+    {
+      "file": "lanes/environment/digest-payroll-currency-d56949df-9d23-4501-b220-68f4e5847fda.json",
+      "changed": [
+        "services/snapshots/snapshot-contracts.ts",
+        "services/snapshots/tenant-operating-snapshot.service.ts",
+        "lib/dashboard/snapshot-blocker-presentation.ts"
+      ]
+    }
+  ],
+  "regression": {
+    "file": "evidence/digest-final-regression-2026-09-27.json",
+    "sha256": "d44eb6138879cb6c05087877838f53ca781b1a29a933dcb3cb8c420a4a6940ed",
+    "suites": 9,
+    "tests": 159
+  },
+  "review": "DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md",
+  "checklist": "DAILY_DIGEST_CLOSURE.md",
+  "guide": "DAILY_DIGEST_OPERATING_GUIDE.md"
+}

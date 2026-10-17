@@ -20,6 +20,13 @@ Brief description of what this PR does and why it's needed.
 **Test Details:**
 <!-- Describe what testing you performed -->
 
+**Stoquify evidence (see `docs/ecc/WORKFLOW.md`):**
+- Affected tenant, approval, replay, financial-proof or UI-state invariants:
+- Checks executed and result: distinguish mocked unit, real PostgreSQL, browser and manual evidence:
+- Checks not run, reason and remaining release requirement:
+- UI changes: canonical components/tokens, locale/viewport and state evidence:
+- Command/helper or skill changes: reviewed side effects and workflow-contract result:
+
 ## 📸 Screenshots (if applicable)
 
 <!-- Add screenshots for UI changes -->

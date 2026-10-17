@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-30T22:56:05.052Z",
+  "fullReconciliationPassed": false,
+  "error": "Release readiness source changed; review required",
+  "failedSource": "services/accounting/posting.service.ts",
+  "expected": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+  "observed": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+  "reconcilerSha256": "19c49b999e564244c23b9a04d192e252aa208f67a100a0887d70b3b55cb09e42",
+  "commandExitCode": 1,
+  "priorCheckpoint": "evidence/operational-receipt-register-refresh-2026-09-30.json",
+  "reviewedCloseDelta": {
+    "file": "evidence/close-assessment-drift-111c228a-7c48-42b8-9600-65a360dc501d-review.json",
+    "sha256": "0159b1b39f27558821b6784415a76563bb98393453face9941cee9a205ebf1c9",
+    "tests": 76,
+    "limitation": "Mocked suite; no PostgreSQL race or crash-recovery proof"
+  },
+  "operationalReview": {
+    "file": "evidence/operational-receipt-review-2026-09-30.json",
+    "sha256": "cd6fee1cbade825384d39c33ed65765176b0538811de0259d9a35a9faf9996e0"
+  },
+  "registerBeforeSha256": "690b592c2d655d5e6be25df2ca56d47fcd3287738ff5f76f84b003fb2edba8f2",
+  "registerAfterSha256": "1908741e0c7c6ccad9627fd3583ce1fe5ce708c2f6febfbe2d04cd961d0db57c",
+  "progressBeforeSha256": "deab6766e13582d5d2a694cf06553c49247363d17b28036406a7ae6131c277b1",
+  "progressAfterSha256": "7c0d4ff5689719dbb04788f608c2b42ba4adc257c21699ca72dd7a536e4b6d08",
+  "workflowClosuresAdded": 0
+}

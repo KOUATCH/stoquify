@@ -1,6 +1,8 @@
 "use client"
 
-import { useEffect, useId, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
+import Link from "next/link"
+import { useQueryClient } from "@tanstack/react-query"
 import { useLocale, useTranslations } from "next-intl"
 import { BarChart3, RefreshCw } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,24 +13,72 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { useClientAuth } from "@/hooks/useClientAuth"
 import { useDailySalesReport } from "@/hooks/analytics/useDailySalesReport"
+import { organizationCalendarDay, useDailySalesScope } from "@/hooks/analytics/useDailySalesScope"
+import { usePermissions } from "@/hooks/usePermissions"
+import { getLatestDailySalesDayAction } from "@/actions/analytics/daily-sales.actions"
 import type { DailySalesReadModel } from "@/services/analytics/daily-sales-read.service"
 import { analyticsContentClass, analyticsControlClass, analyticsMutedTextClass, analyticsPageClass, analyticsPanelClass, analyticsRowClass, analyticsToneClass } from "@/components/analytics/dashboard/analytics-dashboard-theme"
 
-type Props = { organizationId?: string; locationId?: string; date?: Date }
+type Props = { organizationId?: string; locationId?: string; date?: Date; persistScope?: boolean }
 
-export default function CompleteIntegratedDailySalesDashboard({ organizationId, locationId, date }: Props) {
+export default function CompleteIntegratedDailySalesDashboard({ organizationId, locationId, date, persistScope = false }: Props) {
   const auth = useClientAuth(), locale = useLocale(), t = useTranslations("dailySalesReport")
+  const { hasPermission, organizationId: permissionOrgId } = usePermissions()
+  const queryClient = useQueryClient()
   const fieldId = useId()
   const orgId = organizationId ?? auth.organizationId
   const identity = (auth.user?.id ?? "") + ":" + (orgId ?? "")
+  const urlScope = useDailySalesScope(orgId, persistScope)
   const [draft, setDraft] = useState<{ identity: string; locationId?: string; date?: string }>({ identity })
-  const selected = draft.identity === identity ? draft : undefined
-  const query = useDailySalesReport({ userId: auth.user?.id, organizationId: orgId, locationId: selected?.locationId ?? locationId, date: selected?.date ?? date })
+  const selected = persistScope ? urlScope : draft.identity === identity ? draft : undefined
+  const invalidScope = persistScope && urlScope.invalid
+  const query = useDailySalesReport({ userId: auth.user?.id, organizationId: orgId, locationId: selected?.locationId ?? locationId, date: selected?.date ?? date, enabled: !invalidScope })
   const data = query.data
-  const [knownLocations, setKnownLocations] = useState<{ identity: string; rows: DailySalesReadModel["locations"] } | null>(null)
-  useEffect(() => { if (data) setKnownLocations({ identity, rows: data.locations }) }, [data, identity])
-  const locations = data?.locations ?? (knownLocations?.identity === identity ? knownLocations.rows : [])
-  const changeScope = (patch: { locationId?: string; date?: string }) => setDraft(current => ({ ...(current.identity === identity ? current : {}), identity, ...patch }))
+  const [knownReport, setKnownReport] = useState<{ identity: string; data: DailySalesReadModel } | null>(null)
+  useEffect(() => { if (data && !query.error) setKnownReport({ identity, data }) }, [data, identity, query.error])
+  const contextReport = data ?? (knownReport?.identity === identity ? knownReport.data : undefined)
+  const locations = contextReport?.locations ?? []
+  const changeScope = (patch: { locationId?: string; date?: string }) => {
+    const next = { date: selected?.date ?? data?.date, locationId: selected?.locationId ?? locationId ?? contextReport?.locationId ?? undefined, ...patch }
+    if (persistScope) urlScope.write(next)
+    else setDraft({ identity, ...next })
+  }
+  // Pin resolved defaults in bookmarks without issuing a second identical report request.
+  useEffect(() => {
+    if (!persistScope || invalidScope || !data || query.error || !auth.user?.id || !orgId) return
+    if (urlScope.date === data.date && urlScope.locationId === (data.locationId ?? undefined)) return
+    queryClient.setQueryData(["daily-sales", auth.user.id, orgId, data.locationId, data.date], data)
+    urlScope.write({ date: data.date, locationId: data.locationId ?? undefined }, true)
+  }, [persistScope, invalidScope, data, query.error, auth.user?.id, orgId, queryClient, urlScope])
+  const scopeKey = JSON.stringify([identity, selected?.date, selected?.locationId, data?.date, data?.locationId])
+  const activeScope = useRef(scopeKey)
+  const latestRequest = useRef(0)
+  activeScope.current = scopeKey
+  useEffect(() => () => { activeScope.current = "unmounted" }, [])
+  const [latest, setLatest] = useState<{ key: string; state: "loading" | "empty" | "failed" } | null>(null)
+  useEffect(() => { latestRequest.current += 1; setLatest(null) }, [scopeKey])
+  const latestState = latest?.key === scopeKey ? latest.state : null
+  const findLatest = async () => {
+    if (!orgId || !data?.locationId) return
+    const key = scopeKey
+    const request = ++latestRequest.current
+    setLatest({ key, state: "loading" })
+    try {
+      const result = await getLatestDailySalesDayAction({ organizationId: orgId, locationId: data.locationId })
+      if (activeScope.current !== key || latestRequest.current !== request) return
+      if (!result.success) { setLatest({ key, state: "failed" }); return }
+      if (!result.data.date) { setLatest({ key, state: "empty" }); return }
+      setLatest(null)
+      changeScope({ date: result.data.date })
+    } catch { if (activeScope.current === key && latestRequest.current === request) setLatest({ key, state: "failed" }) }
+  }
+  const shortcut = (offset: number) => {
+    if (contextReport) changeScope({ date: organizationCalendarDay(contextReport.context.timezone.iana, offset) })
+  }
+  const resetScope = () => {
+    if (persistScope) urlScope.write({})
+    else setDraft({ identity })
+  }
   const decimal = (value: string | null | undefined) => {
     const match = value ? /^(-?)(\d+)\.(\d+)$/.exec(value) : null
     if (!match) return t("unavailable")
@@ -40,7 +90,7 @@ export default function CompleteIntegratedDailySalesDashboard({ organizationId, 
   const instant = (value: string) => new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: data?.context.timezone.iana }).format(new Date(value))
   const errorCode = query.error && "code" in query.error ? String(query.error.code) : ""
   const denied = ["FORBIDDEN", "AUTH_REQUIRED"].includes(errorCode)
-  const visible = data && !query.error
+  const visible = data && !query.error && !invalidScope
   const metrics = visible ? data.metrics : null
 
   return (
@@ -51,26 +101,33 @@ export default function CompleteIntegratedDailySalesDashboard({ organizationId, 
             <h1 className="flex items-center gap-2 text-2xl font-semibold"><BarChart3 aria-hidden="true" className="h-5 w-5 text-[var(--dash-brand-strong)]" />{t("title")}</h1>
             <p className={cn("mt-1 text-sm", analyticsMutedTextClass)}>{t("description")}</p>
           </div>
-          <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={query.isFetching || !orgId || !auth.user?.id} onClick={() => { void query.refetch() }}><RefreshCw aria-hidden="true" className="mr-2 h-4 w-4" />{t("refresh")}</Button>
+          <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={invalidScope || query.isFetching || !orgId || !auth.user?.id} onClick={() => { void query.refetch() }}><RefreshCw aria-hidden="true" className="mr-2 h-4 w-4" />{t("refresh")}</Button>
         </div>
 
         <Card className={analyticsPanelClass}>
           <CardContent className="grid gap-4 p-4 sm:grid-cols-2">
             <div className="min-w-0 space-y-1 text-sm"><label htmlFor={fieldId + "-date"}>{t("date")}</label>
-              <Input id={fieldId + "-date"} type="date" className={analyticsControlClass} value={selected?.date ?? data?.date ?? ""} onChange={event => changeScope({ date: event.target.value || undefined })} />
+              <Input id={fieldId + "-date"} type="date" className={analyticsControlClass} value={selected?.date ?? data?.date ?? ""} onChange={event => { if (event.target.value) changeScope({ date: event.target.value }) }} />
             </div>
             <div className="min-w-0 space-y-1 text-sm"><label htmlFor={fieldId + "-location"}>{t("location")}</label>
               <select id={fieldId + "-location"} className={cn(analyticsControlClass, "h-10 w-full px-3")} value={selected?.locationId ?? locationId ?? data?.locationId ?? ""} disabled={!locations.length} onChange={event => changeScope({ locationId: event.target.value })}>
                 {!locations.length && <option value="">{t("locationUnavailable")}</option>}
+                {selected?.locationId && !locations.some(location => location.id === selected.locationId) && <option value={selected.locationId}>{t("selectedLocationUnavailable")}</option>}
                 {locations.map(location => <option key={location.id} value={location.id}>{location.name}{location.retained ? " (" + t("retained") + ")" : ""}</option>)}
               </select>
+            </div>
+            <div className="flex flex-wrap gap-2 sm:col-span-2" role="group" aria-label={t("dayShortcuts")}>
+              <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={!contextReport} onClick={() => shortcut(0)}>{t("today")}</Button>
+              <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={!contextReport} onClick={() => shortcut(-1)}>{t("yesterday")}</Button>
             </div>
           </CardContent>
         </Card>
 
-        {(auth.isLoading || (query.isPending && orgId && auth.user?.id)) && <div role="status" className="space-y-3"><p>{t("loading")}</p><Skeleton className="h-36 w-full" /></div>}
+        {(auth.isLoading || (!invalidScope && query.isPending && orgId && auth.user?.id)) && <div role="status" className="space-y-3"><p>{t("loading")}</p><Skeleton className="h-36 w-full" /></div>}
+        {visible && query.isFetching && <p role="status" className={analyticsMutedTextClass}>{t("refreshing")}</p>}
+        {invalidScope && <div role="alert"><p>{t("invalidScope")}</p><Button type="button" variant="outline" className="dashboard-button-secondary mt-2" onClick={resetScope}>{t("resetScope")}</Button></div>}
         {!auth.isLoading && (!orgId || !auth.user?.id) && <p role="status" className={analyticsMutedTextClass}>{t("organizationRequired")}</p>}
-        {query.error && <div role="alert" className={cn("rounded-lg border p-4", analyticsToneClass("gold"))}><p className="font-medium">{t(denied ? "denied" : "failed")}</p><p className="mt-1 text-sm">{t(denied ? "deniedHelp" : "retryHelp")}</p></div>}
+        {!invalidScope && query.error && <div role="alert" className={cn("rounded-lg border p-4", analyticsToneClass("gold"))}><p className="font-medium">{t(denied ? "denied" : "failed")}</p><p className="mt-1 text-sm">{t(denied ? "deniedHelp" : "retryHelp")}</p>{!denied && <Button type="button" variant="outline" className="dashboard-button-secondary mt-2" onClick={resetScope}>{t("resetScope")}</Button>}</div>}
         {visible && <>
           <div className={cn("flex flex-wrap items-center gap-2 text-sm", analyticsMutedTextClass)}>
             <Badge variant="outline" className={analyticsToneClass("info")}>{t("source." + data.source.kind)}</Badge>
@@ -79,7 +136,10 @@ export default function CompleteIntegratedDailySalesDashboard({ organizationId, 
             {data.source.recordedAt && <span>{t("recordedAt", { time: instant(data.source.recordedAt) })}</span>}
             {data.source.finalized !== null && <Badge variant="outline" className={analyticsToneClass("muted")}>{t(data.source.finalized ? "finalized" : "draft")}</Badge>}
           </div>
-          <p className={cn("text-sm", analyticsMutedTextClass)}>{t(data.source.kind === "ORDER_AGGREGATION" ? "orderMeaning" : data.source.kind === "STORED_REPORT" ? "savedMeaning" : "noLocations")}</p>
+          {data.source.kind === "NO_LOCATIONS" ? <p className={analyticsMutedTextClass}>{t("noLocations")}</p> : <div className={cn("space-y-2 text-sm", analyticsMutedTextClass)}>
+            <p>{t(data.source.kind === "ORDER_AGGREGATION" ? "orderSummary" : "savedSummary")}</p>
+            <details><summary className="w-fit cursor-pointer rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]">{t("calculation")}</summary><p className="mt-2">{t(data.source.kind === "ORDER_AGGREGATION" ? "orderMeaning" : "savedMeaning")}</p><p className="mt-2">{t("quantityMeaning")}</p></details>
+          </div>}
           {metrics && <>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
@@ -89,7 +149,17 @@ export default function CompleteIntegratedDailySalesDashboard({ organizationId, 
                 [t("average"), money(metrics.average)],
               ].map(([label, value]) => <Card key={label} className={analyticsPanelClass}><CardContent className="p-4"><p className={cn("text-sm", analyticsMutedTextClass)}>{label}</p><p className="mt-2 break-words text-xl font-semibold tabular-nums">{value}</p></CardContent></Card>)}
             </div>
-            {metrics.count === 0 && <p role="status" className={analyticsMutedTextClass}>{t("empty")}</p>}
+            {metrics.count === 0 && <section className={cn("space-y-3 rounded-lg border p-4", analyticsPanelClass)} aria-label={t("empty")}>
+              <p role="status" className={analyticsMutedTextClass}>{t("empty")}</p>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" variant="outline" className="dashboard-button-secondary" onClick={() => document.getElementById(fieldId + "-date")?.focus()}>{t("changeDate")}</Button>
+                <Button type="button" variant="outline" className="dashboard-button-secondary" onClick={() => document.getElementById(fieldId + "-location")?.focus()}>{t("changeLocation")}</Button>
+                <Button type="button" variant="outline" className="dashboard-button-secondary whitespace-normal h-auto min-h-10" disabled={query.isFetching || latestState === "loading"} onClick={() => { void findLatest() }}>{t("latestDay")}</Button>
+                {permissionOrgId === orgId && hasPermission("OPERATE_POS") && <Button asChild variant="outline" className="dashboard-button-secondary"><Link href={`/${locale}/dashboard/pos`}>{t("openPos")}</Link></Button>}
+              </div>
+              <p className={cn("text-xs", analyticsMutedTextClass)}>{t("latestWindow")}</p>
+              {latestState && <p role={latestState === "failed" ? "alert" : "status"}>{t(latestState === "loading" ? "latestLoading" : latestState === "empty" ? "latestEmpty" : "latestFailed")}</p>}
+            </section>}
             <div className="grid gap-4 lg:grid-cols-2">
               <Card className={analyticsPanelClass}><CardHeader><CardTitle className="text-base">{t("cashTitle")}</CardTitle></CardHeader><CardContent>
                 {data.recordedCash ? <dl className="space-y-2">{Object.entries(data.recordedCash).map(([name, value]) => <div key={name} className="flex flex-wrap justify-between gap-2 text-sm"><dt className={analyticsMutedTextClass}>{t("cash." + name)}</dt><dd className="tabular-nums">{money(value)}</dd></div>)}</dl> : <p className={cn("text-sm", analyticsMutedTextClass)}>{t("cashUnavailable")}</p>}

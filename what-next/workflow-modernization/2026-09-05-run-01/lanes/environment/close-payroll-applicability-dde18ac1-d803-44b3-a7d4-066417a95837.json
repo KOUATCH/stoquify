@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-30T17:57:01.142Z",
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/accounting/close-assurance.service.ts": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+    "services/accounting/close-assurance-pack.service.ts": "e64756f3b131f683c2b95754d6203673b1721f4cf94a2bc6ac4314c40bb8b54b"
+  },
+  "checks": [
+    {
+      "name": "actual-assessment-with-no-payroll-period-has-no-pilot-gate",
+      "passed": true,
+      "remainingBlockers": [
+        "Close run status is BLOCKED, not READY.",
+        "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+        "1 high-severity blocker(s) remain open.",
+        "1 open high-risk finding(s) block certification."
+      ]
+    },
+    {
+      "name": "overlapping-period-without-accounting-link-and-run-blocks",
+      "passed": true
+    },
+    {
+      "name": "each-retained-run-requires-its-own-persisted-certificate",
+      "passed": true
+    },
+    {
+      "name": "foreign-period-with-same-accounting-reference-excluded",
+      "passed": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuoeqjy40000may0do0vz1x8",
+    "actorId": "cmuoeqjyn0002may0g6qgx079",
+    "periodId": "cmuoeqjzf0006may03g907jvg",
+    "runId": "cmuoeqkrm0008may0gjwatjes"
+  },
+  "noFinancialOrCertifiedEffects": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/accounting/close-assurance.service.ts": "e030758dfb31f88722ffff86919fa74697c3dededf7813b4c67b97ea3db17b3f",
+    "services/accounting/close-assurance-pack.service.ts": "e64756f3b131f683c2b95754d6203673b1721f4cf94a2bc6ac4314c40bb8b54b"
+  },
+  "sourceStable": true
+}

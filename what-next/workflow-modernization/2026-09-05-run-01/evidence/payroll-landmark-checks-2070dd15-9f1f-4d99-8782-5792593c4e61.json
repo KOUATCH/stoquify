@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-30T15:05:25.521Z",
+  "sourceBefore": {
+    "components/payroll/PayrollRunWorkbench.tsx": "1312ef0818276920be6082ee3dcf6fb02060ab412d19f87dfff8c306afb409e1",
+    "components/payroll/PayrollRegisterTieOut.tsx": "585e5b68223815bc06dae3fad4ec75e4459ea911dbddd08da01ba3929c8ebdb3",
+    "components/payroll/__tests__/PayrollRunWorkbench.test.tsx": "82885b770d6c78cbb3be84db357824ec19ed90264e3744e10206b3844c7ec392"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/payroll/__tests__/PayrollRunWorkbench.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "Test Suites: 1 passed, 1 total\nTests:       11 passed, 11 total\nSnapshots:   0 total\nTime:        10.583 s, estimated 49 s\nRan all test suites within paths \"components/payroll/__tests__/PayrollRunWorkbench.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/payroll/PayrollRunWorkbench.tsx",
+        "components/payroll/PayrollRegisterTieOut.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/payroll/PayrollRunWorkbench.tsx": "1312ef0818276920be6082ee3dcf6fb02060ab412d19f87dfff8c306afb409e1",
+    "components/payroll/PayrollRegisterTieOut.tsx": "585e5b68223815bc06dae3fad4ec75e4459ea911dbddd08da01ba3929c8ebdb3",
+    "components/payroll/__tests__/PayrollRunWorkbench.test.tsx": "82885b770d6c78cbb3be84db357824ec19ed90264e3744e10206b3844c7ec392"
+  },
+  "sourceStable": true,
+  "passed": true
+}

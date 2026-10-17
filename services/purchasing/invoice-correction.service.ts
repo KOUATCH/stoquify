@@ -5,6 +5,7 @@ import { BusinessRuleError, ConflictError, IdempotencyConflictError, NotFoundErr
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
 import { buildInvoiceLinePlans, duplicateFingerprint, expireMatchExceptionInTx, lockMatchExceptionInvoice, resolveAPCountryPackStatus } from "./ap-control.service"
+import { netUninvoicedReceiptReturns } from "./receipt-invoice-capacity"
 import { invoiceCorrectionAuthority } from "./invoice-correction-authority"
 import { invoiceCorrectionCommandSchema, invoiceCorrectionDraftSchema, invoiceCorrectionHistorySchema, invoiceCorrectionQuerySchema, type InvoiceCorrectionCommand, type InvoiceCorrectionDraft, type InvoiceCorrectionHistory, type InvoiceCorrectionQuery } from "./invoice-correction-contracts"
 import { invoicePreparationScopeSchema, type InvoicePreparationScope } from "./invoice-preparation-authority"
@@ -82,12 +83,13 @@ export async function loadInvoiceCorrectionSource(input: InvoiceCorrectionSource
       ...(query.receiptAfter ? { id: { gt: query.receiptAfter } } : {}),
     }, include: { goodsReceipt: { select: { receiptNumber: true } }, purchaseOrderLine: { select: { purchaseOrder: { select: { orderNumber: true } } } }, item: { select: { nameEn: true, nameFr: true } } }, orderBy: { id: "asc" }, take: 51 })
     const reservations = await tx.supplierInvoiceLine.groupBy({ by: ["goodsReceiptLineId"], where: { organizationId: scope.organizationId, supplierInvoiceId: { not: invoice.id }, goodsReceiptLineId: { in: receipts.map(row => row.id) }, supplierInvoice: { organizationId: scope.organizationId, deletedAt: null, status: { not: "CANCELLED" } } }, _sum: { quantity: true } })
+    const returned = await netUninvoicedReceiptReturns(tx, { organizationId: scope.organizationId, supplierId: invoice.supplierId, lines: receipts })
     const used = new Map(reservations.map(row => [row.goodsReceiptLineId, row._sum.quantity ?? new Prisma.Decimal(0)]))
     return {
       organizationId: scope.organizationId, actorId: scope.actorId, invoiceId: invoice.id, supplierName: invoice.supplier.name, checkedAt: new Date().toISOString(), previousEvidenceVerified: proof.valid,
       activeException: exceptions.some(row => ["OPEN", "APPROVED"].includes(row.status) && row.expiresAt > new Date()),
       preparation: { supplierId: invoice.supplierId, invoiceNumber: invoice.invoiceNumber, currency: invoice.currency, invoiceDate: invoice.invoiceDate.toISOString().slice(0,10), dueDate: invoice.dueDate?.toISOString().slice(0,10) ?? "", notes: invoice.notes ?? "", documentReference: proof.valid && proof.prepared.success ? proof.prepared.data.documentReference : "", documentSha256: proof.valid && proof.prepared.success ? proof.prepared.data.documentSha256 : "", lines: invoice.lines.map(row => ({ goodsReceiptLineId: row.goodsReceiptLineId ?? "", description: row.description, quantity: row.quantity.toString(), unitCost: row.unitCost.toFixed(2), taxRate: row.taxRate.toString() })) },
-      receipts: receipts.slice(0,50).map(row => ({ id: row.id, receiptNumber: row.goodsReceipt.receiptNumber, orderNumber: row.purchaseOrderLine.purchaseOrder.orderNumber, description: row.item.nameEn, descriptionFr: row.item.nameFr || row.item.nameEn, available: row.receivedQuantity.minus(used.get(row.id) ?? 0).toString(), unitCost: row.unitCost.toFixed(2) })), receiptNext: receipts.length > 50 ? receipts[49].id : null,
+      receipts: receipts.slice(0,50).map(row => ({ id: row.id, receiptNumber: row.goodsReceipt.receiptNumber, orderNumber: row.purchaseOrderLine.purchaseOrder.orderNumber, description: row.item.nameEn, descriptionFr: row.item.nameFr || row.item.nameEn, available: Prisma.Decimal.max(0, row.receivedQuantity.minus(used.get(row.id) ?? 0).minus(returned.get(row.id) ?? 0)).toString(), unitCost: row.unitCost.toFixed(2) })), receiptNext: receipts.length > 50 ? receipts[49].id : null,
     }
   })
 }

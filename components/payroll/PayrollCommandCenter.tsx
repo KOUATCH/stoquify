@@ -1,5 +1,8 @@
 "use client"
 
+
+import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+
 import Link from "next/link"
 import { useMemo, useState, useTransition } from "react"
 import {
@@ -100,24 +103,24 @@ const countryPackReviewTopics = [
   "withholdingRounding",
 ] as const
 
-function dateLabel(value: string | null | undefined) {
-  if (!value) return "Pending"
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(value))
+function dateLabel(value: string | null | undefined, locale: Locale = "en") {
+  if (!value) return payrollUiText("Pending", locale)
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(value))
 }
 
-function dateTimeLabel(value: string | null | undefined) {
-  if (!value) return "Pending"
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value))
+function dateTimeLabel(value: string | null | undefined, locale: Locale = "en") {
+  if (!value) return payrollUiText("Pending", locale)
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value))
 }
 
 function money(amount: string, currency: string) {
   return amount.includes("[REDACTED") ? amount : `${amount} ${currency}`
 }
 
-function displayValue(value: string | number | boolean | null | undefined) {
-  if (value === true) return "Yes"
-  if (value === false) return "No"
-  if (value === null || value === undefined || value === "") return "Pending"
+function displayValue(value: string | number | boolean | null | undefined, locale: Locale = "en") {
+  if (value === true) return payrollUiText("Yes", locale)
+  if (value === false) return payrollUiText("No", locale)
+  if (value === null || value === undefined || value === "") return payrollUiText("Pending", locale)
   return String(value)
 }
 
@@ -173,11 +176,11 @@ function approvalNotice(approval: PayrollCountryPackReviewIntakeApproval): Count
   }
 }
 
-function pilotStatusLabel(value: string) {
-  if (value === "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW") return "Certified"
-  if (value === "READY_FOR_SIGNOFF") return "Signoff"
-  if (value === "BLOCKED") return "Blocked"
-  return "Not evaluated"
+function pilotStatusLabel(value: string, locale: Locale = "en") {
+  if (value === "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW") return payrollUiText("Certified", locale)
+  if (value === "READY_FOR_SIGNOFF") return payrollUiText("Signoff", locale)
+  if (value === "BLOCKED") return payrollUiText("Blocked", locale)
+  return payrollUiText("Not evaluated", locale)
 }
 
 function stateTone(value: string | null | undefined) {
@@ -194,10 +197,10 @@ function stateTone(value: string | null | undefined) {
   return "border-white/12 bg-white/8 text-slate-200"
 }
 
-function Badge({ value }: { value: string | null | undefined }) {
+function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
   return (
     <span className={`inline-flex min-h-7 max-w-full items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${stateTone(value)}`}>
-      <span className="truncate">{value ?? "Pending"}</span>
+      <span className="truncate">{payrollStatusText(value, locale)}</span>
     </span>
   )
 }
@@ -237,11 +240,11 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       status: data.currentPeriod.status,
       source: "payroll.period",
       rows: [
-        { label: "Period start", value: data.currentPeriod.periodStart },
-        { label: "Period end", value: data.currentPeriod.periodEnd },
-        { label: "Pay date", value: data.currentPeriod.payDate },
-        { label: "Country pack", value: data.currentPeriod.countryPackVersion },
-        { label: "Country pack hash", value: data.currentPeriod.countryPackResolutionHash },
+        { label: payrollUiText("Period start", locale), value: data.currentPeriod.periodStart },
+        { label: payrollUiText("Period end", locale), value: data.currentPeriod.periodEnd },
+        { label: payrollUiText("Pay date", locale), value: data.currentPeriod.payDate },
+        { label: payrollUiText("Country pack", locale), value: data.currentPeriod.countryPackVersion },
+        { label: payrollUiText("Country pack hash", locale), value: data.currentPeriod.countryPackResolutionHash },
         { label: "Capability", value: data.currentPeriod.countryPackCapabilityStatus },
         { label: "Accounting period", value: data.currentPeriod.accountingPeriodId },
       ],
@@ -255,13 +258,13 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       status: data.evidence.latestRun.status,
       source: "payroll.run",
       rows: [
-        { label: "Document hash", value: data.evidence.latestRun.documentHash },
-        { label: "Evidence hash", value: data.evidence.latestRun.evidenceHash },
+        { label: payrollUiText("Document hash", locale), value: data.evidence.latestRun.documentHash },
+        { label: payrollUiText("Evidence hash", locale), value: data.evidence.latestRun.evidenceHash },
         { label: "Calculation hash", value: data.evidence.latestRun.calculationHash },
         { label: "Attendance hash", value: data.evidence.latestRun.attendanceSnapshotHash },
-        { label: "Country pack hash", value: data.evidence.latestRun.countryPackResolutionHash },
-        { label: "Ledger batch", value: data.evidence.latestRun.ledgerPostingBatchId },
-        { label: "Posted event", value: data.evidence.latestRun.postedBusinessEventId },
+        { label: payrollUiText("Country pack hash", locale), value: data.evidence.latestRun.countryPackResolutionHash },
+        { label: payrollUiText("Ledger batch", locale), value: data.evidence.latestRun.ledgerPostingBatchId },
+        { label: payrollUiText("Posted event", locale), value: data.evidence.latestRun.postedBusinessEventId },
         { label: "Run version", value: String(data.evidence.latestRun.lifecycle.version) },
         { label: "Transition proof", value: data.evidence.latestRun.lifecycle.transitionEvidence },
         { label: "Trust Spine writes", value: data.evidence.latestRun.lifecycle.writeEnabled ? "Enabled" : "Disabled" },
@@ -283,12 +286,12 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       source: "payroll.payment_batch",
       href: localizePath("/dashboard/finance/payments", locale),
       rows: [
-        { label: "Document hash", value: data.evidence.latestPaymentBatch.documentHash },
-        { label: "Evidence hash", value: data.evidence.latestPaymentBatch.evidenceHash },
+        { label: payrollUiText("Document hash", locale), value: data.evidence.latestPaymentBatch.documentHash },
+        { label: payrollUiText("Evidence hash", locale), value: data.evidence.latestPaymentBatch.evidenceHash },
         { label: "Bank file hash", value: data.evidence.latestPaymentBatch.bankFileHash },
-        { label: "Ledger batch", value: data.evidence.latestPaymentBatch.ledgerPostingBatchId },
-        { label: "Posted event", value: data.evidence.latestPaymentBatch.postedBusinessEventId },
-        { label: "Reconciliation", value: data.evidence.latestPaymentBatch.reconciliationStatus },
+        { label: payrollUiText("Ledger batch", locale), value: data.evidence.latestPaymentBatch.ledgerPostingBatchId },
+        { label: payrollUiText("Posted event", locale), value: data.evidence.latestPaymentBatch.postedBusinessEventId },
+        { label: payrollUiText("Reconciliation", locale), value: data.evidence.latestPaymentBatch.reconciliationStatus },
       ],
     })
   }
@@ -301,8 +304,8 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       source: "payroll.declaration",
       href: localizePath("/dashboard/payroll/declarations", locale),
       rows: [
-        { label: "Payload hash", value: data.evidence.latestDeclaration.payloadHash },
-        { label: "Country pack hash", value: data.evidence.latestDeclaration.countryPackResolutionHash },
+        { label: payrollUiText("Payload hash", locale), value: data.evidence.latestDeclaration.payloadHash },
+        { label: payrollUiText("Country pack hash", locale), value: data.evidence.latestDeclaration.countryPackResolutionHash },
         { label: "Country-pack register proof", value: data.evidence.latestDeclaration.countryPackRegisterProofHash },
         { label: "Country-pack proof status", value: data.evidence.latestDeclaration.countryPackRegisterProofStatus },
         { label: "Country-pack proof present", value: data.evidence.latestDeclaration.countryPackRegisterProofPresent },
@@ -313,7 +316,7 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
         { label: "Statutory coverage hash", value: data.evidence.latestDeclaration.statutoryScenarioCoverageHash },
         { label: "Review evidence hashes", value: data.evidence.latestDeclaration.countryPackReviewEvidenceSourceHashes.join(", ") || null },
         { label: "Legal refs", value: data.evidence.latestDeclaration.countryPackLegalRefs.join(", ") || null },
-        { label: "Due date", value: data.evidence.latestDeclaration.dueDate },
+        { label: payrollUiText("Due date", locale), value: data.evidence.latestDeclaration.dueDate },
         { label: "Updated", value: data.evidence.latestDeclaration.updatedAt },
       ],
     })
@@ -331,7 +334,7 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
         { label: "Critical blockers", value: String(data.evidence.closeRun.criticalBlockerCount) },
         { label: "High blockers", value: String(data.evidence.closeRun.highBlockerCount) },
         { label: "Evidence coverage", value: data.evidence.closeRun.evidenceCoveragePct },
-        { label: "As of", value: data.evidence.closeRun.asOf },
+        { label: payrollUiText("As of", locale), value: data.evidence.closeRun.asOf },
       ],
     })
   }
@@ -346,7 +349,7 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       { label: "Certificate hash", value: data.evidence.pilotCertification.certificateHash },
       { label: "Generated", value: data.evidence.pilotCertification.generatedAt },
       { label: "Evaluated", value: data.evidence.pilotCertification.evaluatedAt },
-      { label: "Blockers", value: String(data.evidence.pilotCertification.blockerCount) },
+      { label: payrollUiText("Blockers", locale), value: String(data.evidence.pilotCertification.blockerCount) },
       { label: "Blocker codes", value: data.evidence.pilotCertification.blockerCodes.join(", ") || null },
       { label: "Missing signoffs", value: data.evidence.pilotCertification.missingSignoffRoles.join(", ") || null },
       { label: "Release gates", value: String(data.evidence.pilotCertification.releaseGateCount) },
@@ -355,33 +358,33 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
   })
   subjects.push({
     id: "final-release",
-    label: "Final release readiness",
+    label: payrollUiText("Final release readiness", locale),
     status: data.evidence.finalRelease.decision,
     source: "payroll.final_release_readiness",
     rows: [
       { label: "Pack hash", value: data.evidence.finalRelease.packHash },
       { label: "Generated", value: data.evidence.finalRelease.generatedAt },
-      { label: "Blockers", value: String(data.evidence.finalRelease.blockerCount) },
+      { label: payrollUiText("Blockers", locale), value: String(data.evidence.finalRelease.blockerCount) },
       { label: "Critical blockers", value: String(data.evidence.finalRelease.criticalBlockerCount) },
       { label: "High blockers", value: String(data.evidence.finalRelease.highBlockerCount) },
       { label: "Gate count", value: String(data.evidence.finalRelease.gateCount) },
-      { label: "Passing gates", value: String(data.evidence.finalRelease.passGateCount) },
+      { label: payrollUiText("Passing gates", locale), value: String(data.evidence.finalRelease.passGateCount) },
       { label: "Action-required gates", value: String(data.evidence.finalRelease.actionRequiredGateCount) },
       { label: "Blocked gates", value: String(data.evidence.finalRelease.blockedGateCount) },
       { label: "Statutory coverage", value: data.evidence.finalRelease.statutorySetup?.status ?? null },
       { label: "Statutory coverage hash", value: data.evidence.finalRelease.statutorySetup?.evidenceHash ?? null },
-      { label: "Statutory families", value: displayValue(data.evidence.finalRelease.statutorySetup?.families) },
-      { label: "Missing review evidence", value: displayValue(data.evidence.finalRelease.statutorySetup?.missingReviewEvidenceCount) },
-      { label: "Source evidence hashes", value: displayValue(data.evidence.finalRelease.statutorySetup?.sourceEvidenceHashCount) },
-      { label: "Required review topics", value: displayValue(data.evidence.finalRelease.statutorySetup?.requiredReviewTopics) },
-      { label: "Required review topic count", value: displayValue(data.evidence.finalRelease.statutorySetup?.requiredReviewTopicCount) },
+      { label: payrollUiText("Statutory families", locale), value: displayValue(data.evidence.finalRelease.statutorySetup?.families, locale) },
+      { label: "Missing review evidence", value: displayValue(data.evidence.finalRelease.statutorySetup?.missingReviewEvidenceCount, locale) },
+      { label: "Source evidence hashes", value: displayValue(data.evidence.finalRelease.statutorySetup?.sourceEvidenceHashCount, locale) },
+      { label: "Required review topics", value: displayValue(data.evidence.finalRelease.statutorySetup?.requiredReviewTopics, locale) },
+      { label: "Required review topic count", value: displayValue(data.evidence.finalRelease.statutorySetup?.requiredReviewTopicCount, locale) },
       { label: "Country-pack review status", value: data.evidence.finalRelease.countryPackReviewIntake?.status ?? null },
       { label: "Country-pack approval hash", value: data.evidence.finalRelease.countryPackReviewIntake?.approvalHash ?? null },
       { label: "Country-pack certificate hash", value: data.evidence.finalRelease.countryPackReviewIntake?.certificateHash ?? null },
       { label: "Country-pack proposed version", value: data.evidence.finalRelease.countryPackReviewIntake?.proposedPackVersion ?? null },
       { label: "Country-pack target families", value: data.evidence.finalRelease.countryPackReviewIntake?.targetFamilies.join(", ") || null },
-      { label: "Country-pack fresh auth", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.freshAuthSatisfied) },
-      { label: "Country-pack approval evidence", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.approvalEvidenceHashPresent) },
+      { label: "Country-pack fresh auth", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.freshAuthSatisfied, locale) },
+      { label: "Country-pack approval evidence", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.approvalEvidenceHashPresent, locale) },
       { label: "Blocker codes", value: data.evidence.finalRelease.blockerCodes.join(", ") || null },
       { label: "Release gate requirements", value: String(data.evidence.finalRelease.releaseGateRequirementCount) },
       { label: "Redaction policy", value: data.evidence.finalRelease.redactionPolicy },
@@ -390,17 +393,17 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
 
   subjects.push({
     id: "adapter-operations",
-    label: "Adapter operations",
+    label: payrollUiText("Adapter operations", locale),
     status: data.readiness.adapterOperations.state,
     source: "payroll.adapter_operations",
     href: localizePath("/dashboard/payroll/payments", locale),
     rows: [
       { label: "Redaction policy", value: data.adapterOperations.redaction.policy },
-      { label: "Raw payloads included", value: displayValue(data.adapterOperations.redaction.rawPayloadsIncluded) },
-      { label: "Credential secrets included", value: displayValue(data.adapterOperations.redaction.credentialSecretsIncluded) },
-      { label: "Salary or identity included", value: displayValue(data.adapterOperations.redaction.salaryOrEmployeeIdentityIncluded) },
+      { label: "Raw payloads included", value: displayValue(data.adapterOperations.redaction.rawPayloadsIncluded, locale) },
+      { label: "Credential secrets included", value: displayValue(data.adapterOperations.redaction.credentialSecretsIncluded, locale) },
+      { label: "Salary or identity included", value: displayValue(data.adapterOperations.redaction.salaryOrEmployeeIdentityIncluded, locale) },
       { label: "Provider accounts", value: String(data.adapterOperations.summary.providerAccounts) },
-      { label: "Provider blocked", value: String(data.adapterOperations.summary.providerBlocked) },
+      { label: payrollUiText("Provider blocked", locale), value: String(data.adapterOperations.summary.providerBlocked) },
       { label: "Provider action required", value: String(data.adapterOperations.summary.providerActionRequired) },
       { label: "Dead-letter inbox items", value: String(data.adapterOperations.summary.deadLetterInboxItems) },
       { label: "Failed inbox items", value: String(data.adapterOperations.summary.failedInboxItems) },
@@ -413,9 +416,9 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       { label: "Worker completed", value: String(data.adapterOperations.summary.settlementWorkerCompletedItems) },
       { label: "Worker unknown", value: String(data.adapterOperations.summary.settlementWorkerUnknownItems) },
       { label: "Replay or tamper events", value: String(data.adapterOperations.summary.replayOrTamperEvents) },
-      { label: "Authority dead-letter", value: String(data.adapterOperations.summary.authorityDeadLetter) },
+      { label: payrollUiText("Authority dead-letter", locale), value: String(data.adapterOperations.summary.authorityDeadLetter) },
       { label: "Authority harness gaps", value: String(data.adapterOperations.summary.authorityHarnessGaps) },
-      { label: "Payment adapter gaps", value: String(data.adapterOperations.summary.paymentAdapterGaps) },
+      { label: payrollUiText("Payment adapter gaps", locale), value: String(data.adapterOperations.summary.paymentAdapterGaps) },
       { label: "Chaos gate state", value: data.adapterOperations.adapterChaosGate.state },
       { label: "Chaos gate blockers", value: data.adapterOperations.adapterChaosGate.blockerCodes.join(", ") || null },
       { label: "Authority chaos missing", value: String(data.adapterOperations.summary.authorityChaosGateMissing) },
@@ -439,12 +442,11 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
   return subjects
 }
 
-function ProofButton({ subject, onClick }: { subject: ProofSubject | null; onClick: (subject: ProofSubject) => void }) {
+function ProofButton({ locale = "en", subject, onClick }: { subject: ProofSubject | null; onClick: (subject: ProofSubject) => void } & { locale?: Locale }) {
   if (!subject) {
     return (
       <span className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-3 text-xs font-semibold text-slate-500">
-        Pending
-      </span>
+         {payrollUiText("Pending", locale)} </span>
     )
   }
 
@@ -452,32 +454,30 @@ function ProofButton({ subject, onClick }: { subject: ProofSubject | null; onCli
     <button
       type="button"
       onClick={() => onClick(subject)}
-      title="Open proof"
+      title={payrollUiText("Open proof", locale)}
       className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/10 px-3 text-xs font-semibold text-white transition hover:bg-white/15"
     >
       <Eye className="h-4 w-4" aria-hidden="true" />
-      Proof
-    </button>
+       {payrollUiText("Proof", locale)} </button>
   )
 }
 
-function ProofDrawer({ subject, open, onOpenChange }: { subject: ProofSubject | null; open: boolean; onOpenChange: (open: boolean) => void }) {
+function ProofDrawer({ locale = "en", subject, open, onOpenChange }: { subject: ProofSubject | null; open: boolean; onOpenChange: (open: boolean) => void } & { locale?: Locale }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full overflow-y-auto border-white/10 bg-[#101820] text-slate-100 sm:max-w-2xl">
         <SheetHeader className="pr-8">
-          <SheetTitle className="text-white">{subject?.label ?? "Proof"}</SheetTitle>
+          <SheetTitle className="text-white">{subject?.label ?? payrollUiText("Proof", locale)}</SheetTitle>
           <SheetDescription className="text-slate-400">{subject?.source ?? "payroll.command_read_model"}</SheetDescription>
         </SheetHeader>
 
         {subject ? (
           <div className="mt-6 flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] p-4">
-              <Badge value={subject.status} />
+              <Badge locale={locale} value={subject.status} />
               {subject.href ? (
                 <Link href={subject.href} className="inline-flex min-h-8 items-center gap-2 rounded-md border border-white/12 px-2.5 text-xs font-semibold text-white hover:bg-white/10">
-                  Open
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                   {payrollUiText("Open", locale)} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               ) : null}
             </div>
@@ -485,7 +485,7 @@ function ProofDrawer({ subject, open, onOpenChange }: { subject: ProofSubject | 
               {subject.rows.map((row) => (
                 <div key={row.label} className="grid gap-2 px-4 py-3 sm:grid-cols-[160px_minmax(0,1fr)]">
                   <dt className="text-xs font-semibold uppercase tracking-normal text-slate-400">{row.label}</dt>
-                  <dd className="min-w-0 break-all text-sm text-slate-100">{row.value || "Pending"}</dd>
+                  <dd className="min-w-0 break-all text-sm text-slate-100">{row.value || payrollUiText("Pending", locale)}</dd>
                 </div>
               ))}
             </div>
@@ -496,16 +496,16 @@ function ProofDrawer({ subject, open, onOpenChange }: { subject: ProofSubject | 
   )
 }
 
-function DetailRow({ label, value }: { label: string; value: string | number | boolean | null | undefined }) {
+function DetailRow({ locale = "en", label, value }: { label: string; value: string | number | boolean | null | undefined } & { locale?: Locale }) {
   return (
     <div className="grid gap-1 sm:grid-cols-[140px_minmax(0,1fr)]">
       <dt className="text-xs font-semibold uppercase tracking-normal text-slate-500">{label}</dt>
-      <dd className="min-w-0 break-words text-xs text-slate-200">{displayValue(value)}</dd>
+      <dd className="min-w-0 break-words text-xs text-slate-200">{displayValue(value, locale)}</dd>
     </div>
   )
 }
 
-function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void }) {
+function AdapterOperationsPanel({ locale = "en", data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void } & { locale?: Locale }) {
   const adapterProof = proofSubjects.find((subject) => subject.id === "adapter-operations") ?? null
   const summary = data.adapterOperations.summary
   const chaosGate = data.adapterOperations.adapterChaosGate
@@ -517,8 +517,8 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <Landmark className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-white">Adapter operations</h2>
-            <Badge value={data.readiness.adapterOperations.state} />
+            <h2 className="text-sm font-semibold text-white">{payrollUiText("Adapter operations", locale)}</h2>
+            <Badge locale={locale} value={data.readiness.adapterOperations.state} />
           </div>
           <p className="mt-1 line-clamp-2 text-xs text-slate-400">{data.readiness.adapterOperations.message}</p>
         </div>
@@ -527,23 +527,23 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
             <EyeOff className="h-4 w-4 text-emerald-200" aria-hidden="true" />
             {data.adapterOperations.redaction.policy}
           </span>
-          <ProofButton subject={adapterProof} onClick={onProof} />
+          <ProofButton locale={locale} subject={adapterProof} onClick={onProof} />
         </div>
       </div>
 
       <div className="grid gap-3 border-b border-white/10 p-4 sm:grid-cols-2 xl:grid-cols-6">
-        <Metric label="Provider blocked" value={summary.providerBlocked} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Callback lag" value={summary.laggingCallbackProviders} icon={CalendarClock} tone="bg-amber-400/12 text-amber-200" />
-        <Metric label="Inbox stale" value={summary.staleProcessingInboxItems} icon={CalendarClock} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Authority dead-letter" value={summary.authorityDeadLetter} icon={FileText} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Certification gaps" value={certificationGapCount} icon={ShieldCheck} tone="bg-cyan-400/12 text-cyan-200" />
-        <Metric label="Chaos gate" value={summary.adapterChaosGateBlockers} icon={ShieldCheck} tone="bg-amber-400/12 text-amber-200" />
+        <Metric label={payrollUiText("Provider blocked", locale)} value={summary.providerBlocked} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Callback lag", locale)} value={summary.laggingCallbackProviders} icon={CalendarClock} tone="bg-amber-400/12 text-amber-200" />
+        <Metric label={payrollUiText("Inbox stale", locale)} value={summary.staleProcessingInboxItems} icon={CalendarClock} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Authority dead-letter", locale)} value={summary.authorityDeadLetter} icon={FileText} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Certification gaps", locale)} value={certificationGapCount} icon={ShieldCheck} tone="bg-cyan-400/12 text-cyan-200" />
+        <Metric label={payrollUiText("Chaos gate", locale)} value={summary.adapterChaosGateBlockers} icon={ShieldCheck} tone="bg-amber-400/12 text-amber-200" />
       </div>
 
       <div className="grid gap-4 p-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)]">
         <div className="min-w-0 rounded-lg border border-white/10 bg-white/[0.04]">
           <div className="border-b border-white/10 px-4 py-3">
-            <h3 className="text-sm font-semibold text-white">Provider health</h3>
+            <h3 className="text-sm font-semibold text-white">{payrollUiText("Provider health", locale)}</h3>
           </div>
           <div className="divide-y divide-white/10">
             {data.adapterOperations.providerHealth.length ? (
@@ -551,41 +551,41 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
                 <div key={provider.providerAccountId} className="space-y-3 px-4 py-3">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <p className="min-w-0 truncate text-sm font-semibold text-white">{provider.displayName}</p>
-                    <Badge value={provider.state} />
-                    <Badge value={provider.status} />
+                    <Badge locale={locale} value={provider.state} />
+                    <Badge locale={locale} value={provider.status} />
                   </div>
                   <dl className="grid gap-2 md:grid-cols-2">
-                    <DetailRow label="Provider" value={provider.providerCode} />
-                    <DetailRow label="Currency" value={provider.currencyCode} />
-                    <DetailRow label="Statement" value={dateTimeLabel(provider.latestStatementImportedAt)} />
-                    <DetailRow label="Statement hash" value={provider.latestStatementFileHash} />
-                    <DetailRow label="Latest event" value={dateTimeLabel(provider.latestProviderEventReceivedAt)} />
-                    <DetailRow label="Reconciliation" value={provider.latestReconciliationStatus} />
-                    <DetailRow label="Run guard" value={provider.latestReconciliationGuard} />
-                    <DetailRow label="Run dedupe key" value={provider.latestReconciliationRunDedupeKey} />
-                    <DetailRow label="Dead letters" value={provider.deadLetterInboxCount} />
-                    <DetailRow label="Failed inbox" value={provider.failedInboxCount} />
-                    <DetailRow label="Processing inbox" value={provider.processingInboxCount} />
-                    <DetailRow label="Retry due" value={provider.retryDueInboxCount} />
-                    <DetailRow label="Stale processing" value={provider.staleProcessingInboxCount} />
-                    <DetailRow label="Replay/tamper" value={provider.replayOrTamperEventCount} />
-                    <DetailRow label="Exceptions" value={provider.openExceptionCount} />
-                    <DetailRow label="Duplicate risk" value={provider.duplicateRiskCount} />
-                    <DetailRow label="Settlement worker" value={provider.settlementWorker.latestAction} />
-                    <DetailRow label="Worker source" value={provider.settlementWorker.latestActionSource} />
-                    <DetailRow label="Worker action at" value={dateTimeLabel(provider.settlementWorker.latestActionAt)} />
-                    <DetailRow label="Worker next retry" value={dateTimeLabel(provider.settlementWorker.nextRetryAt)} />
-                    <DetailRow label="Worker error" value={provider.settlementWorker.lastErrorCode} />
-                    <DetailRow label="Worker evidence" value={provider.settlementWorker.evidenceRefs.map((ref) => ref.payloadHash).join(", ") || null} />
+                    <DetailRow locale={locale} label={payrollUiText("Provider", locale)} value={provider.providerCode} />
+                    <DetailRow locale={locale} label={payrollUiText("Currency", locale)} value={provider.currencyCode} />
+                    <DetailRow locale={locale} label={payrollUiText("Statement", locale)} value={dateTimeLabel(provider.latestStatementImportedAt, locale)} />
+                    <DetailRow locale={locale} label={payrollUiText("Statement hash", locale)} value={provider.latestStatementFileHash} />
+                    <DetailRow locale={locale} label={payrollUiText("Latest event", locale)} value={dateTimeLabel(provider.latestProviderEventReceivedAt, locale)} />
+                    <DetailRow locale={locale} label={payrollUiText("Reconciliation", locale)} value={provider.latestReconciliationStatus} />
+                    <DetailRow locale={locale} label={payrollUiText("Run guard", locale)} value={provider.latestReconciliationGuard} />
+                    <DetailRow locale={locale} label={payrollUiText("Run dedupe key", locale)} value={provider.latestReconciliationRunDedupeKey} />
+                    <DetailRow locale={locale} label={payrollUiText("Dead letters", locale)} value={provider.deadLetterInboxCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Failed inbox", locale)} value={provider.failedInboxCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Processing inbox", locale)} value={provider.processingInboxCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Retry due", locale)} value={provider.retryDueInboxCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Stale processing", locale)} value={provider.staleProcessingInboxCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Replay/tamper", locale)} value={provider.replayOrTamperEventCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Exceptions", locale)} value={provider.openExceptionCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Duplicate risk", locale)} value={provider.duplicateRiskCount} />
+                    <DetailRow locale={locale} label={payrollUiText("Settlement worker", locale)} value={provider.settlementWorker.latestAction} />
+                    <DetailRow locale={locale} label={payrollUiText("Worker source", locale)} value={provider.settlementWorker.latestActionSource} />
+                    <DetailRow locale={locale} label={payrollUiText("Worker action at", locale)} value={dateTimeLabel(provider.settlementWorker.latestActionAt, locale)} />
+                    <DetailRow locale={locale} label={payrollUiText("Worker next retry", locale)} value={dateTimeLabel(provider.settlementWorker.nextRetryAt, locale)} />
+                    <DetailRow locale={locale} label={payrollUiText("Worker error", locale)} value={provider.settlementWorker.lastErrorCode} />
+                    <DetailRow locale={locale} label={payrollUiText("Worker evidence", locale)} value={provider.settlementWorker.evidenceRefs.map((ref) => ref.payloadHash).join(", ") || null} />
                   </dl>
                   <div className="flex flex-wrap gap-2">
-                    {provider.blockers.length ? provider.blockers.map((blocker) => <Badge key={blocker} value={blocker} />) : <Badge value="READY" />}
+                    {provider.blockers.length ? provider.blockers.map((blocker) => <Badge locale={locale} key={blocker} value={blocker} />) : <Badge locale={locale} value="READY" />}
                   </div>
                   <p className="break-words text-xs text-slate-300">{provider.nextAction}</p>
                 </div>
               ))
             ) : (
-              <div className="px-4 py-6 text-sm text-slate-400">No provider accounts returned.</div>
+              <div className="px-4 py-6 text-sm text-slate-400">{payrollUiText("No provider accounts returned.", locale)}</div>
             )}
           </div>
         </div>
@@ -593,20 +593,20 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
         <div className="grid min-w-0 gap-4">
           <div className="rounded-lg border border-white/10 bg-white/[0.04]">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
-              <h3 className="text-sm font-semibold text-white">Chaos release gate</h3>
-              <Badge value={chaosGate.state} />
+              <h3 className="text-sm font-semibold text-white">{payrollUiText("Chaos release gate", locale)}</h3>
+              <Badge locale={locale} value={chaosGate.state} />
             </div>
             <div className="space-y-3 px-4 py-3">
               <dl className="grid gap-2">
-                <DetailRow label="Authority claims" value={chaosGate.authorityAutomationClaims} />
-                <DetailRow label="Provider claims" value={chaosGate.providerAutomationClaims} />
-                <DetailRow label="Authority missing" value={chaosGate.missingAuthorityProofCount} />
-                <DetailRow label="Provider missing" value={chaosGate.missingProviderProofCount} />
-                <DetailRow label="Authority proof" value={chaosGate.latestAuthorityProofHash} />
-                <DetailRow label="Provider proof" value={chaosGate.latestProviderProofHash} />
+                <DetailRow locale={locale} label={payrollUiText("Authority claims", locale)} value={chaosGate.authorityAutomationClaims} />
+                <DetailRow locale={locale} label={payrollUiText("Provider claims", locale)} value={chaosGate.providerAutomationClaims} />
+                <DetailRow locale={locale} label={payrollUiText("Authority missing", locale)} value={chaosGate.missingAuthorityProofCount} />
+                <DetailRow locale={locale} label={payrollUiText("Provider missing", locale)} value={chaosGate.missingProviderProofCount} />
+                <DetailRow locale={locale} label={payrollUiText("Authority proof", locale)} value={chaosGate.latestAuthorityProofHash} />
+                <DetailRow locale={locale} label={payrollUiText("Provider proof", locale)} value={chaosGate.latestProviderProofHash} />
               </dl>
               <div className="flex flex-wrap gap-2">
-                {chaosGate.blockerCodes.length ? chaosGate.blockerCodes.map((blocker) => <Badge key={blocker} value={blocker} />) : <Badge value="READY" />}
+                {chaosGate.blockerCodes.length ? chaosGate.blockerCodes.map((blocker) => <Badge locale={locale} key={blocker} value={blocker} />) : <Badge locale={locale} value="READY" />}
               </div>
               <p className="break-words text-xs text-slate-300">{chaosGate.nextAction}</p>
             </div>
@@ -614,7 +614,7 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
 
           <div className="rounded-lg border border-white/10 bg-white/[0.04]">
             <div className="border-b border-white/10 px-4 py-3">
-              <h3 className="text-sm font-semibold text-white">Authority executions</h3>
+              <h3 className="text-sm font-semibold text-white">{payrollUiText("Authority executions", locale)}</h3>
             </div>
             <div className="divide-y divide-white/10">
               {data.adapterOperations.authorityExecutions.length ? (
@@ -622,32 +622,32 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
                   <div key={`${execution.declarationId}-${execution.declarationEvidenceId ?? "pending"}`} className="space-y-3 px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="min-w-0 truncate text-sm font-semibold text-white">{execution.authority} {execution.declarationType}</p>
-                      <Badge value={execution.executionStatus ?? execution.status} />
+                      <Badge locale={locale} value={execution.executionStatus ?? execution.status} />
                     </div>
                     <dl className="grid gap-2">
-                      <DetailRow label="Adapter" value={execution.authorityAdapterKey} />
-                      <DetailRow label="Harness hash" value={execution.authorityCertificationHarnessHash} />
-                      <DetailRow label="Proof hash" value={execution.authorityAdapterProofHash} />
-                      <DetailRow label="Chaos hash" value={execution.adapterChaosReleaseGateHash} />
-                      <DetailRow label="Attempts" value={execution.attempts} />
-                      <DetailRow label="Next attempt" value={dateTimeLabel(execution.nextAttemptAt)} />
-                      <DetailRow label="Error code" value={execution.errorCode} />
+                      <DetailRow locale={locale} label={payrollUiText("Adapter", locale)} value={execution.authorityAdapterKey} />
+                      <DetailRow locale={locale} label={payrollUiText("Harness hash", locale)} value={execution.authorityCertificationHarnessHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Proof hash", locale)} value={execution.authorityAdapterProofHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Chaos hash", locale)} value={execution.adapterChaosReleaseGateHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Attempts", locale)} value={execution.attempts} />
+                      <DetailRow locale={locale} label={payrollUiText("Next attempt", locale)} value={dateTimeLabel(execution.nextAttemptAt, locale)} />
+                      <DetailRow locale={locale} label={payrollUiText("Error code", locale)} value={execution.errorCode} />
                     </dl>
                     <div className="flex flex-wrap gap-2">
-                      {execution.blockers.length ? execution.blockers.map((blocker) => <Badge key={blocker} value={blocker} />) : <Badge value="READY" />}
+                      {execution.blockers.length ? execution.blockers.map((blocker) => <Badge locale={locale} key={blocker} value={blocker} />) : <Badge locale={locale} value="READY" />}
                     </div>
                     <p className="break-words text-xs text-slate-300">{execution.nextAction}</p>
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-6 text-sm text-slate-400">No authority executions returned.</div>
+                <div className="px-4 py-6 text-sm text-slate-400">{payrollUiText("No authority executions returned.", locale)}</div>
               )}
             </div>
           </div>
 
           <div className="rounded-lg border border-white/10 bg-white/[0.04]">
             <div className="border-b border-white/10 px-4 py-3">
-              <h3 className="text-sm font-semibold text-white">Payment adapter gaps</h3>
+              <h3 className="text-sm font-semibold text-white">{payrollUiText("Payment adapter gaps", locale)}</h3>
             </div>
             <div className="divide-y divide-white/10">
               {data.adapterOperations.paymentAdapterGaps.length ? (
@@ -655,25 +655,25 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
                   <div key={gap.payrollPaymentBatchId} className="space-y-3 px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="min-w-0 truncate text-sm font-semibold text-white">{gap.batchNumber}</p>
-                      <Badge value={gap.status} />
-                      <Badge value={gap.paymentAdapterStatus} />
+                      <Badge locale={locale} value={gap.status} />
+                      <Badge locale={locale} value={gap.paymentAdapterStatus} />
                     </div>
                     <dl className="grid gap-2">
-                      <DetailRow label="Method" value={gap.method} />
-                      <DetailRow label="Harness hash" value={gap.providerCertificationHarnessHash} />
-                      <DetailRow label="Proof hash" value={gap.paymentAdapterProofHash} />
-                      <DetailRow label="Chaos hash" value={gap.adapterChaosReleaseGateHash} />
-                      <DetailRow label="Contract hash" value={gap.paymentProviderAdapterContractHash} />
-                      <DetailRow label="Exception" value={gap.paymentExceptionId} />
+                      <DetailRow locale={locale} label={payrollUiText("Method", locale)} value={gap.method} />
+                      <DetailRow locale={locale} label={payrollUiText("Harness hash", locale)} value={gap.providerCertificationHarnessHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Proof hash", locale)} value={gap.paymentAdapterProofHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Chaos hash", locale)} value={gap.adapterChaosReleaseGateHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Contract hash", locale)} value={gap.paymentProviderAdapterContractHash} />
+                      <DetailRow locale={locale} label={payrollUiText("Exception", locale)} value={gap.paymentExceptionId} />
                     </dl>
                     <div className="flex flex-wrap gap-2">
-                      {gap.blockers.map((blocker) => <Badge key={blocker} value={blocker} />)}
+                      {gap.blockers.map((blocker) => <Badge locale={locale} key={blocker} value={blocker} />)}
                     </div>
                     <p className="break-words text-xs text-slate-300">{gap.nextAction}</p>
                   </div>
                 ))
               ) : (
-                <div className="px-4 py-6 text-sm text-slate-400">No payment adapter gaps returned.</div>
+                <div className="px-4 py-6 text-sm text-slate-400">{payrollUiText("No payment adapter gaps returned.", locale)}</div>
               )}
             </div>
           </div>
@@ -685,13 +685,13 @@ function AdapterOperationsPanel({ data, proofSubjects, onProof }: { data: Payrol
 
 function ActionBoard({ data, locale }: { data: PayrollCommandReadModel; locale: Locale }) {
   if (!data.nextActions.length) {
-    return <EmptyState title="Action board" body="No command actions are queued." />
+    return <EmptyState title={payrollUiText("Action board", locale)} body={payrollUiText("No command actions are queued.", locale)} />
   }
 
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
       <div className="border-b border-white/10 px-4 py-3">
-        <h2 className="text-sm font-semibold text-white">Action board</h2>
+        <h2 className="text-sm font-semibold text-white">{payrollUiText("Action board", locale)}</h2>
       </div>
       <div className="divide-y divide-white/10">
         {data.nextActions.map((action) => {
@@ -700,10 +700,10 @@ function ActionBoard({ data, locale }: { data: PayrollCommandReadModel; locale: 
             <div key={action.id} className="grid gap-3 px-4 py-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
               <div className="min-w-0">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <p className="truncate text-sm font-semibold text-white">{action.label}</p>
-                  <Badge value={action.priority} />
-                  {action.requiresFreshAuth ? <Badge value="Fresh auth" /> : null}
-                  {action.requiresSeparateApprover ? <Badge value="Maker-checker" /> : null}
+                  <p className="truncate text-sm font-semibold text-white">{payrollUiText(action.label, locale)}</p>
+                  <Badge locale={locale} value={action.priority} />
+                  {action.requiresFreshAuth ? <Badge locale={locale} value="Fresh auth" /> : null}
+                  {action.requiresSeparateApprover ? <Badge locale={locale} value="Maker-checker" /> : null}
                 </div>
                 <p className="mt-1 break-words text-xs text-slate-400">{action.source} / {action.requiredPermission}</p>
                 {action.blockedBy.length ? (
@@ -713,26 +713,22 @@ function ActionBoard({ data, locale }: { data: PayrollCommandReadModel; locale: 
               {route && !action.allowed && action.source === "payroll.run_lifecycle" && action.blockedBy.length ? (
                 <span className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 text-sm font-semibold text-amber-100">
                   <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-                  Blocked
-                </span>
+                   {payrollUiText("Blocked", locale)} </span>
               ) : route && action.allowed ? (
                 <Link
                   href={localizePath(route, locale)}
                   className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
-                  Open
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                   {payrollUiText("Open", locale)} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               ) : route ? (
                 <span className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-400/20 bg-rose-400/10 px-3 text-sm font-semibold text-rose-100">
                   <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-                  Need access
-                </span>
+                   {payrollUiText("Need access", locale)} </span>
               ) : (
                 <span className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 text-sm font-semibold text-amber-100">
                   <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-                  Pending route
-                </span>
+                   {payrollUiText("Pending route", locale)} </span>
               )}
             </div>
           )
@@ -742,15 +738,15 @@ function ActionBoard({ data, locale }: { data: PayrollCommandReadModel; locale: 
   )
 }
 
-function BlockerFlow({ data }: { data: PayrollCommandReadModel }) {
+function BlockerFlow({ locale = "en", data }: { data: PayrollCommandReadModel } & { locale?: Locale }) {
   if (!data.blockers.length) {
-    return <EmptyState title="Blocker flow" body="No command blockers are queued." />
+    return <EmptyState title={payrollUiText("Blocker flow", locale)} body={payrollUiText("No command blockers are queued.", locale)} />
   }
 
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
       <div className="border-b border-white/10 px-4 py-3">
-        <h2 className="text-sm font-semibold text-white">Blocker flow</h2>
+        <h2 className="text-sm font-semibold text-white">{payrollUiText("Blocker flow", locale)}</h2>
       </div>
       <div className="divide-y divide-white/10">
         {data.blockers.map((blocker) => (
@@ -758,7 +754,7 @@ function BlockerFlow({ data }: { data: PayrollCommandReadModel }) {
             <div className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <p className="truncate text-sm font-semibold text-white">{blocker.code}</p>
-                <Badge value={blocker.severity} />
+                <Badge locale={locale} value={blocker.severity} />
               </div>
               <p className="mt-1 break-words text-xs text-slate-300">{blocker.message}</p>
               <p className="mt-2 break-words text-xs text-slate-500">{blocker.source}</p>
@@ -773,17 +769,17 @@ function BlockerFlow({ data }: { data: PayrollCommandReadModel }) {
   )
 }
 
-function ReadinessRail({ data }: { data: PayrollCommandReadModel }) {
+function ReadinessRail({ locale = "en", data }: { data: PayrollCommandReadModel } & { locale?: Locale }) {
   return (
     <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {Object.entries(data.readiness).map(([key, item]) => (
         <div key={key} className="min-h-[118px] rounded-lg border border-white/10 bg-white/[0.05] p-4">
           <div className="flex min-w-0 items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{key}</p>
-              <p className="mt-2 line-clamp-2 text-xs text-slate-400">{item.message}</p>
+              <p className="truncate text-sm font-semibold text-white">{payrollUiText(key, locale)}</p>
+              <p className="mt-2 line-clamp-2 text-xs text-slate-400">{payrollUiText(item.message, locale)}</p>
             </div>
-            <Badge value={item.state} />
+            <Badge locale={locale} value={item.state} />
           </div>
         </div>
       ))}
@@ -791,13 +787,13 @@ function ReadinessRail({ data }: { data: PayrollCommandReadModel }) {
   )
 }
 
-function ReviewShell({ data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void }) {
+function ReviewShell({ locale = "en", data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void } & { locale?: Locale }) {
   const latestRunProof = proofSubjects.find((subject) => subject.id === "latest-run") ?? null
 
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
       <div className="border-b border-white/10 px-4 py-3">
-        <h2 className="text-sm font-semibold text-white">Run review</h2>
+        <h2 className="text-sm font-semibold text-white">{payrollUiText("Run review", locale)}</h2>
       </div>
       <div className="divide-y divide-white/10">
         {data.workbench.queues.recentRuns.length ? (
@@ -805,29 +801,29 @@ function ReviewShell({ data, proofSubjects, onProof }: { data: PayrollCommandRea
             <div key={run.id} className="grid gap-3 px-4 py-3 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)_auto] xl:items-center">
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-white">{run.runNumber}</p>
-                <p className="mt-1 truncate text-xs text-slate-400">{run.periodName} / {dateLabel(run.payDate)}</p>
+                <p className="mt-1 truncate text-xs text-slate-400">{run.periodName} / {dateLabel(run.payDate, locale)}</p>
               </div>
               <div className="flex min-w-0 flex-wrap gap-2">
-                <Badge value={run.status} />
-                <Badge value={run.ledgerPostingBatchId ? "LEDGER_EVIDENCE" : "LEDGER_PENDING"} />
-                <Badge value={run.postedBusinessEventId ? "EVENT_POSTED" : "EVENT_PENDING"} />
-                {run.id === data.evidence.latestRun?.id ? <Badge value={data.evidence.latestRun.lifecycle.transitionEvidence} /> : null}
+                <Badge locale={locale} value={run.status} />
+                <Badge locale={locale} value={run.ledgerPostingBatchId ? "LEDGER_EVIDENCE" : "LEDGER_PENDING"} />
+                <Badge locale={locale} value={run.postedBusinessEventId ? "EVENT_POSTED" : "EVENT_PENDING"} />
+                {run.id === data.evidence.latestRun?.id ? <Badge locale={locale} value={data.evidence.latestRun.lifecycle.transitionEvidence} /> : null}
               </div>
               <div className="flex min-w-0 items-center justify-between gap-3 xl:justify-end">
                 <div className="min-w-0 text-sm font-semibold text-white">{money(run.netPayableAmount, run.currency)}</div>
-                <ProofButton subject={run.id === data.evidence.latestRun?.id ? latestRunProof : null} onClick={onProof} />
+                <ProofButton locale={locale} subject={run.id === data.evidence.latestRun?.id ? latestRunProof : null} onClick={onProof} />
               </div>
             </div>
           ))
         ) : (
-          <div className="px-4 py-6 text-sm text-slate-400">No payroll runs found.</div>
+          <div className="px-4 py-6 text-sm text-slate-400">{payrollUiText("No payroll runs found.", locale)}</div>
         )}
       </div>
     </section>
   )
 }
 
-function FinanceState({ data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void }) {
+function FinanceState({ locale = "en", data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void } & { locale?: Locale }) {
   const paymentProof = proofSubjects.find((subject) => subject.id === "latest-payment-batch") ?? null
   const declarationProof = proofSubjects.find((subject) => subject.id === "latest-declaration") ?? null
   const closeProof = proofSubjects.find((subject) => subject.id === "close-run") ?? null
@@ -836,43 +832,43 @@ function FinanceState({ data, proofSubjects, onProof }: { data: PayrollCommandRe
     <section className="grid gap-4 xl:grid-cols-3">
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="border-b border-white/10 px-4 py-3">
-          <h2 className="text-sm font-semibold text-white">Payment state</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Payment state", locale)}</h2>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap gap-2">
-            <Badge value={data.evidence.latestPaymentBatch?.status ?? "PENDING"} />
-            <Badge value={data.trustedCounts.reconciliationExceptions > 0 ? "ACTION_REQUIRED" : "READY"} />
+            <Badge locale={locale} value={data.evidence.latestPaymentBatch?.status ?? "PENDING"} />
+            <Badge locale={locale} value={data.trustedCounts.reconciliationExceptions > 0 ? "ACTION_REQUIRED" : "READY"} />
           </div>
-          <p className="text-sm text-slate-300">{data.trustedCounts.currentPeriodPaymentBatches} current-period batch(es)</p>
-          <ProofButton subject={paymentProof} onClick={onProof} />
+          <p className="text-sm text-slate-300">{data.trustedCounts.currentPeriodPaymentBatches}  {payrollUiText("current-period batch(es)", locale)}</p>
+          <ProofButton locale={locale} subject={paymentProof} onClick={onProof} />
         </div>
       </div>
 
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="border-b border-white/10 px-4 py-3">
-          <h2 className="text-sm font-semibold text-white">Declaration state</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Declaration state", locale)}</h2>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap gap-2">
-            <Badge value={data.evidence.latestDeclaration?.status ?? "PENDING"} />
-            <Badge value={data.trustedCounts.openDeclarations > 0 ? "ACTION_REQUIRED" : "READY"} />
+            <Badge locale={locale} value={data.evidence.latestDeclaration?.status ?? "PENDING"} />
+            <Badge locale={locale} value={data.trustedCounts.openDeclarations > 0 ? "ACTION_REQUIRED" : "READY"} />
           </div>
-          <p className="text-sm text-slate-300">{data.trustedCounts.currentPeriodDeclarations} current-period declaration(s)</p>
-          <ProofButton subject={declarationProof} onClick={onProof} />
+          <p className="text-sm text-slate-300">{data.trustedCounts.currentPeriodDeclarations}  {payrollUiText("current-period declaration(s)", locale)}</p>
+          <ProofButton locale={locale} subject={declarationProof} onClick={onProof} />
         </div>
       </div>
 
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="border-b border-white/10 px-4 py-3">
-          <h2 className="text-sm font-semibold text-white">Close state</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Close state", locale)}</h2>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap gap-2">
-            <Badge value={data.evidence.closeRun?.status ?? "PENDING"} />
-            <Badge value={data.readiness.close.state} />
+            <Badge locale={locale} value={data.evidence.closeRun?.status ?? "PENDING"} />
+            <Badge locale={locale} value={data.readiness.close.state} />
           </div>
-          <p className="text-sm text-slate-300">{data.evidence.closeRun?.readinessScore ?? "n/a"} readiness score</p>
-          <ProofButton subject={closeProof} onClick={onProof} />
+          <p className="text-sm text-slate-300">{data.evidence.closeRun?.readinessScore ?? "n/a"}  {payrollUiText("readiness score", locale)}</p>
+          <ProofButton locale={locale} subject={closeProof} onClick={onProof} />
         </div>
       </div>
     </section>
@@ -909,7 +905,7 @@ function CountryPackReviewNoticePanel({ notice }: { notice: CountryPackReviewNot
   )
 }
 
-function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel }) {
+function CountryPackReviewIntakePanel({ locale = "en", data }: { data: PayrollCommandReadModel } & { locale?: Locale }) {
   const existingApproval = data.evidence.finalRelease.countryPackReviewIntake
   const [proposedPackJson, setProposedPackJson] = useState("")
   const [basePackVersion, setBasePackVersion] = useState(data.currentPeriod?.countryPackVersion ?? "")
@@ -1037,8 +1033,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-teal-200" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-white">Country-pack review intake</h2>
-            <Badge value={existingApproval?.status ?? "MISSING"} />
+            <h2 className="text-sm font-semibold text-white">{payrollUiText("Country-pack review intake", locale)}</h2>
+            <Badge locale={locale} value={existingApproval?.status ?? "MISSING"} />
           </div>
           <p className="mt-1 break-words text-xs text-slate-400">{existingApproval?.approvalHash ?? data.evidence.finalRelease.packHash}</p>
         </div>
@@ -1055,9 +1051,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
       <div className="grid gap-4 p-4">
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.7fr)]">
           <label className="text-xs font-semibold text-slate-400">
-            Proposed country-pack JSON
-            <textarea
-              aria-label="Proposed country-pack JSON"
+             {payrollUiText("Proposed country-pack JSON", locale)} <textarea
+              aria-label={payrollUiText("Proposed country-pack JSON", locale)}
               value={proposedPackJson}
               onChange={(event) => setProposedPackJson(event.target.value)}
               className={textareaClass()}
@@ -1066,9 +1061,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
           </label>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <label className="text-xs font-semibold text-slate-400">
-              Country code
-              <input
-                aria-label="Country code"
+               {payrollUiText("Country code", locale)} <input
+                aria-label={payrollUiText("Country code", locale)}
                 value={countryCode}
                 onChange={(event) => setCountryCode(event.target.value)}
                 className={fieldClass()}
@@ -1076,9 +1070,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
               />
             </label>
             <label className="text-xs font-semibold text-slate-400">
-              Base pack version
-              <input
-                aria-label="Base pack version"
+               {payrollUiText("Base pack version", locale)} <input
+                aria-label={payrollUiText("Base pack version", locale)}
                 value={basePackVersion}
                 onChange={(event) => setBasePackVersion(event.target.value)}
                 className={fieldClass()}
@@ -1089,7 +1082,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
         </div>
 
         <div className="grid gap-3 rounded-lg border border-white/10 bg-black/10 p-3">
-          <p className="text-xs font-semibold uppercase tracking-normal text-slate-400">Target families</p>
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-400">{payrollUiText("Target families", locale)}</p>
           <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {countryPackTargetFamilies.map((option) => (
               <label key={option.value} className="flex min-h-10 items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 text-xs font-semibold text-slate-200">
@@ -1107,13 +1100,12 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
         </div>
 
         <div className="grid gap-3 rounded-lg border border-white/10 bg-black/10 p-3">
-          <p className="text-xs font-semibold uppercase tracking-normal text-slate-400">Review topic evidence</p>
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-400">{payrollUiText("Review topic evidence", locale)}</p>
           <div className="grid gap-3">
             {reviewEvidence.map((entry, index) => (
               <div key={entry.topic} className="grid gap-2 rounded-md border border-white/10 bg-white/[0.04] p-3 xl:grid-cols-[minmax(160px,0.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,0.8fr)]">
                 <label className="text-xs font-semibold text-slate-400">
-                  Topic
-                  <input
+                   {payrollUiText("Topic", locale)} <input
                     aria-label={`Review topic ${index + 1}`}
                     value={entry.topic}
                     onChange={(event) => updateEvidence(index, "topic", event.target.value)}
@@ -1122,8 +1114,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
                   />
                 </label>
                 <label className="text-xs font-semibold text-slate-400">
-                  Legal reference
-                  <input
+                   {payrollUiText("Legal reference", locale)} <input
                     aria-label={`Legal reference ${index + 1}`}
                     value={entry.legalRef}
                     onChange={(event) => updateEvidence(index, "legalRef", event.target.value)}
@@ -1132,8 +1123,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
                   />
                 </label>
                 <label className="text-xs font-semibold text-slate-400">
-                  Evidence hash
-                  <input
+                   {payrollUiText("Evidence hash", locale)} <input
                     aria-label={`Evidence hash ${index + 1}`}
                     value={entry.sourceEvidenceHash}
                     onChange={(event) => updateEvidence(index, "sourceEvidenceHash", event.target.value)}
@@ -1142,8 +1132,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
                   />
                 </label>
                 <label className="text-xs font-semibold text-slate-400">
-                  Reviewer
-                  <input
+                   {payrollUiText("Reviewer", locale)} <input
                     aria-label={`Reviewer ${index + 1}`}
                     value={entry.reviewedBy}
                     onChange={(event) => updateEvidence(index, "reviewedBy", event.target.value)}
@@ -1152,8 +1141,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
                   />
                 </label>
                 <label className="text-xs font-semibold text-slate-400">
-                  Reviewed on
-                  <input
+                   {payrollUiText("Reviewed on", locale)} <input
                     aria-label={`Reviewed on ${index + 1}`}
                     value={entry.reviewedOn}
                     onChange={(event) => updateEvidence(index, "reviewedOn", event.target.value)}
@@ -1168,9 +1156,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
 
         <div className="grid gap-3 rounded-lg border border-white/10 bg-black/10 p-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end">
           <label className="text-xs font-semibold text-slate-400">
-            Review certificate hash
-            <input
-              aria-label="Review certificate hash"
+             {payrollUiText("Review certificate hash", locale)} <input
+              aria-label={payrollUiText("Review certificate hash", locale)}
               value={certificateHash}
               onChange={(event) => setCertificateHash(event.target.value)}
               className={fieldClass()}
@@ -1178,9 +1165,8 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
             />
           </label>
           <label className="text-xs font-semibold text-slate-400">
-            Approval evidence hash
-            <input
-              aria-label="Approval evidence hash"
+             {payrollUiText("Approval evidence hash", locale)} <input
+              aria-label={payrollUiText("Approval evidence hash", locale)}
               value={approvalEvidenceHash}
               onChange={(event) => setApprovalEvidenceHash(event.target.value)}
               className={fieldClass()}
@@ -1195,8 +1181,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
               className="inline-flex min-h-10 items-center gap-2 rounded-md border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-50 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <CheckCircle2 className="h-4 w-4" aria-hidden="true" />}
-              Evaluate pack
-            </button>
+               {payrollUiText("Evaluate pack", locale)} </button>
             <button
               type="button"
               disabled={isPending || !proposedPackJson.trim()}
@@ -1204,8 +1189,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
               className="inline-flex min-h-10 items-center gap-2 rounded-md border border-teal-400/30 bg-teal-400/10 px-3 py-2 text-sm font-semibold text-teal-50 transition hover:bg-teal-400/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <ShieldCheck className="h-4 w-4" aria-hidden="true" />}
-              Record certificate
-            </button>
+               {payrollUiText("Record certificate", locale)} </button>
             <button
               type="button"
               disabled={isPending || !certificateHash.trim() || !approvalEvidenceHash.trim()}
@@ -1213,8 +1197,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
               className="inline-flex min-h-10 items-center gap-2 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <LockKeyhole className="h-4 w-4" aria-hidden="true" />}
-              Approve certificate
-            </button>
+               {payrollUiText("Approve certificate", locale)} </button>
           </div>
         </div>
 
@@ -1224,7 +1207,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
   )
 }
 
-function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void }) {
+function FinalReleasePanel({ locale = "en", data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void } & { locale?: Locale }) {
   const finalRelease = data.evidence.finalRelease
   const finalReleaseProof = proofSubjects.find((subject) => subject.id === "final-release") ?? null
 
@@ -1234,8 +1217,8 @@ function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollComm
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-teal-200" aria-hidden="true" />
-            <h2 className="text-sm font-semibold text-white">Final release readiness</h2>
-            <Badge value={finalRelease.decision} />
+            <h2 className="text-sm font-semibold text-white">{payrollUiText("Final release readiness", locale)}</h2>
+            <Badge locale={locale} value={finalRelease.decision} />
           </div>
           <p className="mt-1 break-words text-xs text-slate-400">{finalRelease.packHash}</p>
         </div>
@@ -1244,18 +1227,18 @@ function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollComm
             <EyeOff className="h-4 w-4 text-emerald-200" aria-hidden="true" />
             {finalRelease.redactionPolicy}
           </span>
-          <ProofButton subject={finalReleaseProof} onClick={onProof} />
+          <ProofButton locale={locale} subject={finalReleaseProof} onClick={onProof} />
         </div>
       </div>
 
       <div className="grid gap-3 border-b border-white/10 p-4 sm:grid-cols-2 xl:grid-cols-7">
-        <Metric label="Passing gates" value={`${finalRelease.passGateCount}/${finalRelease.gateCount}`} icon={ShieldCheck} tone="bg-emerald-400/12 text-emerald-200" />
-        <Metric label="Blockers" value={finalRelease.blockerCount} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Critical" value={finalRelease.criticalBlockerCount} icon={LockKeyhole} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Statutory families" value={displayValue(finalRelease.statutorySetup?.families)} icon={FileText} tone="bg-cyan-400/12 text-cyan-200" />
-        <Metric label="Review hashes" value={displayValue(finalRelease.statutorySetup?.sourceEvidenceHashCount)} icon={CheckCircle2} tone="bg-teal-400/12 text-teal-200" />
-        <Metric label="Review topics" value={displayValue(finalRelease.statutorySetup?.requiredReviewTopicCount)} icon={ClipboardList} tone="bg-sky-400/12 text-sky-200" />
-        <Metric label="Pack approval" value={finalRelease.countryPackReviewIntake?.status ?? "Missing"} icon={ShieldCheck} tone="bg-violet-400/12 text-violet-100" />
+        <Metric label={payrollUiText("Passing gates", locale)} value={`${finalRelease.passGateCount}/${finalRelease.gateCount}`} icon={ShieldCheck} tone="bg-emerald-400/12 text-emerald-200" />
+        <Metric label={payrollUiText("Blockers", locale)} value={finalRelease.blockerCount} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Critical", locale)} value={finalRelease.criticalBlockerCount} icon={LockKeyhole} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Statutory families", locale)} value={displayValue(finalRelease.statutorySetup?.families, locale)} icon={FileText} tone="bg-cyan-400/12 text-cyan-200" />
+        <Metric label={payrollUiText("Review hashes", locale)} value={displayValue(finalRelease.statutorySetup?.sourceEvidenceHashCount, locale)} icon={CheckCircle2} tone="bg-teal-400/12 text-teal-200" />
+        <Metric label={payrollUiText("Review topics", locale)} value={displayValue(finalRelease.statutorySetup?.requiredReviewTopicCount, locale)} icon={ClipboardList} tone="bg-sky-400/12 text-sky-200" />
+        <Metric label={payrollUiText("Pack approval", locale)} value={finalRelease.countryPackReviewIntake?.status ?? payrollUiText("Missing", locale)} icon={ShieldCheck} tone="bg-violet-400/12 text-violet-100" />
       </div>
 
       <div className="divide-y divide-white/10">
@@ -1265,10 +1248,10 @@ function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollComm
               <p className="truncate text-sm font-semibold text-white">{gate.label}</p>
               <p className="mt-1 break-words text-xs text-slate-500">{gate.source}</p>
             </div>
-            <div className="min-w-0 break-all text-xs text-slate-300">{gate.evidenceHash ?? "Pending"}</div>
+            <div className="min-w-0 break-all text-xs text-slate-300">{gate.evidenceHash ?? payrollUiText("Pending", locale)}</div>
             <div className="flex min-w-0 flex-wrap justify-start gap-2 xl:justify-end">
-              <Badge value={gate.status} />
-              {gate.blockerCodes.length ? <Badge value={`${gate.blockerCodes.length} blockers`} /> : null}
+              <Badge locale={locale} value={gate.status} />
+              {gate.blockerCodes.length ? <Badge locale={locale} value={`${gate.blockerCodes.length} blockers`} /> : null}
             </div>
           </div>
         ))}
@@ -1276,18 +1259,18 @@ function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollComm
     </section>
   )
 }
-function FreshnessPanel({ data }: { data: PayrollCommandReadModel }) {
+function FreshnessPanel({ locale = "en", data }: { data: PayrollCommandReadModel } & { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05]">
       <div className="border-b border-white/10 px-4 py-3">
-        <h2 className="text-sm font-semibold text-white">Freshness</h2>
+        <h2 className="text-sm font-semibold text-white">{payrollUiText("Freshness", locale)}</h2>
       </div>
       <div className="grid gap-2 p-4 sm:grid-cols-2 xl:grid-cols-4">
         {data.freshness.map((item) => (
           <div key={item.source} className="min-h-[86px] rounded-lg border border-white/10 bg-white/[0.04] p-3">
             <div className="flex items-start justify-between gap-2">
               <p className="min-w-0 truncate text-xs font-semibold text-white">{item.source}</p>
-              <Badge value={item.status} />
+              <Badge locale={locale} value={item.status} />
             </div>
             <p className="mt-2 text-xs text-slate-400">{item.ageHours === null ? "n/a" : `${item.ageHours}h`}</p>
           </div>
@@ -1309,7 +1292,7 @@ export default function PayrollCommandCenter({ data, error, locale }: Props) {
         <div className="flex items-start gap-3">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
           <div className="min-w-0">
-            <h1 className="text-base font-semibold">Payroll command unavailable</h1>
+            <h1 className="text-base font-semibold">{payrollUiText("Payroll command unavailable", locale)}</h1>
             <p className="mt-1 break-words text-sm text-rose-100">{error}</p>
           </div>
         </div>
@@ -1318,57 +1301,57 @@ export default function PayrollCommandCenter({ data, error, locale }: Props) {
   }
 
   if (!data) {
-    return <EmptyState title="Payroll command" body="No payroll command data is available." />
+    return <EmptyState title={payrollUiText("Payroll command", locale)} body={payrollUiText("No payroll command data is available.", locale)} />
   }
 
   return (
     <main className="flex min-w-0 flex-col gap-4 text-slate-100">
       <section className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">Payroll command center</p>
-          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">HR, payroll, evidence, and close control</h1>
+          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">{payrollUiText("Payroll command center", locale)}</p>
+          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{payrollUiText("HR, payroll, evidence, and close control", locale)}</h1>
           <p className="mt-2 max-w-4xl text-sm text-slate-300">
-            As of {dateTimeLabel(data.asOf)}. Current period: {data.currentPeriod?.name ?? "Pending"}.
+             {payrollUiText("As of", locale)} {dateTimeLabel(data.asOf, locale)}{payrollUiText(". Current period:", locale)} {data.currentPeriod?.name ?? payrollUiText("Pending", locale)}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge value={data.redaction.payrollAmounts.mode} />
-          <Badge value={data.evidence.latestRun?.lifecycle.transitionEvidence ?? "NO_RUN"} />
-          <Badge value={data.evidence.pilotCertification.status} />
-          <ProofButton subject={pilotProof} onClick={setSelectedProof} />
-          <ProofButton subject={periodProof} onClick={setSelectedProof} />
+          <Badge locale={locale} value={data.redaction.payrollAmounts.mode} />
+          <Badge locale={locale} value={data.evidence.latestRun?.lifecycle.transitionEvidence ?? "NO_RUN"} />
+          <Badge locale={locale} value={data.evidence.pilotCertification.status} />
+          <ProofButton locale={locale} subject={pilotProof} onClick={setSelectedProof} />
+          <ProofButton locale={locale} subject={periodProof} onClick={setSelectedProof} />
         </div>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Metric label="Active employees" value={data.trustedCounts.activeEmployees} icon={UsersRound} tone="bg-sky-400/12 text-sky-200" />
-        <Metric label="Attendance ready" value={data.trustedCounts.attendanceReadyEmployees} icon={CalendarClock} tone="bg-cyan-400/12 text-cyan-200" />
-        <Metric label="Payment approved" value={data.trustedCounts.approvedPaymentDestinations} icon={Banknote} tone="bg-emerald-400/12 text-emerald-200" />
-        <Metric label="Ledger blockers" value={data.trustedCounts.ledgerBlockers} icon={LockKeyhole} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Current runs" value={data.trustedCounts.currentPeriodRuns} icon={ReceiptText} tone="bg-violet-400/12 text-violet-200" />
-        <Metric label="Open declarations" value={data.trustedCounts.openDeclarations} icon={FileText} tone="bg-amber-400/12 text-amber-200" />
-        <Metric label="Next actions" value={data.nextActions.length} icon={ClipboardList} tone="bg-slate-400/12 text-slate-200" />
-        <Metric label="Pilot cert" value={pilotStatusLabel(data.evidence.pilotCertification.status)} icon={ShieldCheck} tone="bg-teal-400/12 text-teal-200" />
-        <Metric label="Final release" value={data.evidence.finalRelease.decision === "READY_FOR_FULL_PRODUCTION_APPROVAL" ? "Ready" : "Not ready"} icon={ShieldCheck} tone="bg-cyan-400/12 text-cyan-200" />
-        <Metric label="Proof subjects" value={proofSubjects.length} icon={ShieldCheck} tone="bg-slate-400/12 text-slate-200" />
+        <Metric label={payrollUiText("Active employees", locale)} value={data.trustedCounts.activeEmployees} icon={UsersRound} tone="bg-sky-400/12 text-sky-200" />
+        <Metric label={payrollUiText("Attendance ready", locale)} value={data.trustedCounts.attendanceReadyEmployees} icon={CalendarClock} tone="bg-cyan-400/12 text-cyan-200" />
+        <Metric label={payrollUiText("Payment approved", locale)} value={data.trustedCounts.approvedPaymentDestinations} icon={Banknote} tone="bg-emerald-400/12 text-emerald-200" />
+        <Metric label={payrollUiText("Ledger blockers", locale)} value={data.trustedCounts.ledgerBlockers} icon={LockKeyhole} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Current runs", locale)} value={data.trustedCounts.currentPeriodRuns} icon={ReceiptText} tone="bg-violet-400/12 text-violet-200" />
+        <Metric label={payrollUiText("Open declarations", locale)} value={data.trustedCounts.openDeclarations} icon={FileText} tone="bg-amber-400/12 text-amber-200" />
+        <Metric label={payrollUiText("Next actions", locale)} value={data.nextActions.length} icon={ClipboardList} tone="bg-slate-400/12 text-slate-200" />
+        <Metric label={payrollUiText("Pilot cert", locale)} value={pilotStatusLabel(data.evidence.pilotCertification.status, locale)} icon={ShieldCheck} tone="bg-teal-400/12 text-teal-200" />
+        <Metric label={payrollUiText("Final release", locale)} value={data.evidence.finalRelease.decision === "READY_FOR_FULL_PRODUCTION_APPROVAL" ? payrollUiText("Ready", locale) : payrollUiText("Not ready", locale)} icon={ShieldCheck} tone="bg-cyan-400/12 text-cyan-200" />
+        <Metric label={payrollUiText("Proof subjects", locale)} value={proofSubjects.length} icon={ShieldCheck} tone="bg-slate-400/12 text-slate-200" />
       </section>
 
-      <ReadinessRail data={data} />
-      <PayrollPilotCertificationPanel data={data} />
+      <ReadinessRail locale={locale} data={data} />
+      <PayrollPilotCertificationPanel locale={locale} data={data} />
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
-        <BlockerFlow data={data} />
+        <BlockerFlow locale={locale} data={data} />
         <ActionBoard data={data} locale={locale} />
       </section>
 
-      <ReviewShell data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
-      <FinanceState data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
-      <FinalReleasePanel data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
-      <CountryPackReviewIntakePanel data={data} />
-      <AdapterOperationsPanel data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
-      <FreshnessPanel data={data} />
+      <ReviewShell locale={locale} data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
+      <FinanceState locale={locale} data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
+      <FinalReleasePanel locale={locale} data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
+      <CountryPackReviewIntakePanel locale={locale} data={data} />
+      <AdapterOperationsPanel locale={locale} data={data} proofSubjects={proofSubjects} onProof={setSelectedProof} />
+      <FreshnessPanel locale={locale} data={data} />
 
-      <ProofDrawer subject={selectedProof} open={Boolean(selectedProof)} onOpenChange={(open) => { if (!open) setSelectedProof(null) }} />
+      <ProofDrawer locale={locale} subject={selectedProof} open={Boolean(selectedProof)} onOpenChange={(open) => { if (!open) setSelectedProof(null) }} />
     </main>
   )
 }

@@ -577,7 +577,7 @@ function managerKpi(input: {
   id: string
   title: string
   detail: string
-  value: number
+  value: number | null
   unit: string
   snapshot: SnapshotResult<unknown>
   href: string

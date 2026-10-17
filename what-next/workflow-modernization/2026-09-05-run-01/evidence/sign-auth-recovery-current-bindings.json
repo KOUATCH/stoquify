@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-27T17:05:34.168Z",
+  "workflow": "PR-10",
+  "completeWorkflowVerified": false,
+  "sourceHashes": {
+    "components/finance/ReconciliationSignReview.tsx": "7aa17acfa217a385d552d15e2ca46941fb9dccb8b8abdfefef813735c2ec7ea7",
+    "components/finance/__tests__/ReconciliationSignReview.test.tsx": "4d6e26e5826468932e30c03be52afa13ea0ce348b32344c8dbd9b349a24e6d29",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "aad8e6dc4a845c45c1188610ff594b84a5e9fdb7c9da9a754eb6467bc6798ace",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "messages/en.json": "57117766aafecdb4b23ed7f8724fc99637d2917ec3778c9b02ec0bd0315c71d9",
+    "messages/fr.json": "cdd26f800f90eea59585b191e02d3e883a91f3f909ba2dd4447d86782ebc3262",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc"
+  },
+  "currentReceipts": [
+    {
+      "file": "evidence/sign-focus-checks-c0474747-2572-45ad-9f0a-b76c81bd84b1.json",
+      "sha256": "0197cbd7b4d12dae36a968f15e1b74184599ca81159fa0c878635d3aec543355"
+    },
+    {
+      "file": "lanes/environment/sign-auth-error-browser-404bafd0-ad17-4e3a-b08d-6e5e97adb6d8.json",
+      "sha256": "cf3abcd78a90a4dc0d2bfe034c26f3661baaeec9d8af0c2dce39e8cba75f097f"
+    }
+  ],
+  "reusedAndImpactEvidence": [
+    {
+      "file": "lanes/environment/sign-auth-error-browser-5e77b952-01ad-4592-a1ec-e75feb85b1f7.json",
+      "sha256": "0639cd8a4b83990854f5d52bb359c56483b80eed195d0daf9c3bcee5cc96723f"
+    },
+    {
+      "file": "evidence/sign-auth-focus-impact.json",
+      "sha256": "b36c8a009324c49e4269f8e11d9e02e4be12674a9ff6a64743821acb228dee05"
+    },
+    {
+      "file": "evidence/sign-auth-copy-impact.json",
+      "sha256": "1fd9239ca4d24b031f6eb35cb14bf7a1e6d72ffa801ab394fc2fcc0390845afc"
+    },
+    {
+      "file": "evidence/sign-auth-independent-catalog-edit.json",
+      "sha256": "1a299a85d93ae9a84721fb99164e733e37c284fd02c61925754d40e3c91f9dbb"
+    },
+    {
+      "file": "evidence/sign-auth-independent-catalog-edit-final.json",
+      "sha256": "194f810502a4a876d9e71c939dc3277a9e387ba15591ad21301e530b63b309a0"
+    }
+  ],
+  "scope": "Final tests and corrected-copy browser; full transport recovery reused through exact display-only impact proof. Both browser runs changed only the separately reconstructed unrelated module catalogue dictionary section."
+}

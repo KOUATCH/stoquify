@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-30T13:45:40.637Z",
+  "syntheticReleaseFixtures": true,
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "ebfc2667bdc8edccefb53463fcf69db06b9a99ef34499ae2782723207bb2d856",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "0db5fc785e6f7dedaa556d12b8ea53a6a3c73bbe890076bd6d96ff9e6f20b334",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51"
+  },
+  "checks": [],
+  "passed": false,
+  "error": "The expression evaluated to a falsy value:\n\n  assert.ok(read.batches[0].settlement.canRecord)\n",
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "ebfc2667bdc8edccefb53463fcf69db06b9a99ef34499ae2782723207bb2d856",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "0db5fc785e6f7dedaa556d12b8ea53a6a3c73bbe890076bd6d96ff9e6f20b334",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "cb1b94e71f1b400ae7d5241000d5617dd4d4e120d3da0e80a8937febff830a51"
+  },
+  "sourceStable": true
+}

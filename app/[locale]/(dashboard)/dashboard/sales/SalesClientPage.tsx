@@ -1,7 +1,7 @@
 "use client"
 
-import CompleteIntegratedDailySalesDashboard from "@/components/sales/CompleteIntegratedDailySalesDashboard"
+import SalesDashboard from "@/components/analytics/SalesDashboard"
 
 export default function SalesClientPage() {
-  return <CompleteIntegratedDailySalesDashboard />
+  return <SalesDashboard />
 }

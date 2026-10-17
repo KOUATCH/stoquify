@@ -19,6 +19,7 @@ import { type ErrorCategory, type ErrorSeverity } from "@/lib/error-handling/typ
 import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 
 export type ProtectedActionContext = RbacContext & {
+  correlationId?: string
   freshAuth?: {
     claims: AuthSessionClaims
     lastAuthAt: Date
@@ -102,7 +103,7 @@ export function protect<I, O>(
       if (options.tenantGuard !== false && options.tenantGuard !== "handler-derived") {
         await assertTrustedTenantInput(input, ctx)
       }
-      const actionCtx: ProtectedActionContext = freshAuth ? { ...ctx, freshAuth } : ctx
+      const actionCtx: ProtectedActionContext = { ...ctx, correlationId, ...(freshAuth ? { freshAuth } : {}) }
       const data = await handler(input, actionCtx)
       return { success: true, data, error: null, status: 200 }
     } catch (error) {
@@ -117,6 +118,7 @@ export function protect<I, O>(
       })
 
       if (isRbacError(error)) {
+        logger.warn("protected action denied", { code: safeError.code, correlationId, permission: options.permission, auditResource: options.auditResource })
         return {
           success: false,
           data: null,
@@ -131,6 +133,7 @@ export function protect<I, O>(
       }
 
       if (error instanceof FreshAuthRequiredError) {
+        logger.warn("protected action requires fresh authentication", { code: "FRESH_AUTH_REQUIRED", correlationId, permission: options.permission, auditResource: options.auditResource })
         const stepUpError = toSafeActionError(error, {
           correlationId,
           code: "FRESH_AUTH_REQUIRED",

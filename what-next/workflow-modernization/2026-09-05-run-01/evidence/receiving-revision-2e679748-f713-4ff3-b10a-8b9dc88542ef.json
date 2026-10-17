@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-09-30T22:29:20.336Z",
+  "endedAt": "2026-09-30T22:29:34.775Z",
+  "before": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchase-order/purchase-receiving-contracts.ts": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185",
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1",
+    "services/purchase-order/__tests__/purchase-receiving-revision.test.ts": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c",
+    "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5"
+  },
+  "after": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchase-order/purchase-receiving-contracts.ts": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185",
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1",
+    "services/purchase-order/__tests__/purchase-receiving-revision.test.ts": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c",
+    "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5"
+  },
+  "sourceStable": true,
+  "results": [
+    {
+      "command": [
+        "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+        "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx"
+      ],
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "output": "\nTest Suites: 2 passed, 2 total\nTests:       7 passed, 7 total\nSnapshots:   0 total\nTime:        2.999 s\nRan all test suites within paths \"services/purchase-order/__tests__/purchase-receiving-revision.test.ts\", \"components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx\".\n"
+    },
+    {
+      "command": [
+        "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+        "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+        "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx"
+      ],
+      "status": 0,
+      "signal": null,
+      "error": null,
+      "output": ""
+    }
+  ]
+}

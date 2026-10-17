@@ -1,0 +1,33 @@
+const { fixture } = require('./verify-signoff-request-order.cjs');
+const f = require('./statement-recipient-fixtures.cjs'), { db, fs, path, crypto, assert } = f;
+const { getModuleCatalog } = require(path.join(f.root, 'services/modules/module-catalog.service.ts'));
+const { observeModuleAccess } = require(path.join(f.root, 'services/modules/module-entitlement.service.ts'));
+const service = require(path.join(f.root, 'services/reconciliation/reconciliation-run-preparation.service.ts'));
+const files = ['services/reconciliation/reconciliation-run-preparation.service.ts', 'actions/payments/reconciliation-preparation.actions.ts', 'services/modules/module-entitlement.service.ts'];
+const hashes = () => Object.fromEntries(files.map(file => [file, crypto.createHash('sha256').update(fs.readFileSync(path.join(f.root, file))).digest('hex')]));
+const stamp = crypto.randomUUID(), report = { at: new Date().toISOString(), sourceBefore: hashes(), purpose: 'Reproduce stale outer module admission; passed means defect reproduced, not acceptable behavior.' };
+(async () => {
+  await f.helper.withClient(f.target, f.helper.assertOwned);
+  const x = await fixture('prepare-module-' + stamp), modules = getModuleCatalog().map(m => m.slug);
+  await db.tenantModuleConfiguration.create({ data: { organizationId: x.org.id, manifestHash: 'owned-preparation-boundary', selectedModules: modules, activeModules: modules } });
+  await db.tenantModuleGrant.createMany({ data: modules.map(moduleSlug => ({ organizationId: x.org.id, moduleSlug, status: 'active', source: 'requested_modules' })) });
+  const permissions = ['payments.reconciliation.read', 'payments.reconciliation.run', 'accounting.journal.read'];
+  const control = () => { const now = new Date(); return { organizationId: x.org.id, actorId: x.maker.id, actorPermissions: permissions, now, lastAuthAt: now }; };
+  const access = () => observeModuleAccess({ organizationId: x.org.id, userId: x.maker.id, actorPermissions: permissions, moduleSlug: 'payment_reconciliation', surfaceType: 'action', surface: 'actions/payments/reconciliation-preparation.actions.ts', accessIntent: 'write', mode: 'enforce', audit: false });
+  report.organizationId = x.org.id; report.runId = x.run.runId;
+  report.initialAdmission = (await access()).allowed; assert.equal(report.initialAdmission, true);
+  const preview = await service.previewReconciliationPreparation({ runId: x.run.runId }, control()); assert.equal(preview.canPrepare, true);
+  await db.tenantModuleGrant.update({ where: { organizationId_moduleSlug: { organizationId: x.org.id, moduleSlug: 'payment_reconciliation' } }, data: { status: 'read_only' } });
+  report.currentWriteAdmission = (await access()).allowed; assert.equal(report.currentWriteAdmission, false);
+  report.previewAfterWithdrawal = await service.previewReconciliationPreparation({ runId: x.run.runId }, control());
+  report.result = await service.prepareReconciliationRun({ runId: x.run.runId, expectedRevision: preview.revision, reason: 'Owned reproduction of stale action admission', idempotencyKey: crypto.randomUUID() }, control());
+  report.preparationAudits = await db.ledgerAuditEvent.count({ where: { organizationId: x.org.id, action: 'RECONCILIATION_RUN_PREPARE' } });
+  report.signatures = await db.ledgerAuditEvent.count({ where: { organizationId: x.org.id, action: 'PAYMENT_RECONCILIATION_RUN_SIGN' } });
+  report.journals = await db.journalEntry.count({ where: { organizationId: x.org.id } });
+  assert.equal(report.preparationAudits, 1); assert.equal(report.signatures, 0); assert.equal(report.journals, 0);
+  report.defectReproduced = true; report.passed = true;
+})().catch(error => { report.passed = false; report.error = f.safe(error); process.exitCode = 1; }).finally(async () => {
+  report.sourceAfter = hashes(); report.sourceStable = JSON.stringify(report.sourceBefore) === JSON.stringify(report.sourceAfter);
+  const output = path.join(__dirname, 'preparation-module-reproduction-' + stamp + '.json'); fs.writeFileSync(output, JSON.stringify(report, null, 2), { flag: 'wx' });
+  console.log(JSON.stringify({ output, passed: report.passed, defectReproduced: report.defectReproduced, error: report.error })); await db.$disconnect(); process.exit(process.exitCode || 0);
+});

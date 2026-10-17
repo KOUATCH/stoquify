@@ -40,12 +40,22 @@ describe("DashboardErrorState", () => {
     render(<DashboardErrorState error={error} reset={reset} title="Inventory could not load" />)
 
     expect(screen.getByRole("heading", { name: "Inventory could not load" })).toBeInTheDocument()
+    expect(screen.getAllByRole("main")).toHaveLength(1)
     expect(screen.getByText(/Retry the read-only dashboard without exposing internal details/)).toBeInTheDocument()
     expect(screen.queryByText(/sk_live_sensitive_value/)).not.toBeInTheDocument()
     expect(consoleError).toHaveBeenCalledWith(error)
 
     fireEvent.click(screen.getByRole("button", { name: "Try again" }))
 
+    expect(reset).toHaveBeenCalledTimes(1)
+  })
+
+  it("shares the dashboard main landmark when embedded and retains retry", () => {
+    const reset = jest.fn()
+    render(<main aria-label="Dashboard workspace"><DashboardErrorState embedded reset={reset} /></main>)
+    expect(screen.getAllByRole("main")).toHaveLength(1)
+    expect(screen.getByRole("main", { name: "Dashboard workspace" })).toContainElement(screen.getByRole("heading", { level: 1 }))
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }))
     expect(reset).toHaveBeenCalledTimes(1)
   })
 

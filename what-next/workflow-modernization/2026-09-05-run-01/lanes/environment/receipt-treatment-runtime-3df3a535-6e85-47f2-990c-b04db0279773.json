@@ -1,0 +1,416 @@
+{
+  "run": "3df3a535-6e85-47f2-990c-b04db0279773",
+  "at": "2026-10-01T00:13:00.037Z",
+  "checks": [
+    {
+      "id": "mixed",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-mixed",
+      "receiptId": "cmuos67uy002kmaf0n9e677s7",
+      "invoiceId": "cmuos68qi003ymaf071ihcnod",
+      "initialBlocker": "AP_NON_STOCK_TREATMENT_REVIEW",
+      "invalidResults": [
+        {
+          "mode": "implicit",
+          "blockerCode": "AP_NON_STOCK_TREATMENT_REVIEW",
+          "postingBatchId": "cmuos69cm004fmaf0cpqenngp"
+        },
+        {
+          "mode": "control",
+          "blockerCode": "AP_NON_STOCK_TREATMENT_REVIEW",
+          "postingBatchId": "cmuos69cm004fmaf0cpqenngp"
+        },
+        {
+          "mode": "receivables",
+          "blockerCode": "AP_NON_STOCK_TREATMENT_REVIEW",
+          "postingBatchId": "cmuos69cm004fmaf0cpqenngp"
+        },
+        {
+          "mode": "foreign-currency",
+          "blockerCode": "AP_NON_STOCK_TREATMENT_REVIEW",
+          "postingBatchId": "cmuos69cm004fmaf0cpqenngp",
+          "invoiceCurrency": "USD",
+          "accountCurrency": "EUR"
+        }
+      ],
+      "staleDenied": true,
+      "exactRetry": true,
+      "retainedApprovalUnchanged": true,
+      "balances": {
+        "INVENTORY": "25.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-30.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00",
+        "OWNED_NON_STOCK_TREATMENT": "5.00"
+      },
+      "stock": {
+        "quantity": "1.000",
+        "value": "25.00",
+        "projectionHash": "sha256:1427cf28a8ad28bd2ef8864f4a99761060e18c967f99a3b740042e32083073ba",
+        "tieout": {
+          "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-mixed",
+          "currency": "USD",
+          "recordedThrough": "2026-10-01T00:13:13.028Z",
+          "periodStart": null,
+          "periodEnd": null,
+          "inventoryValue": "25.00",
+          "ledgerClass3Value": "25.00",
+          "driftAmount": "0.00",
+          "rollForward": {
+            "openingInventoryValue": "0.00",
+            "movementInventoryValue": "25.00",
+            "closingInventoryValue": "25.00",
+            "inventoryRollForwardVariance": "0.00",
+            "openingLedgerClass3Value": "0.00",
+            "movementLedgerClass3Value": "25.00",
+            "closingLedgerClass3Value": "25.00",
+            "ledgerRollForwardVariance": "0.00"
+          },
+          "sourceCounts": {
+            "inventoryLevelCount": 1,
+            "inventoryTransactionCount": 1,
+            "stockAdjustmentCount": 0,
+            "stockWriteOffCount": 0,
+            "stockCountVarianceCount": 0,
+            "purchaseReceiptCount": 1,
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "class3JournalLineCount": 1,
+            "stockBusinessEventCount": 2
+          },
+          "failureCount": 0,
+          "evidenceHash": "sha256:f85d2d07472eab321e123e0928011c00efda9e2ab2f4e3483562c62d01f697d1",
+          "evidenceHashVersion": 1,
+          "status": "PASSED",
+          "reportHash": "sha256:e2aff9a3fd5bf7a7eed38e78b8281613beed6164fedce3283980b262924acb19",
+          "failures": []
+        }
+      },
+      "journal": [
+        {
+          "key": "ACCOUNTS_PAYABLE",
+          "debit": "0.00",
+          "credit": "30.00"
+        },
+        {
+          "key": "GRNI",
+          "debit": "25.00",
+          "credit": "0.00"
+        },
+        {
+          "key": "OWNED_NON_STOCK_TREATMENT",
+          "debit": "5.00",
+          "credit": "0.00"
+        }
+      ],
+      "elapsedMs": 6033
+    },
+    {
+      "id": "nonstock",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-nonstock",
+      "receiptId": "cmuos6cef00a7maf0gc9212yt",
+      "invoiceId": "cmuos6cv500armaf0w8ofo51b",
+      "initialBlocker": "AP_POSTING_RULE_REVIEW",
+      "retainedApprovalUnchanged": true,
+      "balances": {
+        "INVENTORY": "0.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-5.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00",
+        "OWNED_NON_STOCK_TREATMENT": "5.00"
+      },
+      "journal": [
+        {
+          "key": "ACCOUNTS_PAYABLE",
+          "debit": "0.00",
+          "credit": "5.00"
+        },
+        {
+          "key": "OWNED_NON_STOCK_TREATMENT",
+          "debit": "5.00",
+          "credit": "0.00"
+        }
+      ],
+      "elapsedMs": 2309
+    },
+    {
+      "id": "zero-stock",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-zero-stock",
+      "receiptId": "cmuos6e4600f2maf0497t6q4g",
+      "invoiceId": "cmuos6egf00g0maf0v85qt78i",
+      "exceptionId": "cmuos6eqq00gemaf0q9v3qrem",
+      "returnId": "dfc04b30-ce53-4703-9892-9a447645d1a8",
+      "creditId": "219e1d8f-4419-4ba6-a8ee-0cf024dbb474",
+      "reversalId": "933bbf7d-fcbd-4c6c-a1da-ce42f5098960",
+      "zeroStockRecognition": {
+        "quantity": "1.000",
+        "priorCost": "0.00",
+        "receiptId": "cmuos6e4600f2maf0497t6q4g",
+        "invoiceNet": "5.00",
+        "receiptCost": "0.00",
+        "priorQuantity": "0.000",
+        "receiptLineId": "cmuos6e4g00f6maf02eheqcfd",
+        "costAllocation": {
+          "quantity": "1.000",
+          "algorithm": "RECEIPT_REMAINING_POOL_V2",
+          "sourceValue": "0.00",
+          "consumedValue": "0.00",
+          "allocatedValue": "0.00",
+          "sourceQuantity": "1.000",
+          "consumedQuantity": "0.000"
+        },
+        "receiptBatchId": null,
+        "accountingStatus": "NOT_REQUIRED",
+        "receiptJournalId": null,
+        "receiptEvidenceHash": "4048b094a32619333a623f7252e1bc8a644bdb4a89ae564dd8070ad5bdfa9416"
+      },
+      "creditLines": [
+        {
+          "key": "ACCOUNTS_PAYABLE",
+          "debit": "5.00",
+          "credit": "0.00"
+        },
+        {
+          "key": "INVENTORY_VARIANCE",
+          "debit": "0.00",
+          "credit": "5.00"
+        }
+      ],
+      "cleared": {
+        "INVENTORY": "0.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "0.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "balances": {
+        "INVENTORY": "0.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-5.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "5.00"
+      },
+      "stock": {
+        "quantity": "0.000",
+        "value": "0.00",
+        "projectionHash": "sha256:6f04ded988a3fa0c8b39204014405d6fac397ee11611b19366929eb65f11847c",
+        "tieout": {
+          "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-zero-stock",
+          "currency": "USD",
+          "recordedThrough": "2026-10-01T00:13:18.465Z",
+          "periodStart": null,
+          "periodEnd": null,
+          "inventoryValue": "0.00",
+          "ledgerClass3Value": "0.00",
+          "driftAmount": "0.00",
+          "rollForward": {
+            "openingInventoryValue": "0.00",
+            "movementInventoryValue": "0.00",
+            "closingInventoryValue": "0.00",
+            "inventoryRollForwardVariance": "0.00",
+            "openingLedgerClass3Value": "0.00",
+            "movementLedgerClass3Value": "0.00",
+            "closingLedgerClass3Value": "0.00",
+            "ledgerRollForwardVariance": "0.00"
+          },
+          "sourceCounts": {
+            "inventoryLevelCount": 1,
+            "inventoryTransactionCount": 2,
+            "stockAdjustmentCount": 0,
+            "stockWriteOffCount": 0,
+            "stockCountVarianceCount": 0,
+            "purchaseReceiptCount": 1,
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "class3JournalLineCount": 0,
+            "stockBusinessEventCount": 4
+          },
+          "failureCount": 0,
+          "evidenceHash": "sha256:02e3ca323c813e7b5c0eed26e26441fe82b0ac6c2a36d78f3dc4cd9970a8b521",
+          "evidenceHashVersion": 1,
+          "status": "PASSED",
+          "reportHash": "sha256:73438c522e63915c47b650cacda8bb2b9507c89b2197dc1877b855704ea53fe9",
+          "failures": []
+        }
+      },
+      "elapsedMs": 3091
+    },
+    {
+      "id": "positive-stock",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-positive",
+      "receiptId": "cmuos6gk200mimaf0910eq5jd",
+      "invoiceId": "cmuos6gy000numaf0wa9x9g7y",
+      "recognitionVersion": 2,
+      "balances": {
+        "INVENTORY": "25.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-25.00",
+        "SUPPLIER_RETURN_CLAIM": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "stock": {
+        "quantity": "1.000",
+        "value": "25.00",
+        "projectionHash": "sha256:5ec0bb6c5d7eb6110e8003b2cc5cc5e361408bfea70e2fa9cf00a4006edd6223",
+        "tieout": {
+          "organizationId": "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-positive",
+          "currency": "USD",
+          "recordedThrough": "2026-10-01T00:13:20.295Z",
+          "periodStart": null,
+          "periodEnd": null,
+          "inventoryValue": "25.00",
+          "ledgerClass3Value": "25.00",
+          "driftAmount": "0.00",
+          "rollForward": {
+            "openingInventoryValue": "0.00",
+            "movementInventoryValue": "25.00",
+            "closingInventoryValue": "25.00",
+            "inventoryRollForwardVariance": "0.00",
+            "openingLedgerClass3Value": "0.00",
+            "movementLedgerClass3Value": "25.00",
+            "closingLedgerClass3Value": "25.00",
+            "ledgerRollForwardVariance": "0.00"
+          },
+          "sourceCounts": {
+            "inventoryLevelCount": 1,
+            "inventoryTransactionCount": 1,
+            "stockAdjustmentCount": 0,
+            "stockWriteOffCount": 0,
+            "stockCountVarianceCount": 0,
+            "purchaseReceiptCount": 1,
+            "posMovementCount": 0,
+            "openingStockCount": 0,
+            "class3JournalLineCount": 1,
+            "stockBusinessEventCount": 2
+          },
+          "failureCount": 0,
+          "evidenceHash": "sha256:95fd7b15564c8fdc97a6c9fe3cbe270731e10d999ca292f297c30b9b30cdb52d",
+          "evidenceHashVersion": 1,
+          "status": "PASSED",
+          "reportHash": "sha256:ec20e71f4946c8a48f3e996096b0c0c18df576027c4591ad280acc73af49aa4c",
+          "failures": []
+        }
+      },
+      "elapsedMs": 1830
+    }
+  ],
+  "selection": {
+    "selected": null,
+    "available": [
+      "mixed",
+      "nonstock",
+      "zero-stock",
+      "positive-stock"
+    ],
+    "skipped": []
+  },
+  "scope": "Existing exact owned localhost database. New synthetic organizations only; real receiving, invoice preparation, independent exception review/approval, recovery, returns and credits. No DDL, migrations, seeds, messages, payment execution or statutory approval.",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchasing/ap-control.service.ts": "6704f26093f6d57452393c797773ed6c271dccc3cc5ed46261dcca587160ba5c",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchase-order/purchase-order.service.ts": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchase-order/receipt-recognition.service.ts": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+    "services/purchase-order/receipt-ledger-recovery.service.ts": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7",
+    "services/purchasing/purchase-return-credit.service.ts": "4c050e2d0aa21a53ca4d59e62586e5c90d2f932673d5b1ae91a50c22b59dbb57",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-recognition.cjs": "1f91dc98a9018b1c47b21bee8426505a278f84ea1e982e5ac89c0876ed5ea1a1",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/purchasing/supplier-payment-balance.ts": "534b989cf0698bc096435012f1d9cd6791f1fd9c632b72880ccc6714830619e5",
+    "services/purchasing/supplier-credit-allocation.ts": "110cdef4580011ccee884e3ee8f249259fb9b03c4aeec8aa1ff5e883b078fab6",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchase-order/receipt-ledger-recovery-contracts.ts": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/periods.service.ts": "9683fae332998f4656cd4d0b25803ef1a9fd38c71302fb6ed3da4dc4d013888e",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "prisma/migrations/20260930231500_supplier_credit_zero_value_evidence/migration.sql": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-fractional-receipt-valuation.cjs": "9485ef336cb58ca298aeb4d279acf18723ad61c94a9cbb11ddf9008d610285b4",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/receipt-treatment-runtime.cjs": "82990537449a2d3395bae8754052bf5acacea215e453621bc0a7fdfe249a5fa3"
+  },
+  "originalBefore": "403ab3c9b66675309a5093406c4742a9507bed99cfb354018a17fb7a347af31f",
+  "sourcesAfter": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchasing/ap-control.service.ts": "6704f26093f6d57452393c797773ed6c271dccc3cc5ed46261dcca587160ba5c",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-invoice-capacity.ts": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "services/purchase-order/purchase-order.service.ts": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchase-order/receipt-recognition.service.ts": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+    "services/purchase-order/receipt-ledger-recovery.service.ts": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7",
+    "services/purchasing/purchase-return-credit.service.ts": "4c050e2d0aa21a53ca4d59e62586e5c90d2f932673d5b1ae91a50c22b59dbb57",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-recognition.cjs": "1f91dc98a9018b1c47b21bee8426505a278f84ea1e982e5ac89c0876ed5ea1a1",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/purchasing/supplier-payment-balance.ts": "534b989cf0698bc096435012f1d9cd6791f1fd9c632b72880ccc6714830619e5",
+    "services/purchasing/supplier-credit-allocation.ts": "110cdef4580011ccee884e3ee8f249259fb9b03c4aeec8aa1ff5e883b078fab6",
+    "services/purchasing/purchase-return-credit.schemas.ts": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+    "services/purchase-order/receipt-ledger-recovery-contracts.ts": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/periods.service.ts": "9683fae332998f4656cd4d0b25803ef1a9fd38c71302fb6ed3da4dc4d013888e",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "prisma/migrations/20260930231500_supplier_credit_zero_value_evidence/migration.sql": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-fractional-receipt-valuation.cjs": "9485ef336cb58ca298aeb4d279acf18723ad61c94a9cbb11ddf9008d610285b4",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/receipt-treatment-runtime.cjs": "82990537449a2d3395bae8754052bf5acacea215e453621bc0a7fdfe249a5fa3"
+  },
+  "sourceStable": true,
+  "originalAfter": "403ab3c9b66675309a5093406c4742a9507bed99cfb354018a17fb7a347af31f",
+  "originalUnchanged": true,
+  "fixtureOrganizations": [
+    "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-mixed",
+    "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-nonstock",
+    "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-zero-stock",
+    "workflow_supplier_ack_en_receipt-handoff-d29bc4a6-0700-4689-9a16-ae653a0f27e1-operational-87f1e4a9-a27d-4b4f-9c65-3abdf4eda216-treatment-positive"
+  ],
+  "passed": true
+}

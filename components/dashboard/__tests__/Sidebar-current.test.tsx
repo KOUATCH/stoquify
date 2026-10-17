@@ -20,6 +20,14 @@ const currentLinks = () => document.querySelectorAll('aside a[aria-current]')
 describe("Sidebar current destination and disclosure", () => {
   beforeEach(() => { mockPathname = "/en/dashboard/purchases/payables/prepare" })
 
+  it("uses the localized role label without granting navigation permissions", () => {
+    mockPathname = "/fr/dashboard"
+    render(<Sidebar session={{ user: { name: "Owned test", permissions: [], roles: [{ name: "Accountant", nameEn: "Accountant", nameFr: "Comptable", code: "ACCOUNTANT" }] } }} />)
+    expect(screen.getByText("Comptable")).toBeVisible()
+    expect(screen.queryByText("Accountant")).not.toBeInTheDocument()
+    expect(screen.queryByRole("link", { name: "AP Workbench" })).not.toBeInTheDocument()
+  })
+
   it("marks the nearest authorized destination once without marking its overview ancestor", () => {
     render(<Sidebar session={session} />)
     expect(currentLinks()).toHaveLength(1)

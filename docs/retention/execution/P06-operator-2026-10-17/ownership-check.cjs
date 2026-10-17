@@ -1,0 +1,21 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto')
+const root=path.resolve(__dirname,'../../../..'),baseline=JSON.parse(fs.readFileSync(path.join(__dirname,'BASELINE.json'),'utf8'))
+const hash=s=>crypto.createHash('sha256').update(s).digest('hex'),normal=s=>s.replace(/\r\n/g,'\n')
+const matchBaseline=(file,text)=>[text,normal(text),normal(text).replace(/\n/g,'\r\n')].find(value=>hash(value)===baseline.hashes[file])
+const tests='lib/pos/__tests__/offline-local-queue.test.ts',current=fs.readFileSync(path.join(root,tests),'utf8')
+const start=current.indexOf('  it("discovers local-only queues'),end=current.indexOf('  it("P06 preserves unknown evidence')
+if(start<0||end<start)throw Error('Expected owned test boundaries')
+const original=matchBaseline(tests,current.slice(0,start)+current.slice(end))
+if(original===undefined)throw Error('Original storage tests changed beyond the owned addition')
+fs.writeFileSync(path.join(__dirname,'offline-local-queue.test.ts.before.txt'),original)
+const queue=fs.readFileSync(path.join(root,'lib/pos/offline-local-queue.ts'),'utf8')
+const queueOriginal=queue.replace(/export type OfflineLocalQueueSummary =[\s\S]*?(?=async function updateQueue<T>)/,'')
+if(matchBaseline('lib/pos/offline-local-queue.ts',queueOriginal)===undefined)throw Error('Original queue behavior changed beyond the owned inventory addition')
+const oldRow='| [P06](../implementation-prompts/06_OFFLINE_REPLAY_FIRST_SLICE.md) | P04, P05 | Offline/POS engineer | R02/R04; M2 preparation | PARTIAL — integrated test slice verified; operator integration open | [RESULT](P06/RESULT.md), [2026-10-17 closure](P05-P06-closure-2026-10-17/RESULT.md): real queue/HTTP/PostgreSQL replay, concurrency and retained blocker evidence | Local-only unsent close visibility and authenticated offline operator journey remain open; broader authority-change and integrated restart combinations unproved. Production replay disabled. P07–P24 not run. |'
+const statusPath='docs/retention/execution/STATUS.md',status=fs.readFileSync(path.join(root,statusPath),'utf8')
+const oldStatus=status.replace(/^\| \[P06\].*$/m,oldRow)
+if(matchBaseline(statusPath,oldStatus)===undefined)throw Error('Status rows outside P06 differ from this task baseline')
+const unchanged=['hooks/posHooks/useOfflineSync.ts','actions/pos/sync.actions.ts','services/pos/offline-sync.service.ts','services/pos/checkout-state.ts','services/pos/__tests__/pos-full-commit.postgres.test.ts','prisma/schema.prisma']
+for(const file of unchanged)if(hash(fs.readFileSync(path.join(root,file)))!==baseline.hashes[file])throw Error('Unexpected authority/schema drift: '+file)
+const result={utc:new Date().toISOString(),success:true,originalQueueLogicPreserved:true,originalStorageTestsPreserved:true,onlyP06StatusRowChanged:true,unchangedAuthorityAndSchema:unchanged}
+fs.writeFileSync(path.join(__dirname,'OWNERSHIP_CHECK.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result))

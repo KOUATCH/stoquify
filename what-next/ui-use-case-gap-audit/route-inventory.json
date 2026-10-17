@@ -1,0 +1,2438 @@
+{
+  "date": "2026-10-04",
+  "count": 163,
+  "warning": "Static inventory is not end-to-end verification",
+  "pages": [
+    {
+      "route": "/customer-statement/[statementId]",
+      "file": "app/customer-statement/[statementId]/page.tsx",
+      "lines": 26,
+      "sha256": "7ebe0e2d01f729c99bb1fec6552de836da56809ced39207cf1c7ed1996763f0e",
+      "imports": [
+        "next",
+        "./CustomerStatementPortal"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/digital-receipt/[receiptId]",
+      "file": "app/digital-receipt/[receiptId]/page.tsx",
+      "lines": 140,
+      "sha256": "9a520643c5a550643e9fcf48e10b39a31422d19b774983ae8f08d8942972756d",
+      "imports": [
+        "next",
+        "next/navigation",
+        "zod",
+        "@/services/_shared/action-errors",
+        "@/services/pos/receipt.service",
+        "./PrintReceiptButton"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/",
+      "file": "app/page.tsx",
+      "lines": 11,
+      "sha256": "2735f4e3229db255b216d41ffadab4b439c8f293f55a94be887762dbf72bbe4d",
+      "imports": [
+        "@/i18n/routing",
+        "next/headers",
+        "next/navigation"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/forgot-password",
+      "file": "app/[locale]/(auth)/forgot-password/page.tsx",
+      "lines": 15,
+      "sha256": "b28417fe851b2f0c48e1b657abfb02ed983bf4432dbb828c117e40359fd1bc95",
+      "imports": [
+        "@/components/Forms/ForgotPasswordForm",
+        "@/components/auth/v2/AuthV2Shell",
+        "@/i18n/routing"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/login",
+      "file": "app/[locale]/(auth)/login/page.tsx",
+      "lines": 13,
+      "sha256": "d7581f4e91e368bf91e570dafb7c17ff7af80f7ecc739679394bd5e8aa9a70f8",
+      "imports": [
+        "@/components/auth"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/login-v2",
+      "file": "app/[locale]/(auth)/login-v2/page.tsx",
+      "lines": 29,
+      "sha256": "d6aa396736196004ce106565bc0d309760b9ad9fd320ff411b8045e867d8d5df",
+      "imports": [
+        "@/components/auth/v2/AuthV2Shell",
+        "@/components/auth/v2/LoginV2Form",
+        "@/i18n/routing",
+        "next-intl/server"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/register",
+      "file": "app/[locale]/(auth)/register/page.tsx",
+      "lines": 14,
+      "sha256": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+      "imports": [
+        "@/components/auth",
+        "@/components/auth/BeautifulRegisterForm"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/register-v2",
+      "file": "app/[locale]/(auth)/register-v2/page.tsx",
+      "lines": 22,
+      "sha256": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018",
+      "imports": [
+        "@/components/auth/v2/AuthV2Shell",
+        "@/components/auth/v2/RegisterV2Form",
+        "@/i18n/routing"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/reset-password",
+      "file": "app/[locale]/(auth)/reset-password/page.tsx",
+      "lines": 21,
+      "sha256": "4aae38badec04f9129e38abb3f26ffd471038f0d53795a263f5d62cb78aaec52",
+      "imports": [
+        "@/components/Forms/ResetPasswordForm",
+        "@/components/auth/v2/AuthV2Shell",
+        "@/i18n/routing",
+        "next",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/unauthorized",
+      "file": "app/[locale]/(auth)/unauthorized/page.tsx",
+      "lines": 12,
+      "sha256": "e5c0f909ea17f4ac61a275ee2b72a8ed342294f9383dc9d3f7b2f9c6f97a2d65",
+      "imports": [
+        "@/components/NotAuthorized",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/user-invite/[organisationId]",
+      "file": "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx",
+      "lines": 24,
+      "sha256": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+      "imports": [
+        "@/components/Forms/InvitedUserRegistration",
+        "@/components/auth/v2/AuthV2Shell",
+        "@/i18n/routing",
+        "@/services/users/user-identity.service"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/verify/[userId]",
+      "file": "app/[locale]/(auth)/verify/[userId]/page.tsx",
+      "lines": 30,
+      "sha256": "8b44f603b71dfa6fa36165d560b56d9e0838e0f2c810e88efebe99c39771db5b",
+      "imports": [
+        "@/components/auth/v2/AuthV2Shell",
+        "@/components/auth/v2/VerifyV2Form",
+        "@/i18n/routing"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/accountant-access",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx",
+      "lines": 46,
+      "sha256": "05bd10ba81c3b240ce1d6cdb543c56e42aade510aeb57eeca89e0155cfccde8a",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/accountant-access.actions",
+        "@/components/accounting/AccountantAccessManager",
+        "@/config/useAuth",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/accountant-portal",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx",
+      "lines": 55,
+      "sha256": "a4d427f944db90053d62e9aa481dc006941f4a023d99af068719e5f8f9c83c2d",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/data-trust.actions",
+        "@/components/accounting/AccountantPortal",
+        "@/config/useAuth",
+        "@/types/bilingual",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/accountant-portfolio",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx",
+      "lines": 51,
+      "sha256": "1d3dfeb8457ba94c0b386e0703fff42534c771995a845f45fd97eee264d5ca7e",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/accountant-access.actions",
+        "@/components/accounting/AccountantPortfolio",
+        "@/components/accounting/AccountantWorkDesk",
+        "@/config/useAuth",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/accounts",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx",
+      "lines": 276,
+      "sha256": "fc416cb7d6f2fe65fb5a846a9bd0039cca1798f72d78d2f832c08bc0d8f75033",
+      "imports": [
+        "@/components/accounting/AccountingDataTable",
+        "next/navigation",
+        "lucide-react",
+        "@/actions/accounting/accounts.actions",
+        "../_components/accounting-ui",
+        "@/config/useAuth",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/close",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx",
+      "lines": 74,
+      "sha256": "e033de471c0f233ff7387de4b1829248547f1c4fb81cd8c8072add8f860df49d",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/close-assurance.actions",
+        "@/components/accounting/CloseAssuranceCenter",
+        "@/config/useAuth",
+        "@/types/bilingual",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/close/[periodId]",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/close/[periodId]/page.tsx",
+      "lines": 75,
+      "sha256": "d2df64d88256e0b8744c0331027d42af0aca957f700e0f78af8645faa6ea3687",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/close-assurance.actions",
+        "@/components/accounting/CloseAssuranceCenter",
+        "@/config/useAuth",
+        "@/types/bilingual",
+        "../../_components/accounting-ui",
+        "../../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/control-center",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx",
+      "lines": 73,
+      "sha256": "3f7fed391eaf16f74f22e186fe1b03105ebf87e69eae06e202abcae4517548ca",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/settings.actions",
+        "@/components/accounting/AccountingControlCenter",
+        "@/config/useAuth",
+        "@/types/bilingual",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/journals/new",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "lines": 200,
+      "sha256": "ffa66a8f5b9a1b58fdb734dab2d9af84764b1a32c5f264fb3d9aff6e5c0009e1",
+      "imports": [
+        "next-intl/server",
+        "lucide-react",
+        "@/actions/accounting/accounts.actions",
+        "@/actions/accounting/journals.actions",
+        "@/config/useAuth",
+        "@/lib/modules/module-operation-error",
+        "./ManualJournalDraftForm",
+        "../../_components/accounting-ui",
+        "../../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/journals",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx",
+      "lines": 140,
+      "sha256": "620b8f5c0273d0e8faf412da315e888300f8ae6d2d6684c2705ede35edeca28e",
+      "imports": [
+        "node:crypto",
+        "@prisma/client",
+        "lucide-react",
+        "@/actions/accounting/journals.actions",
+        "@/components/accounting/AccountingDataTable",
+        "@/components/accounting/JournalEntryActions",
+        "@/components/accounting/journal-workflow-copy",
+        "@/components/DataTableComponents",
+        "@/config/useAuth",
+        "@/lib/security/rbac",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/page.tsx",
+      "lines": 225,
+      "sha256": "797190472e91a9b17c39a0c22a1f4fefba8255a9cdbf60274f7db42c18492203",
+      "imports": [
+        "@/components/accounting/AccountingDataTable",
+        "lucide-react",
+        "@/actions/accounting/reports.actions",
+        "@/config/useAuth",
+        "@/i18n/navigation",
+        "./_components/accounting-ui",
+        "./accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/reports/financial-statements",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx",
+      "lines": 763,
+      "sha256": "bdadad717208844634a2e204b78e631757e5e413d563f367d63d2abfb35daea9",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/reports.actions",
+        "@/config/useAuth",
+        "@/i18n/navigation",
+        "@/services/accounting/financial-statements.service",
+        "../../_components/accounting-ui",
+        "../../accounting-route-access",
+        "./financial-statement-lines-table",
+        "@/components/DataTableComponents"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/reports/trial-balance",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx",
+      "lines": 106,
+      "sha256": "91e79b6fcea037fb81a0b00d5b475fb4df91110c496584b351ad59aa333fbb45",
+      "imports": [
+        "lucide-react",
+        "@/actions/accounting/reports.actions",
+        "@/config/useAuth",
+        "../../_components/accounting-ui",
+        "./trial-balance-table",
+        "../../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/accounting/setup",
+      "file": "app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx",
+      "lines": 320,
+      "sha256": "5afbe8bdb2e90447e91b4259c22823cf6801da00cf791579f310f7b8de9d09a5",
+      "imports": [
+        "@/components/accounting/AccountingDataTable",
+        "next/navigation",
+        "lucide-react",
+        "@/actions/accounting/settings.actions",
+        "@/config/useAuth",
+        "../_components/accounting-ui",
+        "../accounting-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/analytics",
+      "file": "app/[locale]/(dashboard)/dashboard/analytics/page.tsx",
+      "lines": 36,
+      "sha256": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+      "imports": [
+        "@/components/analytics/BusinessPulseDashboard",
+        "@/services/analytics/sales-analytics.service",
+        "./analytics-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/analytics/referrals",
+      "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+      "lines": 37,
+      "sha256": "26f70ccd8ae9c09e1d9927d79a3fa89686f4c55b1054356e0d672ef5308b21ec",
+      "imports": [
+        "next",
+        "@/actions/referrals/referral-funnel.actions",
+        "@/components/referrals/ReferralFunnelDashboard",
+        "../analytics-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/analytics/reports",
+      "file": "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
+      "lines": 52,
+      "sha256": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+      "imports": [
+        "next",
+        "./ReportsClient",
+        "../analytics-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/assurance/control-tower/incidents/[incidentId]",
+      "file": "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
+      "lines": 42,
+      "sha256": "38b8dcb25a3ccd27dbbf78e8215ad61274941a30874fee5f63e8963ff3bccc04",
+      "imports": [
+        "next",
+        "next/navigation",
+        "@/components/assurance/AssuranceIncidentDetailView",
+        "../../../assurance-route-access",
+        "@/services/assurance/assurance-control-tower.service"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/assurance/control-tower",
+      "file": "app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx",
+      "lines": 41,
+      "sha256": "d019492f1dab52e08ac971f49767582f41bd7af8a5e676d60cf76cf738a98ab9",
+      "imports": [
+        "next",
+        "@/components/assurance/AssuranceControlTowerDashboard",
+        "@/services/assurance/assurance-control-tower.service",
+        "../assurance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/cashDrawer",
+      "file": "app/[locale]/(dashboard)/dashboard/cashDrawer/page.tsx",
+      "lines": 24,
+      "sha256": "de3e3ea2bc7758a6b0c0355abebf7c1f6a40e5cb9e11bdb70fc1bef815a60d32",
+      "imports": [
+        "next/navigation",
+        "./cash-drawer-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/change-password",
+      "file": "app/[locale]/(dashboard)/dashboard/change-password/page.tsx",
+      "lines": 30,
+      "sha256": "41113b7357c2b14ef6b21e3e54159e369ccb07709054124e85985fa604793bd3",
+      "imports": [
+        "./change-password-route-access",
+        "@/components/Forms/ChangePasswordForm"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/compliance",
+      "file": "app/[locale]/(dashboard)/dashboard/compliance/page.tsx",
+      "lines": 37,
+      "sha256": "19690074b78460f086f18edd36ba248ea27a7d0d52fed4b37629ae415dca9a50",
+      "imports": [
+        "./compliance-route-access",
+        "@/actions/compliance/compliance-center.actions",
+        "@/components/compliance/ComplianceCenterDashboard"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers/new",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
+      "lines": 24,
+      "sha256": "dd5757761158bbd8e3c2e1b0b999809c5424d722de1d3c14a38c416830dec0c5",
+      "imports": [
+        "@/components/customers/CustomerActionPage",
+        "../customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/page.tsx",
+      "lines": 40,
+      "sha256": "e49ab66a7d530d40b6c5bf35461ffbe29046d858c5783b90217a7f0e4ae73ee8",
+      "imports": [
+        "@/components/customers/CustomerManagementDashboard",
+        "./customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
+      "lines": 32,
+      "sha256": "7bebbd9909990ae8eba0a96640a2040c5b0ac9a63f5d5f54ee25c9b0ec9ba8a7",
+      "imports": [
+        "@/components/customers/CustomerActionPage",
+        "../../customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers/[id]/orders",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
+      "lines": 62,
+      "sha256": "201c1971f737a683543322d6a3940513357653d8a5582db81b8a3c6e7b5d6e36",
+      "imports": [
+        "./CustomerOrdersClientPage",
+        "@/lib/i18n/organization-money",
+        "@/services/organization/organization-settings.service",
+        "@/lib/security/rbac-permissions",
+        "next/navigation",
+        "../../customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
+      "lines": 72,
+      "sha256": "2902f06c16dadba0e68ef29cb9232781ae29fc7c15fb54437a1d878529b5e2b9",
+      "imports": [
+        "@/components/customers/CustomerProfilePage",
+        "@/services/organization/organization-settings.service",
+        "@/lib/security/rbac-permissions",
+        "@/lib/i18n/organization-money",
+        "next/navigation",
+        "../customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/customers/[id]/statement",
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+      "lines": 127,
+      "sha256": "381f235ae135827f9c6846b303864e647dfbcb681850f62685eac485b5a95b05",
+      "imports": [
+        "next/navigation",
+        "@/actions/customers/customerActions",
+        "@/components/customers/CustomerStatementWorkflow",
+        "@/lib/i18n/organization-money",
+        "@/services/organization/organization-settings.service",
+        "@/services/modules/module-entitlement.service",
+        "../../customers-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/daily-digest",
+      "file": "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
+      "lines": 62,
+      "sha256": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+      "imports": [
+        "next",
+        "@/components/daily-habit/DailyHabitDigestDashboard",
+        "@/services/daily-habit/daily-habit-digest.service",
+        "@/services/agents/agent-rollout.service",
+        "@/services/ai/copilot-proposal-release.service",
+        "./daily-digest-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/analytics",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx",
+      "lines": 18,
+      "sha256": "fcdffebf84f1813898b4d4425e25043d5840a6d4d61ab95ba2f1c1af7386ff36",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/cash-command",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+      "lines": 87,
+      "sha256": "87d473b922b0c93f81a986fd807ff45f9fc874c5ef46ecd997ff7a0a7859cdc6",
+      "imports": [
+        "next",
+        "@/services/cash-command/cash-command-navigation",
+        "@/services/cash-command/cash-command-presentation",
+        "@/components/cash-command/CashCommandDashboard",
+        "@/components/dashboard/DashboardRouteState",
+        "@/i18n/routing",
+        "@/lib/security/rbac",
+        "@/services/cash-command/cash-command.service",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/cash-drawer",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx",
+      "lines": 18,
+      "sha256": "f18363cb55f4a5df64174dcc863dca20e0e31d32fe7916e961da1398b117db26",
+      "imports": [
+        "@/components/pos/CashDrawerManagementDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/cash-flow",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx",
+      "lines": 18,
+      "sha256": "03d3a798ed37c4f8ee178d7bdcaf9ccc76924bb21bc2be645c9ed22a4a5564a3",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/cash-payment-history",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
+      "lines": 41,
+      "sha256": "a2515e086052dcd90df66308f1fa824c8bcdaff97787a29d2240f14c727bacbf",
+      "imports": [
+        "@/components/finance/CashPaymentHistoryWorkbench",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/costs",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx",
+      "lines": 18,
+      "sha256": "05d75c887c00a3011a62aca9ace78faf3f01d04213c87492fb76cd6dd42adb71",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/page.tsx",
+      "lines": 18,
+      "sha256": "ef71f71e180ca30d03a1e3cf7486829a4bdce2715627e4811d3aa75870279893",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "./finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/payables",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx",
+      "lines": 23,
+      "sha256": "68f9b7642622651e9fe9f562c543cada0d2507a4abac8c2d835442f38c239690",
+      "imports": [
+        "@/components/finance/FinanceSpecializedLedgerSurfaces",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/payments",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx",
+      "lines": 23,
+      "sha256": "ea02e2228bf8f8e84272b2647c542f9645af2f9a7d4264ee197e1f3361be0473",
+      "imports": [
+        "@/components/finance/FinanceSpecializedLedgerSurfaces",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/profit-loss",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx",
+      "lines": 18,
+      "sha256": "6626ccea9a3ab27bc1cfcb770285474c57c3a23761ea7296ffea8de1ada9e6a0",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/profitability",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx",
+      "lines": 18,
+      "sha256": "21a418127d7fdd1392eb572c91a5382311d47054de3b96ded0807034f00fd5b5",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/receivables/history",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
+      "lines": 29,
+      "sha256": "3a4075291097c0352bc450844c5258e16546b0064f963f6bb7bf8ff8fb0c9a29",
+      "imports": [
+        "@/components/finance/AROpenItemsHistoryWorkbench",
+        "../../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/receivables",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx",
+      "lines": 23,
+      "sha256": "1305cd25d894bad79a4c2a039ea06d153e0f6800cd74f69ac4f3b85044e80d86",
+      "imports": [
+        "@/components/finance/FinanceSpecializedLedgerSurfaces",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/reconciliation",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+      "lines": 20,
+      "sha256": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+      "imports": [
+        "@/components/finance/PaymentReconciliationWorkbench",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/retail",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx",
+      "lines": 18,
+      "sha256": "ff2ddb8b20677114ca8695bb5f674cb83b59bc18828d2c5252c6ce5ac82f2172",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/sales",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx",
+      "lines": 18,
+      "sha256": "73ad09529b19348073d7bf3655ddce88354b3264f926673cd67fa7fefbcf5b42",
+      "imports": [
+        "@/components/finance/FinanceCommandCenterDashboard",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/stock-to-cash",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx",
+      "lines": 36,
+      "sha256": "56ecc5ffe1b5772f97305ba813036f712a35329b77a08fcad59e3e1627272424",
+      "imports": [
+        "next",
+        "@/components/stock-to-cash/StockToCashFlowDashboard",
+        "@/services/stock-to-cash/stock-to-cash-flow.service",
+        "../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/finance/tax-rates/create",
+      "file": "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx",
+      "lines": 35,
+      "sha256": "2556d03da4b503625b708af89a081140aff5a42349f9e615bd76d38c26e29dfd",
+      "imports": [
+        "@/components/tax-rates/TaxRatesManagementDashboard",
+        "../../finance-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/brands/create",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+      "lines": 58,
+      "sha256": "f276afa1d508c81c5f7934856a2906670e8c8d69281ec8486f3a96d3b5258b00",
+      "imports": [
+        "lucide-react",
+        "next/link",
+        "@/components/brands/ModernBrandForm",
+        "@/components/ui/button",
+        "@/config/useAuth",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/brands",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+      "lines": 106,
+      "sha256": "8f4f094537896105a3ed62da2dd8b09fbad131e498b507466f70718b8678f5be",
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "@/actions/brands/getBrandsAction",
+        "@/components/inventory/EnhancedBrandsManagement",
+        "@/components/ui/button",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/brands/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx",
+      "lines": 55,
+      "sha256": "74ea2bde396784f70f1cb6d9bc191d95565867b3aaa7f6f99479f9e81d352818",
+      "imports": [
+        "next/navigation",
+        "@/actions/brands/getBrandsAction",
+        "@/components/brands/ModernBrandForm",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/categories/create",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+      "lines": 44,
+      "sha256": "b9e827ca582e229c8dc7757e35c92b7848f0553b13705afcd9b10a1d2e361da0",
+      "imports": [
+        "@/actions/categories/getOrgCategories",
+        "@/components/categories/ModernCategoryForm",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/categories",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+      "lines": 111,
+      "sha256": "1847fec5554cdf731c66728df3a945300394e06537c73da1899d29f12f8ab50b",
+      "imports": [
+        "react",
+        "next/link",
+        "lucide-react",
+        "@/actions/categories/getOrgCategories",
+        "@/components/dashboard/categories/CategoriesPageClient",
+        "@/components/ui/button",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/categories/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx",
+      "lines": 59,
+      "sha256": "b02d6d16abb0f558a784ff44e4eafe0666f4f36b3131f7b58284495975c0fed1",
+      "imports": [
+        "next/navigation",
+        "@/actions/categories/getCategoriesAction",
+        "@/components/categories/ModernCategoryForm",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/categories/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+      "lines": 187,
+      "sha256": "9b45adf511e54832f0899350934f92a85265e8d6f612941f2547d1fa99eb9c9d",
+      "imports": [
+        "lucide-react",
+        "next/link",
+        "next/navigation",
+        "@/actions/categories/getCategoriesAction",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items/create",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "lines": 275,
+      "sha256": "71fa102d29223ad8d1cfa38caefef850023afdfb4fdd850e6f8a1ba490d4e3f3",
+      "imports": [
+        "@/actions/brands/getOrgBrands",
+        "@/actions/categories/getOrgCategories",
+        "@/actions/item/items",
+        "@/actions/locations/getOrgLocations",
+        "@/actions/taxRate/getOrgTaxRates",
+        "@/actions/units/getOrgUnits",
+        "@/components/inventory/CreateItemWizard",
+        "@/components/ui/button",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "@/lib/generateSKU",
+        "@/lib/i18n/organization-money",
+        "lucide-react",
+        "@/i18n/server-routing",
+        "next/cache",
+        "@/services/modules/module-entitlement.service",
+        "@/services/organization/organization-settings.service",
+        "next-intl/server",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items/new",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx",
+      "lines": 35,
+      "sha256": "895dd0050a9dbfeb3a76240f94d807913ad9bbe41fb4c6621162e2ad9321690b",
+      "imports": [
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "lines": 350,
+      "sha256": "3d925f5f223603537478062956018a454f6325df660d0eb60e6d4eed60f683c8",
+      "imports": [
+        "../inventory-route-access",
+        "@/actions/brands/getOrgBrands",
+        "@/actions/categories/getOrgCategories",
+        "@/actions/itemsShow/getOrgItemsWithInventoryLevels",
+        "@/actions/taxRate/getOrgTaxRates",
+        "@/actions/units/getOrgUnits",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/components/ui/data-table",
+        "@/components/ui/groups/inventory/ItemManagement",
+        "@/components/ui/groups/inventory/item-inventory-summary",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "@/types/bilingual",
+        "@/types/itemTypes",
+        "lucide-react",
+        "next-intl/server",
+        "@/i18n/navigation",
+        "@/lib/i18n/organization-money",
+        "@/services/organization/organization-settings.service",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+      "lines": 91,
+      "sha256": "4c5ce83a7ec2773a5b4e2b80dc0d7a6941b75e0481f1f314c694dcd71a9672b6",
+      "imports": [
+        "@/actions/brands/getOrgBrands",
+        "@/actions/categories/getOrgCategories",
+        "@/actions/taxRate/getOrgTaxRates",
+        "@/actions/units/getOrgUnits",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "@/services/item/item.service",
+        "@/services/modules/module-entitlement.service",
+        "next/navigation",
+        "./EditItemClient",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items/[id]/others",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx",
+      "lines": 30,
+      "sha256": "729482e9c946b76e532f0df91ee2028417da5bfa54a9f08b640c7b4b52e82f65",
+      "imports": [
+        "@/config/useAuth",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/items/[id]/suppliers",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx",
+      "lines": 129,
+      "sha256": "cae4541190eec33b92413fa311f385b5b70a1208800d46b3a52d6699db99faa8",
+      "imports": [
+        "@/actions/item-suppliers/getItemWithSuppliers",
+        "@/actions/itemsShow/getBriefItemById",
+        "@/actions/suppliers/getOrgSuppliers",
+        "@/components/ui/button",
+        "@/components/ui/data-table",
+        "@/config/useAuth",
+        "lucide-react",
+        "@/i18n/navigation",
+        "@/i18n/routing",
+        "@/lib/i18n/organization-money",
+        "@/services/organization/organization-settings.service",
+        "react",
+        "./AddSuppliersToItemModal",
+        "./LayoutItemSuppliers",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/loss-control",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx",
+      "lines": 26,
+      "sha256": "5e8c5a91d0706a0c0e97997a2b996a5a27d6528a05698c30ae80c2b6d945ab30",
+      "imports": [
+        "@/components/inventory/loss/InventoryLossWorkbench",
+        "@/config/useAuth",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/movements",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "lines": 32,
+      "sha256": "8b1f0267621b83aeadfe50bb2a6a5a474216f9ac51a51e9b4894d6e66d285e9d",
+      "imports": [
+        "@/components/inventory/movements/InventoryMovementHistoryWorkbench",
+        "@/config/useAuth",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/page.tsx",
+      "lines": 37,
+      "sha256": "e8a071766d8852da439a8a8ac4e518978db664a0a1bd388c2f6ca4ff4ed5ac80",
+      "imports": [
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "./inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/transfers/create",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/transfers/create/page.tsx",
+      "lines": 16,
+      "sha256": "b266ac70033da806b401c293486a5abee94d6e32d20ce364f9553eb5f21657d5",
+      "imports": [
+        "@/components/inventory/transfers/CreateTransferPage",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/transfers",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/transfers/page.tsx",
+      "lines": 26,
+      "sha256": "cb0e725262255e56706938778fd584ffe88945820122ffef136fc92307f0b307",
+      "imports": [
+        "@/components/inventory/transfers/TransferDashboard",
+        "@/config/useAuth",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/transfers/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/transfers/[id]/page.tsx",
+      "lines": 13,
+      "sha256": "df4a09987c354dd9ebcf4aa1e12cc3650b50c042764897cde0872b6e028c3625",
+      "imports": [
+        "@/components/inventory/transfers/TransferWorkflowPage",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/units/create",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+      "lines": 54,
+      "sha256": "d7bc3eb6e5666d9ea219c59933e6717f0ac9455ff177dde03cf96853cfc1923b",
+      "imports": [
+        "@/components/units/UnitsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/units",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+      "lines": 50,
+      "sha256": "deaeda3f0b7ad9f70d6298df4f4f529d5c8bad3647b15dba6a340a5981a466a2",
+      "imports": [
+        "@/components/units/UnitsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/inventory/units/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx",
+      "lines": 54,
+      "sha256": "9c1a2826c8d9f46f3d765835ced582a4cfb5f22d922f03ad61759a2326686073",
+      "imports": [
+        "@/components/units/UnitsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../../inventory-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/items/new",
+      "file": "app/[locale]/(dashboard)/dashboard/items/new/page.tsx",
+      "lines": 28,
+      "sha256": "9fb2d01608bf9de25cd1f0cf04380586b0a4ae4f51470baad691074e6360298c",
+      "imports": [
+        "@/i18n/routing",
+        "@/i18n/routing",
+        "../items-route-access",
+        "next/navigation"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/items",
+      "file": "app/[locale]/(dashboard)/dashboard/items/page.tsx",
+      "lines": 79,
+      "sha256": "e162879edfd5cf1139c6e1ad9760d7bfa2a37eeed68a68e8f772b52455d330cf",
+      "imports": [
+        "./items-route-access",
+        "@/actions/brands/getOrgBrands",
+        "@/actions/categories/getOrgCategories",
+        "@/actions/itemsShow/getBriefOrgItems",
+        "@/actions/taxRate/getOrgTaxRates",
+        "@/actions/units/getOrgUnits",
+        "@/components/ui/data-table",
+        "@/components/ui/groups/inventory/ItemManagement",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next-intl/server",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/manager-action-center/daily-close",
+      "file": "app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx",
+      "lines": 105,
+      "sha256": "3ecd6e6f15b31fb8827a68da9850b33a533abe8b7f0eae70f073c1178c8fa07b",
+      "imports": [
+        "next",
+        "@/actions/end-of-day-close/branch-daily-close-completion.actions",
+        "@/components/manager-action-center/BranchDailyCloseWorkspace",
+        "@/lib/security/rbac",
+        "@/i18n/routing",
+        "../manager-action-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/manager-action-center",
+      "file": "app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx",
+      "lines": 106,
+      "sha256": "80810dbf25015510e653b39b270c5ffe8e9e7ce32b37b3a202e3d2fa3b77f072",
+      "imports": [
+        "next",
+        "@/components/dashboard/DashboardErrorState",
+        "@/components/manager-action-center/ManagerActionCenterDashboard",
+        "@/components/manager-action-center/ManagerLocationActionCenterDashboard",
+        "@/i18n/routing",
+        "@/services/_shared/action-errors",
+        "@/services/manager-action-center/manager-action-center-query.service",
+        "./manager-action-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/notifications-demo",
+      "file": "app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx",
+      "lines": 36,
+      "sha256": "cd179f08aa9e327b38efa4e25b8888237e4b2c4fd0bde0f3c0e257273d5e954f",
+      "imports": [
+        "@/components/notifications/EnhancedNotificationTest",
+        "next/navigation",
+        "./notifications-demo-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/owner-war-room",
+      "file": "app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx",
+      "lines": 75,
+      "sha256": "ac8b3e01ee90e66962e22fe248308f6908879483b25e4876ef549b7831cece2b",
+      "imports": [
+        "next",
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/owner-war-room/OwnerWarRoomDashboard",
+        "@/i18n/routing",
+        "@/services/owner-war-room/owner-war-room.service",
+        "./owner-war-room-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard",
+      "file": "app/[locale]/(dashboard)/dashboard/page.tsx",
+      "lines": 106,
+      "sha256": "6712a0c01051ee44552aa58749d4637dcc5048f18166c1a631fe6fb3e46ce725",
+      "imports": [
+        "@/actions/dashboard/getDashboardData",
+        "@/components/dashboard/DashboardErrorState",
+        "@/components/dashboard/EnhancedEnterpriseDashboard",
+        "@/components/dashboard/SessionRecoverySignOutButton",
+        "@/config/error-boundary",
+        "@/i18n/routing",
+        "@/lib/security/rbac",
+        "next/navigation"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/attendance",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/attendance/page.tsx",
+      "lines": 45,
+      "sha256": "1e39cad9fd624c9fe36d7ad858d6e07453dc5ca621b0deabf1896528b1f703d0",
+      "imports": [
+        "@/actions/payroll/payroll-payment-evidence.actions",
+        "@/components/payroll/PayrollPaymentAttendanceReadinessWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/compensation",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx",
+      "lines": 45,
+      "sha256": "773d869a5a80c312f86bf7a7bd6f038078a41f7b2659839b7a02498986ec0fb6",
+      "imports": [
+        "@/actions/payroll/payroll-compensation.actions",
+        "@/components/payroll/PayrollCompensationWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/contracts",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx",
+      "lines": 45,
+      "sha256": "ef8a27f1b4612873171539c776b6b7dc87c28e4dff0d9213c5d0d8c5bd824ed3",
+      "imports": [
+        "@/actions/payroll/payroll-contract.actions",
+        "@/components/payroll/PayrollContractLifecycleWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/declarations",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx",
+      "lines": 45,
+      "sha256": "8fc0efdb8723f71c9e48548ae7c70868a96357c1f99e10743fe98452866ae865",
+      "imports": [
+        "@/actions/payroll/payroll-control.actions",
+        "@/components/payroll/PayrollDeclarationWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/employees",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx",
+      "lines": 45,
+      "sha256": "3249311f382eb338b1abb94536dca4f352a6f735c21823d0212d2bdfb131dc84",
+      "imports": [
+        "@/actions/payroll/payroll-employee.actions",
+        "@/components/payroll/PayrollEmployeeSourceWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/page.tsx",
+      "lines": 45,
+      "sha256": "9932f0af1db4e461eb838fd52971a51b731df0aa2eff1f5790a20ad2a897b8ec",
+      "imports": [
+        "@/actions/payroll/payroll-command-read-model.actions",
+        "@/components/payroll/PayrollCommandCenter",
+        "@/i18n/routing",
+        "./payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/payments",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx",
+      "lines": 57,
+      "sha256": "9c6c96e9daa413b4d64f1abc40d897787970be3d15cad459f4e725e24ff20188",
+      "imports": [
+        "@/actions/payroll/payroll-control.actions",
+        "@/actions/payroll/payroll-payment-reconciliation.actions",
+        "@/components/payroll/PayrollEmployeeBalanceWorkbench",
+        "@/components/payroll/PayrollPaymentReconciliationWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/payslips",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx",
+      "lines": 45,
+      "sha256": "32d484187bf4470b29a1fcbcf91fa2236e98077000cfc2a737a6e0ef5efee37b",
+      "imports": [
+        "@/actions/payroll/payroll-payslip-self-service.actions",
+        "@/components/payroll/PayrollPayslipSelfService",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/register",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx",
+      "lines": 48,
+      "sha256": "eac5fb5d3af01b8ea28a5b237e4c2bbd136a40cdcde5191d5ff5afa553594868",
+      "imports": [
+        "@/actions/payroll/payroll-register.actions",
+        "@/components/payroll/PayrollRegisterTieOut",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/runs",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx",
+      "lines": 45,
+      "sha256": "111fe82f48afc5de61947bc00542b2afb4d58152388da8b6f9bccfbe023cb09c",
+      "imports": [
+        "@/actions/payroll/payroll-control.actions",
+        "@/components/payroll/PayrollRunWorkbench",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/payroll/setup",
+      "file": "app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx",
+      "lines": 67,
+      "sha256": "a3a82468a8c6539e296ec3f9f815c3d20b75a192050a6797066e5d0b77fa1448",
+      "imports": [
+        "@/actions/payroll/payroll-setup.actions",
+        "@/components/payroll/PayrollSetupControlPlane",
+        "@/i18n/routing",
+        "../payroll-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people/approvals",
+      "file": "app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx",
+      "lines": 86,
+      "sha256": "2265130c22f33d96f0a84056dc50c662e356f057beae1365b27d51dc86b37561",
+      "imports": [
+        "next/link",
+        "lucide-react",
+        "@/components/hris/HrisApprovalInbox",
+        "@/components/dashboard/DashboardRouteState",
+        "@/i18n/routing",
+        "@/services/hris/approval-inbox.service",
+        "../people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people/history",
+      "file": "app/[locale]/(dashboard)/dashboard/people/history/page.tsx",
+      "lines": 86,
+      "sha256": "03f7185639379a2b37704877a6feeaec735e80d2d9a70f48b13110c3e9b1a3d8",
+      "imports": [
+        "next/link",
+        "lucide-react",
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/hris/HrisMovementHistory",
+        "@/i18n/routing",
+        "@/services/hris/movement-history.service",
+        "../people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people/me",
+      "file": "app/[locale]/(dashboard)/dashboard/people/me/page.tsx",
+      "lines": 75,
+      "sha256": "edf50fae1328707190d62c6558bf1a5a8e8c10ebff1cde0853257b942dd46f9c",
+      "imports": [
+        "@/components/hris/HrisEmployeeSelfService",
+        "@/components/dashboard/DashboardRouteState",
+        "@/i18n/routing",
+        "@/services/_shared/action-errors",
+        "@/services/hris/self-service.service",
+        "../people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people",
+      "file": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
+      "lines": 121,
+      "sha256": "fa13f04ecd739e99e56c258bc47c78d2b8b7a8be84c65b6edaaa2c5c94546ca5",
+      "imports": [
+        "next/link",
+        "lucide-react",
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/hris/HrisEmployeeDirectoryTable",
+        "@/i18n/routing",
+        "@/services/hris/employee.service",
+        "./people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people/team",
+      "file": "app/[locale]/(dashboard)/dashboard/people/team/page.tsx",
+      "lines": 66,
+      "sha256": "1626811f612143215215f7e85209d5a4571f5bbd253ffcbc121e5bafa446751e",
+      "imports": [
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/hris/HrisManagerSelfService",
+        "@/i18n/routing",
+        "@/services/_shared/action-errors",
+        "@/services/hris/manager-self-service.service",
+        "../people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/people/[employeeId]",
+      "file": "app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx",
+      "lines": 161,
+      "sha256": "370c9b38a24c4503ebddc8ea1a6a68641baae5a17c786e718672dc888dad9b87",
+      "imports": [
+        "next/link",
+        "lucide-react",
+        "@/components/dashboard/DashboardRouteState",
+        "@/i18n/routing",
+        "@/services/_shared/action-errors",
+        "@/services/hris/employee.service",
+        "../people-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/pos",
+      "file": "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
+      "lines": 22,
+      "sha256": "f441cdcdcb6ff88008d971a6fa689f23926a193f9a5c8afd5aa0426e07a68657",
+      "imports": [
+        "./pos-route-access",
+        "@/components/pos/ProfessionalPOSSystem"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/profile",
+      "file": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "lines": 18,
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "imports": [
+        "@/components/settings/SelfProfile",
+        "@/components/dashboard/DashboardRouteState",
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac",
+        "@/i18n/routing"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders/analytics",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx",
+      "lines": 54,
+      "sha256": "c5ce5c095765676af7c56638445c7398692583524b5a560dc74d1171842398b7",
+      "imports": [
+        "next-intl/server",
+        "@/components/purchase-orders/PurchaseOrderAnalyticsDashboard",
+        "@/i18n/routing",
+        "@/services/purchase-order/purchase-order.service",
+        "../purchase-orders-route-access",
+        "./analytics-range"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders/new",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "lines": 66,
+      "sha256": "733ad820495ce389ca99266826f3a702b9725b81ec2eb16634468c5c322f8a48",
+      "imports": [
+        "next-intl/server",
+        "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction",
+        "@/lib/modules/module-operation-error",
+        "@/components/purchase-orders/ModernCreatePurchaseOrderForm",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "@/i18n/server-routing",
+        "@/services/purchase-order/purchase-order.service",
+        "../purchase-orders-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx",
+      "lines": 223,
+      "sha256": "536f5075893d9ba9ce2288c52d3e65d7bc8bc0ad26aabfdfe36e6f198e4d8b8f",
+      "imports": [
+        "react",
+        "react",
+        "lucide-react",
+        "next-intl/server",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/components/ui/data-table",
+        "@/components/ui/groups/purchase-orders/PurchaseOrderManagement",
+        "@/i18n/navigation",
+        "@/i18n/routing",
+        "@/lib/i18n/formatters",
+        "@/services/purchase-order/purchase-order.service",
+        "@/services/purchase-order/purchase-order-capabilities",
+        "@/types/bilingual",
+        "./purchase-orders-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+      "lines": 67,
+      "sha256": "d7c4a98b98e9d4383abeabc5967551ba5c8c9d9e8a8f4f27c26a9bdb46037306",
+      "imports": [
+        "next/navigation",
+        "@/components/purchase-orders/ModernEditPurchaseOrderForm",
+        "@/services/_shared/action-errors",
+        "@/services/purchase-order/purchase-order.service",
+        "@/lib/security/auth-session",
+        "@/services/_shared/action-errors",
+        "../../purchase-orders-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx",
+      "lines": 47,
+      "sha256": "4552f782eb96deae1d69331ebb436092e4050c4f38d6843e1ad24f1431ed4805",
+      "imports": [
+        "../purchase-orders-route-access",
+        "@/components/purchase-orders/ModernPurchaseOrderDetailPage",
+        "next/navigation"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx",
+      "lines": 54,
+      "sha256": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+      "imports": [
+        "next/navigation",
+        "next-intl/server",
+        "@/components/purchase-orders/SupplierPoAcknowledgementWorkbench",
+        "@/services/purchase-order/supplier-po-acknowledgement.service",
+        "@/components/dashboard/DashboardRouteState",
+        "@/services/_shared/action-errors",
+        "@/i18n/routing",
+        "../../purchase-orders-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/page.tsx",
+      "lines": 490,
+      "sha256": "d0a98ec39c6380eeb4b865111606c5b6f6ba27dad5386914924c2deb2e115075",
+      "imports": [
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/components/ui/dropdown-menu",
+        "@/actions/purchaseOrderWorkflow/newPOActions",
+        "./purchases-route-access",
+        "./purchase-route-redirect",
+        "@/components/ui/separator",
+        "@/lib/i18n/formatters",
+        "@/services/purchase-order/purchase-order.schemas",
+        "date-fns",
+        "lucide-react",
+        "@/i18n/navigation",
+        "next/navigation",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/approve",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx",
+      "lines": 15,
+      "sha256": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950",
+      "imports": [
+        "@/components/purchasing/InvoiceApprovalWorkbench",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/correct",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "lines": 15,
+      "sha256": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+      "imports": [
+        "@/components/purchasing/InvoiceCorrectionWorkbench",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/exceptions/request",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx",
+      "lines": 9,
+      "sha256": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+      "imports": [
+        "@/components/purchasing/InvoiceMatchExceptionWorkbench",
+        "@/lib/security/rbac-permissions",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/exceptions/review",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx",
+      "lines": 9,
+      "sha256": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+      "imports": [
+        "@/components/purchasing/InvoiceMatchExceptionWorkbench",
+        "@/lib/security/rbac-permissions",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/history",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
+      "lines": 33,
+      "sha256": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+      "imports": [
+        "@/components/purchasing/APHistoryWorkbench",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
+      "lines": 85,
+      "sha256": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+      "imports": [
+        "@/actions/purchasing/ap-control.actions",
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/purchasing/APControlWorkbench",
+        "next/link",
+        "@/components/ui/button",
+        "@/lib/security/rbac-permissions",
+        "../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/payments/approve",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/approve/page.tsx",
+      "lines": 8,
+      "sha256": "b34e8c8e5a16c575b2e1ac2587573187cf1ffaa9c2b1f18c9f2b81f2d4691791",
+      "imports": [
+        "@/components/purchasing/PaymentRequestWorkbench",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/payments/reconcile",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/reconcile/page.tsx",
+      "lines": 12,
+      "sha256": "25026a274d725152f874272621e025329a2b5fc330efdd22aaf19331d86c6776",
+      "imports": [
+        "@/components/purchasing/PaymentReconciliationHandoffWorkbench",
+        "@/services/purchasing/payment-reconciliation-contracts",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/payments/record",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx",
+      "lines": 8,
+      "sha256": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+      "imports": [
+        "@/components/purchasing/PaymentExecutionWorkbench",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/payments/recovery",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx",
+      "lines": 10,
+      "sha256": "e4d0ac7645f12a197b5e10bfc5dc4243459b3a6a7bd67cab3519d9a20979beca",
+      "imports": [
+        "@/components/purchasing/PaymentPostingRecoveryWorkbench",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/payments/request",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/request/page.tsx",
+      "lines": 8,
+      "sha256": "df54ade3181083871b534865c092651f4ed8f9588dc5040c756e9bbb8f0a0e7e",
+      "imports": [
+        "@/components/purchasing/PaymentRequestWorkbench",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/prepare",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+      "lines": 15,
+      "sha256": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+      "imports": [
+        "@/components/purchasing/InvoicePreparationWorkbench",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/payables/recovery",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx",
+      "lines": 15,
+      "sha256": "ba5460787fcf83e49a79b6fa3c2a0eecf7c401ec72b67f58ac2ab4240d85f59d",
+      "imports": [
+        "@/components/purchasing/InvoiceLedgerRecoveryWorkbench",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/suppliers/create",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx",
+      "lines": 44,
+      "sha256": "45d09b16d65d23c7a35bc2fd787678656f2cb9bff62567d42ea0ef6edeb49368",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/suppliers",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
+      "lines": 44,
+      "sha256": "ed1d32be4007ea90372980260e87caa546ccc05bc0c068a754d52bd79840f6a2",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/suppliers/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx",
+      "lines": 47,
+      "sha256": "20ed5cc24c258c1cf1ca26370b56d8fffddd38e302644cfb37ce6dd4102084e1",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/suppliers/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx",
+      "lines": 48,
+      "sha256": "f438eddc72f9b9ba975aa7d92f1dec1d6ebb67016c120338a1d1ab17625dc752",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../../purchases-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/purchases/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx",
+      "lines": 540,
+      "sha256": "e5c67ef398005c10fbebee3be3642298075731a2f7e79d50387721c550f735e5",
+      "imports": [
+        "@/actions/purchaseOrderWorkflow/newPOActions",
+        "../purchases-route-access",
+        "../purchase-route-redirect",
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/components/ui/card",
+        "@/components/ui/dropdown-menu",
+        "@/components/ui/separator",
+        "@/lib/i18n/formatters",
+        "@/services/purchase-order/purchase-order.schemas",
+        "date-fns",
+        "lucide-react",
+        "@/i18n/navigation",
+        "next/navigation",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/sales",
+      "file": "app/[locale]/(dashboard)/dashboard/sales/page.tsx",
+      "lines": 24,
+      "sha256": "57878af84c432b28b88cb2d47236741bcb4c8e29ab8e9025f86b6d902c644680",
+      "imports": [
+        "./sales-route-access",
+        "next-intl/server",
+        "./SalesClientPage"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/appearance",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx",
+      "lines": 44,
+      "sha256": "f2a2f7dfce7a6179df1933eb3d9d09dbb567bf27584b4a390ecfe9c08a7535e7",
+      "imports": [
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "./AppearanceSettingsClient",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/company",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx",
+      "lines": 66,
+      "sha256": "aa78f1f474b2bf9b974bcd222e728872124b6ec314377436c36f27b3985ced85",
+      "imports": [
+        "@/config/useAuth",
+        "@/lib/auth-server",
+        "@/components/settings/OrganizationManagementTable",
+        "@/components/settings/OrganizationSettingsForm",
+        "@/i18n/routing",
+        "next/navigation",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/data-onboarding",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx",
+      "lines": 30,
+      "sha256": "69d66a0c1c27b05ad361562de2c00addfdbbd353dca718f9bef48d376f1df9c6",
+      "imports": [
+        "@/components/onboarding/MasterDataOnboardingWorkbench",
+        "@/config/master-data-onboarding",
+        "@/lib/security/rbac",
+        "@/services/onboarding/master-data-import.service",
+        "@/services/onboarding/master-data-csv",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/locations/create",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+      "lines": 54,
+      "sha256": "d3cad742d1b9a43b9b83ccb1f158e345fa3d72694e7b886f72b7a8bb041f0a4c",
+      "imports": [
+        "@/components/locations/LocationsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/locations/new",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+      "lines": 54,
+      "sha256": "7e7a72343bded49525e83843e7788def676a032d23d6de80062ae9c199141894",
+      "imports": [
+        "@/components/locations/LocationsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/locations",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+      "lines": 54,
+      "sha256": "6fecf5655b3d2568bcdba6a0f61bd15d4869a66c0e1333c945cd0bce47ec084c",
+      "imports": [
+        "@/components/locations/LocationsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/locations/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx",
+      "lines": 54,
+      "sha256": "48d3c2bfa4aa970b6b5839f3799d54daa477841888c65aa43cd73a45a3463f13",
+      "imports": [
+        "@/components/locations/LocationsManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/modules",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "lines": 30,
+      "sha256": "9ed3e9256a0dd2f1d8668df284fda7bd3202909311dc5961cb1600a5ff8eca31",
+      "imports": [
+        "next-intl/server",
+        "@/components/modules/ModuleCompositionWorkbench",
+        "@/services/modules/module-composition.service",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/notifications",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx",
+      "lines": 44,
+      "sha256": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+      "imports": [
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "./NotificationsSettingsClient",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/organization",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/organization/page.tsx",
+      "lines": 35,
+      "sha256": "b11c2ecf3190d0fbc2b4da040a7f53c5bd8bf39d052e64b8c22da0eeb2b18d28",
+      "imports": [
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/roles/new",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx",
+      "lines": 26,
+      "sha256": "46d73de978cc9bab23c2e9ebbf456488afdba46d6b138d977f398cc3bc957c2e",
+      "imports": [
+        "@/components/Forms/RoleForm",
+        "@/lib/security/rbac",
+        "../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/roles",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx",
+      "lines": 187,
+      "sha256": "633e680226f937833891855a47016dee47de248780d0e035c73e9cf390d30ce4",
+      "imports": [
+        "next/link",
+        "@/components/ui/button",
+        "@/components/ui/badge",
+        "@/actions/roles/getOrgRoles",
+        "@/config/useAuth",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/components/dashboard/DashboardRouteState",
+        "@/i18n/routing",
+        "lucide-react",
+        "./columns",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/roles/update/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx",
+      "lines": 31,
+      "sha256": "f0ea83103b432e2190badd345b3972e7102faa04b022a2ca828cdc6ccd9d4606",
+      "imports": [
+        "@/components/Forms/RoleForm",
+        "@/lib/security/rbac",
+        "../../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/security",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx",
+      "lines": 391,
+      "sha256": "3cef34c77414195b097fae7af0c9eb1a29bde3afb10c63783b0ff928f55f3794",
+      "imports": [
+        "@/components/ui/badge",
+        "@/components/ui/button",
+        "@/lib/security/rbac",
+        "@/i18n/routing",
+        "@/lib/security/auth-session",
+        "@/lib/security/rbac-permissions",
+        "@/services/security/security-settings.service",
+        "@/types/bilingual",
+        "lucide-react",
+        "lucide-react",
+        "next/link",
+        "next/navigation",
+        "@/components/settings/AccountSessions",
+        "react",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/tax-rates/create",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+      "lines": 54,
+      "sha256": "7a220aea98143d331f924d8d1d98dba9176ff0ba4de02dd1cbf195fdd63d86d6",
+      "imports": [
+        "@/components/tax-rates/TaxRatesManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/tax-rates",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+      "lines": 50,
+      "sha256": "83cc7cab15678fee2b4c5dc1ac118b666bd0f95d38796c4ea3bd16e7243efb5d",
+      "imports": [
+        "@/components/tax-rates/TaxRatesManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/tax-rates/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+      "lines": 54,
+      "sha256": "31a3a3af573ffe2df844be9316bb53c5c97459a0ed3b746499a13583ba259bce",
+      "imports": [
+        "@/components/tax-rates/TaxRatesManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/terminals",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx",
+      "lines": 50,
+      "sha256": "f62ed5fa2dac60e6c7f9979962efc0f6869fad1eadc7b8ef98230d44511d64f2",
+      "imports": [
+        "@/components/pos/TerminalManagementDashboard",
+        "@/config/useAuth",
+        "@/i18n/routing",
+        "next/navigation",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/users",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx",
+      "lines": 131,
+      "sha256": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+      "imports": [
+        "next/link",
+        "lucide-react",
+        "@/actions/_shared/safe-action-responses",
+        "@/services/users/user-invitation-options.service",
+        "@/actions/users/getOrgInvites",
+        "@/actions/users/getOrgUsers",
+        "@/components/Forms/users/userInvitationForm",
+        "@/components/ui/button",
+        "@/config/useAuth",
+        "@/lib/security/rbac",
+        "@/lib/security/rbac-permissions",
+        "@/components/dashboard/DashboardRouteState",
+        "@/components/settings/user-directory-copy",
+        "@/i18n/routing",
+        "./UsersPageClient",
+        "./columns",
+        "../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/settings/users/update/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+      "lines": 14,
+      "sha256": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40",
+      "imports": [
+        "@/components/settings/MemberAccessEditor",
+        "@/lib/security/rbac",
+        "../../../settings-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/suppliersSystem/new",
+      "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx",
+      "lines": 44,
+      "sha256": "585a45859dfd74e1eeb47b608ca3d507a8fad0fd449c21ab3f58ea1353a9d517",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../suppliers-system-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/suppliersSystem",
+      "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx",
+      "lines": 45,
+      "sha256": "55a4f5f17925ca40599b0a36751e0ada5fba78a4994309f9c1c3d6db1575dd22",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "./suppliers-system-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/suppliersSystem/[id]/edit",
+      "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/edit/page.tsx",
+      "lines": 46,
+      "sha256": "2384c75d1019cf8808dc56b3cf1008685440a624413c33bac97f65b4e4b12776",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../../suppliers-system-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/dashboard/suppliersSystem/[id]",
+      "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx",
+      "lines": 47,
+      "sha256": "730352a82d93b3fad79c4036fcc274a5a5abcaa1e0c8adc37642993432db937c",
+      "imports": [
+        "@/components/suppliers/SupplierManagementDashboard",
+        "../suppliers-system-route-access"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Inaccessible in current browser session; unauthenticated"
+    },
+    {
+      "route": "/[locale]/landing-preview/founder-journey",
+      "file": "app/[locale]/(home)/landing-preview/founder-journey/page.tsx",
+      "lines": 39,
+      "sha256": "5ac79b3d16a1f0367dfadc98aad9fbb939b9a1e39dc44dc1bea8699d1518f9b5",
+      "imports": [
+        "@/components/landing-preview/founder-journey/founder-journey-preview",
+        "@/i18n/routing",
+        "next",
+        "next-intl/server"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]",
+      "file": "app/[locale]/(home)/page.tsx",
+      "lines": 20,
+      "sha256": "302c3d9725680da7041521edb1a59e5bc4725883edb43abaf33c687a20a95817",
+      "imports": [
+        "@/components/landing/final-cta",
+        "@/components/landing/hero",
+        "@/components/landing/landing-message-sections",
+        "@/components/landing/product-gallery",
+        "@/components/landing/capability-overview"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/waitlist",
+      "file": "app/[locale]/(home)/waitlist/page.tsx",
+      "lines": 11,
+      "sha256": "b0772be824bdb974ff6d9499558373517eaf79947f14ab0f0c38a2de2cecde15",
+      "imports": [
+        "@/components/Forms/WaitList",
+        "react"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/workflows",
+      "file": "app/[locale]/(home)/workflows/page.tsx",
+      "lines": 6,
+      "sha256": "5ffc44f83a0f6c7bd688be4adf8d979347349548d95b0504ee0088653236b61b",
+      "imports": [
+        "@/components/landing/workflow-atlas"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/ohada-os",
+      "file": "app/[locale]/ohada-os/page.tsx",
+      "lines": 13,
+      "sha256": "eb403d64c44d16c075520681800743cd4081b952bbfc0ec7fce673672e036c03",
+      "imports": [
+        "@/components/marketing/ohada-os-landing"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/supplier-purchase-order/[envelopeId]",
+      "file": "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx",
+      "lines": 27,
+      "sha256": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+      "imports": [
+        "next",
+        "./SupplierPoAcknowledgementPortal"
+      ],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    },
+    {
+      "route": "/[locale]/update",
+      "file": "app/[locale]/update/page.tsx",
+      "lines": 4,
+      "sha256": "650f5569e732d2fed25f5a298d2475e2e5ee5f9f14c71688b38974fdb920faa4",
+      "imports": [],
+      "sourceStatus": "Entry source scanned; follow-up depth is recorded in report",
+      "runtimeStatus": "Unverified unless listed in report browser log"
+    }
+  ]
+}

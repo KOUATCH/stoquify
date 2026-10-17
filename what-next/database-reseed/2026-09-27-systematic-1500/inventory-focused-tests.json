@@ -1,0 +1,17 @@
+{
+  "recordedAt": "2026-09-27T11:31:08.270Z",
+  "command": "npx jest services/inventory/__tests__/inventory-reconciliation.service.test.ts services/inventory/__tests__/inventory-adjustment-traceability.test.ts prisma/__tests__/systematic-reseed-inventory.test.ts services/inventory/__tests__/inventory-adjustment.service.test.ts --runInBand --silent",
+  "result": "PASS",
+  "suitesPassed": 4,
+  "testsPassed": 20,
+  "durationSeconds": 7.216,
+  "evidence": "Recorded from the completed focused Jest invocation in this task; no further source changes to these tested paths occurred afterward except the seed opening-ledger snapshot recheck.",
+  "coverage": [
+    "legacy positive and signed-negative outbound cost normalization",
+    "negative inbound costs are not silently made positive",
+    "batch and expiry propagation into the initial immutable movement",
+    "whole-unit and fractional stock planning",
+    "stock floor rerun behavior",
+    "existing adjustment service controls"
+  ]
+}

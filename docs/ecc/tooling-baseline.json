@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "recordedOn": "2026-10-07",
+  "purpose": "Repository-owned observation record; not a native Codex/ECC configuration schema or release certification.",
+  "source": {
+    "head": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+    "scope": "HEAD plus dirty local working tree; no commit created by this task"
+  },
+  "packages": {
+    "next": {
+      "declared": "^15.1.4",
+      "npmLocked": "15.5.18",
+      "installed": "15.5.18"
+    },
+    "react": {
+      "declared": "^19.1.1",
+      "npmLocked": "19.2.6",
+      "installed": "19.2.6"
+    },
+    "typescript": {
+      "declared": "^5",
+      "npmLocked": "5.8.3",
+      "installed": "5.8.3"
+    },
+    "prisma": {
+      "declared": "^6.19.3",
+      "npmLocked": "6.19.3",
+      "installed": "6.19.3"
+    },
+    "better-auth": {
+      "declared": "^1.6.14",
+      "npmLocked": "1.6.14",
+      "installed": "1.6.14"
+    },
+    "tailwindcss": {
+      "declared": "^3.4.1",
+      "npmLocked": "3.4.19",
+      "installed": "3.4.19"
+    },
+    "@playwright/test": {
+      "declared": "^1.61.1",
+      "npmLocked": "1.61.1",
+      "installed": "1.61.1"
+    },
+    "jest": {
+      "declared": "^30.4.1",
+      "npmLocked": "30.4.2",
+      "installed": "30.4.2"
+    },
+    "axe-core": {
+      "declared": "^4.11.4",
+      "npmLocked": "4.11.4",
+      "installed": "4.11.4"
+    }
+  },
+  "packageManager": {
+    "ci": "npm ci",
+    "pnpmLockRetained": true,
+    "lockfilesHaveDifferentResolutions": true,
+    "note": "Added direct axe-core ^4.11.4 using existing resolutions: npm 4.11.4, pnpm 4.13.0. No dependency download or framework upgrade performed. npm and pnpm reproduction parity remains unverified."
+  },
+  "codex": {
+    "preferredHarness": "Codex desktop with shared project standards",
+    "pathCliVersion": "0.128.0",
+    "desktopBundledCliVersion": "0.160.1",
+    "supportedInventory": "Desktop-bundled plugin list --json and plugin marketplace list --json succeeded for local ECC inventory; PATH CLI rejects list.",
+    "hostPathChanged": false,
+    "remoteCatalog": "Request failed; local inventory succeeded"
+  },
+  "ecc": {
+    "id": "ecc@ecc",
+    "version": "2.2.3",
+    "enabled": true,
+    "marketplaceSource": "https://github.com/affaan-m/ECC.git",
+    "nativeInventoryVerified": true,
+    "storedHookTrustRecordObserved": true,
+    "currentHookHashMatch": "not verified",
+    "hookExecution": "not verified",
+    "reinstallOrTrustMutation": false
+  },
+  "browser": {
+    "chromeDevtools": "Profile-in-use error on list_pages; connectivity unresolved",
+    "renderedPilotEvidence": "not run",
+    "recovery": "Use task-isolated browser or supported connector configuration; see maintenance.md"
+  },
+  "database": {
+    "localCliProbe": [
+      "docker",
+      "podman",
+      "psql",
+      "pg_ctl",
+      "initdb"
+    ],
+    "probeResult": "Not found on PATH",
+    "disposableTargetVerified": false,
+    "livePilotEvidence": "not run",
+    "note": "No database connection, migration, seed or reset attempted."
+  },
+  "ci": {
+    "localWorkflow": "Agent Workflow Contract precedes Verify Repo",
+    "remoteRun": "not run",
+    "remoteRequiredChecks": "not verified"
+  },
+  "projectContentHashNormalization": "UTF-8 text with CRLF normalized to LF; record only, no automatic refresh",
+  "projectContent": {
+    ".agents/skills/ui-ux-pro-max/SKILL.md": "49c3c13a42e048944cc674ab1220ae71cfee04804b858ffd3add76401db71cea",
+    ".agents/skills/ui-ux-pro-max/scripts/design_system.py": "fbe0905fdfe03f1f1d000183a35f23b573ec0589ecc163207f0f97e0d3dc0832",
+    ".agents/skills/ui-ux-pro-max/scripts/tests/test_core.py": "7b60ed565591881b4a3743ac21bb1d539a8b9ccaae57c7381bdf9140e306b1b3",
+    ".agents/skills/design/SKILL.md": "3c8b2f22bde44bc19476fde9a9f56953c3ebd2e47a7aaa0ee6d6598b67a5d3d9",
+    ".agents/skills/ui-styling/SKILL.md": "cc3399a6f3b3faf10678e83d13235185db7e56a420c3122fe0f3d885a73e2652",
+    ".agents/skills/brand/SKILL.md": "5f85dba0a922720be5309f8441587b36641809643bf1c3d8a7c5e72912d3e31e"
+  }
+}

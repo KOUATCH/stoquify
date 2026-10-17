@@ -3,10 +3,14 @@ import { requirePermission } from "@/lib/security/rbac"
 import {
   postPurchaseReturn,
   postSupplierCreditNote,
+  reversePurchaseReturn,
+  reverseSupplierCreditNote,
 } from "@/services/purchasing/purchase-return-credit.service"
 import {
   postPurchaseReturnAction,
   postSupplierCreditNoteAction,
+  reversePurchaseReturnAction,
+  reverseSupplierCreditNoteAction,
 } from "../purchase-return-credit.actions"
 
 jest.mock("next/cache", () => ({ revalidatePath: jest.fn() }))
@@ -154,5 +158,57 @@ describe("purchase return and supplier credit actions", () => {
       purchaseReturnId: "return-1",
       supplierInvoiceId: "invoice-1",
     }))
+  })
+
+  const reversals = [
+    { action: reversePurchaseReturnAction, service: reversePurchaseReturn, permission: "purchasing.returns.post", resource: "PurchaseReturn",
+      input: { purchaseReturnId: "return-1", idempotencyKey: "reverse-return-1", reason: "Correction accepted" } },
+    { action: reverseSupplierCreditNoteAction, service: reverseSupplierCreditNote, permission: "purchasing.ap.credit.post", resource: "SupplierCreditNote",
+      input: { supplierCreditNoteId: "credit-1", creditNoteNumber: "CN-REV-1", creditDate: "2026-10-01", documentHash: "sha256:credit-reversal", idempotencyKey: "reverse-credit-1", reason: "Correction accepted" } },
+  ]
+  it.each(reversals)("carries server-derived authority through $permission waits", async ({ action, service, permission, resource, input }) => {
+    const ctx = context(permission)
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: ctx.userId, tenantId: ctx.orgId, lastAuthAt: Date.now() } })
+    const owner = service as jest.Mock
+    owner.mockImplementation(async (_input, _client, control) => {
+      await control.assertCurrentAuthority()
+      return { replayed: false }
+    })
+    const result = await action({ ...input, organizationId: "other-org", postedById: "other-actor", assertCurrentAuthority: "untrusted" })
+    expect(result.success).toBe(true)
+    expect(owner).toHaveBeenCalledWith(expect.objectContaining({ organizationId: ctx.orgId, postedById: ctx.userId }), undefined,
+      { assertCurrentAuthority: expect.any(Function) })
+    expect(owner.mock.calls.at(-1)[0]).not.toHaveProperty("assertCurrentAuthority")
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(2)
+    expect(mockRequirePermission).toHaveBeenLastCalledWith(permission, { resource, auditAllowed: false })
+  })
+
+  it.each(reversals)("returns fresh-auth failure before $permission effects after a wait", async ({ action, service, permission, input }) => {
+    const ctx = context(permission), effects = jest.fn()
+    const { FreshAuthRequiredError } = jest.requireMock("@/lib/security/auth-session")
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockRequireFreshAuth.mockResolvedValueOnce({ claims: { userId: ctx.userId, tenantId: ctx.orgId, lastAuthAt: Date.now() } })
+      .mockRejectedValueOnce(new FreshAuthRequiredError())
+    ;(service as jest.Mock).mockImplementation(async (_input, _client, control) => { await control.assertCurrentAuthority(); effects() })
+    expect((await action(input)).success).toBe(false)
+    expect(effects).not.toHaveBeenCalled()
+  })
+
+  it.each(reversals)("refuses a changed identity after $permission waits", async ({ action, service, permission, input }) => {
+    const ctx = context(permission), effects = jest.fn()
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockRequireFreshAuth.mockResolvedValueOnce({ claims: { userId: ctx.userId, tenantId: ctx.orgId, lastAuthAt: Date.now() } })
+      .mockResolvedValueOnce({ claims: { userId: "different-user", tenantId: "other-tenant", lastAuthAt: Date.now() } })
+    ;(service as jest.Mock).mockImplementation(async (_input, _client, control) => { await control.assertCurrentAuthority(); effects() })
+    expect(await action(input)).toMatchObject({ success: false, status: 401 })
+    expect(effects).not.toHaveBeenCalled()
+  })
+
+  it.each(reversals)("refuses mismatched entry claims before invoking $permission", async ({ action, service, permission, input }) => {
+    mockRequirePermission.mockResolvedValue(context(permission))
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "other-user", tenantId: "org-1", lastAuthAt: Date.now() } })
+    expect(await action(input)).toMatchObject({ success: false, status: 401 })
+    expect(service).not.toHaveBeenCalled()
   })
 })

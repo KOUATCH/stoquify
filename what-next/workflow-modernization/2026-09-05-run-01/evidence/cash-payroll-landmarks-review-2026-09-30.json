@@ -1,0 +1,148 @@
+{
+  "at": "2026-09-30T15:13:20.355Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_PAYROLL_LANDMARKS_2026-09-30.md",
+  "sourceHashes": {
+    "components/payroll/PayrollRunWorkbench.tsx": "cc5c98ea8bd4e0c4d4137bbfbddb35039cb32e8d390f23ca675634aac63f7992",
+    "components/payroll/PayrollRegisterTieOut.tsx": "85d2ed1f6f53ddd54a2ca6ab9bb7cc837331c5b09c1fd5c90464133c53ed7b30",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx": "111fe82f48afc5de61947bc00542b2afb4d58152388da8b6f9bccfbe023cb09c",
+    "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx": "eac5fb5d3af01b8ea28a5b237e4c2bbd136a40cdcde5191d5ff5afa553594868",
+    "components/payroll/__tests__/PayrollRunWorkbench.test.tsx": "82885b770d6c78cbb3be84db357824ec19ed90264e3744e10206b3844c7ec392"
+  },
+  "priorImpact": [
+    {
+      "file": "components/payroll/PayrollRunWorkbench.tsx",
+      "before": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+      "after": "cc5c98ea8bd4e0c4d4137bbfbddb35039cb32e8d390f23ca675634aac63f7992"
+    },
+    {
+      "file": "components/payroll/PayrollRegisterTieOut.tsx",
+      "before": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+      "after": "85d2ed1f6f53ddd54a2ca6ab9bb7cc837331c5b09c1fd5c90464133c53ed7b30"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "populated_payroll_runs_and_register_single_main_landmark_en_fr_three_viewports",
+    "payroll_register_keyboard_handoff_and_brand_token_focus"
+  ],
+  "receipts": [
+    {
+      "file": "lanes/environment/payroll-landmarks-d7897bf7-95b5-4021-9e97-f7d8a81dd396.json",
+      "sha256": "b6721582c971413aa2277ad7403925f8edc0e9d5765ea302ed7945a1b1dbd237"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d.json",
+      "sha256": "eb9dbf7db0d4c1b107dd7ad50b3a0f61d28c9d0436aee07010e757111ecee994"
+    },
+    {
+      "file": "evidence/payroll-landmark-checks-5aa99026-c845-424c-a261-7a4945731bbb.json",
+      "sha256": "9c1c30f0ae3edf966e67a20445f9a9cca4c8d552af9c30478451c973380bdd04"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-4b765b5c-5bae-485d-884c-3d507463f616.json",
+      "sha256": "b329a859dd41c143676efd3c6f710e3ee5e44b94ee9a6f0052d86b92d78be7b0"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-a5e680e1-7f85-4760-81ce-ae72a54a72cb.json",
+      "sha256": "2b197bb51830d5be0de89ebddb19276fbabe9ad85950b42067fe233e27b9e7c4"
+    },
+    {
+      "file": "evidence/payroll-landmark-checks-2070dd15-9f1f-4d99-8782-5792593c4e61.json",
+      "sha256": "096b480dfab43f0719aec3bdfcb7c402fd773e7e3f5aa59c97d57cb37b71deed"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CASH_PAYROLL_LANDMARKS_2026-09-30.md",
+      "sha256": "d7043ea4eecb49352a009783c1d6e61f4cf35417199976d2f7912fe391311469"
+    },
+    {
+      "file": "run-payroll-landmark-checks.cjs",
+      "sha256": "4542bcb49c94e7bfe54c24da3dc50b2834ee6cb1e2ded90ce253299f45ae3e05"
+    },
+    {
+      "file": "lanes/environment/verify-payroll-landmarks.cjs",
+      "sha256": "49b4048b388ddebe85b9b47273ad8a0f8e08bbdcc8f84a7149ab5b36bb61032f"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-d7897bf7-95b5-4021-9e97-f7d8a81dd396-en-1440-runs.png",
+      "sha256": "95d121793b9314234cbd57ee2e51c2aaa4118343e0b0363339e4be8a40f87d7b"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-d7897bf7-95b5-4021-9e97-f7d8a81dd396-en-1440-register.png",
+      "sha256": "bd44a31ad6836991cea7f007e191b344e7878c8ca6be6c6538b849b74b0dfbde"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-d7897bf7-95b5-4021-9e97-f7d8a81dd396-fr-1440-runs.png",
+      "sha256": "2b6cd1e0d8a8e8cf6c9a8c2b7e888860e345e3c23f46bd6c01f45a28e6c8e6f0"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-d7897bf7-95b5-4021-9e97-f7d8a81dd396-fr-1440-register.png",
+      "sha256": "391038e6daf5dcb3a78adb0adf601f2685f71336d1012b81ada23b2cec48eb95"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-320-runs.png",
+      "sha256": "9d928559c1a311512a41843fd3a9a834ea12fc9c66f16f753eb6e60d0106b135"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-320-register.png",
+      "sha256": "ccf2edd135fa568dc9f95bfc5d338a10347fceaf9af9e628a1cadeaeeba47bd3"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-768-runs.png",
+      "sha256": "9f8a98a7b5165ae1cf43fb2c752ab58560e6e3a41357f4b2b65fb773819f1785"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-768-register.png",
+      "sha256": "2218d11c916a7ff471823c25ff5280fc48b92618d2fa857aca26e82d91f26c46"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-1440-runs.png",
+      "sha256": "de9602648d184373837c8d28723086486edcafcf7ce0c0db66e7f4539f3ded26"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-en-1440-register.png",
+      "sha256": "b186c2b9aa6b2524bee2aece9845f77bcf9ebd792e2603961e10b40ec582290b"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-320-runs.png",
+      "sha256": "9d928559c1a311512a41843fd3a9a834ea12fc9c66f16f753eb6e60d0106b135"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-320-register.png",
+      "sha256": "37bc4e1dfd2551de0423952fcabf7d536f133b1b60d1054e2aa20b51e95c09c4"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-768-runs.png",
+      "sha256": "daf40664c300ed800afe0c1a1e385f5ba3f5709b6bd90a3ccc82f478a3467ed2"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-768-register.png",
+      "sha256": "7ae77527c54b73871c69b3092c38c84e3d3ccf0d34c6ade100b5931deaad6470"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-1440-runs.png",
+      "sha256": "0d77a5a440fc44d4a9ec910970cc818b0cbc1d7b732d553b309e576b3c46c2ef"
+    },
+    {
+      "file": "lanes/environment/payroll-landmarks-25ad8b28-d184-4ad3-99e3-13d4ddf01c1d-fr-1440-register.png",
+      "sha256": "8eb84ed29a791daf70a24dbd35ff093ae4c4ae5c1915bcee4f30f5631a45e7eb"
+    }
+  ],
+  "remaining": [
+    "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish the Cash accessibility checklist: keyboard/contrast/reflow, enlarged text and remaining payroll route/state landmarks and table interaction. Populated run/register routes now have one main landmark and tested brand-token handoff focus at EN/FR 320/768/1440. Native screen-reader speech and browser zoom remain unverified limits.",
+    "Complete route-latency investigation against a recorded baseline or approved budget. The original truncated shell hydration trace remains unattributed; investigate any recurrence. The reproduced date mismatch is corrected.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "limits": [
+    "No financial or permission service changed",
+    "Browser matrix covers populated run/register routes and named handoff controls, not all controls or route states",
+    "No native screen-reader/zoom or full contrast certification",
+    "Wider payroll localization remains incomplete",
+    "Country-pack external dependency remains"
+  ]
+}

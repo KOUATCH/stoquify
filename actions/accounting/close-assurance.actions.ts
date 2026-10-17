@@ -7,6 +7,7 @@ import {
   SESSION_ASSURANCE_LEVEL,
 } from "@/lib/security/auth-session"
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+import { closeEvidenceAcceptanceControl, closeEvidenceWorkControl } from "@/services/accounting/close-evidence-acceptance-context"
 import {
   acceptMissingCloseEvidenceResponse,
   approveCloseWaiver,
@@ -154,10 +155,7 @@ const requestMissingEvidence = protect<unknown, MissingCloseEvidenceRequestDto>(
   },
   async (input, ctx) => {
     const parsed = requestMissingCloseEvidenceInputSchema.parse(input)
-    const result = await requestMissingCloseEvidence(ctx.orgId, parsed, {
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-    })
+    const result = await requestMissingCloseEvidence(ctx.orgId, parsed, await closeEvidenceWorkControl(ctx))
     revalidateClosePaths(result.periodId)
     return result
   },
@@ -175,10 +173,7 @@ const respondToMissingEvidence = protect<unknown, MissingCloseEvidenceResponseDt
   },
   async (input, ctx) => {
     const parsed = respondToMissingCloseEvidenceInputSchema.parse(input)
-    const result = await respondToMissingCloseEvidence(ctx.orgId, parsed, {
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-    })
+    const result = await respondToMissingCloseEvidence(ctx.orgId, parsed, await closeEvidenceWorkControl(ctx))
     revalidateClosePaths(result.periodId)
     return result
   },
@@ -199,17 +194,9 @@ const acceptMissingEvidenceResponse = protect<
     freshAuth: { maxAgeSeconds: 300 },
   },
   async (input, ctx) => {
-    const lastAuthAt = verifiedCloseFreshAuthTime(ctx)
+    const control = closeEvidenceAcceptanceControl(ctx)
     const parsed = acceptMissingCloseEvidenceResponseInputSchema.parse(input)
-    const result = await acceptMissingCloseEvidenceResponse(ctx.orgId, parsed, {
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      freshAuth: {
-        actorId: ctx.userId,
-        organizationId: ctx.orgId,
-        lastAuthAt,
-      },
-    })
+    const result = await acceptMissingCloseEvidenceResponse(ctx.orgId, parsed, control)
     revalidateClosePaths(result.periodId)
     return result
   },

@@ -44,7 +44,9 @@ function makeRepo(
     JSON.stringify({
       scripts: {
         build:
-          "npm run release:secrets:preflight && npm run prisma:migrate:deploy:safe && npm run build:linted",
+          "npm run release:secrets:preflight && npm run build:linted",
+        "release:artifact": "node scripts/release-artifact.cjs prepare",
+        "release:schema:promote": "node scripts/promote-release-schema.cjs",
         "policy:gates":
           "npm run prisma:migration:safety:gate && npm run release:evidence:gate",
         "prisma:migration:history:health":
@@ -192,8 +194,13 @@ describe("Prisma production migration gate", () => {
       exitCode: 0,
     });
     expect(calls).toHaveLength(2);
-    expect(calls[0].args).toEqual(["run", "prisma:migrate:deploy"]);
-    expect(calls[1].args).toEqual(["run", "prisma:migration:history:health"]);
+    expect(calls[0].args.slice(-2)).toEqual(["run", "prisma:migrate:deploy"]);
+    expect(calls[1].args.slice(-2)).toEqual(["run", "prisma:migration:history:health"]);
+    expect(calls[0].options.shell).toBe(false);
+    if (process.platform === "win32") {
+      expect(calls[0].command).toBe(process.execPath);
+      expect(calls[0].args[0]).toMatch(/npm-cli\.js$/);
+    }
   });
 
   it("fails the safe deploy when direct migration-history health fails", () => {

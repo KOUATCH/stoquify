@@ -546,7 +546,8 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
           },
         },
       },
-      _sum: { debit: true, credit: true },
+      _sum: { baseDebit: true, baseCredit: true },
+      _count: { _all: true, baseDebit: true, baseCredit: true },
     }),
     db.journalEntryLine.groupBy({
       by: ["accountId"],
@@ -560,7 +561,8 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
           entryDate: { lte: requestedPeriod.endDate },
         },
       },
-      _sum: { debit: true, credit: true },
+      _sum: { baseDebit: true, baseCredit: true },
+      _count: { _all: true, baseDebit: true, baseCredit: true },
     }),
     db.organizationAccountingSettings.findUnique({
       where: { organizationId: input.organizationId },
@@ -579,6 +581,12 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
   ) {
     throw new BusinessRuleError("Posted journal account evidence is unavailable for this organization");
   }
+  if ([...periodActivity, ...cumulativeActivity].some((row) =>
+    row._count._all !== row._count.baseDebit || row._count._all !== row._count.baseCredit ||
+    row._sum.baseDebit === null || row._sum.baseCredit === null
+  )) {
+    throw new BusinessRuleError("Functional-currency evidence is missing from posted journal lines. Review the historical entries before reporting.");
+  }
 
   return buildFinancialStatementsReadModel({
     organizationId: input.organizationId,
@@ -586,8 +594,8 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
     period: requestedPeriod,
     availablePeriods,
     accounts,
-    periodActivity,
-    cumulativeActivity,
+    periodActivity: periodActivity.map((row) => ({ accountId: row.accountId, _sum: { debit: row._sum.baseDebit, credit: row._sum.baseCredit } })),
+    cumulativeActivity: cumulativeActivity.map((row) => ({ accountId: row.accountId, _sum: { debit: row._sum.baseDebit, credit: row._sum.baseCredit } })),
   });
 }
 

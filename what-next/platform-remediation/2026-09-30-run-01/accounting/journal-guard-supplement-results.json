@@ -1,0 +1,153 @@
+{
+  "startedAt": "2026-09-30T21:29:12.149Z",
+  "databaseName": "stoquify_restore_local_remediation_20260930_run01",
+  "migration": "20260930213000_journal_posted_status_transitions",
+  "sourceDatabaseTouched": false,
+  "recordIdentifiersEmitted": false,
+  "stages": [
+    {
+      "command": "prisma migrate deploy",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:29:23.298Z"
+    },
+    {
+      "command": "prisma migrate status",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:29:31.238Z"
+    }
+  ],
+  "checks": [
+    {
+      "name": "posted_line_delete_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_line_delete_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_line_update_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_to_draft_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_to_draft_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_to_voided_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_to_voided_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_to_posted_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_voided_draft_sequence_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "account_only_tenant_mismatch_insert_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "account_only_tenant_mismatch_update_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_to_reversed_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_same_status_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "reversed_same_status_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "draft_to_posted_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "draft_to_voided_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "source_posted_parent_with_nested_lines_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    }
+  ],
+  "priorMigrationSha256": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde",
+  "migrationSha256": "50742465c97d3519981a2918d50a2988a4f06058159a7662a9341048815f8e97",
+  "migrationsBefore": 88,
+  "priorMigrationChecksumPreserved": true,
+  "migrationsAfter": 89,
+  "status": "SUPPLEMENTAL_GUARDS_VERIFIED_ON_RESTORED_COPY",
+  "limitations": [
+    "No source database writes or historical repairs; only migration installation persists on this-run disposable clone.",
+    "No complete header immutability, late-insert prevention, tenant reassignment, cascade retention, runtime-role or concurrent draft-edit/post qualification.",
+    "This is transactional SQL behavior proof, not complete application producer or reversal workflow qualification."
+  ],
+  "fixtureRollbackConfirmed": true,
+  "completedAt": "2026-09-30T21:29:31.537Z"
+}

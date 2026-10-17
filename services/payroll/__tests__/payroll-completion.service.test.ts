@@ -19,6 +19,13 @@ import {
   Prisma,
 } from "@prisma/client";
 
+// Isolate payment/accounting behavior after admission. The real admission
+// contract is exercised separately in payroll-production-admission.test.ts.
+jest.mock("../payroll-production-admission", () => ({
+  assertPayrollProductionAdmission: jest.fn(),
+  assertPayrollProductionAdmissionInTx: jest.fn(),
+}));
+
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),

@@ -1,12 +1,17 @@
+"use client"
+
+import { useLocale } from "next-intl"
+
 export default function OwnerWarRoomLoading() {
-  return <CommandSurfaceLoading title="Preparing Owner Morning Brief" />
+  const french = useLocale() === "fr"
+  return <CommandSurfaceLoading title={french ? "Préparation du point quotidien du dirigeant" : "Preparing Owner Morning Brief"} />
 }
 
 function CommandSurfaceLoading({ title }: { title: string }) {
   return (
-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
+    <div className="dashboard-landing-theme dark min-h-screen motion-reduce:[&_.animate-pulse]:animate-none bg-[var(--dash-canvas)]">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
-        <section className="dashboard-glass-panel rounded-lg p-4 md:p-5">
+        <section role="status" aria-live="polite" className="dashboard-glass-panel rounded-lg p-4 md:p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div className="min-w-0 max-w-5xl space-y-3">
               <div className="h-7 w-40 animate-pulse rounded-md bg-[var(--dash-border-subtle)]" />
@@ -22,6 +27,6 @@ function CommandSurfaceLoading({ title }: { title: string }) {
           <div className="h-64 animate-pulse rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.32)]" />
         </section>
       </div>
-    </main>
+    </div>
   )
 }

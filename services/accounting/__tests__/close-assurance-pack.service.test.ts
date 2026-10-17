@@ -1,3 +1,7 @@
+import { CLOSE_CERTIFICATION_INVALIDATION_SOURCES } from "../close-assurance-pack.service"
+jest.mock("../close-source-revision.service", () => ({ ...jest.requireActual("../close-source-revision.service"), lockCloseSourceRevisionInTx: jest.fn().mockResolvedValue({ version: 1, revision: "0" }) }))
+import { lockCloseSourceRevisionInTx } from "../close-source-revision.service"
+import { createCloseControlScope } from "../close-control-scope"
 jest.mock("server-only", () => ({}))
 
 jest.mock("node:crypto", () => {
@@ -11,7 +15,10 @@ jest.mock("node:crypto", () => {
 jest.mock("@/prisma/db", () => {
   const dbMock = {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
+    organizationAccountingSettings: { findUnique: jest.fn() },
     closeRun: {
+      findMany: jest.fn(),
       findFirst: jest.fn(),
       update: jest.fn(),
     },
@@ -24,6 +31,7 @@ jest.mock("@/prisma/db", () => {
       create: jest.fn(),
       findMany: jest.fn(),
     },
+    payrollPeriod: { findMany: jest.fn() },
     payrollRun: {
       findMany: jest.fn(),
     },
@@ -34,6 +42,7 @@ jest.mock("@/prisma/db", () => {
     },
     auditLog: {
       findFirst: jest.fn(),
+      findMany: jest.fn(),
       create: jest.fn(),
     },
   }
@@ -50,11 +59,15 @@ import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuati
 import {
   exportClosePack,
   recordCloseCertificationInvalidation,
+  recordCloseCertificationInvalidationsForSource,
 } from "../close-assurance-pack.service"
 
 const mockDb = db as unknown as {
+  organizationAccountingSettings: { findUnique: jest.Mock }
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
   closeRun: {
+    findMany: jest.Mock
     findFirst: jest.Mock
     update: jest.Mock
   }
@@ -67,6 +80,7 @@ const mockDb = db as unknown as {
     create: jest.Mock
     findMany: jest.Mock
   }
+  payrollPeriod: { findMany: jest.Mock }
   payrollRun: {
     findMany: jest.Mock
   }
@@ -76,6 +90,7 @@ const mockDb = db as unknown as {
     update: jest.Mock
   }
   auditLog: {
+    findMany: jest.Mock
     findFirst: jest.Mock
     create: jest.Mock
   }
@@ -105,6 +120,9 @@ function inventoryAnnex(sourceHash = "sha256:inventory-valuation") {
     inventorySubledgerValueTotal: "700.00",
     mismatchAmount: "0.00",
     sourceHash,
+    evidenceHashVersion: 1,
+    observationHash: "sha256:inventory-observation",
+    recordedThrough: "2026-06-15T12:00:00.000Z",
     blockerStatus: "PASSED",
     failures: [],
   }
@@ -186,7 +204,10 @@ function cleanInventoryValuation(sourceHash = "sha256:inventory-valuation") {
     inventoryValue: "700.00",
     ledgerClass3Value: "700.00",
     driftAmount: "0.00",
-    reportHash: sourceHash,
+    reportHash: "sha256:inventory-observation",
+    evidenceHash: sourceHash,
+    evidenceHashVersion: 1,
+    recordedThrough: "2026-06-15T12:00:00.000Z",
     sourceCounts: inventoryAnnex(sourceHash).sourceCounts,
     failures: [],
   }
@@ -198,6 +219,8 @@ function closeRun(overrides: Record<string, unknown> = {}) {
     organizationId: "org-1",
     periodId: "period-1",
     status: "READY",
+    createdAt: new Date("2026-06-15T12:00:00.000Z"),
+    voidedAt: null,
     readinessScore: 96,
     criticalBlockerCount: 0,
     highBlockerCount: 0,
@@ -210,6 +233,7 @@ function closeRun(overrides: Record<string, unknown> = {}) {
     summary: { checklistCount: 2 },
     provenance: { items: [] },
     metadata: {
+      sourceRevision: { version: 1, revision: "0" },
       trustLevel: "T4",
       inventoryValuationAnnex: inventoryAnnex(),
       payrollFinanceForecastProof: payrollForecastProof(),
@@ -398,11 +422,70 @@ function closeRun(overrides: Record<string, unknown> = {}) {
   return { ...base, ...overrides }
 }
 
+// Only callback completion commits this transaction double. A domain rejection
+// inside the callback therefore cannot be mistaken for durable evidence writes.
+function observeInvalidationTransactions(initialRun = closeRun()) {
+  let committedRun = initialRun
+  const committedEvents: unknown[] = []
+  const committedAudits: unknown[] = []
+  const committedExports: unknown[] = []
+  const transactions = { committed: 0, rolledBack: 0 }
+  const createEvent = mockDb.businessEvent.create.getMockImplementation()!
+  const createAudit = mockDb.ledgerAuditEvent.create.getMockImplementation()!
+  const updateExport = mockDb.closePackExport.update.getMockImplementation()!
+  const updateRun = mockDb.closeRun.update.getMockImplementation()!
+  mockDb.$transaction.mockImplementation(async callback => {
+    let pendingRun = committedRun
+    const events: unknown[] = [], audits: unknown[] = [], exports: unknown[] = []
+    mockDb.closeRun.findFirst.mockImplementation(async () => pendingRun)
+    mockDb.closeRun.update.mockImplementation(async args => {
+      await updateRun(args)
+      pendingRun = { ...pendingRun, ...args.data }
+      return pendingRun
+    })
+    mockDb.businessEvent.create.mockImplementation(async args => {
+      const result = await createEvent(args)
+      events.push(args.data)
+      return result
+    })
+    mockDb.ledgerAuditEvent.create.mockImplementation(async args => {
+      const result = await createAudit(args)
+      audits.push(args.data)
+      return result
+    })
+    mockDb.closePackExport.update.mockImplementation(async args => {
+      const result = await updateExport(args)
+      exports.push(args)
+      return result
+    })
+    try {
+      const result = await callback(mockDb)
+      committedRun = pendingRun
+      committedEvents.push(...events)
+      committedAudits.push(...audits)
+      committedExports.push(...exports)
+      transactions.committed++
+      return result
+    } catch (error) {
+      transactions.rolledBack++
+      throw error
+    }
+  })
+  return { run: () => committedRun, committedEvents, committedAudits, committedExports, transactions }
+}
+
 describe("close assurance pack service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.mocked(lockCloseSourceRevisionInTx).mockReset().mockResolvedValue({ version: 1, revision: "0" })
     mockDb.$transaction.mockImplementation((callback) => callback(mockDb))
+    mockDb.$queryRaw.mockResolvedValue([{ id: "close-run-1" }])
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: true, setupStatus: "READY" })
     mockDb.closeRun.findFirst.mockResolvedValue(closeRun())
+    mockDb.closeRun.findMany.mockImplementation(async () => {
+      const result = await mockDb.closeRun.findFirst.mock.results.at(-1)?.value
+      return result ? [result] : []
+    })
     mockDb.closePackExport.create.mockImplementation(({ data }) =>
       Promise.resolve({
         id: "close-pack-export-1",
@@ -410,11 +493,12 @@ describe("close assurance pack service", () => {
       }),
     )
     mockDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
-    mockDb.payrollRun.findMany.mockResolvedValue([{ id: "payroll-run-1" }])
-    mockDb.closePackExport.findFirst.mockResolvedValue({
+    mockDb.payrollPeriod.findMany.mockResolvedValue([{ id: "payroll-period-1", accountingPeriodId: "period-1" }])
+    mockDb.payrollRun.findMany.mockResolvedValue([{ id: "payroll-run-1", payrollPeriodId: "payroll-period-1" }])
+    mockDb.closePackExport.findFirst.mockImplementation(({ where }) => Promise.resolve(where.id ? {
       id: "close-pack-export-1",
       metadata: { mode: "CERTIFIED" },
-    })
+    } : null))
     mockDb.closePackExport.update.mockResolvedValue({
       id: "close-pack-export-1",
     })
@@ -442,9 +526,51 @@ describe("close assurance pack service", () => {
       }),
     )
     mockDb.businessEvent.update.mockResolvedValue({ id: "business-event-1" })
-    mockDb.auditLog.findFirst.mockResolvedValue(pilotCertificationAudit())
+    mockDb.auditLog.findMany.mockResolvedValue([pilotCertificationAudit()])
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-log-1" })
     mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation())
+  })
+
+  it.each([undefined, { version: 1, revision: "99" }])("refuses certification and retains invalidation for a missing or stale source revision: %j", async sourceRevision => {
+    const original = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ metadata: { ...original.metadata, sourceRevision } }))
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier", actorPermissions: ["accounting.close.certify"], lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:00:00Z",
+    })).rejects.toThrow("source revision")
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ staleState: expect.objectContaining({ sourceModel: "CloseSourceRevision" }) }) }) }))
+    expect(mockDb.ledgerAuditEvent.create).toHaveBeenCalled()
+  })
+
+  it("retains the exact versioned close scope inside the hashed pack without rewriting history", async () => {
+    const scope = createCloseControlScope("org-1", { id: "period-1", startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59.999Z") }, new Date("2026-07-05T12:00:00Z"))
+    const retained = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ metadata: { ...retained.metadata, closeScope: scope } }))
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, {
+      actorId: "operator-1", actorPermissions: ["accounting.close.export"], now: "2026-07-05T13:00:00Z",
+    })
+    expect(JSON.parse(result.content).closeRun.metadata.closeScope).toEqual(scope)
+    const changedScope = createCloseControlScope("org-1", { id: "period-1", startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59.999Z") }, new Date("2026-07-05T12:00:00.001Z"))
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ metadata: { ...retained.metadata, closeScope: changedScope } }))
+    const changed = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, {
+      actorId: "operator-1", actorPermissions: ["accounting.close.export"], now: "2026-07-05T13:00:00Z",
+    })
+    expect(changed.contentHash).not.toBe(result.contentHash)
+  })
+
+  it("hashes retained account coverage as control evidence rather than an unsigned reconciliation certificate", async () => {
+    const retained = closeRun()
+    const coverage = { providerAccountId: "bank-a", status: "NO_ACTIVITY_APPROVED", scopeHash: "sha256:scope", noActivityEvidence: { id: "proof-a", hash: "sha256:proof", sourceDocumentHash: "sha256:document", approvedById: "reviewer" } }
+    const item = { ...retained.evidenceItems[0], id: "coverage-a", evidenceType: "AUDIT_LOG", sourceTable: "provider_accounts", sourceType: "ProviderAccountCloseCoverage", sourceId: "bank-a", provenance: "OPERATIONAL", sourceHash: "sha256:proof", metadata: coverage }
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ evidenceItems: [...retained.evidenceItems, item] }))
+    const input = { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" as const }
+    const control = { actorId: "operator-1", actorPermissions: ["accounting.close.export"], now: "2026-07-05T13:00:00Z" }
+    const result = await exportClosePack("org-1", input, control)
+    const payload = JSON.parse(result.content)
+    expect(payload.evidenceItems.find((row: any) => row.id === "coverage-a").metadata).toEqual(coverage)
+    expect(result.content).not.toContain("reconciliation certificate reference(s) are unsigned")
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ evidenceItems: [...retained.evidenceItems, { ...item, metadata: { ...coverage, status: "BLOCKED" } }] }))
+    expect((await exportClosePack("org-1", input, control)).contentHash).not.toBe(result.contentHash)
   })
 
   it("allows draft exports with blockers and writes a watermarked audit record", async () => {
@@ -496,6 +622,7 @@ describe("close assurance pack service", () => {
     )
 
     expect(result.mode).toBe("DRAFT_NOT_CERTIFIED")
+    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
     expect(result.contentHash).toMatch(/^sha256:/)
     expect(result.watermarkId).toContain("draft-not-certified")
     expect(result.content).toContain("Draft close pack is not certified")
@@ -777,7 +904,7 @@ describe("close assurance pack service", () => {
   })
 
   it("blocks certified exports when persisted pilot-cycle certification is missing", async () => {
-    mockDb.auditLog.findFirst.mockResolvedValue(null)
+    mockDb.auditLog.findMany.mockResolvedValue([])
 
     await expect(
       exportClosePack(
@@ -792,6 +919,81 @@ describe("close assurance pack service", () => {
       ),
     ).rejects.toThrow(/pilot-cycle certification evidence is missing/i)
 
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("records absent payroll periods without inventing payroll approval", async () => {
+    mockDb.payrollPeriod.findMany.mockResolvedValue([])
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00.000Z", now: "2026-06-15T13:01:00.000Z",
+    })
+    const saved = JSON.parse(result.content).annexes.pilotCycleCertification.saved
+    expect(saved).toEqual(expect.objectContaining({ status: "NOT_APPLICABLE", applicability: "NO_RECORDED_PAYROLL_PERIOD", certificateHash: null, closePeriodPayrollPeriodCount: 0, runCertificates: [] }))
+    expect(mockDb.payrollRun.findMany).not.toHaveBeenCalled()
+    expect(mockDb.auditLog.findMany).not.toHaveBeenCalled()
+    expect(mockDb.payrollPeriod.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: {
+      organizationId: "org-1", OR: [
+        { accountingPeriodId: "period-1" },
+        { periodStart: { lte: expect.any(Date) }, periodEnd: { gte: expect.any(Date) } },
+      ],
+    } }))
+  })
+
+  it("does not turn an unavailable payroll scope into no payroll", async () => {
+    mockDb.payrollPeriod.findMany.mockRejectedValue(new Error("scope unavailable"))
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, {
+      actorId: "reader-1", actorPermissions: ["accounting.close.export"],
+    })).rejects.toThrow("scope unavailable")
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks a retained period without a run and an unlinked overlapping period", async () => {
+    mockDb.payrollPeriod.findMany.mockResolvedValue([{ id: "payroll-period-1", accountingPeriodId: null }])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, {
+      actorId: "reader-1", actorPermissions: ["accounting.close.export"],
+    })
+    const blockers = JSON.parse(result.content).export.certificationBlockers
+    expect(blockers).toEqual(expect.arrayContaining([
+      expect.stringMatching(/no retained payroll run/), expect.stringMatching(/matching accounting-period link/),
+    ]))
+  })
+
+  it("requires each payroll run's own certificate", async () => {
+    mockDb.payrollRun.findMany.mockResolvedValue([
+      { id: "payroll-run-1", payrollPeriodId: "payroll-period-1" },
+      { id: "payroll-run-2", payrollPeriodId: "payroll-period-1" },
+    ])
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00.000Z", now: "2026-06-15T13:01:00.000Z",
+    })).rejects.toThrow(/Payroll run 2.*evidence is missing/)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("retains all matching certificates and rejects a later blocked evaluation", async () => {
+    mockDb.payrollRun.findMany.mockResolvedValue([
+      { id: "payroll-run-1", payrollPeriodId: "payroll-period-1" },
+      { id: "payroll-run-2", payrollPeriodId: "payroll-period-1" },
+    ])
+    mockDb.auditLog.findMany.mockResolvedValue([
+      pilotCertificationAudit(), { ...pilotCertificationAudit(), id: "audit-2", entityId: "payroll-run-2" },
+    ])
+    const control = { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], lastAuthAt: "2026-06-15T13:00:00.000Z", now: "2026-06-15T13:01:00.000Z" }
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, control)
+    expect(JSON.parse(result.content).annexes.pilotCycleCertification.saved).toEqual(expect.objectContaining({ closePeriodPayrollRunCount: 2, runCertificates: [expect.objectContaining({ certificateHash: "sha256:pilot-cycle-certificate" }), expect.objectContaining({ certificateHash: "sha256:pilot-cycle-certificate" })] }))
+    mockDb.auditLog.findMany.mockResolvedValue([pilotCertificationAudit({ status: "BLOCKED" }), pilotCertificationAudit(), { ...pilotCertificationAudit(), entityId: "payroll-run-2" }])
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, control)).rejects.toThrow(/not certified for production release/)
+  })
+
+  it.each([null, { accountingEnabled: true, setupStatus: "IN_PROGRESS" }, { accountingEnabled: false, setupStatus: "READY" }])("rejects a saved READY run when current accounting setup is incomplete: %j", async (settings) => {
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue(settings)
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00.000Z", now: "2026-06-15T13:01:00.000Z",
+    })).rejects.toThrow(/Complete accounting setup/)
+    expect(mockDb.organizationAccountingSettings.findUnique).toHaveBeenCalledWith({ where: { organizationId: "org-1" }, select: { accountingEnabled: true, setupStatus: true } })
     expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
   })
 
@@ -865,6 +1067,220 @@ describe("close assurance pack service", () => {
         }),
       }),
     )
+  })
+
+  it.each(["READY", "RUNNING", "BLOCKED", "VOIDED", "CERTIFIED"])("rejects an older READY certification when the newer assessment is %s", async status => {
+    const retained = closeRun(), newer = closeRun({ id: "newer-private", status, createdAt: new Date("2026-06-15T12:01:00Z") })
+    mockDb.closeRun.findMany.mockResolvedValue([newer, retained])
+    await expect(exportClosePack("org-1", { closeRunId: retained.id, mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "CONFLICT", message: expect.stringContaining("no longer current") })
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledWith({ where: { organizationId: "org-1", periodId: "period-1" }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 2, select: { id: true, createdAt: true, status: true, voidedAt: true } })
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "ReadCommitted" })
+  })
+
+  it.each(["close-run-1", "other-tied-run"])("denies either tied assessment without using IDs to establish currentness (%s)", async requested => {
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ id: requested }))
+    mockDb.closeRun.findMany.mockResolvedValue([closeRun({ id: "other-tied-run" }), closeRun()])
+    await expect(exportClosePack("org-1", { closeRunId: requested, mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "CONFLICT", message: expect.stringContaining("same creation time") })
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+  })
+
+  it("denies an independently voided newest READY assessment", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ voidedAt: new Date("2026-06-15T12:05:00Z") }))
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "INVALID_TRANSITION" })
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("retains historical draft export without current-assessment locking or selection", async () => {
+    mockDb.closeRun.findMany.mockRejectedValue(new Error("Draft must not select current assessment"))
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, { actorId: "reader", actorPermissions: ["accounting.close.export"] })
+    expect(result.isCertified).toBe(false)
+    expect(mockDb.closeRun.findMany).not.toHaveBeenCalled()
+    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+  })
+
+  it("waits for period publication and rereads the newly current assessment before certification", async () => {
+    let release!: () => void, entered!: () => void
+    const waiting = new Promise<void>(resolve => { entered = resolve })
+    const lock = new Promise(resolve => { release = () => resolve([]) })
+    mockDb.$queryRaw.mockImplementationOnce(() => { entered(); return lock })
+    const work = exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })
+    await waiting
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(1)
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith({ where: { id: "close-run-1", organizationId: "org-1", period: { organizationId: "org-1" } }, select: { periodId: true } })
+    expect(mockDb.closeRun.findMany).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    mockDb.closeRun.findMany.mockResolvedValue([closeRun({ id: "newly-published", status: "RUNNING", createdAt: new Date("2026-06-15T12:01:00Z") }), closeRun()])
+    release()
+    await expect(work).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockDb.$queryRaw.mock.calls[0][0].values).toEqual([JSON.stringify(["close-assessment-order", "org-1", "period-1"])])
+    expect(mockDb.$queryRaw.mock.calls[1][0].text).toContain('FROM "close_runs"')
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(2)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a cross-tenant or missing requested assessment before acquiring period locks", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(null)
+    await expect(exportClosePack("org-1", { closeRunId: "foreign-run", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith({ where: { id: "foreign-run", organizationId: "org-1", period: { organizationId: "org-1" } }, select: { periodId: true } })
+    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+  it.each(["CERTIFIED", "DRAFT_NOT_CERTIFIED"] as const)("rejects a tenant-owned run with a foreign accounting period during %s export", async mode => {
+    const corrupt = { ...closeRun(), period: { ...closeRun().period, organizationId: "foreign-org" } }
+    mockDb.closeRun.findFirst.mockImplementation(async ({ where }) =>
+      where.organizationId === corrupt.organizationId &&
+      (!where.period?.organizationId || where.period.organizationId === corrupt.period.organizationId)
+        ? corrupt : null,
+    )
+    await expect(exportClosePack("org-1", { closeRunId: corrupt.id, mode }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify", "accounting.close.export"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: corrupt.id, organizationId: "org-1", period: { organizationId: "org-1" } } }))
+    expect(mockDb.$queryRaw).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+  })
+  it("keeps recorded close invalidation effective even when inventory is fresh and status is READY", async () => {
+    const value = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({ ...value, metadata: { ...value.metadata, staleState: { status: "EVIDENCE_STALE" } } })
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })).rejects.toThrow("A recorded change invalidated close certification evidence.")
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("waits for the run lock and rereads invalidation before certification", async () => {
+    let unlock!: () => void, lockEntered!: () => void
+    const pendingLock = new Promise<{ id: string }[]>(resolve => { unlock = () => resolve([{ id: "close-run-1" }]) })
+    const entered = new Promise<void>(resolve => { lockEntered = resolve })
+    mockDb.$queryRaw.mockResolvedValueOnce([]).mockImplementationOnce(() => { lockEntered(); return pendingLock })
+    const exporting = exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z",
+    })
+    await entered
+    const readsBeforeUnlock = mockDb.closeRun.findFirst.mock.calls.length
+    const before = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({ ...before, status: "BLOCKED", metadata: { ...before.metadata, staleState: { status: "EVIDENCE_STALE", sourceId: "concurrent-source" } } })
+    unlock()
+    await expect(exporting).rejects.toThrow("A recorded change invalidated close certification evidence.")
+    expect(readsBeforeUnlock).toBe(1) // Tenant-scoped period discovery only.
+    expect(mockDb.$queryRaw.mock.calls[0][0].text).toContain("pg_advisory_xact_lock")
+    expect(mockDb.$queryRaw.mock.calls[1][0].text).toMatch(/FROM "close_runs"[\s\S]*FOR NO KEY UPDATE/)
+    expect(mockDb.$queryRaw.mock.calls[1][0].values).toEqual(["org-1", "close-run-1"])
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+  })
+
+  it("invalidates the export committed while source invalidation waited for its run lock", async () => {
+    let unlock!: () => void, lockEntered!: () => void
+    const pendingLock = new Promise<{ id: string }[]>(resolve => { unlock = () => resolve([{ id: "close-run-1" }]) })
+    const entered = new Promise<void>(resolve => { lockEntered = resolve })
+    mockDb.$queryRaw.mockImplementationOnce(() => { lockEntered(); return pendingLock })
+    mockDb.closeRun.findMany.mockResolvedValue([{ id: "close-run-1" }])
+    const invalidating = recordCloseCertificationInvalidationsForSource("org-1", {
+      sourceCode: "LEDGER_JOURNAL_POSTED", sourceId: "new-entry", periodId: "period-1",
+      staleReason: "Source changed while certification completed", newEvidenceHash: "entry-new",
+    }, { actorId: "poster", now: "2026-06-15T13:01:00Z" })
+    await entered
+    const readsBeforeUnlock = mockDb.closeRun.findFirst.mock.calls.length
+    const exportReadsBeforeUnlock = mockDb.closePackExport.findFirst.mock.calls.length
+    const before = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({ ...before, status: "CERTIFIED", metadata: { ...before.metadata, certifiedExportId: "newly-certified-export" } })
+    mockDb.closePackExport.findFirst.mockResolvedValue({ id: "newly-certified-export", contentHash: "retained-hash", isCertified: true, metadata: { mode: "CERTIFIED", certificationHistory: "retained" } })
+    unlock()
+    const result = await invalidating
+    expect(readsBeforeUnlock).toBe(0)
+    expect(exportReadsBeforeUnlock).toBe(0)
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ select: { id: true }, orderBy: { id: "asc" } }))
+    expect(mockDb.closePackExport.findFirst).toHaveBeenCalledWith({ where: { organizationId: "org-1", closeRunId: "close-run-1", isCertified: true }, orderBy: [{ exportedAt: "desc" }, { id: "desc" }] })
+    expect(result.results[0].closePackExportId).toBe("newly-certified-export")
+    expect(mockDb.closePackExport.update).toHaveBeenCalledWith({ where: { id: "newly-certified-export" }, data: { metadata: expect.objectContaining({ certificationHistory: "retained", staleState: expect.objectContaining({ status: "EVIDENCE_STALE", sourceId: "new-entry" }) }) } })
+    expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ certifiedExportId: "newly-certified-export", staleState: expect.objectContaining({ status: "EVIDENCE_STALE" }) }) }) }))
+    expect(mockDb.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      idempotencyKey: expect.stringContaining(":newly-certified-export:"),
+      payload: expect.objectContaining({ closePackExportId: "newly-certified-export" }),
+    }) }))
+  })
+
+  it.each(["certify", "invalidate"])("rejects a missing tenant-scoped lock target before %s evidence reads", async operation => {
+    mockDb.$queryRaw.mockResolvedValue([])
+    const result = operation === "certify"
+      ? exportClosePack("org-1", { closeRunId: "foreign-close", mode: "CERTIFIED" }, { actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], now: "2026-06-15T13:00:00Z", lastAuthAt: "2026-06-15T13:00:00Z" })
+      : recordCloseCertificationInvalidation("org-1", { closeRunId: "foreign-close", sourceModel: "Ledger", sourceEventName: "ledger.journal.posted", staleReason: "Owned source changed" })
+    await expect(result).rejects.toThrow("Close run not found")
+    expect(mockDb.$queryRaw.mock.calls[operation === "certify" ? 1 : 0][0].values).toEqual(["org-1", "foreign-close"])
+    expect(mockDb.closeRun.findFirst).toHaveBeenCalledTimes(operation === "certify" ? 1 : 0)
+    expect(mockDb.closePackExport.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("preserves direct run-only invalidation and explicit export bindings", async () => {
+    await recordCloseCertificationInvalidation("org-1", { closeRunId: "close-run-1", sourceModel: "Ledger", sourceEventName: "ledger.journal.posted", staleReason: "Owned source changed" })
+    expect(mockDb.closePackExport.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.update).not.toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ idempotencyKey: expect.stringContaining(":run:") }) }))
+    jest.clearAllMocks()
+    await recordCloseCertificationInvalidationsForSource("org-1", { closeRunId: "close-run-1", closePackExportId: "explicit-export", sourceCode: "LEDGER_JOURNAL_POSTED", sourceId: "new-entry", staleReason: "Owned source changed" })
+    expect(mockDb.closePackExport.findFirst).toHaveBeenCalledWith({ where: { id: "explicit-export", organizationId: "org-1", closeRunId: "close-run-1" } })
+    expect(mockDb.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ idempotencyKey: expect.stringContaining(":explicit-export:") }) }))
+  })
+
+  it.each(["RUNNING", "READY", "CERTIFIED", "EXPORTED"])("invalidates a %s assessment on a new source event even without an export", async (status) => {
+    const value = { ...closeRun(), status }
+    mockDb.closeRun.findFirst.mockResolvedValue(value)
+    // Model the persisted run population. A query restricted to CERTIFIED
+    // would miss the READY assessment even though period close can consume it.
+    mockDb.closeRun.findMany.mockImplementation(async ({ where }) => {
+      const statusCondition = where.AND[1].OR[0].status
+      const included = typeof statusCondition === "string" ? statusCondition === status : statusCondition.in.includes(status)
+      return included ? [{ id: value.id, packExports: [] }] : []
+    })
+    const result = await recordCloseCertificationInvalidationsForSource("org-1", {
+      sourceCode: "LEDGER_JOURNAL_POSTED", sourceId: "new-entry", periodId: "period-1",
+      staleReason: "Ledger activity changed after this assessment", newEvidenceHash: "entry-2",
+    }, { actorId: "poster", now: "2026-06-15T13:01:00Z" })
+    expect(result.invalidatedCount).toBe(1)
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", AND: expect.arrayContaining([{ OR: [{ periodId: "period-1" }] }]) }) }))
+    expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: value.id }, data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ staleState: expect.objectContaining({ status: "EVIDENCE_STALE", sourceId: "new-entry" }) }) }),
+    }))
+    expect(mockDb.closePackExport.update).not.toHaveBeenCalled()
+  })
+
+  it("discovers a tenant-scoped period union once with deterministic run ordering", async () => {
+    mockDb.closeRun.findMany.mockResolvedValue([])
+    const result = await recordCloseCertificationInvalidationsForSource("org-1", {
+      sourceCode: "LEDGER_JOURNAL_REVERSED", sourceId: "original", periodIds: ["period-z", "period-a", "period-z"],
+      staleReason: "Complete reversal period union", newEvidenceHash: "reversal",
+    })
+    expect(result.invalidatedCount).toBe(0)
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledTimes(1)
+    expect(mockDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ organizationId: "org-1", AND: expect.arrayContaining([{ OR: [{ periodId: { in: ["period-a", "period-z"] } }] }]) }),
+      orderBy: { id: "asc" }, select: { id: true },
+    }))
+    expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("accepts unchanged source evidence despite a different observation hash", async () => {
+    mockReconcileInventoryClass3.mockResolvedValue({ ...cleanInventoryValuation(), reportHash: "sha256:new-observation", recordedThrough: "2026-06-15T13:00:00.000Z" })
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, { actorId: "operator-1", actorPermissions: ["accounting.close.export"] })
+    expect(JSON.parse(result.content).annexes.inventoryValuation.freshness.status).toBe("FRESH")
+  })
+
+  it("requires a new assessment for legacy inventory annexes without the fingerprint version", async () => {
+    const value = closeRun()
+    const legacyAnnex: Record<string, unknown> = { ...inventoryAnnex() }
+    delete legacyAnnex.evidenceHashVersion
+    mockDb.closeRun.findFirst.mockResolvedValue({ ...value, metadata: { ...value.metadata, inventoryValuationAnnex: legacyAnnex } })
+    const result = await exportClosePack("org-1", { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED" }, { actorId: "operator-1", actorPermissions: ["accounting.close.export"] })
+    expect(JSON.parse(result.content).annexes.inventoryValuation.freshness.status).toBe("MISSING")
+    expect(result.content).toContain("Run a new close assessment.")
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
   })
 
   it("uses a safe inventory-refresh limitation when draft pack evidence is unavailable", async () => {
@@ -942,6 +1358,81 @@ describe("close assurance pack service", () => {
         }),
       }),
     )
+  })
+
+  it.each(["changed", "missing", "blocked", "unavailable"])("commits truthful %s inventory invalidation before denying certification", async condition => {
+    if (condition === "unavailable") {
+      mockReconcileInventoryClass3.mockRejectedValue(new Error("private database connection details"))
+    } else if (condition !== "missing") {
+      mockReconcileInventoryClass3.mockResolvedValue({ ...cleanInventoryValuation("sha256:changed"), ...(condition === "blocked" ? { status: "BLOCKED", failures: [{ message: "Inventory evidence requires correction" }] } : {}) })
+    }
+    const retained = condition === "missing" ? closeRun({ metadata: { ...closeRun().metadata, inventoryValuationAnnex: null } }) : closeRun()
+    const state = observeInvalidationTransactions(retained)
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED", correlationId: "detected-corr" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"],
+      lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:01:00Z",
+    })).rejects.toThrow(/Certified close pack is blocked/)
+    expect(state.transactions.committed).toBe(1)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "BLOCKED", metadata: expect.objectContaining({ staleState: expect.objectContaining({ status: "EVIDENCE_STALE" }) }) }) }))
+    expect(state.run().status).toBe("BLOCKED")
+    expect(state.committedEvents).toEqual([expect.objectContaining({ eventType: "close.certification.invalidated", outboxMessages: { create: [expect.objectContaining({ eventName: "close.certification.invalidated" })] } })])
+    expect(state.committedAudits).toHaveLength(1)
+    expect(JSON.stringify(state.committedEvents)).not.toContain("private database connection details")
+  })
+
+  it("retains the current certified artifact and avoids duplicate invalidation on a new denial request", async () => {
+    mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation("sha256:changed"))
+    mockDb.closePackExport.findFirst.mockResolvedValue({ id: "retained-export", contentHash: "original-content-hash", isCertified: true, metadata: { certificationHistory: "retained" } })
+    const state = observeInvalidationTransactions()
+    for (const [attempt, actor] of [[1, "certifier-1"], [2, "certifier-2"]] as const) {
+      await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED", correlationId: `denial-${attempt}` }, {
+        actorId: actor, actorPermissions: ["accounting.close.certify"], lastAuthAt: `2026-06-15T13:0${attempt}:00Z`, now: `2026-06-15T13:0${attempt}:00Z`,
+      })).rejects.toThrow(/Certified close pack is blocked/)
+    }
+    expect(state.transactions).toEqual({ committed: 1, rolledBack: 1 })
+    expect(state.committedEvents).toHaveLength(1)
+    expect(state.committedAudits).toHaveLength(1)
+    expect(state.committedExports).toEqual([{ where: { id: "retained-export" }, data: { metadata: expect.objectContaining({ certificationHistory: "retained", staleState: expect.objectContaining({ actorId: "certifier-1", correlationId: "denial-1" }) }) } }])
+    expect(mockDb.businessEvent.create).toHaveBeenCalledTimes(1)
+    expect(mockDb.closeRun.update).toHaveBeenCalledTimes(1)
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["audit", "run", "export"])("rolls back detected invalidation if its %s write fails", async failingWrite => {
+    mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation("sha256:changed"))
+    const failure = new Error("invalidation persistence failed")
+    if (failingWrite === "audit") mockDb.ledgerAuditEvent.create.mockRejectedValue(failure)
+    if (failingWrite === "run") mockDb.closeRun.update.mockRejectedValue(failure)
+    if (failingWrite === "export") {
+      mockDb.closePackExport.findFirst.mockResolvedValue({ id: "retained-export", metadata: {} })
+      mockDb.closePackExport.update.mockRejectedValue(failure)
+    }
+    const state = observeInvalidationTransactions()
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: "certifier-1", actorPermissions: ["accounting.close.certify"], lastAuthAt: "2026-06-15T13:00:00Z", now: "2026-06-15T13:01:00Z",
+    })).rejects.toBe(failure)
+    expect(state.transactions).toEqual({ committed: 0, rolledBack: 1 })
+    expect(state.run().status).toBe("READY")
+    expect(state.committedEvents).toEqual([])
+    expect(state.committedAudits).toEqual([])
+    expect(state.committedExports).toEqual([])
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["permission", "fresh-auth", "maker-checker", "setup"])("does not persist stale-evidence writes for a %s denial", async denial => {
+    mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation("sha256:changed"))
+    if (denial === "setup") mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ accountingEnabled: false, setupStatus: "READY" })
+    await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+      actorId: denial === "maker-checker" ? "runner-1" : "certifier-1",
+      actorPermissions: denial === "permission" ? [] : ["accounting.close.certify"],
+      lastAuthAt: denial === "fresh-auth" ? undefined : "2026-06-15T13:00:00Z", now: "2026-06-15T13:01:00Z",
+    })).rejects.toThrow()
+    expect(mockReconcileInventoryClass3).not.toHaveBeenCalled()
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockDb.closeRun.update).not.toHaveBeenCalled()
   })
 
   it("records stale evidence against an already certified run and export", async () => {
@@ -1029,4 +1520,17 @@ describe("close assurance pack service", () => {
     expect(second.contentHash).toBe(first.contentHash)
     expect(second.content).toBe(first.content)
   })
+})
+
+it("labels no-journal supplier credit reversals with their real source model and event", () => {
+  expect(CLOSE_CERTIFICATION_INVALIDATION_SOURCES.SUPPLIER_CREDIT_NOTE_REVERSED).toMatchObject({
+    sourceCode: "SUPPLIER_CREDIT_NOTE_REVERSED", sourceModel: "SupplierCreditNote", sourceTable: "supplier_credit_notes", sourceEventName: "purchase.supplier_credit.reversed", domain: "ledger",
+  })
+})
+
+it.each(["invalid", "future", "missing actor"])("rejects %s approval authority before persistence", async kind => {
+  await expect(exportClosePack("org-1", { closeRunId: "close-run-1", mode: "CERTIFIED" }, {
+    actorId: kind === "missing actor" ? undefined : "certifier-1", actorPermissions: ["accounting.close.certify"],
+    now: "2026-06-15T13:00:00Z", lastAuthAt: kind === "invalid" ? "not-a-date" : kind === "future" ? "2026-06-15T14:00:00Z" : "2026-06-15T13:00:00Z",
+  })).rejects.toThrow("Fresh authentication")
 })

@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-30T15:16:43.201Z",
+  "baseline": true,
+  "sourceBefore": {
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca"
+  },
+  "views": [],
+  "organizationId": "cmunymsth0000ma7gnhleydzs",
+  "stage": "fr/320",
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('.dashboard-landing-content').getByRole('heading', { name: 'Synthèse de trésorerie', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for locator('.dashboard-landing-content').getByRole('heading', { name: 'Synthèse de trésorerie', exact: true })\n",
+  "sourceAfter": {
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca"
+  },
+  "sourceStable": true
+}

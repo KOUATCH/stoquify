@@ -1,0 +1,1583 @@
+{
+  "at": "2026-09-27T16:47:53.506Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.tsx": "8fa0bcceb9c6582e5f88ad8c63f35c85bf80c57707ef64b83026880cb70c3da8",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "messages/en.json": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+    "messages/fr.json": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmuk1y3n50000maj44b00rbhz",
+      "runId": "cmuk1y3wy001amaj4e953m7fo",
+      "scans": [
+        {
+          "state": "authentication-required",
+          "scan": {
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "impact": "serious",
+                "nodes": [
+                  {
+                    "target": [
+                      "h4"
+                    ],
+                    "html": "<h4 class=\"font-semibold\">Independent reconciliation sign-off</h4>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.justify-between.gap-2 > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(2)"
+                    ],
+                    "html": "<p>Review the current run and source evidence. Confirmation signs this reviewed version; any changed evidence requires another review.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(3)"
+                    ],
+                    "html": "<p>Run: cmuk1y3wy001amaj4e953m7fo</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".text-\\[var\\(--dash-danger\\)\\][role=\"alert\"]"
+                    ],
+                    "html": "<p role=\"alert\" class=\"text-[var(--dash-danger)]\">Confirm your password, then retry the retained signing request.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(5)"
+                    ],
+                    "html": "<p>A signing request is retained in this browser. Retry it to recover its actual outcome before starting another review.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(6)"
+                    ],
+                    "html": "<p class=\"font-medium\">Owned request ordering · XAF · 9/27/2026</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(7)"
+                    ],
+                    "html": "<p>Checked at 9/27/2026, 5:49:36 PM</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(8)"
+                    ],
+                    "html": "<p>Evidence checks passed for this review. Confirm only after you have reviewed the totals and records.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > .space-y-3 > p"
+                    ],
+                    "html": "<p>Gross amounts by source and currency, including incoming and outgoing records. Callbacks and statements can describe the same payment: do not add these categories. Matched amounts are allocations; unresolved suspense excludes resolved and written-off cases. These are not net balances.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "h5"
+                    ],
+                    "html": "<h5 class=\"font-semibold\">XAF</h5>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(1) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Internal payment records</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(1) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(2) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Provider callback evidence</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(2) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(3) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Statement evidence</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(3) > dd"
+                    ],
+                    "html": "<dd>0.00 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(4) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Matched allocations</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(4) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(5) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Unresolved suspense cases</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(5) > dd"
+                    ],
+                    "html": "<dd>0.00 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Internal payments</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Provider events</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Statement files</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Statement lines</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Matches</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(6) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Retained exceptions</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(6) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(7) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Retained suspense records</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(7) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "form > label"
+                    ],
+                    "html": "<label for=\"cmuk1y3wy001amaj4e953m7fo-sign-password\">Confirm your current password</label>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "#cmuk1y3wy001amaj4e953m7fo-sign-password"
+                    ],
+                    "html": "<input id=\"cmuk1y3wy001amaj4e953m7fo-sign-password\" autocomplete=\"current-password\" required=\"\" class=\"dashboard-control w-full\" type=\"password\" name=\"password\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "12.0pt (16px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "button[type=\"submit\"]"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\" type=\"submit\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.gap-2.flex:nth-child(12) > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "passes": [
+              "aria-allowed-attr",
+              "aria-conditional-attr",
+              "aria-deprecated-role",
+              "aria-prohibited-attr",
+              "aria-required-attr",
+              "aria-roles",
+              "aria-valid-attr-value",
+              "aria-valid-attr",
+              "autocomplete-valid",
+              "button-name",
+              "definition-list",
+              "dlitem",
+              "duplicate-id-aria",
+              "form-field-multiple-labels",
+              "label",
+              "nested-interactive"
+            ]
+          },
+          "rendered": [
+            {
+              "target": [
+                ".text-\\[var\\(--dash-danger\\)\\][role=\"alert\"]"
+              ],
+              "text": "Confirm your password, then retry the retained signing request.",
+              "color": "rgb(239, 106, 106)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 4.692262818281718,
+              "sample": {
+                "x": 366,
+                "y": 2253,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  239,
+                  106,
+                  106
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "form > label"
+              ],
+              "text": "Confirm your current password",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2837,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "#cmuk1y3wy001amaj4e953m7fo-sign-password"
+              ],
+              "text": "",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "boxes": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": false,
+              "reason": "No text boxes or unsupported opacity/filter"
+            },
+            {
+              "target": [
+                "button[type=\"submit\"]"
+              ],
+              "text": "Verify identity",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.168555560022562,
+              "sample": {
+                "x": 366,
+                "y": 2925,
+                "background": [
+                  37,
+                  99,
+                  235
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "scope": "Whole review axe scan; rendered contrast measures only authentication form and error alerts. Unchanged ready review contrast is previously verified."
+        }
+      ],
+      "screenshots": [
+        "sign-auth-error-browser-7e326fc6-1204-4870-b605-6526e8503c69-en-failure.png"
+      ],
+      "errors": [],
+      "requests": [
+        {
+          "path": "/en/dashboard/finance/reconciliation",
+          "method": "GET",
+          "kind": "document",
+          "startMs": 20,
+          "elapsedMs": 54840,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527683868.1208,
+            "domainLookupStart": 0.82,
+            "domainLookupEnd": 2.495,
+            "connectStart": 2.495,
+            "secureConnectionStart": -1,
+            "connectEnd": 3.104,
+            "requestStart": 3.296,
+            "responseStart": 52265.786,
+            "responseEnd": 54821.919
+          }
+        },
+        {
+          "path": "/_next/static/webpack/f6d631456d131ad7.webpack.hot-update.json",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 58941,
+          "elapsedMs": 45,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527742789.181,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.869,
+            "responseStart": 28.874,
+            "responseEnd": 41.574
+          }
+        },
+        {
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 57746,
+          "elapsedMs": 1492,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527741593.3052,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.78,
+            "responseStart": 1479.848,
+            "responseEnd": 1490.55
+          }
+        },
+        {
+          "path": "/_next/static/webpack/67b5cd329992a534.webpack.hot-update.json",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 67522,
+          "elapsedMs": 108,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527751366.406,
+            "domainLookupStart": 1.486,
+            "domainLookupEnd": 2.062,
+            "connectStart": 2.062,
+            "secureConnectionStart": -1,
+            "connectEnd": 4.428,
+            "requestStart": 4.638,
+            "responseStart": 61.137,
+            "responseEnd": 154.196
+          }
+        },
+        {
+          "path": "/api/me/permissions",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 59260,
+          "elapsedMs": 12947,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527743105.4138,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.825,
+            "responseStart": 12937.081,
+            "responseEnd": 12951.839
+          }
+        },
+        {
+          "path": "/api/me/permissions",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 76352,
+          "elapsedMs": 1662,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527760196.8699,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.707,
+            "responseStart": 1650.835,
+            "responseEnd": 2089.324
+          }
+        },
+        {
+          "path": "/api/me/permissions",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 78874,
+          "elapsedMs": 747,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527762718.7788,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.815,
+            "responseStart": 479.401,
+            "responseEnd": 770.088
+          }
+        },
+        {
+          "path": "/en/dashboard/finance/reconciliation",
+          "method": "GET",
+          "kind": "document",
+          "startMs": 81997,
+          "elapsedMs": 3324,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527765841.8281,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.758,
+            "responseStart": 1278.425,
+            "responseEnd": 3329.006
+          }
+        },
+        {
+          "path": "/api/auth/get-session",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 87493,
+          "elapsedMs": 481,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527771337.0051,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.738,
+            "responseStart": 451.277,
+            "responseEnd": 458.007
+          }
+        },
+        {
+          "path": "/api/me/permissions",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 87978,
+          "elapsedMs": 316,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527771822.9949,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.77,
+            "responseStart": 303.39,
+            "responseEnd": 323.291
+          }
+        },
+        {
+          "path": "/api/me/permissions",
+          "method": "GET",
+          "kind": "fetch",
+          "startMs": 89939,
+          "elapsedMs": 1360,
+          "reviewRunArgument": false,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527773783.3801,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 0.713,
+            "responseStart": 916.008,
+            "responseEnd": 1295.691
+          }
+        },
+        {
+          "path": "/en/dashboard/finance/reconciliation",
+          "method": "POST",
+          "kind": "fetch",
+          "startMs": 92168,
+          "elapsedMs": 1714,
+          "reviewRunArgument": true,
+          "signCommandArgument": false,
+          "timing": {
+            "startTime": 1790527776012.866,
+            "domainLookupStart": -1,
+            "domainLookupEnd": -1,
+            "connectStart": -1,
+            "secureConnectionStart": -1,
+            "connectEnd": -1,
+            "requestStart": 1.017,
+            "responseStart": 1148.463,
+            "responseEnd": 1707.387
+          }
+        }
+      ],
+      "entryMs": 81941,
+      "initialNavigation": [
+        {
+          "name": "http://127.0.0.1:3110/en/dashboard/finance/reconciliation?reviewRun=cmuk1y3wy001amaj4e953m7fo",
+          "entryType": "navigation",
+          "startTime": 0,
+          "duration": 56779.80000001192,
+          "navigationId": 9474,
+          "initiatorType": "navigation",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "text/html",
+          "contentEncoding": "gzip",
+          "workerStart": 0,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 1.4000000059604645,
+          "domainLookupStart": 15.900000005960464,
+          "domainLookupEnd": 17.5,
+          "connectStart": 17.5,
+          "secureConnectionStart": 0,
+          "connectEnd": 18.200000017881393,
+          "requestStart": 18.400000005960464,
+          "responseStart": 52277,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 52277,
+          "responseEnd": 54823.60000002384,
+          "transferSize": 126225,
+          "encodedBodySize": 125925,
+          "decodedBodySize": 469272,
+          "responseStatus": 200,
+          "serverTiming": [],
+          "unloadEventStart": 0,
+          "unloadEventEnd": 0,
+          "domInteractive": 54846.40000000596,
+          "domContentLoadedEventStart": 54846.40000000596,
+          "domContentLoadedEventEnd": 54846.5,
+          "domComplete": 56779.60000002384,
+          "loadEventStart": 56779.80000001192,
+          "loadEventEnd": 56779.80000001192,
+          "type": "navigate",
+          "redirectCount": 0,
+          "activationStart": 0,
+          "criticalCHRestart": 0,
+          "notRestoredReasons": null,
+          "confidence": {
+            "randomizedTriggerRate": 0.4994798,
+            "value": "high"
+          }
+        }
+      ],
+      "warmStartMs": 81980,
+      "warmEntryMs": 12052,
+      "warmNavigation": [
+        {
+          "name": "http://127.0.0.1:3110/en/dashboard/finance/reconciliation?reviewRun=cmuk1y3wy001amaj4e953m7fo",
+          "entryType": "navigation",
+          "startTime": 0,
+          "duration": 4768.700000017881,
+          "navigationId": 4858,
+          "initiatorType": "navigation",
+          "deliveryType": "",
+          "nextHopProtocol": "http/1.1",
+          "renderBlockingStatus": "non-blocking",
+          "contentType": "text/html",
+          "contentEncoding": "gzip",
+          "workerStart": 0,
+          "workerRouterEvaluationStart": 0,
+          "workerCacheLookupStart": 0,
+          "workerMatchedSourceType": "",
+          "workerFinalSourceType": "",
+          "redirectStart": 0,
+          "redirectEnd": 0,
+          "fetchStart": 0.6000000238418579,
+          "domainLookupStart": 0.6000000238418579,
+          "domainLookupEnd": 0.6000000238418579,
+          "connectStart": 0.6000000238418579,
+          "secureConnectionStart": 0,
+          "connectEnd": 0.6000000238418579,
+          "requestStart": 15.300000011920929,
+          "responseStart": 1292.9000000059605,
+          "firstInterimResponseStart": 0,
+          "finalResponseHeadersStart": 1292.9000000059605,
+          "responseEnd": 3329.600000023842,
+          "transferSize": 126225,
+          "encodedBodySize": 125925,
+          "decodedBodySize": 467559,
+          "responseStatus": 200,
+          "serverTiming": [],
+          "unloadEventStart": 1309,
+          "unloadEventEnd": 1309,
+          "domInteractive": 3333.2000000178814,
+          "domContentLoadedEventStart": 3333.2000000178814,
+          "domContentLoadedEventEnd": 3333.4000000059605,
+          "domComplete": 4768.4000000059605,
+          "loadEventStart": 4768.700000017881,
+          "loadEventEnd": 4768.700000017881,
+          "type": "reload",
+          "redirectCount": 0,
+          "activationStart": 0,
+          "criticalCHRestart": 0,
+          "notRestoredReasons": null,
+          "confidence": {
+            "randomizedTriggerRate": 0.4994798,
+            "value": "high"
+          }
+        }
+      ],
+      "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     boxes: [],\n+     color: 'rgb(247, 250, 248)',\n+     disabled: false,\n+     expected: 4.5,\n+     measured: false,\n+     reason: 'No text boxes or unsupported opacity/filter',\n+     target: [\n+       '#cmuk1y3wy001amaj4e953m7fo-sign-password'\n+     ],\n+     text: '',\n+     unsupported: []\n+   }\n+ ]\n- []\n"
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     boxes: [],\n+     color: 'rgb(247, 250, 248)',\n+     disabled: false,\n+     expected: 4.5,\n+     measured: false,\n+     reason: 'No text boxes or unsupported opacity/filter',\n+     target: [\n+       '#cmuk1y3wy001amaj4e953m7fo-sign-password'\n+     ],\n+     text: '',\n+     unsupported: []\n+   }\n+ ]\n- []\n",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "components/finance/ReconciliationSignReview.tsx": "8fa0bcceb9c6582e5f88ad8c63f35c85bf80c57707ef64b83026880cb70c3da8",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "messages/en.json": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+    "messages/fr.json": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9"
+  },
+  "sourceStable": true
+}

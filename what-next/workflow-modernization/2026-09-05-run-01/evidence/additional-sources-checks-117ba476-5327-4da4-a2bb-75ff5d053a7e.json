@@ -1,0 +1,70 @@
+{
+  "startedAt": "2026-09-27T13:07:17.268Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "4c42e11a6b49169606b0fb3def3678ed4f24db95322d934bb65ca4ff1b9a2aa9",
+    "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts": "c16d04046e5301e0369a3aef5083fe10249cbcf9eac4788a9953d90d8d6c9ca2"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts"
+      ],
+      "startedAt": "2026-09-27T13:07:17.296Z",
+      "endedAt": "2026-09-27T13:07:31.679Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       93 passed, 93 total\nSnapshots:   0 total\nTime:        5.754 s, estimated 24 s\nRan all test suites within paths \"services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts\", \"services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts\", \"services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/reconciliation/reconciliation-additional-sources.service.ts",
+        "services/reconciliation/payment-reconciliation-run.service.ts",
+        "services/reconciliation/reconciliation-run-preparation-evidence.ts",
+        "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts"
+      ],
+      "startedAt": "2026-09-27T13:07:31.682Z",
+      "endedAt": "2026-09-27T13:07:37.932Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "startedAt": "2026-09-27T13:07:37.932Z",
+      "endedAt": "2026-09-27T13:08:24.102Z",
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "4c42e11a6b49169606b0fb3def3678ed4f24db95322d934bb65ca4ff1b9a2aa9",
+    "services/reconciliation/__tests__/reconciliation-run-preparation-evidence.test.ts": "c16d04046e5301e0369a3aef5083fe10249cbcf9eac4788a9953d90d8d6c9ca2"
+  },
+  "sourceStable": true,
+  "passed": true,
+  "endedAt": "2026-09-27T13:08:24.105Z"
+}

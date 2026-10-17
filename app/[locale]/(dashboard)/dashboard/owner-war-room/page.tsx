@@ -6,9 +6,11 @@ import { localizePath } from "@/i18n/routing"
 import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
 import { routeByKey, withOwnerWarRoomSurfaceAccess } from "./owner-war-room-route-access"
 
-export const metadata: Metadata = {
-  title: "Owner War Room | Kontava",
-  description: "Evidence-backed owner command center for cash, stock, close, module, and action risk.",
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  return locale === "fr"
+    ? { title: "Tableau du dirigeant | Stoquify", description: "Pilotage fondé sur les preuves pour la trésorerie, les stocks, la clôture, les modules et les actions prioritaires." }
+    : { title: "Owner War Room | Stoquify", description: "Evidence-backed owner command center for cash, stock, close, module, and action risk." }
 }
 
 const copy = {
@@ -18,9 +20,9 @@ const copy = {
       "A read-only, evidence-backed command center for cash truth, reconciliation pressure, stock exposure, supplier commitments, payroll exposure, close readiness, action pressure, and module state.",
   },
   fr: {
-    title: "Salle de controle proprietaire",
+    title: "Tableau du dirigeant",
     subtitle:
-      "Un centre de commandement en lecture seule, appuye sur les preuves, pour la tresorerie, le rapprochement, le stock, les engagements fournisseurs, la paie, la cloture, les actions et les modules.",
+      "Un centre de commandement en lecture seule, appuyé sur les preuves, pour la trésorerie, le rapprochement, le stock, les engagements fournisseurs, la paie, la clôture, les actions et les modules.",
   },
 } as const
 
@@ -46,6 +48,7 @@ export default async function OwnerWarRoomPage({
     surface,
     onAllowed: async (ctx, _locale) => {
       const data = await getOwnerWarRoomData({
+        locale: resolvedLocale,
         organizationId: ctx.orgId,
         actorId: ctx.userId,
         actorPermissions: ctx.permissions,

@@ -49,25 +49,31 @@ describe("finance dashboard action", () => {
   })
 
   it("guards the requested dashboard view before reading finance data", async () => {
-    const result = await getFinanceDashboardAction({ view: "receivables" })
+    const result = await getFinanceDashboardAction({ view: "overview" })
 
     expect(result.success).toBe(true)
     expect(mockRequireAnyPermission).toHaveBeenCalledWith(
-      expect.arrayContaining(["finance.receivables.read", "finance.read"]),
-      { resource: "FinanceDashboard", resourceId: "receivables" },
+      expect.arrayContaining(["finance.dashboard.read", "finance.read"]),
+      { resource: "FinanceDashboard", resourceId: "overview" },
     )
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-1",
         userId: "user-1",
         moduleSlug: "payroll",
-        surface: "FinanceDashboard.receivables.payrollForecast",
+        surface: "FinanceDashboard.overview.payrollForecast",
         accessIntent: "read",
       }),
     )
     expect(mockGetFinanceDashboard).toHaveBeenCalledWith(
-      expect.objectContaining({ organizationId: "org-1", view: "receivables", period: "mtd", payrollModuleDecision: expect.any(Object) }),
+      expect.objectContaining({ organizationId: "org-1", view: "overview", period: "mtd", payrollModuleDecision: expect.any(Object) }),
     )
+  })
+
+  it.each(["receivables", "payables"])("retires the broad %s payload before any financial read", async view => {
+    expect((await getFinanceDashboardAction({ view })).success).toBe(false)
+    expect(mockGetFinanceDashboard).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
   })
 
   it("returns a safe action error without reading data when the view guard denies access", async () => {

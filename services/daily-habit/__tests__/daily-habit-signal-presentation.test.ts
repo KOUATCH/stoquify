@@ -12,7 +12,7 @@ it.each([1, 2])("localizes %i recorded inventory loss lines without attributing 
   expect(french.detail).toContain(count === 1 ? "1 ligne de perte enregistrée" : "2 lignes de pertes enregistrées")
   expect(french.detail).toContain("45\u202f000 XAF")
   expect(french.detail).toContain("L’attribution de l’approbation atteste l’autorisation et n’identifie pas la personne à l’origine de la perte.")
-  expect(french).toMatchObject({ sourceHash: "loss-hash", requiredPermission: "inventory.levels.read", actionPath: "/dashboard/inventory/losses", payload: signal.payload })
+  expect(french).toMatchObject({ sourceHash: "loss-hash", requiredPermission: "inventory.levels.read", actionPath: "/dashboard/inventory/loss-control", payload: signal.payload })
   const action = buildActionQueue({ organizationId: "org", signals: [signal], actorPermissions: ["inventory.levels.read"], now }).actionItems[0]
   expect(presentDailyAction(action, "fr")).toMatchObject({ title: french.title, nextStep: "Examinez les preuves d’ajustement, la valorisation et l’attribution de l’approbation avant de vous fier aux totaux des pertes enregistrées." })
   expect(presentDailySignal({ ...signal, detail: "Custom evidence note" }, "fr").detail).toBe("Custom evidence note")

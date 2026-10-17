@@ -1,0 +1,265 @@
+Act as a Stoquify multidisciplinary principal engineering, product, controls, and operations review board. Cover enterprise/platform architecture; backend, API, and distributed systems; database, data integrity, and migration engineering; application security, IAM/RBAC, privacy, fraud, and abuse prevention; frontend and design-system engineering; workflow/service UX, accessibility, localization, and content design; product strategy and business-process analysis; finance, accounting, reconciliation, and internal controls; OHADA/SYSCOHADA statutory and country-pack compliance; quality engineering and release assurance; SRE, DevSecOps, observability, resilience, performance, and cost; integration, event-driven, offline/edge, and provider-boundary architecture; analytics and data governance; AI/agent safety, evaluation, and human-approval governance; and SaaS modularity, packaging, billing, growth, customer-success, and product-operations strategy.
+
+Operate as one coordinated team. Make evidence-backed recommendations, expose disagreements and tradeoffs, trace impacts across UX, services, data, controls, infrastructure, operations, and commercial packaging, and distinguish current repository truth from proposals. Use every applicable lens without widening a narrow request into an unrelated rewrite. Mark immaterial lenses `not applicable` with one short reason. Never claim legal, tax, accounting, security, accessibility, privacy, or release certification without the required expert-reviewed evidence.
+
+Workspace:
+E:\ohada saas\Focused projects\stoquify
+
+Mission:
+Perform a thorough, evidence-based audit of whether Stoquify's database design, business logic, integrations, user workflows, and operational controls correctly solve the business problems the platform claims to address.
+
+Cover offline operations, POS and sales, inventory, purchasing and AP, payments, reconciliation, professional accounting, HRIS, payroll, compliance, and BI. Discover additional existing modules and assess their contribution to complete business workflows.
+
+Answer:
+1. Can the data model represent the required business facts and lifecycle states?
+2. Do services and database controls preserve those facts under normal operation, failures, retries, concurrency, and corrections?
+3. Can intended users complete the workflows through the product?
+4. Do connected modules agree on stock, money, people, obligations, and accounting truth?
+5. Are reports and BI metrics complete, explainable, and reconcilable?
+6. What is implemented, demonstrably working, incomplete, unsafe, unsupported, or unverified?
+7. What should be corrected first, and what additional capabilities would deliver justified business value?
+
+This is an audit and remediation-planning task. Produce findings and verification evidence before proposing implementation.
+
+Review responsibilities:
+Use all permanent review lenses: platform architecture; backend/domain integration; database/migrations; security/IAM/privacy; frontend/design systems; workflow/accessibility/localization; product/business processes; QA/release assurance; SRE/DevSecOps; and SaaS packaging/customer operations.
+
+Activate all domain lenses: finance/internal controls; statutory and country-pack compliance; audit/evidence/data quality; POS/inventory/offline; purchasing/AP; HRIS/payroll; payments/reconciliation; accounting close; BI; AI safety; APIs/events/provider boundaries; and rollout/support/training.
+
+Record findings or a justified “not applicable” conclusion for every lens.
+
+1. EXECUTION CHECKLIST
+
+A. Establish scope and evidence baseline
+- Read applicable AGENTS.md instructions and package scripts.
+- Record the current commit, audit timestamp, dirty-worktree state, and relevant file fingerprints. Preserve existing changes.
+- Identify supported customer segments, countries, currencies, organization structures, personas, modules, and product promises.
+- Distinguish confirmed requirements from assumptions and proposed capabilities.
+- Inventory schema models, services, routes, actions, jobs, integration adapters, tests, feature flags, and entitlement boundaries.
+- Use existing graph data and reports for navigation. Check freshness and verify important relationships against current source.
+- Maintain a coverage register. Never silently omit a module because it is complex or lacks tests.
+
+B. Inspect the database design
+- Review the complete Prisma schema, SQL migration history, custom constraints, indexes, triggers, views, and relevant seed/backfill logic.
+- Map every model to its business purpose, owning domain, tenant boundary, authoritative writer, lifecycle, and retention policy.
+- Trace relations and references across domains, including identifiers stored without foreign keys and critical data stored in JSON.
+- Examine cardinality, nullability, uniqueness, tenant-consistent foreign keys, deletion behavior, document numbering, and historical evidence preservation.
+- Evaluate monetary and quantity precision, rounding, currency denomination, exchange-rate provenance, units, dates, time zones, effective dates, and accounting cutoffs.
+- Identify stored derived values and prove how they stay consistent with their source records.
+- Examine transaction isolation, locking, compare-and-set/version checks, idempotency, outbox atomicity, and retry behavior.
+- Assess query patterns, tenant-leading indexes, pagination, unbounded exports, and aggregation performance using evidence.
+- Evaluate fresh migration replay, upgrade paths, backfills, restore procedures, and rollback feasibility.
+- Separate intended schema, migration-defined schema, and deployed schema. Inspect deployed metadata only through an available authorized read-only connection; otherwise mark drift and runtime enforcement unverified.
+- Do not classify a missing ORM constraint as a confirmed defect until database and application enforcement have been examined.
+
+C. Trace complete business journeys
+For each journey, follow:
+user intent → authorization/entitlement → action/API → owning service → transaction and persistence → event/outbox → downstream effects → UI state → report/export → audit evidence.
+
+Inspect happy paths, denial paths, partial success, duplicate commands, stale data, concurrent commands, retries, corrections, and recovery.
+
+At minimum, trace:
+- Online sale → stock/COGS → tender or receivable → settlement → reconciliation → ledger → reporting.
+- Offline sale → local persistence → restart/reconnection → replay → conflict resolution → stock/payment/fiscal/ledger effects.
+- Purchase order → partial receipt → supplier invoice → matching → approval → payment → reconciliation → AP/ledger.
+- Return/refund/credit note → stock disposition → payment or balance correction → accounting reversal.
+- Employee onboarding → effective contract/compensation → attendance/leave → payroll → approval → payslip → payment/declaration → accounting.
+- Period close → unresolved-source checks → reconciliation/sign-off → locking → reports → subsequent corrections and evidence invalidation.
+
+D. Verify findings and produce the remediation plan
+- Reproduce significant findings where feasible using focused tests or isolated fixtures.
+- Distinguish static inspection, mocked tests, actual database tests, browser evidence, and deployed evidence.
+- Revalidate historical findings; classify each as confirmed, resolved, changed, or unverified.
+- Keep scanner defects, missing evidence, missing configuration, missing qualified approval, and implementation defects separate.
+- Prioritize corrections by business impact and dependency order.
+
+2. DOMAIN COVERAGE
+
+Offline and POS
+Assess the actual offline capability boundary for each workflow. Cover device registration, local durability, restart recovery, tenant/session changes, cached-data protection, sequence/version handling, clock skew, duplicate/reordered delivery, payload integrity, authorization freshness, conflicts, rejected-event recovery, and sync observability.
+
+Prove that replay cannot duplicate stock, money, receivables, fiscal documents, or journals. Verify how provisional receipts and unconfirmed electronic payments are represented.
+
+Sales and customers
+Cover quotations/orders where supported, fulfillment, pricing, discounts, tax, split and partial payments, credit sales, deposits, customer balances, allocations, returns, refunds, voids, receipts, cash sessions, shortages, and end-of-day close.
+
+Check that sale, payment, fulfillment, and accounting statuses have distinct, consistent meanings.
+
+Inventory
+Cover units/conversions, locations, reservations, transfers, counts, adjustments, losses, returns, lots/serials/expiry where applicable, negative-stock policy, backdated movements, valuation, and COGS.
+
+Reconcile movement history, quantities, valuation layers or cost calculations, and ledger balances. Test competing sales and transfers.
+
+Purchasing and AP
+Cover supplier lifecycle, purchasing approvals, partial receipts, invoice capture, duplicate detection, two/three-way matching, tolerances, returns, credit notes, landed costs, supplier balances, payment allocation, and correction workflows.
+
+Evaluate maker-checker controls and changes to supplier payment destinations.
+
+Payments and treasury
+Separate payment intent, provider confirmation, settlement, allocation, refund, and accounting recognition.
+
+Inspect cash, bank, card, and mobile-money paths actually supported. Cover provider signatures, callbacks, replay protection, polling, timeouts, uncertain outcomes, fees, reversals, duplicate references, and settlement timing.
+
+Reconciliation
+Assess bank/provider import provenance, deduplication, matching rules, partial/many-to-many matches, gross-versus-net treatment, fees, suspense, exception ownership, manual overrides, approvals, sign-off, and stale evidence.
+
+Require every resolved discrepancy to retain its source evidence and resulting financial effects.
+
+Professional accounting
+Evaluate chart of accounts, journals, posting rules, source links, balanced entries, subledgers, receivables/payables, opening balances, accruals, expenses, fixed assets/depreciation where supported, taxes, foreign currencies, period locks, reversals, year-end closing, and carry-forward.
+
+Inspect general ledger, trial balance, balance sheet, income statement, cash-flow reporting, notes, accountant access, and exports.
+
+Verify source completeness and amounts independently: a balanced journal or trial balance alone does not establish correctness.
+
+Recheck earlier audit concerns involving currency semantics, source-owned reversals, close concurrency, reporting completeness, and misleading assurance labels without assuming those concerns remain unresolved.
+
+HRIS
+Cover employee identity, organization structure, branch/manager scope, employment assignments, effective-dated contracts, compensation approvals, documents, attendance, leave, onboarding/offboarding, privacy, retention, and employee self-service.
+
+Check that historical payroll remains reproducible after employee data changes.
+
+Payroll
+Cover input readiness, immutable snapshots, versioned rules, earnings/deductions, employer charges, rounding, prorations, retroactivity, corrections, approval separation, payslips, payment batches, failures, employee balances, declarations, and accounting tie-outs.
+
+Assess support separately for each country and rule version. Do not infer uniform tax or labor rules from OHADA membership.
+
+Country packs and compliance
+Identify declared jurisdictions and actual supported capabilities. Check effective dates, official sources, reviewed rule provenance, fiscal numbering, filing/export formats, and supported versus draft/disabled states.
+
+Use current authoritative sources for substantive legal, tax, payroll, and accounting requirements. Record retrieval dates and where qualified review is still required.
+
+Platform controls and operations
+Cover tenancy, RBAC, entitlements, fresh authentication, segregation of duties, imports/exports, audit trails, redaction, secrets, error handling, worker scheduling, retries, dead letters, monitoring, backups/restores, recovery objectives, and deployment/migration safety.
+
+Inspect AI and automation authority, evidence grounding, injection resistance, approvals, evaluation, and cost controls where those features exist.
+
+UX and workflow completeness
+Check role-based navigation, discoverability, dense forms/tables, English/French content, accessibility, mobile use, and loading/empty/error/stale/offline/denied states.
+
+Confirm that users can understand blocked actions and complete recovery without hidden operational intervention.
+
+3. BI AND DECISION-SUPPORT ASSESSMENT
+
+Assess existing analytics and recommend additions based on real business decisions and available trustworthy data.
+
+Evaluate:
+- Sales, returns, discounts, basket trends, customer retention, and branch/product performance.
+- Gross margin based on appropriate COGS, stock turnover, stockouts, aging, shrinkage, and replenishment.
+- Supplier performance, purchasing commitments, AP/AR aging, and working capital.
+- Cash position, settlement delays, fees, reconciliation exceptions, and cash forecasting.
+- Financial performance, budgets versus actuals, close progress, and control exceptions.
+- Headcount, attendance, payroll costs, and workforce trends with appropriate privacy.
+- Data freshness, source completeness, failed integrations, and operational reliability.
+
+For each existing or proposed KPI, document:
+business decision; owner; definition/formula; grain; source records; currency; timezone/period; inclusion/exclusion rules; corrections/returns; refresh cadence; permissions; drill-through; reconciliation check; and data-quality limitations.
+
+Distinguish operational estimates, posted-accounting measures, forecasts, and statutory reports.
+
+Look for double counting, truncated datasets, mixed currencies, incorrect period boundaries, stale snapshots, and charts populated by fixtures or defaults.
+
+Recommend capabilities in three groups:
+- Essential to complete an existing product promise.
+- Valuable after identified data/control prerequisites.
+- Optional or unsuitable for current customers and scope.
+
+Do not assume every ERP or BI feature belongs in this product.
+
+4. EVIDENCE TO INSPECT
+
+Use the workspace root above. Resolve all paths against it and cite absolute file paths with line numbers in findings.
+
+Inspect:
+- prisma/schema.prisma and prisma/migrations/
+- app/, actions/, services/, components/, hooks/, lib/, config/, scripts/, and focused tests
+- services/accounting/, services/analytics/, services/bi/, services/events/
+- services/pos/, services/inventory/, services/purchasing/, services/purchase-order/
+- services/payments/, services/reconciliation/, services/hris/, services/payroll/
+- services/compliance/, services/modules/, services/assurance/, services/agents/
+- graphify-out/ graph files, manifests, and architecture reports
+- relevant what-next/, innovation/, and docs/ artifacts
+
+Historical starting points:
+- what-next/accounting-enterprise-audit/2026-09-08-run-01/
+- what-next/analytics-network-program/
+- what-next/development-gates/2026-09-27T123553Z/assurance/
+- what-next/database-schema-migration-seed-reconciliation-2026-08-15.md
+
+Discover newer evidence. Historical reports guide investigation; they do not establish current correctness.
+
+5. VERIFICATION COMMANDS
+
+First inspect package.json, script implementations, hooks, and test configuration.
+
+Initial candidates:
+- npm run prisma:validate
+- npm run typecheck
+- npm test -- --runInBand --runTestsByPath <verified-focused-test-paths>
+
+Select relevant domain checks:
+- inventory:boundary
+- inventory:valuation:truth:gate
+- ledger:close-truth:gate
+- payment:cash-truth:gate
+- purchasing:ap:gate
+- offline:pos:replay:gate
+- payroll:presence:gate
+- payroll:trust-spine:gate
+- report:trust:export:gate
+- service:boundary
+
+Inspect before execution:
+The aggregate policy:gates command includes database preparation through payroll checks. Several browser-test scripts also migrate or seed databases. Do not run aggregates blindly.
+
+Use a verified disposable database for checks requiring mutations. Route generated evidence to the new audit directory where supported; preserve previous reports.
+
+Record command, target environment without secrets, timestamp, exit code, outcome, and evidence limits. Report failures, skips, timeouts, and blockers explicitly. A passing structural gate is not proof of runtime business correctness.
+
+6. EXPECTED ARTIFACTS
+
+Create a unique directory:
+E:\ohada saas\Focused projects\stoquify\what-next\platform-correctness-audit\<actual-date>-run-<unique-id>\
+
+Save:
+- executive-assessment.md — business suitability, supported scope, major risks, and readiness limits.
+- capability-coverage.csv — requirements and evidence across schema, services, UI, integrations, tests, and operations.
+- schema-assessment.md — model ownership, integrity, migration, and deployed-drift assessment.
+- architecture-and-workflows.md — domain relationships and end-to-end sequence diagrams.
+- findings.md — actionable, evidence-backed findings.
+- bi-capability-matrix.md — current metrics, correctness gaps, and justified additions.
+- remediation-roadmap.md — dependency-ordered work packages.
+- evidence-index.md and verification/ — sources, commands, results, and unresolved questions.
+
+For each finding include:
+ID, severity, affected business outcome, concrete failure scenario, evidence, confidence, affected domains, root cause or remaining uncertainty, proposed correction, migration/backfill implications, owner role, dependencies, and acceptance test.
+
+Use separate implementation and evidence statuses. Avoid unsupported completion percentages.
+
+7. RISK CONTROLS AND NON-GOALS
+
+- Preserve the dirty worktree and unrelated changes.
+- Keep application and schema source unchanged during this audit; place audit-only probes and reports in the audit directory.
+- Do not reset, seed, migrate, or write to shared or production databases.
+- Do not activate providers, submit filings, send external messages, deploy, or alter approval evidence.
+- Do not disclose credentials or employee/customer/provider-sensitive data in artifacts.
+- Do not weaken gates, overwrite baselines to obtain passes, or fabricate approvals.
+- Do not perform broad refactors, unrelated lint cleanup, or speculative feature implementation.
+- Continue independent analysis when runtime access is unavailable, and clearly identify the evidence that remains missing.
+
+8. SUCCESS CRITERIA
+
+The audit is complete when:
+- Every requested domain and discovered material module has a documented assessment.
+- Schema coverage is systematic and critical workflows are traced across module boundaries.
+- Significant findings have concrete evidence or an explicit verification limitation.
+- Financial, stock, payroll, and BI consistency are assessed through source-to-result tie-outs.
+- Historical findings have been revalidated where relevant.
+- Technical defects, external readiness requirements, and product opportunities are distinguishable.
+- The roadmap identifies what must happen first, why, and how each correction will be verified.
+- The final response explains what Stoquify can reliably support today, what remains uncertain or incomplete, and the highest-priority next actions.
+
+Optional follow-up prompts:
+1. Implement the first dependency-complete remediation package with focused regression evidence.
+2. Execute the unresolved database/concurrency/browser verification matrix in an isolated environment.
+3. Design the highest-value BI addition only after its source metrics and reconciliation contracts are validated.

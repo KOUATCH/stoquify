@@ -11,6 +11,11 @@ import { redirect } from "next/navigation"
 
 import ItemsEditPage from "../page"
 
+jest.mock("lucide-react", () => ({
+  AlertTriangle: () => null, Building2: () => null, Clock3: () => null,
+  LockKeyhole: () => null, PackageX: () => null, SearchX: () => null,
+}))
+
 jest.mock("@/app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access", () => ({
   routeByKey: jest.fn(() => ({ key: "inventory-test" })),
   withInventorySurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),

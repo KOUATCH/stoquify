@@ -1,12 +1,11 @@
 import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
-import Link from "next/link"
-import { ArrowUpRight, Banknote, EyeOff, ShieldAlert, TimerReset } from "lucide-react"
+import { Banknote, EyeOff, ShieldAlert, TimerReset } from "lucide-react"
 
+import { BIActionButton } from "@/components/bi/BIActionButton"
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
 import { BISeverityBadge, BIStateBadge } from "@/components/bi/BIStateBadge"
 import { BIStateSurface } from "@/components/bi/BIStateSurface"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   dashboardMutedTextClass,
   dashboardPanelClass,
@@ -14,7 +13,7 @@ import {
   dashboardToneClass,
 } from "@/components/finance/finance-dashboard-theme"
 import { cn } from "@/lib/utils"
-import type { BIActionLink, BIRiskRank, BIUnassessedObservation } from "@/services/bi/bi-contracts"
+import type { BIRiskRank, BIUnassessedObservation } from "@/services/bi/bi-contracts"
 
 type BIRiskOpportunityRadarProps = {
   risks: (BIRiskRank | BIUnassessedObservation)[]
@@ -63,7 +62,7 @@ export function BIRiskOpportunityRadar({
                     <BIStateBadge state={risk.state} locale={locale} />
                     <span className="inline-flex items-center gap-1.5 rounded-md border border-[var(--dash-border-subtle)] px-2 py-1 text-xs text-[var(--dash-text-soft)]">
                       <TimerReset className="h-3.5 w-3.5" aria-hidden="true" />
-                      {(risk.urgency === "now" || risk.urgency === "today" || risk.urgency === "soon" ? biCopy[biLocale(locale)][risk.urgency] : risk.urgency) ?? (locale.startsWith("fr") ? "Urgence non évaluée" : "Urgency not assessed")}
+                      {(risk.urgency === "watch" ? locale.startsWith("fr") ? "à surveiller" : "watch" : risk.urgency === "now" || risk.urgency === "today" || risk.urgency === "soon" ? biCopy[biLocale(locale)][risk.urgency] : risk.urgency) ?? (locale.startsWith("fr") ? "Urgence non évaluée" : "Urgency not assessed")}
                     </span>
                   </div>
                   <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">{risk.title}</h3>
@@ -77,7 +76,7 @@ export function BIRiskOpportunityRadar({
                       {formatMoney(risk.moneyImpact, locale, currencyCode)}
                     </span>
                   ) : null}
-                  {risk.actionLink ? <RiskActionButton action={risk.actionLink} /> : null}
+                  {risk.actionLink ? <BIActionButton action={risk.actionLink} locale={locale} context={risk.title} /> : null}
                 </div>
               </div>
 
@@ -116,32 +115,6 @@ export function BIRiskOpportunityRadar({
         />
       )}
     </section>
-  )
-}
-
-function RiskActionButton({ action }: { action: BIActionLink }) {
-  if (action.disabled || !action.href) {
-    return (
-      <Button
-        size="sm"
-        variant="outline"
-        disabled
-        title={action.disabledReason ?? undefined}
-        className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text-soft)]"
-      >
-        <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-        {action.label}
-      </Button>
-    )
-  }
-
-  return (
-    <Button asChild size="sm" variant="outline" className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text)]">
-      <Link href={action.href}>
-        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-        {action.label}
-      </Link>
-    </Button>
   )
 }
 

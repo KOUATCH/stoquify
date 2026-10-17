@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path'),cp=require('child_process'),crypto=require('crypto');
+const group=process.argv[2],dir=__dirname,root=process.cwd(),v=path.join(dir,'verification');
+const hashFiles=()=>{const base=JSON.parse(fs.readFileSync(path.join(v,'source-fingerprints.json'))).fingerprints;return Object.fromEntries(Object.keys(base).map(p=>[p,fs.existsSync(p)?crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'):null]));};
+let selected;
+if(group==='people'||group==='finance')selected=JSON.parse(fs.readFileSync(path.join(v,group+'-test-selection.json'))).chosen;
+else if(group==='supplement')selected=JSON.parse(fs.readFileSync(path.join(v,'supplement-test-selection.json')));
+else if(group==='changed-ui')selected=['components/accounting/__tests__/AccountantWorkDesk.test.tsx'];
+else throw Error('Unknown group');
+const startedAt=new Date().toISOString(),before=hashFiles();
+const r=cp.spawnSync(process.execPath,[path.join(dir,'run-check.cjs'),'tests-'+group+'-recheck','node_modules/jest/bin/jest.js','--config',path.join(dir,'jest-supplement.config.cjs'),'--runInBand','--watch=false','--no-cache','--json','--outputFile',path.join(v,'tests-'+group+'-recheck.jest.json'),'--runTestsByPath',...selected],{cwd:root,encoding:'utf8',windowsHide:true,timeout:440000,maxBuffer:30e6});console.log(r.stdout);if(r.error)console.log(r.error.message);
+const after=hashFiles();fs.writeFileSync(path.join(v,'tests-'+group+'-recheck-source-window.json'),JSON.stringify({startedAt,endedAt:new Date().toISOString(),selected,before,changedDuringRun:Object.keys(before).filter(p=>before[p]!==after[p]).map(p=>({path:p,before:before[p],after:after[p]}))},null,2));

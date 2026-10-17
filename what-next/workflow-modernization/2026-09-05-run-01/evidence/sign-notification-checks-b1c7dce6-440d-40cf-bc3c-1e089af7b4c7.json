@@ -1,0 +1,45 @@
+{
+  "startedAt": "2026-09-27T13:35:17.474Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "00b5f47905ec8eb98a4ce73900798aa7455e2eccf6d45846481b4604b80e5ca4",
+    "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts": "e0671691b27e8f54ea6eaeafb74d13dc23a786c1158920aafff5518a3c5eccf4",
+    "scripts/reconciliation-sign-notification-worker.ts": "0374a10ed06a6ded55bf57f92869fa3a42285613132e8387b7dccfaceee76788",
+    "scripts/__tests__/reconciliation-sign-notification-worker.test.ts": "037baf91c07f891379ecc0c7134e0e21cdfd45dc379888a7d289cb07ac2b10b2",
+    "messages/en.json": "826a104e6f1a2c174268f96e47e42afd62bef1eecf2b761ea3bf8aededf42703",
+    "messages/fr.json": "089e90c1b9df2ea49b77ee4afca8f72af30067bfe34659a46d2eee445ff8464e"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts",
+        "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+        "services/events/__tests__/business-event-outbox.service.test.ts",
+        "scripts/__tests__/reconciliation-sign-notification-worker.test.ts"
+      ],
+      "startedAt": "2026-09-27T13:35:17.482Z",
+      "endedAt": "2026-09-27T13:35:47.403Z",
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL scripts/__tests__/reconciliation-sign-notification-worker.test.ts (5.519 s)\n  ● rejects invalid arguments\n\n    thrown: \"Exceeded timeout of 5000 ms for a test while waiting for `done()` to be called.\n    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout.\"\n\n       6 |   expect(runReconciliationSignNotificationWorker).not.toHaveBeenCalled()\n       7 | })\n    >  8 | it.each([[], [\"--unknown\"], [...argv, \"--limit\", \"101\"], [...argv, \"--limit\", \"1.5\"], [\"--organization-id\", \"org-1\"]])(\"rejects invalid arguments\", args => {\n         |                                                                                                                      ^\n       9 |   expect(() => parse(args)).toThrow()\n      10 | })\n      11 | it.each([[\"SENT\", 0], [\"FAILED\", 1], [\"DEAD_LETTER\", 1]] as const)(\"reports %s honestly\", async (status, exitCode) => {\n\n      at eachBind (node_modules/.pnpm/jest-each@30.4.1/node_modules/jest-each/build/index.js:54:13)\n      at Object.<anonymous> (scripts/__tests__/reconciliation-sign-notification-worker.test.ts:8:118)\n\n\nTest Suites: 1 failed, 4 passed, 5 total\nTests:       1 failed, 62 passed, 63 total\nSnapshots:   0 total\nTime:        20.812 s\nRan all test suites within paths \"services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts\", \"services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts\", \"services/events/__tests__/business-event-outbox.service.test.ts\", \"scripts/__tests__/reconciliation-sign-notification-worker.test.ts\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-sign-notification.worker.ts": "846a8887800fd51b00a0c76851e49209b9d7951157627a99552e52d4635464a8",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "00b5f47905ec8eb98a4ce73900798aa7455e2eccf6d45846481b4604b80e5ca4",
+    "services/reconciliation/__tests__/reconciliation-sign-notification.worker.test.ts": "e0671691b27e8f54ea6eaeafb74d13dc23a786c1158920aafff5518a3c5eccf4",
+    "scripts/reconciliation-sign-notification-worker.ts": "0374a10ed06a6ded55bf57f92869fa3a42285613132e8387b7dccfaceee76788",
+    "scripts/__tests__/reconciliation-sign-notification-worker.test.ts": "037baf91c07f891379ecc0c7134e0e21cdfd45dc379888a7d289cb07ac2b10b2",
+    "messages/en.json": "826a104e6f1a2c174268f96e47e42afd62bef1eecf2b761ea3bf8aededf42703",
+    "messages/fr.json": "089e90c1b9df2ea49b77ee4afca8f72af30067bfe34659a46d2eee445ff8464e"
+  },
+  "sourceStable": true,
+  "passed": false,
+  "endedAt": "2026-09-27T13:35:47.415Z"
+}

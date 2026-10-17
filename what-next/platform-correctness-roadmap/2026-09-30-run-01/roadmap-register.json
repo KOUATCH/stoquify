@@ -1,0 +1,2109 @@
+{
+  "status": "PROPOSED",
+  "tasks": [
+    {
+      "id": "R00",
+      "title": "Establish the execution baseline and release scope",
+      "parent": "W00",
+      "phase": "Immediate unblockers",
+      "priority": "P0",
+      "effort": "S",
+      "deps": [],
+      "owner": "Delivery lead",
+      "reviewer": "Product owner and QA lead",
+      "findings": [
+        "F13"
+      ],
+      "caps": [
+        "CAP28"
+      ],
+      "objective": "Create one versioned backlog and an explicit capability-by-country, provider, module and customer-cohort release contract.",
+      "state": "The September 30 audit captured a dirty and concurrently changing worktree; no complete customer acceptance dossier or single releasable revision was established.",
+      "steps": [
+        "Fingerprint the current commit, relevant uncommitted files, migrations, toolchain and evidence timestamps. Reproduce findings before marking them current.",
+        "Assign named people to the roles below; record decisions D01–D08, scope, severity, dependencies and evidence links. Preserve other work.",
+        "Choose the first supported online, offline, accounting and HR/payroll cohorts separately. Keep unsupported capability labels explicit."
+      ],
+      "paths": [
+        "what-next/platform-correctness-audit/2026-09-30-run-01",
+        "package.json",
+        "prisma/schema.prisma",
+        ".github/workflows"
+      ],
+      "data": "No business-data changes. Retain immutable audit evidence and source fingerprints; use anonymized fixtures for later execution.",
+      "controls": "A roadmap status cannot authorize production changes or serve as accountant, payroll expert or release-owner approval.",
+      "verify": "Compare current hashes to audit evidence, record changed-file triage, and validate every package dependency and all F/CAP/K coverage.",
+      "gate": "G0: scope, owners, baseline and decision register recorded.",
+      "blocker": "Named delivery staff, target customer segment and deployment ownership are not yet supplied; roles here are assignments to fill, not accepted staffing.",
+      "done": "Every in-scope capability has an owner, release boundary, acceptance scenario and evidence location; no critical finding is silently dropped."
+    },
+    {
+      "id": "R01",
+      "title": "Restore a reproducible test, typecheck and policy-gate baseline",
+      "parent": "W00",
+      "phase": "Immediate unblockers",
+      "priority": "P0",
+      "effort": "M",
+      "deps": [
+        "R00"
+      ],
+      "owner": "QA/platform engineer",
+      "reviewer": "Domain maintainers",
+      "findings": [
+        "F13"
+      ],
+      "caps": [
+        "CAP28"
+      ],
+      "objective": "Make ordinary repository verification complete and produce trustworthy failures.",
+      "state": "Audit adapter passed 3,173 assertions initially with 23 failures; later overlapping rechecks retained 18 failures. Normal Jest startup and typecheck did not complete; two structural gates were blocked.",
+      "steps": [
+        "Diagnose Next/Jest configuration discovery and TypeScript input scope before changing either; prove the root cause rather than assume old build directories caused the timeout.",
+        "Repair stale manual-journal and payroll/backfill mocks; reconcile statutory and permission contracts without weakening draft-country restrictions.",
+        "Replace brittle marker-only checks with behavior-backed assertions where appropriate; resolve all five report-trust clauses individually. Preserve historical failed outputs."
+      ],
+      "paths": [
+        "jest.config.ts",
+        "tsconfig.json",
+        "next.config.mjs",
+        "services/accounting/__tests__/manual-journal.test.ts",
+        "services/payroll/__tests__",
+        "services/analytics/__tests__/business-pulse-links.test.ts",
+        "scripts/payroll-trust-spine-readiness-gate.js",
+        "scripts/report-trust-export-gate.js"
+      ],
+      "data": "No production data. Any DB-dependent command must point at an explicitly isolated disposable database.",
+      "controls": "Do not skip failing safety tests, relax permissions, replace unavailable facts with zero, or change CNPS to READY to obtain a green run.",
+      "verify": "V01–V04 and V05–V14. Complete normal Jest, typecheck and isolated application build; retain exact commands, durations and failure classifications.",
+      "gate": "G0 verification gate: reproducible normal runner and completed typecheck/build; all remaining blockers assigned to their actual domain package.",
+      "blocker": "Current runtime/configuration and resource limits must be measured. Structural gate repair may depend on R13/R22 behavior; baseline closure does not pre-approve those domains.",
+      "done": "Every historical failure is reproduced, fixed or superseded with evidence; normal commands complete; unresolved domain gates remain visible and blocking for their scope."
+    },
+    {
+      "id": "R02",
+      "title": "Correct currency authority, FX conversion and locked settings",
+      "parent": "W01",
+      "phase": "Foundations",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R00",
+        "R01"
+      ],
+      "owner": "Accounting engineer",
+      "reviewer": "Independent accountant and data architect",
+      "findings": [
+        "F01",
+        "F07"
+      ],
+      "caps": [
+        "CAP12",
+        "CAP20"
+      ],
+      "objective": "Preserve transaction denomination and produce correct functional-currency amounts and statements.",
+      "state": "The audit reproduced nominal amounts copied into base fields, mixed nominal sums in statements and mutable base currency after setup lock.",
+      "steps": [
+        "Agree rate direction, rate date/source/version, decimal scale, rounding and functional-currency policy across organization and accounting settings.",
+        "Repair posting and aggregation so nominal and base amounts stay distinct; reject missing/invalid rates and historical relabeling.",
+        "Block unsupported currency changes after economic activity; specify a separately reviewed conversion process if a real customer requires it."
+      ],
+      "paths": [
+        "services/accounting/journals.service.ts",
+        "services/accounting/financial-statements.service.ts",
+        "services/accounting/accounting-settings.service.ts",
+        "prisma/schema.prisma",
+        "services/analytics"
+      ],
+      "data": "Inventory existing rate/base fields before adding columns. Version provenance where missing; historical correction is R09, never an automatic rewrite.",
+      "controls": "Server-owned currency policy, decimal arithmetic, permission checks and audited setup transitions. Accountants approve economic treatment, not just balanced totals.",
+      "verify": "V01–V03, V05–V14 as affected; add independent fixtures: 100 EUR at illustrative 655.957 produces 65,595.70 base units; mixed 100 EUR + 100 base units totals 65,695.70. Include rounding, negative corrections, missing rates and locked-setting attempts.",
+      "gate": "G1 finance: no mixed-currency professional statement until fixture and current-data impact review pass.",
+      "blocker": "Functional-currency transition and FX source policies need owner approval; the illustrative test rate is not a current-rate recommendation.",
+      "done": "Posting, reversal and reporting agree with independent expected base amounts; historical currency cannot be silently relabeled."
+    },
+    {
+      "id": "R03",
+      "title": "Enforce source-owned corrections and compensating effects",
+      "parent": "W03",
+      "phase": "Foundations",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R02"
+      ],
+      "owner": "Accounting/domain integration lead",
+      "reviewer": "POS, inventory, AP and payroll owners",
+      "findings": [
+        "F02"
+      ],
+      "caps": [
+        "CAP04",
+        "CAP12"
+      ],
+      "objective": "Ensure correction of a business transaction also corrects every affected stock, cash, obligation and ledger fact exactly once.",
+      "state": "Generic journal reversal allowed a POS_SALE journal to become a MANUAL reversal without corresponding business-source correction.",
+      "steps": [
+        "Inventory every journal source and its authorized correction owner; define draft cancellation, reversal, refund, return and repost semantics separately.",
+        "Deny generic reversal for source-owned entries; route through existing owner workflows with stable correction identity and linked effects.",
+        "Test partial and repeated corrections, closed periods, failed external refunds, FX, and correction-driven evidence invalidation."
+      ],
+      "paths": [
+        "services/accounting/posting.service.ts",
+        "services/pos",
+        "services/inventory",
+        "services/purchasing",
+        "services/payroll",
+        "services/reconciliation"
+      ],
+      "data": "Append correction links/evidence if necessary; retain original postings and source documents. Scan earlier generic reversals under R09.",
+      "controls": "Maker-checker where required, fresh authority, tenant scope and idempotent compensation; never assert provider refund success from a local journal.",
+      "verify": "V01–V03 and affected truth gates; PostgreSQL tests for duplicate correction, mid-transaction failure, concurrent reversal and source/GL tie-outs.",
+      "gate": "G1 corrections: source-owned reversal bypass denied and approved compensation lifecycle proved.",
+      "blocker": "All source owners must agree obligations and irreversible external steps. Local compensation is not proof a provider returned money.",
+      "done": "Every journal source has an explicit tested correction policy; no supported correction strands inventory, cash or subledger balances."
+    },
+    {
+      "id": "R04",
+      "title": "Make the offline queue durable and migrate existing records safely",
+      "parent": "W02",
+      "phase": "Foundations",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R00",
+        "R01"
+      ],
+      "owner": "Offline/browser-storage engineer",
+      "reviewer": "QA and data-integrity lead",
+      "findings": [
+        "F03"
+      ],
+      "caps": [
+        "CAP01"
+      ],
+      "objective": "Conserve every acknowledged offline sale across concurrent writes and storage failures.",
+      "state": "Two concurrent enqueue calls could both return sequence 1 while retaining only the second record; malformed JSON could reset the queue.",
+      "steps": [
+        "Choose transactional browser storage after evaluating supported devices; IndexedDB is the preferred candidate, with a documented cross-tab transaction design.",
+        "Atomically allocate identity/sequence and persist the complete event before acknowledging capture; quarantine corruption instead of silently replacing it.",
+        "Implement resumable old-queue migration preserving event IDs, hashes and sequence lineage; exercise quota, denied storage, corrupt input and interrupted upgrade."
+      ],
+      "paths": [
+        "lib/pos/offline-local-queue.ts",
+        "lib/pos/__tests__/offline-local-queue.test.ts",
+        "hooks/posHooks/useOfflineSync.ts"
+      ],
+      "data": "Local device migration only in this package. Keep recoverable old data until the new store is verified; never clear uncertain events.",
+      "controls": "Tenant/device separation, bounded retention and safe recovery export. Do not claim storage survives browser eviction or disk loss; define those supported-device limits.",
+      "verify": "V02 focused queue tests plus real-browser multi-tab transactions and restart/quota migration tests. N successful enqueue acknowledgements must correspond to N durable unique events.",
+      "gate": "G1 offline durability; production replay stays disabled pending R32.",
+      "blocker": "Supported browser/device matrix and storage/eviction policy require product decision D03.",
+      "done": "Concurrent capture, corrupt storage and interrupted migration cannot silently lose acknowledged events; recovery limitations are visible to operators."
+    },
+    {
+      "id": "R05",
+      "title": "Recover interrupted sync and reconcile uncertain outcomes",
+      "parent": "W02",
+      "phase": "Foundations",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R04"
+      ],
+      "owner": "Offline/distributed-systems engineer",
+      "reviewer": "Payments and QA leads",
+      "findings": [
+        "F04"
+      ],
+      "caps": [
+        "CAP01",
+        "CAP23"
+      ],
+      "objective": "Recover in-flight events after restart without duplicate economic effects.",
+      "state": "Persisted SYNCING events were excluded from pending replay after reload; transport errors did not reliably return them to recoverable state.",
+      "steps": [
+        "Define persisted attempts, bounded leases, retry eligibility and server outcome lookup using the original event identity.",
+        "Handle lost responses, timeout after commit, tab termination, expired lease, reordering, duplicate replay and revoked-device conflict explicitly.",
+        "Expose pending, uncertain, rejected and resolved states with operator recovery and redacted diagnostics."
+      ],
+      "paths": [
+        "hooks/posHooks/useOfflineSync.ts",
+        "lib/pos/offline-local-queue.ts",
+        "services/pos/offline-sync.service.ts",
+        "components"
+      ],
+      "data": "Version queue state transitions alongside R04 migration. Retain attempt evidence until server resolution is confirmed.",
+      "controls": "Retry transport safely; never create a replacement payment or sale identity because an acknowledgement was lost. External payment finality remains provider-owned.",
+      "verify": "V02, V11; kill browser after send and after server commit, then restart. Assert eventual classified resolution and one server sale/stock/journal effect.",
+      "gate": "G1 replay recovery and later G4 offline pilot.",
+      "blocker": "Requires a stable server idempotency/outcome contract and accessible failure-injection environment.",
+      "done": "No event remains permanently stranded solely because it was SYNCING at restart; duplicate/uncertain responses cannot multiply effects."
+    },
+    {
+      "id": "R06",
+      "title": "Correct fiscal boundaries and general-ledger balances",
+      "parent": "W04",
+      "phase": "Foundations",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R02"
+      ],
+      "owner": "Accounting engineer",
+      "reviewer": "Independent accountant",
+      "findings": [
+        "F08",
+        "F09"
+      ],
+      "caps": [
+        "CAP12"
+      ],
+      "objective": "Make fiscal periods and opening/movement/closing balances economically correct.",
+      "state": "A June 15 fiscal-year start generated a June 1 period; a range ledger balance omitted the opening 100 and showed 25 after a 25 movement.",
+      "steps": [
+        "Choose whether partial-month fiscal years are supported and clip intervals or reject unsupported inputs consistently.",
+        "Calculate approved opening balances before the requested range and distinguish period movement from closing balance.",
+        "Exercise year boundaries, inclusive/exclusive timestamps, adjustments, multiple currencies and pagination independent of totals."
+      ],
+      "paths": [
+        "services/accounting/periods.service.ts",
+        "services/accounting/financial-statements.service.ts",
+        "services/accounting/__tests__/periods.service.test.ts",
+        "actions/accounting"
+      ],
+      "data": "Read-only scan existing fiscal intervals first; repair anomalous populated periods only through R09 with posting references preserved.",
+      "controls": "Explicit business timezone, rate policy and permissions; period display must match posting eligibility.",
+      "verify": "V02, V03, V08, V14; fixtures show opening 100 + movement 25 = closing 125, and no generated interval precedes or exceeds its fiscal year.",
+      "gate": "G1 accounting reports and calendar invariants.",
+      "blocker": "Partial fiscal-year policy and year-end carry-forward treatment need accounting sign-off.",
+      "done": "Period bounds are valid and opening/movement/closing tie to independently selected journal populations."
+    },
+    {
+      "id": "R07",
+      "title": "Unify period close, assurance, invalidation and certified exports",
+      "parent": "W04",
+      "phase": "Foundations",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R06"
+      ],
+      "owner": "Accounting/assurance lead",
+      "reviewer": "Controller and QA",
+      "findings": [
+        "F06"
+      ],
+      "caps": [
+        "CAP13",
+        "CAP27"
+      ],
+      "objective": "Make close state accurately reflect source readiness and supported assurance meaning.",
+      "state": "A synthetic BLOCKED inventory finding did not prevent period CLOSED; certified exports had a separate gate and posting/close locks had improved independently.",
+      "steps": [
+        "Define lock-only versus qualified close and the exact source-readiness contract for each enabled module.",
+        "Use one service-owned eligibility decision under concurrency-safe locks; recheck readiness at transition time.",
+        "Link evidence versions to close/export; invalidate stale packs after corrections and permission changes; provide blocked and reopen recovery flows."
+      ],
+      "paths": [
+        "services/accounting/periods.service.ts",
+        "services/accounting/journal-close-invalidation.service.ts",
+        "services/assurance",
+        "services/end-of-day-close",
+        "components"
+      ],
+      "data": "Preserve prior close evidence and append supersession/invalidation records. Inventory already CLOSED periods before changing semantics.",
+      "controls": "Maker-checker, tenant scope, qualified disclosure and current access at export. Do not imply certification merely because a period is locked.",
+      "verify": "V02, V08, V14 and PostgreSQL posting-versus-close races; each material source blocker must block qualified close and stale export while legitimate lock-only behavior remains explicit.",
+      "gate": "G1 close truth; G2 requires all in-scope source lifecycles.",
+      "blocker": "Controller must approve readiness obligations and any justified, audited exception policy; unresolved blocking evidence cannot be hidden.",
+      "done": "Close, reopen, correction and export share documented semantics and pass concurrent/failure-path tests."
+    },
+    {
+      "id": "R08",
+      "title": "Strengthen database integrity and records retention",
+      "parent": "W05",
+      "phase": "Foundations",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03"
+      ],
+      "owner": "Database engineer",
+      "reviewer": "AppSec, records owner and accountant",
+      "findings": [
+        "F10"
+      ],
+      "caps": [
+        "CAP12",
+        "CAP21",
+        "CAP28"
+      ],
+      "objective": "Protect posted evidence and tenant-consistent references at the appropriate database boundary.",
+      "state": "Local catalog showed 211 models, 87 matching migration checksums, 55 noninternal triggers and 147 CHECK constraints; older ledger paths lacked general immutability defenses. Full drift and retention were unverified.",
+      "steps": [
+        "Inventory all writers, privileges, correction transitions, cascade paths and same-tenant reference invariants using the 211-model ownership register.",
+        "Add targeted posted-evidence protections and composite constraints after orphan scans; prove valid application transitions before enforcement.",
+        "Complete type/default/index/constraint/privilege drift checks and a retention/legal-hold matrix, including HRIS documents, media, logs and device evidence."
+      ],
+      "paths": [
+        "prisma/schema.prisma",
+        "prisma/migrations",
+        "services/accounting",
+        "services/hris",
+        "services/security",
+        "what-next/platform-correctness-audit/2026-09-30-run-01/model-ownership-register.csv"
+      ],
+      "data": "Use expand/validate/enforce migrations and measured lock budgets; backfill only approved missing references. Preserve originals and legal holds; no blanket deletion or ledger rewrite.",
+      "controls": "Least privilege and adversarial direct-SQL tests; separate deployment role from application role; retention policy requires qualified ownership.",
+      "verify": "V01 plus disposable PostgreSQL negative writes, valid correction paths, fresh replay and populated upgrade. Compare catalog, privileges and constraints before/after.",
+      "gate": "G2 database integrity; schema rollout only after upgrade and recovery evidence.",
+      "blocker": "Production role/catalog access, retention policy and legacy orphan assessment are required before production enforcement.",
+      "done": "Illegal writes are rejected, legitimate workflows pass, tenancy and retention rules are documented and migration behavior is demonstrated."
+    },
+    {
+      "id": "R09",
+      "title": "Assess and correct historical data without rewriting evidence",
+      "parent": "W01",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R02",
+        "R03",
+        "R06",
+        "R08"
+      ],
+      "owner": "Data/accounting remediation lead",
+      "reviewer": "Independent accountant and release owner",
+      "findings": [
+        "F01",
+        "F02",
+        "F07",
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "caps": [
+        "CAP12",
+        "CAP13"
+      ],
+      "objective": "Determine whether past facts are affected and repair only confirmed defects through reviewable, reversible procedures.",
+      "state": "Local read-only samples mostly tied out; 12 non-unit FX lines showed no stored conversion mismatch and four posted/reversed journals lacked postingBatchId. These observations do not establish production impact or authorized repair.",
+      "steps": [
+        "Run bounded read-only scans by tenant/currency/source/period with denominators, expected totals and provenance. Separate fixture artifacts from genuine anomalies.",
+        "Prepare a dry-run manifest with affected IDs in restricted storage, proposed append-only corrections, impact on reports/tax/close and before/after totals.",
+        "Rehearse on a restored disposable copy; approve each real repair batch, checkpoint/resume safely, invalidate/rebuild derived snapshots and independently reconcile results."
+      ],
+      "paths": [
+        "services/accounting",
+        "prisma/migrations",
+        "scripts",
+        "services/analytics",
+        "services/assurance"
+      ],
+      "data": "Potential historical repair is explicitly conditional on discovered impact. Original journals and statutory evidence stay intact; restricted manifests may contain sensitive IDs and must not enter public reports.",
+      "controls": "Two-person financial approval, dry-run first, least privilege, idempotency and stop-on-mismatch; no automated mass correction from a synthetic repro alone.",
+      "verify": "Restricted dry-run totals, replay-once/replay-twice invariance, failure-resume and independent subledger/GL/close comparisons on a restored environment.",
+      "gate": "G3 data-impact disposition: verified no impact, approved restriction, or completed reconciled repair for each release cohort.",
+      "blocker": "Actual affected-data population and authorized tenant access are unknown; effort excludes potentially large repair operations.",
+      "done": "Each suspected anomaly has an evidence-backed disposition; any approved correction is traceable and all affected reports are rebuilt with versions."
+    },
+    {
+      "id": "R10",
+      "title": "Prove access, tenant isolation and privacy across entry points",
+      "parent": "W05",
+      "phase": "Foundations",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R00",
+        "R01"
+      ],
+      "owner": "Application security engineer",
+      "reviewer": "Privacy and domain owners",
+      "findings": [
+        "F10"
+      ],
+      "caps": [
+        "CAP21",
+        "CAP15",
+        "CAP25"
+      ],
+      "objective": "Prove users, workers and delegated actors can access only authorized tenant and effective-role data.",
+      "state": "Protected actions, fresh authentication and effective HR scopes exist; the audit did not establish full adversarial or retention execution.",
+      "steps": [
+        "Build a role/tenant/module/action matrix for browser routes, actions, APIs, exports, uploads, workers and delegated accountant access.",
+        "Exercise revoked sessions/grants, same-user different tenant, historical manager scope, stale signed links, bulk APIs and aggregate/drill-through leakage.",
+        "Resolve findings in their owning boundary and retain safe error/redaction behavior; coordinate data retention with R08."
+      ],
+      "paths": [
+        "services/security",
+        "services/hris",
+        "services/modules",
+        "services/agents",
+        "actions",
+        "app",
+        "lib/security"
+      ],
+      "data": "Synthetic multi-tenant fixtures only by default. Do not copy payroll/customer records into test evidence.",
+      "controls": "Deny by default, current server-derived authority, least privilege, fresh auth for sensitive changes and auditable delegation.",
+      "verify": "V02 including tenant-boundary and module-admission suites; negative browser/API/worker cases and export redaction checks using at least two tenants and conflicting roles.",
+      "gate": "G2 access/privacy matrix complete for release scope; critical bypasses block all affected cohorts.",
+      "blocker": "An approved role/scope matrix and supported external entry-point inventory are required.",
+      "done": "Every public or delegated entry point has positive and negative authorization evidence and no unresolved critical tenant/privacy bypass."
+    },
+    {
+      "id": "R11",
+      "title": "Validate master data, onboarding, imports and media lifecycle",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R01",
+        "R10"
+      ],
+      "owner": "Catalog/onboarding engineer",
+      "reviewer": "Operations and privacy owners",
+      "findings": [],
+      "caps": [
+        "CAP26"
+      ],
+      "objective": "Ensure transactional workflows start from valid, tenant-owned and traceable master data.",
+      "state": "Item, unit, tax, category, location, media and history services are represented; complete import, privacy and performance workflows were not proved.",
+      "steps": [
+        "Validate setup completeness, unique external identities, versioned tax/unit references and location ownership before admitting transactions.",
+        "Exercise import preview, duplicate/retry, partial invalid rows and interrupted processing; preserve rejected-row evidence without silently dropping accepted records.",
+        "Verify upload authorization, file validation, expiring access, retention/legal holds and history/redaction."
+      ],
+      "paths": [
+        "services/item",
+        "services/unit",
+        "services/tax-rate",
+        "services/location",
+        "services/media",
+        "services/history",
+        "services/onboarding"
+      ],
+      "data": "Imports require explicit dry-run and row-level outcome manifest; historic references remain valid when master data is edited or deactivated.",
+      "controls": "Tenant-derived references, restricted media, safe file handling and immutable transaction snapshots of required master attributes.",
+      "verify": "Focused service/action suites and browser setup/import tests; duplicate imports do not duplicate items; invalid references cannot cross tenants.",
+      "gate": "G2 onboarding and master-data readiness for the chosen cohort.",
+      "blocker": "Import formats, allowed file types and tenant starting-data quality need bounded product decisions.",
+      "done": "A new tenant can reach a valid operational configuration and reconcile every import row to accepted/rejected status."
+    },
+    {
+      "id": "R12",
+      "title": "Prove online POS, inventory and end-of-day control",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R07",
+        "R08",
+        "R11"
+      ],
+      "owner": "POS/inventory lead",
+      "reviewer": "Operations controller and QA",
+      "findings": [
+        "F02",
+        "F06"
+      ],
+      "caps": [
+        "CAP02",
+        "CAP05",
+        "CAP27"
+      ],
+      "objective": "Demonstrate complete sale, stock, shift and daily-close conservation under concurrency and correction.",
+      "state": "Commerce tests and 541 local stock tie-outs support a substantial implementation; authenticated final journeys and database races remain unproved.",
+      "steps": [
+        "Run shift open, sale, stock issue, tender, return/disposition, refund status, drawer count and daily-close flows.",
+        "Exercise reservations, oversell races, transfer dispatch/receipt, counts, losses, backdated movements, costing and cancel/retry behavior.",
+        "Tie daily cash and leakage exceptions to owners, evidence and period-close obligations without hiding unresolved variances."
+      ],
+      "paths": [
+        "services/pos",
+        "services/inventory",
+        "services/end-of-day-close",
+        "services/leakage",
+        "services/controls",
+        "services/evidence"
+      ],
+      "data": "Use a finalized synthetic fixture with independently computed quantities, valuation, tender and journals; production adjustments require their normal approvals.",
+      "controls": "One stock writer, stable sale identity, approved loss/write-off and scoped branch access. Cash count is distinct from provider-confirmed cash.",
+      "verify": "V02, V05–V09 and V11; PostgreSQL simultaneous last-unit sales, repeated return and transfer failure tests; browser shift-to-close walkthrough.",
+      "gate": "G2 online operations: no unexplained stock/cash/GL mismatch or orphan transaction.",
+      "blocker": "Disposition policies, inventory costing and permitted negative stock must be explicit for the selected cohort.",
+      "done": "Every supported sale/stock/daily-close path has final-state tie-outs, exception ownership and tested recovery."
+    },
+    {
+      "id": "R13",
+      "title": "Complete order-to-cash, customer credit and returns evidence",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R08",
+        "R10"
+      ],
+      "owner": "Order-to-cash engineer",
+      "reviewer": "Credit controller and QA",
+      "findings": [
+        "F02",
+        "F13"
+      ],
+      "caps": [
+        "CAP03",
+        "CAP04"
+      ],
+      "objective": "Prove fulfillment, receivables, settlement and corrections agree with inventory, cash and the ledger.",
+      "state": "Implemented order/customer flows lack completed source-to-cash evidence; customer-settlement reversal readiness remains an unresolved report-gate clause.",
+      "steps": [
+        "Exercise order approval, partial fulfillment, delivery, invoice/credit, customer settlement allocation and overdue balance.",
+        "Prove partial returns, customer credits, failed refund recovery, settlement reversal and unapplied amounts preserve obligations.",
+        "Resolve the settlement compensating-reversal clause with explicit behavior evidence, including closed-period and duplicate cases."
+      ],
+      "paths": [
+        "services/order-to-cash",
+        "services/customer",
+        "services/pos",
+        "services/accounting",
+        "scripts/report-trust-export-gate.js"
+      ],
+      "data": "Preserve invoice/credit identity and source links; backfill only after R09 impact review. Do not write off balances to force a tie-out.",
+      "controls": "Credit limits, approval separation, tenant/customer ownership and current permissions at statement generation.",
+      "verify": "V02, V08, V09, V14; finalized order-to-cash fixtures, partial settlement and reversal races, independent AR and GL aging totals.",
+      "gate": "G2 receivables and returns ready; external statement access additionally needs R22.",
+      "blocker": "Customer credit, return disposition and refund rail rules require a documented operating policy.",
+      "done": "Delivered, returned, billed, settled and outstanding amounts reconcile with clear exception and correction histories."
+    },
+    {
+      "id": "R14",
+      "title": "Complete purchasing, three-way match and AP finalization",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R08",
+        "R11"
+      ],
+      "owner": "Purchasing/AP engineer",
+      "reviewer": "Procurement and AP controller",
+      "findings": [
+        "F02"
+      ],
+      "caps": [
+        "CAP07",
+        "CAP08"
+      ],
+      "objective": "Prove supplier commitment through receipt, invoice, payment allocation and correction.",
+      "state": "Matching, maker-checker and correction infrastructure exists; the local audit found 24 consistent draft allocations and no posted AP lifecycle sample.",
+      "steps": [
+        "Run PO approval, supplier acknowledgement, partial/over receipt, invoice matching, approved exceptions, credit/return and payment allocation.",
+        "Prove duplicate supplier document detection, destination changes, price/tax variance, partial payment and cancellation after receipt.",
+        "Reconcile goods received not invoiced, stock valuation, AP, cash and source journals; link unmatched exceptions to close readiness."
+      ],
+      "paths": [
+        "services/supplier",
+        "services/purchase-order",
+        "services/purchasing",
+        "services/inventory",
+        "services/accounting"
+      ],
+      "data": "Create final-state isolated fixtures rather than upgrading arbitrary drafts. Preserve supplier-document identity and allocation lineage.",
+      "controls": "Maker-checker, verified bank/destination changes, match tolerances and tenant/supplier/currency consistency.",
+      "verify": "V02, V05–V10; PostgreSQL approval/payment allocation races, repeated receipt and partial return fixtures with independent AP/stock/GL totals.",
+      "gate": "G2 AP: complete posted and corrected lifecycle; live payment readiness additionally requires R19.",
+      "blocker": "Tolerance, supplier-risk and payment-destination operating policies are needed.",
+      "done": "Every receipt, invoice, credit and payment allocation reconciles; no over-allocation, duplicate liability or unexplained valuation difference."
+    },
+    {
+      "id": "R15",
+      "title": "Prove payment finality, reconciliation and suspense clearance",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R08",
+        "R10"
+      ],
+      "owner": "Payments/reconciliation lead",
+      "reviewer": "Treasury controller and QA",
+      "findings": [
+        "F01"
+      ],
+      "caps": [
+        "CAP10",
+        "CAP11"
+      ],
+      "objective": "Separate initiated payment, verified settlement, cash movement and reconciled evidence throughout recovery.",
+      "state": "Provider authority, HMAC, imports and reconciliation boundaries exist; all 24 sampled reconciliation runs were DRAFT with no sign-off/certificate.",
+      "steps": [
+        "Exercise cash/bank/mobile-money initiation, pending/failed/uncertain states, authenticated callbacks, imports, matching and explicit suspense.",
+        "Test gross/net/fee and multi-currency settlement, split/merged/partial match, duplicated statements, reversals and conflicting evidence.",
+        "Run maker-checker sign-off/certificate, source correction and certificate invalidation; age exceptions with assigned owners."
+      ],
+      "paths": [
+        "services/payments",
+        "services/reconciliation",
+        "services/accounting",
+        "services/pos"
+      ],
+      "data": "Use synthetic statements and provider fixtures for local proof. Preserve immutable raw-evidence hashes, parser version and normalized lineage.",
+      "controls": "Signature verification, replay defense, least-privilege provider accounts, no success inference from redirect/UI and no silent suspense write-off.",
+      "verify": "V02, V08, V09; final signed reconciliation with independent opening + movements = closing, matching totals and fee/FX postings; concurrent duplicate callback and sign-off tests.",
+      "gate": "G2 local cash/reconciliation truth; real rail claims require R19 acceptance.",
+      "blocker": "Rail-specific statement semantics and qualification environment are unresolved until R19.",
+      "done": "Money states and reconciled balances are explainable by verified evidence; every unmatched or uncertain amount remains visible and owned."
+    },
+    {
+      "id": "R16",
+      "title": "Prove HRIS source records, effective scope and employee service",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R01",
+        "R08",
+        "R10"
+      ],
+      "owner": "HRIS engineer",
+      "reviewer": "HR operations and privacy owner",
+      "findings": [
+        "F10",
+        "F13"
+      ],
+      "caps": [
+        "CAP15",
+        "CAP16"
+      ],
+      "objective": "Deliver reliable employee lifecycle and payroll-ready source inputs with privacy by role and effective date.",
+      "state": "Employee, organization, contract, compensation, document, attendance/leave and self-service services exist; complete browser/retention and historical-scope evidence is absent.",
+      "steps": [
+        "Run joiner, contract change, transfer, manager change, compensation approval, leave/attendance correction and leaver journeys.",
+        "Validate effective-dated manager access and source snapshots; gate payroll inputs on missing/overlapping contracts, unapproved compensation and incomplete time evidence.",
+        "Prove employee document/payslip access, redaction, payment-destination change approval and legal-hold behavior."
+      ],
+      "paths": [
+        "services/hris",
+        "services/payroll",
+        "actions",
+        "components"
+      ],
+      "data": "Rehearse source-data backfill with validation and reconciliation; frozen payroll snapshots must not change when current HR data changes.",
+      "controls": "No broad manager fallback for historical access; restrict compensation/document fields and sensitive exports; segregation of duties.",
+      "verify": "V02, V12, V13; existing HRIS suites plus multi-tenant effective-date, source readiness, correction and self-service browser cases.",
+      "gate": "G2 HRIS source readiness and privacy; payroll-specific qualification is R17/R18.",
+      "blocker": "HR lifecycle, retention, leave and attendance policies require the relevant country/employer review.",
+      "done": "HR changes are effective-dated, approved where needed and traceable; payroll consumes an immutable, validated source snapshot."
+    },
+    {
+      "id": "R17",
+      "title": "Complete payroll calculation, payment, declaration and close proof",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R03",
+        "R07",
+        "R08",
+        "R15",
+        "R16"
+      ],
+      "owner": "Payroll engineer",
+      "reviewer": "Payroll expert and accountant",
+      "findings": [
+        "F11",
+        "F13"
+      ],
+      "caps": [
+        "CAP17",
+        "CAP18"
+      ],
+      "objective": "Demonstrate an entire finalized payroll lifecycle with immutable inputs and balanced obligations.",
+      "state": "Substantial transition/snapshot controls exist, but sampled payroll runs were all DRAFT and country/legacy test-contract gaps remain.",
+      "steps": [
+        "Run input readiness, calculation, review, approval, frozen payslips, payment preparation/allocation, declaration evidence and accounting close.",
+        "Exercise corrections after approval/payment, retroactive inputs, rejected/reversed payouts, employee balances and re-opened reconciliation.",
+        "Independently tie gross, deductions, employer charges, net pay, declarations, clearing accounts and GL; record rule-version provenance."
+      ],
+      "paths": [
+        "services/payroll",
+        "services/hris",
+        "services/reconciliation",
+        "services/accounting",
+        "services/regulatory"
+      ],
+      "data": "Use synthetic staff and reviewed golden cases; production payroll corrections are append-only/versioned and require normal approvals.",
+      "controls": "Maker-checker, least-privilege payslips and destination evidence; do not change draft country status to unblock calculation or submission.",
+      "verify": "V02, V08, V09, V12, V13; current PostgreSQL transition retries, frozen snapshots, duplicate approval/payout and final register/subledger tie-outs.",
+      "gate": "G2 technical payroll proof; production payroll/declaration requires exact R18 capability and R19 rail/authority evidence.",
+      "blocker": "Qualified country rules and accepted payment/declaration adapters remain external dependencies. Local fixtures can run while review proceeds.",
+      "done": "Finalized synthetic payroll is internally reconciled and recoverable; enabled production scope is no broader than separately qualified country/provider support."
+    },
+    {
+      "id": "R18",
+      "title": "Qualify versioned country, payroll, tax and fiscal capabilities",
+      "parent": "W09",
+      "phase": "External qualification",
+      "priority": "P0",
+      "effort": "L",
+      "deps": [
+        "R00"
+      ],
+      "owner": "Country-pack lead",
+      "reviewer": "Independent qualified accountant, payroll/tax expert",
+      "findings": [
+        "F11"
+      ],
+      "caps": [
+        "CAP19"
+      ],
+      "objective": "Publish only capabilities backed by current provenance, reviewed rules and bounded operational support.",
+      "state": "CM is the registered country. CM-2026.1 PUBLISHED is not blanket qualification: CNPS is SUPPORTED_DRAFT, IRPP lacks production calculation support and e-invoicing needs review.",
+      "steps": [
+        "Refresh official 2026 sources and record effective dates, versions, applicability and reviewer decisions without presuming existing rates are wrong.",
+        "Separate accounting, CNPS, IRPP, labor inputs, fiscal numbering/e-invoice and declaration capabilities; build expert-reviewed boundary and exception cases.",
+        "Version approved calculations/forms, retain historical rule selection, disclose blocked capabilities and define the process for later country expansion."
+      ],
+      "paths": [
+        "services/regulatory",
+        "services/compliance",
+        "services/payroll",
+        "config",
+        "what-next/platform-correctness-audit/2026-09-30-run-01/external-source-register.md"
+      ],
+      "data": "Rule-version migrations must not retroactively reinterpret already approved payroll/fiscal documents. Retain provenance and superseded rules.",
+      "controls": "Qualified independent review with dated sources and evidence; no self-certification or blanket OHADA-wide support claim.",
+      "verify": "Versioned golden calculations, rounding/boundary/retroactive cases and capability refusal tests. External authority acceptance is recorded separately in R19.",
+      "gate": "G3 by country and capability: only explicitly reviewed statuses advance.",
+      "blocker": "Named qualified reviewers, official source access and authority specifications. Engineering effort excludes expert/authority waiting time.",
+      "done": "Each claimed country capability has dated provenance, approved cases, explicit limits and an accountable support owner; others remain visibly restricted."
+    },
+    {
+      "id": "R19",
+      "title": "Qualify payment, billing and authority integrations",
+      "parent": "W09",
+      "phase": "External qualification",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R00"
+      ],
+      "owner": "Integration lead",
+      "reviewer": "Treasury, compliance and security owners",
+      "findings": [
+        "F11"
+      ],
+      "caps": [
+        "CAP10",
+        "CAP18",
+        "CAP19",
+        "CAP22"
+      ],
+      "objective": "Obtain explicit evidence for each external rail, billing provider and regulatory adapter claimed by the release.",
+      "state": "Local authority and signature boundaries exist; no current provider/authority sandbox acceptance or deployed receipts were proved by the audit.",
+      "steps": [
+        "Build an integration matrix of country, provider, account, capability, environment, limits, credentials owner and acceptance evidence.",
+        "Prepare contract tests and sandbox scenarios early; execute only with the required access and authority, including timeout-after-accept, duplicate callbacks, signature rotation and rejection.",
+        "Reconcile external accepted/settled/submitted outcomes to R15/R17/R21 and distinguish test acceptance from live qualification."
+      ],
+      "paths": [
+        "services/payments",
+        "services/reconciliation",
+        "services/compliance",
+        "services/regulatory",
+        "services/modules",
+        "scripts"
+      ],
+      "data": "Provider/authority payloads and secrets belong in restricted evidence storage; sanitize reports. Sandbox effects must be bounded and understood.",
+      "controls": "Explicit authorization before external submissions or live financial effects, verified signatures, idempotency, revocation and credential rotation.",
+      "verify": "Provider-specific contract suite, approved sandbox receipts and reconciliation; deployment checks include endpoints, schedules, access and alerts.",
+      "gate": "G3 per integration. Contract preparation can start now; final acceptance depends on the corresponding R15/R17/R21 workflow.",
+      "blocker": "Accounts, sandbox availability, provider/authority permission and external acceptance lead time are not known.",
+      "done": "Every enabled integration has supported-version evidence, failure recovery, a named operator and an honest sandbox/live status; unavailable ones stay disabled."
+    },
+    {
+      "id": "R20",
+      "title": "Complete expenses, accruals and year-end accounting workflow",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R02",
+        "R03",
+        "R06",
+        "R07"
+      ],
+      "owner": "Accounting product engineer",
+      "reviewer": "Independent accountant",
+      "findings": [
+        "F01",
+        "F08",
+        "F09",
+        "F12"
+      ],
+      "caps": [
+        "CAP14"
+      ],
+      "objective": "Define and prove the professional accounting tasks required by the chosen customers beyond daily transactions.",
+      "state": "Expense and journal structures exist; automatic accruals, year-end carry-forward and a full fixed-asset subledger were not established.",
+      "steps": [
+        "Confirm supported expense approval, accrual/prepayment, periodic reversal, adjusting entry, closing and opening-balance workflows.",
+        "Implement missing essential behavior in existing owners; document supported accountant-controlled manual steps where product accepts them.",
+        "Tie year-end opening/closing, retained result and cash-flow classifications to the approved accounting policy; treat asset automation as R35 unless mandatory for launch."
+      ],
+      "paths": [
+        "services/finance",
+        "services/accounting",
+        "prisma/schema.prisma",
+        "components"
+      ],
+      "data": "Potential schedule/classification additions require versioned migrations; preserve source documents, posted entries and prior fiscal reports.",
+      "controls": "Maker-checker on material adjustments, controlled period access, source evidence and qualified accounting policy.",
+      "verify": "V01–V03, V08, V14; independent expense/accrual, reversal, year-end and next-year opening fixtures including FX and closed-period attempts.",
+      "gate": "G2 professional accounting scope explicitly accepted; unsupported automation is disclosed.",
+      "blocker": "Professional-suite definition, year-end policy and need for automated assets are decisions D02/D06.",
+      "done": "Every promised expense/year-end task has a supported, tested workflow and independently balanced output."
+    },
+    {
+      "id": "R21",
+      "title": "Verify entitlement, deactivation, billing and package behavior",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R01",
+        "R10"
+      ],
+      "owner": "SaaS platform engineer",
+      "reviewer": "Billing/product operations",
+      "findings": [],
+      "caps": [
+        "CAP22"
+      ],
+      "objective": "Align sold capabilities, server admission, module changes and safe completion of existing obligations.",
+      "state": "Control-plane admission and completion/correction policies are implemented; commercial provider execution was not verified.",
+      "steps": [
+        "Exercise activate, upgrade, downgrade, suspend, resume and deactivation across UI/action/API/worker entry points.",
+        "Prove stop-new-work does not strand already admitted payments, payroll, corrections or export/evidence obligations.",
+        "Test duplicate/out-of-order provider billing events, provisioning reconciliation and truthful capability/pricing disclosure; use R19 for external acceptance."
+      ],
+      "paths": [
+        "services/modules",
+        "services/operating-access",
+        "services/governance",
+        "components",
+        "app"
+      ],
+      "data": "Version package/grant decisions and keep an audit trail of effective entitlement changes; do not erase obligations on deactivation.",
+      "controls": "Server-side admission locks, tenant scope, provider authority and separation of billing fact from entitlement policy.",
+      "verify": "V02 with module-entitlement/module-admission suites; browser access-state and worker completion tests under concurrent suspension.",
+      "gate": "G2 internal packaging proof; live billing gate is R19.",
+      "blocker": "Initial package catalog, grace policy and customer support commitments require product approval.",
+      "done": "Every paid capability maps to enforced scope and disclosed availability; account changes cannot silently abandon financial obligations."
+    },
+    {
+      "id": "R22",
+      "title": "Complete customer/accountant access, consent and delivery evidence",
+      "parent": "W07",
+      "phase": "Domain implementation",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R10",
+        "R13",
+        "R21"
+      ],
+      "owner": "Customer/network engineer",
+      "reviewer": "Privacy and accountant-access owners",
+      "findings": [
+        "F13"
+      ],
+      "caps": [
+        "CAP25",
+        "CAP13"
+      ],
+      "objective": "Prove scoped external statements, accountant delegation and consented referral/delivery workflows.",
+      "state": "Signed access, consent and communication foundations exist, but two report-trust launch clauses remain unresolved.",
+      "steps": [
+        "Exercise statement generation, signed access, expiry/revocation, recipient scope and accountant grant changes.",
+        "Verify referral attribution only with required consent, withdrawal and duplicate handling; ensure delivery status follows provider evidence.",
+        "Resolve signed-statement and consented-referral gate obligations by behavior, not by adding a matching source-code phrase."
+      ],
+      "paths": [
+        "services/customer",
+        "services/referrals",
+        "services/communication",
+        "services/accounting",
+        "scripts/report-trust-export-gate.js"
+      ],
+      "data": "Store only necessary consent and delivery evidence; retain financial history separately from optional marketing consent.",
+      "controls": "No unauthorized contact; scoped expiring links, current grants, redaction and privacy-reviewed retention.",
+      "verify": "V02, V14; multi-tenant revoked-link and changed-grant tests; use local delivery stubs until authorized sandbox/recipient tests are available.",
+      "gate": "G2 statement/delegation/referral scope; optional referral launch may remain restricted independently of financial reporting.",
+      "blocker": "External delivery evidence requires authorized test recipients/provider access; referral activation depends on consent policy.",
+      "done": "Access cannot outlive its authority; every enabled referral/delivery action has consent and evidence or a clearly blocked state."
+    },
+    {
+      "id": "R23",
+      "title": "Prove event, outbox and worker recovery in deployment",
+      "parent": "W08",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R01",
+        "R10"
+      ],
+      "owner": "Backend/SRE engineer",
+      "reviewer": "Domain owners and operations",
+      "findings": [
+        "F14"
+      ],
+      "caps": [
+        "CAP23",
+        "CAP28"
+      ],
+      "objective": "Demonstrate reliable asynchronous completion with bounded retry, leases, dead letters and observable ownership.",
+      "state": "Lease/retry/dead-letter logic exists; deployed schedules, recovery and alert delivery were not verified.",
+      "steps": [
+        "Inventory each worker/outbox producer, event version, schedule, authorization, ordering and idempotency contract.",
+        "Inject crash-before/after-side-effect, lease expiry, duplicate delivery, poison event and provider outage; prove recovery without multiplying effects.",
+        "Deploy to the controlled validation environment with lag/dead-letter alerts, redacted traces, rate limits, backpressure and operator recovery runbooks."
+      ],
+      "paths": [
+        "services/events",
+        "services/communication",
+        "services/compliance",
+        "services/agents",
+        "scripts",
+        ".github/workflows"
+      ],
+      "data": "Preserve pending work during deploy/rollback and version event payloads compatibly; quarantine poison records instead of deleting them.",
+      "controls": "Least-privilege workers, tenant-derived context, authenticated schedules, bounded retries and protected operational replay.",
+      "verify": "Focused worker suites plus real PostgreSQL process-kill/lease tests; measured backlog recovery and actual alert receipt in the approved test environment.",
+      "gate": "G2 async correctness and G3 deployed-operational evidence.",
+      "blocker": "Known deployment topology, worker scheduling owner and SLO decisions D07.",
+      "done": "Every deployed worker has demonstrated scheduling, idempotent recovery, bounded failure behavior and an operator-owned alert path."
+    },
+    {
+      "id": "R24",
+      "title": "Validate complete EN/FR, accessible and mobile user journeys",
+      "parent": "W08",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R01",
+        "R10",
+        "R11"
+      ],
+      "owner": "Frontend/workflow engineer",
+      "reviewer": "Accessibility specialist and domain users",
+      "findings": [
+        "F04",
+        "F06",
+        "F13"
+      ],
+      "caps": [
+        "CAP29"
+      ],
+      "objective": "Make corrected service behavior understandable and operable by each intended persona.",
+      "state": "Routes, shared components and state contracts exist; the audit browser connection failed and no current authenticated/a11y/mobile proof was obtained.",
+      "steps": [
+        "Create a route/persona/locale/device matrix; verify loading, empty, error, denied, partial, stale, offline, uncertain and recovery states.",
+        "Check keyboard focus/order, screen-reader labels/announcements, contrast, zoom, touch targets, dense tables and EN/FR currency/date/time wording.",
+        "Walk completed domain workflows as cashier, stock manager, purchaser, accountant, HR/payroll, employee and owner; validate corrective actions and support instructions."
+      ],
+      "paths": [
+        "app",
+        "components",
+        "hooks",
+        "config/sidebar.ts",
+        "services/bi"
+      ],
+      "data": "Use isolated synthetic accounts and screenshots with no personal or tenant-sensitive data.",
+      "controls": "UI must reflect server capability/permission state; do not expose implementation jargon or claim financial success from optimistic UI.",
+      "verify": "Real authenticated browser scenarios plus automated accessibility checks and manual keyboard/screen-reader/mobile testing; save route, role, locale, build and evidence.",
+      "gate": "G2 UI shell/state checks can start early; full acceptance waits for each relevant domain package and is consolidated in R31.",
+      "blocker": "Running isolated application, test accounts, supported-device matrix and representative user availability.",
+      "done": "All release-critical personas can complete and recover their workflows in supported locales/devices, with accessibility issues triaged and critical barriers closed."
+    },
+    {
+      "id": "R25",
+      "title": "Create versioned BI metric contracts and source lineage",
+      "parent": "W10",
+      "phase": "BI implementation",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R02",
+        "R03",
+        "R10"
+      ],
+      "owner": "BI/data engineer",
+      "reviewer": "Finance and product owners",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP20"
+      ],
+      "objective": "Provide one authoritative definition and evidence contract per released metric.",
+      "state": "Provenance/freshness/redaction foundations exist, but financial-metrics.v2 explicitly reports PARTIAL and FINANCIAL_SOURCES_NOT_CONNECTED.",
+      "steps": [
+        "Adopt the K01–K19 definitions from the audit and resolve owners, grain, source events, denomination, business timezone and as-of/known-at cutoffs.",
+        "Specify included statuses, returns/corrections, null/zero/empty behavior, data completeness, drill-through permissions and definition version.",
+        "Implement lineage and correction-driven invalidation in existing read models; add a warehouse only if measured requirements justify it."
+      ],
+      "paths": [
+        "services/analytics",
+        "services/bi",
+        "services/snapshots",
+        "services/signals"
+      ],
+      "data": "Derived snapshots may be rebuilt from authoritative facts with versioned backfill manifests; never turn a missing financial source into a fabricated zero.",
+      "controls": "Distinguish operational, posted, reconciled, certified and forecast values. Aggregate and drill-through must enforce identical tenant and scope rules.",
+      "verify": "Contract tests for population/grain, late correction, DST/cutoff, multi-currency, stale sources and revoked permissions; independent whole-population tie-outs.",
+      "gate": "G2 semantic contract; each metric additionally waits for its own source qualification.",
+      "blocker": "Metric definitions and materiality tolerances need named business owners. Existing graphs/read models may be reused after current-source validation.",
+      "done": "Every released KPI has a versioned definition, source lineage, freshness policy, owner and independent reconciliation method."
+    },
+    {
+      "id": "R26",
+      "title": "Complete operational commerce, cash and control BI",
+      "parent": "W10",
+      "phase": "BI implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R23",
+        "R25"
+      ],
+      "owner": "BI/product engineer",
+      "reviewer": "Operations, procurement and treasury",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP20",
+        "CAP27"
+      ],
+      "objective": "Give operators reliable sales, orders, cash, stock, supplier and exception decisions.",
+      "state": "Operational evidence is substantial; some reports describe original activity rather than net corrected outcomes, and deployed freshness remains unproved.",
+      "steps": [
+        "Deliver K01/K03/K04/K05/K07/K08/K10/K11/K17 with explicit activity/correction meaning, scoped drill-through and actionable exceptions.",
+        "Add K06 settlement lag/fees/cash-in-transit for qualified rails only, retaining unavailable status for others.",
+        "Connect owner/manager/cash-command/daily-habit surfaces to these same definitions and permission-aware actions; avoid independent dashboard arithmetic."
+      ],
+      "paths": [
+        "services/analytics",
+        "services/bi",
+        "services/cash-command",
+        "services/owner-war-room",
+        "services/manager-action-center",
+        "services/daily-habit"
+      ],
+      "data": "Backfill derived views from corrected source facts with population counts, completeness and version evidence.",
+      "controls": "No unsupported employee scoring; cash counted, cash recorded and cash settled remain distinct. Supplier OTIF requires promised-date and accepted-receipt definitions.",
+      "verify": "Golden operational dataset, correction/late-event/freshness and permission tests; dashboard totals equal independent source queries and actionable rows resolve correctly.",
+      "gate": "G2 operational BI; rail-specific K06 needs R19. Missing supplier/date sources block that metric alone.",
+      "blocker": "Supplier promised dates, exception aging SLAs and operational freshness thresholds must be defined.",
+      "done": "Each enabled operational KPI ties to source facts and an authorized action; stale or incomplete evidence is visibly qualified."
+    },
+    {
+      "id": "R27",
+      "title": "Complete financial statements, margin, aging and cash-flow BI",
+      "parent": "W10",
+      "phase": "BI implementation",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R07",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R20",
+        "R25"
+      ],
+      "owner": "Financial reporting engineer",
+      "reviewer": "Independent accountant",
+      "findings": [
+        "F01",
+        "F09",
+        "F12"
+      ],
+      "caps": [
+        "CAP12",
+        "CAP20"
+      ],
+      "objective": "Deliver K02/K12/K13/K14 from corrected economic facts with accountant-verifiable results.",
+      "state": "Statement FX/opening defects and disconnected financial sources prevent reliable complete professional financial analytics.",
+      "steps": [
+        "Implement net realized sales, frozen COGS and margin including disposition-aware returns; connect AR/AP aging and working capital.",
+        "Complete trial balance, income statement and balance sheet using approved functional-currency and close/as-of rules.",
+        "Define and implement the supported cash-flow method/classifications, beginning-to-ending cash bridge and noncash/FX reconciliation; retain limitations where sources are incomplete."
+      ],
+      "paths": [
+        "services/accounting/financial-statements.service.ts",
+        "services/analytics/financial-reports.service.ts",
+        "services/analytics/financial-analytics.service.ts",
+        "services/bi"
+      ],
+      "data": "Rebuild financial snapshots only after R09 disposition for affected populations; retain old report versions and source/definition lineage.",
+      "controls": "Independent accountant review; no mixed nominal currencies, current catalog cost substitution, or certification labels without qualified close evidence.",
+      "verify": "Independent accountant-prepared dataset: trial balance debits=credits, assets=liabilities+equity, AR/AP=subledgers, opening cash+cash movements+defined FX bridge=closing cash, margin reflects corrections.",
+      "gate": "G2 financial BI plus R09 population disposition and applicable country/close qualification for production claims.",
+      "blocker": "Cash-flow classification/method, account mappings and source completeness require accounting decisions.",
+      "done": "Financial reports reconcile independently across statements, subledgers and source documents; incomplete populations remain blocked or clearly qualified."
+    },
+    {
+      "id": "R28",
+      "title": "Complete privacy-scoped workforce and payroll BI",
+      "parent": "W10",
+      "phase": "BI implementation",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R16",
+        "R17",
+        "R25"
+      ],
+      "owner": "HR analytics engineer",
+      "reviewer": "HR, payroll and privacy owners",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP16",
+        "CAP17",
+        "CAP20"
+      ],
+      "objective": "Deliver K15/K16 with effective-date definitions and appropriately restricted detail.",
+      "state": "Payroll analytics and HRIS records exist, but full metric definitions, finalized-population evidence and privacy validation remain partial.",
+      "steps": [
+        "Define headcount/FTE inclusion, approved payroll cost, employer charges, attendance/leave denominators and effective organization scope.",
+        "Separate draft estimate, approved payroll, paid amount and accounting cost; include corrections and historical assignment changes.",
+        "Apply small-population suppression or other approved privacy controls, export restrictions and drill-through role checks."
+      ],
+      "paths": [
+        "services/hris",
+        "services/payroll",
+        "services/analytics",
+        "services/bi",
+        "components"
+      ],
+      "data": "Version snapshots and retain only permitted aggregates; no unnecessary employee details in broad management dashboards.",
+      "controls": "No inferred performance ranking from attendance, sales or cash variance. Historical access follows effective authorized scope.",
+      "verify": "Reviewed HR/payroll golden fixtures, changed-manager and small-group privacy tests; cost totals reconcile to approved payroll and GL where that label is used.",
+      "gate": "G2 workforce BI; production statutory payroll cost follows R18 support.",
+      "blocker": "Headcount/FTE, attendance and privacy disclosure policy needs HR ownership.",
+      "done": "Workforce metrics are defined, permission-safe and tied to the correct effective population and payroll status."
+    },
+    {
+      "id": "R29",
+      "title": "Validate AI assistance, security posture and cost controls",
+      "parent": "W08",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R10",
+        "R21",
+        "R25"
+      ],
+      "owner": "AI/AppSec engineer",
+      "reviewer": "Model-risk and product owner",
+      "findings": [],
+      "caps": [
+        "CAP24",
+        "CAP21"
+      ],
+      "objective": "Keep assistance grounded in authorized evidence and prove resistance to unsafe tool use and cross-tenant disclosure.",
+      "state": "Read-only tool risk checks, proposal hashes/expiry and activation controls exist; adversarial model evaluation and deployed cost budgets were not established.",
+      "steps": [
+        "Test prompt injection in business documents/tool output, stale authority, forged proposal evidence, denied tools and cross-tenant retrieval.",
+        "Require current permissions, evidence citations, uncertainty and human-approved workflows for any supported consequential action.",
+        "Measure model/tool latency, error and cost; apply budgets, redaction, emergency suspension and versioned evaluation gates."
+      ],
+      "paths": [
+        "services/agents",
+        "services/ai",
+        "services/security",
+        "scripts"
+      ],
+      "data": "Use synthetic/redacted evaluation cases; record model, prompt/tool-policy versions and permitted retention.",
+      "controls": "Untrusted content cannot grant authority. Assistance cannot self-certify legal/accounting conclusions or invent final financial states.",
+      "verify": "Versioned adversarial evaluation corpus with required refusal/denial cases, tenant data-canary checks, audit evidence and budget-exhaustion behavior.",
+      "gate": "G2 AI safety; optional AI can stay disabled without blocking core commerce if its boundaries are isolated.",
+      "blocker": "Enabled model/provider, use cases, quality threshold and monthly budget need explicit product decisions.",
+      "done": "Enabled AI has no unresolved critical authorization/tool-use finding, measurable quality/cost limits and a tested suspension path."
+    },
+    {
+      "id": "R30",
+      "title": "Rehearse recovery, refresh runbooks and measure service limits",
+      "parent": "W08",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R01",
+        "R08",
+        "R23"
+      ],
+      "owner": "SRE/DevSecOps lead",
+      "reviewer": "Database, security and support leads",
+      "findings": [
+        "F14"
+      ],
+      "caps": [
+        "CAP28"
+      ],
+      "objective": "Make deployment, backup, restore, incident response and operational capacity demonstrable for the release candidate.",
+      "state": "Runbook SQL referenced User/Account/Session instead of mapped users/accounts/sessions and misstated restore history; a current full-chain restore and deployed RPO/RTO were unproved.",
+      "steps": [
+        "Update runbooks against current mappings, deployment topology and actual prior evidence; rehearse login/session, worker, queue and financial recovery.",
+        "Replay the current migration chain (87 at audit time; recount at execution) fresh and as a populated upgrade; restore and verify app access plus business invariants.",
+        "Measure latency/error/backlog/cost under an agreed workload and test alerts, secrets rotation, rollback, backup isolation and approved RPO/RTO targets."
+      ],
+      "paths": [
+        "docs/operations/runbooks/RUNBOOK.md",
+        "scripts/prisma-local-restore-rehearsal.js",
+        "prisma/migrations",
+        ".github/workflows",
+        "scripts"
+      ],
+      "data": "Restore only into a verified isolated target; inspect destructive flags and credentials before executing restore scripts. Preserve backups and source environments.",
+      "controls": "Least-privilege access, sensitive-data handling, backup encryption/access and independent recovery verification; local restore is not deployed PITR proof.",
+      "verify": "Fresh/upgrade migration logs, measured restore with counts and selected cross-domain invariants, authentication smoke, worker catch-up and load/alert evidence against agreed targets.",
+      "gate": "G3 operational readiness; unknown or missed RPO/RTO/performance targets stay open.",
+      "blocker": "Target environment, backup access, workload model, service objectives and incident owners are not yet supplied.",
+      "done": "Operators can execute current runbooks, recover the exact release/data version and demonstrate agreed operational objectives."
+    },
+    {
+      "id": "R31",
+      "title": "Assemble independent end-to-end release evidence",
+      "parent": "W07",
+      "phase": "Verification and hardening",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R04",
+        "R05",
+        "R07",
+        "R08",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R26",
+        "R27",
+        "R28",
+        "R29",
+        "R30"
+      ],
+      "owner": "Release assurance lead",
+      "reviewer": "Independent domain reviewers",
+      "findings": [
+        "F13",
+        "F14"
+      ],
+      "caps": [
+        "CAP28",
+        "CAP29"
+      ],
+      "objective": "Prove the selected candidate as one integrated system using non-draft workflows and fresh evidence.",
+      "state": "Unit and read-only aggregate evidence does not establish finalized domain operation, real database concurrency or authenticated journeys.",
+      "steps": [
+        "Freeze an exact release candidate and migration/toolchain manifest; rerun required commands without the audit-only adapter.",
+        "Execute the six acceptance journeys below with synthetic fixtures, concurrent/failure cases, independent totals and browser evidence. Offline replay here remains isolated and test-authorized; the production admission pilot follows in R32.",
+        "Collect unresolved defects, restrictions, country/provider qualification, historical-data disposition and operator training evidence; invalidate affected proof when code changes."
+      ],
+      "paths": [
+        "services",
+        "actions",
+        "app",
+        "components",
+        "prisma",
+        "scripts",
+        ".github/workflows"
+      ],
+      "data": "Use known fixture denominators and independently calculated expected values; preserve raw command results and sanitized screenshots.",
+      "controls": "Builder cannot be the sole reviewer of material financial/security conclusions. A passing scanner cannot substitute for behavioral or external evidence.",
+      "verify": "V01–V14 plus integration/browser/restore/evaluation evidence. Critical cases include concurrent postings/close, duplicate financial events, uncertain provider result, revoked access and corrections.",
+      "gate": "G3 candidate evidence assembled; final qualification and pilot decisions remain R32/R33.",
+      "blocker": "All listed technical packages must close for full-platform scope. A smaller candidate may only exclude a module through an explicit scope amendment with enforced restrictions.",
+      "done": "Every in-scope promise has fresh independent acceptance evidence tied to the same candidate; no unresolved critical correctness or privacy defect."
+    },
+    {
+      "id": "R32",
+      "title": "Run a controlled offline POS pilot and validate recovery",
+      "parent": "W06",
+      "phase": "Rollout and operations",
+      "priority": "P1",
+      "effort": "L",
+      "deps": [
+        "R04",
+        "R05",
+        "R12",
+        "R15",
+        "R24",
+        "R30",
+        "R31"
+      ],
+      "owner": "Offline/product rollout lead",
+      "reviewer": "Release owner and pilot operations",
+      "findings": [
+        "F03",
+        "F04",
+        "F05"
+      ],
+      "caps": [
+        "CAP01"
+      ],
+      "objective": "Qualify offline operation on the supported device, tender and fiscal scope before activation.",
+      "state": "Replay is deliberately authorized only under test conditions; this is a release boundary, not a flag to remove for convenience.",
+      "steps": [
+        "Specify explicit device enrollment, revocation, queue limits, tender policy, fiscal obligations, conflict review and support procedures.",
+        "Replace test-only admission only after the gate is met with scoped server-side production authorization, feature control and auditability.",
+        "Rehearse power/network loss, offline restart, long disconnect, revoked device, out-of-order replay, clock skew, uncertain tender and fiscal failure; reconcile pilot capture through final GL."
+      ],
+      "paths": [
+        "services/pos/offline-sync.service.ts",
+        "lib/pos/offline-local-queue.ts",
+        "hooks/posHooks/useOfflineSync.ts",
+        "components",
+        "docs/operations"
+      ],
+      "data": "Enroll a bounded approved cohort; preserve local pending facts and migration lineage. Rollback stops new admissions while existing uncertain work is reconciled.",
+      "controls": "No automatic offline mobile-money finality or fiscal validity claim; exact country/rail scope needs R18/R19 where applicable.",
+      "verify": "Real-device pilot with capture/event/server/stock/cash/ledger counts and recovery evidence. Proposed non-negotiable tolerances: zero silent loss, zero duplicate economic effects, zero unexplained tie-out mismatch.",
+      "gate": "G4 offline: approved technical evidence plus applicable R18/R19 and agreed pilot duration/volume (D08).",
+      "blocker": "Pilot devices/users, offline business policy, country/fiscal scope and observation thresholds must be agreed before admission.",
+      "done": "Pilot results meet agreed coverage and objectives; all events are accounted for, operators can recover exceptions, and rollback preserves pending obligations."
+    },
+    {
+      "id": "R33",
+      "title": "Release by qualified cohort and transfer ongoing ownership",
+      "parent": "W08",
+      "phase": "Rollout and operations",
+      "priority": "P1",
+      "effort": "M",
+      "deps": [
+        "R09",
+        "R31"
+      ],
+      "owner": "Release/delivery lead",
+      "reviewer": "Product, domain approvers and SRE",
+      "findings": [
+        "F05",
+        "F11",
+        "F14"
+      ],
+      "caps": [
+        "CAP28",
+        "CAP29",
+        "CAP22"
+      ],
+      "objective": "Activate only the reviewed capability set, then prove support and monitoring ownership.",
+      "state": "No complete-platform release or production certification has been established by the audit or this planning work.",
+      "steps": [
+        "Approve a capability-by-country/provider/tenant matrix; require R32 for offline, R18 for regulated functions and R19 for real external integrations.",
+        "Roll out to a bounded cohort, then expand only after agreed transaction volume, business-cycle coverage and service objectives pass.",
+        "Train operators, publish known limits/runbooks, assign on-call and domain owners, review incidents and conduct a post-pilot acceptance review."
+      ],
+      "paths": [
+        "docs/operations",
+        ".github/workflows",
+        "services/modules",
+        "services/governance",
+        "app"
+      ],
+      "data": "Deploy approved migrations and any reviewed R09 batches only under the release plan; verify post-deploy invariants and retain recoverable snapshots.",
+      "controls": "Explicit release-owner approval; restrict unsupported capabilities in server admission and product messaging. Rollback preserves completed and in-flight financial truth.",
+      "verify": "Candidate manifest, migration/rollback evidence, cohort smoke and reconciliation, alert receipt, support drill and complete signed decision log.",
+      "gate": "G5 release: zero unaccepted critical defects, required qualified reviews, training and sustained cohort metrics.",
+      "blocker": "Named signatories, production authority, pilot thresholds and observation windows are not supplied; R18/R19/R32 are conditional activation gates, never bypassed.",
+      "done": "Each enabled capability is qualified for its actual cohort and handed to accountable operations; remaining restrictions have owners and review dates."
+    },
+    {
+      "id": "R34",
+      "title": "Qualify inventory extensions, landed cost and replenishment",
+      "parent": "W11",
+      "phase": "Conditional extensions",
+      "priority": "P2 conditional",
+      "effort": "XL",
+      "deps": [
+        "R12",
+        "R14",
+        "R25",
+        "R26"
+      ],
+      "owner": "Inventory/procurement product lead",
+      "reviewer": "Operations and accountant",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP06",
+        "CAP09",
+        "CAP20"
+      ],
+      "objective": "Implement K09 and advanced inventory workflows only where the selected customer requires them.",
+      "state": "Lot/serial/expiry/unit fields do not prove complete traceability; landed-cost allocation and predictive replenishment were not established.",
+      "steps": [
+        "Decide requirements independently for lot/serial/expiry, unit conversion, landed cost and replenishment; split accepted work into bounded tickets.",
+        "Prove receipt-to-sale/return recall traceability, exact conversions, cost allocation across partial receipts/returns and valuation consequences.",
+        "Deliver descriptive turnover/aging first; add reorder suggestions only with measured lead time, demand quality, review controls and forecast evaluation."
+      ],
+      "paths": [
+        "services/inventory",
+        "services/purchasing",
+        "services/unit",
+        "services/analytics",
+        "prisma/schema.prisma"
+      ],
+      "data": "Potential lot/cost/lead-time schema and historical backfill; legacy quantities or costs must not be invented to make new features appear complete.",
+      "controls": "Human approval for purchasing suggestions, tenant/location isolation and accountant-reviewed cost allocation.",
+      "verify": "Trace/recall and conversion fixtures, allocation conservation, correction/cutoff tests; forecast backtest against a simple baseline when forecasting is actually in scope.",
+      "gate": "D06 product need and source quality before engineering; becomes mandatory before release for any cohort promised these capabilities.",
+      "blocker": "Customer demand, reliable lead-time/lot/cost source data and bounded feature scope are not established.",
+      "done": "Each accepted extension has its own tested workflow and metric contract; rejected/deferred extensions remain explicit and unadvertised."
+    },
+    {
+      "id": "R35",
+      "title": "Add a fixed-asset subledger when professional scope requires it",
+      "parent": "W11",
+      "phase": "Conditional extensions",
+      "priority": "P2 conditional",
+      "effort": "L",
+      "deps": [
+        "R07",
+        "R20",
+        "R25",
+        "R27"
+      ],
+      "owner": "Accounting product lead",
+      "reviewer": "Independent accountant",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP14"
+      ],
+      "objective": "Provide asset acquisition, depreciation, disposal and reconciliation if needed by target customers.",
+      "state": "A complete asset register/subledger was not established; manual journals alone must not be marketed as automated asset management.",
+      "steps": [
+        "Decide material asset needs, accounting methods, categories, useful lives, opening assets and required reports.",
+        "Design a bounded asset register, schedule, approval, disposal/impairment and source-journal workflow using approved policy.",
+        "Reconcile asset cost/accumulated depreciation/net book value and preserve changes as effective-dated evidence."
+      ],
+      "paths": [
+        "services/accounting",
+        "services/finance",
+        "prisma/schema.prisma",
+        "services/analytics"
+      ],
+      "data": "New asset/schedule schema and reviewed opening-data import may be needed; retain original acquisition and depreciation evidence.",
+      "controls": "Qualified policy, segregation of duties, period locks, currency correctness and reviewed opening balances.",
+      "verify": "Independent accountant golden schedules, partial-period cases, disposal/correction, year-end and asset-to-GL tie-outs.",
+      "gate": "D06 required for chosen segment or explicitly deferred; no asset automation claim until complete.",
+      "blocker": "Customer asset portfolio, methods and opening evidence are unknown; estimate excludes data reconstruction.",
+      "done": "Accepted asset scope is fully reconciled and maintainable, or formally deferred with supported manual accounting boundaries."
+    },
+    {
+      "id": "R36",
+      "title": "Add governed budgets and scenario cash forecasting",
+      "parent": "W11",
+      "phase": "Conditional extensions",
+      "priority": "P2 conditional",
+      "effort": "L",
+      "deps": [
+        "R25",
+        "R27"
+      ],
+      "owner": "FP&A/BI product lead",
+      "reviewer": "Finance owner",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP20"
+      ],
+      "objective": "Deliver K18 for planning decisions after actual financial data is trustworthy.",
+      "state": "No complete budget or scenario cash-forecast capability was established; it must not be inferred from chart surfaces.",
+      "steps": [
+        "Define budget grain, versions, approval, currencies and ownership; connect actuals to the same account/period basis.",
+        "Model scenario cash from due receivables/payables, payroll, commitments and reviewed assumptions with uncertainty ranges.",
+        "Evaluate forecast error against a simple baseline and distinguish forecasts from available cash or certified statements."
+      ],
+      "paths": [
+        "services/analytics",
+        "services/bi",
+        "services/accounting",
+        "prisma/schema.prisma"
+      ],
+      "data": "Potential versioned budget/scenario tables; historical actuals stay immutable and forecast assumptions remain separate.",
+      "controls": "Approved assumptions, role-scoped edits, version audit, sensitivity disclosure and no automatic payment decisions.",
+      "verify": "Budget/actual mapping tie-outs, scenario arithmetic, forecast backtest and permission/version tests.",
+      "gate": "D06 confirmed planning need, stable R27 actuals and data quality threshold.",
+      "blocker": "Planning cadence, budget owners and forecast horizon/accuracy requirements need discovery.",
+      "done": "Users can compare approved budget to trusted actuals and evaluate reproducible scenarios with clear uncertainty."
+    },
+    {
+      "id": "R37",
+      "title": "Add consent-aware customer retention and cohort analytics",
+      "parent": "W11",
+      "phase": "Conditional extensions",
+      "priority": "P2 conditional",
+      "effort": "M",
+      "deps": [
+        "R13",
+        "R22",
+        "R25",
+        "R26"
+      ],
+      "owner": "Commercial analytics lead",
+      "reviewer": "Privacy and product owner",
+      "findings": [
+        "F12"
+      ],
+      "caps": [
+        "CAP20",
+        "CAP25"
+      ],
+      "objective": "Deliver K19 only where identity quality and permitted use support useful repeat-purchase decisions.",
+      "state": "Retention/cohort analytics is optional; anonymous sales, returns and changing customer identity complicate reliable denominators.",
+      "steps": [
+        "Define repeat customer, cohort membership, observation window, identity merge/split and treatment of returns/anonymous transactions.",
+        "Use only approved identity/consent sources, disclose incomplete attribution and permit scoped drill-through.",
+        "Validate a bounded retention use case with customers before adding campaigns or automated outreach."
+      ],
+      "paths": [
+        "services/customer",
+        "services/referrals",
+        "services/analytics",
+        "services/bi"
+      ],
+      "data": "Version identity resolution and derived cohorts; enforce retention and withdrawal policy without deleting required financial records.",
+      "controls": "Privacy-approved use, minimum needed identifiers and no unauthorized messages or sensitive profiling.",
+      "verify": "Synthetic repeat/anonymous/merged-identity and return cases, permission/consent withdrawal tests, independent cohort denominators.",
+      "gate": "D06 useful business decision and approved identity/consent quality; otherwise defer.",
+      "blocker": "Target use case, identity coverage and lawful/consented analytics policy are not established.",
+      "done": "Each published cohort has a defensible population and privacy contract, or the feature stays explicitly deferred."
+    }
+  ],
+  "findings": [
+    [
+      "F01",
+      "P1",
+      "Risky / reproduced",
+      "Incorrect FX base amounts and mixed nominal statement totals",
+      "R02 R09 R27",
+      "Independent nominal/base/rate fixtures; corrected source/report tie-outs; historical impact disposition."
+    ],
+    [
+      "F02",
+      "P1",
+      "Risky / reproduced",
+      "Generic reversal bypasses source-owned POS correction",
+      "R03 R09 R12 R13 R14",
+      "Generic bypass denied; owner correction reconciles all source, stock, cash and GL effects exactly once."
+    ],
+    [
+      "F03",
+      "P1",
+      "Risky / reproduced",
+      "Concurrent local queue writes lose acknowledged events; corrupt JSON can reset facts",
+      "R04 R32",
+      "Multi-tab atomic persistence, quarantine and safe migration; real-device conservation evidence."
+    ],
+    [
+      "F04",
+      "P1",
+      "Risky / reproduced",
+      "Restart strands persisted SYNCING events",
+      "R05 R24 R32",
+      "Interrupted-send/commit/restart resolves using original identities with no duplicate economic effects."
+    ],
+    [
+      "F05",
+      "P1",
+      "Intentionally restricted",
+      "Offline replay is test-authorized only",
+      "R32 R33",
+      "Qualified devices/tenders/fiscal scope, controlled admission, observed pilot and obligation-preserving rollback."
+    ],
+    [
+      "F06",
+      "P1",
+      "Risky / reproduced",
+      "Period close omits broader assurance readiness",
+      "R07 R12 R31",
+      "Shared eligibility and concurrency proof; explicit lock-only/qualified-close states and invalidation."
+    ],
+    [
+      "F07",
+      "P1",
+      "Risky / reproduced",
+      "Locked accounting functional currency remains mutable",
+      "R02 R09",
+      "History-aware server policy blocks relabeling; affected-data review and safe correction disposition."
+    ],
+    [
+      "F08",
+      "P2",
+      "Risky / reproduced",
+      "Fiscal period can precede partial-month year start",
+      "R06 R09 R20",
+      "Boundary policy, no out-of-year intervals, safe disposition of any existing anomalous periods."
+    ],
+    [
+      "F09",
+      "P2",
+      "Risky / reproduced",
+      "General-ledger running balance omits opening balance",
+      "R06 R09 R27",
+      "Opening + movement = closing across cutoff, currency and paginated views."
+    ],
+    [
+      "F10",
+      "P2",
+      "Partial / defense gap",
+      "Older ledger database protections, tenant-reference and retention evidence incomplete",
+      "R08 R09 R10 R16",
+      "Valid writer inventory, adversarial SQL/tenant tests, safe upgrade and approved retention/legal holds."
+    ],
+    [
+      "F11",
+      "P1",
+      "Blocked qualification",
+      "Country and external provider/authority readiness incomplete",
+      "R18 R19 R17 R33",
+      "Dated expert-reviewed capability versions, accepted integration evidence and bounded release claims."
+    ],
+    [
+      "F12",
+      "P2",
+      "Partial / missing capability",
+      "Financial BI and several optional professional/decision-support capabilities incomplete",
+      "R20 R25 R26 R27 R28 R34 R35 R36 R37",
+      "KPI source contracts and independent totals; optional scope either accepted and implemented or explicitly deferred."
+    ],
+    [
+      "F13",
+      "P2",
+      "Partial / verification blocked",
+      "Runner/typecheck limitations, stale tests and unresolved readiness clauses",
+      "R00 R01 R13 R22 R31",
+      "Ordinary completed verification; each gate clause resolved with behavior evidence, no control weakening."
+    ],
+    [
+      "F14",
+      "P2",
+      "Partial / operations unverified",
+      "Stale runbooks and missing current recovery/deployment proof",
+      "R23 R30 R31 R33",
+      "Current isolated restore/upgrade, deployed schedules/alerts, workload/SLO evidence and trained owners."
+    ]
+  ],
+  "capabilities": [
+    [
+      "CAP01",
+      "Offline sales and replay"
+    ],
+    [
+      "CAP02",
+      "Online POS and shifts"
+    ],
+    [
+      "CAP03",
+      "Orders, fulfillment and customer credit"
+    ],
+    [
+      "CAP04",
+      "Returns, refunds and credits"
+    ],
+    [
+      "CAP05",
+      "Stock, transfer, reservation, count and loss"
+    ],
+    [
+      "CAP06",
+      "Lot, serial, expiry and unit conversion"
+    ],
+    [
+      "CAP07",
+      "Supplier and purchasing"
+    ],
+    [
+      "CAP08",
+      "AP matching, allocation and correction"
+    ],
+    [
+      "CAP09",
+      "Landed cost"
+    ],
+    [
+      "CAP10",
+      "Cash, bank and mobile-money payments"
+    ],
+    [
+      "CAP11",
+      "Reconciliation and suspense"
+    ],
+    [
+      "CAP12",
+      "Professional accounting and source posting"
+    ],
+    [
+      "CAP13",
+      "Close assurance, exports and accountant access"
+    ],
+    [
+      "CAP14",
+      "Expense, accrual, year-end and assets"
+    ],
+    [
+      "CAP15",
+      "HR identity, organization and contracts"
+    ],
+    [
+      "CAP16",
+      "Compensation, documents, time and leave"
+    ],
+    [
+      "CAP17",
+      "Payroll calculation and transitions"
+    ],
+    [
+      "CAP18",
+      "Payroll payment, declaration and close"
+    ],
+    [
+      "CAP19",
+      "Country packs and fiscal compliance"
+    ],
+    [
+      "CAP20",
+      "BI, dashboards and decision support"
+    ],
+    [
+      "CAP21",
+      "Identity, tenant, RBAC and privacy"
+    ],
+    [
+      "CAP22",
+      "Modules, packages and billing"
+    ],
+    [
+      "CAP23",
+      "Events, outboxes and workers"
+    ],
+    [
+      "CAP24",
+      "AI and agent governance"
+    ],
+    [
+      "CAP25",
+      "Customer/accountant network and communications"
+    ],
+    [
+      "CAP26",
+      "Master data, media, history and onboarding"
+    ],
+    [
+      "CAP27",
+      "End-of-day and leakage/exception control"
+    ],
+    [
+      "CAP28",
+      "Release, recovery, observability and performance"
+    ],
+    [
+      "CAP29",
+      "Frontend, accessibility, localization and training"
+    ]
+  ],
+  "kpis": [
+    [
+      "K01",
+      "Completed-sale activity",
+      "R26",
+      "Essential",
+      "Order/line population, statuses and original-versus-corrected activity agree."
+    ],
+    [
+      "K02",
+      "Realized net sales, COGS and gross margin",
+      "R27",
+      "Essential",
+      "Recognized net sales less source-frozen, return-adjusted cost; margin null at zero denominator."
+    ],
+    [
+      "K03",
+      "Basket, product and branch performance",
+      "R26",
+      "Essential",
+      "Correct population/grain and branch scope; not a substitute for posted profit."
+    ],
+    [
+      "K04",
+      "Order activity and commitments",
+      "R26",
+      "Essential",
+      "Draft, committed, fulfilled and cancelled states remain distinct."
+    ],
+    [
+      "K05",
+      "Cash position and drawer variance",
+      "R26",
+      "Essential",
+      "Counts, ledger movements and provider-settled money remain distinct."
+    ],
+    [
+      "K06",
+      "Settlement lag, fees and cash in transit",
+      "R26",
+      "Qualified-rail addition",
+      "R19 provider evidence; gross-to-net fee bridge and pending aging."
+    ],
+    [
+      "K07",
+      "Reconciliation exceptions and suspense aging",
+      "R26",
+      "Essential",
+      "Owned unresolved balances and as-of aging tie to reconciliation source records."
+    ],
+    [
+      "K08",
+      "Low stock and inventory coverage",
+      "R26",
+      "Essential",
+      "Available, reserved and on-hand definitions; actionable location scope."
+    ],
+    [
+      "K09",
+      "Inventory turnover, aging and replenishment",
+      "R34",
+      "Conditional extension",
+      "Cost/lead-time/lot data first; descriptive ratios before forecasts."
+    ],
+    [
+      "K10",
+      "Shrinkage, stock loss and adjustment variance",
+      "R26",
+      "Valuable core addition",
+      "Approved loss/count/correction sources and valuation policy."
+    ],
+    [
+      "K11",
+      "Supplier delivery reliability and commitments",
+      "R26",
+      "Valuable core addition",
+      "Promised-date and accepted-receipt denominators; unavailable if missing."
+    ],
+    [
+      "K12",
+      "AR/AP aging and working capital",
+      "R27",
+      "Essential",
+      "Outstanding as-of amounts agree to source allocations and GL."
+    ],
+    [
+      "K13",
+      "Income statement, balance sheet and trial balance",
+      "R27",
+      "Essential",
+      "Correct base currency, openings and whole-population independent statement tie-outs."
+    ],
+    [
+      "K14",
+      "Cash-flow statement",
+      "R27",
+      "Essential professional suite",
+      "Approved method, noncash/FX bridge and beginning-to-ending cash reconciliation."
+    ],
+    [
+      "K15",
+      "Payroll cost and headcount",
+      "R28",
+      "Essential people suite",
+      "Effective population and approved/paid/posted cost states separated."
+    ],
+    [
+      "K16",
+      "Attendance, leave and workforce trends",
+      "R28",
+      "Valuable people addition",
+      "Policy-based denominators, effective manager scope and privacy controls."
+    ],
+    [
+      "K17",
+      "Close progress, evidence freshness and integration reliability",
+      "R26",
+      "Essential",
+      "Versioned source readiness, actual worker lag and independently owned exceptions."
+    ],
+    [
+      "K18",
+      "Budget versus actual and scenario cash forecast",
+      "R36",
+      "Conditional extension",
+      "Trusted actuals, versioned assumptions and measured forecast quality."
+    ],
+    [
+      "K19",
+      "Customer retention and repeat-purchase cohorts",
+      "R37",
+      "Conditional extension",
+      "Identity/consent quality, anonymous transactions and correction-aware populations."
+    ]
+  ],
+  "lenses": [
+    [
+      "Platform architecture",
+      "R00 R03 R07 R21 R31"
+    ],
+    [
+      "Backend / domain integration",
+      "R03 R05 R12 R13 R14 R15 R17 R23"
+    ],
+    [
+      "Database / migrations",
+      "R08 R09 R30"
+    ],
+    [
+      "Security / IAM / privacy",
+      "R08 R10 R16 R22 R29"
+    ],
+    [
+      "Frontend / design systems",
+      "R24 R26 R27 R28"
+    ],
+    [
+      "Workflow / accessibility / localization",
+      "R05 R07 R24 R33"
+    ],
+    [
+      "Product / business processes",
+      "R00 R20 R32 R33 R34 R35 R36 R37"
+    ],
+    [
+      "QA / release assurance",
+      "R01 R31"
+    ],
+    [
+      "SRE / DevSecOps / performance / cost",
+      "R23 R29 R30"
+    ],
+    [
+      "SaaS packaging / billing / customer operations",
+      "R19 R21 R33"
+    ],
+    [
+      "Finance / internal controls",
+      "R02 R03 R06 R07 R09 R20 R27"
+    ],
+    [
+      "Statutory / country compliance",
+      "R18 R19"
+    ],
+    [
+      "Audit / evidence / data quality",
+      "R08 R09 R25 R31"
+    ],
+    [
+      "POS / inventory / offline",
+      "R04 R05 R12 R32 R34"
+    ],
+    [
+      "Purchasing / AP",
+      "R14 R34"
+    ],
+    [
+      "HRIS / payroll",
+      "R16 R17 R18 R28"
+    ],
+    [
+      "Payments / reconciliation",
+      "R15 R19"
+    ],
+    [
+      "Accounting close",
+      "R06 R07 R20 R31"
+    ],
+    [
+      "BI / data governance",
+      "R25 R26 R27 R28 R34 R36 R37"
+    ],
+    [
+      "AI safety / evaluation / human approval",
+      "R29"
+    ],
+    [
+      "API / events / provider boundaries",
+      "R05 R19 R23"
+    ],
+    [
+      "Rollout / support / training",
+      "R24 R30 R32 R33"
+    ]
+  ],
+  "effort": {
+    "core": [
+      263,
+      436
+    ],
+    "conditional": [
+      39,
+      63
+    ],
+    "bands": {
+      "S": [
+        2,
+        4
+      ],
+      "M": [
+        5,
+        8
+      ],
+      "L": [
+        9,
+        15
+      ],
+      "XL": [
+        16,
+        25
+      ]
+    }
+  }
+}

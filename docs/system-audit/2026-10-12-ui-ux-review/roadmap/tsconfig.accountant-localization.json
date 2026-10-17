@@ -1,0 +1,12 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
+  "files": [
+    "../../../../next-env.d.ts",
+    "../../../../components/accounting/AccountantAccessManager.tsx",
+    "../../../../components/accounting/AccountantPortal.tsx",
+    "../../../../app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx"
+  ],
+  "include": [],
+  "exclude": []
+}

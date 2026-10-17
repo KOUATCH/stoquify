@@ -2,6 +2,7 @@ jest.mock("server-only", () => ({}))
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    organization: { findFirst: jest.fn() },
     location: { count: jest.fn(), findFirst: jest.fn() },
     salesOrder: {
       aggregate: jest.fn(),
@@ -11,13 +12,16 @@ jest.mock("@/prisma/db", () => ({
     payment: { aggregate: jest.fn(), findFirst: jest.fn() },
     purchaseOrder: { count: jest.fn(), findFirst: jest.fn() },
     payrollPeriod: { findMany: jest.fn() },
+    businessEvent: { findMany: jest.fn().mockResolvedValue([]) },
     payrollRun: { count: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
     payrollEmployeeBalanceCase: {
+      groupBy: jest.fn(),
       count: jest.fn(),
       aggregate: jest.fn(),
       findFirst: jest.fn(),
     },
     payrollEmployeeBalanceEvent: {
+      groupBy: jest.fn(),
       count: jest.fn(),
       aggregate: jest.fn(),
       findFirst: jest.fn(),
@@ -55,18 +59,22 @@ import {
 } from "../tenant-operating-snapshot.service"
 
 const mockDb = db as unknown as {
+  organization: { findFirst: jest.Mock }
   location: { count: jest.Mock; findFirst: jest.Mock }
   salesOrder: { aggregate: jest.Mock; count: jest.Mock; findFirst: jest.Mock }
   payment: { aggregate: jest.Mock; findFirst: jest.Mock }
   purchaseOrder: { count: jest.Mock; findFirst: jest.Mock }
   payrollPeriod: { findMany: jest.Mock }
+  businessEvent: { findMany: jest.Mock }
   payrollRun: { count: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
   payrollEmployeeBalanceCase: {
+    groupBy: jest.Mock
     count: jest.Mock
     aggregate: jest.Mock
     findFirst: jest.Mock
   }
   payrollEmployeeBalanceEvent: {
+    groupBy: jest.Mock
     count: jest.Mock
     aggregate: jest.Mock
     findFirst: jest.Mock
@@ -84,6 +92,57 @@ const mockInventoryCash = getInventoryCashSnapshot as jest.Mock
 const mockCloseReadiness = getCloseReadinessSnapshot as jest.Mock
 
 describe("tenant operating snapshot service", () => {
+  it("does not combine employee balances or settlements across currencies", async () => {
+    setupTenantData(); setupChildSnapshots()
+    mockDb.organization.findFirst.mockResolvedValue({ currency: "XAF" })
+    mockDb.payrollEmployeeBalanceCase.groupBy.mockResolvedValue([
+      { currency: "USD", _sum: { outstandingAmount: 500 }, _count: { _all: 1 } },
+      { currency: "XAF", _sum: { outstandingAmount: 500 }, _count: { _all: 1 } },
+    ])
+    mockDb.payrollEmployeeBalanceEvent.groupBy.mockResolvedValue([
+      { currency: "USD", _sum: { amount: 500 }, _count: { _all: 1 } },
+      { currency: "XAF", _sum: { amount: 500 }, _count: { _all: 1 } },
+    ])
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", now: "2026-06-21T10:00:00Z" })
+    expect(result.metrics.employeeBalanceOutstandingAmount).toBeNull()
+    expect(result.metrics.periodEmployeeBalanceSettlementAmount).toBeNull()
+    expect(result.metrics.employeeBalanceCurrencyCode).toBe("XAF")
+    expect(result.metrics.employeeBalanceOutstandingByCurrency).toEqual([
+      { currencyCode: "USD", amount: 500, count: 1 },
+      { currencyCode: "XAF", amount: 500, count: 1 },
+    ])
+    expect(result.metrics.periodEmployeeBalanceSettlementByCurrency).toEqual(result.metrics.employeeBalanceOutstandingByCurrency)
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers.map(item => item.id)).toEqual(expect.arrayContaining([
+      "tenant-payroll-balance-currency-mismatch", "tenant-payroll-settlement-currency-mismatch",
+    ]))
+    expect(mockDb.organization.findFirst).toHaveBeenCalledWith({ where: { id: "org-1" }, select: { currency: true } })
+    expect(mockDb.payrollEmployeeBalanceCase.groupBy).toHaveBeenCalledWith(expect.objectContaining({
+      by: ["currency"], where: { organizationId: "org-1", status: { in: ["OPEN", "PARTIALLY_SETTLED"] } },
+    }))
+    mockDb.payrollEmployeeBalanceEvent.groupBy.mockResolvedValue([{ currency: "USD", _sum: { amount: 501 }, _count: { _all: 1 } }])
+    const changed = await getTenantOperatingSnapshot({ organizationId: "org-1", now: "2026-06-21T10:00:00Z" })
+    expect(changed.sourceHash).not.toBe(result.sourceHash)
+  })
+  it("distinguishes a successful empty query from a failed currency aggregation", async () => {
+    setupTenantData(); setupChildSnapshots()
+    const input = { organizationId: "org-1", now: "2026-06-21T10:00:00Z" }
+    const empty = await getTenantOperatingSnapshot(input)
+    expect(empty.metrics).toMatchObject({ employeeBalanceOutstandingAmount: 0, periodEmployeeBalanceSettlementAmount: 0, employeeBalanceOutstandingByCurrency: [], periodEmployeeBalanceSettlementByCurrency: [] })
+    mockDb.payrollEmployeeBalanceEvent.groupBy.mockRejectedValueOnce(new Error("source unavailable"))
+    await expect(getTenantOperatingSnapshot(input)).rejects.toThrow("source unavailable")
+    mockDb.organization.findFirst.mockResolvedValueOnce(null)
+    await expect(getTenantOperatingSnapshot(input)).rejects.toThrow("Organization is unavailable")
+  })
+  it("does not relabel a single foreign-currency balance or settlement as organization currency", async () => {
+    setupTenantData(); setupChildSnapshots()
+    mockDb.payrollEmployeeBalanceCase.groupBy.mockResolvedValue([{ currency: "USD", _sum: { outstandingAmount: 125 }, _count: { _all: 1 } }])
+    mockDb.payrollEmployeeBalanceEvent.groupBy.mockResolvedValue([{ currency: "USD", _sum: { amount: 75 }, _count: { _all: 1 } }])
+    const input = { organizationId: "org-1", now: "2026-06-21T10:00:00Z" }
+    expect((await getTenantOperatingSnapshot(input)).metrics).toMatchObject({ employeeBalanceOutstandingAmount: null, periodEmployeeBalanceSettlementAmount: null })
+    mockDb.organization.findFirst.mockResolvedValue({ currency: "USD" })
+    expect((await getTenantOperatingSnapshot(input)).metrics).toMatchObject({ employeeBalanceOutstandingAmount: 125, periodEmployeeBalanceSettlementAmount: 75, employeeBalanceCurrencyCode: "USD" })
+  })
   it("counts overdue pending orders at the supplied snapshot time within the tenant", async () => {
     setupTenantData(); setupChildSnapshots()
     const now = new Date("2026-06-21T10:00:00.000Z")
@@ -93,6 +152,7 @@ describe("tenant operating snapshot service", () => {
     expect(result.metrics).toMatchObject({ pendingPurchaseOrderCount: 7, overduePurchaseOrderCount: 2 })
   })
   beforeEach(() => {
+    mockDb.businessEvent.findMany.mockResolvedValue([])
     jest.clearAllMocks()
   })
 
@@ -181,13 +241,9 @@ describe("tenant operating snapshot service", () => {
       .mockResolvedValueOnce(2)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
-    mockDb.payrollEmployeeBalanceCase.aggregate.mockResolvedValue({
-      _sum: { outstandingAmount: 27500 },
-    })
+    mockDb.payrollEmployeeBalanceCase.groupBy.mockResolvedValue([{ currency: "XAF", _sum: { outstandingAmount: 27500 }, _count: { _all: 2 } }])
     mockDb.payrollEmployeeBalanceEvent.count.mockResolvedValue(3)
-    mockDb.payrollEmployeeBalanceEvent.aggregate.mockResolvedValue({
-      _sum: { amount: 12500 },
-    })
+    mockDb.payrollEmployeeBalanceEvent.groupBy.mockResolvedValue([{ currency: "XAF", _sum: { amount: 12500 }, _count: { _all: 3 } }])
     mockDb.payrollEmployeeBalanceCase.findFirst.mockResolvedValue({
       updatedAt: new Date("2026-06-21T08:30:00.000Z"),
     })
@@ -211,7 +267,7 @@ describe("tenant operating snapshot service", () => {
         }),
       }),
     )
-    expect(mockDb.payrollEmployeeBalanceEvent.aggregate).toHaveBeenCalledWith(
+    expect(mockDb.payrollEmployeeBalanceEvent.groupBy).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
@@ -247,6 +303,32 @@ describe("tenant operating snapshot service", () => {
       ]),
     )
   })
+  it.each(["payment", "declaration"])("withholds a foreign-currency %s forecast even when other proof is present", async source => {
+    setupChildSnapshots(); setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod(source === "payment"
+      ? { run: { paymentBatches: [forecastPaymentBatch({ currency: "USD" })] } }
+      : { declarations: [forecastDeclaration({ currency: "USD" })] })])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00Z" })
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({ authoritative: false, upcomingNetPayAmount: null, upcomingStatutoryLiabilityAmount: null, totalUpcomingAmount: null, blockerCodes: ["PAYROLL_FORECAST_CURRENCY_MISMATCH"] })
+    expect(result.metrics.payrollFinanceForecast.sourceCurrencies).toEqual(["USD", "XAF"])
+    expect(result.blockers).toContainEqual(expect.objectContaining({ title: "Payroll forecast currencies cannot be combined", detail: "Forecast source currencies: USD; XAF. No conversion evidence establishes a total in XAF." }))
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod(source === "payment"
+      ? { run: { paymentBatches: [forecastPaymentBatch({ currency: "USD", amount: 350001 })] } }
+      : { declarations: [forecastDeclaration({ currency: "USD", amount: 90001 })] })])
+    const changed = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00Z" })
+    expect(changed.sourceHash).not.toBe(result.sourceHash)
+  })
+
+  it("sums compatible forecast amounts with decimal precision", async () => {
+    setupChildSnapshots(); setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod({ run: { paymentBatches: [forecastPaymentBatch({ amount: 0.1 })] }, declarations: [forecastDeclaration({ amount: 0.2 })] })])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00Z" })
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({ authoritative: true, upcomingNetPayAmount: 0.1, upcomingStatutoryLiabilityAmount: 0.2, totalUpcomingAmount: 0.3 })
+    expect(mockDb.payrollPeriod.findMany).toHaveBeenCalledWith(expect.objectContaining({ include: expect.objectContaining({ runs: expect.objectContaining({ include: expect.objectContaining({ paymentBatches: expect.objectContaining({ select: expect.objectContaining({ currency: true }) }), declarations: expect.objectContaining({ select: expect.objectContaining({ currency: true }) }) }) }) }) }))
+  })
+
   it("exposes authoritative aggregate payroll finance forecasts from source-linked evidence", async () => {
     setupChildSnapshots()
     setupTenantData()
@@ -280,6 +362,8 @@ describe("tenant operating snapshot service", () => {
       upcomingNetPayAmount: 350000,
       upcomingStatutoryLiabilityAmount: 90000,
       totalUpcomingAmount: 440000,
+      currencyCode: "XAF",
+      sourceCurrencies: ["XAF"],
       paymentBatchCount: 1,
       declarationCount: 1,
       sourceLinkCount: 2,
@@ -294,6 +378,60 @@ describe("tenant operating snapshot service", () => {
         where: expect.objectContaining({ organizationId: "org-1" }),
       }),
     )
+  })
+
+  it("does not forecast settled payroll cash again or retain its pay date", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod({
+      run: { paymentBatches: [forecastPaymentBatch({ status: "SETTLED" })] },
+    })])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00.000Z" })
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({ authoritative: true, upcomingNetPayAmount: 0, upcomingStatutoryLiabilityAmount: 90000, totalUpcomingAmount: 90000, nextPayDate: null })
+  })
+
+  it("withholds a partially settled payroll forecast whose remaining balance is not established", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod({
+      run: { paymentBatches: [forecastPaymentBatch({ status: "PARTIALLY_SETTLED" })] },
+    })])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00.000Z" })
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({ authoritative: false, upcomingNetPayAmount: null, totalUpcomingAmount: null, blockerCodes: ["PAYROLL_FORECAST_SETTLEMENT_BALANCE_UNVERIFIED"] })
+  })
+
+  it("counts only released obligations in a mixed settled/released scope", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod({
+      run: { paymentBatches: [forecastPaymentBatch({ status: "SETTLED", id: "settled" }), forecastPaymentBatch({ paymentDate: new Date("2026-07-02T00:00:00Z") })] },
+    })])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue([...forecastSourceLinks(), { ...forecastSourceLinks()[1], id: "settled-link", sourceId: "settled" }])
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", periodStart: "2026-06-01", periodEnd: "2026-07-31", now: "2026-06-21T10:00:00.000Z" })
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({ authoritative: true, upcomingNetPayAmount: 350000, totalUpcomingAmount: 440000, nextPayDate: "2026-07-02T00:00:00.000Z" })
+  })
+
+  it("forecasts the verified remainder after each settlement and propagates query failure", async () => {
+    setupChildSnapshots(); setupTenantData()
+    const batch = forecastPaymentBatch({status:'PARTIALLY_SETTLED'})
+    mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod({run:{paymentBatches:[batch]}})])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    const first = {id:'settlement-1', organizationId:'org-1', sourceId:batch.id, status:'APPLIED', processedAt:new Date('2026-06-21T09:00:00Z'), payload:{payrollPaymentBatchId:batch.id, nextStatus:'PARTIALLY_SETTLED', settlementBalance:{version:1,sequence:1,previousEventId:null,currency:'XAF',batchAmount:'350000.00',settlementAmount:'100000.00',cumulativeSettledAmount:'100000.00',remainingAmount:'250000.00'}}}
+    mockDb.businessEvent.findMany.mockResolvedValue([first])
+    const input={organizationId:'org-1',periodStart:'2026-06-01',periodEnd:'2026-07-31',now:'2026-06-21T10:00:00.000Z'}
+    const result=await getTenantOperatingSnapshot(input)
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({authoritative:true,upcomingNetPayAmount:250000,totalUpcomingAmount:340000})
+    expect(mockDb.businessEvent.findMany).toHaveBeenCalledWith(expect.objectContaining({where:expect.objectContaining({organizationId:'org-1',sourceId:{in:[batch.id]}})}))
+    mockDb.businessEvent.findMany.mockResolvedValue([first,{...first,id:'settlement-2',payload:{...first.payload,settlementBalance:{...first.payload.settlementBalance,sequence:2,previousEventId:first.id,settlementAmount:'50000.00',cumulativeSettledAmount:'150000.00',remainingAmount:'200000.00'}}}])
+    expect((await getTenantOperatingSnapshot(input)).metrics.payrollFinanceForecast).toMatchObject({authoritative:true,upcomingNetPayAmount:200000,totalUpcomingAmount:290000})
+    mockDb.businessEvent.findMany.mockRejectedValueOnce(new Error('Owned settlement query unavailable'))
+    await expect(getTenantOperatingSnapshot(input)).rejects.toThrow('Owned settlement query unavailable')
   })
 
   it("fails closed when explicit certified HRIS readiness proof is missing", async () => {
@@ -390,9 +528,9 @@ describe("tenant operating snapshot service", () => {
     expect(result.metrics.payrollFinanceForecast).toMatchObject({
       status: "NON_AUTHORITATIVE",
       authoritative: false,
-      upcomingNetPayAmount: 0,
-      upcomingStatutoryLiabilityAmount: 0,
-      totalUpcomingAmount: 0,
+      upcomingNetPayAmount: null,
+      upcomingStatutoryLiabilityAmount: null,
+      totalUpcomingAmount: null,
       blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
       personLevelAmountsRedacted: true,
     })
@@ -446,9 +584,9 @@ function expectLocationScopeBlockedResult(
           status: "NON_AUTHORITATIVE",
           authoritative: false,
           reasonCode: "TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED",
-          upcomingNetPayAmount: 0,
-          upcomingStatutoryLiabilityAmount: 0,
-          totalUpcomingAmount: 0,
+          upcomingNetPayAmount: null,
+          upcomingStatutoryLiabilityAmount: null,
+          totalUpcomingAmount: null,
           personLevelAmountsRedacted: true,
           blockerCodes: ["TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED"],
         }),
@@ -560,6 +698,7 @@ function forecastPaymentBatch(overrides: Record<string, unknown> = {}) {
     id: "payment-batch-forecast-1",
     status: "RELEASED",
     amount: 350000,
+    currency: "XAF",
     paymentDate: new Date("2026-06-30T00:00:00.000Z"),
     evidenceHash: "sha256:payment-evidence",
     bankFileHash: "sha256:bank-file",
@@ -576,6 +715,7 @@ function forecastDeclaration(overrides: Record<string, unknown> = {}) {
     id: "declaration-forecast-1",
     status: "PAYMENT_DUE",
     amount: 90000,
+    currency: "XAF",
     dueDate: new Date("2026-07-15T00:00:00.000Z"),
     payloadHash: "sha256:declaration-payload",
     countryPackResolutionHash: "sha256:country-pack",
@@ -679,6 +819,9 @@ function setupChildSnapshots() {
 }
 
 function setupTenantData() {
+  mockDb.organization.findFirst.mockResolvedValue({ currency: "XAF" })
+  mockDb.payrollEmployeeBalanceCase.groupBy.mockResolvedValue([])
+  mockDb.payrollEmployeeBalanceEvent.groupBy.mockResolvedValue([])
   mockDb.location.count.mockResolvedValue(1)
   mockDb.salesOrder.aggregate.mockResolvedValue({ _sum: { total: 25000 } })
   mockDb.salesOrder.count.mockResolvedValue(4)

@@ -1,0 +1,80 @@
+{
+  "utc": "2026-10-13T12:36:59.013200+00:00",
+  "artifact_validation": "FAIL",
+  "p05_execution_state": "PARTIAL \u2014 mandatory real database and browser verification NOT_RUN",
+  "checks": {
+    "head_unchanged": true,
+    "prior_83_artifacts_unchanged": true,
+    "only_p05_register_row_changed": true,
+    "selected_unowned_sources_unchanged": true,
+    "original_source_and_test_bytes_preserved_except_owned_additions": true,
+    "p01_drift_only_owned": true,
+    "manifest_matches_final_source": true,
+    "green_109_tests_6_suites_zero_skips": true,
+    "red_reproduced_one_failure": true,
+    "local_artifact_links_resolve": false
+  },
+  "prior_artifact_drift": [],
+  "selected_owned_source_drift": [
+    "services/pos/pos.service.ts",
+    "services/pos/__tests__/commit-recovery.service.test.ts",
+    "services/pos/__tests__/pos-full-commit.postgres.test.ts"
+  ],
+  "unexpected_selected_drift": [],
+  "preservation": {
+    "services/pos/pos.service.ts": {
+      "only_owned_predicate_and_comment": true
+    },
+    "services/pos/__tests__/pos.service.test.ts": {
+      "only_additions_original_bytes_preserved": true,
+      "insertion_blocks": 1
+    },
+    "services/pos/__tests__/commit-recovery.service.test.ts": {
+      "only_additions_original_bytes_preserved": true,
+      "insertion_blocks": 1
+    },
+    "services/pos/__tests__/pos-full-commit.postgres.test.ts": {
+      "only_additions_original_bytes_preserved": true,
+      "insertion_blocks": 1
+    }
+  },
+  "p01_fingerprint_count": 81,
+  "p01_final_drift": [
+    "services/pos/pos.service.ts"
+  ],
+  "source_manifest_drift": [],
+  "test_results": {
+    "CHECKOUT_RECOVERY_AFTER.json": {
+      "success": true,
+      "numPassedTests": 90,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 4
+    },
+    "CHECKOUT_LIFECYCLE_FINAL.json": {
+      "success": true,
+      "numPassedTests": 16,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 1
+    },
+    "PENDING_REQUEST_RESULTS.json": {
+      "success": true,
+      "numPassedTests": 3,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numPassedTestSuites": 1
+    }
+  },
+  "broken_links": [
+    {
+      "document": "RESULT.md",
+      "target": "evidence/VALIDATION.json"
+    },
+    {
+      "document": "RESULT.md",
+      "target": "evidence/VALIDATION.json"
+    }
+  ],
+  "limitations": "Hashes cover selected sources and all prior retention artifacts captured at start, not every dirty file. No database, browser or application command is run by this validator."
+}

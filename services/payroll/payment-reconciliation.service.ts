@@ -4,6 +4,7 @@ import {
   AccountingSourceType,
   MatchStatus,
   PaymentExceptionStatus,
+  PaymentExceptionType,
   PaymentTransactionState,
   PayrollPaymentBatchStatus,
   Prisma,
@@ -11,6 +12,9 @@ import {
 import { z } from "zod";
 
 import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions";
+import { logger } from "@/lib/logger";
+import { createCorrelationId } from "@/lib/error-handling/canonical";
+import { payrollSettlementAuthority } from "./payment-settlement-authority";
 import { db } from "@/prisma/db";
 import {
   BusinessRuleError,
@@ -35,6 +39,9 @@ import {
   type RedactionDecision,
 } from "@/services/security/redaction-policy.service";
 import { resolvePayrollPaymentSettlementLifecycleContract } from "./payroll-adapter-registry.service";
+import { nextSettlementBalance, resolveSettlementBalance, settlementMoney, type SettlementBalance, type SettlementBalanceEvent } from "./payment-settlement-balance";
+import { settlementProofSelectionSchema, type SettlementProofOptions } from "./payment-settlement-proof-contracts";
+import { settlementMatchProofInclude, storedRegisterProof, storedMatchProof, resolveStoredSettlementProof } from "./payment-settlement-proof";
 
 const PAYMENT_RECONCILIATION_READ_PERMISSIONS = [
   "payroll.payments.reconcile",
@@ -78,6 +85,9 @@ export const payrollPaymentReconciliationInputSchema =
 
 export const recordPayrollPaymentSettlementInputSchema =
   actorContextSchema.extend({
+    sessionId: idSchema.optional(),
+    sessionToken: idSchema.optional(),
+    correlationId: idSchema.optional(),
     payrollPaymentBatchId: idSchema,
     settlementStatus: z
       .enum(["settled", "partially_settled"])
@@ -85,6 +95,7 @@ export const recordPayrollPaymentSettlementInputSchema =
     settlementAmount: z
       .union([z.string(), z.number(), z.instanceof(Prisma.Decimal)])
       .optional(),
+    expectedBalanceEventId: idSchema.nullable().optional(),
     providerAccountId: idSchema.optional(),
     providerTransactionId: idSchema.optional(),
     providerReference: idSchema.optional(),
@@ -95,6 +106,7 @@ export const recordPayrollPaymentSettlementInputSchema =
     reconciliationRunId: idSchema.optional(),
     evidenceHash: hashSchema,
     sourceRegisterHash: hashSchema.optional(),
+    proofSelection: settlementProofSelectionSchema.optional(),
     approvedById: idSchema.optional(),
     notes: z.string().trim().max(2000).optional(),
     idempotencyKey: idSchema,
@@ -139,8 +151,15 @@ export type PayrollPaymentReconciliationBatch = {
   status: PayrollPaymentBatchStatus;
   reconciliationStatus: string | null;
   amount: string;
+  settlement: {
+    remainingAmount: string | null;
+    revision: string | null;
+    availability: "verified" | "unavailable" | "restricted";
+    canRecord: boolean;
+  };
   currency: string;
   method: string;
+  proofOptions?: SettlementProofOptions;
   paymentDate: string;
   ledgerPostingBatchId: string | null;
   postedBusinessEventId: string | null;
@@ -299,37 +318,13 @@ const paymentTransactionInclude = {
       providerCode: true,
       displayName: true,
       externalAccountMasked: true,
+      organizationId: true,
     },
   },
 } satisfies Prisma.PaymentTransactionInclude;
 
 const matchRecordInclude = {
-  providerEvent: {
-    select: {
-      id: true,
-      providerEventId: true,
-      providerTransactionId: true,
-      providerReference: true,
-      rawPayloadHash: true,
-      signatureHash: true,
-      signatureValid: true,
-    },
-  },
-  statementLine: {
-    select: {
-      id: true,
-      providerTransactionId: true,
-      providerReference: true,
-      rawLineHash: true,
-      statementFile: {
-        select: {
-          id: true,
-          fileHash: true,
-          fileName: true,
-        },
-      },
-    },
-  },
+  ...settlementMatchProofInclude,
   reconciliationRun: {
     select: {
       id: true,
@@ -366,7 +361,17 @@ async function inTransaction<T>(
   client: DbClient,
   work: (tx: Prisma.TransactionClient) => Promise<T>,
 ) {
-  if (hasTransaction(client)) return client.$transaction((tx) => work(tx));
+  if (hasTransaction(client)) {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await client.$transaction((tx) => work(tx), { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+      } catch (error) {
+        const failure = error as { code?: string; meta?: { code?: string } };
+        if (failure.code !== "P2034" && !(failure.code === "P2010" && ["40001", "40P01"].includes(String(failure.meta?.code)))) throw error;
+        if (attempt === 2) throw new ConflictError("Payroll settlement changed concurrently. Refresh the batch and retry.");
+      }
+    }
+  }
   return work(client as Prisma.TransactionClient);
 }
 
@@ -582,38 +587,19 @@ function assertReadAllowed(
   }
 }
 
-function assertWriteAllowed(
-  input: z.output<typeof recordPayrollPaymentSettlementInputSchema>,
-) {
-  if (input.moduleDecision && !input.moduleDecision.allowed) {
-    throw new ForbiddenError(
-      "Payroll payment reconciliation is not available for this tenant.",
-    );
-  }
-  if (
-    !hasAnyRbacPermission(
-      input.actorPermissions,
-      PAYMENT_RECONCILIATION_WRITE_PERMISSIONS,
-    )
-  ) {
-    throw new ForbiddenError(
-      "Missing permission for payroll payment reconciliation settlement.",
-    );
-  }
-}
-
 function paymentTransactionForBatch(
   batch: PayrollPaymentBatchRecord,
-  transactionsById: Map<string, PaymentTransactionRecord>,
-  transactionsBySourceId: Map<string, PaymentTransactionRecord>,
+  transactions: PaymentTransactionRecord[],
 ) {
-  if (
-    batch.paymentTransactionId &&
-    transactionsById.has(batch.paymentTransactionId)
-  ) {
-    return transactionsById.get(batch.paymentTransactionId) ?? null;
+  const candidates = transactions.filter(transaction => transaction.id === batch.paymentTransactionId ||
+    (transaction.sourceType === "PAYROLL_PAYMENT" && transaction.sourceId === batch.id));
+  if (candidates.length > 1) throw new BusinessRuleError("Payroll payment transaction linkage is ambiguous. Reconcile the source records before proceeding.");
+  const transaction = candidates[0] ?? null;
+  if ((batch.paymentTransactionId && transaction?.id !== batch.paymentTransactionId) ||
+    (transaction && (transaction.organizationId !== batch.organizationId || transaction.sourceType !== "PAYROLL_PAYMENT" || transaction.sourceId !== batch.id))) {
+    throw new BusinessRuleError("Payroll payment transaction linkage does not match the released batch. Reconcile the source records before proceeding.");
   }
-  return transactionsBySourceId.get(batch.id) ?? null;
+  return transaction;
 }
 
 function exceptionsForBatch(
@@ -661,6 +647,15 @@ function inboxForTransaction(
   );
 }
 
+function approvedSettlementMatch(match: MatchRecordRecord) {
+  return APPROVED_SETTLEMENT_MATCH_STATUSES.has(match.status) && Boolean(match.providerEventId || match.statementLineId);
+}
+
+function exceptionSatisfiedByMatch(exception: PaymentExceptionRecord, match: MatchRecordRecord) {
+  if (!approvedSettlementMatch(match)) return false;
+  return (exception.type === PaymentExceptionType.MISSING_STATEMENT_LINE && Boolean(match.statementLineId)) ||
+    (exception.type === PaymentExceptionType.MISSING_PROVIDER_EVENT && Boolean(match.providerEventId));
+}
 function derivedState(input: {
   batch: PayrollPaymentBatchRecord;
   transaction: PaymentTransactionRecord | null;
@@ -674,9 +669,6 @@ function derivedState(input: {
   ) {
     return "SETTLED";
   }
-  if (input.batch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED) {
-    return "PARTIALLY_SETTLED";
-  }
   if (
     !input.batch.ledgerPostingBatchId ||
     input.transaction?.state === PaymentTransactionState.SUSPENSE ||
@@ -685,13 +677,14 @@ function derivedState(input: {
     return "LEDGER_BLOCKED";
   }
   if (
-    input.exceptions.some((exception) => openException(exception.status)) ||
+    input.exceptions.some((exception) => openException(exception.status) && !input.matches.some(match => exceptionSatisfiedByMatch(exception, match))) ||
     input.suspenseItems.some(
       (item) => item.status !== "RESOLVED" && item.status !== "WRITTEN_OFF",
     )
   ) {
     return "EXCEPTION_OPEN";
   }
+  if (input.batch.status === PayrollPaymentBatchStatus.PARTIALLY_SETTLED) return "PARTIALLY_SETTLED";
   const hasApprovedMatch = input.matches.some(
     (match) =>
       APPROVED_SETTLEMENT_MATCH_STATUSES.has(match.status) &&
@@ -773,25 +766,24 @@ async function loadReconciliationRows(
   }
 
   const batchIds = batches.map((batch) => batch.id);
-  const transactionIds = batches
+  const explicitIds = batches
     .map((batch) => batch.paymentTransactionId)
     .filter((id): id is string => Boolean(id));
 
-  const [transactions, exceptions, matches, suspenseItems, inboxItems] =
-    batchIds.length
-      ? await Promise.all([
-          client.paymentTransaction.findMany({
+  const transactions = batchIds.length ? await client.paymentTransaction.findMany({
             where: {
               organizationId: input.organizationId,
               OR: [
-                ...(transactionIds.length
-                  ? [{ id: { in: transactionIds } }]
+                ...(explicitIds.length
+                  ? [{ id: { in: explicitIds } }]
                   : []),
                 { sourceType: "PAYROLL_PAYMENT", sourceId: { in: batchIds } },
               ],
             },
             include: paymentTransactionInclude,
-          }),
+          }) : [];
+  const transactionIds = batches.map(batch => paymentTransactionForBatch(batch, transactions)?.id).filter((id): id is string => Boolean(id));
+  const [exceptions, matches, suspenseItems, inboxItems] = batchIds.length ? await Promise.all([
           client.paymentException.findMany({
             where: {
               organizationId: input.organizationId,
@@ -838,7 +830,7 @@ async function loadReconciliationRows(
             orderBy: { createdAt: "desc" },
           }),
         ])
-      : [[], [], [], [], []];
+      : [[], [], [], []];
 
   return {
     batches,
@@ -862,25 +854,14 @@ function buildReadModel(input: {
   matches: MatchRecordRecord[];
   suspenseItems: SuspenseItemRecord[];
   inboxItems: InboxItemRecord[];
+  settlementEvents: SettlementBalanceEvent[];
+  canWriteSettlement: boolean;
 }): PayrollPaymentReconciliationReadModel {
-  const transactionsById = new Map(
-    input.transactions.map((transaction) => [transaction.id, transaction]),
-  );
-  const transactionsBySourceId = new Map(
-    input.transactions
-      .filter(
-        (transaction) =>
-          transaction.sourceType === "PAYROLL_PAYMENT" && transaction.sourceId,
-      )
-      .map((transaction) => [transaction.sourceId as string, transaction]),
-  );
-
   const batches = input.batches.map<PayrollPaymentReconciliationBatch>(
     (batch) => {
       const transaction = paymentTransactionForBatch(
         batch,
-        transactionsById,
-        transactionsBySourceId,
+        input.transactions,
       );
       const batchExceptions = exceptionsForBatch(
         batch,
@@ -909,6 +890,19 @@ function buildReadModel(input: {
       );
       const latestRetry = batchInboxItems[0] ?? null;
       const metadata = asRecord(batch.metadata);
+      const balance = resolveSettlementBalance(batch, input.settlementEvents.filter(event => event.sourceId === batch.id));
+      const canReadBalance = input.amountDecision.allowed && input.proofIdentifierDecision.allowed;
+      const proofVisible = canReadBalance && input.providerDecision.allowed && input.canWriteSettlement;
+      const proofOptions: SettlementProofOptions = { register: proofVisible ? storedRegisterProof(batch, batch.payrollRun) : null, matches: [] };
+      if (proofOptions.register && transaction) {
+        const usedEvents = input.settlementEvents.filter(event => event.sourceId === batch.id).map(event => asRecord(event.payload));
+        proofOptions.matches = batchMatches.flatMap(match => {
+          if (!balance || !match.amountMatched || match.amountMatched.gt(balance.remaining) || batchMatches.some(other => other.correctionOfId === match.id)) return [];
+          if (usedEvents.some(event => event.matchRecordId === match.id || (match.providerEventId && event.providerEventId === match.providerEventId) || (match.statementLineId && event.statementLineId === match.statementLineId))) return [];
+          const proof = storedMatchProof(batch, transaction, match);
+          return proof ? [proof.option] : [];
+        });
+      }
 
       return {
         id: batch.id,
@@ -919,8 +913,15 @@ function buildReadModel(input: {
         status: batch.status,
         reconciliationStatus: batch.reconciliationStatus,
         amount: amount(input.amountDecision, batch.amount),
+        settlement: {
+          remainingAmount: canReadBalance && balance ? balance.remaining.toFixed(2) : null,
+          revision: canReadBalance && balance ? balance.previousEventId : null,
+          availability: !canReadBalance ? "restricted" : balance ? "verified" : "unavailable",
+          canRecord: canReadBalance && input.providerDecision.allowed && input.canWriteSettlement && Boolean(balance?.remaining.gt(0)) && ["READY_TO_SETTLE", "PARTIALLY_SETTLED"].includes(state),
+        },
         currency: batch.currency,
         method: batch.method,
+        proofOptions,
         paymentDate: batch.paymentDate.toISOString(),
         ledgerPostingBatchId: batch.ledgerPostingBatchId,
         postedBusinessEventId: batch.postedBusinessEventId,
@@ -1244,6 +1245,11 @@ export async function getPayrollPaymentReconciliation(
     providerDecision,
     suspenseDecision,
     proofIdentifierDecision,
+    canWriteSettlement: !parsed.moduleDecision?.entitlement?.readOnly && hasAnyRbacPermission(parsed.actorPermissions, PAYMENT_RECONCILIATION_WRITE_PERMISSIONS),
+    settlementEvents: rows.batches.length ? await client.businessEvent.findMany({
+      where: { organizationId: parsed.organizationId, sourceType: AccountingSourceType.PAYROLL_PAYMENT, sourceId: { in: rows.batches.map(batch => batch.id) }, eventType: "payroll.payment_batch.reconciled" },
+      select: { id: true, organizationId: true, sourceId: true, status: true, payload: true },
+    }) : [],
     ...rows,
   });
 
@@ -1312,9 +1318,9 @@ function assertSettlementState(
       "Payroll payment settlement cannot proceed while the payment transaction is in suspense.",
     );
   }
-  if (openExceptions.length > 0 && !matchRecord) {
+  if (openExceptions.some(exception => !matchRecord || !exceptionSatisfiedByMatch(exception, matchRecord))) {
     throw new BusinessRuleError(
-      "Open payroll payment exceptions require approved matching evidence before settlement.",
+      "Open payroll payment exceptions require their own resolution; missing statement or provider evidence requires a corresponding approved match before settlement.",
     );
   }
   if (
@@ -1335,10 +1341,9 @@ function settlementPayload(input: {
   now: Date;
   nextStatus: PayrollPaymentBatchStatus;
   proofMetadata: ReturnType<typeof paymentBatchProofMetadata>;
+  balance: SettlementBalance;
 }) {
-  const amountValue = input.parsed.settlementAmount
-    ? decimal(input.parsed.settlementAmount)
-    : decimal(input.batch.amount);
+  const amountValue = settlementMoney(input.balance.settlementAmount);
   const providerEvidence = {
     providerAccountId:
       input.parsed.providerAccountId ??
@@ -1390,6 +1395,7 @@ function settlementPayload(input: {
     nextStatus: input.nextStatus,
     settlementStatus: input.parsed.settlementStatus,
     settlementAmount: amountValue.toFixed(2),
+    settlementBalance: input.balance,
     batchAmount: input.batch.amount.toFixed(2),
     currency: input.batch.currency,
     paymentTransactionId: input.transaction.id,
@@ -1412,10 +1418,36 @@ export async function recordPayrollPaymentSettlementEvidence(
   client: DbClient = db,
 ): Promise<PayrollPaymentSettlementResult> {
   const parsed = recordPayrollPaymentSettlementInputSchema.parse(input);
-  assertWriteAllowed(parsed);
-  const now = parseDate(parsed.now, new Date());
+  parsed.correlationId ??= createCorrelationId("payroll");
+  if (parsed.proofSelection) {
+    if (parsed.settlementAmount === undefined || parsed.expectedBalanceEventId === undefined) {
+      throw new BusinessRuleError("Guided payroll settlement requires an explicitly reviewed amount and balance revision.");
+    }
+    // Guided callers select records; they cannot override stored proof with hashes
+    // or provider identifiers. Keep the command identity stable across retries.
+    parsed.evidenceHash = "GUIDED_RECORDS_V1";
+    parsed.sourceRegisterHash = undefined;
+    parsed.matchRecordId = parsed.proofSelection.matchRecordId;
+    parsed.providerEventId = undefined;
+    parsed.statementLineId = undefined;
+    parsed.statementFileHash = undefined;
+    parsed.providerAccountId = undefined;
+    parsed.providerTransactionId = undefined;
+    parsed.providerReference = undefined;
+    parsed.reconciliationRunId = undefined;
+  }
+  const commandHash = prefixedHash({
+    ...parsed, now: undefined, lastAuthAt: undefined, actorPermissions: undefined,
+    sessionId: undefined, sessionToken: undefined, correlationId: undefined,
+    moduleDecision: undefined, metadata: undefined,
+    settlementAmount: parsed.settlementAmount === undefined ? null : settlementMoney(parsed.settlementAmount).toFixed(2),
+  });
 
+  const command = parsed;
   return inTransaction(client, async (tx) => {
+    const authority = await payrollSettlementAuthority(tx, command, false);
+    const parsed = { ...command, actorPermissions: authority.permissions, lastAuthAt: authority.lastAuthAt };
+    let now = authority.now;
     const batch = await tx.payrollPaymentBatch.findFirst({
       where: {
         id: parsed.payrollPaymentBatchId,
@@ -1424,8 +1456,17 @@ export async function recordPayrollPaymentSettlementEvidence(
       include: payrollPaymentBatchInclude,
     });
     if (!batch) throw new NotFoundError("Payroll payment batch not found.");
+    const guidedReplay = parsed.proofSelection ? asRecord(asRecord(batch.metadata)[settlementMetadataKey(parsed.idempotencyKey)]) : null;
+    if (guidedReplay && Object.keys(guidedReplay).length) {
+      if (guidedReplay.commandHash !== commandHash || !guidedReplay.businessEventId || !guidedReplay.paymentTransactionId || !guidedReplay.settlementEvidenceHash) {
+        throw new ConflictError("Payroll settlement replay does not match the recorded guided command.");
+      }
+      return { payrollPaymentBatchId: batch.id, payrollRunId: batch.payrollRunId, status: batch.status,
+        reconciliationStatus: batch.reconciliationStatus ?? "SETTLEMENT_REPLAY", paymentTransactionId: String(guidedReplay.paymentTransactionId),
+        businessEventId: String(guidedReplay.businessEventId), settlementEvidenceHash: String(guidedReplay.settlementEvidenceHash), idempotent: true };
+    }
 
-    const transaction = await tx.paymentTransaction.findFirst({
+    const transactions = await tx.paymentTransaction.findMany({
       where: {
         organizationId: parsed.organizationId,
         OR: [
@@ -1437,13 +1478,14 @@ export async function recordPayrollPaymentSettlementEvidence(
       },
       include: paymentTransactionInclude,
     });
+    const transaction = paymentTransactionForBatch(batch, transactions);
     if (!transaction) {
       throw new BusinessRuleError(
         "Payroll payment batch has no linked payment transaction for reconciliation.",
       );
     }
 
-    const [matchRecord, openExceptions] = await Promise.all([
+    const [matchRecord, openExceptions, openSuspense] = await Promise.all([
       parsed.matchRecordId
         ? tx.matchRecord.findFirst({
             where: {
@@ -1469,6 +1511,10 @@ export async function recordPayrollPaymentSettlementEvidence(
           ],
         },
       }),
+      tx.suspenseItem.findMany({
+        where: { organizationId: parsed.organizationId, paymentTransactionId: transaction.id, status: { notIn: ["RESOLVED", "WRITTEN_OFF"] } },
+        select: { id: true },
+      }),
     ]);
 
     if (parsed.matchRecordId && !matchRecord) {
@@ -1477,6 +1523,20 @@ export async function recordPayrollPaymentSettlementEvidence(
       );
     }
 
+    if (parsed.proofSelection) {
+      if (!matchRecord) throw new NotFoundError("Selected payroll proof was not found.");
+      const correction = await tx.matchRecord.findFirst({ where: { organizationId: parsed.organizationId, correctionOfId: matchRecord.id }, select: { id: true } });
+      if (correction) throw new ConflictError("The selected payroll match has a correction. Review the current evidence.");
+      const proof = resolveStoredSettlementProof(batch, batch.payrollRun, transaction, matchRecord, parsed.proofSelection);
+      parsed.sourceRegisterHash = proof.sourceRegisterHash;
+      parsed.evidenceHash = proof.evidenceHash;
+      parsed.providerEventId = proof.providerEventId;
+      parsed.statementLineId = proof.statementLineId;
+      parsed.statementFileHash = proof.statementFileHash;
+      parsed.providerAccountId = proof.providerAccountId;
+      parsed.providerTransactionId = proof.providerTransactionId;
+      parsed.providerReference = proof.providerReference;
+    }
     assertSettlementEvidence(parsed, matchRecord);
     const proofMetadata = paymentBatchProofMetadata(batch);
 
@@ -1485,6 +1545,12 @@ export async function recordPayrollPaymentSettlementEvidence(
     ];
     if (existingSettlement) {
       const existing = asRecord(existingSettlement);
+      if (existing.commandHash && existing.commandHash !== commandHash) {
+        throw new ConflictError("Payroll payment settlement idempotency key was reused with a different command.");
+      }
+      if (!existing.commandHash && (parsed.settlementAmount !== undefined || parsed.settlementStatus !== "settled")) {
+        throw new ConflictError("Legacy settlement replay has no verified amount contract. Review the original evidence.");
+      }
       if (existing.inputEvidenceHash !== parsed.evidenceHash) {
         throw new ConflictError(
           "Payroll payment settlement idempotency key was reused with a different evidence hash.",
@@ -1512,8 +1578,31 @@ export async function recordPayrollPaymentSettlementEvidence(
       };
     }
 
+    if (openSuspense.length > 0) throw new BusinessRuleError("Resolve the linked payroll payment suspense obligations before settlement.");
     assertSettlementState(batch, transaction, openExceptions, matchRecord);
+    const settlementEvents = await tx.businessEvent.findMany({
+      where: { organizationId: parsed.organizationId, sourceType: AccountingSourceType.PAYROLL_PAYMENT, sourceId: batch.id, eventType: "payroll.payment_batch.reconciled" },
+      select: { id: true, organizationId: true, sourceId: true, status: true, payload: true },
+    });
+    const previousBalance = resolveSettlementBalance(batch, settlementEvents);
+    if (!previousBalance) throw new BusinessRuleError("Payroll settlement history cannot establish the remaining obligation. Reconcile the original evidence before recording another settlement.");
+    if (parsed.expectedBalanceEventId !== undefined && parsed.expectedBalanceEventId !== previousBalance.previousEventId) {
+      throw new ConflictError("The payroll settlement balance changed. Refresh the batch and review the remaining amount.");
+    }
+    const balance = nextSettlementBalance(batch, previousBalance, parsed.settlementAmount, parsed.settlementStatus);
+    if (transaction.currencyCode !== batch.currency || !transaction.amount.eq(batch.amount)) throw new BusinessRuleError("Payroll settlement transaction currency and amount must match the released batch.");
+    if (matchRecord && (matchRecord.currencyCode !== batch.currency || !matchRecord.amountMatched?.eq(balance.settlementAmount))) throw new BusinessRuleError("Approved match currency and amount must match this settlement.");
+    const providerEventId = parsed.providerEventId ?? matchRecord?.providerEventId;
+    const statementLineId = parsed.statementLineId ?? matchRecord?.statementLineId;
+    if (settlementEvents.some(event => {
+      const payload = asRecord(event.payload);
+      return payload.inputEvidenceHash === parsed.evidenceHash || (providerEventId && payload.providerEventId === providerEventId) || (statementLineId && payload.statementLineId === statementLineId) || (matchRecord && payload.matchRecordId === matchRecord.id);
+    })) throw new ConflictError("This provider or statement evidence has already been used for a payroll settlement.");
 
+    const writeAuthority = await payrollSettlementAuthority(tx, command, true);
+    parsed.actorPermissions = writeAuthority.permissions;
+    parsed.lastAuthAt = writeAuthority.lastAuthAt;
+    now = writeAuthority.now;
     const nextBatchStatus =
       parsed.settlementStatus === "settled"
         ? PayrollPaymentBatchStatus.SETTLED
@@ -1528,6 +1617,7 @@ export async function recordPayrollPaymentSettlementEvidence(
       now,
       nextStatus: nextBatchStatus,
       proofMetadata,
+      balance,
     });
     const settlementEvidenceHash = prefixedHash(evidence);
     const settlementLifecycleMetadata = {
@@ -1553,7 +1643,7 @@ export async function recordPayrollPaymentSettlementEvidence(
       now,
       resourceType: "PayrollPaymentBatch",
       resourceId: batch.id,
-      amount: parsed.settlementAmount ?? batch.amount,
+      amount: balance.settlementAmount,
       currency: batch.currency,
       metadata: {
         settlementStatus: parsed.settlementStatus,
@@ -1643,7 +1733,7 @@ export async function recordPayrollPaymentSettlementEvidence(
         organizationId: parsed.organizationId,
         eventType: "payroll.payment_batch.reconciled",
         eventSource: "INTERNAL",
-        schemaVersion: 1,
+        schemaVersion: 2,
         idempotencyKey: `payroll-payment-reconciliation:${batch.id}:${parsed.idempotencyKey}`,
         payload: {
           payrollPaymentBatchId: batch.id,
@@ -1653,6 +1743,9 @@ export async function recordPayrollPaymentSettlementEvidence(
           nextStatus: nextBatchStatus,
           reconciliationStatus,
           settlementEvidenceHash,
+          settlementBalance: balance,
+          commandHash,
+          inputEvidenceHash: parsed.evidenceHash,
           sourceRegisterHash: parsed.sourceRegisterHash,
           ...proofMetadata,
           ...settlementLifecycleMetadata,
@@ -1733,6 +1826,9 @@ export async function recordPayrollPaymentSettlementEvidence(
           latestSettlementAt: now.toISOString(),
           latestSettlementStatus: parsed.settlementStatus,
           [settlementMetadataKey(parsed.idempotencyKey)]: {
+            commandHash,
+            paymentTransactionId: updatedTransaction.id,
+            ...(parsed.proofSelection ? { proofSelection: parsed.proofSelection } : {}),
             businessEventId: eventResult.event.id,
             inputEvidenceHash: parsed.evidenceHash,
             sourceRegisterHash: parsed.sourceRegisterHash,
@@ -1803,6 +1899,8 @@ export async function recordPayrollPaymentSettlementEvidence(
       },
     });
 
+    // Economic locks/writes may have waited. Expiry here rolls back all effects.
+    await payrollSettlementAuthority(tx, command, true);
     return {
       payrollPaymentBatchId: updatedBatch.id,
       payrollRunId: updatedBatch.payrollRunId,
@@ -1814,5 +1912,11 @@ export async function recordPayrollPaymentSettlementEvidence(
       settlementEvidenceHash,
       idempotent: false,
     };
+  }).catch(error => {
+    // Outside the failed transaction: transactional denial audit rows roll back.
+    // This is an operational event, not a substitute for the committed audit trail.
+    logger.warn("payroll settlement rejected", { organizationId: command.organizationId, actorId: command.actorId,
+      correlationId: command.correlationId, resource: command.payrollPaymentBatchId, code: error instanceof Error && "code" in error ? error.code : "SETTLEMENT_FAILED" });
+    throw error;
   });
 }

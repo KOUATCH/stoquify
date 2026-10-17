@@ -1,4 +1,4 @@
-import { clonePurchaseOrder } from "../purchase-order.service"
+import { clonePurchaseOrder, createPurchaseOrderInTx } from "../purchase-order.service"
 import { db } from "@/prisma/db"
 
 jest.mock("@/prisma/db", () => ({ db: { purchaseOrder: { findFirst: jest.fn() }, $transaction: jest.fn() } }))
@@ -26,6 +26,7 @@ const source = {
 const clone = { ...source, id: "cloned-po", orderNumber: "PO-CLONED-1", status: "DRAFT" }
 function transaction() {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([]),
     supplier: { findFirst: jest.fn().mockResolvedValue({ id: "supplier-1" }) },
     location: { findFirst: jest.fn().mockResolvedValue({ id: "location-1" }) },
     item: { findMany: jest.fn().mockResolvedValue([{ id: "item-1" }]) },
@@ -39,6 +40,29 @@ beforeEach(() => {
   tx = transaction()
   ;(db.purchaseOrder.findFirst as jest.Mock).mockResolvedValue(source)
   ;(db.$transaction as jest.Mock).mockImplementation((handler) => handler(tx))
+})
+
+describe("purchase-order creation inside the durable receipt transaction", () => {
+  const input = { organizationId: "org-1", createdById: "buyer-1", supplierId: "supplier-1", locationId: "location-1", date: "2026-10-04", expectedDeliveryDate: "2026-10-05", orderLines: [{ itemId: "item-1", quantity: 2, unitPrice: 10 }] }
+  it.each(["supplier", "location"] as const)("requires a current active tenant %s before allocating a number", async kind => {
+    tx[kind].findFirst.mockResolvedValue(null)
+    await expect(createPurchaseOrderInTx(tx as never, input)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(tx[kind].findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", isActive: true, deletedAt: null }) }))
+    expect(allocatePurchaseDocumentNumber).not.toHaveBeenCalled(); expect(tx.purchaseOrder.create).not.toHaveBeenCalled()
+  })
+  it("rejects unavailable items before numbering and creating the order", async () => {
+    tx.item.findMany.mockResolvedValue([])
+    await expect(createPurchaseOrderInTx(tx as never, input)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(tx.item.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", isActive: true, deletedAt: null }) }))
+    expect(allocatePurchaseDocumentNumber).not.toHaveBeenCalled()
+  })
+  it("keeps reference locks, numbering and creation in the caller's transaction", async () => {
+    await createPurchaseOrderInTx(tx as never, input)
+    expect(db.$transaction).not.toHaveBeenCalled()
+    expect(tx.$queryRaw).toHaveBeenCalledTimes(3)
+    expect(allocatePurchaseDocumentNumber).toHaveBeenCalledWith(tx, { organizationId: "org-1", documentType: "PURCHASE_ORDER" })
+    expect(tx.purchaseOrder.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "DRAFT", createdById: "buyer-1" }) }))
+  })
 })
 describe("clone purchase-order current tenant references", () => {
   it.each([

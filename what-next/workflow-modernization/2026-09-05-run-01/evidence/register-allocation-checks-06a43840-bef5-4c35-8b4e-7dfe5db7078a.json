@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-30T14:11:22.340Z",
+  "sourceBefore": {
+    "services/payroll/payroll-register.service.ts": "36f5ed5c5eacd3dc6394fe0ca732b76a914424bfc39a0f649cca5faec02b2485",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "services/payroll/__tests__/payroll-register.service.test.ts": "bbeaecf2cb67a87228e8fe920b2129af0f7ad3203ba8c11068d35cfe036f3b93"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/payroll/__tests__/payroll-register.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "Test Suites: 1 passed, 1 total\nTests:       16 passed, 16 total\nSnapshots:   0 total\nTime:        11.287 s\nRan all test suites within paths \"services/payroll/__tests__/payroll-register.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/payroll/payroll-register.service.ts",
+        "components/payroll/PayrollRegisterTieOut.tsx",
+        "services/payroll/__tests__/payroll-register.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/payroll/payroll-register.service.ts": "36f5ed5c5eacd3dc6394fe0ca732b76a914424bfc39a0f649cca5faec02b2485",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "services/payroll/__tests__/payroll-register.service.test.ts": "bbeaecf2cb67a87228e8fe920b2129af0f7ad3203ba8c11068d35cfe036f3b93"
+  },
+  "sourceStable": true,
+  "passed": true
+}

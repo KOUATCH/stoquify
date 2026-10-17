@@ -1,5 +1,6 @@
 import {
   AccountingPostingPurpose,
+  AccountingSourceType,
   ChartAccountNormalBalance,
   ChartAccountType,
   JournalType,
@@ -7,7 +8,8 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { getPostingRuleReadiness } from "./posting-rules.service"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -178,6 +180,22 @@ export const REQUIRED_READY_POSTING_PURPOSES = [
   AccountingPostingPurpose.INVENTORY_ADJUSTMENT,
 ] as const
 
+export const REQUIRED_READY_POSTING_SOURCES = {
+  SALE_COMPLETION: AccountingSourceType.POS_SALE,
+  PAYMENT_RECEIPT: AccountingSourceType.POS_PAYMENT,
+  REFUND: AccountingSourceType.POS_REFUND,
+  VOID: AccountingSourceType.POS_VOID,
+  CASH_DRAWER_CLOSE: AccountingSourceType.CASH_DRAWER_CLOSE,
+  GOODS_RECEIPT: AccountingSourceType.GOODS_RECEIPT,
+  SUPPLIER_INVOICE: AccountingSourceType.SUPPLIER_INVOICE,
+  SUPPLIER_PAYMENT: AccountingSourceType.SUPPLIER_PAYMENT,
+  PURCHASE_RETURN: AccountingSourceType.PURCHASE_RETURN,
+  SUPPLIER_CREDIT_NOTE: AccountingSourceType.SUPPLIER_CREDIT_NOTE,
+  CUSTOMER_SETTLEMENT: AccountingSourceType.CUSTOMER_SETTLEMENT,
+  EXPENSE_APPROVAL: AccountingSourceType.EXPENSE,
+  INVENTORY_ADJUSTMENT: AccountingSourceType.STOCK_ADJUSTMENT,
+} satisfies Record<(typeof REQUIRED_READY_POSTING_PURPOSES)[number], AccountingSourceType>
+
 function normalizeCurrency(currency?: string) {
   return (currency || "XAF").trim().toUpperCase()
 }
@@ -228,12 +246,14 @@ export async function ensureAccountingSettings(organizationId: string, actorId?:
   if (existing) return existing
 
   return db.$transaction(async (tx) => {
+    const organization = await tx.organization.findUnique({ where: { id: organizationId }, select: { currency: true } })
+    if (!organization) throw new NotFoundError("Organization not found")
     const settings = await tx.organizationAccountingSettings.create({
       data: {
         organizationId,
         accountingEnabled: false,
         setupStatus: "NOT_STARTED",
-        baseCurrency: "XAF",
+        baseCurrency: normalizeCurrency(organization.currency),
       },
     })
 
@@ -257,6 +277,15 @@ export async function updateAccountingSettings(
   await ensureAccountingSettings(organizationId, actorId)
 
   return db.$transaction(async (tx) => {
+    if (input.baseCurrency !== undefined) {
+      const current = await tx.organizationAccountingSettings.findUnique({ where: { organizationId } })
+      if (!current) throw new NotFoundError("Accounting settings not found")
+      // Match the organization-profile policy: changing the denomination of
+      // historical amounts is a controlled migration, never a settings edit.
+      if (normalizeCurrency(input.baseCurrency) !== normalizeCurrency(current.baseCurrency)) {
+        throw new BusinessRuleError("Changing the accounting base currency requires a separate controlled migration of accounting and operating records")
+      }
+    }
     const settings = await tx.organizationAccountingSettings.update({
       where: { organizationId },
       data: {
@@ -290,6 +319,14 @@ export async function updateAccountingSettings(
 }
 
 export async function collectAccountingSetupReadinessIssues(
+  organizationId: string,
+  tx: Prisma.TransactionClient | typeof db = db,
+  now = new Date(),
+) {
+  return (await getAccountingSetupReadiness(organizationId, tx, now)).issues
+}
+
+export async function getAccountingSetupReadiness(
   organizationId: string,
   tx: Prisma.TransactionClient | typeof db = db,
   now = new Date(),
@@ -328,22 +365,9 @@ export async function collectAccountingSetupReadinessIssues(
       },
       select: { id: true, name: true },
     }),
-    tx.postingRule.findMany({
-      where: {
-        organizationId,
-        isActive: true,
-        postingPurpose: { in: [...REQUIRED_READY_POSTING_PURPOSES] },
-        AND: [
-          { OR: [{ effectiveFrom: null }, { effectiveFrom: { lte: now } }] },
-          { OR: [{ effectiveTo: null }, { effectiveTo: { gte: now } }] },
-        ],
-      },
-      include: {
-        lines: {
-          select: { id: true, accountId: true, mappingKey: true },
-        },
-      },
-    }),
+    getPostingRuleReadiness(organizationId, REQUIRED_READY_POSTING_PURPOSES.map((postingPurpose) => ({
+      postingPurpose, sourceType: REQUIRED_READY_POSTING_SOURCES[postingPurpose],
+    })), tx, now),
   ])
 
   const issues: string[] = []
@@ -389,19 +413,12 @@ export async function collectAccountingSetupReadinessIssues(
     issues.push("Accounting setup requires an open period covering today's date")
   }
 
-  const validPostingPurposes = new Set(
-    postingRules
-      .filter((rule) => rule.lines.length >= 2 && rule.lines.every((line) => line.accountId || normalizeMappingKey(line.mappingKey)))
-      .map((rule) => rule.postingPurpose),
-  )
-
-  for (const requiredPurpose of REQUIRED_READY_POSTING_PURPOSES) {
-    if (!validPostingPurposes.has(requiredPurpose)) {
-      issues.push(`Missing active balanced posting rule scaffold for ${requiredPurpose}`)
-    }
+  for (const { postingPurpose, rule, validationError } of postingRules) {
+    if (!rule) issues.push(`Missing active balanced posting rule scaffold for ${postingPurpose}`)
+    else if (validationError) issues.push(`Posting rule ${rule.code} for ${postingPurpose} is not ready: ${validationError}`)
   }
 
-  return issues
+  return { issues, postingRules }
 }
 
 export async function markAccountingSetupReady(

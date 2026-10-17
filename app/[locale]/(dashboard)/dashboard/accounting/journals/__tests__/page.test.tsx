@@ -1,186 +1,174 @@
-import { render, screen } from "@testing-library/react"
-
-import {
-  listJournalEntriesAction,
-  listJournalsAction,
-} from "@/actions/accounting/journals.actions"
+import { render, screen, within } from "@testing-library/react"
+import { listJournalEntriesAction, listJournalsAction } from "@/actions/accounting/journals.actions"
 import { checkPermission } from "@/config/useAuth"
-
+import { getJournalWorkflowCopy } from "@/components/accounting/journal-workflow-copy"
 import AccountingJournalsPage from "../page"
-jest.mock("next-intl/server", () => ({ getTranslations: jest.fn(async ({ locale }) => (key: string) => `${locale}:${key}`) }))
 
-jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
-  routeByKey: jest.fn(() => ({ key: "accounting-test" })),
-  withAccountingSurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
-}))
-
-jest.mock("@/config/useAuth", () => ({
-  checkPermission: jest.fn(),
-}))
-
-jest.mock("@/actions/accounting/journals.actions", () => ({
-  listJournalEntriesAction: jest.fn(),
-  listJournalsAction: jest.fn(),
-  postJournalEntryAction: jest.fn(),
-  reverseJournalEntryAction: jest.fn(),
-}))
-
+let mockPermissions: string[] = []
 jest.mock("lucide-react", () => {
   const React = jest.requireActual("react")
   const Icon = (props: Record<string, unknown>) => React.createElement("svg", props)
-
-  return {
-    Search: Icon,
-    X: Icon,
-    Check: Icon,
-    ChevronDown: Icon,
-    ChevronUp: Icon,
-    BookOpenCheck: Icon,
-    FilePlus2: Icon,
-    RotateCcw: Icon,
-    Scale: Icon,
-  }
+  return { BookOpenCheck: Icon, FilePlus2: Icon, Scale: Icon, Search: Icon, X: Icon, Check: Icon, ChevronDown: Icon, ChevronUp: Icon }
 })
-
-jest.mock("../../_components/accounting-ui", () => ({
-  AccountingLinkButton: ({
-    href,
-    children,
-  }: {
-    href: string
-    children: React.ReactNode
-  }) => <a href={href}>{children}</a>,
-  AccountingPageShell: ({
-    title,
-    children,
-  }: {
-    title: string
-    children: React.ReactNode
-  }) => (
-    <main>
-      <h1>{title}</h1>
-      {children}
-    </main>
-  ),
-  AccountingMessage: ({ error, notice }: { error?: string; notice?: string }) => (
-    <div>
-      {error ? <p>{error}</p> : null}
-      {notice ? <p>{notice}</p> : null}
-    </div>
-  ),
-  AccountingPanel: ({
-    title,
-    description,
-    children,
-  }: {
-    title: string
-    description?: string
-    children: React.ReactNode
-  }) => (
-    <section>
-      <h2>{title}</h2>
-      {description ? <p>{description}</p> : null}
-      {children}
-    </section>
-  ),
-  AccountingStatCard: ({ label, value }: { label: string; value: string }) => (
-    <div>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  ),
-  accountingDate: (value: Date) => value.toISOString().slice(0, 10),
-  formatAccountingMoney: (value: number) => `XAF ${value.toFixed(0)}`,
+jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
+  routeByKey: jest.fn(() => ({ key: "accounting-journals" })),
+  withAccountingSurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1", permissions: mockPermissions }, "en")),
 }))
+jest.mock("@/lib/security/rbac", () => ({
+  canUsePermission: (ctx: { permissions: string[] }, permission: string) => jest.requireActual("@/lib/security/rbac-permissions").hasRbacPermission(ctx.permissions, permission),
+}))
+jest.mock("@/config/useAuth", () => ({ checkPermission: jest.fn() }))
+jest.mock("@/actions/accounting/journals.actions", () => ({
+  listJournalEntriesAction: jest.fn(), listJournalsAction: jest.fn(),
+}))
+jest.mock("@/components/accounting/JournalEntryActions", () => ({
+  JournalWorkflowFeedback: ({ children, readRevision }: { children: React.ReactNode; readRevision: string | null }) => <div data-read-revision={readRevision ?? "unavailable"}>{children}</div>,
+  JournalEntryActions: ({ entryId, entryNumber, operation }: { entryId: string; entryNumber: string; operation: string }) => <button data-entry-id={entryId}>{operation} {entryNumber}</button>,
+}))
+jest.mock("../../_components/accounting-ui", () => ({
+  AccountingLinkButton: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
+  AccountingPageShell: ({ title, actions, children }: { title: string; actions?: React.ReactNode; children: React.ReactNode }) => <main><h1>{title}</h1>{actions}{children}</main>,
+  AccountingPanel: ({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) => <section><h2>{title}</h2><p>{description}</p>{children}</section>,
+  AccountingStatCard: ({ label, value }: { label: string; value: string }) => <div role="group" aria-label={label}><strong>{value}</strong></div>,
+}))
+const mockRead = listJournalEntriesAction as jest.Mock
+const mockJournals = listJournalsAction as jest.Mock
+const mockGuard = checkPermission as jest.Mock
+const row = (overrides: Record<string, unknown> = {}) => ({
+  id: "entry-1", entryNumber: "JE-0001", entryDate: new Date("2026-01-15T00:00:00.000Z"), status: "DRAFT",
+  sourceType: "MANUAL", memo: "Opening balance", journal: { code: "GEN" }, period: { name: "January 2026" },
+  lines: [{ debit: "1000.25", credit: "0", currency: "XAF" }, { debit: "0", credit: "1000.25", currency: "XAF" }],
+  ...overrides,
+})
+const props = (locale = "en") => ({ params: Promise.resolve({ locale }) })
 
-const mockCheckPermission = checkPermission as jest.Mock
-const mockListJournalsAction = listJournalsAction as jest.Mock
-const mockListJournalEntriesAction = listJournalEntriesAction as jest.Mock
-
-const pageProps = {
-  params: Promise.resolve({ locale: "en" }),
-  searchParams: Promise.resolve({ notice: "Ready" }),
-}
-
-describe("AccountingJournalsPage", () => {
-  it.each(["en", "fr"])("explains unavailable suspense reversal in %s without offering a generic reversal", async locale => {
-    const row = { id: "suspense-journal", entryNumber: "SP-0001", entryDate: new Date("2026-09-09T00:00:00Z"), status: "POSTED", sourceType: "PAYMENT_SUSPENSE", memo: "Suspense evidence", journal: { code: "SP", nameEn: "Suspense" }, period: { name: "September" }, lines: [{ debit: "100.25", credit: "0" }, { debit: "0", credit: "100.25" }] }
-    mockListJournalEntriesAction.mockResolvedValue({ success: true, data: [row] })
-    render(await AccountingJournalsPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
-    expect(screen.getByText(`${locale}:reversalUnavailable`)).toBeVisible()
-    expect(screen.queryByRole("button", { name: "Reverse" })).not.toBeInTheDocument()
-    expect(screen.getByText("SP-0001")).toBeVisible()
-  })
+describe("Journal queue truth and available commands", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockCheckPermission.mockResolvedValue(true)
-    mockListJournalsAction.mockResolvedValue({
-      success: true,
-      data: [
-        {
-          id: "journal-1",
-          code: "GEN",
-          isActive: true,
-        },
-      ],
-    })
-    mockListJournalEntriesAction.mockResolvedValue({
-      success: true,
-      data: [
-        {
-          id: "entry-1",
-          entryNumber: "JE-0001",
-          entryDate: new Date("2026-01-15T00:00:00.000Z"),
-          status: "DRAFT",
-          memo: "Opening balance",
-          journal: { code: "GEN", nameEn: "General journal" },
-          period: { name: "January 2026" },
-          lines: [
-            { debit: "1000", credit: "0" },
-            { debit: "0", credit: "1000" },
-          ],
-        },
-      ],
-    })
+    mockPermissions = ["accounting.journal.read", "accounting.journal.create", "accounting.journal.post", "accounting.journal.reverse"]
+    mockGuard.mockResolvedValue(true)
+    mockJournals.mockResolvedValue({ success: true, data: [{ id: "journal-1", isActive: true }] })
+    mockRead.mockResolvedValue({ success: true, data: [row()] })
   })
 
-  it("requires accounting journal read permission before loading journal data", async () => {
-    render(await AccountingJournalsPage(pageProps))
-
-    expect(mockCheckPermission).toHaveBeenCalledWith("accounting.journal.read")
-    expect(mockListJournalsAction).toHaveBeenCalledWith({})
-    expect(mockListJournalEntriesAction).toHaveBeenCalledWith({ take: 100 })
-    expect(screen.getByRole("heading", { name: "Journal Entries" })).toBeInTheDocument()
-    expect(screen.getByText("JE-0001")).toBeInTheDocument()
-    expect(screen.getByText("Ready")).toBeInTheDocument()
+  it("checks read access before loading and renders only allowed actions from server permissions", async () => {
+    render(await AccountingJournalsPage(props()))
+    expect(mockGuard).toHaveBeenCalledWith("accounting.journal.read")
+    expect(mockJournals).toHaveBeenCalledWith({})
+    expect(mockRead).toHaveBeenCalledWith({ take: 100 })
+    expect(screen.getByRole("heading", { name: "Journal entries" })).toBeVisible()
+    expect(screen.getByRole("button", { name: "post JE-0001" })).toBeVisible()
+    expect(screen.getByRole("link", { name: "New entry" })).toBeVisible()
+    expect(screen.getByText(getJournalWorkflowCopy("en").page.scope)).toBeVisible()
   })
 
-  it("stops before journal data access when the permission guard denies access", async () => {
-    mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
-
-    await expect(AccountingJournalsPage(pageProps)).rejects.toThrow("Forbidden")
-
-    expect(mockCheckPermission).toHaveBeenCalledWith("accounting.journal.read")
-    expect(mockListJournalsAction).not.toHaveBeenCalled()
-    expect(mockListJournalEntriesAction).not.toHaveBeenCalled()
+  it("does not query after a read denial", async () => {
+    mockGuard.mockRejectedValue(new Error("Forbidden"))
+    await expect(AccountingJournalsPage(props())).rejects.toThrow("Forbidden")
+    expect(mockJournals).not.toHaveBeenCalled()
+    expect(mockRead).not.toHaveBeenCalled()
   })
 
-  it("keeps journal entry read errors inside the accounting panel after permission succeeds", async () => {
-    mockListJournalEntriesAction.mockResolvedValue({
-      success: false,
-      status: "error",
-      error: "Entries unavailable",
-    })
+  it.each(["en", "fr"])("keeps a failed entry query unavailable, not empty, in %s", async locale => {
+    const t = getJournalWorkflowCopy(locale).page
+    mockRead.mockResolvedValue({ success: false, error: "private SQL error" })
+    const { container } = render(await AccountingJournalsPage(props(locale)))
+    expect(screen.getByRole("alert")).toHaveTextContent(t.loadEntriesFailed)
+    expect(within(screen.getByRole("group", { name: t.drafts })).getByText(t.unavailable)).toBeVisible()
+    expect(within(screen.getByRole("group", { name: t.posted })).getByText(t.unavailable)).toBeVisible()
+    expect(within(screen.getByRole("group", { name: t.journals })).getByText("1")).toBeVisible()
+    expect(screen.queryByText(t.emptyDrafts)).not.toBeInTheDocument()
+    expect(screen.queryByText("private SQL error")).not.toBeInTheDocument()
+    expect(container.querySelector('[data-finance-result-state="partial"]')).toBeInTheDocument()
+    expect(container.querySelector('[data-read-revision="unavailable"]')).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: t.retry })).toBeVisible()
+  })
 
-    render(await AccountingJournalsPage({
-      params: Promise.resolve({ locale: "en" }),
-      searchParams: Promise.resolve({}),
-    }))
+  it("preserves successful entry data when journal setup information fails", async () => {
+    mockJournals.mockResolvedValue({ success: false, error: "database failed" })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.getByRole("alert")).toHaveTextContent(getJournalWorkflowCopy("en").page.loadJournalsFailed)
+    expect(screen.getByText("JE-0001")).toBeVisible()
+    expect(within(screen.getByRole("group", { name: "Journals" })).getByText("Unavailable")).toBeVisible()
+  })
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("accounting.journal.read")
-    expect(mockListJournalsAction).toHaveBeenCalledWith({})
-    expect(mockListJournalEntriesAction).toHaveBeenCalledWith({ take: 100 })
-    expect(screen.getByText("Entries unavailable")).toBeInTheDocument()
-    expect(screen.getByText("No journal entries yet.")).toBeInTheDocument()
+  it("shows error when both queries fail and true zero only for successful empty reads", async () => {
+    mockJournals.mockResolvedValue({ success: false, error: "failed" })
+    mockRead.mockResolvedValue({ success: false, error: "failed" })
+    const { container } = render(await AccountingJournalsPage(props()))
+    expect(container.querySelector('[data-finance-result-state="error"]')).toBeInTheDocument()
+    expect(screen.getAllByText("Unavailable")).toHaveLength(3)
+    expect(screen.queryByText("0")).not.toBeInTheDocument()
+  })
+
+  it.each(["en", "fr"])("renders successful empty results with localized copy in %s", async locale => {
+    mockJournals.mockResolvedValue({ success: true, data: [] })
+    mockRead.mockResolvedValue({ success: true, data: [] })
+    const { container } = render(await AccountingJournalsPage(props(locale)))
+    const t = getJournalWorkflowCopy(locale).page
+    expect(container.querySelector('[data-finance-result-state="ready"]')).toBeInTheDocument()
+    expect(screen.getByText(t.emptyDrafts)).toBeVisible()
+    expect(screen.getByText(t.emptyPosted)).toBeVisible()
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument()
+  })
+
+  it.each(["INVENTORY_ADJUSTMENT", "PAYMENT_SUSPENSE", null, undefined])("offers no generic command for source %s", async sourceType => {
+    mockRead.mockResolvedValue({ success: true, data: [row({ sourceType }), row({ id: "posted", entryNumber: "JE-0002", status: "POSTED", sourceType })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.queryByRole("button", { name: /^(post|reverse) JE-/ })).not.toBeInTheDocument()
+    expect(screen.getByText("JE-0002")).toBeVisible()
+  })
+
+  it("does not offer reverse for source-owned recovery or already reversed/voided evidence", async () => {
+    mockRead.mockResolvedValue({ success: true, data: [
+      row({ status: "POSTED", postingBatch: { metadata: { resolutionRecoveryReceiptId: "receipt" } } }),
+      row({ id: "reversed", entryNumber: "REVERSED-1", status: "REVERSED" }),
+      row({ id: "voided", entryNumber: "VOIDED-1", status: "VOIDED" }),
+    ] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.queryByRole("button", { name: /^reverse / })).not.toBeInTheDocument()
+    expect(screen.getByText("VOIDED-1")).toBeVisible()
+    expect(screen.getByText("REVERSED-1")).toBeVisible()
+  })
+
+  it("does not infer sensitive posting/reversal permission from wildcard or read permission", async () => {
+    mockPermissions = ["*", "accounting.journal.read"]
+    mockRead.mockResolvedValue({ success: true, data: [row(), row({ id: "p", entryNumber: "JE-0002", status: "POSTED" })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.queryByRole("button", { name: /^(post|reverse) JE-/ })).not.toBeInTheDocument()
+  })
+
+  it("offers reversal only when its explicit permission is present; hides creation for a reader", async () => {
+    mockPermissions = ["accounting.journal.read", "accounting.journal.reverse"]
+    mockRead.mockResolvedValue({ success: true, data: [row(), row({ id: "p", entryNumber: "JE-0002", status: "POSTED" })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.getByRole("button", { name: "reverse JE-0002" })).toBeVisible()
+    expect(screen.queryByRole("button", { name: "post JE-0001" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("link", { name: "New entry" })).not.toBeInTheDocument()
+  })
+
+  it("retains exact cents and separates currencies without labeling their sum XAF", async () => {
+    mockRead.mockResolvedValue({ success: true, data: [row({ lines: [
+      { debit: "9007199254740991.91", credit: "0", currency: "USD" },
+      { debit: "0.09", credit: "0", currency: "USD" },
+      { debit: "0", credit: "12.34", currency: "EUR" },
+    ] })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.getByText("9,007,199,254,740,992.00 USD")).toBeVisible()
+    expect(screen.getByText("12.34 EUR")).toBeVisible()
+    expect(screen.queryByText(/XAF/)).not.toBeInTheDocument()
+  })
+
+  it.each([null, undefined, "NaN"])("does not turn a missing/invalid amount %s into zero", async debit => {
+    mockRead.mockResolvedValue({ success: true, data: [row({ lines: [{ debit, credit: "0", currency: "XAF" }] })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.getAllByText("Unavailable")).toHaveLength(2)
+    expect(screen.queryByText("0.00 XAF")).not.toBeInTheDocument()
+  })
+
+  it("does not invent a currency when a line currency is absent", async () => {
+    mockRead.mockResolvedValue({ success: true, data: [row({ lines: [{ debit: "100", credit: "0" }] })] })
+    render(await AccountingJournalsPage(props()))
+    expect(screen.getAllByText("Unavailable")).toHaveLength(2)
   })
 })

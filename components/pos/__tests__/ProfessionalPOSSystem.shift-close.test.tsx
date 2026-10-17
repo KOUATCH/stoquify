@@ -1,5 +1,11 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { readPendingSale, savePendingSale } from "@/lib/pos/pending-sale"
+import { assertNoLocalOfflineWork } from "@/lib/pos/offline-local-queue"
+jest.mock("@/lib/pos/offline-local-queue", () => ({ assertNoLocalOfflineWork: jest.fn().mockResolvedValue(undefined) }))
+jest.mock("@/components/pos/offline/LocalOfflineRecovery", () => ({
+  LocalOfflineRecovery: () => <div data-testid="local-offline-recovery" />,
+  localOfflineCopy: { en: { closeBlocked: "Local offline evidence blocks shift close" }, fr: { closeBlocked: "Preuves hors ligne" } },
+}))
 jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
 jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: jest.fn(() => ({
   ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
@@ -152,6 +158,48 @@ function openCloseDialog() {
   fireEvent.click(screen.getByRole("button", { name: "smart.endShift" }))
   return screen.getByRole("dialog")
 }
+
+describe("POS search keyboard scope", () => {
+  beforeEach(() => { jest.clearAllMocks(); sessionStorage.clear(); setupHooks(100, actionSuccess(null)) })
+
+  it("keeps the search input and its focus while catalogue results load", () => {
+    const { rerender } = render(<ProfessionalPOSSystem />)
+    const search = screen.getByRole("textbox", { name: "search.placeholder" })
+    search.focus()
+    fireEvent.change(search, { target: { value: "SKU-1" } })
+    mockHooks.usePOSCatalog.mockReturnValue({ data: undefined, isLoading: true } as never)
+    rerender(<ProfessionalPOSSystem />)
+    expect(screen.getByRole("textbox", { name: "search.placeholder" })).toBe(search)
+    expect(search).toHaveValue("SKU-1")
+    expect(search).toHaveFocus()
+    expect(screen.queryByText("readState.loadingTitle")).not.toBeInTheDocument()
+  })
+
+  it("labels search, clears it explicitly and leaves browser shortcuts alone", () => {
+    render(<ProfessionalPOSSystem />)
+    const search = screen.getByRole("textbox", { name: "search.placeholder" })
+    fireEvent.change(search, { target: { value: "SKU-1" } })
+    fireEvent.click(screen.getByRole("button", { name: "search.clear" }))
+    expect(search).toHaveValue("")
+    expect(search).toHaveFocus()
+    const browserShortcut = new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true, cancelable: true })
+    window.dispatchEvent(browserShortcut)
+    expect(browserShortcut.defaultPrevented).toBe(false)
+  })
+
+  it("does not clear catalog search or move focus to tender from an open dialog", () => {
+    render(<ProfessionalPOSSystem />)
+    const search = screen.getByRole("textbox", { name: "search.placeholder" })
+    fireEvent.change(search, { target: { value: "SKU-1" } })
+    const dialog = openCloseDialog()
+    const input = within(dialog).getByRole("spinbutton", { name: "shift.countedCash" })
+    input.focus()
+    fireEvent.keyDown(input, { key: "F8" })
+    expect(input).toHaveFocus()
+    fireEvent.keyDown(input, { key: "Escape" })
+    expect(search).toHaveValue("SKU-1")
+  })
+})
 
 describe("ProfessionalPOSSystem resume at checkout", () => {
   const lifecycleMock = jest.mocked(usePOSCheckoutLifecycle)
@@ -368,6 +416,23 @@ describe("ProfessionalPOSSystem checkout recovery", () => {
     expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
     expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
   })
+
+  it("P05 retains original intent and reports uncertainty when the commit response is lost", async () => {
+    const { request, commit } = setupRecovery("NOT_FOUND")
+    const retainedBefore = readPendingSale(sessionStorage, "org-1", "cashier-1")
+    commit.mockRejectedValue(new TypeError("Failed to fetch"))
+    render(<ProfessionalPOSSystem />)
+    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
+    const retry = await screen.findByRole("button", { name: "recovery.retryOriginal" })
+    fireEvent.click(retry)
+    await waitFor(() => expect(mockNotifications.warning).toHaveBeenCalledWith(
+      "recovery.title", "recovery.failed", expect.objectContaining({ category: "sales", priority: "high" }),
+    ))
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).toEqual(retainedBefore)
+    expect(retainedBefore?.request.clientCommitId).toBe(request.clientCommitId)
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+    expect(mockNotifications.error).not.toHaveBeenCalledWith("notifications.saleErrorTitle", expect.anything(), expect.anything())
+  })
 })
 
 describe("ProfessionalPOSSystem shift close", () => {
@@ -439,6 +504,19 @@ describe("ProfessionalPOSSystem shift close", () => {
       })
     })
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+  })
+
+  it.each(["pending evidence", "storage unavailable"])("blocks shift submission when a fresh local check finds %s", async reason => {
+    const close = setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    ;(assertNoLocalOfflineWork as jest.Mock).mockRejectedValueOnce(new Error(reason))
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "0" } })
+    fireEvent.click(within(dialog).getByRole("button", { name: "shift.close" }))
+    expect(await screen.findByText("Local offline evidence blocks shift close")).toBeInTheDocument()
+    expect(close).not.toHaveBeenCalled()
+    expect(assertNoLocalOfflineWork).toHaveBeenCalledWith({ organizationKey: "org-1", locationId: "location-1", terminalId: "terminal-1" })
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
   })
 
   it.each([
@@ -586,6 +664,17 @@ describe("ProfessionalPOSSystem shift close", () => {
       "Shift state changed; refresh before closing it",
       { category: "pos", priority: "high" },
     )
+  })
+
+  it("explains an offline close blocker without exposing its internal code", async () => {
+    setupHooks(100, { success: false, data: null, error: "POS_CHECKOUT_OFFLINE_PENDING", status: 409 })
+    render(<ProfessionalPOSSystem />)
+    const dialog = openCloseDialog()
+    fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "100" } })
+    fireEvent.click(within(dialog).getByRole("button", { name: "shift.close" }))
+    await waitFor(() => expect(within(dialog).getByRole("alert")).toHaveTextContent("lifecycle.errors.POS_CHECKOUT_OFFLINE_PENDING"))
+    expect(within(dialog).getByLabelText("shift.countedCash")).toHaveValue(100)
+    expect(mockNotifications.error).toHaveBeenCalledWith("notifications.closeShiftErrorTitle", "lifecycle.errors.POS_CHECKOUT_OFFLINE_PENDING", { category: "pos", priority: "high" })
   })
 
   it("clears the count and explanation when the active shift identity changes", async () => {
@@ -904,7 +993,7 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "shell.touchMode" }))
     expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-2")
-    expect(screen.getByRole("spinbutton", { name: "stock.inCart" })).toHaveClass("h-10", "w-24")
+    expect(screen.getByRole("spinbutton", { name: "cart.quantityFor" })).toHaveClass("h-10", "w-24")
     expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-10", "w-10")
     expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-14")
 

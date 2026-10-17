@@ -1,0 +1,38 @@
+{
+  "run": "915987a4-06aa-4b80-b86a-3fcdc3a481a0",
+  "at": "2026-09-30T20:30:50.214Z",
+  "scope": "Synthetic owned-local internal-domain lifecycle probe; no production approval or metadata repair",
+  "cases": [
+    {
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-5b237266-837b-4d8b-b96f-1504c07fe9f7-direct-lifecycle-915987a4-06aa-4b80-b86a-3fcdc3a481a0-false",
+      "invoiceId": "cmuok8f5b002vma50heg2ji3u",
+      "accrued": false,
+      "invoiceStatus": "POSTED",
+      "matchStatus": "MATCHED",
+      "variance": "0.00",
+      "persistedApprovalAgrees": true,
+      "ledgerStatus": "POSTED",
+      "eventHasMaker": true,
+      "eventHasApprover": true,
+      "eventHasMatch": true,
+      "eventHasIndependentEvidence": true
+    },
+    {
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-5b237266-837b-4d8b-b96f-1504c07fe9f7-direct-lifecycle-915987a4-06aa-4b80-b86a-3fcdc3a481a0-true",
+      "invoiceId": "cmuok8gkc006rma50vo9yi90t",
+      "accrued": true,
+      "invoiceStatus": "POSTED",
+      "matchStatus": "MATCHED",
+      "variance": "0.00",
+      "persistedApprovalAgrees": true,
+      "ledgerStatus": "BLOCKED_PENDING_RULES",
+      "eventHasMaker": true,
+      "eventHasApprover": true,
+      "eventHasMatch": true,
+      "eventHasIndependentEvidence": true,
+      "recoveredWithoutDuplicateLiability": true
+    }
+  ],
+  "passed": true,
+  "sourceHash": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad"
+}

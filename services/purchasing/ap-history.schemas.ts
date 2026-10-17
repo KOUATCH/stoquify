@@ -15,6 +15,7 @@ const pageSizeSchema = z
 export const apHistoryFiltersSchema = z
   .object({
     lane: z.enum(["invoice", "payment", "all"]).optional(),
+    invoiceId: z.string().trim().min(1).max(200).optional(),
     supplierId: z.string().trim().min(1).optional(),
     invoiceStatus: z.nativeEnum(SupplierInvoiceStatus).optional(),
     paymentStatus: z.nativeEnum(SupplierPaymentStatus).optional(),

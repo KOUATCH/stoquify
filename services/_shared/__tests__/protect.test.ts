@@ -3,6 +3,9 @@ import { assertCanUseOrganization, RbacError, requirePermission } from "@/lib/se
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { ApplicationError } from "@/services/_shared/action-errors"
+import { setLoggerSink } from "@/lib/logger"
+
+afterEach(() => setLoggerSink())
 
 jest.mock("@/lib/security/rbac", () => {
   class MockRbacError extends Error {
@@ -70,6 +73,18 @@ function moduleDecision(overrides: Record<string, unknown> = {}) {
 }
 
 describe("protect", () => {
+  it.each(["handler", "rbac", "fresh"])("emits the same correlation as the safe %s failure without request secrets", async kind => {
+    const sink = jest.fn(); setLoggerSink(sink)
+    mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1", permissions: ["users.read"] })
+    if (kind === "rbac") mockRequirePermission.mockRejectedValue(new RbacError("denied", "FORBIDDEN", 403))
+    if (kind === "fresh") mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
+    const action = protect({ permission: "users.read", freshAuth: kind === "fresh" }, async () => { throw new Error("private-query") })
+    const result = await action({ password: "private-password" })
+    expect(result.success).toBe(false)
+    if (!result.success) expect(sink).toHaveBeenCalledWith(expect.objectContaining({ context: expect.objectContaining({ correlationId: result.correlationId }) }))
+    expect(JSON.stringify(sink.mock.calls)).not.toContain("private-query")
+    expect(JSON.stringify(sink.mock.calls)).not.toContain("private-password")
+  })
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: new Date("2026-06-30T11:59:00.000Z").getTime() } })
@@ -91,7 +106,7 @@ describe("protect", () => {
     expect(result).toEqual({ success: true, data: { ok: true }, error: null, status: 200 })
     expect(mockRequirePermission).toHaveBeenCalledWith("users.read", { resource: "User" })
     expect(mockAssertCanUseOrganization).not.toHaveBeenCalled()
-    expect(handler).toHaveBeenCalledWith({ id: "user-2" }, ctx)
+    expect(handler).toHaveBeenCalledWith({ id: "user-2" }, { ...ctx, correlationId: expect.any(String) })
   })
 
   it("preserves only the allowlisted stopped-work reason on an authorized command denial", async () => {
@@ -152,7 +167,7 @@ describe("protect", () => {
 
     expect(result).toEqual({ success: true, data: { ok: true }, error: null, status: 200 })
     expect(mockAssertCanUseOrganization).toHaveBeenCalledWith(ctx, "org-session")
-    expect(handler).toHaveBeenCalledWith({ data: { organizationId: "org-session" } }, ctx)
+    expect(handler).toHaveBeenCalledWith({ data: { organizationId: "org-session" } }, { ...ctx, correlationId: expect.any(String) })
   })
 
   it("allows reviewed handler-derived tenant scope without trusting caller organization fields", async () => {
@@ -172,7 +187,7 @@ describe("protect", () => {
 
     expect(result).toEqual({ success: true, data: { ok: true }, error: null, status: 200 })
     expect(mockAssertCanUseOrganization).not.toHaveBeenCalled()
-    expect(handler).toHaveBeenCalledWith({ organizationId: "caller-org" }, ctx)
+    expect(handler).toHaveBeenCalledWith({ organizationId: "caller-org" }, { ...ctx, correlationId: expect.any(String) })
   })
 
   it("blocks a protected action when module entitlement enforcement denies access", async () => {

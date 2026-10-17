@@ -37,3 +37,8 @@ it("preserves negative numeric movements while neutralizing text formulas", () =
   const h = history(); h.rows[0].movementState = "recorded"; h.rows[0].signedPayableMovement = "-10.25"
   const csv = buildAPHistoryCsv(h, { locale: "en", organizationId: "org-1", watermarkId: "wm-test", filtersHash: "hash" }); expect(csv).toContain('"-10.25"'); expect(csv).not.toContain("'-10.25")
 })
+
+it("retains exact invoice scope for the controlled export", async () => {
+  await prepareAPHistoryExport({ filters: { lane: "invoice", invoiceId: "i1", supplierId: "s1" } }, scope)
+  expect(readAPHistory).toHaveBeenCalledWith(expect.objectContaining({ filters: { lane: "invoice", invoiceId: "i1", supplierId: "s1", pageSize: 100 } }), { client: tx, exportRowLimit: 5000 })
+})

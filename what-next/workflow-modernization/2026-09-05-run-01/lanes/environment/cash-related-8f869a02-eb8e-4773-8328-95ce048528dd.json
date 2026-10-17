@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-28T09:37:49.604Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "aca8f32b2f4473a21c0511bf8073d77c6a9f2a7c7d8d723eb59286d85fc87ee3",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "7779054e99f727c9bc2aed2ff250a800a1580996d965a23698edc1c223377900",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "purpose": "Real database read equivalence and related-service invocation counts. Historical orchestration reconstructed through original tenant snapshot entry; no latency certification.",
+  "checks": [
+    "same actual aggregate including provenance and blockers",
+    "same disclosed summary, proof subjects and card values/states",
+    "related service invocations reduced from six to three",
+    "aggregate receives identical source objects used by cards"
+  ],
+  "baseline": {
+    "counts": {
+      "payment": 2,
+      "inventory": 2,
+      "close": 2
+    },
+    "elapsedMs": 385.80809999999974
+  },
+  "current": {
+    "counts": {
+      "payment": 1,
+      "inventory": 1,
+      "close": 1
+    },
+    "elapsedMs": 113.30439999999999
+  },
+  "noBusinessMutation": true,
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "aca8f32b2f4473a21c0511bf8073d77c6a9f2a7c7d8d723eb59286d85fc87ee3",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "7779054e99f727c9bc2aed2ff250a800a1580996d965a23698edc1c223377900",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "03306c085b304d2ee03ec38f68a9cedc8a502828fa5fe801a0ab504b2d23d9de",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "sourceStable": true,
+  "passed": true
+}

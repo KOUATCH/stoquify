@@ -1,0 +1,51 @@
+{
+  "at": "2026-09-30T14:16:34.172Z",
+  "syntheticAllocationFixtures": true,
+  "sourceBefore": {
+    "services/payroll/payroll-register.service.ts": "36f5ed5c5eacd3dc6394fe0ca732b76a914424bfc39a0f649cca5faec02b2485",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "actions/payroll/payroll-register.actions.ts": "5a4f3330b9ad331f59a39b935db9de47b62640c43cfc1940d2cbb765282572c0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "allocationLabel": true,
+      "settlementExplanation": true,
+      "localizedHandoff": true,
+      "keyboardFocus": true,
+      "noExplanationOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "register-allocation-a516d0b2-6b1a-4f93-b91f-3a366313902b-en.png"
+    },
+    {
+      "locale": "fr",
+      "allocationLabel": true,
+      "settlementExplanation": true,
+      "localizedHandoff": true,
+      "keyboardFocus": true,
+      "noExplanationOverflow": true,
+      "noPageErrors": true,
+      "screenshot": "register-allocation-a516d0b2-6b1a-4f93-b91f-3a366313902b-fr.png"
+    }
+  ],
+  "persisted": {
+    "cancelledAndFailedExcluded": true,
+    "draftIsAllocationNotSettlement": true,
+    "historyRetained": true,
+    "crossTenantDenied": true,
+    "amountRedacted": true,
+    "batchIds": [
+      "cmuo6v3b70009mafkhr996y2i",
+      "cmuo6v3ib000dmafksd6gu7qf",
+      "cmuo6v3iw000hmafk19g57llr"
+    ]
+  },
+  "stage": "fr register",
+  "passed": true,
+  "sourceAfter": {
+    "services/payroll/payroll-register.service.ts": "36f5ed5c5eacd3dc6394fe0ca732b76a914424bfc39a0f649cca5faec02b2485",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "actions/payroll/payroll-register.actions.ts": "5a4f3330b9ad331f59a39b935db9de47b62640c43cfc1940d2cbb765282572c0"
+  },
+  "sourceStable": true
+}

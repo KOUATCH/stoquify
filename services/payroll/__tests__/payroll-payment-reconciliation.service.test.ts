@@ -1,4 +1,6 @@
 jest.mock("server-only", () => ({}));
+jest.mock("../payment-settlement-authority", () => ({ payrollSettlementAuthority: jest.fn() }));
+import { payrollSettlementAuthority } from "../payment-settlement-authority";
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -38,7 +40,7 @@ import {
 } from "@prisma/client";
 
 import { db } from "@/prisma/db";
-import { BusinessRuleError } from "@/services/_shared/action-errors";
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors";
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
 import {
   assertSensitiveActionAllowed,
@@ -54,6 +56,7 @@ import {
   getPayrollPaymentReconciliation,
   recordPayrollPaymentSettlementEvidence,
 } from "../payment-reconciliation.service";
+import { storedRegisterProof, storedMatchProof } from "../payment-settlement-proof";
 
 const mockDb = db as unknown as { $transaction: jest.Mock };
 const mockRecordCloseInvalidation =
@@ -320,13 +323,180 @@ function buildTx(overrides: Record<string, unknown> = {}) {
     auditLog: {
       create: jest.fn().mockResolvedValue({ id: "audit-1" }),
     },
+    businessEvent: { findMany: jest.fn().mockResolvedValue([]) },
     ...overrides,
   };
 }
 
 describe("payroll payment reconciliation service", () => {
+  function guidedFixture() {
+    const tx = buildTx();
+    const original = batchFixture();
+    const batch = batchFixture({ payrollRun: { ...original.payrollRun, organizationId: "org-1", version: 3, currency: "XAF", documentHash: "stored-register", postedBusinessEventId: "run-posted", ledgerPostingBatchId: "run-ledger", deletedAt: null, cancelledAt: null } });
+    const transaction = transactionFixture({ providerAccount: { ...transactionFixture().providerAccount, organizationId: "org-1" } });
+    const originalMatch = matchFixture();
+    const source = { organizationId: "org-1", providerAccountId: "provider-account-1", currencyCode: "XAF", amount: new Prisma.Decimal("143700.00"), archivedAt: null, occurredAt: new Date("2026-06-30") };
+    const match = matchFixture({ providerEvent: { ...originalMatch.providerEvent, ...source, status: "PROCESSED", direction: "OUTBOUND" }, statementLine: { ...originalMatch.statementLine, ...source, status: "MATCHED", direction: "DEBIT", statementFile: { ...originalMatch.statementLine.statementFile, organizationId: "org-1", providerAccountId: "provider-account-1", status: "PROCESSED", archivedAt: null } } });
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue(batch);
+    tx.payrollPaymentBatch.findMany.mockResolvedValue([batch]);
+    tx.paymentTransaction.findMany.mockResolvedValue([transaction]);
+    tx.matchRecord.findMany.mockResolvedValue([match]);
+    tx.matchRecord.findFirst.mockImplementation(({ where }) => Promise.resolve(where.correctionOfId ? null : match));
+    const run = storedRegisterProof(batch, batch.payrollRun as never)!;
+    const proof = storedMatchProof(batch, transaction as never, match as never)!;
+    const input = { organizationId: "org-1", actorId: "controller-1", actorPermissions: ["payroll.payments.reconcile"], payrollPaymentBatchId: "batch-1", evidenceHash: "untrusted", sourceRegisterHash: "untrusted", providerAccountId: "untrusted", idempotencyKey: "guided-1", expectedBalanceEventId: null, settlementAmount: "143700.00", lastAuthAt: "2026-06-30T09:00:00Z", now: "2026-06-30T09:01:00Z",
+      proofSelection: { payrollRunId: run.id, runVersion: run.version, runRevision: run.revision, matchRecordId: proof.option.id, matchRevision: proof.option.revision } };
+    mockDb.$transaction.mockImplementation(callback => callback(tx));
+    return { tx, batch, transaction, match, input };
+  }
+
+  it("resolves selected proof in the settlement transaction and ignores client hashes", async () => {
+    const { tx, input } = guidedFixture();
+    const result = await recordPayrollPaymentSettlementEvidence(input);
+    expect(result.idempotent).toBe(false);
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "Serializable" });
+    const event = mockRecordBusinessEventInTx.mock.calls[0][1];
+    expect(event.payload.sourceRegisterHash).toBe("stored-register");
+    expect(event.payload.inputEvidenceHash).toMatch(/^sha256:[a-f0-9]{64}$/);
+    expect(tx.paymentTransaction.update.mock.calls[0][0].data.providerAccountId).toBe("provider-account-1");
+  });
+  it("requires an explicitly reviewed balance for guided commands", async () => {
+    const { tx, input } = guidedFixture();
+    await expect(recordPayrollPaymentSettlementEvidence({ ...input, expectedBalanceEventId: undefined })).rejects.toThrow("explicitly reviewed");
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+  });
+
+  it.each(["P2034", "40001", "40P01"])("rechecks persisted authority after %s retry and denies before economic writes", async code => {
+    const { tx, input } = guidedFixture();
+    const conflict = code === "P2034" ? { code } : { code: "P2010", meta: { code } };
+    jest.mocked(payrollSettlementAuthority).mockRejectedValueOnce(conflict).mockRejectedValueOnce(new ForbiddenError("Revoked before retry"));
+    await expect(recordPayrollPaymentSettlementEvidence(input)).rejects.toMatchObject({ code: "FORBIDDEN" });
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(2);
+    expect(payrollSettlementAuthority).toHaveBeenCalledTimes(2);
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("uses persisted permissions and time instead of caller snapshots for sensitive controls", async () => {
+    const { input } = guidedFixture();
+    await recordPayrollPaymentSettlementEvidence({ ...input, actorPermissions: ["*"], now: "2000-01-01", lastAuthAt: "2099-01-01" });
+    expect(mockEvaluateSensitiveAction).toHaveBeenCalledWith(expect.objectContaining({ actorPermissions: ["payroll.payments.reconcile"], now: new Date("2026-06-30T09:01:00Z"), lastAuthAt: new Date("2026-06-30T09:00:00Z") }));
+    expect(jest.mocked(payrollSettlementAuthority).mock.calls.map(call => call[2])).toEqual([false, true, true]);
+  });
+
+  it("checks authority before disclosing an otherwise valid guided replay", async () => {
+    const { tx, batch, input } = guidedFixture();
+    await recordPayrollPaymentSettlementEvidence(input);
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue({ ...batch, metadata: tx.payrollPaymentBatch.update.mock.calls[0][0].data.metadata });
+    tx.paymentTransaction.update.mockClear();
+    jest.mocked(payrollSettlementAuthority).mockRejectedValueOnce(new ForbiddenError("Revoked"));
+    await expect(recordPayrollPaymentSettlementEvidence(input)).rejects.toMatchObject({ code: "FORBIDDEN" });
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+  });
+
+  it("replays recorded guided commands before reevaluating changed source eligibility", async () => {
+    const { tx, batch, input } = guidedFixture();
+    await recordPayrollPaymentSettlementEvidence(input);
+    const saved = tx.payrollPaymentBatch.update.mock.calls[0][0].data.metadata;
+    tx.payrollPaymentBatch.findFirst.mockResolvedValue({ ...batch, status: "SETTLED", metadata: saved, payrollRun: { ...batch.payrollRun, documentHash: null } });
+    tx.matchRecord.findFirst.mockClear(); tx.paymentTransaction.update.mockClear();
+    expect((await recordPayrollPaymentSettlementEvidence(input)).idempotent).toBe(true);
+    expect(tx.matchRecord.findFirst).not.toHaveBeenCalled();
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+  });
+
+  it.each(["revision", "correction", "foreign-source"])("rejects guided %s changes before writes", async kind => {
+    const { tx, input, match } = guidedFixture();
+    if (kind === "revision") input.proofSelection.matchRevision = "stale";
+    if (kind === "correction") tx.matchRecord.findFirst.mockImplementation(({ where }) => Promise.resolve(where.correctionOfId ? { id: "correction" } : match));
+    if (kind === "foreign-source") tx.matchRecord.findFirst.mockImplementation(({ where }) => Promise.resolve(where.correctionOfId ? null : { ...match, providerEvent: { ...match.providerEvent, organizationId: "foreign" } }));
+    await expect(recordPayrollPaymentSettlementEvidence(input)).rejects.toThrow();
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("does not expose selector records to readers lacking proof redaction authority", async () => {
+    const { tx } = guidedFixture();
+    const result = await getPayrollPaymentReconciliation({ organizationId: "org-1", actorId: "reader", actorPermissions: ["payroll.command.read"] }, tx as never);
+    expect(result.batches[0].proofOptions).toEqual({ register: null, matches: [] });
+  });
+
+  it("loads all evidence through a unique legacy source-linked transaction", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findMany.mockResolvedValue([batchFixture({ paymentTransactionId: null })]);
+    await getPayrollPaymentReconciliation({ organizationId: "org-1", actorPermissions: ["payments.reconciliation.read"] }, tx as never);
+    for (const query of [tx.matchRecord.findMany, tx.suspenseItem.findMany]) {
+      expect(query).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", paymentTransactionId: { in: ["payment-tx-1"] } }) }));
+    }
+    expect(tx.paymentReconciliationInboxItem.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ OR: [{correlationId:{in:["payment-tx-1"]}},{externalId:{in:["payment-tx-1"]}}] }) }));
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
+  it.each(["duplicate", "wrong-source"])("rejects %s transaction linkage in the read model", async kind => {
+    const tx=buildTx();
+    tx.paymentTransaction.findMany.mockResolvedValue(kind === "duplicate" ? [transactionFixture(), transactionFixture({id:"another"})] : [transactionFixture({sourceId:"another-batch"})]);
+    await expect(getPayrollPaymentReconciliation({organizationId:"org-1",actorPermissions:["payments.reconciliation.read"]},tx as never)).rejects.toThrow(/transaction/i);
+  });
+  it("rejects ambiguous source-linked transactions before settlement mutation", async () => {
+    const tx=buildTx();
+    tx.paymentTransaction.findMany.mockResolvedValue([transactionFixture(),transactionFixture({id:"another"})]);
+    mockDb.$transaction.mockImplementation(callback=>callback(tx));
+    await expect(recordPayrollPaymentSettlementEvidence({organizationId:"org-1",payrollPaymentBatchId:"batch-1",actorId:"controller-1",actorPermissions:["payroll.payments.reconcile"],lastAuthAt:"2026-06-30T09:00:00.000Z",now:"2026-06-30T09:01:00.000Z",matchRecordId:"match-1",evidenceHash:"proof",sourceRegisterHash:"register",idempotencyKey:"ambiguous"})).rejects.toThrow(/transaction/i);
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+  });
+  it("keeps newly blocked partial payments out of the settlement form", async () => {
+    const tx = buildTx();
+    tx.payrollPaymentBatch.findMany.mockResolvedValue([batchFixture({ status: PayrollPaymentBatchStatus.PARTIALLY_SETTLED })]);
+    tx.paymentException.findMany.mockResolvedValue([exceptionFixture({ type: PaymentExceptionType.SIGNATURE_FAILURE })]);
+    const result = await getPayrollPaymentReconciliation({ organizationId: "org-1", actorPermissions: ["payments.reconciliation.read", "payroll.payslips.read", "payroll.payments.reconcile"] }, tx as never);
+    expect(result.batches[0].derivedState).toBe("EXCEPTION_OPEN");
+    expect(result.batches[0].settlement.canRecord).toBe(false);
+  });
+  it("allows the released-batch evidence gap to progress only with its approved matching evidence", async () => {
+    const tx = buildTx();
+    const result = await getPayrollPaymentReconciliation({ organizationId: "org-1", actorId: "controller-1", actorPermissions: ["payments.reconciliation.read", "payroll.payslips.read", "payroll.payments.reconcile"] }, tx as never);
+    expect(result.batches[0].derivedState).toBe("READY_TO_SETTLE");
+    expect(result.batches[0].settlement.canRecord).toBe(true);
+    tx.matchRecord.findMany.mockResolvedValue([]);
+    const unmatched = await getPayrollPaymentReconciliation({ organizationId: "org-1", actorPermissions: ["payments.reconciliation.read", "payroll.payslips.read", "payroll.payments.reconcile"] }, tx as never);
+    expect(unmatched.batches[0].settlement.canRecord).toBe(false);
+  });
+  it.each(["SIGNATURE_FAILURE", "TAMPER_SIGNAL", "AMOUNT_MISMATCH"])("does not clear %s with ordinary settlement evidence", async type => {
+    const tx = buildTx();
+    tx.paymentException.findMany.mockResolvedValue([exceptionFixture({ type })]);
+    mockDb.$transaction.mockImplementation(callback => callback(tx));
+    await expect(recordPayrollPaymentSettlementEvidence({ organizationId: "org-1", payrollPaymentBatchId: "batch-1", actorId: "controller-1", actorPermissions: ["payroll.payments.reconcile"], lastAuthAt: "2026-06-30T09:00:00.000Z", now: "2026-06-30T09:01:00.000Z", settlementStatus: "settled", matchRecordId: "match-1", evidenceHash: "proof", sourceRegisterHash: "register", idempotencyKey: "blocked" })).rejects.toThrow(/exception/i);
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.paymentException.updateMany).not.toHaveBeenCalled();
+  });
+  it("does not settle while a linked suspense obligation is open", async () => {
+    const tx = buildTx();
+    tx.suspenseItem.findMany.mockResolvedValue([{ id: "suspense", status: "OPEN" }]);
+    mockDb.$transaction.mockImplementation(callback => callback(tx));
+    await expect(recordPayrollPaymentSettlementEvidence({ organizationId: "org-1", payrollPaymentBatchId: "batch-1", actorId: "controller-1", actorPermissions: ["payroll.payments.reconcile"], lastAuthAt: "2026-06-30T09:00:00.000Z", now: "2026-06-30T09:01:00.000Z", settlementStatus: "settled", matchRecordId: "match-1", evidenceHash: "proof", sourceRegisterHash: "register", idempotencyKey: "suspense" })).rejects.toThrow(/suspense/i);
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+  });
+  it("rejects current persisted authority denial before loading records", async () => {
+    const tx=buildTx();
+    jest.mocked(payrollSettlementAuthority).mockRejectedValueOnce(new ForbiddenError("Current authority denied"));
+    await expect(recordPayrollPaymentSettlementEvidence({organizationId:'org-1',payrollPaymentBatchId:'batch-1',actorId:'controller-1',actorPermissions:['payroll.payments.reconcile'],moduleDecision:{allowed:true,entitlement:{readOnly:true}} as never,evidenceHash:'proof',idempotencyKey:'read-only'},tx as never)).rejects.toMatchObject({code:'FORBIDDEN'});
+    expect(tx.payrollPaymentBatch.findFirst).not.toHaveBeenCalled();
+  });
+  it.each(['-1', '0', '143701', 'NaN', 'Infinity', '1.001'])('rejects invalid settlement amount %s before mutation', async settlementAmount => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(callback => callback(tx));
+    await expect(recordPayrollPaymentSettlementEvidence({
+      organizationId: 'org-1', payrollPaymentBatchId: 'batch-1',
+      actorId: 'controller-1', actorPermissions: ['payroll.payments.reconcile'],
+      lastAuthAt: '2026-06-30T09:00:00.000Z', now: '2026-06-30T09:01:00.000Z',
+      settlementStatus: 'settled', settlementAmount, matchRecordId: 'match-1',
+      evidenceHash: 'sha256:input', sourceRegisterHash: 'sha256:register', idempotencyKey: 'invalid-amount',
+    })).rejects.toThrow();
+    expect(tx.paymentTransaction.update).not.toHaveBeenCalled();
+    expect(tx.payrollPaymentBatch.update).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(payrollSettlementAuthority).mockReset().mockResolvedValue({ permissions: ["payroll.payments.reconcile"], now: new Date("2026-06-30T09:01:00Z"), lastAuthAt: new Date("2026-06-30T09:00:00Z") });
     mockDb.$transaction.mockImplementation((callback) => callback(buildTx()));
     mockEvaluateSensitiveAction.mockReturnValue({
       allowed: true,
@@ -366,6 +536,7 @@ describe("payroll payment reconciliation service", () => {
     );
 
     expect(result.summary.readyToSettle).toBe(1);
+    expect(result.batches[0].settlement).toEqual({remainingAmount:"143700.00",revision:null,availability:"verified",canRecord:false});
     expect(result.redaction.proofIdentifiers).toEqual(
       expect.objectContaining({
         allowed: true,
@@ -634,12 +805,10 @@ describe("payroll payment reconciliation service", () => {
         },
       }),
     );
-    tx.paymentTransaction.findFirst.mockResolvedValue(
-      transactionFixture({
+    tx.paymentTransaction.findMany.mockResolvedValue([transactionFixture({
         state: PaymentTransactionState.SETTLED,
         settledAt: new Date("2026-06-30T09:01:00.000Z"),
-      }),
-    );
+      })]);
     tx.paymentException.findMany.mockResolvedValue([]);
     mockDb.$transaction.mockImplementation((callback) => callback(tx));
 
@@ -694,12 +863,10 @@ describe("payroll payment reconciliation service", () => {
         },
       }),
     );
-    tx.paymentTransaction.findFirst.mockResolvedValue(
-      transactionFixture({
+    tx.paymentTransaction.findMany.mockResolvedValue([transactionFixture({
         state: PaymentTransactionState.SETTLED,
         settledAt: new Date("2026-06-30T09:01:00.000Z"),
-      }),
-    );
+      })]);
     tx.paymentException.findMany.mockResolvedValue([]);
     mockDb.$transaction.mockImplementation((callback) => callback(tx));
 

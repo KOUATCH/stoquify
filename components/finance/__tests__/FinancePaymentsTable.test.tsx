@@ -302,6 +302,26 @@ describe("FinancePaymentsSurface layout", () => {
 })
 
 describe("FinanceReceivablesSurface layout", () => {
+  it("offers open-item work before the summary and preserves zero-day terms", () => {
+    const data = dashboardData()
+    data.topReceivables = [{ id: "customer-1", name: "Due immediately", balance: 100, terms: 0, severity: "info" }]
+    mockedUseFinanceDashboard.mockReturnValue({ data: { success: true, data }, isLoading: false, isFetching: false, error: null, refetch: jest.fn() } as unknown as ReturnType<typeof useFinanceDashboard>)
+    render(<FinanceReceivablesSurface />)
+    expect(screen.getByRole("link", { name: "workQueue.receivablesAction" })).toHaveAttribute("href", "/dashboard/finance/receivables/history")
+    expect(screen.getByText("workQueue.balanceScope")).toBeInTheDocument()
+    expect(screen.getByText("workQueue.summaryScope")).toBeInTheDocument()
+    expect(screen.getByText("workQueue.recentScope")).toBeInTheDocument()
+    expect(screen.getByText("aging.terms")).toBeInTheDocument()
+    const queue = screen.getByRole("region", { name: "workQueue.title" })
+    expect(queue.compareDocumentPosition(screen.getByRole("heading", { name: "receivables.sections.aging" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("withdraws stale balances after a failed refresh", () => {
+    mockedUseFinanceDashboard.mockReturnValue({ data: { success: true, data: dashboardData() }, isLoading: false, isFetching: false, error: new Error("private failure"), refetch: jest.fn() } as unknown as ReturnType<typeof useFinanceDashboard>)
+    render(<FinanceReceivablesSurface />)
+    expect(screen.queryByRole("heading", { name: "receivables.sections.aging" })).not.toBeInTheDocument()
+    expect(screen.queryByText("private failure")).not.toBeInTheDocument()
+  })
   it("renders every bottom workflow action in the responsive row grid", () => {
     mockedUseFinanceDashboard.mockReturnValue({
       data: {
@@ -566,6 +586,8 @@ describe("FinancePayablesSurface navigation", () => {
     } as unknown as ReturnType<typeof useFinanceDashboard>)
 
     render(<FinancePayablesSurface />)
+
+    expect(screen.getByRole("link", { name: "workQueue.payablesAction" })).toHaveAttribute("href", "/dashboard/purchases/payables")
 
     const disbursementsTitle = screen.getByRole("heading", { name: "payables.sections.disbursements" })
     const workflowsTitle = screen.getByText("payables.sections.workflows")

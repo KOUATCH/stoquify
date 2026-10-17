@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-30T14:57:00.274Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_PAYROLL_HRIS_CHAIN_2026-09-30.md",
+  "sourceHashes": {
+    "services/payroll/payroll-control.service.ts": "6a52569570186d25d8232d710dd6dd0de915c0ebb6fc4a1ea573550e25242036",
+    "services/payroll/employee.service.ts": "2a3a3f9094b27e9b1593c3c68ce6a0319d964eb35c7c82ef93789994e04af04d",
+    "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+    "services/hris/employee.service.ts": "89d497c2daeb4f6fb7579deccebeae3a7dd2cfb8b85221d2a429ea6e0849b7e9",
+    "services/hris/contract.service.ts": "b8f90d6706e44ebec6a993eec481abca65db7bf7fedc396a9a4ed7db6ae60a1e",
+    "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+    "services/hris/time-leave.service.ts": "81a81e14d226b84220ca748abd94aa2c6158be430e344593810819a4a28ed242",
+    "services/hris/time-leave.contract.ts": "9d264a306ed417187726a268d8719ea2dc31db1e500e993a93cb95a6e9b8f2e5",
+    "services/hris/payroll-readiness-contract.ts": "e7248febcc73de3d1b978b555ab857ee6603020cdb77e97288e5c4eef98a3797",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/regulatory/country-packs/cameroon.ts": "3bcc16ecc6b7f8695102fdbd047cadb63fe4049ba6ea409466465aa17c3e4749",
+    "services/regulatory/country-packs/registry.ts": "dd7cac8d10d2ad7239a6061ae4ab91853c671b0d127cfb2fed8553cfa6e834bb",
+    "services/regulatory/country-packs/resolve.ts": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/payroll/payroll-country-pack-review-intake.service.ts": "8546ec1e13f6db183983a72d41ac0a1f0c141a416f5ac0eff0043ae6347ac6ba",
+    "services/payroll/payroll-country-pack-fixture-runner.ts": "2461f17bc8755efa1f16595d6864858a6e357ab9bd6c3878a36d22db536abd05",
+    "services/payroll/payroll-statutory-scenario-coverage.service.ts": "87cd5c54791daff5986b2c93644f0507439b02a94351a47c095c1bba19ef570e",
+    "services/payroll/payroll-country-pack-review-intake-persistence.service.ts": "83381897ec2e5a603ff370dde7f66aecc8cf01ab236725d363e3749c746472f6",
+    "actions/payroll/payroll-country-pack-review-intake.actions.ts": "f7cac37075c9f4f2e34e2fa6d643dff874d66ade62c7c642370e637ac3baaa9f"
+  },
+  "verifiedSubcriteria": [
+    "actual_hris_identity_document_contract_destination_attendance_readiness_chain_on_synthetic_inputs",
+    "current_country_pack_period_and_calculation_denials_without_financial_effects"
+  ],
+  "receipts": [
+    {
+      "file": "lanes/environment/payroll-hris-input-chain-bd47490f-c26b-4cb8-89f9-efb457b6075b.json",
+      "sha256": "e38b780159e995dd03e45d2f6772d7c4bb8c1180d948a86cca3ddb3031374fd7"
+    },
+    {
+      "file": "lanes/environment/payroll-country-review-a6c06546-5382-4132-a552-cca489d0a8c9.json",
+      "sha256": "0aa25999ea5c8b8510cb7a039039a0992c29c8847bcba170c9fae6ede7d9d7c1"
+    },
+    {
+      "file": "lanes/environment/payroll-hris-input-chain-7673617d-339e-4fba-8e7f-50fafad6a2d1.json",
+      "sha256": "8bf57f88c34fe28421f490afc35815fbee6ef6a765e19a1f463922956f667580"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CASH_PAYROLL_HRIS_CHAIN_2026-09-30.md",
+      "sha256": "7a77bf8845c19b88d4a7fec45e7458017e3c8daf60581a9ac9c9eb3c6efbe461"
+    },
+    {
+      "file": "lanes/environment/verify-payroll-hris-input-chain.cjs",
+      "sha256": "0d843982130d7f6a2ab15b400640a4b404c328380c80ab0826d7042dc93eade1"
+    },
+    {
+      "file": "lanes/environment/inspect-payroll-country-review.cjs",
+      "sha256": "7c25ae3236196b562464d4a6fa219ffc6b6305fef04c402d2027e810eb9b98b3"
+    }
+  ],
+  "remaining": [
+    "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish the Cash accessibility checklist: tablet coverage, keyboard/contrast/reflow, enlarged text and the identified payroll nested-main boundary. Native screen-reader speech and browser zoom remain unverified limits.",
+    "Complete route-latency investigation against a recorded baseline or approved budget. The original truncated shell hydration trace remains unattributed; investigate any recurrence. The reproduced date mismatch is corrected.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "externalDependency": {
+    "owner": "qualified payroll/statutory reviewer and authorized legal owner",
+    "input": "authentic reviewed CNPS rules, IRPP review topics and executable expected-output evidence",
+    "engineeringAfter": "encode and validate reviewed pack; integrate resolver version; repeat full financial lifecycle"
+  },
+  "limits": [
+    "synthetic upstream document/policy/scanner inputs are not real approvals",
+    "raw fixture period only for isolated HRIS attendance verification",
+    "calculation and release remain unexecuted",
+    "no application/schema changes or new browser validation"
+  ],
+  "next": "Continue unaffected Cash/payroll accessibility and recovery; preserve statutory dependency."
+}

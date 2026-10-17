@@ -5,7 +5,7 @@ import { getStockToCashFlowData } from "@/services/stock-to-cash/stock-to-cash-f
 import { withFinanceSurfaceAccess, routeByKey } from "../finance-route-access"
 
 export const metadata: Metadata = {
-  title: "Stock-to-Cash Flow | Kontava",
+  title: "Stock-to-Cash Flow | Stoquify",
   description: "Read-only stock-to-cash flow from purchasing, inventory, POS, payments, ledger, and close readiness.",
 }
 

@@ -1,0 +1,54 @@
+{
+  "recorded_utc": "2026-10-13T10:07:15.884487+00:00",
+  "workflow": {
+    "command": "npm run agent:workflow:check",
+    "exit_code": 0,
+    "result": "PASS",
+    "unclassified_count": 198
+  },
+  "classification": {
+    "command": "node scripts/verify-agent-workflow-contract.js --command test:ecc:pilots",
+    "exit_code": 0,
+    "auditAllowed": true
+  },
+  "fixture_tests": {
+    "command": "node node_modules/jest/bin/jest.js --config jest.opening-position-fixtures.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P03/evidence/FIXTURE_AND_IMPORT_RESULTS_FINAL.json",
+    "exit_code": 0,
+    "suites": 3,
+    "passed": 48,
+    "skipped": 0,
+    "previous_run": "FIXTURE_AND_IMPORT_RESULTS.json: 47 passed, before adding independent changed-control regression"
+  },
+  "inventory_tests": {
+    "command": "node node_modules/jest/bin/jest.js --config jest.ecc-pilots.config.cjs --runInBand --no-cache --selectProjects ecc-unit --runTestsByPath services/inventory/__tests__/inventory-stock-event.service.test.ts --testNamePattern \"opening stock|closed-period|idempotency conflict\" --json --outputFile docs/retention/execution/P03/evidence/INVENTORY_BOUNDARY_RESULTS.json",
+    "exit_code": 0,
+    "suites": 1,
+    "passed": 3,
+    "filtered": 29,
+    "evidence": "mocked source tests; not DB"
+  },
+  "initial_inventory_invocation": {
+    "command": "npm run test:ecc:pilots -- --selectProjects ecc-unit --runTestsByPath services/inventory/__tests__/inventory-stock-event.service.test.ts --testNamePattern \"opening stock|closed-period|idempotency conflict\" --json --outputFile docs/retention/execution/P03/evidence/INVENTORY_BOUNDARY_RESULTS.json",
+    "exit_code": 0,
+    "suites": 1,
+    "passed": 32,
+    "limitation": "npm forwarded requested flags as positional patterns on this host; only inventory suite ran, but JSON was not written. Direct command above restored exact selection and wrote evidence."
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --skipLibCheck --target ES2022 --module commonjs --moduleResolution node --esModuleInterop --types \"node,jest\" services/onboarding/__tests__/fixtures/opening-position-contract.ts services/onboarding/__tests__/opening-position-contract.test.ts",
+    "exit_code": 0,
+    "stdout": "",
+    "scope": "new test-only checker and test"
+  },
+  "not_run": [
+    "real database",
+    "browser",
+    "provider",
+    "customer data",
+    "qualified expert review",
+    "restore/load",
+    "migration",
+    "build",
+    "P04-P24"
+  ]
+}

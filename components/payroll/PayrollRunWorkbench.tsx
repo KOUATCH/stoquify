@@ -321,25 +321,25 @@ function LinkedFacts({ run, locale }: { run: RunRow; locale: Locale }) {
       <div className="grid gap-2 sm:grid-cols-2">
         <Link
           href={localizePath("/dashboard/payroll/register", locale)}
-          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10"
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
         >
           Register
         </Link>
         <Link
           href={localizePath("/dashboard/payroll/declarations", locale)}
-          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10"
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
         >
           Declarations
         </Link>
         <Link
           href={localizePath("/dashboard/payroll/payments", locale)}
-          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10"
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
         >
           Payments
         </Link>
         <Link
           href={localizePath("/dashboard/accounting/close", locale)}
-          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10"
+          className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
         >
           Close
         </Link>
@@ -348,7 +348,20 @@ function LinkedFacts({ run, locale }: { run: RunRow; locale: Locale }) {
   );
 }
 
-function Blockers({ run }: { run: RunRow }) {
+function inputProofCopy(locale: Locale) {
+  return locale === "fr" ? {
+    title: "Preuves des données de paie certifiées manquantes",
+    detail: "Les demandes de paiement, leur transmission et les déclarations exigent les preuves de préparation SIRH et des données du moteur de paie produites par le calcul.",
+    nextAction: "Vérifiez dans le SIRH l’identité, les documents contractuels approuvés, la rémunération, la destination de paiement et la présence certifiée. Utilisez le processus contrôlé de calcul ou de correction ; ne modifiez pas une paie comptabilisée et n’insérez pas manuellement des empreintes d’approbation.",
+  } : {
+    title: "Certified payroll input proof is missing",
+    detail: "Payment requests, release and declarations require the HRIS readiness and payroll engine input proof produced by calculation.",
+    nextAction: "Review employee identity, approved contract documents, compensation, payment destination and certified attendance in HRIS. Use the controlled calculation or correction workflow; do not edit a posted run or insert approval hashes manually.",
+  };
+}
+
+function Blockers({ run, locale }: { run: RunRow; locale: Locale }) {
+  const proofCopy = inputProofCopy(locale);
   if (!run.blockers.length) {
     return (
       <p className="text-xs text-emerald-100">No run blocker is visible.</p>
@@ -364,10 +377,10 @@ function Blockers({ run }: { run: RunRow }) {
         >
           <div className="flex flex-wrap items-center gap-2">
             <Badge value={blocker.severity} />
-            <p className="font-semibold text-white">{blocker.title}</p>
+            <p className="font-semibold text-white">{blocker.id === "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING" ? proofCopy.title : blocker.title}</p>
           </div>
-          <p className="mt-2 text-amber-100">{blocker.detail}</p>
-          <p className="mt-2 text-amber-200">{blocker.nextAction}</p>
+          <p className="mt-2 text-amber-100">{blocker.id === "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING" ? proofCopy.detail : blocker.detail}</p>
+          <p className="mt-2 text-amber-200">{blocker.id === "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING" ? proofCopy.nextAction : blocker.nextAction}</p>
         </div>
       ))}
     </div>
@@ -398,11 +411,11 @@ function NextActions({
               <Badge value="Maker-checker" />
             ) : null}
             {action.allowed ? <Badge value="Allowed" /> : <Badge value="Blocked" />}
-            {action.blockedBy.map((code) => <Badge key={code} value={code} />)}
+            {action.blockedBy.map((code) => <Badge key={code} value={code === "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING" ? inputProofCopy(locale).title : code} />)}
             {action.href ? (
               <Link
                 href={localizePath(action.href, locale)}
-                className="inline-flex min-h-7 items-center rounded-md border border-white/12 px-2 text-xs font-semibold text-white hover:bg-white/10"
+                className="inline-flex min-h-7 items-center rounded-md border border-white/12 px-2 text-xs font-semibold text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
               >
                 Open
               </Link>
@@ -494,7 +507,7 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
   if (!data) return <EmptyState />;
 
   return (
-    <main className="flex min-w-0 flex-col gap-4 text-slate-100">
+    <div className="flex min-w-0 flex-col gap-4 text-slate-100">
       <section className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">
@@ -516,19 +529,19 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
           <Badge value={data.redaction.payrollAmounts.mode} />
           <Link
             href={localizePath("/dashboard/payroll/register", locale)}
-            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
           >
             Register
           </Link>
           <Link
             href={localizePath("/dashboard/payroll/declarations", locale)}
-            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
           >
             Declarations
           </Link>
           <Link
             href={localizePath("/dashboard/payroll/payments", locale)}
-            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
+            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dash-brand)]"
           >
             Payments
           </Link>
@@ -667,7 +680,7 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
                       <RelatedItems run={run} />
                     </td>
                     <td className="px-4 py-3">
-                      <Blockers run={run} />
+                      <Blockers run={run} locale={locale} />
                     </td>
                     <td className="px-4 py-3">
                       <NextActions
@@ -730,6 +743,6 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

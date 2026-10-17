@@ -67,7 +67,7 @@ export const activeCartSchema = z.object({
 })
 
 export const checkoutLeaseSchema = z.object({ checkoutLeaseId: z.string().uuid() })
-export const checkoutWorkspaceSchema = activeCartSchema.extend({ sessionId: z.string().min(1), checkoutLeaseId: z.string().uuid() })
+export const checkoutWorkspaceSchema = activeCartSchema.extend({ sessionId: z.string().min(1), checkoutLeaseId: z.string().uuid(), recoveryAfter: z.string().min(1).max(200).optional() })
 export const checkoutCartCommandSchema = checkoutWorkspaceSchema.extend({
   command: z.enum(["RESUME", "PARK"]),
   salesOrderId: z.string().min(1),

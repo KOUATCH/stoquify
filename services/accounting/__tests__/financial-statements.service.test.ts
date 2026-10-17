@@ -195,7 +195,7 @@ describe("financial statements retain archived posted account evidence", () => {
         total.credit += entry.credit;
         totals.set(entry.accountId, total);
       }
-      return [...totals].map(([accountId, total]) => ({ accountId, _sum: { debit: new Prisma.Decimal(total.debit), credit: new Prisma.Decimal(total.credit) } }));
+      return [...totals].map(([accountId, total]) => ({ accountId, _count: { _all: 1, baseDebit: 1, baseCredit: 1 }, _sum: { baseDebit: new Prisma.Decimal(total.debit), baseCredit: new Prisma.Decimal(total.credit) } }));
     });
   });
 
@@ -245,7 +245,7 @@ describe("financial statements retain archived posted account evidence", () => {
       organizationId: "org-1",
     }]);
     mockDb.journalEntryLine.groupBy.mockResolvedValue([{
-      accountId: "memo", _sum: { debit: new Prisma.Decimal(50), credit: new Prisma.Decimal(50) },
+      accountId: "memo", _count: { _all: 1, baseDebit: 1, baseCredit: 1 }, _sum: { baseDebit: new Prisma.Decimal(50), baseCredit: new Prisma.Decimal(50) },
     }]);
     const report = await getFinancialStatements({ organizationId: "org-1", periodId: period.id });
     expect(report.profitAndLoss.totals.revenue).toBe("0.00");
@@ -408,6 +408,40 @@ describe("accounting financial statements", () => {
         },
       }),
     );
+  });
+
+  it("aggregates 100 EUR and 100 XAF into 65,695.70 XAF without mixing nominal amounts", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValue(period);
+    mockDb.accountingPeriod.findMany.mockResolvedValue([period]);
+    mockDb.chartOfAccount.findMany.mockResolvedValue(accounts.filter((value) => ["cash", "sales"].includes(value.id)).map((value) => ({ ...value, organizationId: "org-1" })));
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ baseCurrency: "XAF" });
+    mockDb.organization.findUnique.mockResolvedValue({ currency: "XAF" });
+    const entries: Array<{ accountId: string; debit: string; credit: string; baseDebit: string; baseCredit: string }> = [
+      { accountId: "cash", debit: "100", credit: "0", baseDebit: "65595.70", baseCredit: "0" },
+      { accountId: "cash", debit: "100", credit: "0", baseDebit: "100", baseCredit: "0" },
+      { accountId: "sales", debit: "0", credit: "100", baseDebit: "0", baseCredit: "65595.70" },
+      { accountId: "sales", debit: "0", credit: "100", baseDebit: "0", baseCredit: "100" },
+    ];
+    mockDb.journalEntryLine.groupBy.mockImplementation(async ({ _sum }) => ["cash", "sales"].map((accountId) => ({
+      accountId,
+      _count: { _all: 2, baseDebit: 2, baseCredit: 2 },
+      _sum: Object.fromEntries(Object.keys(_sum).map((key) => [key, entries.filter((row) => row.accountId === accountId).reduce((sum, row) => sum.plus(row[key as "debit" | "credit" | "baseDebit" | "baseCredit"]), new Prisma.Decimal(0))])),
+    })));
+    const report = await getFinancialStatements({ organizationId: "org-1", periodId: period.id });
+    expect(report.currency).toBe("XAF");
+    expect(report.profitAndLoss.totals.revenue).toBe("65695.70");
+    expect(report.balanceSheet.totals.assets).toBe("65695.70");
+    expect(report.ledgerChecks.periodActivity).toMatchObject({ debit: "65695.70", credit: "65695.70", isBalanced: true });
+  });
+
+  it("rejects incomplete functional sums instead of silently dropping null historical amounts", async () => {
+    mockDb.accountingPeriod.findFirst.mockResolvedValue(period);
+    mockDb.accountingPeriod.findMany.mockResolvedValue([period]);
+    mockDb.chartOfAccount.findMany.mockResolvedValue([{ ...accounts[0], organizationId: "org-1" }]);
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ baseCurrency: "XAF" });
+    mockDb.organization.findUnique.mockResolvedValue({ currency: "XAF" });
+    mockDb.journalEntryLine.groupBy.mockResolvedValue([{ accountId: "cash", _count: { _all: 2, baseDebit: 1, baseCredit: 2 }, _sum: { baseDebit: new Prisma.Decimal(100), baseCredit: new Prisma.Decimal(0) } }]);
+    await expect(getFinancialStatements({ organizationId: "org-1", periodId: period.id })).rejects.toThrow(/functional-currency evidence/i);
   });
 
   it("rejects a period outside the organization before reading ledger data", async () => {

@@ -1,0 +1,61 @@
+{
+  "at": "2026-09-27T15:36:30.170Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "7b9b299dc295ae8d8fe93b75f6f0551ca8b35b6db9d5e1cbbe208a8f134e7601"
+  },
+  "previewMs": 59,
+  "passed": true,
+  "organizationId": "cmujzea7a0000ma6gk49sanlv",
+  "runId": "cmujzeadc001ama6gp4l9q6ce",
+  "counts": {
+    "paymentTransactionCount": 121,
+    "providerEventCount": 121,
+    "statementFileCount": 0,
+    "statementLineCount": 0,
+    "matchRecordCount": 121,
+    "exceptionCount": 0,
+    "suspenseCount": 0
+  },
+  "amountSummary": {
+    "version": 1,
+    "basis": "GROSS_SOURCE_AMOUNTS_BY_CURRENCY",
+    "currencies": [
+      {
+        "currencyCode": "XAF",
+        "amounts": {
+          "payments": "3100.25",
+          "providerEvents": "3100.25",
+          "statementLines": "0.00",
+          "matched": "3100.25",
+          "unresolvedSuspense": "0.00"
+        }
+      }
+    ]
+  },
+  "detailCoverage": {
+    "limitPerCollection": 100,
+    "matchRecords": {
+      "returned": 100,
+      "total": 121,
+      "truncated": true
+    },
+    "exceptions": {
+      "returned": 0,
+      "total": 0,
+      "truncated": false
+    },
+    "suspenseItems": {
+      "returned": 0,
+      "total": 0,
+      "truncated": false
+    }
+  },
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-amount-summary.ts": "10164d891c8e5235adc58c5e86528efc492afddde51cb99c5af24de10c881ba6",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "7b9b299dc295ae8d8fe93b75f6f0551ca8b35b6db9d5e1cbbe208a8f134e7601"
+  },
+  "sourceStable": true
+}

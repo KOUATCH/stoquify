@@ -1,0 +1,41 @@
+{
+  "at": "2026-09-27T13:29:45.743Z",
+  "sourceBefore": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8"
+  },
+  "cases": [
+    {
+      "kind": "provider-suspended",
+      "deniedWithoutEffects": true
+    },
+    {
+      "kind": "provider-revision",
+      "deniedWithoutEffects": true
+    }
+  ],
+  "passed": false,
+  "error": "\nInvalid `db.reconciliationRun.findUniqueOrThrow()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-races.cjs:58:153\n\n  55 const x = await fixture(kind); await add(x); const reviewed = await preview(x), input = command(x, reviewed.revision);\n  56 if (kind === 'provider-suspended') await db.providerAccount.update({ where: { id: x.provider.id }, data: { status: 'SUSPENDED' } });\n  57 if (kind === 'provider-revision') await db.providerAccount.update({ where: { id: x.provider.id }, data: { displayName: 'Owned changed reviewed provider' } });\n→ 58 if (kind === 'period-closed') { const run = await db.reconciliationRun.findUniqueOrThrow({\n       where: {\n     +   id: String\n       },\n       data: {\n         status: \"CLOSED\"\n       }\n     })\n\nArgument `id` must not be null.",
+  "stack": [
+    "PrismaClientValidationError: ",
+    "Invalid `db.reconciliationRun.findUniqueOrThrow()` invocation in",
+    "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-races.cjs:58:153",
+    "",
+    "  55 const x = await fixture(kind); await add(x); const reviewed = await preview(x), input = command(x, reviewed.revision);"
+  ],
+  "sourceAfter": {
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "6e40bdb4c3d289f89a0846762fd14de52ef86b8b72d44e87a22c8e581d8c58a2",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "f8a0d601262a5b26dea61bb796ed18d303253db9f9354fb9fd3de4ca6e15f683",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "061b42a8d5d54973485e9877a5ac65650301bb731e2c062369961c345aef06ec",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8"
+  },
+  "sourceStable": true
+}

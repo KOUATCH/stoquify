@@ -1,0 +1,328 @@
+--- a/app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx
+@@ -26,10 +26,10 @@
+ const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
+ const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
+ const PERMISSION_DENIED_MESSAGE =
+-  "This finance surface is read-only, but it still requires the matching finance permission. The denial was recorded by the RBAC guard."
+-const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this tenant"
++  "Ask your organization administrator to review your finance access. This access denial has been recorded."
++const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this organization"
+ const DEFAULT_MODULE_LOCKED_MESSAGE =
+-  "This workflow is protected by the payment reconciliation module entitlement. Enable the module before relying on cash, bank, card, or mobile-money reconciliation results here."
++  "Ask your organization administrator to review the modules required to use this page."
+ 
+ const FINANCE_ROUTE_STATE_COPY = {
+   en: {
+@@ -37,12 +37,15 @@
+     moduleLockedEyebrow: "Module locked",
+     permissionDeniedEyebrow: "Permission required",
+     noActiveOrgTitle: "An active organization is required",
+-    noActiveOrgMessage: "Refresh your session from the dashboard so this finance surface can load tenant-scoped data.",
++    noActiveOrgMessage: "Refresh your session from the dashboard to load your organization’s financial data.",
+     permissionDeniedTitle: "This finance page is not available for your role",
+     cashCommandDeniedTitle: "Cash Command Intelligence is not available for this role",
+-    reconciliationLockedTitle: "Payment reconciliation is not enabled for this tenant",
++    reconciliationLockedTitle: "Payment reconciliation is not enabled for this organization",
+     reconciliationLockedMessage:
+-      "Enable the payment reconciliation module so cash, bank, card, or mobile-money reconciliation results can be validated by this surface.",
++      "An administrator must enable payment reconciliation before you can review cash, bank, card or mobile-money reconciliation here.",
++    cashDrawerLockedTitle: "Cash drawer is not enabled for this organization",
++    cashDrawerLockedMessage:
++      "An administrator must enable the cash drawer module before you can view cash movements and payment history.",
+     reconciliationDeniedTitle: "Payment reconciliation is not available for this role",
+     permissionDeniedMessage: PERMISSION_DENIED_MESSAGE,
+   },
+@@ -54,12 +57,15 @@
+     noActiveOrgMessage: "Actualisez votre session depuis le tableau de bord pour charger les données financières de votre organisation.",
+     permissionDeniedTitle: "Cette page financière n’est pas accessible à votre rôle",
+     cashCommandDeniedTitle: "Le pilotage de la trésorerie n’est pas accessible à votre rôle",
+-    reconciliationLockedTitle: "Le rapprochement des paiements n’est pas activé pour ce locataire",
++    reconciliationLockedTitle: "Le rapprochement des paiements n’est pas activé pour cette organisation",
+     reconciliationLockedMessage:
+-      "Activez le module de rapprochement des paiements afin de valider ici les résultats liés aux espèces, aux banques, aux cartes et au mobile money.",
++      "Un administrateur doit activer le rapprochement des paiements pour vous permettre de consulter ici les rapprochements d’espèces, de banque, de cartes ou de mobile money.",
++    cashDrawerLockedTitle: "Le module de caisse n’est pas activé pour cette organisation",
++    cashDrawerLockedMessage:
++      "Un administrateur doit activer le module de caisse pour vous permettre de consulter les mouvements de caisse et l’historique des paiements.",
+     reconciliationDeniedTitle: "Le rapprochement des paiements n’est pas accessible à ce rôle",
+     permissionDeniedMessage:
+-      "Cette surface financière est en lecture seule, mais elle exige toujours l’autorisation financière correspondante. Le refus a été enregistré par le contrôle RBAC.",
++      "Demandez à votre administrateur de vérifier vos droits d’accès aux pages financières. Ce refus d’accès a été enregistré.",
+   },
+ } as const
+ 
+@@ -68,7 +74,7 @@
+     button: "Enable reconciliation",
+     pending: "Enabling…",
+     confirm:
+-      "Enable Payment Reconciliation and any missing required Finance or Accounting modules for this tenant? This access change will be audit logged.",
++      "Enable Payment Reconciliation and any missing required Finance or Accounting modules for this organization? This access change will be audit logged.",
+     success: "Reconciliation enabled. Reloading the workbench…",
+     error: "Reconciliation could not be enabled.",
+     freshAuthRequired: "Confirm your current password to authorize this module access change.",
+@@ -79,7 +85,7 @@
+     button: "Activer le rapprochement",
+     pending: "Activation…",
+     confirm:
+-      "Activer le rapprochement des paiements ainsi que les modules Finance ou Comptabilité requis et manquants pour ce locataire ? Cette modification d’accès sera journalisée.",
++      "Activer le rapprochement des paiements ainsi que les modules Finance ou Comptabilité requis et manquants pour cette organisation ? Cette modification d’accès sera journalisée.",
+     success: "Rapprochement activé. Rechargement de l’espace de travail…",
+     error: "Le rapprochement n’a pas pu être activé.",
+     freshAuthRequired: "Confirmez votre mot de passe actuel pour autoriser cette modification d’accès.",
+@@ -172,14 +178,18 @@
+             kind="locked_module"
+             eyebrow={routeStateCopy.moduleLockedEyebrow}
+             title={
+-              isReconciliationSurface
++              moduleRequirement.moduleSlug === "payment_reconciliation"
+                 ? routeStateCopy.reconciliationLockedTitle
+-                : moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`
++                : moduleRequirement.moduleSlug === "cash_drawer"
++                  ? routeStateCopy.cashDrawerLockedTitle
++                  : moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`
+             }
+             message={
+-              isReconciliationSurface
++              moduleRequirement.moduleSlug === "payment_reconciliation"
+                 ? routeStateCopy.reconciliationLockedMessage
+-                : moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE
++                : moduleRequirement.moduleSlug === "cash_drawer"
++                  ? routeStateCopy.cashDrawerLockedMessage
++                  : moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE
+             }
+             primaryHref={localizePath("/dashboard", locale)}
+             primaryLabel={routeStateCopy.backToDashboard}
+--- a/app/[locale]/(dashboard)/dashboard/finance/__tests__/finance-route-access.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/__tests__/finance-route-access.test.tsx
+@@ -9,7 +9,7 @@
+ }))
+ 
+ jest.mock("@/components/modules/TenantModuleActivationButton", () => ({
+-  TenantModuleActivationButton: ({ labels }: { labels: { button: string } }) => <button>{labels.button}</button>,
++  TenantModuleActivationButton: jest.fn(({ labels }: { labels: { button: string } }) => <button>{labels.button}</button>),
+ }))
+ jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
+ jest.mock("@/i18n/routing", () => ({
+@@ -25,6 +25,7 @@
+ 
+ import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
++import { TenantModuleActivationButton } from "@/components/modules/TenantModuleActivationButton"
+ import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
+ 
+ const requirePermission = requireAnyPermission as jest.Mock
+@@ -39,8 +40,8 @@
+   })
+ 
+   it.each([
+-    ["en", "Payment reconciliation is not enabled for this tenant", "Back to dashboard"],
+-    ["fr", "Le rapprochement des paiements n’est pas activé pour ce locataire", "Retour au tableau de bord"],
++    ["en", "Payment reconciliation is not enabled for this organization", "Back to dashboard"],
++    ["fr", "Le rapprochement des paiements n’est pas activé pour cette organisation", "Retour au tableau de bord"],
+   ])("keeps a module denial embedded and localized in %s", async (locale, title, back) => {
+     const content = await withFinanceSurfaceAccess({
+       params: Promise.resolve({ locale }), surface: routeByKey("finance-reconciliation")!, onAllowed,
+@@ -56,12 +57,22 @@
+     expect(observeAccess).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-a", accessIntent: "read", mode: "enforce" }))
+   })
+ 
+-  it("preserves the authorized administrator's activation action within the blocked state", async () => {
++  it.each([
++    ["en", "Enable reconciliation", /missing required Finance or Accounting modules for this organization.*audit logged/, "Confirm your current password"],
++    ["fr", "Activer le rapprochement", /Finance ou Comptabilité requis et manquants pour cette organisation.*journalisée/, "Confirmez votre mot de passe actuel"],
++  ] as const)("preserves administrator activation scope and authentication disclosure in %s", async (locale, button, confirm, freshAuth) => {
+     requirePermission.mockResolvedValue({ orgId: "org-a", userId: "user-a", permissions: ["payments.reconciliation.read", "MANAGE_SYSTEM_SETTINGS"] })
+     render(<main>{await withFinanceSurfaceAccess({
+-      params: Promise.resolve({ locale: "fr" }), surface: routeByKey("finance-reconciliation")!, onAllowed,
++      params: Promise.resolve({ locale }), surface: routeByKey("finance-reconciliation")!, onAllowed,
+     })}</main>)
+-    expect(screen.getByRole("button", { name: "Activer le rapprochement" })).toBeVisible()
++    expect(screen.getByRole("button", { name: button })).toBeVisible()
++    expect(TenantModuleActivationButton).toHaveBeenCalledWith(expect.objectContaining({
++      moduleSlug: "payment_reconciliation",
++      labels: expect.objectContaining({
++        confirm: expect.stringMatching(confirm),
++        freshAuthRequired: expect.stringContaining(freshAuth),
++      }),
++    }), undefined)
+     expect(screen.getAllByRole("main")).toHaveLength(1)
+     expect(onAllowed).not.toHaveBeenCalled()
+   })
+@@ -73,8 +84,32 @@
+     })}</main>)
+     expect(screen.getByRole("heading", { name: "Cette page financière n’est pas accessible à votre rôle" })).toBeVisible()
+     expect(screen.getAllByRole("main")).toHaveLength(1)
+-    expect(screen.queryByText(/Private guard detail|Finance payments|is not available/)).not.toBeInTheDocument()
++    expect(screen.queryByText(/Private guard detail|Finance payments|is not available|RBAC|lecture seule/)).not.toBeInTheDocument()
++    expect(screen.getByText(/Demandez à votre administrateur.*Ce refus d’accès a été enregistré/)).toBeVisible()
+     expect(observeAccess).not.toHaveBeenCalled()
++    expect(onAllowed).not.toHaveBeenCalled()
++  })
++
++  it.each([
++    ["en", "cash_drawer", "Cash drawer is not enabled for this organization", /An administrator must enable the cash drawer/],
++    ["fr", "cash_drawer", "Le module de caisse n’est pas activé pour cette organisation", /Un administrateur doit activer le module de caisse/],
++    ["en", "payment_reconciliation", "Payment reconciliation is not enabled for this organization", /An administrator must enable payment reconciliation/],
++    ["fr", "payment_reconciliation", "Le rapprochement des paiements n’est pas activé pour cette organisation", /Un administrateur doit activer le rapprochement/],
++  ] as const)("explains the actual missing history module in %s: %s", async (locale, moduleSlug, title, message) => {
++    observeAccess.mockImplementation(async ({ moduleSlug: slug }) => ({ allowed: slug !== moduleSlug }))
++    render(<main>{await withFinanceSurfaceAccess({
++      params: Promise.resolve({ locale }), surface: routeByKey("finance-cash-payment-history")!, onAllowed,
++    })}</main>)
++    expect(screen.getByRole("heading", { name: title })).toBeVisible()
++    expect(screen.getByText(message)).toBeVisible()
++    expect(screen.getByRole("link")).toHaveAttribute("href", `/${locale}/dashboard`)
++    expect(screen.queryByText(/tenant|locataire|surface|entitlement|RBAC/)).not.toBeInTheDocument()
++    expect(screen.queryByRole("button")).not.toBeInTheDocument()
++    expect(screen.getAllByRole("main")).toHaveLength(1)
++    expect(observeAccess).toHaveBeenLastCalledWith(expect.objectContaining({
++      moduleSlug, organizationId: "org-a", userId: "user-a", mode: "enforce", audit: true,
++    }))
++    expect(observeAccess).toHaveBeenCalledTimes(moduleSlug === "cash_drawer" ? 1 : 2)
+     expect(onAllowed).not.toHaveBeenCalled()
+   })
+ 
+--- a/app/[locale]/(dashboard)/dashboard/finance/reconciliation/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/reconciliation/__tests__/page.test.tsx
+@@ -5,6 +5,8 @@
+ import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+ 
+ import FinanceReconciliationPage from "../page"
++
++jest.mock("next/navigation", () => ({ useRouter: () => ({ refresh: jest.fn() }) }))
+ 
+ jest.mock("lucide-react", () => {
+   const createIcon = (name: string) => {
+@@ -141,7 +143,7 @@
+     render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "en" }) }))
+ 
+     expect(screen.getByText("Module locked")).toBeInTheDocument()
+-    expect(screen.getByText("Payment reconciliation is not enabled for this tenant")).toBeInTheDocument()
++    expect(screen.getByText("Payment reconciliation is not enabled for this organization")).toBeInTheDocument()
+     expect(screen.queryByText("Payment reconciliation workbench rendered")).not.toBeInTheDocument()
+     expect(mockPaymentReconciliationWorkbench).not.toHaveBeenCalled()
+   })
+@@ -182,10 +184,10 @@
+     expect(screen.getByText("Module verrouillé")).toBeInTheDocument()
+     expect(
+       screen.getByRole("heading", {
+-        name: "Le rapprochement des paiements n’est pas activé pour ce locataire",
++        name: "Le rapprochement des paiements n’est pas activé pour cette organisation",
+       }),
+     ).toBeInTheDocument()
+-    expect(screen.getByText(/Activez le module de rapprochement des paiements/)).toBeInTheDocument()
++    expect(screen.getByText(/Un administrateur doit activer le rapprochement des paiements/)).toBeInTheDocument()
+     expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
+       "href",
+       "/fr/dashboard",
+@@ -206,7 +208,7 @@
+         name: "Le rapprochement des paiements n’est pas accessible à ce rôle",
+       }),
+     ).toBeInTheDocument()
+-    expect(screen.getByText(/Le refus a été enregistré par le contrôle RBAC/)).toBeInTheDocument()
++    expect(screen.getByText(/Ce refus d’accès a été enregistré/)).toBeInTheDocument()
+     expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
+       "href",
+       "/fr/dashboard",
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**14 October — Delivery 12:** finance denial instructions now use organization terminology and explain administrator recovery; both Cash and Payment History module-denial branches are localized in EN/FR. Activation dependency/audit/authentication disclosures remain intact. All 28 mocked route/component tests, scoped TypeScript and production-file lint passed. Edge now lists dashboard/accountant destinations, but page inspection and navigation still time out; this is a browser-control gap, not evidence that another sign-in is required. Real accountant, owner/cashier and responsive acceptance remain open. See [Delivery 12](EXECUTION-12.md).
++
+ **14 October — Delivery 11:** reconciliation now distinguishes an unconfirmed access check from a generic service failure, offers localized access review and refreshes the existing permission lookup. Local runtime recovered on port 3003; browser currently requires sign-in. This does not close the unresolved populated-accountant or responsive checks. See [Delivery 11](EXECUTION-11.md).
+ 
+ **Delivery 10 role acceptance update:** the Edge session now confirms ACCOUNTANT. The English dashboard correctly displays the permission limit and access-review action, closing that specific Delivery 02 rendered check. Reconciliation reached its accountant shell but remained loading; console reported workbench unavailable. Accountant portal, French and responsive checks remain blocked by runtime/browser failures, not by a missing sign-in. See [Delivery 10](EXECUTION-10.md). Historical role-gap notes below describe earlier observations.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-12.md
+@@ -0,0 +1,58 @@
++# Delivery 12 — Finance access copy and French module states
++
++Date: 14 October 2026. Source revision: `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`, with substantial pre-existing working-tree changes. Status: implemented locally; real-browser acceptance remains open.
++
++## User-visible change
++
++Finance permission messages now explain that the organization administrator can review access. They retain the access-denial audit notice while removing internal terms such as RBAC, surface and tenant, and the blanket assertion that every affected finance page is read-only. Missing-organization recovery describes the organization's financial data.
++
++Reconciliation module messages use organization terminology and explain that an administrator must enable the module. Both module-denial branches of Cash and Payment History now have English/French headings and recovery instructions. Source inspection established that these two requirements belong to `finance-cash-payment-history`; Cash Command itself has no route-level module requirements in this catalog. No new requirements were added.
++
++Module-activation confirmation still discloses activation of missing required Finance or Accounting dependencies, audit logging and the current-password requirement. The activation component, authority checks, role permissions, organization binding, module enforcement order and protected data reads are unchanged. The edit only selects localized presentation copy for the known module identifiers. Existing fallback handling for other identifiers remains.
++
++## Verification
++
++| Evidence class | Result |
++|---|---|
++| Workflow contract | Passed, exit 0; 196 scripts outside the reviewed manifest |
++| Current source inspection | Finance route wrapper, route/module catalog, route tests, shared route-state and activation components, and permission-denial audit calls inspected |
++| Mocked component/route tests | **28 passed in 3 suites**, exit 0; see `evidence/delivery-12-tests.json` |
++| Scoped semantic TypeScript | Passed, exit 0; normal dependency resolution with `noEmit`, incremental disabled and Next environment declarations |
++| Production-file ESLint | Passed, exit 0 |
++| Real database tests | Not run; no migration, seed or business transaction performed |
++| Live rendered/browser acceptance | Not completed; browser control timed out before page inspection |
++
++The mocked lane checks both EN/FR history module-denial branches, enforcement order, organization/actor context and audit flag, no protected-content mount on denial, no activation button for ordinary readers, administrator activation disclosure, locale-preserving recovery links and a single main landmark. Existing reconciliation tests retain requested-run selection checks and module/permission boundaries. Cash-command tests cover route and service denial, missing organization, source failure and French empty content. These are jsdom/component checks, not visual, responsive, screen-reader or real-role certification.
++
++Commands, after reviewing scripts, registry and imported setup:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.finance-access-copy.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-12-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.finance-access-copy.json --pretty false
++node node_modules/eslint/bin/eslint.js "app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx"
++```
++
++The isolated Jest configuration calls `next/jest` without an application directory, avoiding application configuration/environment loading. Server authority, entitlement, data services and mutation actions are mocked. The reconciliation test now explicitly mocks its router rather than relying on the repository-wide setup. No build, application restart, deployment or commit was performed.
++
++## Browser coverage and precise gap
++
++| Destination / context | Locale / role / viewport / state | Observation |
++|---|---|---|
++| Edge, localhost:3000 `/en/login`, initial attempt | EN; current role and viewport not measured | Tab metadata initially showed login; focus/control calls timed out |
++| Edge, localhost:3000 `/en/dashboard/accounting/accountant-access` | EN; accountant intended from user context, current role not independently confirmed; viewport unmeasured | Later tab inventory showed this destination and other dashboard/finance tabs. Claiming the page timed out in browser evaluation; no content or loaded state verified |
++| Edge, localhost:3000 `/en/dashboard/finance/reconciliation`, dedicated attempt | EN; current role/viewport/state unverified | Opening a dedicated verification tab timed out during navigation; no populated, denied or error state accepted |
++
++The initial login observation is superseded by later dashboard tab metadata. Asking the user to sign in again is not justified by that metadata. The immediate blocker is the browser-control timeout. Metadata alone does not establish page content, the current actor, successful data loading or a regression in the application. No screenshots or responsive measurements were obtained; no viewport override was applied. No permissions, modules, invitations or business transactions were submitted. Ordinary application reads may produce audit records.
++
++## Remaining acceptance
++
++1. Once browser control responds, confirm the actual accountant role and inspect reconciliation's populated, denied or error state; verify EN/FR recovery and access-review/accountant-portal destinations.
++2. Verify the changed denial states with existing authorized fixtures at 1440×900, 1024×768 and approximately 390×844, including long French text and keyboard focus. Do not change live entitlements to manufacture a denial.
++3. Complete actual owner/cashier journeys and the remaining responsive and screen-reader checks. Earlier SUPER ADMIN results do not substitute for these roles.
++
++The larger roadmap remains in progress. This delivery does not certify retention, collaboration, network effects, referrals or release readiness.
++
++## Ownership and rollback
++
++The exact pre-edit bytes and hashes of the three existing source/test files and roadmap were captured in `evidence/delivery-12-baseline.json`. The owned patch and post-edit hash manifest are `evidence/delivery-12-owned.patch` and `evidence/delivery-12-files.json`. Reverse only the owned patch after reviewing later overlapping changes; never reset these files to HEAD. New scoped check configurations and this report can be removed independently. The shared finance catalog and business controls were not edited.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.finance-access-copy.config.cjs
+@@ -0,0 +1,16 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Mocked route/component lane; no application config, environment, server or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root,
++  testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/app'],
++  testMatch: [
++    '<rootDir>/app/**/finance/__tests__/finance-route-access.test.tsx',
++    '<rootDir>/app/**/finance/reconciliation/__tests__/page.test.tsx',
++    '<rootDir>/app/**/finance/cash-command/__tests__/page.test.tsx',
++  ],
++  collectCoverage: false,
++})
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.finance-access-copy.json
+@@ -0,0 +1,7 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
++  "files": ["../../../../next-env.d.ts", "../../../../app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx"],
++  "include": [],
++  "exclude": []
++}

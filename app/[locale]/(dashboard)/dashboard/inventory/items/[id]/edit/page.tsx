@@ -2,6 +2,7 @@ import getOrgBrands from "@/actions/brands/getOrgBrands"
 import getOrgCategories from "@/actions/categories/getOrgCategories"
 import getOrgTaxRates from "@/actions/taxRate/getOrgTaxRates"
 import getOrgUnits from "@/actions/units/getOrgUnits"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { getItemEditDTO } from "@/services/item/item.service"
@@ -37,14 +38,11 @@ async function ItemsEditPageImpl({ params }: Props) {
   const itemData = await getItemEditDTO(userOrg, id)
   if (!itemData) {
     return (
-      <main className="container mx-auto max-w-3xl px-4 py-12" aria-labelledby="item-not-found-title">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-900">
-          <h1 id="item-not-found-title" className="text-xl font-semibold">Item not found</h1>
-          <p className="mt-2 text-sm">
-            This item does not exist in your organization or is no longer available.
-          </p>
-        </div>
-      </main>
+      <DashboardRouteState kind="not_found" locale={locale} embedded
+        title="Item not found"
+        message="This item does not exist in your organization or is no longer available."
+        primaryLabel="Back to items"
+        primaryHref={localizePath("/dashboard/inventory/items", locale)} />
     )
   }
 
@@ -61,7 +59,7 @@ async function ItemsEditPageImpl({ params }: Props) {
   const categories = categoriesRes.success ? (categoriesRes.data ?? []) : []
 
   return (
-    <main className="container mx-auto px-4 py-6 sm:px-6 sm:py-8">
+    <div className="min-w-0">
       <EditItemClient
         itemData={itemData}
         initialBrandData={brands}
@@ -69,7 +67,7 @@ async function ItemsEditPageImpl({ params }: Props) {
         initialTaxRateData={taxRates}
         initialCategoryData={categories}
       />
-    </main>
+    </div>
   )
 }
 

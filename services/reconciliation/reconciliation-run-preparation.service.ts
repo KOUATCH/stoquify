@@ -4,11 +4,14 @@ import { db } from "@/prisma/db"
 import { FreshAuthRequiredError } from "@/lib/security/auth-session"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError } from "@/services/_shared/action-errors"
+import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx, withReconciliationCloseRetry } from "./reconciliation-close-order.service"
 import type { SuspenseCorrectionControl } from "./payment-suspense-correction.service"
 import { suspenseMetadata } from "./payment-suspense-evidence"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
 import { loadRunForCertification, validateReconciliationRunEvidenceInTx, type ReconciliationPreparationBlocker } from "./payment-reconciliation-certification.service"
-import { preparationHash as hash, preparationJson as json, preparedRunHash, loadRunPreparationReceiptInTx } from "./reconciliation-run-preparation-evidence"
+import { preparationHash as hash, preparationJson as json, preparedRunHash, loadRunPreparationReceiptInTx, loadAdditionalSourcesReceiptInTx } from "./reconciliation-run-preparation-evidence"
 import { reconciliationPreparationReadSchema, reconciliationPreparationSchema, reconciliationPreparationQuerySchema, type ReconciliationPreparationCommand } from "./reconciliation-run-preparation.contracts"
 
 async function authorize(tx: Prisma.TransactionClient, control: SuspenseCorrectionControl, write = false, readScope: "runs" | "evidence" = "evidence") {
@@ -18,6 +21,16 @@ async function authorize(tx: Prisma.TransactionClient, control: SuspenseCorrecti
     throw new ForbiddenError("An active workspace actor is required.")
   const now = (control.now ?? new Date()).getTime(), at = control.lastAuthAt?.getTime()
   if (write && (at === undefined || !Number.isFinite(at) || at > now || now - at > 300_000)) throw new FreshAuthRequiredError()
+}
+function moduleAccess(tx: Prisma.TransactionClient, control: SuspenseCorrectionControl, accessIntent: "read" | "write") {
+  return evaluateModuleAccessInTx(tx, {
+    organizationId: control.organizationId, userId: control.actorId, actorPermissions: control.actorPermissions,
+    moduleSlug: "payment_reconciliation", surfaceType: "action", surface: "services/reconciliation/reconciliation-run-preparation.service.ts",
+    accessIntent, mode: "enforce",
+  })
+}
+async function requireModuleRead(tx: Prisma.TransactionClient, control: SuspenseCorrectionControl) {
+  if (!(await moduleAccess(tx, control, "read")).allowed) throw new ForbiddenError("Reconciliation module read access is unavailable.")
 }
 function assertPreparatable(run: Awaited<ReturnType<typeof loadRunForCertification>>) {
   if (!["NEEDS_REVIEW", "READY_FOR_SIGNOFF"].includes(run.status) || run.signedAt || run.signedById || run.certificateHash || run.certificatePayload)
@@ -33,7 +46,11 @@ export async function previewReconciliationPreparation(input: unknown, control: 
   const command = reconciliationPreparationReadSchema.parse(input), asOf = control.now ?? new Date()
   return db.$transaction(async tx => {
     await authorize(tx, control)
+    await requireModuleRead(tx, control)
+    const writeAccess = await moduleAccess(tx, control, "write")
     const run = await loadRunForCertification(tx, control.organizationId, command.runId, asOf)
+    if (!writeAccess.allowed)
+      return { runId: run.id, status: run.status, canPrepare: false as const, revision: null, blocker: "MODULE_WRITE_REQUIRED" as const, counts: null, asOf: asOf.toISOString() }
     if (!["NEEDS_REVIEW", "READY_FOR_SIGNOFF"].includes(run.status) || run.signedAt || run.signedById || run.certificateHash || run.certificatePayload || !run.runById?.trim())
       return { runId: run.id, status: run.status, canPrepare: false as const, revision: null, blocker: "RUN_STATE_REQUIRED" as const, counts: null, asOf: asOf.toISOString() }
     try {
@@ -53,6 +70,7 @@ export async function readReconciliationPreparation(input: unknown, control: Sus
   const query = reconciliationPreparationQuerySchema.parse(input), asOf = control.now ?? new Date()
   return db.$transaction(async tx => {
     await authorize(tx, control, false, query.kind === "runs" ? "runs" : "evidence")
+    await requireModuleRead(tx, control)
     const after = query.cursor ? { OR: [{ createdAt: { lt: new Date(query.cursor.createdAt) } }, { createdAt: new Date(query.cursor.createdAt), id: { lt: query.cursor.id } }] } : {}
     const nextCursor = (rows: Array<{ id: string; createdAt: Date }>) => rows.length > 20 ? { id: rows[19].id, createdAt: rows[19].createdAt.toISOString() } : null
     if (query.kind === "runs") {
@@ -67,25 +85,44 @@ export async function readReconciliationPreparation(input: unknown, control: Sus
     }
     const run = await loadRunForCertification(tx, control.organizationId, query.runId, asOf)
     const where = { organizationId: control.organizationId, source: "RECONCILIATION_RUN" as const, status: "PROCESSED" as const,
-      externalId: run.id, idempotencyKey: { startsWith: "reconciliation-run-preparation:" } }
-    const rows = await tx.paymentReconciliationInboxItem.findMany({ where: { AND: [where, after] }, select: { id: true, createdAt: true },
+      externalId: run.id, OR: [{ idempotencyKey: { startsWith: "reconciliation-run-preparation:" } }, { idempotencyKey: { startsWith: "reconciliation-additional-sources:" } }] }
+    const rows = await tx.paymentReconciliationInboxItem.findMany({ where: { AND: [where, after] }, select: { id: true, createdAt: true, idempotencyKey: true },
       take: 21, orderBy: [{ createdAt: "desc" }, { id: "desc" }] })
     const total = await tx.paymentReconciliationInboxItem.count({ where })
     const records = await Promise.all(rows.slice(0, 20).map(async row => {
+      if (row.idempotencyKey.startsWith("reconciliation-additional-sources:")) {
+        const { data } = await loadAdditionalSourcesReceiptInTx(tx, control.organizationId, run.id, row.id)
+        return { id: row.id, kind: "ADDITIONAL_SOURCES" as const, retainedCertificateHash: data.beforeRun.status === "SIGNED" && typeof data.beforeRun.certificateHash === "string" ? data.beforeRun.certificateHash : null, recordedAt: data.incorporatedAt, actorId: data.actorId, reason: data.reason }
+      }
       const { data } = await loadRunPreparationReceiptInTx(tx, control.organizationId, run.id, row.id)
-      return { id: row.id, preparedAt: data.preparedAt, preparedById: data.preparedById, reason: data.reason }
+      return { id: row.id, kind: "PREPARATION" as const, retainedCertificateHash: null, recordedAt: data.preparedAt, actorId: data.preparedById, reason: data.reason }
     }))
     return { kind: "history" as const, asOf: asOf.toISOString(), total, nextCursor: nextCursor(rows), records,
       run: { id: run.id, status: run.status, businessDate: run.businessDate.toISOString(), providerName: run.providerAccount.displayName, currencyCode: run.providerAccount.currencyCode } }
   }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 export async function prepareReconciliationRun(input: ReconciliationPreparationCommand, control: SuspenseCorrectionControl) {
+  const startedAt = Date.now()
   const command = reconciliationPreparationSchema.parse(input), now = control.now ?? new Date()
   const key = "reconciliation-run-preparation:" + command.idempotencyKey
   const requestHash = hash({ command, organizationId: control.organizationId, actorId: control.actorId })
   try {
-    return await db.$transaction(async tx => {
+    const result = await withReconciliationCloseRetry(() => db.$transaction(async tx => {
       await authorize(tx, { ...control, now }, true)
+      const decision = await moduleAccess(tx, control, "write")
+      if (!decision.allowed) {
+        await tx.auditLog.create({ data: {
+          organizationId: control.organizationId, userId: control.actorId,
+          entityType: "ModuleEntitlementDecision", entityId: "payment_reconciliation:prepare:" + command.runId,
+          action: "MODULE_ENTITLEMENT_ENFORCED", changes: {
+            moduleSlug: decision.moduleSlug, surface: decision.surface, accessIntent: decision.accessIntent,
+            result: decision.result, reason: decision.reason, entitlementStatus: decision.entitlement?.status ?? null,
+            missingDependencies: decision.missingDependencies.map(item => item.dependsOnSlug),
+            rbacWildcardPresent: decision.rbacWildcardPresent, rbacWildcardBypassedEntitlement: false,
+          },
+        } })
+        return { moduleDenied: true as const }
+      }
       const run = await loadRunForCertification(tx, control.organizationId, command.runId, now)
       const prior = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId: control.organizationId, idempotencyKey: key } })
       if (prior) {
@@ -94,7 +131,10 @@ export async function prepareReconciliationRun(input: ReconciliationPreparationC
         // Exact replay reports the retained transition and current status; it never changes readiness again.
         return { runId: run.id, receiptId: prior.id, preparedAt: saved.data.preparedAt, currentStatus: run.status, replayed: true }
       }
+      await lockReconciliationCloseCatalogInTx(tx, control.organizationId)
       const current = await previewInTx(tx, run)
+      const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, control.organizationId)
+      await authorize(tx, { ...control, now: new Date(now.getTime() + Math.max(0, Date.now() - startedAt)) }, true)
       if (command.expectedRevision !== current.revision) throw new ConflictError("The reviewed evidence changed. Refresh the preparation preview.")
       const receiptId = randomUUID()
       const transition = await tx.reconciliationRun.updateMany({ where: { id: run.id, organizationId: control.organizationId,
@@ -112,10 +152,17 @@ export async function prepareReconciliationRun(input: ReconciliationPreparationC
       await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: "RECONCILIATION_RUN_PREPARE",
         resourceType: "ReconciliationRun", resourceId: run.id, message: "Reviewed reconciliation prepared for independent sign-off; no financial posting",
         metadata: json({ receiptId, reviewedRevision: current.revision }) } })
+      await recordCloseCertificationInvalidationsForSourceInTx(tx, control.organizationId, {
+        sourceCode: "PAYMENT_RECONCILIATION_PREPARED", sourceId: run.id, periodIds: affectedPeriodIds,
+        previousEvidenceHash: preparedRunHash(run), newEvidenceHash: preparedRunHash(prepared), correlationId: receiptId,
+        staleReason: "Reconciliation preparation changed its reviewed evidence; run Close assessment again.",
+      }, { actorId: control.actorId, now })
       await publishPaymentReconciliationNotification({ type: "payment-reconciliation.run.ready-for-signoff", organizationId: control.organizationId,
         evidenceRef: { reconciliationRunId: run.id }, correlationId: receiptId, dedupeKey: receiptId }, tx)
       return { runId: run.id, receiptId, preparedAt: now.toISOString(), currentStatus: prepared.status, replayed: false }
-    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }))
+    if ("moduleDenied" in result) throw new ForbiddenError("Reconciliation module write access is unavailable.")
+    return result
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && (["P2002", "P2034"].includes(error.code)
       || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code)))))

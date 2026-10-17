@@ -37,7 +37,7 @@ export default function AuthLayout({ children, variant = "login", className }: A
   const hasWorkspaceGuide = variant === "login" || variant === "register";
 
   return (
-    <main className={cn("auth-shell min-h-screen bg-[var(--auth-canvas)] text-[var(--auth-text)]", className)}>
+    <main className={cn("auth-shell min-h-screen bg-[var(--auth-canvas)] text-[var(--auth-text)]", hasWorkspaceGuide ? "auth-contour-shell" : "auth-shell-grid", className)}>
       <header className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href={localizePath("/", locale)} className="block min-w-0 max-w-[190px] sm:max-w-none">
           <StoquifyLogo className="w-full" theme={isDarkTheme ? "dark" : "light"} width={212} height={48} tagline={pageCopy.common.brandSubtitle} />

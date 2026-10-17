@@ -2,7 +2,7 @@ jest.mock("server-only", () => ({}))
 import { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 import { dailySalesPeriod } from "../daily-sales-period"
-import { getDailySalesReadModel } from "../daily-sales-read.service"
+import { getDailySalesReadModel, getLatestDailySalesDay } from "../daily-sales-read.service"
 
 const decimal = (value: string) => new Prisma.Decimal(value)
 const input = { organizationId: "org-1", locationId: "location-1", date: "2026-09-06" }
@@ -91,4 +91,41 @@ it("separates saved cash and credit records from order estimates and preserves t
   expect(result.recordedCash).toEqual({ opening: "0.00", closing: "13.00", cashIn: "5.00", cashOut: "2.00", variance: "-1.00" })
   expect(result.recordedPayments?.credit).toBe("2.25"); expect(result).not.toHaveProperty("expectedBalance")
   expect(tx.salesOrder.aggregate).not.toHaveBeenCalled()
+})
+
+describe("latest activity", () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-09-06T12:00:00Z"))
+    tx.location.findFirst = jest.fn().mockResolvedValue({ id: "location-1" })
+    tx.dailySalesReport.findMany = jest.fn().mockResolvedValue([])
+    tx.salesOrder.findFirst = jest.fn().mockResolvedValue(null)
+  })
+  afterEach(() => jest.useRealTimers())
+
+  it("returns a bounded empty result rather than inventing a day", async () => {
+    expect(await getLatestDailySalesDay(input)).toEqual({ date: null, from: "2025-09-06", through: "2026-09-06", locationId: "location-1" })
+    expect(tx.dailySalesReport.findMany).toHaveBeenCalledWith(expect.objectContaining({ take: 366, where: expect.objectContaining({ organizationId: "org-1", locationId: "location-1" }) }))
+    expect(tx.salesOrder.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", locationId: "location-1", deletedAt: null, orderDate: { gte: new Date("2025-09-05T23:00:00Z"), lt: new Date("2026-09-06T23:00:00Z") } }) }))
+  })
+  it("excludes every saved day from order lookup, including a saved zero day", async () => {
+    tx.dailySalesReport.findMany.mockResolvedValue([{ date: new Date("2026-09-06T00:00:00Z"), totalTransactions: 0 }, { date: new Date("2026-09-03T00:00:00Z"), totalTransactions: 2 }])
+    tx.salesOrder.findFirst.mockResolvedValue({ orderDate: new Date("2026-09-04T23:30:00Z") })
+    expect((await getLatestDailySalesDay(input)).date).toBe("2026-09-05")
+    expect(tx.salesOrder.findFirst.mock.calls[0][0].where.NOT.OR).toEqual([
+      { orderDate: { gte: new Date("2026-09-05T23:00:00Z"), lt: new Date("2026-09-06T23:00:00Z") } },
+      { orderDate: { gte: new Date("2026-09-02T23:00:00Z"), lt: new Date("2026-09-03T23:00:00Z") } },
+    ])
+  })
+  it("chooses a newer nonempty saved report over an older order", async () => {
+    tx.dailySalesReport.findMany.mockResolvedValue([{ date: new Date("2026-09-05T00:00:00Z"), totalTransactions: 1 }])
+    tx.salesOrder.findFirst.mockResolvedValue({ orderDate: new Date("2026-09-01T12:00:00Z") })
+    expect((await getLatestDailySalesDay(input)).date).toBe("2026-09-05")
+  })
+  it("rejects foreign locations before activity reads and preserves query failure", async () => {
+    tx.location.findFirst.mockResolvedValueOnce(null)
+    await expect(getLatestDailySalesDay({ ...input, locationId: "foreign" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(tx.dailySalesReport.findMany).not.toHaveBeenCalled()
+    tx.dailySalesReport.findMany.mockRejectedValueOnce(new Error("database unavailable"))
+    await expect(getLatestDailySalesDay(input)).rejects.toThrow("database unavailable")
+  })
 })

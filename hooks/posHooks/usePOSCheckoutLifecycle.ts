@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import { acquirePOSCheckoutAction, changePOSCheckoutCartAction } from "@/actions/pos/checkout.actions"
+import { acquirePOSCheckoutAction, changePOSCheckoutCartAction, renewPOSCheckoutAction } from "@/actions/pos/checkout.actions"
 import type { CommitSaleInput } from "@/services/pos/pos.schemas"
 
 type Scope = { organizationId?: string | null; actorId?: string; locationId: string; terminalId: string; sessionId?: string }
@@ -13,6 +13,7 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
   const [leaseId, setLeaseId] = useState("")
   const [ready, setReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [commandError, setCommandError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null)
   const [acceptedCartId, setAcceptedCartId] = useState<string | null>(null)
@@ -28,7 +29,7 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
     readyRef.current = false
     commandRef.current = null
     refreshRef.current = async () => {}
-    setReady(false); setBusy(false); setLeaseId(""); setSnapshot(null); setAcceptedCartId(null); setError(null)
+    setReady(false); setBusy(false); setLeaseId(""); setSnapshot(null); setAcceptedCartId(null); setError(null); setCommandError(null)
     if (!organizationId || !actorId || !sessionId || !locationId || !terminalId) return
     let alive = true, inFlight = false, ownsBrowserLock = false, acquiring = false
     let release: (() => void) | undefined
@@ -56,22 +57,31 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
           sessionStorage.setItem(key, id)
         } catch { id = crypto.randomUUID() }
         setLeaseId(id)
-        const refresh = async () => {
+        let lastRecoveryAt = 0
+        let recoveryAfter: string | undefined
+        const refresh = async (recover = true) => {
           if (!alive || inFlight || !online) return
           inFlight = true
           const requestedAt = Date.now()
           const requestedVersion = authorityVersion.current
           try {
-            const response = await acquirePOSCheckoutAction({ locationId, terminalId, sessionId, checkoutLeaseId: id })
+            const request = { locationId, terminalId, sessionId, checkoutLeaseId: id, ...(recover && recoveryAfter ? { recoveryAfter } : {}) }
+            const response = recover ? await acquirePOSCheckoutAction(request) : await renewPOSCheckoutAction(request)
             if (!alive || requestedVersion !== authorityVersion.current) return
             if (!response.success) { invalidateOwnership(response.error); return }
             // Count response latency against the lease; the server started it before replying.
             const remaining = 55_000 - (Date.now() - requestedAt)
             if (remaining <= 0) { invalidateOwnership("POS_CHECKOUT_OWNERSHIP_REQUIRED"); return }
             readyRef.current = true
-            setSnapshot(previous => ({ ...response.data, recoveredSales: response.data.recoveredSales.length ? response.data.recoveredSales : previous?.recoveredSales ?? [] })); setReady(true); setError(null)
-            // Re-read the active identity after reconnect or a lost lifecycle-command response.
-            void queryClient.invalidateQueries({ queryKey: ["pos-operations", "cart", locationId, terminalId, sessionId] })
+            if (response.data) {
+              const recovered = response.data
+              recoveryAfter = recovered.recoveryAfter ?? undefined
+              setSnapshot(previous => ({ ...recovered, recoveredSales: recovered.recoveredSales.length ? recovered.recoveredSales : previous?.recoveredSales ?? [] }))
+              lastRecoveryAt = Date.now()
+              // Re-read identity after reconnect or a lost lifecycle-command response.
+              void queryClient.invalidateQueries({ queryKey: ["pos-operations", "cart", locationId, terminalId, sessionId] })
+            }
+            setReady(true); setError(null)
             clearTimeout(expiry)
             expiry = setTimeout(() => { if (alive) invalidateOwnership("POS_CHECKOUT_OWNERSHIP_REQUIRED") }, remaining)
           } catch { if (alive && requestedVersion === authorityVersion.current) invalidateOwnership("POS_CHECKOUT_CONNECTION_LOST") }
@@ -80,7 +90,9 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
         refreshRef.current = refresh
         await refresh()
         if (!alive) return
-        interval = setInterval(() => { void refresh() }, 20_000)
+        // Keep the frequent lease path independent of history. Pending/parked items
+        // remain discoverable on explicit refresh, reconnect and a periodic sweep.
+        interval = setInterval(() => { void refresh(!readyRef.current || Date.now() - lastRecoveryAt >= 300_000) }, 20_000)
         await new Promise<void>(resolve => { release = resolve })
       }).catch(() => { if (alive) invalidateOwnership("POS_CHECKOUT_CONNECTION_LOST") }).finally(() => { acquiring = false })
     }
@@ -109,13 +121,15 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
     const requestedGeneration = generation.current
     const requestedVersion = authorityVersion.current
     const isCurrent = () => generation.current === requestedGeneration && authorityVersion.current === requestedVersion && readyRef.current
-    setBusy(true); setError(null)
+    setBusy(true); setError(null); setCommandError(null)
     try {
       const response = await changePOSCheckoutCartAction({ command, salesOrderId, locationId, terminalId, sessionId, checkoutLeaseId: leaseId })
       if (!isCurrent()) return null
       if (!response.success) {
-        setError(response.error)
-        if (["POS_CHECKOUT_OWNERSHIP_REQUIRED", "POS_CHECKOUT_OWNED_ELSEWHERE", "POS_CHECKOUT_SHIFT_UNAVAILABLE"].includes(response.error ?? "")) { readyRef.current = false; authorityVersion.current++; setReady(false); setAcceptedCartId(null) }
+        // A renewed lease does not mean the rejected cart command succeeded.
+        if (["POS_CHECKOUT_OWNERSHIP_REQUIRED", "POS_CHECKOUT_OWNED_ELSEWHERE", "POS_CHECKOUT_SHIFT_UNAVAILABLE"].includes(response.error ?? "")) {
+          setError(response.error); readyRef.current = false; authorityVersion.current++; setReady(false); setAcceptedCartId(null)
+        } else setCommandError(response.error)
         return null
       }
       setAcceptedCartId(response.data.activeCartId)
@@ -129,5 +143,5 @@ export function usePOSCheckoutLifecycle(scope: Scope) {
     } finally { if (commandRef.current === token) { commandRef.current = null; setBusy(false) } }
   }, [ready, locationId, terminalId, sessionId, leaseId, queryClient, refresh])
 
-  return { ready, busy, leaseId, error, snapshot, acceptedCartId, acceptCart: setAcceptedCartId, refresh, command }
+  return { ready, busy, leaseId, error: error || commandError, snapshot, acceptedCartId, acceptCart: setAcceptedCartId, refresh, command }
 }

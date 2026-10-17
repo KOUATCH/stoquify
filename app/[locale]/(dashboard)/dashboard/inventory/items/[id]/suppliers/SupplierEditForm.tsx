@@ -23,7 +23,7 @@ import {
   CalendarIcon,
   CheckCircle,
   Clock,
-  DollarSign,
+  Coins,
   FileText,
   Hash,
   Loader2,
@@ -199,12 +199,12 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
 
   if (!selectedSupplier) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-        <div className="rounded-full bg-muted p-6 mb-4">
-          <Star className="h-12 w-12 text-muted-foreground" />
+      <div className="flex min-h-[360px] flex-col items-center justify-center p-6 text-center sm:p-10">
+        <div className="mb-5 rounded-lg bg-[var(--dash-info-soft)] p-4">
+          <Star className="h-8 w-8 text-[var(--dash-info)]" />
         </div>
         <h3 className="text-lg font-semibold mb-2">No Supplier Selected</h3>
-        <p className="text-muted-foreground max-w-sm">
+        <p className="max-w-sm text-sm leading-6 text-[var(--dash-text-soft)]">
           Select a supplier from the list to view and edit their details for this item.
         </p>
       </div>
@@ -214,14 +214,14 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-6 border-b bg-gradient-to-r from-background to-muted/20">
+      <div className="border-b border-[var(--dash-border-subtle)] p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold mb-1">Edit Supplier Details</h2>
-            <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold text-primary">{selectedSupplier.supplier?.name || "Unknown Supplier"}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="break-words text-xl font-semibold text-[var(--dash-brand-strong)]">{selectedSupplier.supplier?.name || "Unknown Supplier"}</p>
               {selectedSupplier.isPreferred && (
-                <Badge variant="secondary" className="gap-1">
+                <Badge variant="outline" className="gap-1 border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]">
                   <Star className="h-3 w-3 fill-current" />
                   Preferred
                 </Badge>
@@ -232,46 +232,46 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
       </div>
 
       {/* Form Content */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="min-w-0 p-5 sm:p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Success Alert */}
             {saveSuccess && (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">Supplier details updated successfully!</AlertDescription>
+              <Alert className="border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]">
+                <CheckCircle className="h-4 w-4 text-[var(--dash-success)]" />
+                <AlertDescription className="text-[var(--dash-success)]">Supplier details updated successfully!</AlertDescription>
               </Alert>
             )}
 
             {/* Error Alert */}
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             {/* Supplier Preferences */}
-            <Card>
-              <CardHeader className="pb-4">
+            <Card className="rounded-none border-0 border-b border-[var(--dash-border-subtle)] bg-transparent pb-6 text-[var(--dash-text)] shadow-none">
+              <CardHeader className="px-0 pt-0 pb-4">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Star className="h-4 w-4" />
                   Supplier Preferences
                 </CardTitle>
-                <CardDescription>Configure your preferences for this supplier relationship</CardDescription>
+                <CardDescription className="text-[var(--dash-text-soft)]">Configure your preferences for this supplier relationship</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-0">
                 <FormField
                   control={form.control}
                   name="isPreferred"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/40 p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base font-medium">Preferred Supplier</FormLabel>
-                        <FormDescription>Mark this supplier as preferred for this item</FormDescription>
+                        <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">Mark this supplier as preferred for this item</FormDescription>
                       </div>
                       <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        <Switch className="data-[state=checked]:bg-[var(--dash-brand)] data-[state=unchecked]:bg-[var(--dash-border)]" checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -285,14 +285,14 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                       <FormLabel>Supplier SKU</FormLabel>
                       <FormControl>
                         <div className="flex gap-2">
-                          <Input placeholder="Enter supplier's SKU for this item" {...field} value={field.value ?? ""} />
-                          <Button type="button" variant="outline" onClick={handleGenerateSKU} disabled={isPending}>
+                          <Input className="dashboard-control min-w-0" placeholder="Enter supplier's SKU for this item" {...field} value={field.value ?? ""} />
+                          <Button type="button" variant="outline" className="dashboard-button-secondary shrink-0" aria-label="Generate supplier SKU" onClick={handleGenerateSKU} disabled={isPending}>
                             <Hash className="h-4 w-4" />
                           </Button>
                         </div>
                       </FormControl>
-                      <FormDescription>The SKU or part number used by this supplier</FormDescription>
-                      <FormMessage />
+                      <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">The SKU or part number used by this supplier</FormDescription>
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -300,30 +300,30 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
             </Card>
 
             {/* Order Details */}
-            <Card>
-              <CardHeader className="pb-4">
+            <Card className="rounded-none border-0 border-b border-[var(--dash-border-subtle)] bg-transparent pb-6 text-[var(--dash-text)] shadow-none">
+              <CardHeader className="px-0 pt-0 pb-4">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Package className="h-4 w-4" />
                   Order Details
                 </CardTitle>
-                <CardDescription>Configure ordering parameters and pricing information</CardDescription>
+                <CardDescription className="text-[var(--dash-text-soft)]">Configure ordering parameters and pricing information</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="leadTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
+                        <FormLabel className="flex flex-wrap items-center gap-2">
                           <Clock className="h-4 w-4" />
                           Lead Time (days)
                         </FormLabel>
                         <FormControl>
-                          <Input type="number" min="0" step="1" placeholder="0" {...field} />
+                          <Input className="dashboard-control" type="number" min="0" step="1" placeholder="0" {...field} />
                         </FormControl>
-                        <FormDescription>Expected delivery time in days</FormDescription>
-                        <FormMessage />
+                        <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">Expected delivery time in days</FormDescription>
+                        <FormMessage className="text-[var(--dash-danger)]" />
                       </FormItem>
                     )}
                   />
@@ -333,15 +333,15 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                     name="minOrderQty"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
+                        <FormLabel className="flex flex-wrap items-center gap-2">
                           <Package className="h-4 w-4" />
                           Min Order Quantity
                         </FormLabel>
                         <FormControl>
-                          <Input type="number" min="0" step="1" placeholder="0" {...field} />
+                          <Input className="dashboard-control" type="number" min="0" step="1" placeholder="0" {...field} />
                         </FormControl>
-                        <FormDescription>Minimum quantity per order</FormDescription>
-                        <FormMessage />
+                        <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">Minimum quantity per order</FormDescription>
+                        <FormMessage className="text-[var(--dash-danger)]" />
                       </FormItem>
                     )}
                   />
@@ -352,18 +352,18 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                   name="unitCost"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
+                      <FormLabel className="flex flex-wrap items-center gap-2">
+                        <Coins className="h-4 w-4" />
                         Unit Cost
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <DollarSign className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input type="number" step="0.01" min="0" placeholder="0.00" className="ps-10" {...field} />
+                          <Coins className="absolute start-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--dash-text-soft)]" />
+                          <Input type="number" step="0.01" min="0" placeholder="0.00" className="dashboard-control ps-10" {...field} />
                         </div>
                       </FormControl>
-                      <FormDescription>Cost per unit in your base currency</FormDescription>
-                      <FormMessage />
+                      <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">Cost per unit in your base currency</FormDescription>
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -380,8 +380,8 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                             <Button
                               variant="outline"
                               className={cn(
-                                "w-full ps-3 text-start font-normal",
-                                field.value ? "text-muted-foreground" : "",
+                                "dashboard-button-secondary w-full ps-3 text-start font-normal",
+                                field.value ? "text-[var(--dash-text-soft)]" : "",
                               )}
                             >
                               {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
@@ -389,7 +389,7 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent className="dashboard-landing-theme dark enterprise-floating-surface w-auto p-0" align="start">
                           <Calendar
                             mode="single"
                             selected={field.value}
@@ -399,8 +399,8 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>When did you last purchase from this supplier?</FormDescription>
-                      <FormMessage />
+                      <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">When did you last purchase from this supplier?</FormDescription>
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
@@ -408,15 +408,15 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
             </Card>
 
             {/* Additional Notes */}
-            <Card>
-              <CardHeader className="pb-4">
+            <Card className="rounded-none border-0 border-b border-[var(--dash-border-subtle)] bg-transparent pb-6 text-[var(--dash-text)] shadow-none">
+              <CardHeader className="px-0 pt-0 pb-4">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <FileText className="h-4 w-4" />
                   Additional Notes
                 </CardTitle>
-                <CardDescription>Add any additional information about this supplier relationship</CardDescription>
+                <CardDescription className="text-[var(--dash-text-soft)]">Add any additional information about this supplier relationship</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <FormField
                   control={form.control}
                   name="notes"
@@ -425,26 +425,28 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
                       <FormControl>
                         <Textarea
                           placeholder="Add any additional notes about this supplier, special terms, contact preferences, etc..."
-                          className="min-h-[100px] resize-none"
+                          className="dashboard-control min-h-[100px] resize-y"
+                          aria-label="Additional supplier notes"
                           {...field}
                           value={field.value ?? ""}
                         />
                       </FormControl>
-                      <FormDescription>These notes are private and only visible to your team</FormDescription>
-                      <FormMessage />
+                      <FormDescription className="text-xs leading-5 text-[var(--dash-text-soft)]">These notes are private and only visible to your team</FormDescription>
+                      <FormMessage className="text-[var(--dash-danger)]" />
                     </FormItem>
                   )}
                 />
               </CardContent>
             </Card>
 
-            <Separator />
+            <Separator className="bg-[var(--dash-border-subtle)]" />
 
             {/* Action Buttons */}
-            <div className="flex justify-between pt-4">
+            <div className="flex flex-wrap justify-between gap-3 pt-2">
               <Button
                 type="button"
                 variant="outline"
+                className="dashboard-button-secondary"
                 onClick={handleReset}
                 disabled={isPending || !form.formState.isDirty}
               >
@@ -452,7 +454,7 @@ const EditSupplierForm = ({ itemId, selectedSupplier, onUpdate }: SupplierEditFo
               </Button>
 
               <div className="flex gap-2">
-                <Button type="submit" disabled={isPending || !form.formState.isDirty} className="min-w-[140px]">
+                <Button type="submit" disabled={isPending || !form.formState.isDirty} className="dashboard-button-primary min-w-[140px]">
                   {isPending ? (
                     <>
                       <Loader2 className="h-4 w-4 me-2 animate-spin" />

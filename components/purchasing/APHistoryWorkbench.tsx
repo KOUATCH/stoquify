@@ -1,6 +1,9 @@
 "use client"
 
+import { OpenItemsReturnLink } from "@/components/finance/OpenItemsReturnLink"
 import { useState } from "react"
+import Link from "next/link"
+import { paymentReconciliationCopy } from "./payment-reconciliation-copy"
 import { APHistoryExportDialog } from "./APHistoryExportDialog"
 
 import { useLocale, useTranslations } from "next-intl"
@@ -29,7 +32,7 @@ import type { APHistoryResult, APHistoryRow } from "@/services/purchasing/ap-his
 
 type APHistoryT = ReturnType<typeof useTranslations<"apHistory">>
 
-export function APHistoryWorkbench({ organizationId, actorId }: { organizationId: string; actorId: string }) {
+export function APHistoryWorkbench({ organizationId, actorId, canExport = false }: { organizationId: string; actorId: string; canExport?: boolean }) {
   const [exportOpen, setExportOpen] = useState(false)
   const t = useTranslations("apHistory")
   const locale = useLocale()
@@ -92,7 +95,9 @@ export function APHistoryWorkbench({ organizationId, actorId }: { organizationId
 
   return (
     <>
-    <APHistoryExportDialog open={exportOpen} onOpenChange={setExportOpen} organizationId={organizationId} actorId={actorId} filters={{ lane: filters.lane, supplierId: filters.supplierId, dateFrom: filters.dateFrom, dateTo: filters.dateTo }} />
+    <OpenItemsReturnLink locale={locale === "fr" ? "fr" : "en"} />
+    {filters.invoiceId && <p className="px-4 pb-3 text-sm">{locale === "fr" ? "Facture sélectionnée uniquement ; les totaux et exports suivent ce filtre. Réinitialisez les filtres pour l’historique global." : "Selected invoice only; totals and exports follow this filter. Reset filters for full history."}</p>}
+    <APHistoryExportDialog open={exportOpen} onOpenChange={setExportOpen} organizationId={organizationId} actorId={actorId} filters={{ invoiceId: filters.invoiceId, lane: filters.lane, supplierId: filters.supplierId, dateFrom: filters.dateFrom, dateTo: filters.dateTo }} />
     <CanonicalTableBoundary
       contract={financePayablesHistoryTableContract}
       locale={locale === "fr" ? "fr" : "en"}
@@ -136,7 +141,7 @@ export function APHistoryWorkbench({ organizationId, actorId }: { organizationId
         permissionMessage: t("states.permissionMessage"),
         noOrgTitle: t("states.noOrgTitle"),
         noOrgMessage: t("states.noOrgMessage"),
-        proofUnavailableTitle: t("proof.unavailableTitle"),
+        proofUnavailableTitle: t("proof.scopeTitle"),
         proofUnavailableMessage: t("proof.unavailableMessage"),
         mobileCardAction: t("table.mobileCardAction"),
         resultCount: (count) => t("table.resultCount", { count }),
@@ -155,10 +160,10 @@ export function APHistoryWorkbench({ organizationId, actorId }: { organizationId
         title: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId,
         subtitle: (row) => `${row.supplier.name} / ${laneLabel(row.lane, t)}`,
         status: (row) => <><StateBadge state={row.controlState} t={t} />{row.retained ? <span className="ml-2 text-xs">{t("retained")}</span> : null}</>,
-        value: (row) => movementLabel(row, t, locale),
+        value: (row) => <div className="space-y-2"><div>{movementLabel(row, t, locale)}</div><p className="break-words text-sm font-normal text-[var(--dash-text-soft)]">{t("table.evidence")}: {evidenceLabel(row, t)}</p></div>,
       }}
       drawerTitle={(row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId}
-      drawerDescription={(row) => `${row.supplier.name} / ${row.sourceType}`}
+      drawerDescription={(row) => `${row.supplier.name} / ${t(`sourceTypes.${row.sourceType}`)}`}
       drawerMetadata={(row) => [
         { label: t("drawer.effectiveAt"), value: formatHistoryDate(row.effectiveAt, locale, timezone), icon: CalendarClock },
         { label: t("drawer.recordedAt"), value: formatHistoryDate(row.recordedAt, locale, timezone), icon: Database },
@@ -172,13 +177,14 @@ export function APHistoryWorkbench({ organizationId, actorId }: { organizationId
       onSelectRow={selectRow}
       onNextPage={nextPage}
       onRetry={() => isStale ? restartHistory() : refetch()}
-      onExport={() => setExportOpen(true)}
+      onExport={canExport ? () => setExportOpen(true) : undefined}
       isLoading={isLoading}
       isError={isError}
       errorMessage={isStale ? t("states.staleMessage") : error instanceof Error ? error.message : undefined}
       hasMore={hasMore}
       isPartial={isPartial}
-      partialSources={result?.completeness.sources.filter((source) => source.state === "partial").map((source) => source.source) ?? []}
+      wrapProofSummary
+      partialSources={result?.completeness.sources.filter((source) => source.state === "partial").map((source) => source.source === "supplier_ap_history_accounting_claim" ? t("proof.accountingScope") : source.source === "supplier_invoices" ? t("sources.invoices") : source.source === "supplier_payments" ? t("sources.payments") : source.source) ?? []}
       headerActions={[
         ...(isStale ? [{ label: t("filters.reset"), icon: RotateCcw, onClick: resetFilters, variant: "secondary" as const }] : []),
         ...(filters.supplierId
@@ -214,21 +220,23 @@ export function APHistoryWorkbench({ organizationId, actorId }: { organizationId
 function APHistoryDrawer({ row, locale, timezone, t }: { row: APHistoryRow; locale: string; timezone: string; t: APHistoryT }) {
   return (
     <>
+      {row.sourceType === "SUPPLIER_PAYMENT" && ["RELEASED", "POSTED"].includes(row.businessState) && <Link href={`/${locale}/dashboard/purchases/payables/payments/reconcile?payment=${encodeURIComponent(row.sourceId)}`} className="button-gold-chestnut-link mb-4 inline-block break-words underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">{paymentReconciliationCopy(locale).link}</Link>}
       <DetailSection title={t("drawer.businessIdentity")}>
         <dl>
           <DetailLine label={t("drawer.lane")} value={laneLabel(row.lane, t)} />
-          <DetailLine label={t("drawer.source")} value={`${row.sourceType} / ${row.sourceId}`} />
+          <DetailLine label={t("drawer.source")} value={<span className="break-all">{row.sourceId}</span>} />
           <DetailLine label={t("drawer.amount")} value={formatMoney(row.amount, row.currency, locale)} />
           <DetailLine label={t("drawer.signedMovement")} value={movementLabel(row, t, locale)} />
         </dl>
       </DetailSection>
       <DetailSection title={t("drawer.accounting")}>
         <dl>
-          <DetailLine label={t("drawer.businessState")} value={row.lane === "invoice" ? controlStateLabel(row.controlState, t) : row.businessState} />
+          <DetailLine label={t("drawer.businessState")} value={row.lane === "invoice" ? controlStateLabel(row.controlState, t) : paymentStateLabel(row.businessState, t)} />
           <DetailLine label={t("drawer.ledgerPostingBatch")} value={row.accounting.ledgerPostingBatchId} />
           <DetailLine label={t("drawer.businessEvent")} value={row.accounting.postedBusinessEventId} />
-          <DetailLine label={t("drawer.documentHash")} value={row.accounting.documentHash} />
-          <DetailLine label={t("drawer.evidenceHash")} value={row.accounting.evidenceHash} />
+          <DetailLine label={t("drawer.documentHash")} value={<span className="break-all">{row.accounting.documentHash ?? "-"}</span>} />
+          <DetailLine label={t("drawer.evidenceHash")} value={<span className="break-all">{row.accounting.evidenceHash ?? evidenceLabel(row, t)}</span>} />
+          {row.movementState === "unverified" && <DetailLine label={t("table.evidence")} value={t("proof.needsReview")} />}
         </dl>
       </DetailSection>
       <DetailSection title={t("drawer.sourceAttribution")}>
@@ -236,7 +244,7 @@ function APHistoryDrawer({ row, locale, timezone, t }: { row: APHistoryRow; loca
           <DetailLine label={t("drawer.supplier")} value={row.supplier.name} />
           <DetailLine label={t("drawer.purchaseOrder")} value={row.reference.purchaseOrderId} />
           <DetailLine label={t("drawer.dueDate")} value={formatHistoryDate(row.reference.dueDate, locale, timezone)} />
-          <DetailLine label={t("drawer.bankDestination")} value={row.payment.bankDestination ?? t("proof.unavailableTitle")} />
+          <DetailLine label={t("drawer.bankDestination")} value={row.payment.redactions.some((redaction) => redaction.category === "supplier_bank_detail") ? t("proof.bankDetailsProtected") : row.payment.bankDestination ?? t("proof.notRecorded")} />
           <DetailLine label={t("drawer.effectiveAt")} value={formatHistoryDate(row.effectiveAt, locale, timezone)} />
           <DetailLine label={t("drawer.recordedAt")} value={formatHistoryDate(row.recordedAt, locale, timezone)} />
         </dl>
@@ -264,8 +272,19 @@ function buildColumns(t: APHistoryT, locale: string, timezone: string): Transact
     { id: "currency", header: t("table.currency"), cell: (row) => row.currency },
     { id: "amount", header: t("table.amount"), cell: (row) => formatMoney(row.amount, row.currency, locale) },
     { id: "movement", header: t("table.movement"), cell: (row) => movementLabel(row, t, locale) },
-    { id: "evidence", header: t("drawer.evidenceHash"), cell: (row) => row.accounting.evidenceHash ?? t("proof.unavailableTitle") },
+    { id: "evidence", header: t("table.evidence"), cell: (row) => evidenceLabel(row, t) },
   ]
+}
+
+function evidenceLabel(row: APHistoryRow, t: APHistoryT) {
+  if (row.movementState === "unverified") return t("proof.needsReview")
+  if (row.accounting.evidenceHash) return row.accounting.evidenceHash
+  if (
+    row.controlState === "draft" &&
+    row.movementState === "not_recognized" &&
+    (row.lane === "invoice" || (row.lane === "payment" && row.businessState === "DRAFT"))
+  ) return t("proof.draftNotPosted")
+  return t("proof.unavailableTitle")
 }
 
 function mapShellFilterPatch(patch: Partial<TransactionHistoryFilters>) {
@@ -305,7 +324,7 @@ function StateBadge({
     <Badge
       variant="outline"
       className={cn(
-        "rounded-md",
+        "whitespace-normal break-words rounded-md",
         dashboardToneClass(apControlStateTones[state]),
       )}
     >
@@ -335,6 +354,18 @@ function controlStateLabel(
       return t("controlStates.exception")
     case "cancelled":
       return t("controlStates.cancelled")
+  }
+}
+
+function paymentStateLabel(state: string, t: APHistoryT) {
+  switch (state) {
+    case "DRAFT": return t("paymentStates.DRAFT")
+    case "APPROVED": return t("paymentStates.APPROVED")
+    case "RELEASED": return t("paymentStates.RELEASED")
+    case "POSTED": return t("paymentStates.POSTED")
+    case "CANCELLED": return t("paymentStates.CANCELLED")
+    case "FAILED": return t("paymentStates.FAILED")
+    default: return t("paymentStates.unknown")
   }
 }
 

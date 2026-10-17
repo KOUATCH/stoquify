@@ -15,6 +15,8 @@ jest.mock("@/prisma/db", () => ({
 import { db } from "@/prisma/db"
 import {
   createPostingRule,
+  getPostingRuleReadiness,
+  getActivePostingRule,
   requireActivePostingRule,
   validatePostingRuleLines,
 } from "../posting-rules.service"
@@ -24,6 +26,7 @@ const mockTx = {
   postingRule: {
     create: jest.fn(),
     findFirst: jest.fn(),
+    findMany: jest.fn(),
   },
   ledgerAuditEvent: { create: jest.fn() },
 }
@@ -61,6 +64,52 @@ describe("posting rules service", () => {
     mockTx.chartOfAccount.findMany.mockResolvedValue(mappedAccounts)
     mockDb.chartOfAccount.findMany.mockResolvedValue(mappedAccounts)
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+  })
+
+  const contract = { sourceType: AccountingSourceType.POS_SALE, postingPurpose: AccountingPostingPurpose.SALE_COMPLETION }
+  function candidate(id = "selected") {
+    return { id, code: id, ...contract, lines: [
+      { side: PostingRuleLineSide.DEBIT, mappingKey: "CASH_ON_HAND", amountSource: PostingRuleAmountSource.GROSS_AMOUNT },
+      { side: PostingRuleLineSide.CREDIT, mappingKey: "SALES_REVENUE", amountSource: PostingRuleAmountSource.GROSS_AMOUNT },
+    ] }
+  }
+
+  it("uses the same source, effective window and deterministic precedence as posting", async () => {
+    mockTx.postingRule.findMany.mockResolvedValue([candidate()])
+    mockTx.postingRule.findFirst.mockResolvedValue(candidate())
+    const now = new Date("2026-09-30T12:00:00Z")
+    const readiness = await getPostingRuleReadiness("org-1", [contract], mockTx as never, now)
+    expect(readiness[0]).toMatchObject({ rule: { id: "selected" }, validationError: null })
+    await getActivePostingRule("org-1", { ...contract, effectiveAt: now }, mockTx as never)
+    const readinessQuery = mockTx.postingRule.findMany.mock.calls[0][0]
+    const postingQuery = mockTx.postingRule.findFirst.mock.calls[0][0]
+    expect(readinessQuery.orderBy).toEqual(postingQuery.orderBy)
+    expect(readinessQuery.orderBy).toEqual([{ priority: "asc" }, { createdAt: "desc" }, { id: "asc" }])
+    expect(readinessQuery.where).toMatchObject({ organizationId: "org-1", isActive: true, OR: [contract], AND: postingQuery.where.AND })
+  })
+
+  it("does not count a different source type as the required capability", async () => {
+    mockTx.postingRule.findMany.mockResolvedValue([{ ...candidate(), sourceType: AccountingSourceType.MANUAL }])
+    expect(await getPostingRuleReadiness("org-1", [contract], mockTx as never)).toEqual([{ ...contract, rule: null, validationError: null }])
+  })
+
+  it.each(["inactive", "nonleaf", "unmapped", "zero_multiplier", "foreign_account"])("rejects the selected %s rule without falling through to a lower rule", async (scenario) => {
+    const bad = candidate("selected-bad")
+    if (scenario === "inactive") mockTx.chartOfAccount.findMany.mockResolvedValue([])
+    if (scenario === "nonleaf") mockTx.chartOfAccount.findMany.mockResolvedValue(mappedAccounts.map(a => ({ ...a, _count: { children: 1 } })))
+    if (scenario === "unmapped") bad.lines[0].mappingKey = "UNKNOWN"
+    if (scenario === "zero_multiplier") Object.assign(bad.lines[0], { multiplier: 0 })
+    if (scenario === "foreign_account") Object.assign(bad.lines[0], { mappingKey: null, accountId: "foreign-account" })
+    mockTx.postingRule.findMany.mockResolvedValue([bad, candidate("lower-priority")])
+    const [result] = await getPostingRuleReadiness("org-1", [contract], mockTx as never)
+    expect(result.rule?.id).toBe("selected-bad")
+    expect(result.validationError).toEqual(expect.any(String))
+  })
+
+  it("propagates unavailable account reads instead of reporting a successful empty check", async () => {
+    mockTx.postingRule.findMany.mockResolvedValue([candidate()])
+    mockTx.chartOfAccount.findMany.mockRejectedValue(new Error("Database unavailable"))
+    await expect(getPostingRuleReadiness("org-1", [contract], mockTx as never)).rejects.toThrow("Database unavailable")
   })
 
   it("rejects rules without both debit and credit sides", async () => {

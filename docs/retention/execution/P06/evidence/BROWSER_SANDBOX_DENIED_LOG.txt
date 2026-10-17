@@ -1,0 +1,330 @@
+FAIL lib/pos/__tests__/offline-local-queue.test.ts (33.101 s)
+  ● offline local POS queue with browser storage › P06 preserves unknown evidence through real browser offline and reconnect transitions
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › conserves concurrent acknowledgements across tabs, reload and a continuous hash chain
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › keeps final fiscal numbering unavailable to caller-controlled queue input
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › quarantines corrupt legacy bytes without resetting identities ({damaged-json)
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › quarantines corrupt legacy bytes without resetting identities ({})
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › quarantines corrupt legacy bytes without resetting identities ({"queueVersion":1,"entries":[]})
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › migrates legacy SYNCING evidence without replacing identities, and retains original bytes
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › recovers an interrupted migration after marker write failure
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › does not acknowledge an injected quota failure or lose previously committed evidence
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › does not acknowledge a transaction aborted after its write request
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › allows only one active cross-tab lease and retries original identities after tab termination
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › retains uncertain evidence, retries without a replacement identity and ignores stale responses
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › keeps conflict evidence and prevents sending newer events out of sequence
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › blocks changed legacy data and detects eviction instead of resurrecting a stale queue
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › blocks altered payload hashes and changes of cashier-session ownership
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › survives closing and reopening a persistent browser profile with an unresolved attempt
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › rejects unsupported or denied IndexedDB instead of silently falling back to localStorage
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › does not strand migrated attempts with an invalid or unbounded lease
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+  ● offline local POS queue with browser storage › caps each claim at the server limit and resumes remaining events in sequence
+
+    page.goto: net::ERR_NETWORK_ACCESS_DENIED at http://127.0.0.1:52542/
+    Call log:
+    [2m  - navigating to "http://127.0.0.1:52542/", waiting until "load"[22m
+
+      19 |   jest.setTimeout(60_000)
+      20 |
+    > 21 |   async function openPage(browserContext = context) {
+         |                   ^
+      22 |     const tab = await browserContext.newPage()
+      23 |     await tab.goto(url)
+      24 |     await tab.addScriptTag({ type: "module", content: 'import * as queue from "/queue.js"; window.queue = queue;' })
+
+      at openPage (lib/pos/__tests__/offline-local-queue.test.ts:21:19)
+      at Object.<anonymous> (lib/pos/__tests__/offline-local-queue.test.ts:59:16)
+
+Test Suites: 1 failed, 1 total
+Tests:       19 failed, 19 total
+Snapshots:   0 total
+Time:        33.712 s
+Ran all test suites within paths "lib/pos/__tests__/offline-local-queue.test.ts".
+Test results written to: docs\retention\execution\P06\evidence\OFFLINE_BROWSER_EXPLICIT_CACHE.json

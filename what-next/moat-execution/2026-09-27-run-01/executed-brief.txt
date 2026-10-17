@@ -1,0 +1,148 @@
+Act as a Stoquify multidisciplinary principal engineering, product, controls, and operations review board. Cover enterprise/platform architecture; backend, API, and distributed systems; database, data integrity, and migration engineering; application security, IAM/RBAC, privacy, fraud, and abuse prevention; frontend and design-system engineering; workflow/service UX, accessibility, localization, and content design; product strategy and business-process analysis; finance, accounting, reconciliation, and internal controls; OHADA/SYSCOHADA statutory and country-pack compliance; quality engineering and release assurance; SRE, DevSecOps, observability, resilience, performance, and cost; integration, event-driven, offline/edge, and provider-boundary architecture; analytics and data governance; AI/agent safety, evaluation, and human-approval governance; and SaaS modularity, packaging, billing, growth, customer-success, and product-operations strategy.
+Operate as one coordinated team. Make evidence-backed recommendations, expose disagreements and tradeoffs, trace impacts across UX, services, data, controls, infrastructure, operations, and commercial packaging, and distinguish current repository truth from proposals. Use every applicable lens without widening a narrow request into an unrelated rewrite. Mark immaterial lenses not applicable with one short reason. Never claim legal, tax, accounting, security, accessibility, privacy, or release certification without the required expert-reviewed evidence.
+Maintain explicit review ownership across architecture; backend and integrations; data and migrations; security and privacy; frontend; workflow design, accessibility, and localization; product and business processes; quality and release assurance; reliability and operations; and SaaS packaging, growth, and customer success. Activate accounting, treasury, payments, purchasing, inventory, country-compliance, audit, analytics, and change-management specialists wherever their boundaries are affected.
+Mission and governing evidence
+Work in E:\ohada saas\Focused projects\stoquify.
+Use [strategic-moat-opportunities-2026-09-27.md](E:/ohada saas/Focused projects/stoquify/docs/moat/strategic-moat-opportunities-2026-09-27.md) as the governing strategic input.
+Translate its recommendations into a detailed, dependency-aware roadmap and executable delivery program. Then implement and verify the eligible work in that program. Continue beyond planning while authorized, unblocked work remains.
+Preserve the report’s priorities:
+- M1: Accountant evidence work desk and repeat-client onboarding.
+- M2: Proven local payment-to-close operations, serving as M1’s first operational use case.
+- M3: Cash-constrained stock and obligation planning, initially validated through a prototype.
+- M4: Repeat supplier-to-buyer collaboration, beginning with a useful single-relationship workflow.
+Treat the report’s scores, estimates, customer profiles, and validation thresholds as explicit hypotheses. Reassess them when current repository or customer evidence warrants a change. Do not interpret a strategic recommendation as proof of demand, operational readiness, or a achieved network effect.
+1. Evidence-first discovery
+Read repository instructions, current Git status, the governing report, its evidence register, and relevant subsequent work.
+Inspect:
+- docs/moat/ and what-next/moat-evidence-2026-09-27/.
+- Relevant what-next/, innovation/, and existing roadmap/status registers.
+- graphify-out/ for dependency navigation, verified against current source.
+- Relevant routes, actions, services, components, hooks, configuration, Prisma models, integrations, permissions, entitlements, and tests.
+Revalidate each proposed gap. Classify it as:
+- Already implemented and verified.
+- Implemented but not sufficiently verified.
+- Partially implemented.
+- Not found within the inspected scope.
+- Dependent on external evidence or decisions.
+Identify active overlapping initiatives and reuse their contracts, work packages, and evidence. Do not create a competing implementation or duplicate program merely because the report proposes a similar capability.
+Record the branch, HEAD, relevant source fingerprints, dirty-worktree boundaries, and material changes since the assessment. Preserve unrelated work.
+2. Develop the roadmap and execution plan
+Create one integrated program covering all four opportunities, with separate engineering, operational, customer-validation, and commercial milestones.
+For every work package, specify:
+Required field	Purpose
+Stable ID and linked recommendation	Trace the work to M1–M4 or a prerequisite
+Customer outcome and smallest useful slice	Explain what becomes possible
+Existing foundation and precise gap	Prevent duplicate implementation
+Responsible role and affected files/services	Establish ownership and scope
+Dependencies and entry conditions	Determine when execution may begin
+Data, API, event, access, and UI contracts	Make implementation concrete
+Acceptance criteria and verification	Define observable completion
+Rollout, recovery, and rollback	Address operational consequences
+Effort range, assumptions, and external lead time	Make estimates interpretable
+Status, evidence, blockers, and next action	Support continuation across runs
+
+
+Identify the critical path, resource assumptions, and sequencing constraints. Separate engineer effort from elapsed time and provider or expert-review delays.
+Use the report’s 90-day outline as an initial planning hypothesis. Adjust it to actual scope and capacity. Keep at most one principal customer workflow in active implementation plus one bounded validation experiment.
+3. Organize delivery into gated phases
+Phase	Required scope	Exit evidence
+P0 — Current truth and program baseline	Reconcile existing work, confirm gaps, map dependencies, establish ownership and success metrics	Current capability matrix, traceability register, first eligible work packages
+P1 — Trusted onboarding and measurement	Establish pilot data coverage, financial cutover requirements, authorization, delivery visibility, and productive-activation metrics	Reconciled inputs, explicit access boundaries, recovery paths, measurable task outcomes
+P2 — M1/M2 vertical slice	Connect accountant triage, payment-proof investigation, evidence requests, review, authoritative resolution, and close proof	Tested end-to-end workflow with source-linked evidence and explicit unresolved states
+P3 — Controlled operational validation	Prepare and, where authorized and available, conduct the narrow customer/provider pilot	Real repeat-use, reliability, support-cost, and paid-interest evidence
+P4 — M3 planning validation	Prototype cash scenarios and purchasing choices using reliable source inputs	Useful repeated decisions and forecast evaluation before substantial implementation
+P5 — M4 collaboration validation	Complete one supplier participation journey, then test repeated use and relationship overlap	Reliable task completion before wider network investment
+
+
+Do not use mocked tests or synthetic activity to pass customer-demand, provider-operation, willingness-to-pay, or network-effect gates.
+4. Define the implementation boundaries
+For M1, extend the existing accountant portfolio and review workflows:
+- Produce a permission-filtered cross-client work list with urgency, ownership, due dates, evidence state, and the next permitted action.
+- Reuse existing requests, responses, review decisions, grants, and exports.
+- Reauthorize client access at list, detail, action, and export boundaries.
+- Connect invitation delivery, first completed work, subsequent productive use, and onboarding outcomes.
+- Keep tenant-specific financial records and employee information appropriately separated.
+For M2, complete a narrow payment-proof workflow:
+- Choose the first rail or statement format from actual customer need and verified integration evidence.
+- Distinguish recorded payment, accepted ingestion, provider confirmation, settlement, fees, reversal, and unknown status.
+- Preserve idempotency, duplicate detection, maker-checker decisions, financial precision, and source lineage.
+- Verify that changed source evidence invalidates or supersedes affected close proof appropriately.
+- Establish failure diagnosis, delivery recovery, unresolved-case ownership, and operating-cost measurements.
+Do not invent a provider contract or represent the generic adapter as a verified named-provider integration.
+For M3, prepare an explainable prototype before a broad production build:
+- Define opening cash, dated obligations, expected receipts, inventory needs, supplier lead times, cash buffers, and uncertainty.
+- Compare a base case with explicit scenarios.
+- Preserve assumptions and forecast versions so later actuals can be compared fairly.
+- Keep predictions distinct from accounting facts.
+- Route proposed purchases, transfers, or payment decisions through existing domain approval services.
+- Implement durable scenario functionality only when the corresponding validation and data-readiness conditions are satisfied.
+For M4, extend the existing supplier acknowledgement foundation:
+- Complete invitation delivery, response visibility, buyer review, and one useful discrepancy-resolution journey.
+- Keep supplier submissions as proposals; owning services retain authority over purchasing, stock, AP, payments, and bank details.
+- Introduce reusable cross-buyer participation only after actual relationship overlap and customer value are established.
+- Define revocation, identity linking, recipient privacy, support, and safe disclosure for each relationship.
+5. Execute the eligible work
+After producing the initial roadmap and register, begin the first eligible work package without stopping solely to request approval of routine implementation choices.
+For each package:
+1. Confirm dependencies, scope, current source, and acceptance criteria.
+2. Implement the smallest complete vertical slice.
+3. Add or adapt meaningful tests for changed behavior and material risks.
+4. Run focused verification and inspect the results.
+5. Repair regressions introduced by the slice.
+6. Update the register with exact changes, evidence, remaining limits, and next steps.
+7. Continue to the next eligible package.
+Prefer server-owned services and read models before UI composition. Reuse the existing workbenches, design system, event infrastructure, and error-handling patterns.
+Distinguish implemented, verified locally, validated operationally, validated commercially, and released. None of these automatically implies another.
+When a package depends on unavailable customer participation, provider access, expert review, or a consequential external action, prepare the concrete reviewable materials, record the exact dependency, and continue independent work. Do not bypass the condition or mark it complete.
+6. Customer validation and commercial planning
+Turn the report’s pilot proposals into executable protocols, preserving its thresholds unless a documented reason justifies revision.
+Specify:
+- Target participants and recruitment criteria.
+- Existing workflow and baseline measurement.
+- Tasks, observation periods, denominators, and exclusions.
+- Success, redesign, and stop thresholds.
+- Evidence collection and consent requirements.
+- Support effort, delivery cost, proposed buyer, and pricing hypothesis.
+- Ownership of the decision to continue or stop.
+Measure productive work rather than registrations alone: first authorized task, first reviewed resolution, repeat productive cycle, paid continuation, unresolved-case age, and support minutes.
+Prepare interview guides, task scripts, sample-data requirements, onboarding checklists, and outcome-recording templates. Do not contact people or activate live providers unless explicitly authorized.
+7. Expected artifacts
+Maintain planning and execution documents under:
+docs/moat/roadmap/
+Required artifacts:
+- MOAT_ROADMAP.md
+- MOAT_EXECUTION_PLAN.md
+- MOAT_WORK_PACKAGE_REGISTER.json
+- MOAT_REQUIREMENTS_TRACEABILITY.md
+- MOAT_VALIDATION_PROTOCOLS.md
+- MOAT_DECISIONS_AND_BLOCKERS.md
+- MOAT_EXECUTION_REPORT.md
+Store run-specific logs, test results, source fingerprints, browser evidence, and other verification under:
+what-next/moat-execution/<execution-date>-run-<number>/
+Use the repository’s docs-report-publisher skill with docs_subfolder set to moat/roadmap to publish matching Markdown/PDF pairs for the final narrative documents. Keep intermediate rendering files outside that publication directory.
+Maintain one canonical program register. On subsequent runs, resume from its verified state rather than restarting discovery or creating duplicate roadmaps.
+8. Verification and risk controls
+Inspect package.json and the relevant test configuration before selecting commands.
+Use focused Jest tests for affected services, actions, hooks, and components. Run npm run typecheck and applicable boundary or policy checks when the changes warrant them. Use database integration checks for persistence, concurrency, and migration behavior where an authorized test environment is available.
+Verify relevant failure paths:
+- Cross-tenant and unauthorized access.
+- Expired or revoked grants.
+- Duplicate commands, retries, and concurrent decisions.
+- Stale evidence and changed source records.
+- Delivery failure and unknown provider outcomes.
+- Monetary precision, currency, dates, and partial data.
+- Migration control totals, rollback, and recovery.
+- English/French UX, keyboard operation, and accessible state communication.
+Record commands and outcomes as passed, failed, skipped, or blocked. Do not replace missing runtime evidence with a static scan.
+Keep changes surgical. Preserve module entitlement, tenant isolation, auditability, privacy, domain ownership, and user changes. Do not touch unrelated lint warnings or refactor unrelated modules.
+9. Success criteria and non-goals
+A planning milestone is complete when every recommendation has a disposition, dependency path, responsible role, acceptance criteria, validation protocol, and executable first slice.
+An implementation package is complete only when its acceptance criteria pass and the required evidence is saved. A customer or operational milestone requires the corresponding real-world evidence.
+The execution run must deliver all eligible work it can complete and clearly identify the remaining conditional work. Do not claim the entire program is complete while required milestones remain open.
+Exclude open marketplaces, public ratings, cross-tenant benchmarks, lending, insurance, broad country expansion, and generic AI expansion unless new evidence and explicit scope changes justify them.
+End the run by stating:
+- What was planned, implemented, and verified.
+- Which customer outcome is now supported.
+- What remains unverified or blocked.
+- Whether the investment priority changed.
+- The next executable work package and any precise external dependency.

@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { Link } from "@/i18n/navigation"
 import { useForm } from "react-hook-form"
 import * as XLSX from "xlsx"
 import { z } from "zod"
@@ -34,11 +35,14 @@ import type { CategoryDTO } from "@/types/types"
 import type { UnitDTO } from "@/types/unit"
 
 import { useCreateItem } from "@/hooks/itemsHooks/useItemHooks"
-import { formatCurrency } from "@/lib/formatCurrency"
+import { inventoryItemsText } from "@/components/inventory/inventory-items-copy"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 import { formatDate } from "@/lib/formateDate"
+import { fr } from "date-fns/locale"
 import { ItemWithInventoryLevelsPayload } from "@/types/itemTypes"
 import { ItemForm2 } from "./ItemForm2"
 import { useItemManagement } from "./hooks/useItemManagement"
+import { getItemInventorySummary } from "./item-inventory-summary"
 
 // Import TanStack Table components
 import {
@@ -157,6 +161,7 @@ interface ItemManagementProps {
   initialBrandData: BrandDTO[]
   initialUnitData: UnitDTO[]
   initialTaxRateData: TaxRateDTO[]
+  currency?: string
   initialSearch?: string
   activeFilterChips?: ActiveFilterChip[]
   locale?: Locale
@@ -185,7 +190,8 @@ const getColumns = (
   handleEditClick: (item: ItemWithInventoryLevelsPayload) => void,
   handleDeleteClick: (item: ItemWithInventoryLevelsPayload) => void,
   isDeleting: boolean,
-  itemToDelete: ItemWithInventoryLevelsPayload | null
+  itemToDelete: ItemWithInventoryLevelsPayload | null,
+  locale: Locale
 ): ColumnDef<ItemWithInventoryLevelsPayload>[] => [
     {
       id: "select",
@@ -193,14 +199,14 @@ const getColumns = (
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
+          aria-label={inventoryItemsText("Select all", locale)}
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
+          aria-label={inventoryItemsText("Select row", locale)}
         />
       ),
       enableSorting: false,
@@ -208,7 +214,7 @@ const getColumns = (
     },
     {
       accessorKey: "name",
-      header: "Name",
+      header: inventoryItemsText("Name", locale),
       cell: ({ row }) => {
         const item = row.original
         return (
@@ -221,7 +227,7 @@ const getColumns = (
               />
             </div>
             <div className="min-w-0 flex flex-col">
-              <span className="font-medium text-foreground line-clamp-1">{item.name}</span>
+              <Link href={`/dashboard/inventory/items/${encodeURIComponent(item.id)}`} className="font-medium text-foreground line-clamp-1 underline underline-offset-4">{item.name}</Link>
               <span className="text-xs text-muted-foreground">{item.sku}</span>
             </div>
           </div>
@@ -230,7 +236,7 @@ const getColumns = (
     },
     {
       accessorKey: "costPrice",
-      header: "Cost",
+      header: inventoryItemsText("Cost", locale),
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("costPrice"))
         return <span className="font-medium">{formatCurrency(amount)}</span>
@@ -238,43 +244,42 @@ const getColumns = (
     },
     {
       accessorKey: "sellingPrice",
-      header: "Price",
+      header: inventoryItemsText("Price", locale),
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("sellingPrice"))
         return <span className="font-medium text-green-600">{formatCurrency(amount)}</span>
       },
     },
     {
-      accessorKey: "inventoryLevels",
-      header: "Stock",
+      id: "inventoryLevels",
+      accessorFn: (item) => getItemInventorySummary(item).stock,
+      header: inventoryItemsText("Stock", locale),
       cell: ({ row }) => {
-        const inventoryLevels = row.getValue("inventoryLevels") as any[]
-        const quantity = inventoryLevels?.[0]?.quantityOnHand || 0
+        const { stock: quantity, threshold } = getItemInventorySummary(row.original)
 
         let status = "default"
-        if (quantity === 0) status = "destructive"
-        else if (quantity < 10) status = "warning"
+        if (quantity <= 0) status = "destructive"
+        else if (quantity <= threshold) status = "warning"
 
         return (
           <Badge variant={status as any}>
-            {quantity} in stock
+            {quantity.toLocaleString(locale)} {inventoryItemsText("in stock", locale)}
           </Badge>
         )
       },
     },
     {
-      accessorKey: "value",
-      header: "Total Value",
+      id: "value",
+      accessorFn: (item) => getItemInventorySummary(item).value,
+      header: inventoryItemsText("Total Value", locale),
       cell: ({ row }) => {
-        const item = row.original
-        const quantity = item.inventoryLevels?.[0]?.quantityOnHand || 0
-        const value = (Number(item.sellingPrice) || 0) * quantity
+        const value = row.getValue<number>("value")
         return <span className="font-medium">{formatCurrency(value)}</span>
       },
     },
     {
       accessorKey: "createdAt",
-      header: "Date Added",
+      header: inventoryItemsText("Date Added", locale),
       cell: ({ row }) => {
         return formatDate(row.getValue("createdAt"))
       },
@@ -289,27 +294,30 @@ const getColumns = (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{inventoryItemsText("Open menu", locale)}</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{inventoryItemsText("Actions", locale)}</DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link href={`/dashboard/inventory/items/${encodeURIComponent(item.id)}`}>{locale === "fr" ? "Consulter l’article" : "View item"}</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(item.id || "")}
               >
-                Copy ID
+                {inventoryItemsText("Copy ID", locale)}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleEditClick(item)}>
-                Edit Item
+                {inventoryItemsText("Edit Item", locale)}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleDeleteClick(item)}
                 disabled={isBeingDeleted}
                 className="text-destructive focus:text-destructive"
               >
-                {isBeingDeleted ? "Deleting..." : "Delete Item"}
+                {isBeingDeleted ? inventoryItemsText("Deleting...", locale) : inventoryItemsText("Delete Item", locale)}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -410,7 +418,7 @@ const ModernItemTable = ({
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const filteredRowCount = table.getFilteredRowModel().rows.length
   const selectedItems = selectedRows.map((row) => row.original)
-  const tableTitle = title || "Items Management"
+  const tableTitle = title || inventoryItemsText("Items Management", locale)
 
   const handleClearFilters = useCallback(() => {
     if (hasActiveSearch) {
@@ -481,7 +489,7 @@ const ModernItemTable = ({
             <div className="min-w-0">
               <h2 className="text-lg font-semibold text-[var(--dash-text)]">{tableTitle}</h2>
               <p className="mt-1 break-words text-sm text-[var(--dash-text-soft)]">
-                Showing {filteredRowCount.toLocaleString()} of {data.length.toLocaleString()} items
+                {locale === "fr" ? `${filteredRowCount.toLocaleString(locale)} articles affichés sur ${data.length.toLocaleString(locale)}` : `Showing ${filteredRowCount.toLocaleString(locale)} of ${data.length.toLocaleString(locale)} items`}
               </p>
             </div>
           </div>
@@ -489,7 +497,7 @@ const ModernItemTable = ({
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
               <Sparkles className="me-1 h-3 w-3 text-[var(--dash-spruce)]" />
-              Live Data
+              {inventoryItemsText("Live Data", locale)}
             </Badge>
             <Button
               variant="outline"
@@ -499,7 +507,7 @@ const ModernItemTable = ({
               className="dashboard-button-secondary h-9 rounded-lg"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-              {isLoading ? "Refreshing" : "Refresh"}
+              {isLoading ? inventoryItemsText("Refreshing", locale) : inventoryItemsText("Refresh", locale)}
             </Button>
             <Button
               variant="outline"
@@ -508,7 +516,7 @@ const ModernItemTable = ({
               className="dashboard-button-secondary h-9 rounded-lg"
             >
               <Download className="mr-2 h-4 w-4" />
-              Export
+              {inventoryItemsText("Export", locale)}
             </Button>
           </div>
         </div>
@@ -526,7 +534,7 @@ const ModernItemTable = ({
             ))}
             {hasActiveSearch && !hasSearchFilterChip ? (
               <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
-                Search: {globalFilter}
+                {inventoryItemsText("Search:", locale)} {globalFilter}
               </Badge>
             ) : null}
             <Button
@@ -535,7 +543,7 @@ const ModernItemTable = ({
               onClick={handleClearFilters}
               className="h-8 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]"
             >
-              Clear
+              {inventoryItemsText("Clear", locale)}
             </Button>
           </div>
         ) : null}
@@ -547,7 +555,8 @@ const ModernItemTable = ({
           <div className="relative w-full min-w-0 flex-1 lg:min-w-[18rem]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
             <Input
-              placeholder="Search items, SKUs, categories, or brands"
+              aria-label={locale === "fr" ? "Rechercher des articles" : "Search items"}
+              placeholder={inventoryItemsText("Search items, SKUs, categories, or brands", locale)}
               value={globalFilter ?? ""}
               onChange={(event) => setGlobalFilter(event.target.value)}
               className="dashboard-control h-9 w-full rounded-lg pl-9 pr-9"
@@ -555,7 +564,7 @@ const ModernItemTable = ({
             {hasActiveSearch ? (
               <button
                 type="button"
-                aria-label="Clear item search"
+                aria-label={inventoryItemsText("Clear item search", locale)}
                 onClick={() => setGlobalFilter("")}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-1.5 py-0.5 text-xs font-semibold text-[var(--dash-text-faint)] transition hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]"
               >
@@ -580,13 +589,13 @@ const ModernItemTable = ({
               variant="landing"
             />
             <Select value={stockFilter} onValueChange={handleStockFilterChange}>
-              <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
-                <SelectValue placeholder="Stock status" />
+              <SelectTrigger aria-label={inventoryItemsText("Stock status", locale)} className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
+                <SelectValue placeholder={inventoryItemsText("Stock status", locale)} />
               </SelectTrigger>
               <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
                 {STOCK_FILTER_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    {inventoryItemsText(option.label, locale)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -595,7 +604,7 @@ const ModernItemTable = ({
             {selectedRows.length > 0 ? (
               <>
                 <Badge variant="outline" className="rounded-lg border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
-                  {selectedRows.length.toLocaleString()} selected
+                  {selectedRows.length.toLocaleString(locale)} {locale === "fr" ? "sélectionné(s)" : "selected"}
                 </Badge>
                 <Button
                   variant="outline"
@@ -604,7 +613,7 @@ const ModernItemTable = ({
                   className="dashboard-button-secondary h-9 rounded-lg"
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Export Selected
+                  {inventoryItemsText("Export Selected", locale)}
                 </Button>
               </>
             ) : null}
@@ -613,7 +622,7 @@ const ModernItemTable = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="dashboard-button-secondary h-9 rounded-lg">
                   <SlidersHorizontal className="mr-2 h-4 w-4" />
-                  View
+                  {inventoryItemsText("View", locale)}
                   <ChevronDownIcon className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -629,7 +638,7 @@ const ModernItemTable = ({
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) => column.toggleVisibility(!!value)}
                       >
-                        {column.id}
+                        {typeof column.columnDef.header === "string" ? column.columnDef.header : column.id}
                       </DropdownMenuCheckboxItem>
                     )
                   })}
@@ -657,7 +666,7 @@ const ModernItemTable = ({
           state={isLoading ? "loading" : table.getFilteredRowModel().rows.length === 0 ? (globalFilter || stockFilter !== "all" ? "no-results" : "empty") : "ready"}
           density={density}
         >
-        <Table className="min-w-[920px]">
+        <Table className="min-w-[920px]" scrollRegionLabel={locale === "fr" ? "Tableau des articles de stock" : "Stock items table"}>
           <TableHeader className="sticky top-0 z-10 bg-[rgba(16,27,32,0.94)] backdrop-blur">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -732,18 +741,18 @@ const ModernItemTable = ({
                     </div>
                     <div>
                       <h3 className="text-base font-semibold text-[var(--dash-text)]">
-                        {hasActiveSearch ? "No matching items" : "No inventory items yet"}
+                        {hasActiveSearch ? inventoryItemsText("No matching items", locale) : inventoryItemsText("No inventory items yet", locale)}
                       </h3>
                       <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">
                         {hasActiveSearch
-                          ? "Try a different search term or clear the filter to see the full catalog."
-                          : "Create your first item to start tracking pricing, stock health, and inventory value."}
+                          ? inventoryItemsText("Try a different search term or clear the filter to see the full catalog.", locale)
+                          : inventoryItemsText("Create your first item to start tracking pricing, stock health, and inventory value.", locale)}
                       </p>
                     </div>
                     <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                       {hasActiveSearch && (
                         <Button variant="outline" size="sm" onClick={() => setGlobalFilter("")} className="dashboard-button-secondary rounded-lg">
-                          Clear Search
+                          {inventoryItemsText("Clear Search", locale)}
                         </Button>
                       )}
                     </div>
@@ -777,6 +786,7 @@ const ItemManagement = memo<ItemManagementProps>(
     initialSearch = "",
     activeFilterChips = [],
     locale = "en",
+    currency = "XAF",
   }) => {
     // Validate required props
     if (!organizationId) {
@@ -851,7 +861,8 @@ const ItemManagement = memo<ItemManagementProps>(
             SKU: item.sku,
             "Cost Price": item.costPrice,
             "Selling Price": item.sellingPrice,
-            "Total Value": (Number(item.sellingPrice) || 0) * (Number(item.maxStockLevel) || 0),
+            Stock: getItemInventorySummary(item).stock,
+            "Total Value": getItemInventorySummary(item).value,
             "Date Added": formatDate(item.createdAt),
           }))
 
@@ -864,13 +875,13 @@ const ItemManagement = memo<ItemManagementProps>(
           const fileName = `Items_${format(new Date(), "yyyy-MM-dd_HH-mm-ss")}.xlsx`
           XLSX.writeFile(workbook, fileName)
 
-          notify.success("Export successful", {
-            description: `${filteredItems.length} items exported to ${fileName}`,
+          notify.success(inventoryItemsText("Export successful", locale), {
+            description: locale === "fr" ? `${filteredItems.length} articles exportés vers ${fileName}` : `${filteredItems.length} items exported to ${fileName}`,
           })
         } catch (error) {
           console.error("Export error:", error)
-          notify.error("Export failed", {
-            description: error instanceof Error ? error.message : "Unknown error occurred",
+          notify.error(inventoryItemsText("Export failed", locale), {
+            description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
           })
         }
       },
@@ -895,18 +906,18 @@ const ItemManagement = memo<ItemManagementProps>(
     const handleRefresh = useCallback(async () => {
       try {
         await refetch()
-        notify.success("Items refreshed successfully")
+        notify.success(inventoryItemsText("Items refreshed successfully", locale))
       } catch (error) {
-        notify.error("Failed to refresh items")
+        notify.error(inventoryItemsText("Failed to refresh items", locale))
       }
-    }, [refetch])
+    }, [refetch, locale])
 
     // Form submission
     const onSubmit = useCallback(
       async (data: ItemFormValues) => {
         if (isImageUploading || createItemMutation.isPending) return
         if (!itemImageUrl) {
-          notify.error("Upload an image before saving this item.")
+          notify.error(inventoryItemsText("Upload an image before saving this item.", locale))
           return
         }
         try {
@@ -927,8 +938,8 @@ const ItemManagement = memo<ItemManagementProps>(
 
           await createItemMutation.mutateAsync(newItemData)
 
-          notify.success("Item added successfully", {
-            description: `${data.name} has been added to your inventory`,
+          notify.success(inventoryItemsText("Item added successfully", locale), {
+            description: locale === "fr" ? `${data.name} a été ajouté à votre stock` : `${data.name} has been added to your inventory`,
           })
 
           setFormDialogOpen(false)
@@ -938,8 +949,8 @@ const ItemManagement = memo<ItemManagementProps>(
           await refetch()
         } catch (error) {
           console.error("Submit error:", error)
-          notify.error("Failed to add item", {
-            description: error instanceof Error ? error.message : "Unknown error occurred",
+          notify.error(inventoryItemsText("Failed to add item", locale), {
+            description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
           })
         }
       },
@@ -952,24 +963,29 @@ const ItemManagement = memo<ItemManagementProps>(
 
       try {
         await deleteItemMutation.mutateAsync({ id: itemToDelete.id!, organizationId })
-        notify.success("Item deleted successfully", {
-          description: `${itemToDelete.name} has been removed from your inventory`,
+        notify.success(inventoryItemsText("Item deleted successfully", locale), {
+          description: locale === "fr" ? `${itemToDelete.name} a été retiré de votre stock` : `${itemToDelete.name} has been removed from your inventory`,
         })
         setDeleteDialogOpen(false)
         setItemToDelete(null)
         await refetch()
       } catch (error) {
         console.error("Delete error:", error)
-        notify.error("Failed to delete item", {
-          description: error instanceof Error ? error.message : "Unknown error occurred",
+        notify.error(inventoryItemsText("Failed to delete item", locale), {
+          description: error instanceof Error ? error.message : inventoryItemsText("Unknown error occurred", locale),
         })
       }
-    }, [itemToDelete, deleteItemMutation, organizationId, setDeleteDialogOpen, setItemToDelete, refetch])
+    }, [itemToDelete, deleteItemMutation, organizationId, setDeleteDialogOpen, setItemToDelete, refetch, locale])
+
+    const moneyFormatter = useMemo(() => createOrganizationMoneyFormatter({ organizationId, locale, currency }), [organizationId, locale, currency])
+    const formatDisplayDate = useCallback((date: Date | string) => locale === "fr"
+      ? format(typeof date === "string" ? new Date(date) : date, "dd MMM yyyy", { locale: fr })
+      : formatDate(date), [locale])
 
     // Table columns
     const columns = useMemo(
-      () => getColumns(formatCurrency, formatDate, handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete),
-      [handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete]
+      () => getColumns(moneyFormatter.format, formatDisplayDate, handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale),
+      [handleEditClick, handleDeleteClick, deleteItemMutation.isPending, itemToDelete, locale, moneyFormatter, formatDisplayDate]
     )
 
     // Error state
@@ -977,12 +993,12 @@ const ItemManagement = memo<ItemManagementProps>(
       return (
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="text-destructive">Error Loading Items</CardTitle>
-            <CardDescription>Failed to load items. Please try refreshing the page.</CardDescription>
+            <CardTitle className="text-destructive">{inventoryItemsText("Error Loading Items", locale)}</CardTitle>
+            <CardDescription>{inventoryItemsText("Failed to load items. Please try refreshing the page.", locale)}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={handleRefresh} variant="outline">
-              Try Again
+              {inventoryItemsText("Try Again", locale)}
             </Button>
           </CardContent>
         </Card>
@@ -998,7 +1014,7 @@ const ItemManagement = memo<ItemManagementProps>(
           isLoading={isLoading}
           onRefresh={handleRefresh}
           onExport={handleExport}
-          title={title || "Items Management"}
+          title={title || inventoryItemsText("Items Management", locale)}
           initialSearch={initialSearch}
           activeFilterChips={activeFilterChips}
           locale={locale}
@@ -1008,12 +1024,12 @@ const ItemManagement = memo<ItemManagementProps>(
         <EntityForm
           open={formDialogOpen}
           onOpenChange={handleFormDialogClose}
-          title="Add New Item"
+          title={inventoryItemsText("Add New Item", locale)}
           form={form}
           size="lg"
           onSubmit={onSubmit}
           isSubmitting={createItemMutation.isPending || isImageUploading}
-          submitLabel="Add Item"
+          submitLabel={inventoryItemsText("Add Item", locale)}
         >
           <ItemForm2
             form={form}
@@ -1032,25 +1048,25 @@ const ItemManagement = memo<ItemManagementProps>(
         <ConfirmationDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          title="Delete Item"
+          title={inventoryItemsText("Delete Item", locale)}
           description={
             itemToDelete ? (
               <div className="space-y-2">
                 <p>
-                  Are you sure you want to delete <strong>{itemToDelete.name}</strong>?
+                  {locale === "fr" ? "Voulez-vous vraiment supprimer " : "Are you sure you want to delete "}<strong>{itemToDelete.name}</strong> ?
                 </p>
                 <div className="text-sm text-muted-foreground">
                   <p>SKU: {itemToDelete.sku}</p>
-                  <p>This action cannot be undone.</p>
+                  <p>{inventoryItemsText("This action cannot be undone.", locale)}</p>
                 </div>
               </div>
             ) : (
-              "Are you sure you want to delete this item?"
+              inventoryItemsText("Are you sure you want to delete this item?", locale)
             )
           }
           onConfirm={handleDeleteConfirmation}
           isConfirming={deleteItemMutation.isPending}
-          confirmLabel="Delete Item"
+          confirmLabel={inventoryItemsText("Delete Item", locale)}
           variant="destructive"
         />
       </div>

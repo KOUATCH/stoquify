@@ -18,7 +18,11 @@ function fixture(generatedVersion = "6.19.3") {
   }
   write("package.json", "{}")
   write("prisma/schema.prisma", schema)
-  write("node_modules/prisma/package.json", JSON.stringify({ version: "6.19.3", main: "cli.js" }))
+  write("node_modules/prisma/package.json", JSON.stringify({
+    version: "6.19.3",
+    bin: { prisma: "cli.js" },
+    exports: { "./package.json": "./package.json", ".": "./missing-types.js" },
+  }))
   write("node_modules/prisma/cli.js", "// CLI fixture")
   write("node_modules/@prisma/engines/package.json", "{}")
   write("node_modules/@prisma/engines/query_engine-windows.dll.node", "engine")
@@ -56,6 +60,40 @@ describe("Prisma development startup", () => {
     expect(fs.statSync(engine).mtimeMs).toBe(before)
   })
 
+  it("reuses the client when Prisma only reorders block attributes", () => {
+    const task = fixture()
+    const withAttributes = schema.replace('  name String @default("New York")\n}', '  name String @default("New York")\n  @@index([name])\n  @@unique([id, name])\n}')
+    task.write("prisma/schema.prisma", withAttributes)
+    task.write("node_modules/.prisma/client/schema.prisma", withAttributes.replace(
+      "  @@index([name])\n  @@unique([id, name])",
+      "  @@unique([id, name])\n  @@index([name])",
+    ))
+    expect(ensureClient(task.options)).toBe(0)
+    expect(task.spawnSync).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["constraint field order", "  @@unique([name, id])\n  @@index([name])"],
+    ["constraint removal", "  @@index([name])"],
+  ])("still regenerates for a real %s change", (_label, attributes) => {
+    const task = fixture()
+    const withAttributes = schema.replace('  name String @default("New York")\n}', '  name String @default("New York")\n  @@index([name])\n  @@unique([id, name])\n}')
+    task.write("node_modules/.prisma/client/schema.prisma", withAttributes)
+    task.write("prisma/schema.prisma", withAttributes.replace("  @@index([name])\n  @@unique([id, name])", attributes))
+    expect(ensureClient(task.options)).toBe(0)
+    expect(task.spawnSync).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([false, true])("handles fields moved above block attributes (field changed: %s)", (changed) => {
+    const task = fixture()
+    task.write("prisma/schema.prisma", schema.replace('  name String @default("New York")',
+      `  @@index([name])\n  name ${changed ? "String?" : "String"} @default("New York")`))
+    task.write("node_modules/.prisma/client/schema.prisma", schema.replace('  name String @default("New York")',
+      '  name String @default("New York")\n  @@index([name])'))
+    expect(ensureClient(task.options)).toBe(0)
+    expect(task.spawnSync).toHaveBeenCalledTimes(changed ? 1 : 0)
+  })
+
   it.each([
     ["new field", schema.replace("id String @id", "id String @id\n  sku String?")],
     ["changed whitespace inside a default", schema.replace('"New York"', '"New  York"')],
@@ -90,7 +128,7 @@ describe("Prisma development startup", () => {
 
   it("regenerates when the installed Prisma CLI version changes", () => {
     const task = fixture()
-    task.write("node_modules/prisma/package.json", JSON.stringify({ version: "6.19.4", main: "cli.js" }))
+    task.write("node_modules/prisma/package.json", JSON.stringify({ version: "6.19.4", bin: { prisma: "cli.js" } }))
     ensureClient(task.options)
     expect(task.spawnSync).toHaveBeenCalledTimes(1)
   })

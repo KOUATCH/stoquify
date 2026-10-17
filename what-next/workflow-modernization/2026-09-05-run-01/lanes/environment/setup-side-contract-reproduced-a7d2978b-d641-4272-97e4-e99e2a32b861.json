@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-30T18:47:39.978Z",
+  "scope": "Service contract with isolated in-memory read adapter; no database writes",
+  "sourceHashes": {
+    "services/accounting/accounting-settings.service.ts": "1be92b5855539232f9ddcc971d6e8c1449500d340b964d87535012173771650f"
+  },
+  "cases": [
+    {
+      "sides": [
+        "DEBIT",
+        "DEBIT"
+      ],
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "sides": [
+        "CREDIT",
+        "CREDIT"
+      ],
+      "issueCount": 0,
+      "issues": []
+    },
+    {
+      "sides": [
+        "DEBIT",
+        "CREDIT"
+      ],
+      "issueCount": 0,
+      "issues": []
+    }
+  ],
+  "passed": true,
+  "sourceStable": true
+}

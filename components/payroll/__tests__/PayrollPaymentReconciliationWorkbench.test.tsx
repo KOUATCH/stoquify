@@ -3,6 +3,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { recordPayrollPaymentSettlementEvidenceAction } from "@/actions/payroll/payroll-payment-reconciliation.actions";
 import type { PayrollPaymentReconciliationReadModel } from "@/actions/payroll/payroll-payment-reconciliation.actions";
 import PayrollPaymentReconciliationWorkbench from "../PayrollPaymentReconciliationWorkbench";
+import PayrollPaymentSettlementForm from "../PayrollPaymentSettlementForm";
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions";
+jest.mock("@/actions/security/step-up-auth.actions", () => ({stepUpWithPasswordAction:jest.fn()}));
 
 const mockRefresh = jest.fn();
 
@@ -40,6 +43,10 @@ jest.mock("lucide-react", () => {
 
 const mockRecordSettlement =
   recordPayrollPaymentSettlementEvidenceAction as jest.Mock;
+const proofOptions = {
+  register: { id: "run-1", runNumber: "PAY-2026-06", version: 3, revision: "run-revision" },
+  matches: [{ id: "match-1", revision: "match-revision", reference: "PAY-001", kind: "provider_and_statement" as const, amount: "335000.00", currency: "XAF", occurredAt: "2026-06-30T09:00:00Z" }],
+};
 
 function reconciliationData(): PayrollPaymentReconciliationReadModel {
   return {
@@ -90,6 +97,7 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
     batches: [
       {
         id: "batch-1",
+        proofOptions,
         batchNumber: "PAY-BROWSER-PAY-2026-06",
         payrollRunId: "run-1",
         runNumber: "PAY-BROWSER-RUN-2026-06",
@@ -97,6 +105,7 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
         status: "RELEASED",
         reconciliationStatus: "READY_TO_SETTLE",
         amount: "335000.00",
+        settlement: {remainingAmount:"335000.00",revision:null,availability:"verified",canRecord:true},
         currency: "XAF",
         method: "MOBILE_MONEY",
         paymentDate: "2026-06-30T12:00:00.000Z",
@@ -185,15 +194,92 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
 }
 
 function fillSettlementProof() {
-  fireEvent.change(screen.getByLabelText("Source register hash"), {
-    target: { value: "sha256:register-proof" },
-  });
-  fireEvent.change(screen.getByLabelText("Evidence hash"), {
-    target: { value: "sha256:settlement-input" },
-  });
+  fireEvent.change(screen.getByLabelText("Approved reconciliation"), { target: { value: "match-1" } });
 }
 
 describe("PayrollPaymentReconciliationWorkbench", () => {
+  it("requires eligible stored proof and never offers manual hash fields", () => {
+    render(<PayrollPaymentSettlementForm payrollPaymentBatchId="batch" batchNumber="B" amount="100.00" currency="XAF" />);
+    expect(screen.getByRole("button", { name: "Record settlement proof" })).toBeDisabled();
+    expect(screen.queryByLabelText("Evidence hash")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Source register hash")).not.toBeInTheDocument();
+    expect(screen.getByText(/No eligible unused approved match/)).toBeVisible();
+  });
+  it("requires selecting proof again when the source revision changes", () => {
+    const props = { payrollPaymentBatchId: "batch", batchNumber: "B", amount: "100.00", currency: "XAF", proofOptions };
+    const view = render(<PayrollPaymentSettlementForm {...props} />);
+    fillSettlementProof();
+    view.rerender(<PayrollPaymentSettlementForm {...props} proofOptions={{ ...proofOptions, register: { ...proofOptions.register, revision: "new-run" } }} />);
+    expect(screen.getByRole("button", { name: "Record settlement proof" })).toBeDisabled();
+    expect(screen.getByRole("alert")).toHaveTextContent("proof changed");
+    fillSettlementProof();
+    expect(screen.getByRole("button", { name: "Record settlement proof" })).toBeEnabled();
+  });
+  it("uses the verified remainder and never prefills an already consumed partial match", () => {
+    const data=reconciliationData();data.batches[0].status="PARTIALLY_SETTLED";data.batches[0].derivedState="PARTIALLY_SETTLED";
+    data.batches[0].settlement={remainingAmount:"500.00",revision:"event-1",availability:"verified",canRecord:true};
+    render(<PayrollPaymentReconciliationWorkbench data={data} locale="en"/>);
+    expect(screen.getByLabelText("Settlement amount")).toHaveValue("500.00");
+    expect(screen.getByLabelText("Approved reconciliation")).toHaveValue("");
+  });
+  it("keeps drafts until a changed balance is explicitly reviewed", () => {
+    const props={payrollPaymentBatchId:"batch",batchNumber:"B",amount:"100.00",currency:"XAF",balanceRevision:null,proofOptions};
+    const view=render(<PayrollPaymentSettlementForm {...props}/>);
+    fillSettlementProof();
+    view.rerender(<PayrollPaymentSettlementForm {...props} amount="60.00" balanceRevision="event1"/>);
+    expect(screen.getByRole("button",{name:"Record settlement proof"})).toBeDisabled();
+    expect(screen.getByLabelText("Approved reconciliation")).toHaveValue("match-1");
+    fireEvent.click(screen.getByRole("button",{name:"Review and use refreshed balance"}));
+    expect(screen.getByLabelText("Settlement amount")).toHaveValue("60.00");
+    expect(screen.getByLabelText("Approved reconciliation")).toHaveValue("");
+  });
+  it("locks uncertain entries and retries the identical command after transport failure", async () => {
+    mockRecordSettlement.mockRejectedValueOnce(new Error("connection lost"));
+    render(<PayrollPaymentReconciliationWorkbench data={reconciliationData()} locale="en"/>);
+    fillSettlementProof();fireEvent.click(screen.getByRole("button",{name:"Record settlement proof"}));
+    const retry=await screen.findByRole("button",{name:"Retry the same request"});
+    expect(screen.getByLabelText("Settlement amount")).toBeDisabled();
+    expect(screen.getByLabelText("Approved reconciliation")).toHaveValue("match-1");
+    fireEvent.click(retry);await screen.findByText("Settlement evidence recorded.");
+    expect(mockRecordSettlement.mock.calls[1][0]).toEqual(mockRecordSettlement.mock.calls[0][0]);
+    expect(await screen.findByRole("button",{name:"Record settlement proof"})).toBeDisabled();
+  });
+  it("localizes French validation and preserves input", async () => {
+    mockRecordSettlement.mockResolvedValueOnce({success:false,status:422,code:"BUSINESS_RULE_VIOLATION",error:"English server validation"});
+    render(<PayrollPaymentSettlementForm payrollPaymentBatchId="batch" batchNumber="B" amount="100.00" currency="XAF" locale="fr" proofOptions={proofOptions}/>);
+    fireEvent.change(screen.getByLabelText("Rapprochement approuvé"),{target:{value:"match-1"}});
+    fireEvent.click(screen.getByRole("button",{name:"Enregistrer la preuve de règlement"}));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Vérifiez le montant");
+    expect(screen.queryByText("English server validation")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Rapprochement approuvé")).toHaveValue("match-1");
+  });
+  it("restores the invoking settlement button when a pending request loses keyboard focus", async () => {
+    mockRecordSettlement.mockImplementationOnce(async () => {
+      (document.activeElement as HTMLElement).blur();
+      throw new Error("lost response");
+    });
+    render(<PayrollPaymentSettlementForm payrollPaymentBatchId="batch" batchNumber="B" amount="100.00" currency="XAF" proofOptions={proofOptions}/>);
+    fillSettlementProof();
+    const submit=screen.getByRole("button",{name:"Record settlement proof"});submit.focus();fireEvent.click(submit);
+    await waitFor(()=>expect(screen.getByRole("button",{name:"Retry the same request"})).toHaveFocus());
+  });
+  it("does not steal focus when the operator moved to another control during submission", async () => {
+    mockRecordSettlement.mockImplementationOnce(async () => {
+      screen.getByRole("button",{name:"Other control"}).focus();
+      throw new Error("lost response");
+    });
+    render(<><button>Other control</button><PayrollPaymentSettlementForm payrollPaymentBatchId="batch" batchNumber="B" amount="100.00" currency="XAF" proofOptions={proofOptions}/></>);
+    fillSettlementProof();
+    const submit=screen.getByRole("button",{name:"Record settlement proof"});submit.focus();fireEvent.click(submit);
+    await screen.findByRole("button",{name:"Retry the same request"});
+    expect(screen.getByRole("button",{name:"Other control"})).toHaveFocus();
+  });
+  it("does not offer recording for an unverified balance", () => {
+    const data=reconciliationData();data.batches[0].settlement={remainingAmount:null,revision:null,availability:"unavailable",canRecord:false};
+    render(<PayrollPaymentReconciliationWorkbench data={data} locale="fr"/>);
+    expect(screen.queryByRole("form")).not.toBeInTheDocument();
+    expect(screen.getByText(/Le solde restant n’est pas vérifié/)).toBeVisible();
+  });
   beforeEach(() => {
     jest.clearAllMocks();
     mockRecordSettlement.mockResolvedValue({
@@ -366,15 +452,7 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
           payrollPaymentBatchId: "batch-1",
           settlementStatus: "settled",
           settlementAmount: "335000.00",
-          evidenceHash: "sha256:settlement-input",
-          sourceRegisterHash: "sha256:register-proof",
-          matchRecordId: "match-1",
-          providerAccountId: "provider-account-1",
-          providerTransactionId: "MOMO-PAYROLL-2026-06-001",
-          providerReference: "PAY-BROWSER-PAY-2026-06",
-          providerEventId: "provider-event-1",
-          statementLineId: "statement-line-1",
-          statementFileHash: "sha256:statement-file",
+          proofSelection: { payrollRunId: "run-1", runVersion: 3, runRevision: "run-revision", matchRecordId: "match-1", matchRevision: "match-revision" },
           metadata: expect.objectContaining({
             sourceSurface: "/dashboard/payroll/payments",
           }),
@@ -391,6 +469,8 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
       await screen.findByText("Settlement evidence recorded."),
     ).toBeInTheDocument();
     expect(mockRefresh).toHaveBeenCalled();
+    expect(mockRecordSettlement.mock.calls[0][0]).not.toHaveProperty("evidenceHash");
+    expect(mockRecordSettlement.mock.calls[0][0]).not.toHaveProperty("sourceRegisterHash");
   });
 
   it("renders fresh-auth denial returned by settlement action", async () => {
@@ -423,4 +503,32 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     expect(screen.getByText("act_fresh_payroll_payment")).toBeInTheDocument();
     expect(mockRefresh).not.toHaveBeenCalled();
   });
+  it("authenticates without submitting the preserved settlement draft", async () => {
+    mockRecordSettlement.mockResolvedValueOnce({ success: false, code: "FRESH_AUTH_REQUIRED", status: 403 });
+    (stepUpWithPasswordAction as jest.Mock).mockResolvedValueOnce({ success: true });
+    render(<PayrollPaymentReconciliationWorkbench data={reconciliationData()} locale="en" />);
+    fillSettlementProof();
+    fireEvent.click(screen.getByRole("button", { name: "Record settlement proof" }));
+    const password = await screen.findByLabelText("Current password");
+    fireEvent.change(password, { target: { value: "test-password" } });
+    fireEvent.click(screen.getByRole("button", { name: "Authenticate", exact: true }));
+    expect(await screen.findByText("Authentication confirmed. Review and submit the settlement separately.")).toBeVisible();
+    expect(stepUpWithPasswordAction).toHaveBeenCalledWith({ password: "test-password" });
+    expect(screen.queryByLabelText("Current password")).not.toBeInTheDocument();
+    expect(mockRecordSettlement).toHaveBeenCalledTimes(1);
+    expect(screen.getByLabelText("Approved reconciliation")).toHaveValue("match-1");
+    fireEvent.click(await screen.findByRole("button", { name: "Record settlement proof" }));
+    await waitFor(() => expect(mockRecordSettlement).toHaveBeenCalledTimes(2));
+    expect(mockRecordSettlement.mock.calls[1][0]).toEqual(mockRecordSettlement.mock.calls[0][0]);
+  });
 });
+
+
+it("renders French destination headings without mutating source evidence", () => {
+  const data = reconciliationData()
+  const original = JSON.stringify(data)
+  render(<PayrollPaymentReconciliationWorkbench data={data} locale="fr" />)
+  expect(screen.getByRole("heading", { name: "Rapprochement des paiements" })).toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "Lots de paiements" })).toBeInTheDocument()
+  expect(JSON.stringify(data)).toBe(original)
+})

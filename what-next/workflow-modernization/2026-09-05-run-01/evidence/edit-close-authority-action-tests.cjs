@@ -1,0 +1,12 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'../../../..'),file='actions/accounting/__tests__/close-assurance.actions.test.ts',full=path.join(root,file);
+const capture=JSON.parse(fs.readFileSync(path.join(__dirname,'close-authority-before-28ee45e0-6457-402a-a934-c81d2f568582.json'))),sha=x=>crypto.createHash('sha256').update(x).digest('hex'),bytes=fs.readFileSync(full);assert.equal(sha(bytes),capture.files[file].sha256);
+const nl=bytes.includes(Buffer.from('\r\n'))?'\r\n':'\n';let text=bytes.toString().replaceAll('\r\n','\n');
+let matches=0;text=text.replace(/(claims: \{\n)(\s+)(userId: "user-session",)/g,(_all,start,space,end)=>{matches++;return start+space+'sessionId: "trusted-session-id",\n'+space+'sessionToken: "trusted-session-token",\n'+space+end;});assert.equal(matches,2);
+function once(body,from,to){assert.equal(body.split(from).length-1,1,from);return body.replace(from,to);}
+const begin=text.indexOf('  it("accepts a missing-proof response through protected fresh accountant authority"'),end=text.indexOf('  it("exports draft close packs with tenant and actor context"',begin);assert.ok(begin>0&&end>begin);let body=text.slice(begin,end);
+body=once(body,'      permissions: ["*"],','      permissions: ["*"],\n      session: { id: "attacker-session", token: "attacker-token" },\n      requireWorkDeskAccess: true,');
+body=once(body,'        actorPermissions: mockPermissions,\n        freshAuth: {','        actorPermissions: mockPermissions,\n        session: { id: "trusted-session-id", token: "trusted-session-token" },\n        requireWorkDeskAccess: false,\n        freshAuth: {');
+body=once(body,'    expect(result.success).toBe(true)','    expect(result.success).toBe(true)\n    expect(JSON.stringify(result)).not.toContain("trusted-session-token")');
+body=once(body,'    ["user identity", freshAuthFixture({ userId: "other-user" })],','    ["missing session", freshAuthFixture({ sessionId: "" })],\n    ["missing session token", freshAuthFixture({ sessionToken: "" })],\n    ["user identity", freshAuthFixture({ userId: "other-user" })],');
+text=text.slice(0,begin)+body+text.slice(end);const out=Buffer.from(text.replaceAll('\n',nl)),temp=full+'.'+crypto.randomUUID()+'.tmp';fs.writeFileSync(temp,out,{flag:'wx'});fs.renameSync(temp,full);assert.equal(sha(fs.readFileSync(full)),sha(out));console.log(JSON.stringify({file,sha256:sha(out)}));

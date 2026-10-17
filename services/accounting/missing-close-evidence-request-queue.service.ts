@@ -1,9 +1,12 @@
 import "server-only";
+import { readResolvedCloseEvidence } from "./close-evidence-resolution-records";
 
 import { CloseFindingStatus, Prisma } from "@prisma/client";
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions";
 import { db } from "@/prisma/db";
+import { closeEvidenceAfter, closeEvidenceNextCursor, readCloseEvidenceCursor } from "./close-evidence-pagination";
+import { readCloseEvidenceRecipient } from "./close-evidence-recipient.service";
 import {
   BusinessRuleError,
   ForbiddenError,
@@ -40,6 +43,7 @@ export type GetClientMissingCloseEvidenceRequestQueueInput = Readonly<{
   organizationId: string;
   actorId: string;
   actorPermissions: readonly string[];
+  page?: { periodId: string; cursor?: string };
 }>;
 
 function metadataRecord(value: Prisma.JsonValue | null) {
@@ -121,28 +125,18 @@ export async function getClientMissingCloseEvidenceRequestQueue(
   }
 
   const generatedAt = new Date();
+  const pageScope = { organizationId, actorId, periodId: input.page?.periodId ?? "", kind: "requests" as const };
+  if (input.page && !input.page.periodId.trim()) throw new BusinessRuleError("Accounting period is required.");
+  const cursor = readCloseEvidenceCursor(pageScope, input.page?.cursor);
   const matchingComment: Prisma.AccountantCommentWhereInput = {
     organizationId,
     visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
-    AND: [
-      {
-        metadata: {
-          path: ["requestType"],
-          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
-        },
-      },
-      {
-        metadata: {
-          path: ["requestedFromId"],
-          equals: actorId,
-        },
-      },
-    ],
   };
   const findings = await db.closeAssuranceFinding.findMany({
     where: {
       organizationId,
       ownerId: actorId,
+      ...(input.page ? { periodId: input.page.periodId, ...closeEvidenceAfter(cursor) } : {}),
       status: { in: [...OPEN_FINDING_STATUSES] },
       comments: { some: matchingComment },
     },
@@ -165,11 +159,18 @@ export async function getClientMissingCloseEvidenceRequestQueue(
         },
       },
       comments: {
-        where: matchingComment,
+        where: input.page ? { organizationId, OR: [matchingComment, {
+          visibility: { in: [MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY, "ACCOUNTANT_RESPONSE_ACCEPTED"] },
+        }] } : matchingComment,
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-        take: 1,
+        take: input.page ? 3 : 2,
         select: {
           id: true,
+          organizationId: true,
+          periodId: true,
+          closeRunId: true,
+          findingId: true,
+          visibility: true,
           authorId: true,
           body: true,
           correlationId: true,
@@ -178,7 +179,7 @@ export async function getClientMissingCloseEvidenceRequestQueue(
         },
       },
     },
-    orderBy: [{ dueAt: "asc" }, { createdAt: "asc" }, { id: "asc" }],
+    orderBy: input.page ? [{ createdAt: "asc" }, { id: "asc" }] : [{ dueAt: "asc" }, { createdAt: "asc" }, { id: "asc" }],
     take: CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems + 1,
   });
 
@@ -189,17 +190,13 @@ export async function getClientMissingCloseEvidenceRequestQueue(
     CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems,
   );
   const responseCandidates: MissingCloseEvidenceResponseRecord[] =
-    visibleFindings.length === 0
+    input.page ? visibleFindings.flatMap(finding => finding.comments.filter(comment => comment.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY)) : visibleFindings.length === 0
       ? []
       : await db.accountantComment.findMany({
           where: {
             organizationId,
             findingId: { in: visibleFindings.map((finding) => finding.id) },
-            visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
-            metadata: {
-              path: ["responseType"],
-              equals: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
-            },
+            visibility: { in: [MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY, "ACCOUNTANT_RESPONSE_ACCEPTED"] },
           },
           select: {
             id: true,
@@ -221,12 +218,12 @@ export async function getClientMissingCloseEvidenceRequestQueue(
           take: MAX_RESPONSE_CANDIDATES + 1,
         });
   const responseEvidenceTruncated =
-    responseCandidates.length > MAX_RESPONSE_CANDIDATES;
+    !input.page && responseCandidates.length > MAX_RESPONSE_CANDIDATES;
   const responsesByFinding = new Map<
     string,
     MissingCloseEvidenceResponseRecord[]
   >();
-  for (const response of responseCandidates.slice(0, MAX_RESPONSE_CANDIDATES)) {
+  for (const response of input.page ? responseCandidates : responseCandidates.slice(0, MAX_RESPONSE_CANDIDATES)) {
     if (!response.findingId) continue;
     const responses = responsesByFinding.get(response.findingId) ?? [];
     responses.push(response);
@@ -234,7 +231,11 @@ export async function getClientMissingCloseEvidenceRequestQueue(
   }
 
   for (const finding of visibleFindings) {
-    const comment = finding.comments[0];
+    let resolved: Awaited<ReturnType<typeof readResolvedCloseEvidence>> = null;
+    try { resolved = await readResolvedCloseEvidence(db, organizationId, finding.id); }
+    catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push(invalidEvidenceBlocker(finding.id, `finding-${finding.id}`)); continue; }
+    const requestComments = resolved ? resolved.records.filter(comment => comment.visibility === MISSING_CLOSE_EVIDENCE_VISIBILITY) : input.page ? finding.comments.filter(comment => comment.visibility === MISSING_CLOSE_EVIDENCE_VISIBILITY) : finding.comments;
+    const comment = requestComments[0];
     const requestId = comment?.id ?? `finding-${finding.id}`;
     const requestType = comment
       ? metadataString(comment.metadata, "requestType")
@@ -242,9 +243,13 @@ export async function getClientMissingCloseEvidenceRequestQueue(
     const requestedById = comment
       ? metadataString(comment.metadata, "requestedById")
       : null;
-    const requestedFromId = comment
+    let requestedFromId = comment
       ? metadataString(comment.metadata, "requestedFromId")
       : null;
+    if (comment && requestedFromId) {
+      try { requestedFromId = (await readCloseEvidenceRecipient(db, comment)).recipientId; }
+      catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push(invalidEvidenceBlocker(finding.id, requestId)); continue; }
+    }
     const correlationId = comment
       ? metadataString(comment.metadata, "correlationId")
       : null;
@@ -255,6 +260,7 @@ export async function getClientMissingCloseEvidenceRequestQueue(
 
     if (
       !comment ||
+      requestComments.length !== 1 ||
       requestType !== MISSING_CLOSE_EVIDENCE_REQUEST_TYPE ||
       !comment.authorId ||
       requestedById !== comment.authorId ||
@@ -270,7 +276,7 @@ export async function getClientMissingCloseEvidenceRequestQueue(
     }
 
     const responseCandidatesForFinding =
-      responsesByFinding.get(finding.id) ?? [];
+      resolved ? resolved.records.filter(comment => comment.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY) : responsesByFinding.get(finding.id) ?? [];
     const awaitingResponse = AWAITING_RESPONSE_FINDING_STATUSES.has(
       finding.status,
     );
@@ -412,6 +418,7 @@ export async function getClientMissingCloseEvidenceRequestQueue(
     organizationId,
     actorId,
     generatedAt: generatedAt.toISOString(),
+    ...(input.page ? { nextCursor: closeEvidenceNextCursor(pageScope, findings.length > CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems ? visibleFindings.at(-1) : undefined) } : {}),
     source: {
       organizationScoped: true,
       recipientScoped: true,
@@ -441,7 +448,7 @@ export async function getClientMissingCloseEvidenceRequestQueue(
       invalidRequestEvidence,
       invalidResponseEvidence,
       truncated:
-        findings.length > CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems ||
+        (!input.page && findings.length > CLIENT_MISSING_CLOSE_EVIDENCE_REQUEST_QUEUE.maxItems) ||
         responseEvidenceTruncated,
     },
     requests,

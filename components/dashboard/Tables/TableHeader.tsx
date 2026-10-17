@@ -24,11 +24,6 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { FaFileExcel } from "react-icons/fa";
 import { RiFileExcel2Line } from "react-icons/ri";
-import {
-  Options,
-  SelectValue,
-} from "react-tailwindcss-select/dist/components/type";
-;
 
 type TableHeaderProps = {
   title: string;
@@ -48,8 +43,6 @@ export default function TableHeader({
   modalForm,
   showImport = true,
 }: TableHeaderProps) {
-  const [status, setStatus] = useState<SelectValue>(null);
-  const [date, setDate] = useState<SelectValue>(null);
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [jsonData, setJsonData] = useState("");
   const [preview, setPreview] = useState(false);
@@ -70,22 +63,6 @@ export default function TableHeader({
     excelDownload = "/Products.xlsx";
   }
   console.log(excelFile);
-  const options: Options = [
-    { value: "true", label: "Active" },
-    { value: "false", label: "Disabled" },
-  ];
-  const dateOptions: Options = [
-    { value: "lastMonth", label: "Last Month" },
-    { value: "thisMonth", label: "This Month" },
-  ];
-  const handleStatusChange = (item: SelectValue) => {
-    console.log("value:", item);
-    setStatus(item);
-  };
-  const handleDateChange = (item: SelectValue) => {
-    console.log("value:", item);
-    setDate(item);
-  };
 
   function selectExcelFile(file: File | null) {
     setExcelFile(file);

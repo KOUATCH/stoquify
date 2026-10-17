@@ -1,0 +1,123 @@
+{
+  "run": "7c77ff90-dc98-4acd-a706-3a98ef4676ed",
+  "at": "2026-09-30T20:26:11.294Z",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "368986b640c13253b7deac890c538b52fcb5ca33c3ad3258e6c20c3ab8cae15b",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556"
+  },
+  "checks": [
+    {
+      "name": "Recognized receipt is cleared by partial invoices 6 + 4 without recognizing inventory again",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-partial",
+      "invoiceIds": [
+        "cmuok2ltn0038mascri0d8gph",
+        "cmuok2nlb004fmasc8gbafhwn"
+      ],
+      "journalCount": 3,
+      "stockMovementCount": 1,
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-25000.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "elapsedMs": 6691
+    },
+    {
+      "name": "Legacy unposted receipt retains invoice-based inventory recognition",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-legacy",
+      "balances": {
+        "INVENTORY": "15000.00",
+        "GRNI": "0.00",
+        "ACCOUNTS_PAYABLE": "-15000.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "elapsedMs": 2993
+    },
+    {
+      "name": "One invoice can combine recognized and legacy receipt lines without double counting",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-mixed",
+      "balances": {
+        "INVENTORY": "17500.00",
+        "GRNI": "-7500.00",
+        "ACCOUNTS_PAYABLE": "-10000.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "elapsedMs": 4690
+    },
+    {
+      "name": "Historical inventory-debit rule blocks accrued invoice, then reviewed recovery clears GRNI once",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-legacy-rule",
+      "invoiceId": "cmuok2wls00i7mascpvs4b9sc",
+      "balances": {
+        "INVENTORY": "25000.00",
+        "GRNI": "-10000.00",
+        "ACCOUNTS_PAYABLE": "-15000.00",
+        "INPUT_VAT": "0.00",
+        "INVENTORY_VARIANCE": "0.00"
+      },
+      "approvalPreserved": true,
+      "elapsedMs": 5729
+    },
+    {
+      "name": "Concurrent exact reviewed approvals converge to one invoice journal and liability",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-concurrent",
+      "invoiceId": "cmuok30ne00n5mascigb8m4oh",
+      "exactRetryConverged": true,
+      "elapsedMs": 4157
+    },
+    {
+      "name": "Changed receipt journal after review cannot authorize a payable or another inventory debit",
+      "status": "passed",
+      "organizationId": "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-corrupt",
+      "invoiceId": "cmuok369200rjmasc5r6bod6s",
+      "noInvoiceAccountingEffects": true,
+      "elapsedMs": 8010
+    }
+  ],
+  "scope": "Owned localhost PostgreSQL; actual reviewed receiving, invoice preparation, independent approval and ledger recovery. Receipt recognition is a canonical-kernel verification fixture, not an operational goods-receipt producer. Synthetic accounting setup and fixture sessions are not professional approval or certification. No real payments, messages or migration.",
+  "productionReceiptProducerImplemented": false,
+  "originalBefore": "a4c2c84fa07ac5b961e8f42ad349f3c639b3b50ba7236d1eb151de1729e5d06d",
+  "noPaymentsCreated": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/ap-control.service.ts": "368986b640c13253b7deac890c538b52fcb5ca33c3ad3258e6c20c3ab8cae15b",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556"
+  },
+  "sourceStable": true,
+  "fixtureOrganizations": [
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-partial",
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-legacy",
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-mixed",
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-legacy-rule",
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-concurrent",
+    "workflow_supplier_ack_en_receipt-handoff-7c77ff90-dc98-4acd-a706-3a98ef4676ed-corrupt"
+  ],
+  "passed": true
+}

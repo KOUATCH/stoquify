@@ -7,6 +7,11 @@ import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service"
 import ItemSuppliersPage from "../page"
 
+jest.mock("../../../../inventory-route-access", () => ({
+  routeByKey: () => ({ key: "inventory-items-suppliers" }),
+  withInventorySurfaceAccess: ({ onAllowed }: { onAllowed: () => Promise<React.ReactNode> }) => onAllowed(),
+}))
+
 jest.mock("@/actions/item-suppliers/getItemWithSuppliers", () => ({
   __esModule: true,
   default: jest.fn(),
@@ -36,6 +41,7 @@ jest.mock("@/i18n/navigation", () => ({
 }))
 jest.mock("lucide-react", () => ({
   ArrowLeft: (props: React.SVGProps<SVGSVGElement>) => <svg {...props} />,
+  Truck: (props: React.SVGProps<SVGSVGElement>) => <svg {...props} />,
 }))
 jest.mock("../AddSuppliersToItemModal", () => ({
   __esModule: true,

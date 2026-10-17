@@ -38,6 +38,9 @@ export type AROpenItemEvidenceGrade = "operational" | "posted"
 
 export type AROpenItemInput = {
   organizationId: string
+  locationId?: string
+  maxDocuments?: number
+  includeAllocations?: boolean
   customerId?: string | null
   asOf?: Date | string | null
   recordedThrough?: Date | string | null
@@ -182,6 +185,7 @@ export async function getCustomerAROpenItems(input: AROpenItemInput): Promise<AR
   const documents = await client.customerReceivableDocument.findMany({
     where: {
       organizationId: input.organizationId,
+      ...(input.locationId ? { sourceSalesOrder: { organizationId: input.organizationId, locationId: input.locationId } } : {}),
       ...(input.customerId ? { customerId: input.customerId } : {}),
       issuedAt: { lte: asOf },
       createdAt: { lte: recordedThrough },
@@ -199,9 +203,13 @@ export async function getCustomerAROpenItems(input: AROpenItemInput): Promise<AR
       },
     },
     orderBy: [{ dueDate: "asc" }, { invoiceDate: "asc" }, { id: "asc" }],
+    ...(input.maxDocuments ? { take: input.maxDocuments + 1 } : {}),
   })
+  if (input.maxDocuments && documents.length > input.maxDocuments) {
+    throw new BusinessRuleError("Choose a narrower receivable scope before reporting.")
+  }
   const documentIds = documents.map((document) => document.id)
-  const entries = documentIds.length
+  const entries = documentIds.length && input.includeAllocations !== false
     ? await client.customerLedgerEntry.findMany({
         where: {
           organizationId: input.organizationId,

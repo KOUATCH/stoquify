@@ -15,6 +15,7 @@ const LANES = ["all", "invoice", "payment"] as const
 
 export type APHistoryUrlFilters = TransactionHistoryFilters & {
   lane?: "all" | "invoice" | "payment"
+  invoiceId?: string
   supplierId?: string
   cursor?: string
   selected?: string
@@ -24,6 +25,7 @@ export function parseAPHistorySearchParams(params: URLSearchParams): APHistoryUr
   const pageSize = Number(params.get("pageSize"))
   return {
     lane: enumValue(params.get("lane"), LANES),
+    invoiceId: stringParam(params.get("invoiceId")),
     supplierId: stringParam(params.get("supplierId")),
     dateFrom: validDateOnly(params.get("dateFrom")),
     dateTo: validDateOnly(params.get("dateTo")),
@@ -36,6 +38,7 @@ export function parseAPHistorySearchParams(params: URLSearchParams): APHistoryUr
 export function filtersForAPHistoryAction(filters: APHistoryUrlFilters) {
   return {
     ...(filters.lane && filters.lane !== "all" ? { lane: filters.lane } : {}),
+    ...(filters.invoiceId ? { invoiceId: filters.invoiceId } : {}),
     ...(filters.supplierId ? { supplierId: filters.supplierId } : {}),
     ...(filters.dateFrom ? { dateFrom: filters.dateFrom } : {}),
     ...(filters.dateTo ? { dateTo: filters.dateTo } : {}),
@@ -88,7 +91,7 @@ export function useAPHistoryWorkbench({ organizationId, actorId }: { organizatio
     },
     hasMore: historyQuery.data?.pageInfo.hasMore ?? false,
     updateFilters: replaceWith,
-    resetFilters: () => replaceWith({ lane: undefined, dateFrom: undefined, dateTo: undefined, pageSize: 50, cursor: undefined, selected: undefined }),
+    resetFilters: () => replaceWith({ invoiceId: undefined, supplierId: filters.invoiceId ? undefined : filters.supplierId, lane: undefined, dateFrom: undefined, dateTo: undefined, pageSize: 50, cursor: undefined, selected: undefined }),
     // Selecting retained details does not reload the data. Tracking this as a
     // filter transition replaces the table with a loader and destroys the
     // drawer's focus-return target on both opening and closing.
@@ -108,6 +111,7 @@ export function buildAPHistoryHref(pathname: string, params: URLSearchParams, pa
     if (value === undefined || value === null || value === "") next.delete(key)
     else next.set(key, String(value))
   }
+  if ("lane" in patch && patch.lane !== "invoice") next.delete("invoiceId")
   if (!("cursor" in patch) && Object.keys(patch).some(key => key !== "selected")) next.delete("cursor")
   if (!("selected" in patch)) next.delete("selected")
   const query = next.toString()

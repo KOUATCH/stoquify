@@ -1,0 +1,345 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const root = __dirname;
+function writeCurrent(file, value) {
+  if (fs.readFileSync(file, 'utf8') === value) return;
+  try { fs.writeFileSync(file, value); }
+  catch (error) {
+    if (process.platform !== 'win32' || error.code !== 'UNKNOWN') throw error;
+    // Windows mapped readers can prevent truncation while allowing atomic replacement.
+    const resolved = path.resolve(file);
+    if (!resolved.startsWith(path.resolve(root) + path.sep)) throw error;
+    const retained = resolved + '.retained-' + crypto.randomUUID();
+    const staged = resolved + '.pending-' + crypto.randomUUID();
+    fs.copyFileSync(resolved, retained, fs.constants.COPYFILE_EXCL);
+    fs.writeFileSync(staged, value, { flag: 'wx' });
+    fs.renameSync(staged, resolved);
+    if (fs.readFileSync(file, 'utf8') !== value) throw new Error('Report write did not preserve bytes: ' + file);
+  }
+}
+const file = path.join(root, 'WORKFLOW_REGISTER.json');
+const register = JSON.parse(fs.readFileSync(file, 'utf8'));
+const ids = new Set(register.workflows.map(w => w.id));
+if (ids.size !== register.workflows.length) throw new Error('Duplicate workflow IDs');
+const statuses = ['Queued', 'In progress', 'Verification pending', 'Blocked—engineering', 'Blocked—external', 'Complete—verified'];
+for (const workflow of register.workflows) {
+  // Queue position does not discard existing assessment, implementation or runtime evidence.
+  workflow.status = statuses.includes(workflow.status) ? workflow.status : 'Queued';
+  if (workflow.completeWorkflowVerified && workflow.status !== 'Complete—verified') throw new Error(`Closure/status disagreement: ${workflow.id}`);
+  if (workflow.status === 'Complete—verified' && !workflow.completeWorkflowVerified) throw new Error(`Missing closure evidence: ${workflow.id}`);
+}
+const digest = register.workflows.find(w => w.id === 'AN-DAILY-DIGEST');
+digest.implementationStatus = 'payroll_forecast_currency_proof_and_nullable_consumers_corrected';
+digest.runtimeStatus = 'owned_en_fr_forecast_currency_disclosure_revocation_and_independent_proof_controls_verified';
+digest.remaining = [
+  'Six produced signal families have EN/FR label, source and unit checks. Payroll recovery, settlement and forecast currency defects are corrected; unavailable values, disclosure, revocation and independent proof controls are verified. Remaining: non-Manager contrast, text enlargement and final evidence binding. Destination localization and full payroll/finance lifecycles remain with their source workflows.',
+  'Shared permission provenance, close and payment handoffs are verified. Finance/reconciliation and payroll module matrices are verified. Close module, direct-page and read-action boundaries are verified; inventory source/direct item read boundaries are verified; purchasing source/list read admission is verified; core/Weekly grants and analytics destination are verified; Owner/Manager/daily-close page and action grants are verified; Digest authority, keyboard handoff, current revocation, top entry and Back are verified in EN/FR; broader governed-agent lifecycle remains. Compilation overhead and full-document navigation were identified in development; production performance remains unverified. Inventory Loss has its own explicit module guard.',
+  'Evidence badge aria rule and Chromium text exposure pass. EN/FR Manager all-mode rendered text contrast and primary focus/hover verified; axe contrast remains incomplete due to pseudo-elements. 126 seven-workspace EN/FR keyboard/reflow/reduced-motion views now pass, including selected-label visibility. Remaining: other workspace-content contrast and text enlargement. Native screen-reader speech/browser zoom are unverified limits.',
+];
+digest.closureReview = { checklist: 'DAILY_DIGEST_CLOSURE.md', evidence: 'DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md', verifiedCriteria: ['overdue-count-date-status-tenant-location-contract', 'source-read-failure-not-zero', 'en-fr-purchasing-keyboard-handoff-and-date-correction', 'current-source-permission-removal', 'risk-source-freshness-isolated-regression', 'en-fr-empty-observation-non-assurance-three-widths', 'source-severity-preserved-with-unassessed-urgency', 'all-composed-source-organizations-validated', 'server-disabled-modes-and-first-enabled-keyboard-activation', 'en-fr-command-action-label-reflow-and-localized-source-impact'], completeWorkflowVerified: false };
+if (!digest.evidence.includes('DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md')) digest.evidence.push('DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md');
+digest.closureReview.verifiedCriteria.push('five-persona-en-fr-source-module-handoff-contracts', 'evidence-badge-text-chromium-and-aria-rule');
+digest.closureReview.verifiedCriteria.push('stored-permission-provenance-en-fr-grant-revoke-and-api');
+digest.closureReview.verifiedCriteria.push('en-fr-close-signal-handoff-back-and-revocation', 'close-reader-controls-fail-closed-and-refresh-retains-notes');
+digest.closureReview.verifiedCriteria.push('payment-suspense-currency-scope-null-propagation-and-recovery', 'en-fr-payment-warning-handoff-back-and-revocation');
+digest.closureReview.verifiedCriteria.push('en-fr-source-link-back-view-restoration-and-cached-link-current-authority');
+digest.closureReview.verifiedCriteria.push('inventory_value_does_not_infer_dead_stock', 'inventory_summary_and_item_handoff_authority_en_fr');
+digest.closureReview.verifiedCriteria.push('payroll_source_details_permission_module_and_revocation_before_serialization');
+digest.closureReview.verifiedCriteria.push('payroll_destination_all_of_read_permissions_and_owner_finance_audiences', 'en_fr_payroll_evidence_handoff_back_and_cached_link_revocation');
+digest.closureReview.verifiedCriteria.push('canonical_source_warnings_localized_in_nested_digest_representations', 'fr_320px_source_code_reflow_keyboard_and_revoked_privacy');
+digest.closureReview.verifiedCriteria.push('persisted_payroll_module_read_matrix_en_fr', 'expired_session_en_fr_form_restores_digest_and_mode');
+digest.closureReview.verifiedCriteria.push('stale_and_blocked_source_timing_en_fr_refresh', 'controlled_payment_query_failure_rejects_and_retry_retains_blockers');
+digest.closureReview.verifiedCriteria.push('en_fr_manager_three_mode_rendered_contrast', 'primary_hover_keyboard_focus_and_clipping');
+if (!digest.evidence.includes('DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md')) digest.evidence.push('DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md');
+digest.closureReview.verifiedCriteria.push('actual_en_fr_app_query_exception_failed_retry_and_source_recovery');
+digest.closureReview.verifiedCriteria.push('request_clock_preserves_one_utc_day_across_sources', 'owned_en_fr_overlapping_read_period_and_tenant_isolation');
+digest.closureReview.verifiedCriteria.push('inventory_loss_canonical_french_copy_preserves_source_and_causation', 'en_fr_loss_detail_reflow_and_revoked_privacy');
+digest.closureReview.verifiedCriteria.push('genuine_weekly_source_window_and_current_balance_semantics', 'en_fr_weekly_period_keyboard_refresh_and_revocation', 'weekly_midnight_overlapping_read_tenant_isolation');
+digest.closureReview.verifiedCriteria.push('en_fr_real_digest_agent_projection_validator_and_revocation', 'hydrated_disabled_agent_and_missing_release_no_mutation', 'agent_request_language_and_workspace_revision_state_isolation');
+digest.closureReview.verifiedCriteria.push('finance_reconciliation_persisted_read_matrix_en_fr', 'finance_denied_details_suppressed_with_source_limitations_retained', 'en_fr_hydrated_finance_and_command_keyboard_grant_transitions');
+digest.closureReview.verifiedCriteria.push('close_assurance_persisted_read_matrix_en_fr', 'close_source_details_restricted_without_clearing_limitations', 'close_direct_pages_and_read_actions_share_current_read_gate');
+digest.closureReview.verifiedCriteria.push('inventory_persisted_read_matrix_and_summary_detail_separation_en_fr', 'inventory_direct_page_action_and_retained_read_admission', 'item_query_failure_failed_retry_and_filtered_recovery_en_fr');
+digest.closureReview.verifiedCriteria.push('purchasing_persisted_en_fr_read_matrix_and_restricted_manager_summary', 'purchasing_list_read_handoff_retention_and_recommended_dependency', 'purchasing_read_actions_and_route_wrappers_deny_before_domain_queries');
+digest.closureReview.verifiedCriteria.push('core_and_weekly_persisted_19_state_read_matrix_en_fr', 'analytics_destination_any_of_permission_and_current_module_gate', 'en_fr_empty_workspace_and_disabled_weekly_handoff_explanations');
+digest.closureReview.verifiedCriteria.push('operating_dashboard_pages_current_module_read_gate_en_fr', 'operating_read_actions_enforce_and_retained_admission');
+digest.closureReview.verifiedCriteria.push('digest_operating_handoff_authority_persisted_service_matrix_en_fr');
+digest.closureReview.verifiedCriteria.push('owner_handoff_denial_en_fr_route_recovery_unit_verified');
+digest.closureReview.verifiedCriteria.push('expired_evidence_is_stale_not_a_business_blocker_en_fr', 'owned_en_fr_operating_handoff_authority_and_revocation', 'digest_top_entry_and_back_restore_en_fr', 'owner_denial_french_mobile_rendering');
+digest.closureReview.verifiedCriteria.push('seven_workspace_en_fr_three_mode_three_width_keyboard_reflow_motion', 'selected_workspace_label_not_clipped_after_selection', 'digest_read_no_background_business_mutation');
+digest.closureReview.verifiedCriteria.push('inventory_loss_actual_route_keyboard_handoff_back_en_fr', 'loss_permission_module_revocation_and_read_only_recovery_en_fr', 'loss_cache_identity_period_and_drawer_withdrawal');
+const lossReport = 'INVENTORY_LOSS_HANDOFF_VERIFICATION_2026-09-27.md';
+if (!digest.evidence.includes(lossReport)) digest.evidence.push(lossReport);
+const signalReport = 'DAILY_DIGEST_SIGNAL_AUDIT_2026-09-27.md';
+if (!digest.evidence.includes(signalReport)) digest.evidence.push(signalReport);
+digest.closureReview.verifiedCriteria.push('historical_payroll_count_does_not_infer_exposure', 'en_fr_owned_payroll_history_and_forecast_blocker_preservation', 'six_generated_signal_family_labels_units_and_source_contracts');
+const cashRead = register.workflows.find(w => w.id === 'FA-CASH-COMMAND');
+const oldCurrencyGap = 'Shared tenant snapshot sums employee-balance cases without currency grouping and omits the unit in blocker copy. Reproduce mixed currencies; establish nullable totals/per-currency evidence and verify Cash Command consumers, related settlements and forecast amounts.';
+const previousForecastGap = 'Payroll recovery/settlement currency grouping and nullable consumers are verified. Remaining: forecast payment batches and declarations omit currency from selected source evidence and add raw amounts. Reproduce and correct that contract; full Cash Command runtime/localization remains queued.';
+const currencyGap = 'Shared payroll recovery/settlement/forecast currency contracts are corrected and verified. Full Cash Command runtime, localization and genuinely posted payroll lifecycle evidence remain in this queued workflow; no such closure is inferred from Digest rejection tests.';
+const forecastReport = 'FORECAST_CURRENCY_VERIFICATION_2026-09-27.md';
+if (!digest.evidence.includes(forecastReport)) digest.evidence.push(forecastReport);
+digest.closureReview.verifiedCriteria.push('payroll_forecast_currency_decimal_and_withheld_source_fingerprint', 'unavailable_forecast_totals_preserved_across_shared_consumers', 'owned_en_fr_forecast_currency_revocation_and_independent_proof_controls');
+const currencyReport = 'PAYROLL_CURRENCY_READ_VERIFICATION_2026-09-27.md';
+digest.closureReview.verifiedCriteria.push('payroll_recovery_settlement_currency_grouping_no_conversion', 'en_fr_owned_currency_disclosure_revocation_recovery', 'null_total_preserves_cash_recovery_and_failed_query_not_zero');
+if (!digest.evidence.includes(currencyReport)) digest.evidence.push(currencyReport);
+cashRead.remaining = cashRead.remaining.filter(value => value !== oldCurrencyGap && value !== previousForecastGap);
+if (!cashRead.evidence.includes(forecastReport)) cashRead.evidence.push(forecastReport);
+if (!cashRead.evidence.includes(currencyReport)) cashRead.evidence.push(currencyReport);
+if (!cashRead.remaining.includes(currencyGap)) cashRead.remaining.push(currencyGap);
+if (!cashRead.evidence.includes(signalReport)) cashRead.evidence.push(signalReport);
+const cashLaneFile = path.join(root, 'lanes/finance-accounting/WORKFLOW_REGISTER.json');
+const cashLane = JSON.parse(fs.readFileSync(cashLaneFile, 'utf8'));
+const laneCash = cashLane.workflows.find(w => w.id === cashRead.id);
+laneCash.remaining = laneCash.remaining.filter(value => value !== oldCurrencyGap && value !== previousForecastGap);
+if (!laneCash.evidence.includes('../../' + forecastReport)) laneCash.evidence.push('../../' + forecastReport);
+if (!laneCash.evidence.includes('../../' + currencyReport)) laneCash.evidence.push('../../' + currencyReport);
+if (!laneCash.remaining.includes(currencyGap)) laneCash.remaining.push(currencyGap);
+if (!laneCash.evidence.includes('../../' + signalReport)) laneCash.evidence.push('../../' + signalReport);
+writeCurrent(cashLaneFile, JSON.stringify(cashLane, null, 2) + '\n');
+const lossRead = register.workflows.find(w => w.id === 'IN-013');
+lossRead.implementationStatus = 'identity_scoped_cache_and_denial_withdrawal_corrected';
+lossRead.runtimeStatus = 'en_fr_read_handoff_drawer_revocation_and_read_only_recovery_verified';
+lossRead.remaining = [
+  'Complete broader period/history, localization, contrast and text-enlargement review; current evidence covers EN desktop/FR mobile handoff and current permission/module denial.',
+  'Stock-count and adjustment approval/posting remain separate workflows; this workbench is read-only.'
+];
+if (!lossRead.evidence.includes(lossReport)) lossRead.evidence.push(lossReport);
+const lossLaneFile = path.join(root, 'lanes/inventory/WORKFLOW_REGISTER.json');
+const lossLane = JSON.parse(fs.readFileSync(lossLaneFile, 'utf8'));
+const laneLoss = lossLane.workflows.find(w => w.id === lossRead.id);
+Object.assign(laneLoss, { implementationStatus: lossRead.implementationStatus, runtimeStatus: lossRead.runtimeStatus, remaining: lossRead.remaining });
+if (!laneLoss.evidence.includes('../../' + lossReport)) laneLoss.evidence.push('../../' + lossReport);
+writeCurrent(lossLaneFile, JSON.stringify(lossLane, null, 2) + '\n');
+const itemRead = register.workflows.find(w => w.id === 'MD-ITEM-01');
+itemRead.runtimeStatus = 'en_fr_inventory_module_read_and_query_recovery_verified_full_localization_incomplete';
+itemRead.remaining = itemRead.remaining.filter(value => value !== "Live French Digest handoff shows English item names, page labels and permission-denial copy; source item nameFr exists. Correct locale propagation and full item-page localization. Items page also coerces failed item reads to an empty list; verify and fix failure presentation.");
+const itemGap = "Live French item destination still shows English names and page labels; source item nameFr exists. Complete full page localization and broader lifecycle/accessibility checks. Module/permission denial and query-failure/retry copy are localized and runtime verified; failed item reads no longer become successful empty inventory.";
+if (!itemRead.remaining.includes(itemGap)) itemRead.remaining.push(itemGap);
+if (!itemRead.evidence.includes('DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md')) itemRead.evidence.push('DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md');
+const itemLaneFile = path.join(root, 'lanes/master-data/WORKFLOW_REGISTER.json');
+const itemLane = JSON.parse(fs.readFileSync(itemLaneFile, 'utf8'));
+const laneItem = itemLane.workflows.find(w => w.id === itemRead.id);
+Object.assign(laneItem, { runtimeStatus: itemRead.runtimeStatus, remaining: itemRead.remaining });
+if (!laneItem.evidence.includes('../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md')) laneItem.evidence.push('../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md');
+writeCurrent(itemLaneFile, JSON.stringify(itemLane, null, 2) + '\n');
+const laneFile = path.join(root, 'lanes/analytics/WORKFLOW_REGISTER.json');
+const closure = JSON.parse(fs.readFileSync(path.join(root, 'evidence/digest-closure-2026-09-27.json'), 'utf8'));
+if (closure.status !== 'Complete—verified' || closure.workflow !== digest.id) throw new Error('Missing Digest closure decision');
+const independentLocaleAdditions = [];
+for (const [source, expected] of Object.entries(closure.sourceHashes)) {
+  const bytes = fs.readFileSync(path.resolve(root, '../../..', source));
+  const actual = crypto.createHash('sha256').update(bytes).digest('hex');
+  if (actual === expected) continue;
+  // Only the reconciliation preparation/recovery copy changed. Reconstruct the
+  // historical dictionary with that one section restored; all other bytes must
+  // match the original closure binding, including every Digest translation.
+  if (['messages/en.json', 'messages/fr.json'].includes(source)) {
+    const historical = require('node:child_process').execFileSync('git', ['show', '62a56036a5ac9b37236a20c9b148052199069479:' + source], { cwd: path.resolve(root, '../../..'), encoding: 'utf8', windowsHide: true, maxBuffer: 8 * 1024 * 1024 });
+    if (crypto.createHash('sha256').update(historical).digest('hex') !== expected) throw new Error('Historical locale is not closure-bound');
+    function section(raw, name = "runPreparation") {
+      const start = raw.indexOf('    "' + name + '": {'), brace = raw.indexOf('{', start);
+      if (start < 0) throw new Error('Missing reconciliation locale section');
+      let depth = 0, quoted = false, escaped = false;
+      for (let i = brace; i < raw.length; i++) {
+        const c = raw[i];
+        if (quoted) { if (escaped) escaped = false; else if (c.charCodeAt(0) === 92) escaped = true; else if (c === '"') quoted = false; }
+        else if (c === '"') quoted = true;
+        else if (c === '{') depth++;
+        else if (c === '}' && --depth === 0) return { start, end: i + 1 };
+      }
+      throw new Error('Unterminated locale section');
+    }
+    const localeRaw = bytes.toString('utf8');
+    const catalog = localeRaw.match(/^    "catalog": \{\r?\n(?:      "[^\r\n]*\r?\n)+    \},\r?\n/m);
+    const catalogBinding = JSON.parse(fs.readFileSync(path.join(root, 'evidence/sign-entry-independent-catalog-edit.json'), 'utf8')).rows.find(row => row.file === source);
+    if (!catalog || crypto.createHash('sha256').update(catalog[0]).digest('hex') !== catalogBinding?.catalogTextSha256) throw new Error('Independent module catalogue copy changed');
+    const current = localeRaw.replace(catalog[0], '').replace(/^        "payment_reconciliation_run_reopened": "(?:Signed reconciliation reopened — fresh review required|Rapprochement signé rouvert — nouvel examen requis)",\r?\n/m, '').replace(/^        "payment_reconciliation_exception_source_(?:withdrawal_proposed|withdrawal_rejected|withdrawn)": "[^"\r\n]*",\r?\n/gm, '').replace(/^        "payment_reconciliation_run_signed": "(?:Reconciliation signature recorded|Signature du rapprochement enregistrée)",\r?\n/m, ''), a = section(current), b = section(historical);
+    let restored = current.slice(0, a.start) + historical.slice(b.start, b.end) + current.slice(a.end);
+    const currentReview = JSON.parse(current).paymentReconciliationWorkbench.exceptionClosure;
+    const originalReview = JSON.parse(historical).paymentReconciliationWorkbench.exceptionClosure;
+    const comparableReview = { ...currentReview };
+    for (const key of ['sourcePath', 'sourceEvidence', 'sourceIdentity', 'sourceConsequences', 'sourceIndependent', 'withdrawalReason', 'withdrawalConsequences', 'withdrawalPreview', 'withdrawalHint', 'withdrawalPropose', 'withdrawalApprove', 'withdrawalIndependent', 'withdrawalEvidence', 'withdrawalCertificate', 'withdrawalRecords']) delete comparableReview[key];
+    for (const key of ['description', 'consequences', 'proposalHint']) comparableReview[key] = originalReview[key];
+    if (JSON.stringify(comparableReview) !== JSON.stringify(originalReview)) throw new Error('Unexpected exception-review locale change');
+    const currentSign = JSON.parse(restored).paymentReconciliationWorkbench.signReview;
+    const historicalSign = JSON.parse(historical).paymentReconciliationWorkbench.signReview;
+    const expectedModuleUnavailable = source === 'messages/en.json' ? 'The current module grants allow viewing this run, but not signing it. Ask your module administrator to review reconciliation, finance and accounting write access.' : 'Les droits actuels des modules permettent de consulter ce rapprochement, mais pas de le signer. Demandez à votre administrateur de vérifier les droits d’écriture des modules de rapprochement, de finance et de comptabilité.';
+    if (currentSign.moduleUnavailable !== expectedModuleUnavailable) throw new Error('Unexpected module sign-review translation');
+    const comparableSign = { ...currentSign }; delete comparableSign.amounts; delete comparableSign.moduleUnavailable;
+    if (JSON.stringify(comparableSign) !== JSON.stringify(historicalSign)) throw new Error('Unexpected sign-review locale change');
+    const signSection = section(restored, 'signReview'), historicalSignSection = section(historical, 'signReview');
+    restored = restored.slice(0, signSection.start) + historical.slice(historicalSignSection.start, historicalSignSection.end) + restored.slice(signSection.end);
+    const currentFacts = JSON.parse(restored).paymentReconciliationWorkbench.certification.runFacts;
+    const historicalFacts = JSON.parse(historical).paymentReconciliationWorkbench.certification.runFacts;
+    restored = restored.replace(JSON.stringify(currentFacts), JSON.stringify(historicalFacts));
+    const c = section(restored, 'exceptionClosure'), d = section(historical, 'exceptionClosure');
+    restored = restored.slice(0, c.start) + historical.slice(d.start, d.end) + restored.slice(c.end);
+    if (crypto.createHash('sha256').update(restored).digest('hex') === expected) {
+      independentLocaleAdditions.push({ source, historicalHash: expected, currentHash: actual, change: 'Only the exact separately bound moduleComposition.catalog addition plus reconciliation runPreparation, the exact signed-observation inbox label and eight source-review keys, ten withdrawal keys and three specified withdrawal inbox labels plus the exact reopened-run label, source amount-review section, exact moduleUnavailable signing explanation and recorded run-facts label changed; all other dictionary bytes match the original closure.' });
+      continue;
+    }
+  }
+  throw new Error('Digest closure source changed: ' + source);
+}
+digest.status = 'Complete—verified';
+digest.completeWorkflowVerified = true;
+digest.runtimeStatus = 'complete_verified_owned_en_fr_read_lifecycle_authority_recovery_and_source_handoffs';
+digest.remaining = [];
+digest.verificationLimits = ['Native screen-reader speech and browser-chrome zoom unverified; controlled text enlargement and keyboard/reflow verified.', 'Production latency and downstream source business lifecycles are outside this read-workflow closure.'];
+digest.closureReview.completeWorkflowVerified = true;
+digest.closureReview.evidence = 'evidence/digest-closure-2026-09-27.json';
+digest.closureReview.verifiedCriteria.push('all_seven_workspace_contrast_and_controlled_text_enlargement', 'current_session_query_recovery_and_concurrent_read_refresh', 'current_authority_matrix_and_final_source_binding_review');
+for (const item of ['DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md', 'DAILY_DIGEST_OPERATING_GUIDE.md', 'evidence/digest-closure-2026-09-27.json']) if (!digest.evidence.includes(item)) digest.evidence.push(item);
+const signoff = register.workflows.find(w => w.id === 'PR-10');
+signoff.status = 'In progress';
+signoff.implementationStatus = 'sign_entry_live_authority_shared_and_recovery_verified';
+signoff.runtimeStatus = 'owned_en_fr_one_permission_request_withdrawal_failure_recovery_signature_verified';
+signoff.closureReview = { checklist: 'RECONCILIATION_SIGNOFF_CLOSURE.md', completeWorkflowVerified: false, evidence: 'RECONCILIATION_SIGN_ENTRY_2026-09-27.md', verifiedCriteria: ['later_start_winner_exact_recovery', 'same_and_other_signer_serializable_races', 'new_unmatched_source_preview_and_commit_refusal', 'closed_exception_prepare_sign_export_reverse', 'additional_sources_exact_pair_preserves_original_match', 'additional_source_atomic_rollback_and_concurrent_retry', 'all_recovery_actors_independent_from_signer', 'protected_action_scope_and_fresh_authentication', 'en_fr_committed_response_loss_reload_exact_retry', 'validated_combined_history_and_renewed_preparation', 'en_fr_operator_sign_refusal_and_independent_sign', 'three_width_preview_reflow_and_keyboard_focus', 'provider_preview_drift_and_suspension_denial', 'period_close_before_lock_refuses_recovery', 'committed_recovery_cannot_be_overwritten_by_earlier_sign_or_prepare', 'signed_event_validated_inbox_consumer', 'competing_workers_and_lost_acknowledgement_backoff_retry', 'actual_cli_and_en_fr_neutral_inbox_observation', 'real_statement_import_recovery_prepare_sign_export', 'immutable_statement_file_hash_protection', 'committed_sign_and_prepare_reject_stale_recovery', 'genuine_retained_statement_investigation_gap_reproduced', 'exact_nonfinancial_source_disposition_with_independent_decision', 'source_decision_atomic_rollback_and_concurrent_retry', 'late_statement_and_callback_prepare_sign_export_no_new_allocation', 'en_fr_actual_source_review_authentication_rejection_retry_history'], note: 'PR-10 remains primary. Statement recovery through signed export and both transaction orderings now have current evidence. The nonfinancial disposition is implemented and verified for exact corroborating statements/callbacks, including EN/FR browser rejection, approval and retry. Approved-source correction/reopening and repeated signing now have verified service/DB/worker evidence; final browser evidence is recorded in the linked milestone. Signed-source arrival now has current database and EN/FR recovery evidence. Currency-separated source/current-suspense amounts, v3 certificates and 121-source coverage now have current evidence. Read/active-actor withdrawal and EN/FR ready/signed contrast are now verified. Module write-state and both lock orderings now have current evidence, with EN/FR read-only/module-denied recovery and retained export. EN/FR authentication, rejected password, controlled transport failure, exact reload retry and focus now have current proof. Repeated permission requests are diagnosed and corrected: six EN/FR entries now use one request, with withdrawal, failed lookup, recovery and explicit signing verified. Full closure binding and race review remain open. Live scheduling and general exhausted-message recovery are separate operational limits.' };
+signoff.closureReview.verifiedCriteria.push('retained_source_decision_withdrawal_independent_approval', 'stale_source_withdrawal_and_fresh_reapproval', 'withdrawal_audit_rollback_concurrent_and_late_exact_retry', 'retained_certificate_and_second_signature_event_identity', 'two_signature_events_exact_inbox_delivery', 'en_fr_withdrawal_rejection_retry_history_and_remounted_focus');
+signoff.closureReview.verifiedCriteria.push('signed_source_arrival_retains_verified_certificate', 'signed_recovery_corrupt_certificate_and_provider_drift_refusal', 'signed_recovery_atomic_close_invalidation_and_inbox', 'signed_late_callback_and_statement_independent_review_and_resigning', 'en_fr_signed_recovery_response_loss_retry_history_reflow_and_enlargement');
+signoff.closureReview.verifiedCriteria.push('source_currency_category_amounts_and_current_unresolved_suspense', 'v3_certificate_preview_binding_and_v2_export_preservation', 'full_121_source_review_despite_100_record_display_limit', 'en_fr_amount_review_reflow_enlargement_and_independent_signing', 'cold_entry_compilation_span_measured');
+signoff.closureReview.verifiedCriteria.push('read_withdrawal_and_active_tenant_signer_before_sign_and_replay', 'retired_preview_sign_and_authentication_responses_on_authority_change', 'en_fr_actual_role_withdrawal_exact_pending_retry_and_single_signature', 'en_fr_ready_and_signed_rendered_contrast', 'warm_entry_document_and_post_load_resource_timeline');
+signoff.closureReview.verifiedCriteria.push('transaction_bound_module_write_matrix_and_denial_audit', 'real_module_withdrawal_first_and_sign_first_lock_orderings', 'en_fr_read_only_pending_retry_suspension_restore_and_retained_export', 'en_fr_read_only_module_locked_contrast_reflow_enlargement_and_export_focus');
+signoff.closureReview.verifiedCriteria.push('post_authentication_keyboard_focus_without_automatic_submission', 'en_fr_wrong_password_clearing_and_refocus', 'en_fr_controlled_transport_failure_exact_reload_retry_single_signature', 'en_fr_authentication_error_contrast_reflow_and_controlled_enlargement');
+if (!signoff.evidence.includes(signoff.closureReview.evidence)) signoff.evidence.push(signoff.closureReview.evidence);
+signoff.remaining = signoff.remaining.filter(value => value !== 'New unmatched evidence now blocks preparation/signing. Real same-provider/day rerun is rejected; implement a retained-record recovery path without duplicate allocations, then verify independent review and signing. This is an engineering dependency, not an external approval.');
+signoff.remaining = signoff.remaining.filter(value => value !== 'Additional-source recovery services now retain matches and verify independent prepare/sign after exact additions. Still required: protected action/module boundary, EN/FR interface and history/retry integration, changed provider/period and concurrent signing tests, broader retained-reference resolution and source-volume review. This is engineering work, not an external approval.');
+signoff.remaining = signoff.remaining.filter(value => value !== 'Protected recovery actions and EN/FR interface/history/exact retry are implemented and verified through independent signing. Still required: changed provider/period and concurrent signing/preparation tests, broader retained-reference and statement-source resolution, source-volume review, operator/outbox handoff, remaining accessibility and entry-latency diagnosis. This is engineering work, not an external approval.');
+signoff.remaining = signoff.remaining.filter(value => value !== 'Recovery refuses changed provider revisions, suspension and closed periods; committed recovery defeats earlier sign/preparation transactions. Signed-event inbox publication, CLI, competing workers and lost-acknowledgement retry are verified. Still required: retained-reference and statement-source resolution, reverse race orderings, source-volume review, remaining sign-review accessibility/current-authority evidence and entry-latency diagnosis. Live worker scheduling and exhausted-message repair/requeue are separately unverified operational boundaries.');
+signoff.remaining = signoff.remaining.filter(value => value !== 'Additional statement/payment recovery through independent signature/export, source immutability and both recovery/signing/preparation orderings are verified. A genuine later statement for an already allocated payment is safely blocked but has no nonfinancial investigation disposition: implement independent source review, retained decision evidence and preparation/signing consumption without duplicate allocation or financial posting. Signed-source recovery, source-volume review, remaining sign-review accessibility/current-authority evidence and entry-latency diagnosis remain. Live scheduling and exhausted-message repair/requeue remain separate operational limits.');
+signoff.remaining = signoff.remaining.filter(value => value !== "Exact corroborating statements and callbacks now support independent nonfinancial review, retained proof, preparation/signing and EN/FR rejection/retry/history without a duplicate payment, allocation or journal. Still required: correction/revocation of approved source decisions and signed-source reopening, source-volume/exposure-total review, remaining current-authority and review-panel/sign-review accessibility, and entry-latency diagnosis. Live worker scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Independent nonfinancial source approval and withdrawal, retained certificates, reapproval, repeated signing and separate signature inbox delivery are implemented and locally verified. Still required: generic sources first arriving after signature, source-volume/exposure-total review, remaining current-authority and sign-review accessibility, and entry-latency diagnosis. Live worker scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Signed-source arrival and independent source review now preserve the original certificate, invalidate affected close evidence and support EN/FR retry/history, preparation and independent re-signing. Still required: source-volume/exposure totals (resolved 100.25 corroboration retains 100.25 suspense and 200.50 external evidence in the new certificate), remaining current-authority/sign-review accessibility and entry-latency diagnosis. Live scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Signed-source recovery and source-derived amounts are verified, including separated currencies/evidence categories, resolved-suspense exclusion, v3 preview-bound certificates, unchanged v2 exports and 121-source coverage beyond display limits. Still required: remaining current-authority/sign-review accessibility evidence reconciliation and warm-entry latency attribution; development trace identifies cold compilation. Live scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Source recovery, current amounts and full-population signing remain verified. Current read/sign withdrawal, active tenant actor checks, late-response retirement, exact retry after restoration and EN/FR ready/signed contrast now have current evidence. Still required: reconcile the remaining module-state and error-state accessibility evidence; profile the measured post-load session/permission/data/review chain (warm usable review about eight seconds). Live scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Source recovery, amounts, full-population signing and current actor/role boundaries remain verified. Transaction-bound module writes, read-only/expired/suspended/dependency grants, both lock orderings and EN/FR read-only/suspension/restored retry/retained export now have current evidence. Still required: reconcile general error/authentication accessibility and full closure bindings; profile the measured post-load session/permission/data/review chain (warm usable review about eight seconds). Live scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.remaining = signoff.remaining.filter(value => value !== "Source recovery, amounts, full-population signing, role/module controls and concurrent orderings retain their evidence. Authentication now returns keyboard focus to explicit Retry; actual EN/FR wrong-password and controlled transport-failure/reload/exact retry paths, contrast and reflow pass. Still required: finish the full closure source-binding/race audit and attribute variable warm entry latency to its session/permission/data/review chain. Live scheduling and exhausted-message repair/requeue remain separate operational limits.");
+signoff.closureReview.verifiedCriteria.push('en_fr_entry_repeated_permission_queries_three_to_one', 'shared_live_authority_withdrawal_failed_lookup_reload_recovery_and_signing');
+const sourceRecoveryGap = "Source recovery, amounts, full-population signing, role/module controls, concurrent orderings and authentication recovery retain their evidence. Delayed duplicate permission queries are corrected and verified in six EN/FR entries with live withdrawal, failed-lookup recovery and explicit independent signing. Still required: reconcile the full lifecycle source bindings and identify any concrete missing signing/provider/source/period race. Live scheduling and exhausted-message repair/requeue remain separate operational limits.";
+if (!signoff.remaining.includes(sourceRecoveryGap)) signoff.remaining.push(sourceRecoveryGap);
+const signClosure = JSON.parse(fs.readFileSync(path.join(root, 'evidence/signoff-closure-2026-09-27.json'), 'utf8'));
+if (!signClosure.completeWorkflowVerified || signClosure.criteria.some(row => row.disposition !== 'verified')) throw new Error('Incomplete signing closure');
+const preparationImpactFile = 'evidence/preparation-module-impact-2026-09-27.json';
+const preparationImpact = JSON.parse(fs.readFileSync(path.join(root, preparationImpactFile), 'utf8'));
+if (!preparationImpact.passed || preparationImpact.preservesClosedWorkflow !== 'PR-10') throw new Error('Missing preparation impact review');
+const preparationHistoryImpactFile = 'evidence/preparation-history-impact-2026-09-27.json';
+const preparationHistoryImpact = JSON.parse(fs.readFileSync(path.join(root, preparationHistoryImpactFile), 'utf8'));
+if (!preparationHistoryImpact.passed || preparationHistoryImpact.source.before !== preparationHistoryImpact.source.reconstructedBefore || preparationHistoryImpact.source.before !== preparationImpact.sources.find(row => row.file === preparationHistoryImpact.source.file)?.after) throw new Error('Unbound history focus change');
+for (const row of [preparationHistoryImpact.parent, ...preparationHistoryImpact.receipts, ...preparationHistoryImpact.artifacts]) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('History impact evidence changed: ' + row.file);
+function withHistoryImpact(source, expected) {
+  if (source !== preparationHistoryImpact.source.file) return expected;
+  if (expected !== preparationHistoryImpact.source.before) throw new Error('Unexpected predecessor for history focus change');
+  return preparationAuthImpact.source.after;
+}
+const preparationAuthImpactFile = 'evidence/preparation-auth-impact-2026-09-27.json';
+const preparationAuthImpact = JSON.parse(fs.readFileSync(path.join(root, preparationAuthImpactFile), 'utf8'));
+if (!preparationAuthImpact.passed || preparationAuthImpact.source.before !== preparationAuthImpact.source.reconstructedBefore || preparationAuthImpact.source.before !== preparationHistoryImpact.source.after) throw new Error('Unbound authentication/discovery change');
+for (const row of [preparationAuthImpact.parent, ...preparationAuthImpact.receipts, ...preparationAuthImpact.screenshots]) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Authentication impact evidence changed: ' + row.file);
+const preparationContrastFile = 'lanes/environment/preparation-module-browser-8f133387-8f32-409a-a1c6-7ad72f6e0cf5.json';
+const preparationContrast = JSON.parse(fs.readFileSync(path.join(root, preparationContrastFile), 'utf8'));
+if (!preparationContrast.passed || !preparationContrast.sourceStable || !preparationContrast.translationStable || preparationContrast.journeys.length !== 2 || preparationContrast.journeys.some(row => row.renderedContrast.length !== 2 || row.renderedContrast.some(size => size.measured.length !== 2 || size.measured.some(item => !item.measured || !item.passes)))) throw new Error('Missing preparation contrast evidence');
+for (const [source, expected] of Object.entries(preparationContrast.sourceBefore)) if (crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') !== withHistoryImpact(source, expected)) throw new Error('Preparation contrast source changed: ' + source);
+for (const row of [preparationImpact.closure, ...preparationImpact.receipts, ...preparationImpact.screenshots]) {
+  if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Preparation impact evidence changed: ' + row.file);
+}
+for (const [source, expected] of Object.entries(signClosure.sourceHashes)) {
+  const impact = preparationImpact.sources.find(row => row.file === source);
+  if (impact && impact.before !== expected) throw new Error('Preparation impact is not closure-bound');
+  if (crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') !== withHistoryImpact(source, impact?.after ?? expected)) throw new Error('Signing closure source changed: ' + source);
+}
+for (const row of signClosure.translations) {
+  const data = JSON.parse(fs.readFileSync(path.resolve(root, '../../..', row.file), 'utf8'));
+  const impact = preparationImpact.translations.find(item => item.file === row.file && item.namespace === row.namespace);
+  if (!impact || impact.sha256 !== row.sha256 || data[row.namespace].runPreparation.blockers.MODULE_WRITE_REQUIRED !== impact.addition.value) throw new Error('Unreviewed preparation translation');
+  if (crypto.createHash('sha256').update(JSON.stringify(data[row.namespace])).digest('hex') !== impact.after) throw new Error('Signing translation scope changed: ' + row.file);
+  delete data[row.namespace].runPreparation.blockers.MODULE_WRITE_REQUIRED;
+  if (crypto.createHash('sha256').update(JSON.stringify(data[row.namespace])).digest('hex') !== row.sha256) throw new Error('Other signing translations changed');
+}
+for (const row of [...signClosure.receipts, ...signClosure.artifacts]) {
+  if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Signing closure evidence changed: ' + row.file);
+}
+signoff.status = 'Complete—verified'; signoff.completeWorkflowVerified = true;
+signoff.implementationStatus = 'independent_review_sign_recovery_retention_and_durable_handoff_verified';
+signoff.runtimeStatus = 'owned_en_fr_full_signing_lifecycle_and_connected_database_handoffs_verified';
+signoff.remaining = []; signoff.verificationLimits = signClosure.verificationLimits;
+signoff.closureReview.completeWorkflowVerified = true; signoff.closureReview.evidence = 'evidence/signoff-closure-2026-09-27.json';
+signoff.closureReview.verifiedCriteria.push(...signClosure.criteria.map(row => row.id));
+signoff.closureReview.note = 'Final audit plus preparation-module-impact-2026-09-27 revalidation passed. Two changed preparation dependencies and one added EN/FR blocker are exactly bound; downstream preparation/sign/export and browser recovery refreshed. Original limits remain. The overall platform goal remains active.';
+if (!signoff.evidence.includes(preparationImpactFile)) signoff.evidence.push(preparationImpactFile);
+if (!signoff.evidence.includes(preparationHistoryImpactFile)) signoff.evidence.push(preparationHistoryImpactFile);
+for (const item of ['RECONCILIATION_SIGNOFF_FINAL_AUDIT_2026-09-27.md', 'RECONCILIATION_SIGNOFF_OPERATING_GUIDE.md', signoff.closureReview.evidence]) if (!signoff.evidence.includes(item)) signoff.evidence.push(item);
+const preparation = register.workflows.find(w => w.id === 'PR-19');
+const preparationClosureFile = 'evidence/preparation-closure-2026-09-27.json';
+const preparationClosure = JSON.parse(fs.readFileSync(path.join(root, preparationClosureFile), 'utf8'));
+if (!preparationClosure.completeWorkflowVerified || preparationClosure.workflow !== 'PR-19' || preparationClosure.criteria.some(row => row.disposition !== 'verified')) throw new Error('Incomplete preparation closure');
+for (const [source, expected] of Object.entries(preparationClosure.sourceHashes)) if (crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') !== expected) throw new Error('Preparation closure source changed: ' + source);
+for (const row of preparationClosure.translations) if (crypto.createHash('sha256').update(JSON.stringify(JSON.parse(fs.readFileSync(path.resolve(root, '../../..', row.file)))[row.namespace])).digest('hex') !== row.sha256) throw new Error('Preparation closure translation changed: ' + row.file);
+for (const row of [...preparationClosure.receipts, ...preparationClosure.artifacts]) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Preparation closure evidence changed: ' + row.file);
+Object.assign(preparation, { status: 'Complete—verified', completeWorkflowVerified: true, reviewStatus: 'final_criterion_and_source_audit_verified', implementationStatus: 'module_admission_authentication_and_discovery_history_focus_corrected', runtimeStatus: 'owned_en_fr_preparation_recovery_history_independent_signing_and_reversal_verified', remaining: [], verificationLimits: preparationClosure.verificationLimits });
+preparation.closureReview = { checklist: 'RECONCILIATION_PREPARATION_CLOSURE.md', completeWorkflowVerified: true, evidence: preparationClosureFile, verifiedCriteria: preparationClosure.criteria.map(row => row.id), note: 'Nine implemented preparation criteria have bound evidence. Native speech/browser-chrome zoom, production and separately registered legacy repair/notification operation limits remain explicit.' };
+for (const item of [preparationAuthImpactFile, preparationClosureFile, 'RECONCILIATION_PREPARATION_FINAL_AUDIT_2026-09-27.md']) if (!preparation.evidence.includes(item)) preparation.evidence.push(item);
+if (!signoff.evidence.includes(preparationAuthImpactFile)) signoff.evidence.push(preparationAuthImpactFile);
+const password = register.workflows.find(w => w.id === 'ID-05');
+password.status = 'In progress';
+password.closureReview = { checklist: 'PASSWORD_CHANGE_CLOSURE_2026-09-27.md', completeWorkflowVerified: false, verifiedCriteria: [], note: 'Selected after PR-19 closure. Reconcile retained credential/session and EN/FR evidence against current source before repeating checks.' };
+for (const id of ['NTF-DELIVERY-MONITOR', 'NTF-DELIVERY-RECOVERY']) {
+  const workflow = register.workflows.find(w => w.id === id);
+  for (const entry of ['scripts/reconciliation-sign-notification-worker.ts', 'services/reconciliation/reconciliation-sign-notification.worker.ts']) if (!workflow.entryPoints.includes(entry)) workflow.entryPoints.push(entry);
+  const gap = id === 'NTF-DELIVERY-MONITOR' ? 'Reconciliation signed-event consumer and one-off CLI are verified; authorized live scheduling and operational monitoring are not installed/verified.' : 'Reconciliation signed-event transient retry and lost acknowledgement are verified; general exhausted/invalid-evidence repair and controlled requeue remain engineering work.';
+  if (!workflow.remaining.includes(gap)) workflow.remaining.push(gap);
+}
+
+const signLaneFile = path.join(root, 'lanes/payments-reconciliation/WORKFLOW_REGISTER.json');
+const signLane = JSON.parse(fs.readFileSync(signLaneFile, 'utf8'));
+const laneSignoff = signLane.workflows.find(w => w.id === signoff.id);
+Object.assign(laneSignoff, { status: signoff.status, implementationStatus: signoff.implementationStatus, runtimeStatus: signoff.runtimeStatus, closureReview: signoff.closureReview, remaining: signoff.remaining, completeWorkflowVerified: true, verificationLimits: signoff.verificationLimits });
+if (!laneSignoff.evidence.includes('../../' + signoff.closureReview.evidence)) laneSignoff.evidence.push('../../' + signoff.closureReview.evidence);
+Object.assign(signLane.workflows.find(w => w.id === 'PR-19'), preparation);
+writeCurrent(signLaneFile, JSON.stringify(signLane, null, 2) + '\n');
+const lane = JSON.parse(fs.readFileSync(laneFile, 'utf8'));
+const laneDigest = lane.workflows.find(w => w.id === digest.id);
+Object.assign(laneDigest, { status: digest.status, implementationStatus: digest.implementationStatus, runtimeStatus: digest.runtimeStatus, remaining: digest.remaining, closureReview: digest.closureReview });
+Object.assign(laneDigest, { completeWorkflowVerified: true, verificationLimits: digest.verificationLimits });
+for (const item of ['DAILY_DIGEST_FINAL_VERIFICATION_2026-09-27.md', 'DAILY_DIGEST_OPERATING_GUIDE.md', 'evidence/digest-closure-2026-09-27.json']) if (!laneDigest.evidence.includes('../../' + item)) laneDigest.evidence.push('../../' + item);
+if (!laneDigest.evidence.includes('../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md')) laneDigest.evidence.push('../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md');
+if (!laneDigest.evidence.includes('../../' + lossReport)) laneDigest.evidence.push('../../' + lossReport);
+if (!laneDigest.evidence.includes('../../' + signalReport)) laneDigest.evidence.push('../../' + signalReport);
+if (!laneDigest.evidence.includes('../../' + currencyReport)) laneDigest.evidence.push('../../' + currencyReport);
+if (!laneDigest.evidence.includes('../../' + forecastReport)) laneDigest.evidence.push('../../' + forecastReport);
+writeCurrent(laneFile, JSON.stringify(lane, null, 2) + '\n');
+register.executionPolicy = { version: 'closure-queue-1', primaryWorkflow: 'ID-05', supportingDependency: null, nextPriorities: ['FA-CASH-COMMAND', 'PR-17', 'ID-04'], closureChecklist: 'PASSWORD_CHANGE_CLOSURE_2026-09-27.md', note: 'Switched after PR-19 criterion/source audit and verified preparation closure. Finish substantially verified credential/session controls next; full platform objective remains active.' };
+register.updatedAt = new Date().toISOString();
+register.coverage.discoveredWorkflows = register.workflows.length;
+register.coverage.completeWorkflowsVerified = register.workflows.filter(w => w.completeWorkflowVerified === true).length;
+register.coverage.unmappedEntrySources = register.entrySourceReconciliation.filter(e => !e.matchedWorkflowIds.length).length;
+register.coverage.statusCounts = Object.fromEntries(statuses.map(s => [s, register.workflows.filter(w => w.status === s).length]));
+writeCurrent(file, JSON.stringify(register, null, 2) + '\n');
+const hash = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const unvisited = register.workflows.filter(w => /not[_-](visited|yet|executed)/i.test(w.runtimeStatus || '')).map(w => w.id);
+const partial = register.workflows.filter(w => /verified|passed/i.test(w.runtimeStatus || '')).map(w => w.id);
+const record = { at: register.updatedAt, registerSha256: hash, coverage: register.coverage, discoveryComplete: register.discoveryComplete, unvisitedIds: unvisited, workflowsWithSomeRuntimeEvidence: partial, independentLocaleAdditions, note: 'Runtime labels are discovery aids, not closure evidence. Unmapped count recomputed from existing source reconciliation; discovery remains incomplete.' };
+writeCurrent(path.join(root, 'evidence/current-reconciliation.json'), JSON.stringify(record, null, 2) + '\n');
+const report = `# Current progress
+
+Updated ${register.updatedAt}; source HEAD 62a56036a5ac9b37236a20c9b148052199069479 on codex/migration-control-plane-release-2026-08-29, with preserved working-tree changes. Register policy closure-queue-1; exact binding: [reconciliation](evidence/current-reconciliation.json). Source inventory: [v160 baseline](evidence/source-baseline-v160.json); subsequent edits require affected checks.
+
+**Position:** ${register.workflows.length} discovered workflows; discovery incomplete. ${register.coverage.unmappedEntrySources} source entries remain unmapped in the reconciled inventory. ${Object.entries(register.coverage.statusCounts).map(([s,n]) => `${s}: ${n}`).join('; ')}. PR-19 closed this checkpoint; PR-10 and AN-DAILY-DIGEST remain verified. ${unvisited.length} workflows explicitly report no visit/execution; ${partial.length} have some recorded runtime evidence, which does not establish closure. Queued includes earlier partial work awaiting resumed completion.
+
+| Priority | Workflow and outcome | Status | Delivered and verified | Remaining closure criteria | Blocker / owner | Next action |
+|---|---|---|---|---|---|---|
+| Primary | ID-05: change password and revoke sessions | In progress | Existing transactional credentials and EN/FR recovery evidence | Current lifecycle bindings, accessibility and scanner/runtime reconciliation | Engineering | Audit retained proof against current source |
+| Supporting contract | None active | — | Digest shared currency dependency resolved | — | — | Keep one primary |
+| Next 1 | FA-CASH-COMMAND: reliable finance actions | Queued | Currency/null contracts verified | Full runtime/localization and genuine posted-payroll lifecycle | Engineering | Resume after identity controls |
+| Next 2 | PR-17: resolve reconciliation exceptions | Queued | Source review/correction handoffs | Remaining financial/legacy treatment and complete UI recovery | Engineering | Reconcile prior fixes against original scope |
+| Next 3 | ID-04: redeem an invitation | Queued | Prior authority and recipient evidence | Current accessibility, onboarding and transport handoff | Engineering / identity owner | Reuse identity evidence and identify exact transport boundary |
+
+**Since the previous report:** Closed PR-19 after its nine-criterion/source audit. Corrected authentication focus/error wording and run-list focus after successful or failed reads. Current EN/FR authentication, discovery, denied access, dropped-response/reload/exact retry, responsive layout and contrast pass. Actual financial preparation, independent signing/export and reversal preserve retained records and prevent obsolete replay restoring readiness. Passed 96 tests, lint and full TypeScript. Earlier module, concurrency, history and legacy-refusal evidence remains source-bound. One financial check could not save its receipt due to filesystem permissions; the authorized rerun saved successfully. No new workflows discovered. See [final audit](RECONCILIATION_PREPARATION_FINAL_AUDIT_2026-09-27.md) and [operating guide](RECONCILIATION_PREPARATION_OPERATING_GUIDE.md).
+
+**Priority rationale:** PR-19's implemented lifecycle is complete, so move to the substantially verified password/session control. Native speech/browser-chrome zoom and production performance remain explicit limits. External notification-provider access and approval-register evidence remain separate dependencies owned by the organization's administrator/authorized approver. An outbox row alone does not prove message delivery.
+
+**Backlog:** all 17 families remain in the [workflow register](WORKFLOW_REGISTER.json), including identity/access, modules/master data, sales/POS/inventory/purchasing, finance/reconciliation/payroll/compliance, analytics/evidence, notifications/integrations and agents. See [unvisited IDs and counts](evidence/current-reconciliation.json). Existing per-workflow remaining lists retain exact known gaps. ETA is not reliable while discovery and closure validation remain incomplete.
+`;
+if (report.split(/\s+/).length > 700) throw new Error('Progress report exceeds 700 words');
+writeCurrent(path.join(root, 'CURRENT_PROGRESS.md'), report);
+console.log(JSON.stringify({ ...record, unvisitedIds: unvisited.length, workflowsWithSomeRuntimeEvidence: partial.length }));

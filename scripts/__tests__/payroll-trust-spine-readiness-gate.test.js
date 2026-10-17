@@ -208,6 +208,20 @@ function mutate(root, relativePath, from, to = "removed") {
 }
 
 describe("Payroll Trust Spine readiness gate", () => {
+  it("recognizes parameterized serializable-conflict coverage without dropping the retry obligation", () => {
+    const root = makeTempRepo();
+    writeReadyFixture(root);
+    const file = "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts";
+    mutate(root, file,
+      "retries a serializable transaction conflict and applies the transition once",
+      "retries a %s serializable transaction conflict and applies the transition once");
+    expect(buildPayrollTrustSpineReadiness(root, { mode: "fail" }).summary.status).toBe("ready");
+    mutate(root, file, "retries a %s serializable transaction conflict and applies the transition once");
+    expect(buildPayrollTrustSpineReadiness(root, { mode: "fail" }).blockers).toContain(
+      "cas_idempotency_and_partial_commit_regressions_covered",
+    );
+  });
+
   it("passes the complete lifecycle enforcement spine", () => {
     const root = makeTempRepo();
     writeReadyFixture(root);

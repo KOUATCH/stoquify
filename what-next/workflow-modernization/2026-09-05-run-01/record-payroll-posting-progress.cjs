@@ -1,0 +1,58 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const repo=path.resolve(__dirname,'../../..'),hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),read=file=>JSON.parse(fs.readFileSync(path.join(__dirname,file)));
+const staticFile='evidence/payroll-forecast-settlement-checks-45eefbb7-831c-4b1c-a1b0-ce924c00b979.json',runtimeFile='lanes/environment/payroll-posting-proof-83e84e0e-86f5-42a0-b264-18145720fcbe.json',browserFile='lanes/environment/posted-payroll-browser-5c547733-18e6-4f28-bd65-253822f8ec8d.json';
+const checks=read(staticFile),runtime=read(runtimeFile),browser=read(browserFile),prior=read('evidence/cash-proof-presentation-review-2026-09-30.json');
+assert.ok(checks.passed&&checks.sourceStable&&checks.steps.length===3&&checks.steps.every(step=>step.status===0));assert.match(checks.steps[0].stderr,/Tests:\s+136 passed, 136 total/);
+assert.ok(runtime.passed&&runtime.sourceStable&&runtime.selfReviewDenied&&runtime.failedSealRolledBack&&runtime.emittedLineMutationDenied&&runtime.result.idempotentReplay);assert.equal(runtime.result.proofGrade,'posted');assert.equal(runtime.result.debit,runtime.result.credit);assert.equal(runtime.steps.length,4);
+assert.ok(browser.passed&&browser.sourceStable&&browser.noBusinessMutation);assert.equal(browser.checks.length,3);assert.ok(browser.checks.every(row=>row.actualPostedResponse&&row.localizedReason&&row.keyboardContainmentAndReturn&&row.permissionRevocation&&row.noHorizontalOverflow&&row.noPageErrors));
+const sourceHashes={...prior.sourceHashes,...checks.sourceAfter,...runtime.sourceAfter,...browser.sourceAfter};for(const [file,expected]of Object.entries(sourceHashes))assert.equal(hash(path.join(repo,file)),expected,file);
+const priorImpact=Object.entries(prior.sourceHashes).filter(([file,before])=>sourceHashes[file]!==before).map(([file,before])=>({file,before,after:sourceHashes[file]}));
+const allowed=['services/payroll/payroll-finance-forecast.service.ts','lib/dashboard/snapshot-source-blocker-presentation.ts','services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts','lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts','services/payroll/payroll-control.service.ts'];assert.ok(priorImpact.every(row=>allowed.includes(row.file)));
+const copyFile='lib/dashboard/snapshot-source-blocker-presentation.ts',copy=fs.readFileSync(path.join(repo,copyFile),'utf8');
+const addedText=copy.match(/^  PAYROLL_FORECAST_SETTLEMENT_BALANCE_UNVERIFIED: \{\r?\n[\s\S]*?^  \},\r?\n/m)?.[0];assert.ok(addedText);assert.equal(copy.split(addedText).length,2);
+const beforeCopy=crypto.createHash('sha256').update(copy.replace(addedText,'')).digest('hex');assert.equal(beforeCopy,read('evidence/digest-closure-2026-09-27.json').sourceHashes[copyFile]);
+const report='CASH_PAYROLL_POSTING_AND_SETTLEMENT_2026-09-30.md',reviewFile='evidence/cash-payroll-posting-review-2026-09-30.json';
+const remaining=[
+ 'Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.',
+ 'Verify the complete HRIS calculation, payroll payment/reconciliation, declaration and forecast-admission chain. Review/approve/emit/post, balanced source-linked journal, sealing rollback/retry, self-review denial and immutable emitted lines are verified with real services. Synthetic calculated/statutory inputs are not expert approval. Implement a canonical remaining balance for partial payroll settlements; current forecasts correctly withhold it.',
+ ...prior.remaining.slice(2),
+ 'Verify the new partial-settlement explanation in the actual EN/FR application; its canonical translation and forecast behavior currently have focused unit coverage.'
+];
+const review={at:new Date().toISOString(),workflow:'FA-CASH-COMMAND',supportingDependency:'payroll posting and forecast obligations',completeWorkflowVerified:false,report,sourceHashes,priorImpact,digestImpact:{file:copyFile,before:beforeCopy,after:sourceHashes[copyFile],addedText},
+ verifiedSubcriteria:['settled_payroll_not_upcoming_cash_and_partial_balance_withheld','payroll_review_approve_emit_post_real_services_balanced_source_linked_journal','payslip_seal_failure_atomic_rollback_retry_and_emitted_line_immutability','actual_posted_payroll_proof_en_desktop_fr_tablet_mobile_permission_revocation'],
+ receipts:[staticFile,runtimeFile,browserFile,'evidence/payroll-settlement-forecast-before.json','lanes/environment/payroll-posting-proof-b4f3647d-e6a6-4f8b-b499-10d707048f67.json','lanes/environment/payroll-posting-proof-5ea44f30-ce18-4328-b054-4d31dcd714da.json'].map(file=>({file,sha256:hash(path.join(__dirname,file))})),
+ artifacts:browser.checks.map(row=>{const file='lanes/environment/'+row.screenshot;return{file,sha256:hash(path.join(__dirname,file))};}),remaining,
+ limits:['Synthetic calculated inputs; no HRIS calculation or statutory certification','No actual bank payment, declaration submission or production change','Partial remaining balance and its actual UI remain incomplete','Native screen-reader speech/browser zoom and production performance unverified']};
+let source=fs.readFileSync(path.join(__dirname,'reconcile-current-progress.cjs'),'utf8');
+function replace(before,after){assert.ok(source.includes(before),before);source=source.replace(before,after);}
+const old="const cashProofPresentationCurrent = Object.entries(cashProofPresentation.sourceHashes).every(([source, expected]) => crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') === expected);";
+replace(old,`const cashPayrollPosting = JSON.parse(fs.readFileSync(path.join(root, '${reviewFile}')));
+for (const row of [...cashPayrollPosting.receipts, ...cashPayrollPosting.artifacts]) if (crypto.createHash('sha256').update(fs.readFileSync(path.join(root, row.file))).digest('hex') !== row.sha256) throw new Error('Payroll posting evidence changed');
+for (const row of cashPayrollPosting.priorImpact) if (cashProofPresentation.sourceHashes[row.file] !== row.before || cashPayrollPosting.sourceHashes[row.file] !== row.after) throw new Error('Invalid payroll posting impact');
+const cashPayrollPostingCurrent = Object.entries(cashPayrollPosting.sourceHashes).every(([source, expected]) => crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') === expected);
+if (!cashPayrollPostingCurrent) throw new Error('Payroll posting dependency changed; review required');
+const cashProofPresentationCurrent = cashPayrollPostingCurrent && Object.entries(cashProofPresentation.sourceHashes).every(([source, expected]) => crypto.createHash('sha256').update(fs.readFileSync(path.resolve(root, '../../..', source))).digest('hex') === (cashPayrollPosting.priorImpact.find(row => row.file === source)?.after ?? expected));`);
+const prefix='cashProofPresentation.priorImpact.find(row => row.file === source)?.after ??';assert.equal(source.split(prefix).length-1,15);source=source.split(prefix).join('cashPayrollPosting.priorImpact.find(row => row.file === source)?.after ?? '+prefix);
+replace('  const watch = cashSourceCopy.digestImpact;',`  const payrollCopy = cashPayrollPosting.digestImpact;
+  if (source === payrollCopy.file && expected === payrollCopy.before && actual === payrollCopy.after) {
+    const current = bytes.toString('utf8');
+    if (current.split(payrollCopy.addedText).length !== 2 || crypto.createHash('sha256').update(current.replace(payrollCopy.addedText, '')).digest('hex') !== expected) throw new Error('Unreviewed payroll forecast translation change');
+    continue;
+  }
+  const watch = cashSourceCopy.digestImpact;`);
+replace('...cashProofPresentation.verifiedSubcriteria]','...cashProofPresentation.verifiedSubcriteria, ...cashPayrollPosting.verifiedSubcriteria]');
+replace('cashRead.remaining = cashProofPresentation.remaining;',`cashRead.remaining = cashPayrollPosting.remaining;
+for (const report of [cashPayrollPosting.report, '${reviewFile}']) if (!cashRead.evidence.includes(report)) cashRead.evidence.push(report);
+cashRead.closureReview.payrollPostingBindingCurrent = cashPayrollPostingCurrent;`);
+replace("cashRead.runtimeStatus = 'owned_cash_handoffs_and_four_blocked_proof_drawer_lifecycles_en_fr_verified';",`cashRead.runtimeStatus = 'owned_cash_handoffs_blocked_proofs_and_actual_payroll_journal_proof_en_fr_verified';
+cashRead.implementationStatus = 'settled_payroll_forecast_and_atomic_payslip_emission_corrected';`);
+replace("cashRead.closureReview.note = 'Source admission, handoffs, EN/FR source and proof content, complete proof counts and four blocked drawer lifecycles are verified; successful financial proofs, genuine posted payroll and complete accessibility/latency remain open.';",`cashRead.closureReview.note = 'Actual payroll journal posting/proof, rollback, retry and emitted immutability are verified from synthetic calculated inputs. Full payroll upstream/payment/declaration, other successful proof lifecycles and complete accessibility/latency remain open.';`);
+const start=source.indexOf('**Since the previous report:**'),end=source.indexOf('\n\n**Remaining priority:**',start);assert.ok(start>0&&end>start);
+source=source.slice(0,start)+'**Since the previous report:** Corrected settled payroll being counted as upcoming cash; partial settlements now withhold an unverified balance. Fixed payslip emission inserting lines after sealing: drafts are assembled and sealed in one transaction. Real review/approve/emit/post produced a balanced, source-linked journal; rollback/retry and immutable emitted lines passed. All 136 focused tests, lint and TypeScript pass. Actual posted proof passed EN desktop and FR tablet/mobile with keyboard return, revocation and unchanged business records. [Evidence and guidance](CASH_PAYROLL_POSTING_AND_SETTLEMENT_2026-09-30.md). Inputs were synthetic; no statutory certification or real payment. No workflow closed.'+source.slice(end);
+replace('Source admission; handoffs; EN/FR; four blocked proof lifecycles','Source admission; handoffs; EN/FR; actual payroll journal proof');
+replace('Successful proofs, posted payroll, accessibility and latency','Remaining proof/payroll lifecycles, accessibility and latency');
+replace('Verify genuine posted payroll and successful proof transitions','Verify remaining payroll obligations and successful proof lifecycles');
+replace('| Supporting contract | None active | — | Digest shared currency dependency resolved | — | — | Keep one primary |','| Supporting contract | Payroll posting/forecast | In progress | Posting, immutable emission and settled forecast corrected | Partial settlement balance; payment/declaration chain | Engineering | Establish canonical remaining obligation |');
+replace('Finish successful proof lifecycles, genuine posted payroll and complete accessibility/latency checks.','Finish remaining successful proof lifecycles, payroll obligations and complete accessibility/latency checks. Actual journal posting is verified from synthetic calculated inputs; statutory approval and bank payment are not.');
+replace("supportingDependency: null, nextPriorities:","supportingDependency: 'payroll posting and forecast obligations', nextPriorities:");
+fs.writeFileSync(path.join(__dirname,reviewFile),JSON.stringify(review,null,2)+'\n',{flag:'wx'});fs.writeFileSync(path.join(__dirname,'reconcile-current-progress.cjs'),source);console.log(JSON.stringify({reviewFile,priorImpact}));

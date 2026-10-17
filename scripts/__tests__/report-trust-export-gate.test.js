@@ -3268,6 +3268,101 @@ function writeReadyFixture(root) {
 }
 
 describe("report trust and export certification gate", () => {
+  it("recognizes ledger summary exports and rejects replacement of service-derived summary", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const file = "services/accounting/reports.service.ts"
+    const source = fs.readFileSync(path.join(__dirname, "../..", file), "utf8")
+    expect(source).toContain('summary: { ...report.summary, currency }')
+    write(root, file, source)
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("service_owned_accounting_export_data")
+    write(root, file, source.replace('summary: { ...report.summary, currency }', 'summary: { openingBalance: "0.00", currency }'))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("service_owned_accounting_export_data")
+  })
+
+  it.each([
+    ["manual-only policy removed", "original.sourceType !== AccountingSourceType.MANUAL", "false"],
+    ["blocked outcome removed", "return { sourceOwnedBlocked: original.sourceType }", "return {}"],
+    ["unattributed source allowed", 'if ("sourceOwnedBlocked" in result)', 'if ("sourceOwnedBlocked" in result && result.sourceOwnedBlocked)'],
+  ])("recognizes source-owned reversal protection and rejects %s", (_label, before, after) => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const file = "services/accounting/posting.service.ts"
+    const source = fs.readFileSync(path.join(__dirname, "../..", file), "utf8")
+    expect(source).toContain(before)
+    write(root, file, source)
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("customer_settlement_compensating_reversal_foundation")
+    write(root, file, source.replace(before, after))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("customer_settlement_compensating_reversal_foundation")
+  })
+
+  it.each([
+    ["view success response bypass", "app/api/customer-statements/[statementId]/route.ts", "return privateStatementResponse(response)", "return response"],
+    ["action denial response bypass", "app/api/customer-statements/[statementId]/actions/route.ts", "return privateStatementResponse(jsonErrorEnvelopeResponse", "return jsonErrorEnvelopeResponse"],
+    ["private header removed", "services/accounting/customer-statement-http.ts", "private, no-store, max-age=0", "public, max-age=3600"],
+    ["recipient enum broadened", "services/accounting/customer-statement.schemas.ts", 'z.enum(["DISPUTE", "PROMISE_TO_PAY"])', "z.string()"],
+    ["invalid command admitted", "app/api/customer-statements/[statementId]/actions/route.ts", "if (!parsed.success) throw", "if (false) throw"],
+  ])("recognizes shared private responses and validated input, rejects %s", (_label, file, before, after) => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    for (const sourceFile of ["app/api/customer-statements/[statementId]/route.ts", "app/api/customer-statements/[statementId]/actions/route.ts", "services/accounting/customer-statement-http.ts", "services/accounting/customer-statement.schemas.ts"]) {
+      write(root, sourceFile, fs.readFileSync(path.join(__dirname, "../..", sourceFile), "utf8"))
+    }
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("signed_customer_statement_external_access_foundation")
+    const source = fs.readFileSync(path.join(root, file), "utf8")
+    expect(source).toContain(before)
+    write(root, file, source.replace(before, after))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("signed_customer_statement_external_access_foundation")
+  })
+
+  it.each([
+    ["expiry admission removed", "services/communication/customer-statement-delivery-worker.service.ts", "delivery.token.expiresAt <= clock()", "false"],
+    ["reservation expiry removed", "services/communication/customer-statement-delivery-worker.service.ts", "expiresAt: { gt: clock() }", ""],
+    ["durable command removed", "components/customers/CustomerStatementWorkflow.tsx", "persist({ ...requestsRef.current, delivery: command })", ""],
+    ["consent command removed", "components/customers/CustomerStatementWorkflow.tsx", 'consentBasis: "EXPLICIT"', 'consentBasis: "IMPLIED"'],
+  ])("recognizes current expiry and persisted consent command, rejects %s", (_label, file, before, after) => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    for (const sourceFile of ["services/communication/customer-statement-delivery-worker.service.ts", "components/customers/CustomerStatementWorkflow.tsx"]) {
+      write(root, sourceFile, fs.readFileSync(path.join(__dirname, "../..", sourceFile), "utf8"))
+    }
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("consented_customer_referral_launch_foundation")
+    const source = fs.readFileSync(path.join(root, file), "utf8")
+    expect(source).toContain(before)
+    write(root, file, source.replace(before, after))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("consented_customer_referral_launch_foundation")
+  })
+
+  it("accepts tenant-derived shared analytics scope and rejects removal of its currency authority", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    write(root, "services/analytics/financial-reports.service.ts", [
+      'import { completedReportScope } from "./completed-sales-evidence"',
+      "currency: string currency: input.currency",
+      "const scope = await completedReportScope(tx, input)",
+      "buildReportProvenance({ ...scope, sourceTables: [] })",
+    ].join("\n"))
+    const scope = [
+      "tx.organization.findFirst({ where: { id: input.organizationId, isActive: true }, select: { id: true, currency: true, timezone: true } })",
+      "const currency = organization.currency.trim().toUpperCase()",
+      "return { organizationId: organization.id, locationId, currency, timezone: organization.timezone }",
+    ].join("\n")
+    write(root, "services/analytics/completed-sales-evidence.ts", scope)
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("analytics_currency_is_service_owned")
+    write(root, "services/analytics/completed-sales-evidence.ts", scope.replace("organization.currency.trim().toUpperCase()", '"USD"'))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("analytics_currency_is_service_owned")
+  })
+
+  it("accepts localized provenance currency and rejects a hardcoded translation argument", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const banner = 't("trustDetail", { currency: provenance.currency, sources: provenance.sourceTables }) provenance.knownBlockers'
+    write(root, "components/reports/report-trust-banner.tsx", banner)
+    expect(buildReportTrustExportReadiness(root).blockers).not.toContain("trust_banner_and_policy_wiring")
+    write(root, "components/reports/report-trust-banner.tsx", banner.replace("currency: provenance.currency", 'currency: "USD"'))
+    expect(buildReportTrustExportReadiness(root).blockers).toContain("trust_banner_and_policy_wiring")
+  })
+
   it("passes when report trust is service-owned and explicit", () => {
     const root = makeTempRepo()
     writeReadyFixture(root)

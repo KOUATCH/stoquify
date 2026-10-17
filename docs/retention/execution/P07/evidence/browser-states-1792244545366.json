@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-17T13:40:21.736Z",
+  "steps": [
+    "en actual loading boundary under a held disposable read"
+  ],
+  "database": "stoquify_retention_p07_20261017_1f0304dc47",
+  "status": "FAIL",
+  "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Opening positions: review still required' })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByRole('heading', { name: 'Opening positions: review still required' })\n\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright-core\\lib\\coreBundle.js:3172:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12877:57)\n    at Object.toBeVisible (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\playwright\\lib\\matchers\\expect.js:12867:23)\n    at main (E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P07\\evidence\\browser-states.cjs:28:155)",
+  "injectionRestored": true
+}

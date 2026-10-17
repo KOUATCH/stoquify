@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "noEmit": true },
+  "files": [
+    "next-env.d.ts",
+    "services/pos/pos.service.ts",
+    "services/events/business-event.service.ts",
+    "services/events/__tests__/business-event.service.test.ts",
+    "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+    "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+    "lib/pos/__tests__/offline-local-queue.test.ts",
+    "tests/s04-s05/ap-payment.postgres.test.ts"
+  ],
+  "include": [],
+  "exclude": []
+}

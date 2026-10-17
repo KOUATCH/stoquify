@@ -12,7 +12,6 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 import {
-  AccountingSourceType,
   BusinessOutboxStatus,
   PostingRuleAmountSource,
   PostingRuleLineSide,
@@ -23,6 +22,7 @@ import {
   REQUIRED_ACCOUNTING_MAPPINGS,
   REQUIRED_DEFAULT_JOURNAL_TYPES,
   REQUIRED_READY_POSTING_PURPOSES,
+  REQUIRED_READY_POSTING_SOURCES,
 } from "../accounting-settings.service"
 import { getAccountingControlCenterData } from "../control-center.service"
 
@@ -97,7 +97,7 @@ function readyPostingRules() {
     code: `RULE-${postingPurpose}`,
     nameEn: `${postingPurpose} rule`,
     nameFr: `${postingPurpose} rule`,
-    sourceType: AccountingSourceType.MANUAL,
+    sourceType: REQUIRED_READY_POSTING_SOURCES[postingPurpose],
     postingPurpose,
     isActive: true,
     priority: 10,
@@ -212,6 +212,20 @@ describe("accounting control center read model", () => {
         }),
       ]),
     )
+  })
+
+  it("shows the invalid selected rule and localized recovery instead of a healthy fallback", async () => {
+    const rules = readyPostingRules()
+    mockDb.postingRule.findMany.mockResolvedValue([
+      { ...rules[0], id: "selected-invalid", code: "BROKEN", lines: rules[0].lines.map(line => ({ ...line, mappingKey: "UNMAPPED" })) },
+      ...rules,
+    ])
+    const result = await getAccountingControlCenterData("org-1", { actorPermissions: ["accounting.setup.manage"] }, now)
+    expect(result.setupLock.canLock).toBe(false)
+    expect(result.postingRules[0]).toMatchObject({ ruleId: "selected-invalid", status: "blocked", expectedSourceType: REQUIRED_READY_POSTING_SOURCES.SALE_COMPLETION })
+    expect(result.postingRules[0].blockers[0]).toMatchObject({ messageEn: expect.stringContaining("does not resolve"), messageFr: expect.stringContaining("Vérifiez les comptes actifs") })
+    expect(result.blockers.some(b => b.messageFr.includes("La règle BROKEN pour SALE_COMPLETION"))).toBe(true)
+    expect(mockDb.postingRule.findMany).toHaveBeenCalledTimes(1)
   })
 
 

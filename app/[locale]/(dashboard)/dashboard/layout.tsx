@@ -57,11 +57,17 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden">
+    <div className="dark min-h-screen w-full overflow-x-hidden [color-scheme:dark]">
+      <a
+        href="#dashboard-main-content"
+        className="sr-only rounded-lg bg-[var(--product-surface)] font-semibold text-[var(--product-text)] focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:px-4 focus:py-3 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[var(--product-brand-strong)]"
+      >
+        {locale === "fr" ? "Aller au contenu principal" : "Skip to main content"}
+      </a>
       <Sidebar session={shellSession} />
       <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden md:pl-[220px] lg:pl-[280px]">
         <Navbar session={shellSession} />
-        <main className="min-w-0 flex-1 overflow-x-hidden">{children}</main>
+        <main id="dashboard-main-content" tabIndex={-1} className="min-w-0 flex-1 scroll-mt-24 overflow-x-hidden">{children}</main>
       </div>
     </div>
   )

@@ -1,0 +1,143 @@
+{
+  "at": "2026-09-27T17:30:16.049Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "cases": [
+    {
+      "kind": "provider-suspended",
+      "organizationId": "cmuk3gl8x0000mai8qacx6ezv",
+      "runId": "cmuk3glhm001amai86e98z8tg",
+      "error": {
+        "code": "BUSINESS_RULE_VIOLATION",
+        "message": "An active provider account is required for payment reconciliation."
+      },
+      "effects": {
+        "run": "READY_FOR_SIGNOFF",
+        "audits": 0,
+        "events": 0,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "provider-revised",
+      "organizationId": "cmuk3glme001emai8jkqe1ani",
+      "runId": "cmuk3gloe002omai8wwuck3hm",
+      "error": {
+        "code": "BUSINESS_RULE_VIOLATION",
+        "message": "Reconciliation source evidence changed; refresh before signing."
+      },
+      "effects": {
+        "run": "READY_FOR_SIGNOFF",
+        "audits": 0,
+        "events": 0,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "settlement-approval-withdrawn",
+      "organizationId": "cmuk3glqo002smai8xn7ft9q0",
+      "runId": "cmuk3gltt0042mai83ej5sj00",
+      "error": {
+        "code": "BUSINESS_RULE_VIOLATION",
+        "message": "An approved effective settlement account is required for payment reconciliation."
+      },
+      "effects": {
+        "run": "READY_FOR_SIGNOFF",
+        "audits": 0,
+        "events": 0,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "period-closed",
+      "organizationId": "cmuk3glw50046mai80ruvsafw",
+      "runId": "cmuk3gly4005gmai86vqyu1qo",
+      "error": {
+        "code": "BUSINESS_RULE_VIOLATION",
+        "message": "Accounting period September 2026 is not open"
+      },
+      "effects": {
+        "run": "READY_FOR_SIGNOFF",
+        "audits": 0,
+        "events": 0,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "close-commits-after-run-read-before-sign-period-lock",
+      "organizationId": "cmuk3gm1i005kmai8z3ta5yrl",
+      "runId": "cmuk3gm3l006umai8bbspnuuf",
+      "result": {
+        "error": {
+          "code": "BUSINESS_RULE_VIOLATION",
+          "message": "Reconciliation source evidence changed; refresh before signing."
+        }
+      },
+      "effects": {
+        "run": "READY_FOR_SIGNOFF",
+        "audits": 0,
+        "events": 0,
+        "journals": 0
+      },
+      "passed": true
+    },
+    {
+      "kind": "sign-period-lock-before-close-writer",
+      "organizationId": "cmuk3gmbg006ymai8enxgx6d2",
+      "runId": "cmuk3gmd10088mai8993vlxah",
+      "observedLock": {
+        "wait_event_type": "Lock",
+        "wait_event": "transactionid"
+      },
+      "signature": {
+        "runId": "cmuk3gmd10088mai8993vlxah",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "9d18c1aa29aea42f299538808780276fef905398535f7d364ad7358131727da5",
+        "sourceVersionHash": "sha256:21d2539c41a80be5fe33f6eeeec8d07341ba34a95ebf453e3a0ce9c0cdd62bf9",
+        "signedAt": "2026-09-27T17:30:18.071Z",
+        "correlationId": "d5e0e313-a6c5-40d7-89ae-9c62cf96fb16"
+      },
+      "effects": {
+        "run": "SIGNED",
+        "audits": 1,
+        "events": 1,
+        "journals": 0
+      },
+      "replay": {
+        "runId": "cmuk3gmd10088mai8993vlxah",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": true,
+        "completedByAnotherActor": false,
+        "certificateHash": "9d18c1aa29aea42f299538808780276fef905398535f7d364ad7358131727da5",
+        "sourceVersionHash": "sha256:21d2539c41a80be5fe33f6eeeec8d07341ba34a95ebf453e3a0ce9c0cdd62bf9",
+        "signedAt": "2026-09-27T17:30:18.071Z",
+        "correlationId": "574b9934-6153-4179-aa96-bba6184ad890"
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

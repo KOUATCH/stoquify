@@ -26,7 +26,7 @@ import {
   ArrowLeft,
   Boxes,
   CheckCircle2,
-  CircleDollarSign,
+  Coins,
   ImageIcon,
   Loader2,
   PackageCheck,
@@ -54,7 +54,7 @@ interface ModernItemFormForEditingProps {
 const sections = [
   { id: "basic", label: "Basic information", icon: PackageCheck },
   { id: "identity", label: "Identity", icon: ScanBarcode },
-  { id: "pricing", label: "Pricing & tax", icon: CircleDollarSign },
+  { id: "pricing", label: "Pricing & tax", icon: Coins },
   { id: "classification", label: "Classification", icon: Shapes },
   { id: "inventory", label: "Inventory policy", icon: Boxes },
   { id: "lifecycle", label: "Lifecycle & tracking", icon: CheckCircle2 },
@@ -70,9 +70,9 @@ const textareaClass =
 const insetClass =
   "rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.68)] text-[var(--dash-text)] shadow-[inset_0_1px_0_rgba(255,255,255,0.055)]"
 const primaryButtonClass =
-  "!rounded-lg !border !border-[var(--dash-brand)] !bg-[var(--dash-brand)] !text-white shadow-[0_16px_34px_rgba(47,125,246,0.22)] hover:!border-[var(--dash-brand-strong)] hover:!bg-[var(--dash-brand-strong)] hover:!text-white"
+  "dashboard-button-primary min-h-10 rounded-lg"
 const secondaryButtonClass =
-  "!rounded-lg !border !border-[var(--dash-border-subtle)] !bg-[rgba(24,38,45,0.66)] !text-[var(--dash-text-muted)] hover:!border-[var(--dash-brand)] hover:!bg-[var(--dash-brand-soft)] hover:!text-[var(--dash-text)]"
+  "dashboard-button-secondary min-h-10 rounded-lg"
 const sectionClass = `${formSurfaceClass} scroll-mt-36 overflow-hidden`
 const sectionHeaderClass = "border-b border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.62)] p-4 sm:p-6"
 
@@ -324,17 +324,17 @@ export default function ModernItemFormForEditing({
     >
       <header className={`${formSurfaceClass} p-5 sm:p-7`}>
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
-          <div className="flex items-start gap-4">
+          <div className="flex min-w-0 items-start gap-4">
             <Button type="button" variant="outline" size="icon" className={secondaryButtonClass} aria-label="Back to items" onClick={navigateAway}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="space-y-2">
+            <div className="min-w-0 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline" className="border-[var(--dash-brand)]/40 bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">Item master</Badge>
                 <Badge variant="outline" className={isDirty ? "border-[var(--dash-warning)]/40 bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]" : "border-[var(--dash-success)]/40 bg-[var(--dash-success-soft)] text-[var(--dash-success)]"}>{dirtyMessage}</Badge>
               </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-[var(--dash-text)] sm:text-3xl">
+                <h1 className="break-words text-2xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-3xl">
                   Edit {itemData.nameEn}
                 </h1>
                 <p className="mt-1 max-w-2xl text-sm text-[var(--dash-text-soft)] sm:text-base">
@@ -343,8 +343,8 @@ export default function ModernItemFormForEditing({
               </div>
             </div>
           </div>
-          <div className={`${insetClass} px-4 py-3 text-sm`}>
-            <p className="font-semibold text-[var(--dash-text)]">SKU {itemData.sku}</p>
+          <div className={`${insetClass} min-w-0 px-4 py-3 text-sm`}>
+            <p className="break-all font-mono font-medium text-[var(--dash-text)]">SKU {itemData.sku}</p>
             <p className="text-[var(--dash-text-soft)]">Nothing persists until Save changes is clicked.</p>
           </div>
         </div>

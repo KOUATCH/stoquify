@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');const root=path.resolve(__dirname,'../../..');
+const tests=['services/cash-command/__tests__/cash-command.service.test.ts','components/cash-command/__tests__/CashCommandDashboard.test.tsx','actions/evidence/__tests__/proof-trail.actions.test.ts','app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx'];
+const changed=['services/cash-command/cash-command-visibility.service.ts','services/cash-command/cash-command.service.ts','services/cash-command/cash-command-contracts.ts','components/cash-command/CashCommandDashboard.tsx',...tests.slice(0,2)];
+const files=[...new Set([...changed,...tests,'services/modules/module-entitlement.service.ts','lib/security/rbac-permissions.ts'])];const sources=()=>Object.fromEntries(files.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
+const receipt={at:new Date().toISOString(),sourceBefore:sources(),steps:[]};
+for(const [name,args] of [['jest',['node_modules/jest/bin/jest.js','--runInBand','--runTestsByPath',...tests]],['lint',['node_modules/eslint/bin/eslint.js',...changed]],['typecheck',['node_modules/typescript/bin/tsc','--noEmit','--pretty','false']]]){
+ const r=spawnSync(process.execPath,args,{cwd:root,encoding:'utf8',windowsHide:true,timeout:1200000,maxBuffer:3*1024*1024});receipt.steps.push({name,args,status:r.status,error:r.error?.code??null,stdout:r.stdout,stderr:r.stderr});console.log(JSON.stringify({name,status:r.status,error:r.error?.code}));if(r.status!==0||r.error)break;
+}
+receipt.sourceAfter=sources();receipt.sourceStable=JSON.stringify(receipt.sourceBefore)===JSON.stringify(receipt.sourceAfter);receipt.passed=receipt.sourceStable&&receipt.steps.length===3&&receipt.steps.every(s=>s.status===0&&!s.error);
+const file='evidence/cash-visibility-checks-'+crypto.randomUUID()+'.json';fs.writeFileSync(path.join(__dirname,file),JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,passed:receipt.passed}));process.exitCode=receipt.passed?0:1;

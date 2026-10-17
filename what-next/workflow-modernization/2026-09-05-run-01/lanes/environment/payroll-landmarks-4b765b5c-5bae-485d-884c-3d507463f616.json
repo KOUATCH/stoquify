@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-30T15:00:31.748Z",
+  "expectedMain": 2,
+  "sourceBefore": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx": "111fe82f48afc5de61947bc00542b2afb4d58152388da8b6f9bccfbe023cb09c",
+    "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx": "eac5fb5d3af01b8ea28a5b237e4c2bbd136a40cdcde5191d5ff5afa553594868"
+  },
+  "checks": [],
+  "stage": "en/1440/runs",
+  "passed": false,
+  "error": "expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('heading', { level: 1 })\nExpected: 1\nReceived: 2\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 60000ms\n  - waiting for getByRole('heading', { level: 1 })\n    118 × locator resolved to 2 elements\n        - unexpected value \"2\"\n",
+  "sourceAfter": {
+    "components/payroll/PayrollRunWorkbench.tsx": "7525d4e1430c4e7356c06c63a1bfa95f974798c86e5fc65b69218013aa656ac8",
+    "components/payroll/PayrollRegisterTieOut.tsx": "1424478f38dc4c5c9c7f348e36d3e35be053ab9b10d63868f3df8229833c4c48",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx": "111fe82f48afc5de61947bc00542b2afb4d58152388da8b6f9bccfbe023cb09c",
+    "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx": "eac5fb5d3af01b8ea28a5b237e4c2bbd136a40cdcde5191d5ff5afa553594868"
+  },
+  "sourceStable": true
+}

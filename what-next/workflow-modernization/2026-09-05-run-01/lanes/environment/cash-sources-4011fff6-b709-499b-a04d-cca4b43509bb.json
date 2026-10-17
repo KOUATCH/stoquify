@@ -1,0 +1,414 @@
+{
+  "at": "2026-09-28T10:10:22.031Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command.service.ts": "0f41a7a11e48f022adafb94caaba09f45098cddebadbd707588e380732d95482",
+    "services/cash-command/cash-command-visibility.service.ts": "3e02b04c49b89be0167369b8a69b98f9398b37ce8acb3838214d468ede37df97",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [
+    {
+      "permission": "finance.read",
+      "moduleSlug": "finance",
+      "state": "active",
+      "reads": {
+        "finance": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "finance.read",
+      "moduleSlug": "finance",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "finance.read",
+      "moduleSlug": "finance",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "finance.read",
+      "moduleSlug": "finance",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "finance.read",
+      "moduleSlug": "finance",
+      "state": "read_only",
+      "reads": {
+        "finance": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payments.reconciliation.read",
+      "moduleSlug": "payment_reconciliation",
+      "state": "active",
+      "reads": {
+        "reconciliation": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payments.reconciliation.read",
+      "moduleSlug": "payment_reconciliation",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payments.reconciliation.read",
+      "moduleSlug": "payment_reconciliation",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payments.reconciliation.read",
+      "moduleSlug": "payment_reconciliation",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payments.reconciliation.read",
+      "moduleSlug": "payment_reconciliation",
+      "state": "read_only",
+      "reads": {
+        "reconciliation": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "inventory.read",
+      "moduleSlug": "inventory",
+      "state": "active",
+      "reads": {
+        "inventory": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "inventory.read",
+      "moduleSlug": "inventory",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "inventory.read",
+      "moduleSlug": "inventory",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "inventory.read",
+      "moduleSlug": "inventory",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "inventory.read",
+      "moduleSlug": "inventory",
+      "state": "read_only",
+      "reads": {
+        "inventory": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "accounting.close.read",
+      "moduleSlug": "close_assurance",
+      "state": "active",
+      "reads": {
+        "close": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "accounting.close.read",
+      "moduleSlug": "close_assurance",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "accounting.close.read",
+      "moduleSlug": "close_assurance",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "accounting.close.read",
+      "moduleSlug": "close_assurance",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "accounting.close.read",
+      "moduleSlug": "close_assurance",
+      "state": "read_only",
+      "reads": {
+        "close": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.payments.reconcile",
+      "moduleSlug": "payroll",
+      "state": "active",
+      "reads": {
+        "balance": 1,
+        "forecast": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.payments.reconcile",
+      "moduleSlug": "payroll",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.payments.reconcile",
+      "moduleSlug": "payroll",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.payments.reconcile",
+      "moduleSlug": "payroll",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.payments.reconcile",
+      "moduleSlug": "payroll",
+      "state": "read_only",
+      "reads": {
+        "balance": 1,
+        "forecast": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.declarations.manage",
+      "moduleSlug": "payroll",
+      "state": "active",
+      "reads": {
+        "forecast": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.declarations.manage",
+      "moduleSlug": "payroll",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.declarations.manage",
+      "moduleSlug": "payroll",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.declarations.manage",
+      "moduleSlug": "payroll",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "payroll.declarations.manage",
+      "moduleSlug": "payroll",
+      "state": "read_only",
+      "reads": {
+        "forecast": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "purchases.orders.read",
+      "moduleSlug": "purchasing",
+      "state": "active",
+      "reads": {
+        "purchasing": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "purchases.orders.read",
+      "moduleSlug": "purchasing",
+      "state": "permission-denied",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "purchases.orders.read",
+      "moduleSlug": "purchasing",
+      "state": "suspended",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "purchases.orders.read",
+      "moduleSlug": "purchasing",
+      "state": "expired",
+      "reads": {},
+      "deniedIsNull": true,
+      "tenantIsolation": true
+    },
+    {
+      "permission": "purchases.orders.read",
+      "moduleSlug": "purchasing",
+      "state": "read_only",
+      "reads": {
+        "purchasing": 1
+      },
+      "deniedIsNull": false,
+      "tenantIsolation": true
+    },
+    {
+      "state": "active",
+      "locale": "en",
+      "permittedCash": 1234567,
+      "permittedRecovery": 987654321,
+      "foreignValuesAbsent": true,
+      "durationMs": 7033,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-en-active.png"
+    },
+    {
+      "state": "active",
+      "locale": "fr",
+      "permittedCash": 1234567,
+      "permittedRecovery": 987654321,
+      "foreignValuesAbsent": true,
+      "durationMs": 3310,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-fr-active.png"
+    },
+    {
+      "state": "permission-denied",
+      "locale": "en",
+      "permittedCash": 1234567,
+      "permittedRecovery": null,
+      "foreignValuesAbsent": true,
+      "durationMs": 5851,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-en-permission-denied.png"
+    },
+    {
+      "state": "permission-denied",
+      "locale": "fr",
+      "permittedCash": 1234567,
+      "permittedRecovery": null,
+      "foreignValuesAbsent": true,
+      "durationMs": 3639,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-fr-permission-denied.png"
+    },
+    {
+      "state": "suspended",
+      "locale": "en",
+      "permittedCash": 1234567,
+      "permittedRecovery": null,
+      "foreignValuesAbsent": true,
+      "durationMs": 5411,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-en-suspended.png"
+    },
+    {
+      "state": "suspended",
+      "locale": "fr",
+      "permittedCash": 1234567,
+      "permittedRecovery": null,
+      "foreignValuesAbsent": true,
+      "durationMs": 3856,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-fr-suspended.png"
+    },
+    {
+      "state": "read_only",
+      "locale": "en",
+      "permittedCash": 1234567,
+      "permittedRecovery": 987654321,
+      "foreignValuesAbsent": true,
+      "durationMs": 5428,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-en-read_only.png"
+    },
+    {
+      "state": "read_only",
+      "locale": "fr",
+      "permittedCash": 1234567,
+      "permittedRecovery": 987654321,
+      "foreignValuesAbsent": true,
+      "durationMs": 4878,
+      "screenshot": "cash-sources-4011fff6-b709-499b-a04d-cca4b43509bb-fr-read_only.png"
+    }
+  ],
+  "stage": "browser read_only",
+  "failedQueryAndRetryVerified": true,
+  "noBusinessMutationsDuringReads": true,
+  "sourceAfter": {
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command.service.ts": "0f41a7a11e48f022adafb94caaba09f45098cddebadbd707588e380732d95482",
+    "services/cash-command/cash-command-visibility.service.ts": "3e02b04c49b89be0167369b8a69b98f9398b37ce8acb3838214d468ede37df97",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true,
+  "passed": true
+}

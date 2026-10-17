@@ -1,0 +1,940 @@
+{
+  "run": "a65cae40-2b4a-49c4-8245-58e1602ba512",
+  "at": "2026-10-01T08:58:50.736Z",
+  "journeys": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "organizationId": "workflow_close_write_inventory-reversal-journal-browser-en-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392",
+      "journalId": "cmupayybm00bzmahow6o78b76",
+      "sourceOwnedJournalId": "cmupayx9q009gmahoze07xju5",
+      "screenshots": [
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-review.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-identity-visible-before-db-check.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-identity-required.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-identity-confirmed-awaiting-retry.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-success-focus.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-post-persisted.png",
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-en1440-failed-reverse-page.png"
+      ],
+      "keyboard": [
+        {
+          "name": "post-open-review",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px"
+        },
+        {
+          "name": "post-reopen-review",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px"
+        },
+        {
+          "name": "post-request-with-expired-assurance",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px"
+        },
+        {
+          "name": "post-verify-password",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px"
+        },
+        {
+          "name": "post-explicit-confirmation",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px"
+        },
+        {
+          "name": "reverse-open-review",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px"
+        }
+      ],
+      "auth": [
+        {
+          "operation": "post",
+          "actorId": "cmupayuqm0003mahobq5inqgn",
+          "sessionId": "2DPO0Qar0F3Uatu7OQuUJE33kDYJFksH",
+          "expiredAt": "2026-10-01T08:54:51.202Z",
+          "genuinePasswordVerifiedBeforeSyntheticExpiry": true
+        },
+        {
+          "operation": "reverse",
+          "actorId": "cmupayuqq0005mahokk5qyixb",
+          "sessionId": "EFUdF6lLirgVzLSky60oaS8ZKhY6s5iX",
+          "expiredAt": "2026-10-01T08:55:22.713Z",
+          "genuinePasswordVerifiedBeforeSyntheticExpiry": true
+        }
+      ],
+      "operations": [
+        {
+          "operation": "post",
+          "wire": {
+            "stage": "post-explicit-retry",
+            "calls": [
+              {
+                "stage": "post-expired-submit",
+                "targetMatches": true,
+                "reversalDatePresent": false
+              },
+              {
+                "stage": "post-explicit-retry",
+                "targetMatches": true,
+                "reversalDatePresent": false
+              }
+            ],
+            "responses": [
+              {
+                "stage": "post-expired-submit",
+                "status": 200,
+                "code": "FRESH_AUTH_REQUIRED",
+                "successFalse": true,
+                "successTrue": false
+              },
+              {
+                "stage": "post-explicit-retry",
+                "status": 200,
+                "code": null,
+                "successFalse": false,
+                "successTrue": true
+              }
+            ],
+            "errors": []
+          },
+          "fresh": {
+            "sessionId": "2DPO0Qar0F3Uatu7OQuUJE33kDYJFksH",
+            "verifiedAt": "2026-10-01T09:00:15.070Z",
+            "method": "password"
+          },
+          "proof": {
+            "journalId": "cmupayybm00bzmahow6o78b76",
+            "postingBatchId": "cmupb05m202d1mawc08vwcoi9",
+            "sourceLinkId": "cmupb05nx02d3mawc8i5b6w8g",
+            "debit": "100.00",
+            "credit": "100.00",
+            "beforeHash": "5800ceaf3bf2c11513b02649cb99ddc1f04cb44061be0631d18e2caa2b4b402f",
+            "afterHash": "2afde67d1beaa4461fa348309bba3bc0dc84cb3db239cce8173dab1e9e21dc8d",
+            "onlyExpectedFinancialDelta": true
+          },
+          "noAutomaticRetry": true,
+          "reasonAndDateRetained": false,
+          "keyboardTrapAndReturn": true,
+          "persistentSuccessFocusedAfterRowActionUnmount": true
+        }
+      ],
+      "errors": [],
+      "blockedOrigins": [],
+      "passed": false,
+      "financialBefore": "43f0734512f6ac4b68a477cd23017769f223cbf7bcb0a800c61e003c05fb9de7",
+      "routeLoads": [
+        {
+          "stage": "post-page",
+          "elapsedMs": 9823
+        },
+        {
+          "stage": "reverse-page",
+          "elapsedMs": 3461
+        }
+      ],
+      "buildBefore": {
+        "file": ".next-workflow-supplier/server/app/[locale]/(dashboard)/dashboard/accounting/journals/page.js",
+        "hash": "ee5c1a9acdbd0a95f680406c42d5bc8996c90158b38df7d13c59b9eefb29e3b5",
+        "bytes": 5996392,
+        "currentControllerReferenced": true
+      },
+      "layouts": [
+        {
+          "operation": "post",
+          "viewport": 1440,
+          "documentWidth": 1440,
+          "width": 510,
+          "contentWidth": 510,
+          "reducedMotion": true
+        }
+      ],
+      "lastCheckpoint": "post-identity-confirmed-awaiting-manual-retry",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Review reversal — JE-20261001-0003', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Review reversal — JE-20261001-0003', exact: true })\n",
+      "stack": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Review reversal — JE-20261001-0003', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Review reversal — JE-20261001-0003', exact: true })\n\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright-core@1.62.1\\node_modules\\playwright-core\\lib\\coreBundle.js:9681:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright@1.62.1\\node_modules\\playwright\\lib\\matchers\\expect.js:13310:57)\n    at Object.toBeVisible (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright@1.62.1\\node_modules\\playwright\\lib\\matchers\\expect.js:13300:23)\n    at journey (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:59:232)\n    at async main (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:127:169)\n    at async runMain (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:129:36)",
+      "failedStage": "reverse-page",
+      "failureObservation": {
+        "activeElementTag": "BUTTON",
+        "wire": {
+          "stage": "initial",
+          "calls": [],
+          "responses": [],
+          "observerErrorCount": 0
+        }
+      }
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "organizationId": "workflow_close_write_inventory-reversal-journal-browser-fr-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392",
+      "journalId": "cmupaz1oe00p8mahon0w410je",
+      "sourceOwnedJournalId": "cmupaz0ur00mpmahou345vsdb",
+      "screenshots": [
+        "manual-journal-recovery-a65cae40-2b4a-49c4-8245-58e1602ba512-fr320-failed-post-page.png"
+      ],
+      "keyboard": [
+        {
+          "name": "post-open-review",
+          "active": true,
+          "outline": "solid",
+          "outlineWidth": "2px",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgb(239, 193, 77) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px"
+        }
+      ],
+      "auth": [
+        {
+          "operation": "post",
+          "actorId": "cmupayz5k00dcmahoenmnu286",
+          "sessionId": "xuLfNttTQ8jCSrvSHG233te9xohW9m4g",
+          "expiredAt": "2026-10-01T08:56:27.762Z",
+          "genuinePasswordVerifiedBeforeSyntheticExpiry": true
+        }
+      ],
+      "operations": [],
+      "errors": [],
+      "blockedOrigins": [],
+      "passed": false,
+      "financialBefore": "8280e1ef0c42b8cc2b0cc2f1b9b426107e99b84758c91b68a300bd235df7a007",
+      "routeLoads": [
+        {
+          "stage": "post-page",
+          "elapsedMs": 2826
+        }
+      ],
+      "buildBefore": {
+        "file": ".next-workflow-supplier/server/app/[locale]/(dashboard)/dashboard/accounting/journals/page.js",
+        "hash": "ee5c1a9acdbd0a95f680406c42d5bc8996c90158b38df7d13c59b9eefb29e3b5",
+        "bytes": 5996392,
+        "currentControllerReferenced": true
+      },
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Vérifier la comptabilisation — JE-20261001-0003', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Vérifier la comptabilisation — JE-20261001-0003', exact: true })\n",
+      "stack": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Vérifier la comptabilisation — JE-20261001-0003', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Vérifier la comptabilisation — JE-20261001-0003', exact: true })\n\n    at captureRawStack (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright-core@1.62.1\\node_modules\\playwright-core\\lib\\coreBundle.js:9681:17)\n    at callMatcherAsStep (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright@1.62.1\\node_modules\\playwright\\lib\\matchers\\expect.js:13310:57)\n    at Object.toBeVisible (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\playwright@1.62.1\\node_modules\\playwright\\lib\\matchers\\expect.js:13300:23)\n    at journey (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:59:232)\n    at async main (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:127:169)\n    at async runMain (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\manual-journal-recovery-browser.cjs:129:36)",
+      "failedStage": "post-page",
+      "failureObservation": {
+        "activeElementTag": "BUTTON",
+        "wire": {
+          "stage": "initial",
+          "calls": [],
+          "responses": [],
+          "observerErrorCount": 0
+        }
+      }
+    }
+  ],
+  "scope": "Actual current journals page, EN1440/FR320 financial journeys and both locales read-only at 1440/768/320, distinct post/reverse/read-only actors, existing manual draft, actual inventory source journal, real password assurance expiry and re-verification, explicit manual retry and persisted financial transitions. No response mocks, migrations, seeds, external origins or source/candidate injection.",
+  "limitations": [
+    "Assurance is genuinely established by the password service, then only the owned session timestamp is deliberately aged as a synthetic expiry fault. The browser must receive a real FRESH_AUTH_REQUIRED action response.",
+    "Synthetic credentials, roles and grants are local fixtures, not customer or professional approvals.",
+    "Bounded keyboard, focus, viewport reflow and reduced-motion observations are not full accessibility or browser-zoom certification.",
+    "The unresolved earlier-period Close scope defect remains outside this journal recovery UI proof.",
+    "Development compilation and measured route latency are local observations, not production build or performance certification.",
+    "Server-rendered query-failure states are covered by the focused page tests; this browser run proves actual success and authentication recovery without substituting server-read results."
+  ],
+  "listenerBefore": {
+    "address": "127.0.0.1",
+    "pid": 28380,
+    "parentPid": 12740,
+    "workspaceMatches": true,
+    "nextDevelopmentCommand": true
+  },
+  "sourcesBefore": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-current-proof.ts": "6ab6451b47385269fcf468a4a8c25a5f807ee938501950319998a6d2fe609c8d",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/close-assurance.schemas.ts": "b0f2f9dbf79eb361b98f0407aaa4877ac8a2d2bf673a803632af877581337d95",
+    "services/accounting/close-assurance.service.ts": "7e85e6465d76d2416a1a4a1f1fa2482e44a0428d74b08162f3050eb8e38f6f2d",
+    "services/accounting/close-evidence-acceptance-authority.service.ts": "9e886e71f668ce30553898d4784d230da445d74978a20d2bcb8369eb42db81d9",
+    "services/accounting/close-evidence-collection.ts": "116b28cc33d45d3faf2d36c8fd194b46293b231ab79d43d2ee3c024375b667b5",
+    "services/accounting/close-evidence-replacement.service.ts": "ae7498c25ce4b406404c53ef438023fb2084d461ebe9d014cf115795e367dbaa",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "a6c752692dec778d9450ed44c63a5f7e859266581671dbc10e5e2263f6532d02",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "dffa355fddfbda64c724bbdae17ba97b36f0770f7a0e38d46ef68eb363a94961",
+    "services/accounting/reconciliations.service.ts": "47586a4957bd6850a2fae7a0b58c46996fc061b15f9af1fd5c4ad6a75d8f56de",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/evidence/evidence-blockers.service.ts": "ae863f51e227868ed77b89ef087767f111326617e765db463fab70bd1fb6c660",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/payroll-transition-evidence.ts": "19066ecb84c4cb88e676edb0216715e3b5058b507da328ad512e44d87bb2b370",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "services/reconciliation/payment-reconciliation-manual-candidates.service.ts": "992b23f8fa26666fc95bf6b0246268a97ea06a9ca315236a342f2cf0583cdbe4",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "8b0531b55303406bf0ebc0709ae4c59b1ee58d928f17ee9b5fd447bcea812592",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-summary.service.ts": "71377f47afda496cd4dd4c2c8da74f87e21ef4b091e29b748d3a349121de56eb",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "services/snapshots/close-readiness-snapshot.service.ts": "b92e909738a6f5a9a6d61b49e0ae8907619684ccc1a4afb22bc5bbef0fafb84e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/snapshot-contracts.ts": "900e52d664440a46988ed085019c0aadc1ea9af272213086a831d28b8f4036f6",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-current-recovery-runtime.cjs": "7652c985f51fb304649d5cf41fb713b05551a963e1c6fef270bb417ab4fd9e1a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-denial-recovery-runtime.cjs": "9a0004e63ef61014bca46a379d1ea621e5735228f515cf76cb64d5d3cd76b425",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-pack-write-race-runtime.cjs": "2844c3dc99cb4f52b2aed3911dea496bf5ae13c610dbd6601dc4a2f858938b14",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/inventory-adjustment-reversal-runtime.cjs": "4af185b1a9699afbf301c6ede58e4c4b74e5606f5660e7d1b8382ba6a0c7842b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-recovery-browser.cjs": "e70f8be7a73c09dcdb443687ddd9620440040e3a64349dd2ac5c1f192d0c8414",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-recovery-fixtures.cjs": "a5e20a1a76ed6343b03bf1163212b652cb0233b3798bdf4f3eb3f287985935d1",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/close-denied-invalidation-before-a6929183-07e3-465c-80b1-a29cf89d7b72.json": "ecf08cabb37215d2eb01195b4304d9ea10e743f445c9ff3a4c17585aa4b89a43",
+    "i18n/routing.ts": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "lib/security/credential-sign-in-outcome.ts": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/trusted-origins.ts": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command.service.ts": "58b57b6452e4cc0bc39b9770755b8c69237494c8eef015cc037e47faa07983d8",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/evidence/evidence-redaction.service.ts": "8bd2e220e283d1334c7d2b7f1e009f8ade69c06d6044c046ec5d6c2d839a6981",
+    "services/evidence/proof-trail.service.ts": "b7a0fa1237a43be76517232a01d0bcea0da034905b3c799f555db2cf3f39e161",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/pos/drawer-dashboard.schemas.ts": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2",
+    "services/pos/drawer-dashboard.service.ts": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132",
+    "services/pos/money.ts": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1",
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "services/signals/action-queue.service.ts": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/signals/business-signal.service.ts": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "types/bilingual.ts": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/cash-close-recovery-readonly-4e711acb-b190-418a-826a-f6e8400bf410.json": "9d7248b0be77489a849f4eb71a86711b319a55646f2bef42e219717a88661bd0",
+    "services/inventory/inventory-adjustment-reversal.schemas.ts": "b644c829b9eda1b5f73dd39ce841f095093add0c66403c35057ce3d5cc9ae047",
+    "services/inventory/inventory-adjustment-reversal.service.ts": "ec54b67b9d7be0cc24747e6b131e96f3ef6dc69afdcea88743b6275b83643e9a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-posting-runtime.cjs": "91a7ddbfa4f0c7c0ce51835a661d410c39e190f0c591f6961346f7b2883b3556",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/inventory-adjustment-reversal.service.ts": "087d1cb80e27bfa231fffdb7f9d7c089c6f27e3054dbbeb8bc004fdedc08a689",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/metadata.json": "b1f3405c54e8b149e87e2de7bdd82e080f61338f66fc12744b946e2e221714df",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "620b8f5c0273d0e8faf412da315e888300f8ae6d2d6684c2705ede35edeca28e",
+    "actions/accounting/journals.actions.ts": "15035fb5c9244c6acfbbffa9d6be0d7dbbe8414eaf2e745206510a5a9ea45783",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "components/accounting/JournalEntryActions.tsx": "af8827a04c8ccacc4eef4f50f3e7ff3e84432ee9a3d3edbb8dbeb3f4142d216a",
+    "components/accounting/journal-workflow-copy.ts": "216138cdfe52684f0132e699ab726067167076749020e8b02bde39cabe59de9b",
+    "components/ui/dialog.tsx": "fd78c279fbfbf3960d59a2a0b13c4eb5f2c6db3a076078e1cd493f30e3528463",
+    "components/ui/table.tsx": "45d15c0c9045bf9379ade5c250a86ad469689aa5a28595ff87fb49cb22334e87",
+    "components/DataTableComponents/RenderedDataTable.tsx": "c80648755f1fa1c501fc3f15ee4c897c91d7bed2b6bfd878beb56561c0ec6bb5",
+    "components/DataTableComponents/DataTableSearch.tsx": "11b0487e9dd0d95b5f2058ea5b32279ed135b0eb21010b7ac719068a645f9e24",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+  },
+  "outsideBefore": {
+    "hash": "503776428dd97a4df8f6f7736838d028f8efdf07614c70105590f58bd33e193d",
+    "financial": {
+      "hash": "e692a15a8c1d1248410b628b67c9019998f24cfd3f3bb5434d1e545e84bd7bbc",
+      "inherited": {
+        "hash": "b4c96a74bcd432f78e3a2722366a7d29fa9860bb2896d796d2466e5bfaa24320",
+        "existing": {
+          "hash": "f46a80311f63c6793da6f50b1128c46b9196f3883b0c7545f5b2ba875143824d",
+          "children": {
+            "hash": "3d23b102e69a528f9abd7f0e3f29064927d2879c07b7eab6e32963a076a34708",
+            "models": {
+              "payment": {
+                "count": 142,
+                "hash": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9"
+              },
+              "journalEntry": {
+                "count": 1057,
+                "hash": "035c936ece57480551ef20e044ac6decaf7cb30ab02ec5030b74e4742daeefc5"
+              },
+              "journalEntryLine": {
+                "count": 2144,
+                "hash": "9725e3f09a8ee1937d8e63e17590743e52bc7386164e19fa7b3a59b929c0aae6"
+              },
+              "ledgerPostingBatch": {
+                "count": 2324,
+                "hash": "7231c12bd75675b248688704531cbaa1a28d1b7feeb12b55b1257f73c3eed5f6"
+              },
+              "accountingSourceLink": {
+                "count": 1042,
+                "hash": "2b93361915ca1adcb9b568fc9142bf04d03485b62609e8097b7a6fbb6c62297f"
+              },
+              "supplierInvoice": {
+                "count": 1586,
+                "hash": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f"
+              },
+              "supplierPayment": {
+                "count": 71,
+                "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+              },
+              "inventoryTransaction": {
+                "count": 1304,
+                "hash": "4823e414d43253a9fd1774836c6c9c1a4e67dab2c998474ad153492b4e815a2a"
+              },
+              "organizationAccountingSettings": {
+                "count": 215,
+                "hash": "2b961f23cc2fc9316a737dd1af0f52b0572204e0850e89366b8f448f867088b1"
+              },
+              "chartOfAccount": {
+                "count": 4680,
+                "hash": "ccd4d86a138bcd71130de6e088c4a6da495c2417715ec2f5b627b0a7e4553ab3"
+              },
+              "journal": {
+                "count": 2096,
+                "hash": "138758a8d90148992eea5c2e5102e76511a1121f331891f9e16663614e5e21ac"
+              },
+              "postingRule": {
+                "count": 2988,
+                "hash": "f0d96feeb918644652a8ba01379bf02001f329f6163eadbc0e1535263f7ff080"
+              },
+              "postingRuleLine": {
+                "count": 12084,
+                "hash": "7978582d5ee3920221245ee15eefcb66621a7f1e2ed5f9cdbb51d26b21101cc6"
+              },
+              "fiscalYear": {
+                "count": 1655,
+                "hash": "dedca137251773c73ec234fc28670986f8cc5fde2c7574d3e9a0fa8b01aba612"
+              },
+              "accountingPeriod": {
+                "count": 16670,
+                "hash": "67834a832fb10600912ac5e93363e01122e55a6d40cd5392493c50d2c04239c1"
+              },
+              "closeRun": {
+                "count": 460,
+                "hash": "566a87c7e62f21dfe61b030ac3c481fea24af89ba31dca3c4eb48e8f92393176"
+              },
+              "closeChecklistItem": {
+                "count": 3209,
+                "hash": "e4ba3028b5e466a7e9edc5aa17be079ef15e609aa72b040ccccc49242d255377"
+              },
+              "closeAssuranceFinding": {
+                "count": 142,
+                "hash": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14"
+              },
+              "closeEvidenceItem": {
+                "count": 5858,
+                "hash": "b19d3d2a33ed03b67f717092714135d92303f8eb840433b87d1faee3aa1d01e3"
+              },
+              "closePackExport": {
+                "count": 158,
+                "hash": "06f0437edff321e2299d0a628f7cf28c84e53f6eb395d2be101976e24592de3b"
+              },
+              "user": {
+                "count": 4811,
+                "hash": "744e0758c6cb9a82c1585443e382bdd9b6565970351eca40b5e0ef5c61c17430"
+              },
+              "role": {
+                "count": 3608,
+                "hash": "aed6295aa63a1ae4e2a1e705fa59562d00e9af76c970f041c04cffcce260d8f8"
+              },
+              "tenantModuleConfiguration": {
+                "count": 417,
+                "hash": "ef5097bbc3573cff3c5d26f8473e50e58d9e6822599ce3796e2e713534a4a54d"
+              },
+              "tenantModuleGrant": {
+                "count": 3259,
+                "hash": "6b2b2fabc871e34303ee0903231abc8cbbb981701d07ae773392c686d41fc084"
+              },
+              "ledgerAuditEvent": {
+                "count": 11563,
+                "hash": "8af4b87ccac7ee7b34d1e7f2ad0bf8ed6c722c2dc0f89e6ff835f7b0203b1fb7"
+              },
+              "businessEvent": {
+                "count": 8228,
+                "hash": "80fb854e0fb3dd0451de46a068f189bf97aef2da223aaf7dba51257f82f01f67"
+              },
+              "businessEventOutbox": {
+                "count": 5477,
+                "hash": "bf7f56db59ed51dbd5d6086806c36150ff0ecc9082e7375213f440c75f18010f"
+              },
+              "businessEventAudit": {
+                "count": 14330,
+                "hash": "bf1262de279d4051b20d15f842b0edb0656c669cdc1f00751011d33cfbffe938"
+              }
+            }
+          },
+          "organizationCount": 2806
+        },
+        "extra": {
+          "item": "b6a55552203f13bb881ecca27d6b68b2879bceb5fdb5bdd86dd7f0ba6be38e87",
+          "location": "a812a4fcffcc67609a6f9582ee43603edb48f6a4ab62db5d2d64af14467dbc69",
+          "stockCountSession": "0552f8354f87bf0f3d4809c5aaa36f5b2442b3211dde1c81ba385115b18acff9",
+          "auditLog": "98b42563a583772da6494bd7d712394014d8c887ef954d8d65622f8068575178",
+          "stockCountLine": "41fa1bee38b7059f5b4c74d7a521cb8dd277b6c034debe0903b5d1cf9207e373",
+          "inventoryLevel": "34a8a2d35cb4ba511dba1a9ff5dd7610984a990110cceea414d654c1dcd724fd"
+        }
+      },
+      "extra": {
+        "journalEntry": "035c936ece57480551ef20e044ac6decaf7cb30ab02ec5030b74e4742daeefc5",
+        "journalEntryLine": "9725e3f09a8ee1937d8e63e17590743e52bc7386164e19fa7b3a59b929c0aae6",
+        "ledgerPostingBatch": "7231c12bd75675b248688704531cbaa1a28d1b7feeb12b55b1257f73c3eed5f6",
+        "accountingSourceLink": "2b93361915ca1adcb9b568fc9142bf04d03485b62609e8097b7a6fbb6c62297f",
+        "inventoryTransaction": "4823e414d43253a9fd1774836c6c9c1a4e67dab2c998474ad153492b4e815a2a",
+        "inventoryLevel": "34a8a2d35cb4ba511dba1a9ff5dd7610984a990110cceea414d654c1dcd724fd",
+        "stockAdjustment": "69eaacc43dea06b9d5c4dd747ff7f1fc427eb4a28be94e3aa0cea8ca67a0050f",
+        "stockAdjustmentLine": "406a4e84e34428f500445d7247c3985aac09d930e623330b3fff7773da64afc9",
+        "payment": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9",
+        "supplierInvoice": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f",
+        "supplierPayment": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394",
+        "customerLedgerEntry": "c3a965575075c5f813f402436b1fd169730c9e6ab76c99e380365c0e54dd1d79",
+        "customerSettlement": "d620e6d8286147d73c4778d68521efe68a858deb089cf86a724bfedef0cb9ad3",
+        "item": "b6a55552203f13bb881ecca27d6b68b2879bceb5fdb5bdd86dd7f0ba6be38e87",
+        "location": "a812a4fcffcc67609a6f9582ee43603edb48f6a4ab62db5d2d64af14467dbc69",
+        "auditLog": "98b42563a583772da6494bd7d712394014d8c887ef954d8d65622f8068575178"
+      }
+    }
+  },
+  "fixtures": [
+    {
+      "organizationId": "workflow_close_write_inventory-reversal-journal-browser-en-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392",
+      "original": {
+        "id": "cmupayybm00bzmahow6o78b76",
+        "entryNumber": "JE-20261001-0003"
+      },
+      "sourceOwned": {
+        "id": "cmupayx9q009gmahoze07xju5",
+        "entryNumber": "INVADJ-20261001-0001",
+        "sourceType": "STOCK_ADJUSTMENT"
+      },
+      "untouchedDraft": {
+        "id": "cmupayydq00c6maho5gnv2z5q",
+        "entryNumber": "JE-20261001-0004"
+      },
+      "untouchedPosted": {
+        "id": "cmupayvxu006vmahob3gxz8l2",
+        "entryNumber": "JE-20261001-0001"
+      },
+      "actors": {
+        "poster": "cmupayuqm0003mahobq5inqgn",
+        "reverser": "cmupayuqq0005mahokk5qyixb",
+        "reader": "cmupayyq200d6mahoszo5puzn"
+      }
+    },
+    {
+      "organizationId": "workflow_close_write_inventory-reversal-journal-browser-fr-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392",
+      "original": {
+        "id": "cmupaz1oe00p8mahon0w410je",
+        "entryNumber": "JE-20261001-0003"
+      },
+      "sourceOwned": {
+        "id": "cmupaz0ur00mpmahou345vsdb",
+        "entryNumber": "INVADJ-20261001-0001",
+        "sourceType": "STOCK_ADJUSTMENT"
+      },
+      "untouchedDraft": {
+        "id": "cmupaz1qg00pfmaho1281p3a1",
+        "entryNumber": "JE-20261001-0004"
+      },
+      "untouchedPosted": {
+        "id": "cmupayzyz00k4mahok9fonfba",
+        "entryNumber": "JE-20261001-0001"
+      },
+      "actors": {
+        "poster": "cmupayz5k00dcmahoenmnu286",
+        "reverser": "cmupayz5q00demahobrvaqnn7",
+        "reader": "cmupaz22000qfmaho0g6u9z3h"
+      }
+    }
+  ],
+  "listenerAfter": {
+    "address": "127.0.0.1",
+    "pid": 28380,
+    "parentPid": 12740,
+    "workspaceMatches": true,
+    "nextDevelopmentCommand": true
+  },
+  "sourcesAfter": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-current-proof.ts": "6ab6451b47385269fcf468a4a8c25a5f807ee938501950319998a6d2fe609c8d",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/close-assurance.schemas.ts": "b0f2f9dbf79eb361b98f0407aaa4877ac8a2d2bf673a803632af877581337d95",
+    "services/accounting/close-assurance.service.ts": "7e85e6465d76d2416a1a4a1f1fa2482e44a0428d74b08162f3050eb8e38f6f2d",
+    "services/accounting/close-evidence-acceptance-authority.service.ts": "9e886e71f668ce30553898d4784d230da445d74978a20d2bcb8369eb42db81d9",
+    "services/accounting/close-evidence-collection.ts": "116b28cc33d45d3faf2d36c8fd194b46293b231ab79d43d2ee3c024375b667b5",
+    "services/accounting/close-evidence-replacement.service.ts": "ae7498c25ce4b406404c53ef438023fb2084d461ebe9d014cf115795e367dbaa",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "a6c752692dec778d9450ed44c63a5f7e859266581671dbc10e5e2263f6532d02",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "dffa355fddfbda64c724bbdae17ba97b36f0770f7a0e38d46ef68eb363a94961",
+    "services/accounting/reconciliations.service.ts": "47586a4957bd6850a2fae7a0b58c46996fc061b15f9af1fd5c4ad6a75d8f56de",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/evidence/evidence-blockers.service.ts": "ae863f51e227868ed77b89ef087767f111326617e765db463fab70bd1fb6c660",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/payroll-transition-evidence.ts": "19066ecb84c4cb88e676edb0216715e3b5058b507da328ad512e44d87bb2b370",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "services/reconciliation/payment-reconciliation-manual-candidates.service.ts": "992b23f8fa26666fc95bf6b0246268a97ea06a9ca315236a342f2cf0583cdbe4",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "8b0531b55303406bf0ebc0709ae4c59b1ee58d928f17ee9b5fd447bcea812592",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-summary.service.ts": "71377f47afda496cd4dd4c2c8da74f87e21ef4b091e29b748d3a349121de56eb",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "services/snapshots/close-readiness-snapshot.service.ts": "b92e909738a6f5a9a6d61b49e0ae8907619684ccc1a4afb22bc5bbef0fafb84e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/snapshot-contracts.ts": "900e52d664440a46988ed085019c0aadc1ea9af272213086a831d28b8f4036f6",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-current-recovery-runtime.cjs": "7652c985f51fb304649d5cf41fb713b05551a963e1c6fef270bb417ab4fd9e1a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-denial-recovery-runtime.cjs": "9a0004e63ef61014bca46a379d1ea621e5735228f515cf76cb64d5d3cd76b425",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-pack-write-race-runtime.cjs": "2844c3dc99cb4f52b2aed3911dea496bf5ae13c610dbd6601dc4a2f858938b14",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/inventory-adjustment-reversal-runtime.cjs": "4af185b1a9699afbf301c6ede58e4c4b74e5606f5660e7d1b8382ba6a0c7842b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-recovery-browser.cjs": "e70f8be7a73c09dcdb443687ddd9620440040e3a64349dd2ac5c1f192d0c8414",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-recovery-fixtures.cjs": "a5e20a1a76ed6343b03bf1163212b652cb0233b3798bdf4f3eb3f287985935d1",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/close-denied-invalidation-before-a6929183-07e3-465c-80b1-a29cf89d7b72.json": "ecf08cabb37215d2eb01195b4304d9ea10e743f445c9ff3a4c17585aa4b89a43",
+    "i18n/routing.ts": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "lib/security/credential-sign-in-outcome.ts": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/trusted-origins.ts": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command.service.ts": "58b57b6452e4cc0bc39b9770755b8c69237494c8eef015cc037e47faa07983d8",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/evidence/evidence-redaction.service.ts": "8bd2e220e283d1334c7d2b7f1e009f8ade69c06d6044c046ec5d6c2d839a6981",
+    "services/evidence/proof-trail.service.ts": "b7a0fa1237a43be76517232a01d0bcea0da034905b3c799f555db2cf3f39e161",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/pos/drawer-dashboard.schemas.ts": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2",
+    "services/pos/drawer-dashboard.service.ts": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132",
+    "services/pos/money.ts": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1",
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "services/signals/action-queue.service.ts": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/signals/business-signal.service.ts": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "types/bilingual.ts": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/cash-close-recovery-readonly-4e711acb-b190-418a-826a-f6e8400bf410.json": "9d7248b0be77489a849f4eb71a86711b319a55646f2bef42e219717a88661bd0",
+    "services/inventory/inventory-adjustment-reversal.schemas.ts": "b644c829b9eda1b5f73dd39ce841f095093add0c66403c35057ce3d5cc9ae047",
+    "services/inventory/inventory-adjustment-reversal.service.ts": "ec54b67b9d7be0cc24747e6b131e96f3ef6dc69afdcea88743b6275b83643e9a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-posting-runtime.cjs": "91a7ddbfa4f0c7c0ce51835a661d410c39e190f0c591f6961346f7b2883b3556",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/inventory-adjustment-reversal.service.ts": "087d1cb80e27bfa231fffdb7f9d7c089c6f27e3054dbbeb8bc004fdedc08a689",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/source-reversal-before-inventory-7626709c-c422-4302-a71c-5a2224db92d8/metadata.json": "b1f3405c54e8b149e87e2de7bdd82e080f61338f66fc12744b946e2e221714df",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "620b8f5c0273d0e8faf412da315e888300f8ae6d2d6684c2705ede35edeca28e",
+    "actions/accounting/journals.actions.ts": "15035fb5c9244c6acfbbffa9d6be0d7dbbe8414eaf2e745206510a5a9ea45783",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "components/accounting/JournalEntryActions.tsx": "af8827a04c8ccacc4eef4f50f3e7ff3e84432ee9a3d3edbb8dbeb3f4142d216a",
+    "components/accounting/journal-workflow-copy.ts": "216138cdfe52684f0132e699ab726067167076749020e8b02bde39cabe59de9b",
+    "components/ui/dialog.tsx": "fd78c279fbfbf3960d59a2a0b13c4eb5f2c6db3a076078e1cd493f30e3528463",
+    "components/ui/table.tsx": "45d15c0c9045bf9379ade5c250a86ad469689aa5a28595ff87fb49cb22334e87",
+    "components/DataTableComponents/RenderedDataTable.tsx": "c80648755f1fa1c501fc3f15ee4c897c91d7bed2b6bfd878beb56561c0ec6bb5",
+    "components/DataTableComponents/DataTableSearch.tsx": "11b0487e9dd0d95b5f2058ea5b32279ed135b0eb21010b7ac719068a645f9e24",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+  },
+  "sourceStable": true,
+  "outsideAfter": {
+    "hash": "503776428dd97a4df8f6f7736838d028f8efdf07614c70105590f58bd33e193d",
+    "financial": {
+      "hash": "e692a15a8c1d1248410b628b67c9019998f24cfd3f3bb5434d1e545e84bd7bbc",
+      "inherited": {
+        "hash": "b4c96a74bcd432f78e3a2722366a7d29fa9860bb2896d796d2466e5bfaa24320",
+        "existing": {
+          "hash": "f46a80311f63c6793da6f50b1128c46b9196f3883b0c7545f5b2ba875143824d",
+          "children": {
+            "hash": "3d23b102e69a528f9abd7f0e3f29064927d2879c07b7eab6e32963a076a34708",
+            "models": {
+              "payment": {
+                "count": 142,
+                "hash": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9"
+              },
+              "journalEntry": {
+                "count": 1057,
+                "hash": "035c936ece57480551ef20e044ac6decaf7cb30ab02ec5030b74e4742daeefc5"
+              },
+              "journalEntryLine": {
+                "count": 2144,
+                "hash": "9725e3f09a8ee1937d8e63e17590743e52bc7386164e19fa7b3a59b929c0aae6"
+              },
+              "ledgerPostingBatch": {
+                "count": 2324,
+                "hash": "7231c12bd75675b248688704531cbaa1a28d1b7feeb12b55b1257f73c3eed5f6"
+              },
+              "accountingSourceLink": {
+                "count": 1042,
+                "hash": "2b93361915ca1adcb9b568fc9142bf04d03485b62609e8097b7a6fbb6c62297f"
+              },
+              "supplierInvoice": {
+                "count": 1586,
+                "hash": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f"
+              },
+              "supplierPayment": {
+                "count": 71,
+                "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+              },
+              "inventoryTransaction": {
+                "count": 1304,
+                "hash": "4823e414d43253a9fd1774836c6c9c1a4e67dab2c998474ad153492b4e815a2a"
+              },
+              "organizationAccountingSettings": {
+                "count": 215,
+                "hash": "2b961f23cc2fc9316a737dd1af0f52b0572204e0850e89366b8f448f867088b1"
+              },
+              "chartOfAccount": {
+                "count": 4680,
+                "hash": "ccd4d86a138bcd71130de6e088c4a6da495c2417715ec2f5b627b0a7e4553ab3"
+              },
+              "journal": {
+                "count": 2096,
+                "hash": "138758a8d90148992eea5c2e5102e76511a1121f331891f9e16663614e5e21ac"
+              },
+              "postingRule": {
+                "count": 2988,
+                "hash": "f0d96feeb918644652a8ba01379bf02001f329f6163eadbc0e1535263f7ff080"
+              },
+              "postingRuleLine": {
+                "count": 12084,
+                "hash": "7978582d5ee3920221245ee15eefcb66621a7f1e2ed5f9cdbb51d26b21101cc6"
+              },
+              "fiscalYear": {
+                "count": 1655,
+                "hash": "dedca137251773c73ec234fc28670986f8cc5fde2c7574d3e9a0fa8b01aba612"
+              },
+              "accountingPeriod": {
+                "count": 16670,
+                "hash": "67834a832fb10600912ac5e93363e01122e55a6d40cd5392493c50d2c04239c1"
+              },
+              "closeRun": {
+                "count": 460,
+                "hash": "566a87c7e62f21dfe61b030ac3c481fea24af89ba31dca3c4eb48e8f92393176"
+              },
+              "closeChecklistItem": {
+                "count": 3209,
+                "hash": "e4ba3028b5e466a7e9edc5aa17be079ef15e609aa72b040ccccc49242d255377"
+              },
+              "closeAssuranceFinding": {
+                "count": 142,
+                "hash": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14"
+              },
+              "closeEvidenceItem": {
+                "count": 5858,
+                "hash": "b19d3d2a33ed03b67f717092714135d92303f8eb840433b87d1faee3aa1d01e3"
+              },
+              "closePackExport": {
+                "count": 158,
+                "hash": "06f0437edff321e2299d0a628f7cf28c84e53f6eb395d2be101976e24592de3b"
+              },
+              "user": {
+                "count": 4811,
+                "hash": "744e0758c6cb9a82c1585443e382bdd9b6565970351eca40b5e0ef5c61c17430"
+              },
+              "role": {
+                "count": 3608,
+                "hash": "aed6295aa63a1ae4e2a1e705fa59562d00e9af76c970f041c04cffcce260d8f8"
+              },
+              "tenantModuleConfiguration": {
+                "count": 417,
+                "hash": "ef5097bbc3573cff3c5d26f8473e50e58d9e6822599ce3796e2e713534a4a54d"
+              },
+              "tenantModuleGrant": {
+                "count": 3259,
+                "hash": "6b2b2fabc871e34303ee0903231abc8cbbb981701d07ae773392c686d41fc084"
+              },
+              "ledgerAuditEvent": {
+                "count": 11563,
+                "hash": "8af4b87ccac7ee7b34d1e7f2ad0bf8ed6c722c2dc0f89e6ff835f7b0203b1fb7"
+              },
+              "businessEvent": {
+                "count": 8228,
+                "hash": "80fb854e0fb3dd0451de46a068f189bf97aef2da223aaf7dba51257f82f01f67"
+              },
+              "businessEventOutbox": {
+                "count": 5477,
+                "hash": "bf7f56db59ed51dbd5d6086806c36150ff0ecc9082e7375213f440c75f18010f"
+              },
+              "businessEventAudit": {
+                "count": 14330,
+                "hash": "bf1262de279d4051b20d15f842b0edb0656c669cdc1f00751011d33cfbffe938"
+              }
+            }
+          },
+          "organizationCount": 2806
+        },
+        "extra": {
+          "item": "b6a55552203f13bb881ecca27d6b68b2879bceb5fdb5bdd86dd7f0ba6be38e87",
+          "location": "a812a4fcffcc67609a6f9582ee43603edb48f6a4ab62db5d2d64af14467dbc69",
+          "stockCountSession": "0552f8354f87bf0f3d4809c5aaa36f5b2442b3211dde1c81ba385115b18acff9",
+          "auditLog": "98b42563a583772da6494bd7d712394014d8c887ef954d8d65622f8068575178",
+          "stockCountLine": "41fa1bee38b7059f5b4c74d7a521cb8dd277b6c034debe0903b5d1cf9207e373",
+          "inventoryLevel": "34a8a2d35cb4ba511dba1a9ff5dd7610984a990110cceea414d654c1dcd724fd"
+        }
+      },
+      "extra": {
+        "journalEntry": "035c936ece57480551ef20e044ac6decaf7cb30ab02ec5030b74e4742daeefc5",
+        "journalEntryLine": "9725e3f09a8ee1937d8e63e17590743e52bc7386164e19fa7b3a59b929c0aae6",
+        "ledgerPostingBatch": "7231c12bd75675b248688704531cbaa1a28d1b7feeb12b55b1257f73c3eed5f6",
+        "accountingSourceLink": "2b93361915ca1adcb9b568fc9142bf04d03485b62609e8097b7a6fbb6c62297f",
+        "inventoryTransaction": "4823e414d43253a9fd1774836c6c9c1a4e67dab2c998474ad153492b4e815a2a",
+        "inventoryLevel": "34a8a2d35cb4ba511dba1a9ff5dd7610984a990110cceea414d654c1dcd724fd",
+        "stockAdjustment": "69eaacc43dea06b9d5c4dd747ff7f1fc427eb4a28be94e3aa0cea8ca67a0050f",
+        "stockAdjustmentLine": "406a4e84e34428f500445d7247c3985aac09d930e623330b3fff7773da64afc9",
+        "payment": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9",
+        "supplierInvoice": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f",
+        "supplierPayment": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394",
+        "customerLedgerEntry": "c3a965575075c5f813f402436b1fd169730c9e6ab76c99e380365c0e54dd1d79",
+        "customerSettlement": "d620e6d8286147d73c4778d68521efe68a858deb089cf86a724bfedef0cb9ad3",
+        "item": "b6a55552203f13bb881ecca27d6b68b2879bceb5fdb5bdd86dd7f0ba6be38e87",
+        "location": "a812a4fcffcc67609a6f9582ee43603edb48f6a4ab62db5d2d64af14467dbc69",
+        "auditLog": "98b42563a583772da6494bd7d712394014d8c887ef954d8d65622f8068575178"
+      }
+    }
+  },
+  "outsideUnchanged": true,
+  "fixtureOrganizations": [
+    "workflow_close_write_inventory-reversal-journal-browser-en-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392",
+    "workflow_close_write_inventory-reversal-journal-browser-fr-a65cae40_8f854a66-1f16-4c35-89fc-14f129bba392"
+  ],
+  "passed": false
+}

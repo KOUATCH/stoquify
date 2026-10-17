@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-27T12:42:31.044Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "63742fc9dd36ecf7ae0885ca2eb6ef64e9eba49200d3f975d8ca4d729dbf38b0",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sourceArrival": true,
+      "preview": {
+        "runId": "cmujt6jwq001amafcnpifstsw",
+        "status": "READY_FOR_SIGNOFF",
+        "asOf": "2026-09-27T12:42:32.387Z",
+        "provider": "Owned request ordering",
+        "currencyCode": "XAF",
+        "businessDate": "2026-09-27T00:00:00.000Z",
+        "totals": {
+          "internal": "100.25",
+          "external": "100.25",
+          "matched": "100.25",
+          "suspense": "0.00"
+        },
+        "canSign": false,
+        "blocker": "SOURCE_EVIDENCE_REVIEW_REQUIRED",
+        "expectedSourceVersionHash": null,
+        "expectedEvidenceRevision": null,
+        "counts": null
+      }
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "63742fc9dd36ecf7ae0885ca2eb6ef64e9eba49200d3f975d8ca4d729dbf38b0",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

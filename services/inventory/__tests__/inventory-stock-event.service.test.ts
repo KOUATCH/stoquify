@@ -1,6 +1,10 @@
 import { Prisma, PurchaseCorrectionDirection } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { readReceiptRecognitionSource } from "@/services/purchase-order/receipt-recognition-source"
+import { validateReceiptReturnStockAllocationInTx } from "@/services/purchasing/receipt-return-recognition"
+jest.mock("@/services/purchase-order/receipt-recognition-source", () => ({ readReceiptRecognitionSource: jest.fn() }))
+jest.mock("@/services/purchasing/receipt-return-recognition", () => ({ validateReceiptReturnStockAllocationInTx: jest.fn() }))
 
 import {
   postGoodsReceiptStock,
@@ -14,6 +18,7 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     item: { findFirst: jest.fn() },
     location: { findFirst: jest.fn() },
     accountingPeriod: { findFirst: jest.fn() },
@@ -32,6 +37,7 @@ jest.mock("@/prisma/db", () => ({
 
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
   item: { findFirst: jest.Mock }
   location: { findFirst: jest.Mock }
   accountingPeriod: { findFirst: jest.Mock }
@@ -74,6 +80,7 @@ function inventoryLevel(overrides: Record<string, unknown> = {}) {
 beforeEach(() => {
   jest.clearAllMocks()
   mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
+  mockedDb.$queryRaw.mockResolvedValue([])
   mockedDb.item.findFirst.mockResolvedValue({
     id: "item-1",
     organizationId: "org-1",
@@ -237,6 +244,139 @@ it("posts purchase receipt stock through the inventory kernel with receipt evide
   )
 })
 
+const receiptInput = {
+  organizationId: "org-1",
+  receiptId: "receipt-1",
+  receiptNumber: "GR-001",
+  receivedById: "receiver-1",
+  occurredAt: eventDate,
+  lines: [{ itemId: "item-1", locationId: "loc-1", quantity: 3, unitCost: 120 }],
+}
+
+it("records a source-bound zero-value receipt without a false ledger failure", async () => {
+  ;(readReceiptRecognitionSource as jest.Mock).mockResolvedValue({ sourceHash: "a".repeat(64), inventoryValue: decimal(0), manifest: { effectiveAt: eventDate.toISOString(), locationId: "loc-1", acceptance: { actorId: "receiver-1" }, lines: [{ receiptLineId: "line-1", itemId: "item-1", stockTracked: true, quantity: "3.000", unitCost: "0.00", batchNumber: null, expiryDate: null, serialNumbers: [] }] } })
+  await postGoodsReceiptStock({ ...receiptInput, documentHash: "a".repeat(64), receiptRecognitionNotRequired: true, lines: [{ ...receiptInput.lines[0], goodsReceiptLineId: "line-1", unitCost: 0 }] })
+  expect(mockedDb.inventoryTransaction.create).toHaveBeenCalled()
+  expect(mockedDb.ledgerPostingBatch.create).not.toHaveBeenCalled()
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+})
+
+it("rejects positive or changed costs using a zero-value source exemption", async () => {
+  ;(readReceiptRecognitionSource as jest.Mock).mockResolvedValue({ sourceHash: "a".repeat(64), inventoryValue: decimal(0), manifest: { effectiveAt: eventDate.toISOString(), locationId: "loc-1", acceptance: { actorId: "receiver-1" }, lines: [{ receiptLineId: "line-1", itemId: "item-1", stockTracked: true, quantity: "3.000", unitCost: "0.00", batchNumber: null, expiryDate: null, serialNumbers: [] }] } })
+  await expect(postGoodsReceiptStock({ ...receiptInput, documentHash: "a".repeat(64), receiptRecognitionNotRequired: true, lines: [{ ...receiptInput.lines[0], goodsReceiptLineId: "line-1" }] })).rejects.toThrow("zero-value stock receipt")
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+})
+
+async function retainReceiptEvent(batchStatus = "POSTED", eventStatus = "APPLIED") {
+  await postGoodsReceiptStock(receiptInput)
+  const event = {
+    id: "event-1",
+    ...mockedDb.businessEvent.create.mock.calls[0][0].data,
+    status: eventStatus,
+    outboxMessages: [],
+  }
+  const batch = {
+    id: "posting-batch-1",
+    organizationId: "org-1",
+    sourceType: "GOODS_RECEIPT",
+    sourceId: "receipt-1",
+    postingPurpose: "GOODS_RECEIPT",
+    sourceVersion: 1,
+    postingCycle: 1,
+    periodId: "period-1",
+    status: batchStatus,
+    metadata: { documentHash: "retained-accounting-proof", journalEntryId: "journal-1" },
+  }
+  jest.clearAllMocks()
+  mockedDb.businessEvent.findUnique.mockResolvedValue(event)
+  mockedDb.ledgerPostingBatch.findFirst.mockResolvedValue(batch)
+  mockedDb.ledgerPostingBatch.update.mockImplementation(async (args) => Object.assign(batch, args.data))
+  return { event, batch }
+}
+
+it.each(["POSTED", "REVERSED", "FAILED"])("preserves the %s receipt batch and all stock on an exact applied replay", async (status) => {
+  const { batch } = await retainReceiptEvent(status)
+  const before = JSON.stringify(batch)
+
+  const result = await postGoodsReceiptStock(receiptInput)
+
+  expect(result).toMatchObject({ replayed: true, eventId: "event-1", postingBatchId: "posting-batch-1" })
+  expect(JSON.stringify(batch)).toBe(before)
+  expect(mockedDb.ledgerPostingBatch.create).not.toHaveBeenCalled()
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  expect(mockedDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.businessEvent.update).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it("retains the posted batch before rejecting a replay payload conflict inside an existing transaction", async () => {
+  const { batch } = await retainReceiptEvent()
+  const before = JSON.stringify(batch)
+  const transaction = { ...mockedDb }
+  Reflect.deleteProperty(transaction, "$transaction")
+  transaction.$queryRaw.mockResolvedValueOnce([await mockedDb.accountingPeriod.findFirst()])
+  mockedDb.$transaction.mockClear()
+
+  await expect(postGoodsReceiptStock({
+    ...receiptInput,
+    lines: [{ ...receiptInput.lines[0], quantity: 4 }],
+  }, transaction as unknown as Prisma.TransactionClient)).rejects.toThrow("idempotency key")
+  expect("$transaction" in transaction).toBe(false)
+  // The canonical anomaly writer retains conflict evidence in its own transaction.
+  expect(mockedDb.$transaction).toHaveBeenCalledTimes(1)
+
+  expect(JSON.stringify(batch)).toBe(before)
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  expect(mockedDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.businessEventAudit.create).toHaveBeenCalledWith(expect.objectContaining({
+    data: expect.objectContaining({ action: "IDEMPOTENCY_CONFLICT", organizationId: "org-1" }),
+  }))
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it.each(["POSTED", "REVERSED"])("rejects a novel receipt event against a %s batch before event or stock mutation", async (status) => {
+  const { batch } = await retainReceiptEvent(status)
+  const before = JSON.stringify(batch)
+  mockedDb.businessEvent.findUnique.mockResolvedValue(null)
+
+  await expect(postGoodsReceiptStock({ ...receiptInput, idempotencyKey: "receipt-novel-line" }))
+    .rejects.toThrow("finalized receipt or stock posting")
+
+  expect(JSON.stringify(batch)).toBe(before)
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it.each(["RECEIVED", "FAILED"])("does not label a retained %s stock event an applied replay", async (status) => {
+  await retainReceiptEvent("FAILED", status)
+
+  await expect(postGoodsReceiptStock(receiptInput)).rejects.toThrow("not applied")
+
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  expect(mockedDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it.each([
+  { organizationId: "other-org" },
+  { sourceId: "other-receipt" },
+  { postingPurpose: "SUPPLIER_INVOICE" },
+])("rejects a retained batch identity conflict %j without changing it", async (identity) => {
+  const { batch } = await retainReceiptEvent()
+  Object.assign(batch, identity)
+
+  await expect(postGoodsReceiptStock(receiptInput)).rejects.toThrow("different source")
+
+  expect(mockedDb.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
 it("posts a source-linked purchase return as a negative inventory movement tied to the AP batch", async () => {
   await postPurchaseReturnStock({
     organizationId: "org-1",
@@ -314,6 +454,69 @@ it("reverses a purchase return by restoring stock and referencing the exact orig
       reversalOfTransactionId: "movement-original-1",
     }),
   }))
+})
+
+function allocatedReturnInput(quantity: string, allocatedValue: string, direction: PurchaseCorrectionDirection = PurchaseCorrectionDirection.CORRECTION) {
+  return {
+    organizationId: "org-1", purchaseReturnId: "return-v2", returnNumber: "PR-V2", purchaseOrderId: "po-1", goodsReceiptId: "receipt-1",
+    direction, postedById: "actor-1", occurredAt: eventDate, idempotencyKey: "return-v2-request", documentHash: "sha256:allocated-return",
+    valuation: { version: 2 as const, recognition: { version: 2, returnId: "return-v2" } as never },
+    lines: [{ itemId: "item-1", locationId: "loc-1", quantity, unitCost: "0.01", sourceGoodsReceiptLineId: "receipt-line-1", allocatedValue, ...(direction === PurchaseCorrectionDirection.REVERSAL ? { sourceInventoryTransactionId: "original-movement" } : {}) }],
+  }
+}
+
+it("uses verified fractional allocated cost for both movements and projection, consuming the final cent", async () => {
+  let level = inventoryLevel({ quantityOnHand: decimal(1), quantityAvailable: decimal(1), averageCost: decimal("0.01"), totalValue: decimal("0.01") })
+  mockedDb.inventoryLevel.findUnique.mockImplementation(async () => level)
+  mockedDb.inventoryLevel.updateMany.mockImplementation(async ({ data }) => { level = { ...level, ...data, version: level.version + 1 }; return { count: 1 } })
+  const draws = [["0.300", "0.00"], ["0.300", "0.00"], ["0.400", "0.01"]]
+  for (const [index, [quantity, value]] of draws.entries()) {
+    ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockResolvedValueOnce(new Map([["receipt-line-1", value]]))
+    const result = await postPurchaseReturnStock({ ...allocatedReturnInput(quantity, value), idempotencyKey: `fractional-${index}` })
+    expect(result.totalCost).toEqual(decimal(value))
+  }
+  expect(level.quantityOnHand).toEqual(decimal(0))
+  expect(level.totalValue).toEqual(decimal(0))
+  expect(mockedDb.inventoryTransaction.create.mock.calls.map(([args]) => args.data.totalCost.toFixed(2))).toEqual(["0.00", "0.00", "0.01"])
+  expect(mockedDb.businessEvent.create.mock.calls[2][0].data.payload).toMatchObject({ valuationMethod: "RECEIPT_REMAINING_POOL_V2", lines: [expect.objectContaining({ receiptValuation: { version: 2, sourceGoodsReceiptLineId: "receipt-line-1", allocatedValue: "0.01", recognitionHash: expect.stringMatching(/^[a-f0-9]{64}$/) } })] })
+})
+
+it("preserves an explicitly allocated zero even when nominal quantity times unit cost rounds positive", async () => {
+  mockedDb.inventoryLevel.findUnique.mockResolvedValue(inventoryLevel({ quantityOnHand: decimal("0.600"), quantityAvailable: decimal("0.600"), totalValue: decimal(0) }))
+  ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockResolvedValue(new Map([["receipt-line-1", "0.00"]]))
+  await postPurchaseReturnStock(allocatedReturnInput("0.600", "0.00"))
+  expect(mockedDb.inventoryTransaction.create.mock.calls[0][0].data.totalCost).toEqual(decimal(0))
+  expect(mockedDb.inventoryLevel.updateMany.mock.calls[0][0].data.totalValue).toEqual(decimal(0))
+})
+
+it("restores the exact allocated cent when reversing a fractional return", async () => {
+  mockedDb.inventoryLevel.findUnique.mockResolvedValue(inventoryLevel({ quantityOnHand: decimal(0), quantityAvailable: decimal(0), totalValue: decimal(0) }))
+  ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockResolvedValue(new Map([["receipt-line-1", "0.01"]]))
+  await postPurchaseReturnStock(allocatedReturnInput("0.200", "0.01", PurchaseCorrectionDirection.REVERSAL))
+  expect(mockedDb.inventoryTransaction.create.mock.calls[0][0].data).toMatchObject({ quantity: decimal("0.200"), totalCost: decimal("0.01"), reversalOfTransactionId: "original-movement" })
+  expect(mockedDb.inventoryLevel.updateMany.mock.calls[0][0].data.totalValue).toEqual(decimal("0.01"))
+})
+
+it.each([["0.01", "0.00"], ["0.00", "0.01"]])("rejects projection value %s versus final source allocation %s instead of silently clamping", async (currentValue, allocatedValue) => {
+  mockedDb.inventoryLevel.findUnique.mockResolvedValue(inventoryLevel({ quantityOnHand: decimal("0.400"), quantityAvailable: decimal("0.400"), totalValue: decimal(currentValue) }))
+  ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockResolvedValue(new Map([["receipt-line-1", allocatedValue]]))
+  await expect(postPurchaseReturnStock(allocatedReturnInput("0.400", allocatedValue))).rejects.toMatchObject({ code: "REVIEW_REQUIRED" })
+  expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it("rejects unsupported explicit valuation before any stock transaction", () => {
+  const input = allocatedReturnInput("0.300", "0.00")
+  expect(() => postPurchaseReturnStock({ ...input, valuation: undefined })).toThrow("requires its retained source allocation")
+  expect(mockedDb.$transaction).not.toHaveBeenCalled()
+})
+
+it("propagates allocation verification database failures without writing stock", async () => {
+  const failure = new Error("source query unavailable")
+  ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockRejectedValueOnce(failure)
+  await expect(postPurchaseReturnStock(allocatedReturnInput("0.300", "0.00"))).rejects.toBe(failure)
+  expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
 })
 
 it("posts POS sale stock issue with stable POS event identity and no silent ledger blocker", async () => {
@@ -503,4 +706,22 @@ it("blocks generic manual correction helpers without an explicit idempotency key
   ).toThrow("explicit idempotency key")
 
   expect(mockedDb.$transaction).not.toHaveBeenCalled()
+})
+
+it("defers Close invalidation for a prepared same-transaction reversal without exposing control in the event payload", async () => {
+  const tx = { ...mockedDb } as Partial<typeof mockedDb>; delete tx.$transaction
+  mockedDb.$queryRaw.mockResolvedValue([{ id: "period-1", organizationId: "org-1", status: "OPEN", startDate: new Date("2026-06-01"), endDate: new Date("2026-07-01") }])
+  ;(validateReceiptReturnStockAllocationInTx as jest.Mock).mockResolvedValue(new Map([["receipt-line-1", "0.01"]]))
+  await postPurchaseReturnStock(allocatedReturnInput("0.200", "0.01", PurchaseCorrectionDirection.REVERSAL), tx as unknown as Prisma.TransactionClient,
+    { transaction: tx as unknown as Prisma.TransactionClient, organizationId: "org-1", affectedPeriodIds: ["period-1", "later-period"], deferCloseInvalidation: true })
+  expect(mockedDb.inventoryTransaction.create).toHaveBeenCalled()
+  expect(mockedDb.closeRun.findMany).not.toHaveBeenCalled()
+  const payload = mockedDb.businessEvent.create.mock.calls[0][0].data.payload
+  expect(payload).not.toHaveProperty("closeInvalidationControl"); expect(payload).not.toHaveProperty("affectedPeriodIds")
+})
+it("refuses a prepared stock context from a different transaction before writes", () => {
+  const tx = {} as Prisma.TransactionClient
+  expect(() => postPurchaseReturnStock(allocatedReturnInput("0.200", "0.01", PurchaseCorrectionDirection.REVERSAL), tx,
+    { transaction: {} as Prisma.TransactionClient, organizationId: "org-1", affectedPeriodIds: ["period-1"], deferCloseInvalidation: true })).toThrow("same transaction")
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
 })

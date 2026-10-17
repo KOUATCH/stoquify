@@ -259,7 +259,7 @@ export type PayrollRegisterRow = {
     employeeDeductionAmount: string
     employerChargeAmount: string
     netPayableAmount: string
-    paidAmount: string
+    allocatedAmount: string
     paymentDeltaAmount: string
     currency: string
   }
@@ -324,7 +324,7 @@ export type PayrollRegisterReadModel = {
     employeeDeductionAmount: string
     employerChargeAmount: string
     netPayableAmount: string
-    paidAmount: string
+    allocatedAmount: string
     declaredAmount: string
     currency: string
     registerHash: string
@@ -1705,7 +1705,7 @@ function registerHash(input: {
 }) {
   return `sha256:${hashBusinessPayload({
     kind: "AQSTOQFLOW_PAYROLL_REGISTER_TIE_OUT",
-    version: 8,
+    version: 9,
     payrollRunId: input.run.id,
     runNumber: input.run.runNumber,
     documentHash: input.run.documentHash,
@@ -1742,6 +1742,17 @@ function registerHash(input: {
       computedHash: proof.computedHash,
     })).sort((a, b) => a.runLineId.localeCompare(b.runLineId)),
     payslipDocumentHashes: input.run.lines.map((line) => line.payslip?.documentHash).filter(Boolean).sort(),
+    paymentAllocations: input.run.paymentBatches.map((batch) => ({
+      id: batch.id,
+      status: batch.status,
+      allocations: batch.allocations.map((allocation) => ({
+        id: allocation.id,
+        payslipId: allocation.payslipId,
+        employeeId: allocation.employeeId,
+        amount: decimal(allocation.amount).toFixed(2),
+        currency: allocation.currency,
+      })).sort((a, b) => a.id.localeCompare(b.id)),
+    })).sort((a, b) => a.id.localeCompare(b.id)),
     paymentEvidenceHashes: input.run.paymentBatches.map((batch) => batch.evidenceHash).filter(Boolean).sort(),
     declarationPayloadHashes: input.run.declarations.map((declaration) => declaration.payloadHash).filter(Boolean).sort(),
     sourceLinkIds: input.sourceLinks.map((link) => link.id).sort(),
@@ -1872,6 +1883,11 @@ async function loadCloseTieOut(client: PayrollRegisterClient, run: PayrollRegist
   }
 }
 
+// Allocation is a reservation/disbursement instruction, never proof of settlement.
+function hasCurrentAllocations(batch: { status: PayrollPaymentBatchStatus }) {
+  return batch.status !== PayrollPaymentBatchStatus.CANCELLED && batch.status !== PayrollPaymentBatchStatus.FAILED
+}
+
 function buildRows(input: {
   run: PayrollRegisterRunRecord
   sourceLinksByKey: Map<string, AccountingSourceLinkRecord[]>
@@ -1883,15 +1899,16 @@ function buildRows(input: {
     const payslip = line.payslip
     const paymentAllocations = payslip?.paymentAllocations ?? []
     const paymentBatches = paymentAllocations.map((allocation) => allocation.payrollPaymentBatch)
-    const paidAmount = sumDecimals(paymentAllocations.map((allocation) => allocation.amount))
-    const paymentDelta = paidAmount.minus(decimal(line.netPayableAmount)).abs()
+    const currentAllocations = paymentAllocations.filter((allocation) => hasCurrentAllocations(allocation.payrollPaymentBatch))
+    const allocatedAmount = sumDecimals(currentAllocations.map((allocation) => allocation.amount))
+    const paymentDelta = allocatedAmount.minus(decimal(line.netPayableAmount)).abs()
     const payslipMatchesLine = payslip
       ? decimal(payslip.grossAmount).equals(decimal(line.grossAmount)) &&
         decimal(payslip.employeeDeductionAmount).equals(decimal(line.employeeDeductionAmount)) &&
         decimal(payslip.employerChargeAmount).equals(decimal(line.employerChargeAmount)) &&
         decimal(payslip.netPayableAmount).equals(decimal(line.netPayableAmount))
       : false
-    const paymentStatus = paymentAllocations.length === 0
+    const paymentStatus = currentAllocations.length === 0
       ? (decimal(line.netPayableAmount).isZero() ? "MATCHED" : "MISSING")
       : (paymentDelta.isZero() ? "MATCHED" : "MISMATCH")
     const runLinks = sourceLinksFor(input.sourceLinksByKey, AccountingSourceType.PAYROLL_RUN, input.run.id)
@@ -1922,7 +1939,7 @@ function buildRows(input: {
         employeeDeductionAmount: amount(input.amountDecision, line.employeeDeductionAmount),
         employerChargeAmount: amount(input.amountDecision, line.employerChargeAmount),
         netPayableAmount: amount(input.amountDecision, line.netPayableAmount),
-        paidAmount: amount(input.amountDecision, paidAmount),
+        allocatedAmount: amount(input.amountDecision, allocatedAmount),
         paymentDeltaAmount: amount(input.amountDecision, paymentDelta),
         currency: line.currency,
       },
@@ -2247,7 +2264,7 @@ async function buildReadModel(
     employer: sumDecimals(run.lines.map((line) => line.payslip?.employerChargeAmount)),
     net: sumDecimals(run.lines.map((line) => line.payslip?.netPayableAmount)),
   }
-  const paidAmount = sumDecimals(run.paymentBatches.flatMap((batch) => batch.allocations.map((allocation) => allocation.amount)))
+  const allocatedAmount = sumDecimals(run.paymentBatches.filter(hasCurrentAllocations).flatMap((batch) => batch.allocations.map((allocation) => allocation.amount)))
   const declaredAmount = sumDecimals(run.declarations.map((declaration) => declaration.amount))
   const hash = registerHash({
     run,
@@ -2321,7 +2338,7 @@ async function buildReadModel(
       employeeDeductionAmount: amount(amountDecision, run.employeeDeductionAmount),
       employerChargeAmount: amount(amountDecision, run.employerChargeAmount),
       netPayableAmount: amount(amountDecision, run.netPayableAmount),
-      paidAmount: amount(amountDecision, paidAmount),
+      allocatedAmount: amount(amountDecision, allocatedAmount),
       declaredAmount: amount(amountDecision, declaredAmount),
       currency: run.currency,
       registerHash: hash,
@@ -2351,7 +2368,7 @@ async function buildReadModel(
       },
       payments: amountCheck({
         expected: run.netPayableAmount,
-        actual: paidAmount,
+        actual: allocatedAmount,
         currency: run.currency,
         decision: amountDecision,
         source: "payroll_payment_batches/payroll_payment_allocations",
@@ -2490,7 +2507,7 @@ async function prepareExportInTx(
 
   const payload = {
     kind: "AQSTOQFLOW_PAYROLL_REGISTER_TIE_OUT_EXPORT",
-    version: 1,
+    version: 2,
     export: {
       generatedAt: now.toISOString(),
       generatedById: parsed.actorId,

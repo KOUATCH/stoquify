@@ -1,0 +1,116 @@
+{
+  "at": "2026-09-27T17:52:21.423Z",
+  "workflow": "PR-19",
+  "preservesClosedWorkflow": "PR-10",
+  "closure": {
+    "file": "evidence/signoff-closure-2026-09-27.json",
+    "sha256": "5fd10960708a31aceece8b5a9ebc504f4ad4c93c7255ef65bff19caad6802ac0"
+  },
+  "sources": [
+    {
+      "file": "services/reconciliation/reconciliation-run-preparation.service.ts",
+      "before": "ac95e6fa4d55ed25bed8bf2f5efc4fbc03695fd335b7677d29d4a10d09ecd61c",
+      "after": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8"
+    },
+    {
+      "file": "components/finance/ReconciliationPreparationWorkbench.tsx",
+      "before": "507ee463435a8a5b12d80c1c2fda147f26cd3943182a63c7bb848d1a9a0d877e",
+      "after": "e6824d861835ed34cc2335ffa2bc054ed0d5ec38b95eb978a7703a4758beb5f7"
+    }
+  ],
+  "translations": [
+    {
+      "file": "messages/en.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "352a0b8fd9c0bc771d35fff872f1b9d412c77fd4af30a625065f06006b4d91fe",
+      "dictionaryExceptIndependentCatalogueSha256": "4ebd0dbf82bfab8789035f8c1b5c04177a9fc1f646b41f6fd6ed6f13428fcbee",
+      "after": "65d424ea8d9f610c5a3a7afdba32030376881a56a62dd2ca8ebf101cb7bd9066",
+      "addition": {
+        "key": "runPreparation.blockers.MODULE_WRITE_REQUIRED",
+        "value": "Reconciliation is read-only or its required capabilities are unavailable. Ask your workspace administrator to review access, then refresh this review before retrying preparation."
+      }
+    },
+    {
+      "file": "messages/fr.json",
+      "namespace": "paymentReconciliationWorkbench",
+      "sha256": "4eae7cb27d21c66aea83ae9d33e3c89f7b65f7179dcca5edaf1d7c311197b25a",
+      "dictionaryExceptIndependentCatalogueSha256": "ad5bcdb422ddd53d6837789cdec5116665cd0964bdb1a3049a9e5a0792a800a9",
+      "after": "21940a8c660a5d5a6830a6fcca1f8f296d8b890e3a07a611edc2d4d9ce953ac6",
+      "addition": {
+        "key": "runPreparation.blockers.MODULE_WRITE_REQUIRED",
+        "value": "Le rapprochement est en lecture seule ou ses fonctionnalités requises sont indisponibles. Demandez à votre administrateur de vérifier les accès, puis actualisez cet examen avant de réessayer la préparation."
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "file": "evidence/preparation-module-checks-489b6628-2364-42a6-808d-aa6f7daa96aa.json",
+      "sha256": "129481aaffbe30fd867d188c9bc9f56adb6cc4f8cafb476ab0e2c46b3230eb4c"
+    },
+    {
+      "file": "lanes/environment/preparation-module-boundary-c205af1f-641e-48c3-bbcb-f6d37b2c5be8.json",
+      "sha256": "f7ccae2fec064f3b286b9ea030fabb097278aa634c8866b977dbbc68d8df5879"
+    },
+    {
+      "file": "lanes/environment/preparation-module-ordering-8fb31772-bcba-4f54-ab70-0ed6e565b96e.json",
+      "sha256": "7278d06f95ddc4d1887b9a7fda0a95c3c20769d5aed4b282bc69ac28be4a4626"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1.json",
+      "sha256": "20dda90c88e038e6f28f10a16cb4e536215f69c74294af2416f3f1efb304673e"
+    },
+    {
+      "file": "lanes/environment/signed-source-boundaries-21987f3a-d9e3-482f-9c3a-7d7bceb2cd9b.json",
+      "sha256": "ab3e890db3038c3c653ce32fc593efa73904a6b09819e1ea2ed15ca71ba43ca8"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-320.png",
+      "sha256": "b22ea62487275a675bb6967964d51b34bf1085d5f44ed2b7fbad5a93b4502124"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-768.png",
+      "sha256": "c61319bf68642e6d9ed1e68d571b0acd32aa985df3e872426dafbb7f1370114e"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-1440.png",
+      "sha256": "1710b832809e82c0c6fb01b6acad900d0714e271d61a2cbda973b3ae9ea2fb5a"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-read-only-text-enlargement.png",
+      "sha256": "d94fb3e7151f48d2dbe4d59a7a8f5fdb95ee241d3fbb7f12800491761cba7c82"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-en-recovered-history-320.png",
+      "sha256": "22622bf5c5f852477a4dfca0b46bef9f7963f48b21ee866543e6971524cfa300"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-320.png",
+      "sha256": "1c3f497304e60b1d13e1cab62d93b2f2c01d3a064eef4be4d532fd79def02bf1"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-768.png",
+      "sha256": "1aa47b6e2a367217d96a307b1ee10cda9ef55e19463c5c2af7aff089926716a5"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-1440.png",
+      "sha256": "07f355d0ec55be87f7e386926f62af3058c3d2f4182ce38bd5ff6e46f0244325"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-read-only-text-enlargement.png",
+      "sha256": "01eec6a593773005842f3b95e8f1bb7f0b180ad78b31a416b428dd09cf61c213"
+    },
+    {
+      "file": "lanes/environment/preparation-module-browser-97a38ad3-6488-4ae4-aa2c-d9a58cc3a1c1-fr-recovered-history-320.png",
+      "sha256": "87def181eba0cbe53fc0728ac18a6430b61b20e0b14cac4a0ea1425fc7a778ed"
+    }
+  ],
+  "review": "Adds transaction-bound module admission before preparation reads, writes and retained replay; no changes to source validation, financial amounts, certificate construction, independent signing or exports. Refreshed callback/statement preparation-to-sign/export lifecycle, focused signing regression and EN/FR preparation recovery cover the changed dependency. All other signing closure sources and namespace values remain byte/hash-bound.",
+  "limits": [
+    "PR-19 remains in progress: reviewer conflicts, history volume and legacy evidence review remain.",
+    "Browser axe found no violations in the new preview region but could not resolve contrast for its two paragraphs because of dashboard pseudo-elements; contrast remains pending.",
+    "PR-10 original native assistive-technology, production and notification-operation limits remain unchanged."
+  ],
+  "passed": true
+}

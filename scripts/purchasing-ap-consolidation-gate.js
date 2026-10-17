@@ -49,6 +49,7 @@ function section(source, startMarker, endMarker) {
 
 function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
   const purchaseOrder = read(root, "services/purchase-order/purchase-order.service.ts")
+  const purchaseApproval = read(root, "services/purchase-order/purchase-order-approval.ts")
   const inventoryStockEvent = read(root, "services/inventory/inventory-stock-event.service.ts")
   const purchaseReceivingPostgresTests = read(
     root,
@@ -56,6 +57,9 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
   )
   const apControl = read(root, "services/purchasing/ap-control.service.ts")
   const apActions = read(root, "actions/purchasing/ap-control.actions.ts")
+  const invoiceApprovalActions = read(root, "actions/purchasing/invoice-approval.actions.ts")
+  const invoiceApprovalService = read(root, "services/purchasing/invoice-approval.service.ts")
+  const invoicePostingAuthority = read(root, "services/purchasing/invoice-ledger-recovery-authority.ts")
   const apActionTests = read(root, "actions/purchasing/__tests__/ap-control.actions.test.ts")
   const apServiceTests = read(root, "services/purchasing/__tests__/ap-control.service.test.ts")
   const hardDeleteGate = read(root, "scripts/hard-delete-gate.js")
@@ -87,14 +91,25 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
     "async function queueOutboundSupplierPaymentReconciliation",
   )
   const invoiceApprovalActionSection = section(apActions, "const approveAndPostInvoice", "const requestBankChange")
+  const purchaseApprovalSection = section(purchaseOrder, "export async function approvePurchaseOrder", "export async function cancelPurchaseOrder")
+  const makerCheckerSection = section(purchaseApproval, "export function assertPurchaseApprovalOrder", "export async function purchaseApprovalAuthority")
+  const confirmInvoiceSection = section(invoiceApprovalService, "export async function confirmInvoiceApproval", "export async function loadInvoiceApprovalSources")
+  // Both receiving entry points must preserve a caller transaction, or own one.
+  const receiptTransaction = "client ? work(client) : db.$transaction(work, { timeout: 15000 })"
 
   const checks = [
     {
       id: "purchase_order_maker_checker",
       ready:
-        purchaseOrder.includes("po.createdById === approvedById") &&
-        purchaseOrder.includes("must be approved by a different user") &&
-        purchaseOrder.includes('action: "APPROVE_PURCHASE_ORDER"'),
+        /import\s*\{[^}]*\bassertPurchaseApprovalOrder\b[^}]*\}\s*from\s*["']\.\/purchase-order-approval["']/.test(purchaseOrder) &&
+        makerCheckerSection.includes('if (!order.createdById || order.createdById === actorId) throw new BusinessRuleError(') &&
+        makerCheckerSection.includes('"SOD_VIOLATION"') &&
+        markersInOrder(purchaseApprovalSection, [
+          "db.$transaction(async (tx)",
+          "assertPurchaseApprovalOrder(po, approvedById)",
+          "tx.purchaseOrder.update(",
+          'action: "APPROVE_PURCHASE_ORDER"',
+        ]),
     },
     {
       id: "goods_receipt_atomic_stock_posting",
@@ -105,7 +120,8 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
           "tx,",
         ]) &&
         markersInOrder(receiptSection, [
-          "db.$transaction(async (tx)",
+          receiptTransaction,
+          "await transaction(async (tx)",
           "FOR UPDATE",
           "idempotencyKey: input.idempotencyKey",
           "tx.goodsReceipt.create(",
@@ -115,7 +131,8 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
         ]) &&
         receiptSection.includes('"organizationId" = ${input.organizationId}') &&
         markersInOrder(inspectionResolutionSection, [
-          "db.$transaction(async (tx)",
+          receiptTransaction,
+          "await transaction(async (tx)",
           'FROM "goods_receipts"',
           '"organizationId" = ${input.organizationId}',
           "FOR UPDATE",
@@ -156,7 +173,30 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
         apActions.includes("prepareSupplierInvoiceAction") &&
         apActions.includes("postSupplierInvoiceAction") &&
         invoiceApprovalActionSection.includes("freshAuth: true") &&
-        invoiceApprovalActionSection.includes("approveSupplierInvoice(parsed)") &&
+        // The legacy action intentionally cannot bypass reviewed-revision approval.
+        !/\bapproveSupplierInvoice\s*\(/.test(invoiceApprovalActionSection) &&
+        invoiceApprovalActionSection.includes('return { success: false as const, data: null, error: "Review the current invoice before submitting its approval.", code: "REVIEW_REQUIRED" as const, status: 422 as const }') &&
+        invoiceApprovalActions.includes('requirePermission("purchasing.ap.invoice.post"') &&
+        invoiceApprovalActions.includes("const { claims } = await requireSession()") &&
+        invoiceApprovalActions.includes("if (claims.userId !== actor.userId || claims.tenantId !== actor.orgId) throw new ForbiddenError(") &&
+        invoiceApprovalActions.includes("return { organizationId: actor.orgId, actorId: actor.userId, sessionId: claims.sessionId, sessionToken: claims.sessionToken }") &&
+        invoiceApprovalActions.includes("await confirmInvoiceApproval(command, await scope())") &&
+        invoicePostingAuthority.includes('!hasRbacPermission(permissions, "purchasing.ap.invoice.post")') &&
+        invoicePostingAuthority.includes("id: scope.sessionId, token: scope.sessionToken, userId: scope.actorId, expiresAt: { gt: now }") &&
+        invoicePostingAuthority.includes('if (!session) throw new ForbiddenError(') &&
+        invoicePostingAuthority.includes('session.assuranceOrganizationId === scope.organizationId && session.assuranceMethod === "password"') &&
+        invoicePostingAuthority.includes("session.assuranceLevel >= 1 && session.assuranceVerifiedAt != null && session.assuranceVerifiedAt <= now") &&
+        invoicePostingAuthority.includes("now.getTime() - session.assuranceVerifiedAt.getTime() <= 300000") &&
+        invoicePostingAuthority.includes('if (operation === "submit" && !fresh) throw new BusinessRuleError(') &&
+        invoicePostingAuthority.includes('"FRESH_AUTH_REQUIRED"') &&
+        invoiceApprovalService.includes("db.$transaction(work, { timeout: 20000, isolationLevel: Prisma.TransactionIsolationLevel.Serializable })") &&
+        markersInOrder(confirmInvoiceSection, [
+          "return transaction(async tx => {",
+          'await invoicePostingAuthority(tx, scope, "submit", "approval")',
+          "if (p.preview.revision !== command.expectedRevision) throw new ConflictError(",
+          "if (p.preview.blockers.length) throw new BusinessRuleError(",
+          "await approveSupplierInvoice({ organizationId: scope.organizationId, supplierInvoiceId: command.invoiceId, approvedById: scope.actorId }, tx)",
+        ]) &&
         apControl.includes("export async function approveSupplierInvoice") &&
         apControl.includes("Supplier invoice posting requires an independent approver.") &&
         apControl.includes("tx.supplierInvoice.updateMany(") &&

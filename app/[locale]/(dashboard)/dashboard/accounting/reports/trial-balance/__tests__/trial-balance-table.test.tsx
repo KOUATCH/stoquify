@@ -9,6 +9,19 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { TrialBalanceTable } from "../trial-balance-table"
 
 describe("TrialBalanceTable canonical surface", () => {
+  it("exposes the current sort direction and moves it to the newly sorted column", () => {
+    const { container } = render(<TrialBalanceTable rows={[]} totals={{ activityDebit: "0", activityCredit: "0", debitBalance: "0", creditBalance: "0" }} />)
+    const code = screen.getByRole("button", { name: "Sort by Account code", exact: true })
+    expect(code.closest("th")).toHaveAttribute("aria-sort", "ascending")
+    fireEvent.click(code)
+    expect(code.closest("th")).toHaveAttribute("aria-sort", "descending")
+    const debit = screen.getByRole("button", { name: "Sort by Activity debit", exact: true })
+    fireEvent.click(debit)
+    expect(debit.closest("th")).toHaveAttribute("aria-sort", "ascending")
+    expect(code.closest("th")).not.toHaveAttribute("aria-sort")
+    expect(container.querySelectorAll("th[aria-sort]")).toHaveLength(1)
+  })
+
   it("keeps ledger totals unchanged when searching accounts from another page", () => {
     const { container } = render(<TrialBalanceTable
       rows={Array.from({ length: 12 }, (_, index) => ({
@@ -53,6 +66,15 @@ describe("TrialBalanceTable canonical surface", () => {
     expect(container.querySelector('[data-column-id="code"][data-frozen="start"]')).toBeInTheDocument()
     expect(container.querySelector('[data-column-id="name"][data-frozen="start"]')).toBeInTheDocument()
     expect(screen.getByRole("group", { name: "Densite du tableau" })).toBeInTheDocument()
-    expect(screen.getByText("Grand livre poste")).toBeInTheDocument()
+    expect(screen.getByText("Grand livre comptabilisé")).toBeInTheDocument()
+    expect(screen.getByRole("cell", { name: "Passif", exact: true })).toBeInTheDocument()
+    expect(screen.getByRole("cell", { name: "Crédit", exact: true })).toBeInTheDocument()
+    expect(screen.getByRole("option", { name: "Passif", exact: true })).toHaveValue("LIABILITY")
+    const originalTotals = container.querySelector("tfoot")!.textContent
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Passif" } })
+    expect(screen.getByText("Supplier control")).toBeVisible()
+    fireEvent.change(screen.getByRole("combobox", { name: "Type de compte" }), { target: { value: "LIABILITY" } })
+    expect(screen.getByText("Supplier control")).toBeVisible()
+    expect(container.querySelector("tfoot")!.textContent).toBe(originalTotals)
   })
 })

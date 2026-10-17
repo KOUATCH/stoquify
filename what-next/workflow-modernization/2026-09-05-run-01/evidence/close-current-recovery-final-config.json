@@ -1,0 +1,120 @@
+{
+  "receipts": [
+    {
+      "file": "evidence/close-current-recovery-jest-5fb91428-ebcb-4895-9eed-28123b767203.json",
+      "scope": "Initial 346 tests in 11 suites; unchanged selection/obligation regressions retained. Inventory/provenance and UI revisions are verified by later scoped receipts.",
+      "allowedSuperseded": [
+        "services/inventory/inventory-count.service.ts",
+        "services/inventory/__tests__/inventory-count.service.test.ts",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/inventory/inventory-close-invalidation.service.ts",
+        "components/accounting/CloseAssuranceCenter.tsx",
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-close-current-recovery.cjs"
+      ]
+    },
+    {
+      "file": "evidence/close-current-recovery-inventory-a9b920c0-4437-49d9-9c4c-fa0cb450abee.json",
+      "scope": "Final count/provenance and pack regression:63 tests/2 suites.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "evidence/close-current-recovery-ui-056d49c0-522d-4052-84ae-1b4387086ec7.json",
+      "scope": "50 focused UI/hook tests; later count/provenance and verification-script changes do not alter these mocked UI boundaries.",
+      "allowedSuperseded": [
+        "services/inventory/inventory-count.service.ts",
+        "services/inventory/__tests__/inventory-count.service.test.ts",
+        "services/inventory/inventory-close-invalidation.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-close-current-recovery.cjs"
+      ]
+    },
+    {
+      "file": "lanes/environment/close-current-recovery-runtime-27404d7a-9baa-47f0-82f2-b68da4f38bd5.json",
+      "scope": "Final four actual local database checks, with explicit persisted count provenance and coherent-read race; synthetic setup and limitations retained.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "lanes/environment/close-current-recovery-browser-ready-02970b1f-13d1-4c06-a4e0-209c67c8aeab.json",
+      "scope": "Actual EN1440/FR320 Cash to Close, count invalidation, reassessment, manual fresh identity and certified download, current Cash proof and retained historical proof. Enabled-before-focus readiness wait; all original acceptance assertions retained.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "evidence/close-current-recovery-lint-8afa3178-6c1d-4cfa-823b-cb1d5a448c39.json",
+      "scope": "Final lint check on current files; pass is scoped to command, not platform release approval.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "evidence/close-current-recovery-typecheck-6aa33b47-f35d-4d19-add8-15fae7e7d80f.json",
+      "scope": "Final typecheck check on current files; pass is scoped to command, not platform release approval.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "evidence/close-current-recovery-boundary-e488670b-697f-4607-a902-69c18ebe8535.json",
+      "scope": "Final boundary check on current files; pass is scoped to command, not platform release approval.",
+      "allowedSuperseded": []
+    },
+    {
+      "file": "evidence/close-current-recovery-ledger-6cdcf01c-de7c-465f-94b7-cecd106458f6.json",
+      "scope": "Final ledger check on current files; pass is scoped to command, not platform release approval.",
+      "allowedSuperseded": []
+    }
+  ],
+  "artifacts": [
+    "CLOSE_CURRENT_ASSESSMENT_2026-10-01.md",
+    "lanes/environment/close-auth-focus-probe-6808b92f-2e90-404d-90b8-6ecc68310ad5.json",
+    "lanes/environment/close-auth-focus-probe-dad1a9af-5b25-44c3-b0af-3d30e7a46656.json",
+    "lanes/environment/close-auth-focus-diagnostic-7b814908-640b-4b7b-b97b-916826e75d5f.json",
+    "lanes/environment/close-current-recovery-browser-5939b27e-0910-4f7f-8ae7-477229bcaa2c.json",
+    "lanes/environment/close-current-recovery-browser-3e5d9d40-e364-4cc2-ab76-1708d16d21ef.json",
+    "lanes/environment/close-current-recovery-browser-focus-0c084731-e9cd-4e12-8743-ca54c2b79b3d.json",
+    "evidence/close-current-recovery-boundary-e488670b-697f-4607-a902-69c18ebe8535-gate.json",
+    "evidence/close-current-recovery-boundary-e488670b-697f-4607-a902-69c18ebe8535-gate.md",
+    "evidence/close-current-recovery-ledger-6cdcf01c-de7c-465f-94b7-cecd106458f6-gate.json",
+    "evidence/close-current-recovery-ledger-6cdcf01c-de7c-465f-94b7-cecd106458f6-gate.md",
+    "evidence/finalize-close-current-recovery.cjs",
+    "evidence/close-current-recovery-final-config.json"
+  ],
+  "independentReviews": [
+    {
+      "reviewer": "cash_assessment_policy",
+      "scope": "Current-assessment policy, retained historical finding/evidence obligations, selection tie and certification limits; source-only review, no professional approval."
+    },
+    {
+      "reviewer": "cash_assessment_policy",
+      "scope": "New physical-count registry mapping, shared helper defaults, transaction order, consistent run/export/event/audit/outbox provenance; no issues found in bounded source review."
+    },
+    {
+      "reviewer": "cash_assessment_policy",
+      "scope": "Historical evidence binding review: newly stale denial recovery; prior related-source/request-profile/inventory-freshness evidence semantically affected. Other broad hash-map mismatches are not behavioral regressions."
+    },
+    {
+      "reviewer": "receipt_remaining_boundary",
+      "scope": "Next assessment-creation/current-certification protocol: shared tenant-period transaction lock before creation and certification; assign insertion timestamp after acquisition. Does not solve source discovery/new-run race."
+    }
+  ],
+  "limitations": [
+    "Neither FA-CASH-COMMAND nor FA-CLOSE-PACK meets its complete original workflow checklist.",
+    "Historical unavailable evidence is not resolved by finding acceptance alone; acceptance contains no replacement source ID/hash.",
+    "Aggregate equal-latest-time ambiguity blocks; selected-run certification still lacks a unique-current creation/certification protocol.",
+    "Remaining producers, actual future-period recovery, global ordering, source discovery/new-run races, interrupted delivery, full access/source lifecycle and production performance remain open.",
+    "Owned synthetic fixtures and system certification do not establish professional or statutory approval.",
+    "Native assistive technology, true zoom and full inherited localization/contrast/hydration remain unverified.",
+    "Actual EN screenshot retains generic already-certified export-disabled guidance; clarify retained-certificate/retrieval state in remaining destination lifecycle.",
+    "FR320 screenshot contains inherited English evidence titles and visible development issue badge; bounded journey pass is not full localization, hydration or accessibility acceptance."
+  ],
+  "verifiedCriteria": [
+    "Current-period Close assessment recovery changes Cash truth while original blocked history and unresolved historical obligations remain.",
+    "Newer RUNNING/DRAFT/BLOCKED/VOIDED or independently voided assessments do not fall back to earlier success; equal-latest timestamps block the aggregate.",
+    "Zero-variance count posting immediately invalidates cumulative dependent Close evidence within the posting transaction with correct StockCountSession provenance; retry does not repeat effects.",
+    "Actual reassessment and separate manual certified export recover current Cash while explicit old proof and retained hashes remain unchanged.",
+    "Snapshot/invalidation concurrency yields one coherent read and next-request stale truth; failed query rejects and retries.",
+    "Actual EN desktop and FR mobile recovery journeys: manual fresh identity, correct focus return and deliberate retry, canonical downloaded hash, current-proof handoff with keyboard return and retained adverse historical proof."
+  ],
+  "affectedHistoricalBindingFlags": [
+    "closeDenialRecoveryBindingCurrent",
+    "relatedSourceBindingCurrent",
+    "cashRequestProfileBindingCurrent",
+    "cashInventoryFreshnessBindingCurrent"
+  ]
+}

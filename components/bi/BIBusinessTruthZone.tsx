@@ -1,13 +1,12 @@
 import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
-import Link from "next/link"
-import { ArrowUpRight, EyeOff, LockKeyhole } from "lucide-react"
+import { EyeOff } from "lucide-react"
 
+import { BIActionButton } from "@/components/bi/BIActionButton"
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
 import { BIDrillThroughButton } from "@/components/bi/BIKpiCard"
 import { BIStateBadge } from "@/components/bi/BIStateBadge"
 import { BIStateSurface } from "@/components/bi/BIStateSurface"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   dashboardMutedTextClass,
   dashboardPanelClass,
@@ -30,6 +29,13 @@ export function BIBusinessTruthZone({
   currencyCode = "XAF",
   className,
 }: BIBusinessTruthZoneProps) {
+  const visibleActions = zone.actions.slice(0, 3)
+  const drill = zone.drillThrough
+  const repeatedRoute = drill?.type === "route" && visibleActions.some(action =>
+    action.label === drill.label && (drill.available
+      ? !action.disabled && action.href === drill.href
+      : action.disabled && action.disabledReason === drill.unavailableReason),
+  )
   return (
     <section className={cn(dashboardPanelClass, "p-4", className)}>
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -60,29 +66,10 @@ export function BIBusinessTruthZone({
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {zone.drillThrough ? <BIDrillThroughButton drillThrough={zone.drillThrough} locale={locale} /> : null}
-        {zone.actions.slice(0, 3).map((action) =>
-          action.disabled ? (
-            <Button
-              key={action.id}
-              size="sm"
-              variant="outline"
-              disabled
-              title={action.disabledReason ?? undefined}
-              className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
-            >
-              <LockKeyhole className="h-4 w-4" aria-hidden="true" />
-              {action.label}
-            </Button>
-          ) : (
-            <Button key={action.id} asChild size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-              <Link href={action.href}>
-                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                {action.label}
-              </Link>
-            </Button>
-          ),
-        )}
+        {drill && !repeatedRoute ? <BIDrillThroughButton drillThrough={drill} locale={locale} /> : null}
+        {visibleActions.map(action => (
+          <BIActionButton key={action.id} action={action} locale={locale} context={zone.title} />
+        ))}
       </div>
 
       {zone.blockers.length || zone.redactions.length ? (

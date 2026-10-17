@@ -1,0 +1,468 @@
+{
+  "generatedAt": "2026-09-27T11:43:09.569Z",
+  "datasetVersion": "2026-09-27-systematic-1500",
+  "referenceDate": "2026-09-27",
+  "minimumPerItem": "1500.000",
+  "overallStatus": "APPLIED_WITH_RECORDED_BLOCKERS",
+  "productionCertified": false,
+  "commit": "62a56036a5ac9b37236a20c9b148052199069479",
+  "target": {
+    "host": "localhost",
+    "database": "stoquify_replay_next_20260830"
+  },
+  "candidate": "stoquify_reseed_local_20260927_1500",
+  "smoke": "stoquify_reseed_smoke_local_20260927",
+  "applicationDatabaseSettingChanged": false,
+  "executionEntryPoint": "scripts/run-systematic-reseed.cjs --apply --source --stage <reference|scenarios|financial|inventory>",
+  "sourceStages": [
+    {
+      "stage": "reference",
+      "startedAt": "2026-09-27T11:26:55.684Z",
+      "finishedAt": "2026-09-27T11:27:22.280Z",
+      "artifact": "source-reference.json"
+    },
+    {
+      "stage": "scenarios",
+      "startedAt": "2026-09-27T11:27:24.194Z",
+      "finishedAt": "2026-09-27T11:27:30.346Z",
+      "artifact": "source-scenarios.json"
+    },
+    {
+      "stage": "financial",
+      "startedAt": "2026-09-27T11:27:31.846Z",
+      "finishedAt": "2026-09-27T11:27:34.044Z",
+      "artifact": "source-financial.json"
+    },
+    {
+      "stage": "inventory",
+      "startedAt": "2026-09-27T11:28:18.907Z",
+      "finishedAt": "2026-09-27T11:29:26.995Z",
+      "artifact": "source-inventory.json"
+    }
+  ],
+  "backupRestore": {
+    "generatedAt": "2026-09-27T10:52:22.247Z",
+    "source": {
+      "host": "localhost",
+      "database": "stoquify_replay_next_20260830"
+    },
+    "candidate": {
+      "host": "localhost",
+      "database": "stoquify_reseed_local_20260927_1500"
+    },
+    "dumpBytes": 1717303,
+    "dumpSha256": "f2bf57450379ab3423a774544b04386d8c876dd6bfbf8f6fd550b054d0f5c736",
+    "tableCountsMatch": true,
+    "preservedIdentityMatches": true,
+    "backupRetained": true,
+    "originalDatabaseRetained": true
+  },
+  "stock": {
+    "items": 41,
+    "below1500": 0,
+    "missingLevels": 0,
+    "minimum": 1500
+  },
+  "physicalTables": 216,
+  "sourceSnapshotRows": 23988,
+  "preservation": {
+    "passed": true,
+    "tables": [
+      {
+        "table": "organizations",
+        "beforeCount": 3,
+        "afterCount": 3,
+        "missing": [],
+        "changed": [],
+        "added": 0
+      },
+      {
+        "table": "users",
+        "beforeCount": 99,
+        "afterCount": 180,
+        "missing": [],
+        "changed": [],
+        "added": 81
+      },
+      {
+        "table": "roles",
+        "beforeCount": 95,
+        "afterCount": 174,
+        "missing": [],
+        "changed": [],
+        "added": 79
+      },
+      {
+        "table": "locations",
+        "beforeCount": 27,
+        "afterCount": 27,
+        "missing": [],
+        "changed": [],
+        "added": 0
+      },
+      {
+        "table": "customers",
+        "beforeCount": 26,
+        "afterCount": 26,
+        "missing": [],
+        "changed": [],
+        "added": 0
+      },
+      {
+        "table": "suppliers",
+        "beforeCount": 24,
+        "afterCount": 24,
+        "missing": [],
+        "changed": [],
+        "added": 0
+      },
+      {
+        "table": "items",
+        "beforeCount": 41,
+        "afterCount": 41,
+        "missing": [],
+        "changed": [],
+        "added": 0
+      },
+      {
+        "table": "payroll_employees",
+        "beforeCount": 118,
+        "afterCount": 144,
+        "missing": [],
+        "changed": [],
+        "added": 26
+      },
+      {
+        "table": "accounts",
+        "beforeCount": 30,
+        "afterCount": 111,
+        "missing": [],
+        "changed": [],
+        "added": 81
+      },
+      {
+        "table": "_UserRoles",
+        "beforeCount": 99,
+        "afterCount": 180,
+        "missing": [],
+        "changed": [],
+        "added": 81
+      }
+    ],
+    "artifact": "source-final-preservation-check.json"
+  },
+  "access": {
+    "rolesAdded": 79,
+    "personasAdded": 81,
+    "secretValuesPublished": false,
+    "credentialsArtifact": ".seed-artifacts/2026-09-27-systematic-1500/source-verified-credentials.json"
+  },
+  "integrityArtifact": "source-final-integrity.json",
+  "ledgerArtifact": "source-inventory-canonical-reconciliation.json",
+  "sourceChecks": [
+    {
+      "name": "prisma-validate",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 26347
+    },
+    {
+      "name": "prisma-status",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 26622
+    },
+    {
+      "name": "migration-history",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 2409
+    },
+    {
+      "name": "migration-catalog",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 1566
+    },
+    {
+      "name": "workflow-runtime",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 2482
+    },
+    {
+      "name": "seed-readonly",
+      "exitCode": 0,
+      "error": null,
+      "elapsedMs": 22543
+    }
+  ],
+  "browser": {
+    "generatedAt": "2026-09-27T11:39:37.338Z",
+    "target": "stoquify_replay_next_20260830",
+    "results": [
+      {
+        "organizationId": "rds_org_001",
+        "role": "inventory_adjustment_maker",
+        "status": "PASS",
+        "httpStatus": 200,
+        "route": "/en/dashboard/inventory/items",
+        "finalPath": "/en/dashboard/inventory/items",
+        "tenantVerified": true,
+        "inventoryTableVisible": true,
+        "renderedRows": [
+          "BriocheITEMH6QIB4V6HFCFA 300FCFA 4201500 in stockFCFA 450,000Sep 19, 2026Open menu",
+          "Spring water 1.5 LRDS001-SKU-001FCFA 350FCFA 5001500 in stockFCFA 525,000Aug 30, 2026Open menu",
+          "Orange juice 1 LRDS001-SKU-002FCFA 900FCFA 1,2501500 in stockFCFA 1,350,000Aug 30, 2026Open menu",
+          "Long-grain riceRDS001-SKU-003FCFA 650FCFA 8501500 in stockFCFA 975,000Aug 30, 2026Open menu",
+          "Wheat flourRDS001-SKU-004FCFA 550FCFA 7501532 in stockFCFA 842,600Aug 30, 2026Open menu",
+          "Sardines in tomato sauce 155 gRDS001-SKU-005FCFA 650FCFA 9001587 in stockFCFA 1,031,550Aug 30, 2026Open menu",
+          "Tomato paste 400 gRDS001-SKU-006FCFA 700FCFA 1,0001662 in stockFCFA 1,163,400Aug 30, 2026Open menu",
+          "Laundry detergent 1 kgRDS001-SKU-007FCFA 1,600FCFA 2,2001701 in stockFCFA 2,721,600Aug 30, 2026Open menu",
+          "Dishwashing liquid 750 mlRDS001-SKU-008FCFA 900FCFA 1,3001680 in stockFCFA 1,512,000Aug 30, 2026Open menu",
+          "Bath soap 100 gRDS001-SKU-009FCFA 350FCFA 5001696 in stockFCFA 644,775Aug 30, 2026Open menu"
+        ],
+        "pageErrors": [],
+        "screenshot": "source-browser-rds_org_001-inventory_adjustment_maker.png"
+      },
+      {
+        "organizationId": "rds_org_002",
+        "role": "inventory_adjustment_maker",
+        "status": "PASS",
+        "httpStatus": 200,
+        "route": "/fr/dashboard/inventory/items",
+        "finalPath": "/fr/dashboard/inventory/items",
+        "tenantVerified": true,
+        "inventoryTableVisible": true,
+        "renderedRows": [
+          "Spring water 1.5 LRDS002-SKU-001FCFA 350FCFA 5001500 in stockFCFA 525,000Aug 30, 2026Open menu",
+          "Orange juice 1 LRDS002-SKU-002FCFA 900FCFA 1,2501500 in stockFCFA 1,350,000Aug 30, 2026Open menu",
+          "Long-grain riceRDS002-SKU-003FCFA 650FCFA 8501500 in stockFCFA 975,000Aug 30, 2026Open menu",
+          "Wheat flourRDS002-SKU-004FCFA 550FCFA 7501500 in stockFCFA 825,000Aug 30, 2026Open menu",
+          "Sardines in tomato sauce 155 gRDS002-SKU-005FCFA 650FCFA 9001547 in stockFCFA 1,005,550Aug 30, 2026Open menu",
+          "Tomato paste 400 gRDS002-SKU-006FCFA 700FCFA 1,0001612 in stockFCFA 1,128,400Aug 30, 2026Open menu",
+          "Laundry detergent 1 kgRDS002-SKU-007FCFA 1,600FCFA 2,2001677 in stockFCFA 2,683,200Aug 30, 2026Open menu",
+          "Dishwashing liquid 750 mlRDS002-SKU-008FCFA 900FCFA 1,3001742 in stockFCFA 1,567,800Aug 30, 2026Open menu",
+          "Bath soap 100 gRDS002-SKU-009FCFA 350FCFA 5001687 in stockFCFA 641,625Aug 30, 2026Open menu",
+          "Toothpaste 125 mlRDS002-SKU-010FCFA 750FCFA 1,1001872 in stockFCFA 1,404,000Aug 30, 2026Open menu"
+        ],
+        "pageErrors": [],
+        "screenshot": "source-browser-rds_org_002-inventory_adjustment_maker.png"
+      },
+      {
+        "organizationId": "rds_org_001",
+        "role": "viewer",
+        "status": "PASS",
+        "httpStatus": 200,
+        "route": "/en/dashboard/settings/roles",
+        "finalPath": "/en/unauthorized",
+        "tenantVerified": true,
+        "inventoryTableVisible": false,
+        "readOnlyNegativeCheck": true,
+        "pageErrors": [],
+        "screenshot": "source-browser-rds_org_001-viewer.png"
+      }
+    ]
+  },
+  "isolatedPosSmoke": {
+    "startedAt": "2026-09-27T11:34:23.384Z",
+    "finishedAt": "2026-09-27T11:34:32.537Z",
+    "database": "stoquify_reseed_smoke_local_20260927",
+    "exitCode": 0,
+    "error": null,
+    "preservedExistingSessions": true,
+    "preservedExistingStationNames": true,
+    "previousSessionCount": 33,
+    "newSessionCount": 1,
+    "newStationCount": 1,
+    "log": "isolated-pos-smoke-rerun.log"
+  },
+  "rerun": {
+    "generatedAt": "2026-09-27T11:33:15.912Z",
+    "target": "stoquify_reseed_local_20260927_1500",
+    "stages": [
+      "scenarios",
+      "financial",
+      "inventory"
+    ],
+    "businessRowsStable": true,
+    "changes": [
+      {
+        "table": "audit_logs",
+        "before": 10166,
+        "after": 10168
+      }
+    ],
+    "stock": {
+      "items": 41,
+      "below1500": 0,
+      "missingLevels": 0,
+      "minimum": 1500
+    },
+    "referenceRerun": {
+      "addedRoles": 0,
+      "addedPersonas": 0
+    },
+    "note": "Audits record execution/authentication. No duplicate stock, journal, payment, membership, event, notification, or scenario rows."
+  },
+  "typecheck": {
+    "recordedAt": "2026-09-27T11:43:09.328Z",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "exitCode": 0,
+    "log": "typecheck-final.log",
+    "scope": "Final seed, verification, reconciliation, and inventory UI changes"
+  },
+  "businessInvariants": [
+    {
+      "id": "receipt_movement_source_tieout",
+      "status": "FAIL",
+      "findingCount": 24
+    },
+    {
+      "id": "posted_journal_balance",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "journal_line_sides",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "journal_currency_consistency",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "sales_header_arithmetic",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "sales_line_arithmetic",
+      "status": "FAIL",
+      "findingCount": 24
+    },
+    {
+      "id": "sales_header_line_tax",
+      "status": "FAIL",
+      "findingCount": 24
+    },
+    {
+      "id": "supplier_invoice_header_arithmetic",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "supplier_invoice_line_arithmetic",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "supplier_invoice_line_totals",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "payroll_run_arithmetic",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "payroll_run_line_arithmetic",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "payroll_run_line_totals",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "payslip_run_line_totals",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "payment_refund_bounds",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "signed_reconciliation_proof",
+      "status": "PASS",
+      "findingCount": 0
+    },
+    {
+      "id": "posted_stock_count_line_variance",
+      "status": "PASS",
+      "findingCount": 0
+    }
+  ],
+  "staticGates": [
+    {
+      "gate": "inventory-valuation-truth-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "ledger-close-truth-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "payment-cash-truth-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "purchasing-ap-consolidation-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "role-based-operating-cockpit-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "statutory-country-pack-development-gate",
+      "exitCode": 0,
+      "blockers": []
+    },
+    {
+      "gate": "statutory-country-pack-production-gate",
+      "exitCode": 1,
+      "blockers": [
+        "source_artifact_expert_approval"
+      ]
+    },
+    {
+      "gate": "workflow-assurance-release-gate",
+      "exitCode": 0,
+      "blockers": []
+    }
+  ],
+  "focusedTestEvidence": [
+    "inventory-focused-tests.json",
+    "inventory-ui-focused-tests.json",
+    "assurance/financial-repair-test-results.md",
+    "assurance/role-cockpit-gate-repair-results.md",
+    "assurance/purchasing-ap-gate-repair-results.md",
+    "reference-and-smoke-tests.json"
+  ],
+  "completeReadinessBlockedBy": [
+    "24 historical receipt-source discrepancies",
+    "24 protected sales fixtures with line arithmetic and header/line tax inconsistencies",
+    "48 legacy stock movements missing business-event evidence",
+    "192 legacy generic JSON payload fields",
+    "product tax classification and preserved role permission conflicts",
+    "real statutory source-artifact expert approval",
+    "remaining unexecuted lifecycle and accessibility/localization coverage"
+  ],
+  "handover": "HANDOVER.md",
+  "coverage": "assurance/schema-coverage.json",
+  "reviewers": "assurance/REVIEWER_MATRIX.md",
+  "runbook": "assurance/RESEED_RUNBOOK.md",
+  "unrelatedWorkingTreeChangesPreserved": true
+}

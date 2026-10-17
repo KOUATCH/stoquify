@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-30T11:34:21.144Z",
+  "syntheticReleaseFixtures": true,
+  "sourceBefore": {
+    "services/payroll/payment-reconciliation.service.ts": "2ce0068da2da464581a10266cb2cbb01ae024914d4204d84618f2b1c6c51bc23",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "a65f30afa2e63f24fb8de4bf2ffbc6352377b5a7855a3ad1df74172dc581744c",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "2485b53355222aad51a7181c77718480372fd89bbb83369b92d435630070ce70",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "7fe579d29e997a186371e2e26068e4b873df7d2fe3fd8e93cbc77d7dddc369c3"
+  },
+  "checks": [],
+  "stage": "en lost acknowledgement",
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n\n1 !== 2\n",
+  "failureScreenshot": "settlement-form-65f96f92-2291-4fe6-8f40-68b8df51fef6-failed.png",
+  "sourceAfter": {
+    "services/payroll/payment-reconciliation.service.ts": "2ce0068da2da464581a10266cb2cbb01ae024914d4204d84618f2b1c6c51bc23",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "a65f30afa2e63f24fb8de4bf2ffbc6352377b5a7855a3ad1df74172dc581744c",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/payroll-settlement-copy.ts": "2485b53355222aad51a7181c77718480372fd89bbb83369b92d435630070ce70",
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "7fe579d29e997a186371e2e26068e4b873df7d2fe3fd8e93cbc77d7dddc369c3"
+  },
+  "sourceStable": true
+}

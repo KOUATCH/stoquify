@@ -1,0 +1,7 @@
+lib\dashboard\snapshot-source-blocker-presentation.ts:97:    en: { title: "Payroll provider proof is missing", detail: "Upcoming payroll net-pay is withheld until an active payment provider evidence path is visible.", nextAction: "Open payment provider evidence and payroll payment batches before relying on payroll cash forecasts." },
+lib\dashboard\snapshot-source-blocker-presentation.ts:105:    en: { title: "Payroll ledger proof is missing", detail: "Payroll forecast amounts are withheld until payroll run and payment source links point to posted ledger batches.", nextAction: "Repair payroll posting and accounting source links before using the cash forecast." },
+lib\dashboard\snapshot-blocker-presentation.ts:37:      nextAction: blocker.nextAction === "Review payment batches and declarations by currency before relying on a combined cash forecast."
+services\snapshots\tenant-operating-snapshot.service.ts:1235:        nextAction: "Review payment batches and declarations by currency before relying on a combined cash forecast.",
+services\snapshots\tenant-operating-snapshot.service.ts:1244:          "Open payment provider evidence and payroll payment batches before relying on payroll cash forecasts.",
+services\snapshots\tenant-operating-snapshot.service.ts:1263:          "Repair payroll posting and accounting source links before using the cash forecast.",
+services\cash-command\cash-command.service.ts:847:      businessImpact: "Unsettled employee balances can leave payroll clearing, cash forecasts, and close readiness incomplete.",

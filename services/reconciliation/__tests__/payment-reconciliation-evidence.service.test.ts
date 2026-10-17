@@ -9,6 +9,12 @@ import {
   assertProviderAccountReconciliationReady,
   buildReconciliationEvidenceManifestInTx,
 } from "../payment-reconciliation-evidence.service"
+import { exceptionClosureManifestEvidenceInTx } from "../payment-exception-closure-evidence.service"
+
+jest.mock("../payment-exception-closure-evidence.service", () => ({
+  ...jest.requireActual("../payment-exception-closure-evidence.service"),
+  exceptionClosureManifestEvidenceInTx: jest.fn((...args) => jest.requireActual("../payment-exception-closure-evidence.service").exceptionClosureManifestEvidenceInTx(...args)),
+}))
 
 function readyProviderAccount() {
   return {
@@ -34,6 +40,46 @@ function txFixture() {
 }
 
 describe("payment reconciliation evidence service", () => {
+  const coverageInput = { organizationId: "org-1", providerAccountId: "provider-account-1", reconciliationRunId: "run-1",
+    periodStart: new Date("2026-06-14T00:00:00Z"), periodEnd: new Date("2026-06-15T00:00:00Z"), requireCompleteCoverage: true }
+
+  it.each(["paymentTransaction", "providerEvent", "statementLine"] as const)("refuses an unaccounted %s source at sign-off", async model => {
+    const tx = txFixture()
+    tx[model].findMany.mockResolvedValue([{ id: "new-source" }])
+    await expect(buildReconciliationEvidenceManifestInTx(tx as never, coverageInput)).rejects.toThrow(/not covered by this reconciliation run/i)
+  })
+
+  it.each(["CANDIDATE", "PROPOSED", "NEEDS_REVIEW", "REJECTED", "VOIDED"])("does not count a %s match as source disposition", async status => {
+    const tx = txFixture()
+    tx.providerEvent.findMany.mockResolvedValue([{ id: "event-1" }])
+    tx.matchRecord.findMany.mockResolvedValue([{ id: "match-1", status, providerEventId: "event-1" }])
+    await expect(buildReconciliationEvidenceManifestInTx(tx as never, coverageInput)).rejects.toThrow(/not covered/i)
+  })
+
+  it.each(["AUTO_MATCHED", "APPROVED", "CORRECTED"])("accepts a retained %s disposition without changing the evidence hash", async status => {
+    const tx = txFixture()
+    tx.providerEvent.findMany.mockResolvedValue([{ id: "event-1", amount: new Prisma.Decimal(10), receivedAt: new Date("2026-06-14T12:00:00Z") }])
+    tx.matchRecord.findMany.mockResolvedValue([{ id: "match-1", status, providerEventId: "event-1", amountMatched: new Prisma.Decimal(10) }])
+    const withCheck = await buildReconciliationEvidenceManifestInTx(tx as never, coverageInput)
+    const historical = await buildReconciliationEvidenceManifestInTx(tx as never, { ...coverageInput, requireCompleteCoverage: false })
+    expect(withCheck).toEqual(historical)
+  })
+
+  it("accepts source disposition through verified independent exception closure", async () => {
+    jest.mocked(exceptionClosureManifestEvidenceInTx).mockResolvedValueOnce({ receiptId: "verified-decision", receiptHash: "hash", proposalId: "proposal", proposalHash: "hash", financialDecisionId: "decision" })
+    const tx = txFixture()
+    tx.providerEvent.findMany.mockResolvedValue([{ id: "event-1", amount: new Prisma.Decimal(10), receivedAt: new Date("2026-06-14T12:00:00Z") }])
+    tx.paymentException.findMany.mockResolvedValue([{ id: "exception-1", status: "RESOLVED", providerEventId: "event-1" }])
+    await expect(buildReconciliationEvidenceManifestInTx(tx as never, coverageInput)).resolves.toMatchObject({ counts: { providerEventCount: 1, exceptionCount: 1 } })
+  })
+
+  it("does not count an unresolved exception as source disposition", async () => {
+    const tx = txFixture()
+    tx.providerEvent.findMany.mockResolvedValue([{ id: "event-1" }])
+    tx.paymentException.findMany.mockResolvedValue([{ id: "exception-1", status: "OPEN", providerEventId: "event-1" }])
+    await expect(buildReconciliationEvidenceManifestInTx(tx as never, coverageInput)).rejects.toThrow(/not covered/i)
+  })
+
   it("requires an active, mapped provider account with an approved settlement account", () => {
     expect(() => assertProviderAccountReconciliationReady(readyProviderAccount())).not.toThrow()
     expect(() => assertProviderAccountReconciliationReady({

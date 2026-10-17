@@ -1,0 +1,1033 @@
+diff --git a/components/accounting/AccountantAccessManager.tsx b/components/accounting/AccountantAccessManager.tsx
+--- a/components/accounting/AccountantAccessManager.tsx
++++ b/components/accounting/AccountantAccessManager.tsx
+@@ -1,6 +1,8 @@
+ "use client"
+ 
+ import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
++import { accountantAccessCopy, accountantAccessLabel } from "./accountantAccessCopy"
++import type { Locale } from "@/types/bilingual"
+ 
+ import { useState, useTransition } from "react"
+ import { useRouter } from "next/navigation"
+@@ -19,10 +21,10 @@
+   return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString()
+ }
+ 
+-function formatConsentInstant(value: string): string {
++function formatConsentInstant(value: string, locale: Locale): string {
+   const parsed = new Date(value)
+   if (Number.isNaN(parsed.getTime())) return value
+-  return new Intl.DateTimeFormat(undefined, {
++  return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
+     year: "numeric",
+     month: "short",
+     day: "2-digit",
+@@ -33,9 +35,12 @@
+ }
+ export function AccountantAccessManager({
+   initialGrants,
++  locale = "en",
+ }: {
+   initialGrants: AccountantAccessGrantDto[]
++  locale?: Locale
+ }) {
++  const t = accountantAccessCopy[locale]
+   const router = useRouter()
+   const [message, setMessage] = useState<string | null>(null)
+   const [isPending, startTransition] = useTransition()
+@@ -56,8 +61,8 @@
+       setMessage(
+         result.success
+           ? result.data.outcome === "GRANTED"
+-            ? "Accountant access granted."
+-            : "Accountant invitation queued."
++            ? t.granted
++            : t.queued
+           : result.error,
+       )
+       if (result.success) router.refresh()
+@@ -65,7 +70,7 @@
+   }
+ 
+   function revoke(grantId: string) {
+-    const reason = window.prompt("Reason for revocation")
++    const reason = window.prompt(t.revokeReason)
+     if (!reason) return
+     setMessage(null)
+     startTransition(async () => {
+@@ -73,8 +78,8 @@
+       setMessage(
+         result.success
+           ? result.data.status === "EXPIRED"
+-            ? "Accountant access had already expired."
+-            : "Accountant access revoked."
++            ? t.expired
++            : t.revoked
+           : result.error,
+       )
+       if (result.success) router.refresh()
+@@ -85,41 +90,41 @@
+     <div className="space-y-6">
+       <form action={grant} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
+         <div className="md:col-span-2">
+-          <h2 className="font-semibold">Invite an accountant</h2>
++          <h2 className="font-semibold">{t.invite}</h2>
+           <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
+-            Existing users receive access immediately. New accountants receive a consent-bound invitation and referral onboarding link.
++            {t.invitationHelp}
+           </p>
+         </div>
+         <label className="text-sm">
+-          Accountant email
++          {t.email}
+           <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantEmail" type="email" required />
+         </label>
+         <label className="text-sm">
+-          Firm name
++          {t.firm}
+           <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmName" required />
+         </label>
+         <label className="text-sm">
+-          Firm registration number
++          {t.registration}
+           <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmRegistrationNumber" />
+         </label>
+         <label className="text-sm">
+-          Role
++          {t.role}
+           <select className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="role" defaultValue="READ_ONLY">
+-            <option value="READ_ONLY">Read only</option>
+-            <option value="REVIEWER">Reviewer</option>
+-            <option value="PREPARER">Preparer</option>
++            <option value="READ_ONLY">{t.roles.READ_ONLY}</option>
++            <option value="REVIEWER">{t.roles.REVIEWER}</option>
++            <option value="PREPARER">{t.roles.PREPARER}</option>
+           </select>
+         </label>
+         <label className="text-sm">
+-          Effective from
++          {t.effective}
+           <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="effectiveFrom" type="datetime-local" />
+         </label>
+         <label className="text-sm">
+-          Expires at
++          {t.expires}
+           <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="expiresAt" type="datetime-local" required />
+         </label>
+         <label className="text-sm md:col-span-2">
+-          Signed consent evidence hash
++          {t.consent}
+           <input
+             className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3 font-mono text-xs"
+             name="consentEvidenceHash"
+@@ -129,40 +134,41 @@
+           />
+         </label>
+         <button className="dashboard-button-create min-h-10 w-fit rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50" disabled={isPending}>
+-          {isPending ? "Saving…" : "Invite or grant access"}
++          {isPending ? t.saving : t.submit}
+         </button>
+-        {message ? <p className="self-center text-sm md:col-span-2">{message}</p> : null}
++        {message ? <p role="status" className="self-center text-sm md:col-span-2">{message}</p> : null}
+       </form>
+ 
+       <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
+         <AccountingDataTable
+-          caption={"Accountant access grants"}
+-          emptyMessage={"No accountant access grants."}
++          caption={t.caption}
++          emptyMessage={t.empty}
++          locale={locale}
+           columns={[
+-            { label: "Firm" },
+-            { label: "Role" },
+-            { label: "Status" },
+-            { label: "Expiry" },
+-            { label: "Action" },
++            { label: t.firmColumn },
++            { label: t.role },
++            { label: t.status },
++            { label: t.expiry },
++            { label: t.action },
+           ]}
+           rows={initialGrants.map((grant) => {
+             return {
+               id: grant.id,
+               searchText: [
+                 grant.accountantFirmName,
+-                grant.role.replace("_", " "),
+-                grant.status,
+-                formatConsentInstant(grant.expiresAt),
++                accountantAccessLabel(t.roles, grant.role),
++                accountantAccessLabel(t.statuses, grant.status),
++                formatConsentInstant(grant.expiresAt, locale),
+               ]
+                 .filter((value) => value !== null && value !== undefined)
+                 .join(" "),
+               cells: [
+                 <div key="cell-0">{grant.accountantFirmName}</div>,
+-                <div key="cell-1">{grant.role.replace("_", " ")}</div>,
+-                <div key="cell-2">{grant.status}</div>,
++                <div key="cell-1">{accountantAccessLabel(t.roles, grant.role)}</div>,
++                <div key="cell-2">{accountantAccessLabel(t.statuses, grant.status)}</div>,
+                 <div key="cell-3">
+                   <time dateTime={grant.expiresAt} title={grant.expiresAt}>
+-                    {formatConsentInstant(grant.expiresAt)}
++                    {formatConsentInstant(grant.expiresAt, locale)}
+                   </time>
+                 </div>,
+                 <div key="cell-4">
+@@ -173,7 +179,7 @@
+                       onClick={() => revoke(grant.id)}
+                       type="button"
+                     >
+-                      Revoke
++                      {t.revoke}
+                     </button>
+                   ) : (
+                     "—"
+diff --git a/components/accounting/AccountantPortal.tsx b/components/accounting/AccountantPortal.tsx
+--- a/components/accounting/AccountantPortal.tsx
++++ b/components/accounting/AccountantPortal.tsx
+@@ -25,6 +25,7 @@
+ import { Badge } from "@/components/ui/badge"
+ import { Button } from "@/components/ui/button"
+ import DataTable from "@/components/DataTableComponents/DataTable"
++import { portalEvidenceText } from "./accountantPortalCopy"
+ 
+ type AccountantPortalProps = {
+   initialData?: AccountantPortalData | null
+@@ -80,31 +81,31 @@
+   },
+   fr: {
+     loadingTitle: "Chargement des preuves comptables",
+-    loadingBody: "Verification de la provenance ledger, des liens source, des audits et blocages de certification.",
++    loadingBody: "Vérification de la provenance du grand livre, des liens sources, des audits et des blocages de certification.",
+     errorTitle: "Portail comptable indisponible",
+     retry: "Actualiser",
+-    export: "Exporter le pack",
+-    exporting: "Export",
+-    trustLevel: "Niveau confiance",
+-    postedEntries: "Ecritures postees",
+-    sourceCoverage: "Couverture source",
++    export: "Exporter le dossier certifié",
++    exporting: "Export en cours",
++    trustLevel: "Niveau de confiance",
++    postedEntries: "Écritures comptabilisées",
++    sourceCoverage: "Couverture des liens sources",
+     blockers: "Blocages",
+-    asOf: "A la date",
+-    period: "Periode",
+-    figures: "Figures postees",
+-    figuresDescription: "Les montants financiers s'affichent seulement apres resolution des blocages critiques.",
+-    debit: "Debit activite",
+-    credit: "Credit activite",
++    asOf: "Au",
++    period: "Période",
++    figures: "Montants comptabilisés",
++    figuresDescription: "Les montants financiers s’affichent uniquement après résolution des blocages critiques de fiabilité des données.",
++    debit: "Mouvements au débit",
++    credit: "Mouvements au crédit",
+     provenance: "Provenance",
+     unavailable: "Indisponible",
+     modules: "Modules de preuve",
+-    blockersTitle: "Blocages de cloture",
+-    noBlockers: "Aucun blocage de confiance detecte.",
+-    sourceLinks: "Liens source recents",
+-    auditEvents: "Audit et controles",
++    blockersTitle: "Blocages de clôture",
++    noBlockers: "Aucun blocage de fiabilité détecté.",
++    sourceLinks: "Liens sources récents",
++    auditEvents: "Audit et contrôles",
+     emptyRows: "Aucun enregistrement disponible.",
+-    gate: "Porte",
+-    detail: "Detail",
++    gate: "Contrôle",
++    detail: "Détail",
+     source: "Source",
+     journal: "Journal",
+     batch: "Lot",
+@@ -116,10 +117,10 @@
+     actor: "Acteur",
+     time: "Date",
+     status: "Statut",
+-    certified: "Certifie",
++    certified: "Certifié",
+     partial: "Partiel",
+     nonCompliant: "Non conforme",
+-    disabledExport: "Export certifie bloque",
++    disabledExport: "Export certifié bloqué",
+   },
+ } as const
+ 
+@@ -218,7 +219,7 @@
+     <div className="min-h-[7.5rem] rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.46)] p-4">
+       <div className="flex min-w-0 items-start justify-between gap-3">
+         <div className="min-w-0">
+-          <p className="truncate text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
++          <p className="break-words text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
+           <p className="mt-2 break-words text-2xl font-semibold leading-tight text-[var(--dash-text)]">{value}</p>
+         </div>
+         <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", tones[tone])}>
+@@ -284,12 +285,12 @@
+ 
+   if (!data) {
+     return (
+-      <Panel title={t.errorTitle} description={initialError || (query.error as Error | null)?.message || t.errorTitle}>
++      <Panel title={t.errorTitle} description={portalEvidenceText(initialError || (query.error as Error | null)?.message || t.errorTitle, locale)}>
+         <div className="flex min-h-[18rem] items-center justify-center p-8 text-center">
+           <div className="max-w-md">
+             <ShieldAlert className="mx-auto h-9 w-9 text-[var(--dash-danger)]" />
+             <p className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">
+-              {initialError || (query.error as Error | null)?.message || t.errorTitle}
++              {portalEvidenceText(initialError || (query.error as Error | null)?.message || t.errorTitle, locale)}
+             </p>
+             <Button type="button" onClick={() => query.refetch()} className="dashboard-button-primary mt-5 h-10 rounded-lg">
+               <RefreshCw className="h-4 w-4" />
+@@ -320,21 +321,21 @@
+         <MetricTile
+           label={t.postedEntries}
+           value={data.summary.postedJournalEntries.toString()}
+-          detail={`${data.summary.journalLines} ledger lines from posted/reversed journals`}
++          detail={locale === "fr" ? `${data.summary.journalLines} lignes du grand livre issues d’écritures comptabilisées ou extournées` : `${data.summary.journalLines} ledger lines from posted/reversed journals`}
+           icon={BookOpenCheck}
+           tone={data.summary.postedJournalEntries > 0 ? "brand" : "warning"}
+         />
+         <MetricTile
+           label={t.sourceCoverage}
+-          value={data.summary.sourceLinkCoveragePct === null ? "n/a" : `${data.summary.sourceLinkCoveragePct}%`}
+-          detail={`${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} entries linked`}
++          value={data.summary.sourceLinkCoveragePct === null ? t.unavailable : portalEvidenceText(`${data.summary.sourceLinkCoveragePct}%`, locale)}
++          detail={locale === "fr" ? `${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} écritures liées` : `${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} entries linked`}
+           icon={Link2}
+           tone={data.summary.sourceLinkCoveragePct === 100 ? "success" : "warning"}
+         />
+         <MetricTile
+           label={t.blockers}
+           value={data.summary.blockerCount.toString()}
+-          detail={`${data.summary.criticalBlockers} critical / ${data.summary.highBlockers} high`}
++          detail={locale === "fr" ? `${data.summary.criticalBlockers} critiques / ${data.summary.highBlockers} élevés` : `${data.summary.criticalBlockers} critical / ${data.summary.highBlockers} high`}
+           icon={data.summary.blockerCount ? AlertTriangle : BadgeCheck}
+           tone={data.summary.criticalBlockers ? "danger" : data.summary.highBlockers ? "warning" : "success"}
+         />
+@@ -353,8 +354,8 @@
+             {data.exportReadiness.canExportCertifiedPack ? t.certified : t.disabledExport}
+           </p>
+           <p className="mt-1 text-sm leading-5 text-[var(--dash-text-soft)]">
+-            {data.exportReadiness.disabledReason ||
+-              `${t.period}: ${data.scope.periodName || data.scope.periodId || "current"} (${data.scope.periodStatus})`}
++            {data.exportReadiness.disabledReason ? portalEvidenceText(data.exportReadiness.disabledReason, locale) :
++              `${t.period}: ${data.scope.periodName || data.scope.periodId || portalEvidenceText("current", locale)} (${portalEvidenceText(data.scope.periodStatus, locale)})`}
+           </p>
+         </div>
+         <Button
+@@ -386,18 +387,18 @@
+               <div key={module.module} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-3">
+                 <div className="flex items-start justify-between gap-2">
+                   <div className="min-w-0">
+-                    <p className="font-semibold text-[var(--dash-text)]">{module.label}</p>
+-                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{module.detail}</p>
++                    <p className="font-semibold text-[var(--dash-text)]">{portalEvidenceText(module.label, locale)}</p>
++                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{portalEvidenceText(module.detail, locale)}</p>
+                   </div>
+                   <Badge variant="outline" className={cn("rounded-md", statusClass(module.status))}>
+-                    {module.status}
++                    {portalEvidenceText(module.status, locale)}
+                   </Badge>
+                 </div>
+                 <div className="mt-3 grid gap-2">
+                   {module.facts.map((fact) => (
+                     <div key={fact.label} className="flex min-w-0 items-center justify-between gap-3 text-xs">
+-                      <span className="truncate text-[var(--dash-text-faint)]">{fact.label}</span>
+-                      <span className="font-medium text-[var(--dash-text)]">{fact.value}</span>
++                      <span className="min-w-0 break-words text-[var(--dash-text-faint)]">{portalEvidenceText(fact.label, locale)}</span>
++                      <span className="shrink-0 font-medium text-[var(--dash-text)]">{typeof fact.value === "string" ? portalEvidenceText(fact.value, locale) : fact.value}</span>
+                     </div>
+                   ))}
+                 </div>
+@@ -444,10 +445,10 @@
+       </div>
+       <div className="mt-3 space-y-1 text-xs leading-5 text-[var(--dash-text-soft)]">
+         <p>
+-          {t.provenance}: {figure.provenance}
++          {t.provenance}: {portalEvidenceText(figure.provenance, locale)}
+         </p>
+         <p>{formatDate(figure.asOf, locale)}</p>
+-        {!figure.available ? <p className="text-[var(--dash-warning)]">{figure.reason}</p> : null}
++        {!figure.available ? <p className="text-[var(--dash-warning)]">{portalEvidenceText(figure.reason, locale)}</p> : null}
+       </div>
+     </div>
+   )
+@@ -455,34 +456,40 @@
+ 
+ function BlockersTable({ data, locale }: { data: AccountantPortalData; locale: Locale }) {
+   const t = copy[locale]
++  // The shared search bar searches row data, not rendered column accessors.
++  const rows = useMemo(() => data.blockers.map((blocker) => ({
++    ...blocker,
++    localizedSearchText: [blocker.severity, blocker.title, blocker.detail]
++      .map((value) => portalEvidenceText(value, locale)).join(" "),
++  })), [data.blockers, locale])
+   const columns = useMemo<ColumnDef<AccountantPortalData["blockers"][number]>[]>(() => [
+     {
+       id: t.status,
+-      accessorKey: "severity",
++      accessorFn: (blocker) => `${portalEvidenceText(blocker.severity, locale)} ${blocker.severity}`,
+       header: t.status,
+       cell: ({ row: { original: blocker } }) => (
+         <Badge variant="outline" className={cn("rounded-md", severityClass(blocker.severity))}>
+-          {blocker.severity}
++          {portalEvidenceText(blocker.severity, locale)}
+         </Badge>
+       ),
+     },
+     {
+       id: t.gate,
+-      accessorKey: "title",
++      accessorFn: (blocker) => `${portalEvidenceText(blocker.title, locale)} ${blocker.title} ${blocker.gate}`,
+       header: t.gate,
+       cell: ({ row: { original: blocker } }) => (
+         <div className="min-w-48 whitespace-normal">
+-          <p className="font-medium text-[var(--dash-text)]">{blocker.title}</p>
+-          <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{blocker.gate}</p>
++          <p className="font-medium text-[var(--dash-text)]">{portalEvidenceText(blocker.title, locale)}</p>
++          <details className="mt-1 text-xs text-[var(--dash-text-faint)]"><summary className="cursor-pointer">{locale === "fr" ? "Référence du contrôle" : "Control reference"}</summary><span className="break-all">{blocker.gate}</span></details>
+         </div>
+       ),
+     },
+     {
+       id: t.detail,
+-      accessorKey: "detail",
++      accessorFn: (blocker) => `${portalEvidenceText(blocker.detail, locale)} ${blocker.detail}`,
+       header: t.detail,
+       cell: ({ row: { original: blocker } }) => (
+-        <p className="min-w-64 whitespace-normal text-[var(--dash-text-soft)]">{blocker.detail}</p>
++        <p className="min-w-64 whitespace-normal text-[var(--dash-text-soft)]">{portalEvidenceText(blocker.detail, locale)}</p>
+       ),
+     },
+     {
+@@ -495,14 +502,14 @@
+         </p>
+       ),
+     },
+-  ], [t])
++  ], [locale, t])
+ 
+   return (
+     <Panel title={t.blockersTitle}>
+       <div className="min-w-0 p-4">
+         <DataTable
+           columns={columns}
+-          data={data.blockers}
++          data={rows}
+           caption={t.blockersTitle}
+           scrollRegionLabel={t.blockersTitle}
+           locale={locale}
+@@ -553,7 +560,7 @@
+       header: t.status,
+       cell: ({ row: { original: link } }) => (
+         <Badge variant="outline" className={cn("rounded-md", statusClass(link.postingStatus === "POSTED" ? "ready" : "blocked"))}>
+-          {link.postingStatus}
++          {portalEvidenceText(link.postingStatus, locale)}
+         </Badge>
+       ),
+     },
+@@ -607,7 +614,7 @@
+               : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
+           )}
+         >
+-          {event.source}
++          {portalEvidenceText(event.source, locale)}
+         </Badge>
+       ),
+     },
+@@ -646,7 +653,7 @@
+       header: t.status,
+       cell: ({ row: { original: event } }) => (
+         <Badge variant="outline" className={cn("rounded-md", statusClass(event.status))}>
+-          {event.status}
++          {portalEvidenceText(event.status, locale)}
+         </Badge>
+       ),
+     },
+diff --git a/components/accounting/__tests__/AccountantAccessManager.test.tsx b/components/accounting/__tests__/AccountantAccessManager.test.tsx
+--- a/components/accounting/__tests__/AccountantAccessManager.test.tsx
++++ b/components/accounting/__tests__/AccountantAccessManager.test.tsx
+@@ -51,6 +51,35 @@
+ }
+ 
+ describe("AccountantAccessManager", () => {
++  afterEach(() => jest.restoreAllMocks())
++
++  it("localizes grants without broadening revocation or changing expiry evidence", () => {
++    render(<AccountantAccessManager locale="fr" initialGrants={[grant("active", "ACTIVE"), grant("scheduled", "SCHEDULED"), grant("expired", "EXPIRED"), grant("revoked", "REVOKED")]} />)
++    expect(screen.getByRole("heading", { name: "Inviter un comptable" })).toBeInTheDocument()
++    expect(screen.getByLabelText("Empreinte du justificatif de consentement signé")).toBeRequired()
++    expect(screen.getByLabelText("Expiration")).toBeRequired()
++    expect(screen.getByRole("option", { name: "Lecture seule" })).toHaveValue("READ_ONLY")
++    expect(screen.getByRole("option", { name: "Réviseur" })).toHaveValue("REVIEWER")
++    expect(screen.getByText("Planifié")).toBeInTheDocument()
++    expect(screen.getAllByRole("button", { name: "Révoquer" })).toHaveLength(2)
++    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Planifié" } })
++    expect(screen.getByText("Firm scheduled")).toBeVisible()
++    expect(screen.queryByText("Firm active")).not.toBeInTheDocument()
++    expect(document.querySelector("time")).toHaveAttribute("datetime", "2026-12-31T23:59:59.000Z")
++    expect(mockGrantAction).not.toHaveBeenCalled()
++    expect(mockRevokeAction).not.toHaveBeenCalled()
++  })
++
++  it("reports an expiry race in French without claiming revocation", async () => {
++    const prompt = jest.spyOn(window, "prompt").mockReturnValue("Fin du mandat")
++    mockRevokeAction.mockResolvedValue({ success: true, data: grant("active", "EXPIRED") })
++    render(<AccountantAccessManager locale="fr" initialGrants={[grant("active", "ACTIVE")]} />)
++    fireEvent.click(screen.getByRole("button", { name: "Révoquer" }))
++    expect(prompt).toHaveBeenCalledWith("Motif de révocation")
++    expect(await screen.findByRole("status")).toHaveTextContent("L’accès comptable avait déjà expiré.")
++    expect(screen.queryByText("Accès comptable révoqué.")).not.toBeInTheDocument()
++    expect(mockRevokeAction).toHaveBeenCalledWith({ grantId: "active", reason: "Fin du mandat" })
++  })
+   beforeEach(() => {
+     jest.clearAllMocks()
+     mockGrantAction.mockResolvedValue({
+@@ -83,7 +112,7 @@
+       />,
+     )
+ 
+-    expect(screen.getByText("SCHEDULED")).toBeInTheDocument()
++    expect(screen.getByText("Scheduled")).toBeInTheDocument()
+     expect(screen.getAllByRole("button", { name: "Revoke" })).toHaveLength(2)
+   })
+ 
+diff --git a/app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx b/app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx
+--- a/app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx
+@@ -2,26 +2,30 @@
+ 
+ import { getAccountantAccessRegisterAction } from "@/actions/accounting/accountant-access.actions"
+ import { AccountantAccessManager } from "@/components/accounting/AccountantAccessManager"
++import { accountantAccessCopy } from "@/components/accounting/accountantAccessCopy"
++import type { Locale } from "@/types/bilingual"
+ import { checkPermission } from "@/config/useAuth"
+ import { AccountingPageShell } from "../_components/accounting-ui"
+ import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
+ 
+-async function AccountantAccessPageImpl() {
++async function AccountantAccessPageImpl(locale: Locale) {
++  const t = accountantAccessCopy[locale]
+   await checkPermission("accounting.close.accountant.invite")
+   const response = await getAccountantAccessRegisterAction()
+ 
+   return (
+     <AccountingPageShell
+-      eyebrow="Client consent"
+-      title="Accountant Access"
+-      description="Manage explicit accountant mandates, roles, expiry, evidence, and revocation."
++      eyebrow={t.eyebrow}
++      title={t.title}
++      description={t.description}
+       icon={UserRoundCog}
+     >
+       {response.success ? (
+-        <AccountantAccessManager initialGrants={response.data} />
++        <AccountantAccessManager initialGrants={response.data} locale={locale} />
+       ) : (
+         <div className="rounded-xl border border-destructive/30 p-5 text-sm text-destructive">
+-          {response.error}
++          <p>{t.loadError}</p>
++          <p>{response.error}</p>
+         </div>
+       )}
+     </AccountingPageShell>
+@@ -37,9 +41,12 @@
+     throw new Error("Missing accounting route surface definition: accounting-accountant-access")
+   }
+ 
++  const params = (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" })
++  const { locale } = await params
++
+   return withAccountingSurfaceAccess({
+-    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
++    params,
+     surface,
+-    onAllowed: async () => AccountantAccessPageImpl(),
++    onAllowed: async () => AccountantAccessPageImpl(locale === "fr" ? "fr" : "en"),
+   })
+ }
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -35,7 +35,7 @@
+ | UX03 | Reliable action-to-record handoffs | P1 / UX02 | In progress; shared controls implemented locally | Descriptive generic actions, localized unprefixed URLs and visible disabled reasons; service destination audit remains |
+ | UX04 | POS daily workspace and recovery | P1 / UX03 | Queued | Products/cart/tender dominate; safe recovery remains explicit |
+ | UX05 | Inventory and purchasing workbench normalization | P2 / UX04 | Queued | Consistent filters/tables/detail views and shorter controlled entry journeys |
+-| UX06 | Finance/accountant handoff and close evidence | P2 / UX05 | Queued | Clear review ownership, evidence request progress and return paths |
++| UX06 | Finance/accountant handoff and close evidence | P2 / UX05 | In progress; Deliveries 14–15 localized review surfaces | Reconciliation, trial balance, Accountant Access and portal improvements implemented locally; collaboration journeys remain |
+ | UX07 | HR/payroll, sales, settings and remaining module parity | P2 / UX06 | Queued | Shared visual/state/language conventions applied across remaining routes |
+ | UX08 | Public first impression and role-specific activation | P2 / UX07 | Queued | Realistic product previews and first useful outcomes for each role |
+ | UX09 | Retention, collaboration, network and referral experiments | P2 / UX08 | Queued | Measurable recurring value and useful collaboration; growth claims tested |
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**15 October — Delivery 15:** French Accountant Access and portal presentation are implemented, including consent/expiry labels, trust/blocker narratives, recorded statuses, percentage formatting and translated blocker search. Authorization, raw evidence and certification controls are preserved. All 16 mocked tests, scoped TypeScript and production lint passed. Actual Accountant FR desktop reads, phone/tablet containment, form keyboard focus and EN→FR portal switching were verified. Desktop viewport restoration is now confirmed. Owner/Cashier sessions, full responsive visual review, light-theme/screen-reader checks and shared loading/role-badge cleanup remain open. See [Delivery 15](EXECUTION-15.md).
++
+ **15 October — Delivery 14:** populated reconciliation is now verified in the actual Accountant session in EN/FR. Local fixes remove duplicate main landmarks, wrap risk labels, name filters and translate recorded status/payment-method codes. Trial-balance account types and debit/credit labels are localized while filtering preserves report totals. All 73 mocked tests, both scoped TypeScript checks and production-file lint passed. French phone containment, table keyboard scrolling and mobile-menu focus return were verified; tablet evidence predates the final label cleanup. Browser inspection recovered but screenshot timeouts persist. Owner/Cashier sessions, French Accountant Access/portal copy, final viewport restoration confirmation and broader theme/accessibility acceptance remain open. See [Delivery 14](EXECUTION-14.md).
+ 
+ **14 October — Delivery 13:** live Accountant role reconfirmed; reconciliation's persistent loading skeleton and trial balance's misleading permissions recovery reproduced. Local fixes add an announced EN/FR reconciliation loading state with a dashboard exit, correct trial-balance recovery by failure type, and connect the French route to its bilingual table. Browser control remains intermittent; phone inspection failed and the viewport was restored. Actual owner/cashier and responsive acceptance remain open. See [Delivery 13](EXECUTION-13.md).
+diff --git a/components/accounting/accountantAccessCopy.ts b/components/accounting/accountantAccessCopy.ts
+new file mode 100644
+--- /dev/null
++++ b/components/accounting/accountantAccessCopy.ts
+@@ -0,0 +1,36 @@
++export const accountantAccessCopy = {
++  en: {
++    eyebrow: "Client consent", title: "Accountant Access",
++    description: "Manage explicit accountant mandates, roles, expiry, evidence, and revocation.",
++    invite: "Invite an accountant",
++    invitationHelp: "Existing users receive access immediately. New accountants receive a consent-bound invitation and referral onboarding link.",
++    email: "Accountant email", firm: "Firm name", registration: "Firm registration number", role: "Role",
++    effective: "Effective from", expires: "Expires at", consent: "Signed consent evidence hash",
++    saving: "Saving…", submit: "Invite or grant access", caption: "Accountant access grants",
++    empty: "No accountant access grants.", firmColumn: "Firm", status: "Status", expiry: "Expiry", action: "Action",
++    revoke: "Revoke", revokeReason: "Reason for revocation", granted: "Accountant access granted.",
++    queued: "Accountant invitation queued.", expired: "Accountant access had already expired.", revoked: "Accountant access revoked.",
++    loadError: "Accountant access could not be loaded.",
++    roles: { READ_ONLY: "Read only", REVIEWER: "Reviewer", PREPARER: "Preparer" },
++    statuses: { ACTIVE: "Active", SCHEDULED: "Scheduled", EXPIRED: "Expired", REVOKED: "Revoked" },
++  },
++  fr: {
++    eyebrow: "Consentement du client", title: "Accès comptable",
++    description: "Gérez les mandats explicites des comptables, leurs rôles, échéances, justificatifs et révocations.",
++    invite: "Inviter un comptable",
++    invitationHelp: "Les utilisateurs existants reçoivent immédiatement l’accès. Les nouveaux comptables reçoivent une invitation liée au consentement et un lien d’inscription par recommandation.",
++    email: "Adresse e-mail du comptable", firm: "Nom du cabinet", registration: "Numéro d’immatriculation du cabinet", role: "Rôle",
++    effective: "Prise d’effet", expires: "Expiration", consent: "Empreinte du justificatif de consentement signé",
++    saving: "Enregistrement…", submit: "Inviter ou accorder l’accès", caption: "Autorisations d’accès comptable",
++    empty: "Aucune autorisation d’accès comptable.", firmColumn: "Cabinet", status: "Statut", expiry: "Échéance", action: "Action",
++    revoke: "Révoquer", revokeReason: "Motif de révocation", granted: "Accès comptable accordé.",
++    queued: "Invitation du comptable mise en attente d’envoi.", expired: "L’accès comptable avait déjà expiré.", revoked: "Accès comptable révoqué.",
++    loadError: "Impossible de charger les accès comptables.",
++    roles: { READ_ONLY: "Lecture seule", REVIEWER: "Réviseur", PREPARER: "Préparateur" },
++    statuses: { ACTIVE: "Actif", SCHEDULED: "Planifié", EXPIRED: "Expiré", REVOKED: "Révoqué" },
++  },
++} as const
++
++export function accountantAccessLabel(values: Record<string, string>, value: string) {
++  return Object.prototype.hasOwnProperty.call(values, value) ? values[value] : value
++}
+diff --git a/components/accounting/accountantPortalCopy.ts b/components/accounting/accountantPortalCopy.ts
+new file mode 100644
+--- /dev/null
++++ b/components/accounting/accountantPortalCopy.ts
+@@ -0,0 +1,166 @@
++import type { Locale } from "@/types/bilingual"
++
++// Presentation-only translations of the current evidence service vocabulary.
++// Unknown evidence is preserved verbatim; these labels never determine readiness.
++const frenchEvidence: Record<string, string> = {
++  critical: "Critique", high: "Élevé", medium: "Modéré", low: "Faible",
++  ready: "Prêt", blocked: "Bloqué", needs_review: "À vérifier", partial: "Partiel", warning: "À vérifier", unavailable: "Indisponible",
++  allowed: "Autorisé", denied: "Refusé", success: "Réussi", failed: "Échec", recorded: "Enregistré",
++  POSTED: "Comptabilisé", UNAVAILABLE: "Indisponible", DRAFT: "Brouillon", FAILED: "Échec",
++  REVERSED: "Extourné", OPEN: "Ouverte", CLOSED: "Clôturée", LOCKED: "Verrouillée",
++  CERTIFIED: "Certifié", NON_COMPLIANT: "Non conforme", PARTIAL: "Partiel",
++  ledger: "Grand livre", control: "Contrôle", current: "En cours", "n/a": "Non disponible",
++  "Accountant portal evidence is unavailable.": "Les justificatifs du portail comptable sont indisponibles.",
++  "Critical data-trust blockers must be resolved before this financial figure is rendered.": "Les blocages critiques de fiabilité des données doivent être résolus avant l’affichage de ce montant.",
++  "Certified accountant trust-pack export requires T4: balanced ledger, source-link coverage, no failed events, no open high-risk exceptions, and no unresolved statutory blockers.": "L’export du dossier comptable certifié exige le niveau T4 : grand livre équilibré, couverture des liens sources, aucun événement en échec, aucune anomalie à risque élevé ouverte et aucun blocage réglementaire non résolu.",
++  "Accounting setup is not locked": "Configuration comptable non verrouillée",
++  "Accountant trust packs require the accounting setup to be marked ready before certification.": "La configuration comptable doit être marquée comme prête avant la certification du dossier comptable.",
++  "No accounting period resolved": "Aucune période comptable déterminée",
++  "The portal could not resolve an accounting period for the selected scope.": "Le portail n’a pas pu déterminer de période comptable pour le périmètre sélectionné.",
++  "Period is locked": "Période verrouillée",
++  "Figures are readable but changes and recertification require a new approved close workflow.": "Les montants restent consultables, mais les modifications et la recertification nécessitent une nouvelle procédure de clôture approuvée.",
++  "Posted ledger activity is not balanced": "Mouvements comptabilisés non équilibrés",
++  "Debit and credit totals from posted/reversed journal lines diverge for this scope.": "Les totaux au débit et au crédit des lignes comptabilisées ou extournées diffèrent sur ce périmètre.",
++  "Posted journals lack source links": "Écritures comptabilisées sans lien source",
++  "Posted journals lack posting batches": "Écritures comptabilisées sans lot de comptabilisation",
++  "Posted posting batches lack journals": "Lots comptabilisés sans écriture",
++  "Failed posting batches remain open": "Lots de comptabilisation en échec non résolus",
++  "Business events failed or were rejected": "Événements métier en échec ou rejetés",
++  "Critical payment exceptions are open": "Anomalies critiques de paiement ouvertes",
++  "Payment reconciliation exceptions are open": "Anomalies de rapprochement des paiements ouvertes",
++  "Provider statement evidence is missing": "Justificatifs de relevé du prestataire manquants",
++  "Provider statement cadence is stale": "Fréquence des relevés du prestataire non respectée",
++  "Provider reconciliation signoff is missing": "Signature du rapprochement prestataire manquante",
++  "Supplier payments lack ledger posting": "Paiements fournisseurs sans comptabilisation",
++  "Supplier invoice open items need review": "Factures fournisseurs ouvertes à examiner",
++  "Payroll declarations were rejected": "Déclarations de paie rejetées",
++  "Payroll declarations await authority evidence": "Déclarations de paie en attente de justificatifs de l’autorité",
++  "Payroll declaration lifecycle evidence is incomplete": "Justificatifs du cycle déclaratif de paie incomplets",
++  "Payroll declaration evidence lacks register proof": "Déclarations de paie sans preuve du registre",
++  "Payroll declaration evidence lacks country-pack register proof": "Déclarations de paie sans preuve du registre du référentiel pays",
++  "Payroll declaration evidence lacks authority adapter proof": "Déclarations de paie sans preuve du connecteur de l’autorité",
++  "Payroll declaration evidence lacks authority lifecycle proof": "Déclarations de paie sans preuve du cycle de traitement par l’autorité",
++  "Payroll declarations are still in lifecycle processing": "Déclarations de paie en cours de traitement",
++  "Payroll payments are not settled": "Paiements de paie non réglés",
++  "Payroll payments lack reconciliation evidence": "Paiements de paie sans preuve de rapprochement",
++  "Payroll settlement evidence lacks register proof": "Règlements de paie sans preuve du registre",
++  "Payroll settlement evidence lacks component proof": "Règlements de paie sans preuve des composantes",
++  "Payroll payment evidence lacks provider adapter proof": "Paiements de paie sans preuve du connecteur prestataire",
++  "Payroll payment allocations are missing": "Affectations des paiements de paie manquantes",
++  "Emitted payroll runs are not posted": "Paies émises non comptabilisées",
++  "Payroll lifecycle transition proof is missing": "Preuve des transitions de paie manquante",
++  "Historical payroll transition proof is partial": "Preuve historique des transitions de paie partielle",
++  "Posted payroll runs lack ledger posting": "Paies comptabilisées sans preuve au grand livre",
++  "Posted payroll runs lack component register proof": "Paies comptabilisées sans preuve du registre des composantes",
++  "Posted payroll runs lack certified HRIS input proof": "Paies comptabilisées sans preuve certifiée des données RH",
++  "Payroll run lines lack effective component proof": "Lignes de paie sans preuve des composantes applicables",
++  "Payroll run lines lack emitted payslips": "Lignes de paie sans bulletin émis",
++  "Emitted payroll payslips lack proof hashes": "Bulletins émis sans empreinte justificative",
++  "Paid payroll runs lack settled payment evidence": "Paies payées sans preuve de règlement",
++  "Released payroll payments lack ledger posting": "Paiements de paie libérés sans comptabilisation",
++  "Payroll ledger postings lack source links": "Écritures de paie sans lien source",
++  "Fiscal documents were rejected": "Documents fiscaux rejetés",
++  "Fiscal documents await certification evidence": "Documents fiscaux en attente de certification",
++  "Offline POS sync conflicts remain open": "Conflits de synchronisation de caisse hors ligne ouverts",
++  "Offline POS certification blockers are open": "Blocages de certification de caisse hors ligne ouverts",
++  "Offline POS events await server replay": "Événements de caisse hors ligne en attente de reprise serveur",
++  "No posted ledger activity in scope": "Aucun mouvement comptabilisé sur ce périmètre",
++  "The portal can open, but certified accountant export requires posted ledger evidence.": "Le portail reste accessible, mais l’export comptable certifié exige des justificatifs comptabilisés au grand livre.",
++  "Ledger source of truth": "Grand livre de référence",
++  "Posted journal entries, journal lines, posting batches, and source links.": "Écritures et lignes comptabilisées, lots de comptabilisation et liens sources.",
++  "Business event gateway": "Traitement des événements métier",
++  "Failed/rejected business events block accountant certification.": "Les événements métier en échec ou rejetés bloquent la certification comptable.",
++  "Payment reconciliation": "Rapprochement des paiements",
++  "Open payment exceptions, provider statement cadence, and signed reconciliation runs gate certification.": "Les anomalies de paiement ouvertes, la fréquence des relevés prestataires et les rapprochements signés conditionnent la certification.",
++  "Purchasing and AP": "Achats et dettes fournisseurs",
++  "Supplier invoices and payments must reconcile to ledger evidence.": "Les factures et paiements fournisseurs doivent être rapprochés des justificatifs du grand livre.",
++  "Payroll and declarations": "Paie et déclarations",
++  "Payroll lifecycle transition proof, certified HRIS input proof, register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.": "Les services de paie fournissent les preuves des transitions, des données RH certifiées, de la concordance du registre, des bulletins, des rapprochements et composantes de paiement, des liens sources du grand livre et du cycle déclaratif.",
++  "Compliance documents": "Documents de conformité",
++  "Fiscal document certification/rejection evidence is included in trust gates.": "Les preuves de certification ou de rejet des documents fiscaux entrent dans les contrôles de fiabilité.",
++  "Offline POS sync": "Synchronisation de caisse hors ligne",
++  "Device sync evidence, conflicts, provisional receipts, and close blockers from the 014 offline POS kernel.": "Justificatifs de synchronisation des terminaux, conflits, reçus provisoires et blocages de clôture du module de caisse hors ligne.",
++  "Audit and controls": "Audit et contrôles",
++  "Ledger audit events and sensitive-action control decisions are exposed to accountants.": "Les événements d’audit du grand livre et les décisions de contrôle des actions sensibles sont consultables par les comptables.",
++  "Posted entries": "Écritures comptabilisées", "Journal lines": "Lignes d’écriture", "Source-link coverage": "Couverture des liens sources",
++  "Failed/rejected events": "Événements en échec ou rejetés", "Active provider accounts": "Comptes prestataires actifs",
++  "Statement files": "Fichiers de relevé", "Statement lines": "Lignes de relevé", "Stale statement accounts": "Comptes aux relevés trop anciens",
++  "Signed reconciliation runs": "Rapprochements signés", "Open exceptions": "Anomalies ouvertes", "High/Critical": "Élevées ou critiques",
++  "Open AP invoices": "Factures fournisseurs ouvertes", "Payments without ledger": "Paiements sans comptabilisation",
++  "Emitted runs awaiting posting": "Paies émises en attente de comptabilisation", "Post-cutover transition proof gaps": "Preuves de transition manquantes après bascule",
++  "Legacy partial transition disclosures": "Transitions historiques déclarées partielles", "Prepared declarations": "Déclarations préparées",
++  "Rejected declarations": "Déclarations rejetées", "In-progress declarations": "Déclarations en cours",
++  "Declaration evidence gaps": "Justificatifs déclaratifs manquants", "Declaration register proof gaps": "Preuves du registre déclaratif manquantes",
++  "Declaration country-pack register proof gaps": "Preuves du registre déclaratif du référentiel pays manquantes",
++  "Declaration adapter proof gaps": "Preuves du connecteur déclaratif manquantes", "Declaration lifecycle proof gaps": "Preuves du cycle déclaratif manquantes",
++  "Declaration amendments": "Rectifications de déclaration", "Unsettled batches": "Lots non réglés",
++  "Payment reconciliation evidence gaps": "Preuves de rapprochement des paiements manquantes", "Payment register proof gaps": "Preuves du registre des paiements manquantes",
++  "Payment component proof gaps": "Preuves des composantes de paiement manquantes", "Payment adapter proof gaps": "Preuves du connecteur de paiement manquantes",
++  "Payment allocation gaps": "Affectations de paiement manquantes", "Runs missing ledger": "Paies sans comptabilisation",
++  "Posted run component proof gaps": "Preuves des composantes de paie comptabilisée manquantes", "Posted run certified input proof gaps": "Preuves des données certifiées de paie comptabilisée manquantes",
++  "Effective component proof gaps": "Preuves des composantes applicables manquantes", "Run lines missing payslips": "Lignes de paie sans bulletin",
++  "Payslips missing proof hashes": "Bulletins sans empreinte justificative", "Paid runs missing settled payments": "Paies payées sans règlement justifié",
++  "Payments missing ledger": "Paiements sans comptabilisation", "Payroll batches missing source links": "Lots de paie sans lien source",
++  "Pending fiscal docs": "Documents fiscaux en attente", "Rejected fiscal docs": "Documents fiscaux rejetés",
++  "Pending replay": "En attente de reprise", "Open conflicts": "Conflits ouverts", "Close blockers": "Blocages de clôture",
++  "Ledger audit events": "Événements d’audit du grand livre", "Control audit events": "Événements d’audit des contrôles",
++}
++
++// Each template begins with a server-supplied count. Match the whole remaining
++// sentence so a changed or unknown diagnostic is not silently reinterpreted.
++const countedFrenchEvidence: Record<string, string> = {
++  "posted journal entry or reversal has no accounting source link.": "écriture(s) comptabilisée(s) ou extournée(s) sans lien source comptable.",
++  "posted journal entry or reversal is not tied to a posting batch.": "écriture(s) comptabilisée(s) ou extournée(s) sans lot de comptabilisation associé.",
++  "posted posting batch has no journal entry.": "lot(s) comptabilisé(s) sans écriture.",
++  "posting batch failed and must be corrected before certification.": "lot(s) de comptabilisation en échec à corriger avant certification.",
++  "business event is failed or rejected in the selected scope.": "événement(s) métier en échec ou rejeté(s) sur le périmètre sélectionné.",
++  "high or critical payment reconciliation exception remains open.": "anomalie(s) de rapprochement des paiements à risque élevé ou critique encore ouverte(s).",
++  "payment reconciliation exception remains open.": "anomalie(s) de rapprochement des paiements encore ouverte(s).",
++  "active provider account is configured, but processed/imported statement file and line evidence is missing for the selected scope.": "compte(s) prestataire(s) actif(s) configuré(s), sans justificatifs de fichiers et lignes de relevé traités ou importés sur le périmètre sélectionné.",
++  "active provider account has statement evidence, but its latest statement is older than the configured cadence for the selected scope.": "compte(s) prestataire(s) actif(s) avec justificatifs de relevé, mais dont le dernier relevé dépasse la fréquence configurée sur le périmètre sélectionné.",
++  "active provider account has statement evidence, but no signed reconciliation run is available for the selected scope.": "compte(s) prestataire(s) actif(s) avec justificatifs de relevé, mais sans rapprochement signé sur le périmètre sélectionné.",
++  "approved, released, or posted supplier payment is missing a ledger posting batch.": "paiement(s) fournisseur(s) approuvé(s), libéré(s) ou comptabilisé(s) sans lot de comptabilisation au grand livre.",
++  "posted/payment-pending/disputed supplier invoice remains open.": "facture(s) fournisseur(s) comptabilisée(s), en attente de paiement ou contestée(s), encore ouverte(s).",
++  "payroll declaration requires correction evidence.": "déclaration(s) de paie nécessitant des justificatifs de correction.",
++  "payroll declaration is prepared but not yet accepted, paid, or reconciled.": "déclaration(s) de paie préparée(s), mais pas encore acceptée(s), payée(s) ou rapprochée(s).",
++  "advanced payroll declaration lacks append-only authority evidence.": "déclaration(s) de paie avancée(s) sans preuve de l’autorité conservée en ajout seul.",
++  "close-impacting payroll declaration evidence record is missing source payroll register proof.": "justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du registre de paie source.",
++  "close-impacting payroll declaration evidence record is missing matched country-pack register proof.": "justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve concordante du registre du référentiel pays.",
++  "close-impacting payroll declaration evidence record is missing authority adapter proof or adapter contract hash.": "justificatif(s) déclaratif(s) de paie affectant la clôture sans preuve du connecteur de l’autorité ou empreinte de son contrat.",
++  "close-impacting payroll declaration evidence record is missing authority lifecycle contract hash, status, or close-impact proof.": "justificatif(s) déclaratif(s) de paie affectant la clôture sans empreinte du contrat de cycle de l’autorité, statut ou preuve d’impact sur la clôture.",
++  "payroll declaration is submitted, accepted, payment-due, or paid but not yet reconciled or archived.": "déclaration(s) de paie soumise(s), acceptée(s), à payer ou payée(s), mais pas encore rapprochée(s) ou archivée(s).",
++  "released or partially settled payroll payment batch still needs reconciliation evidence.": "lot(s) de paiement de paie libéré(s) ou partiellement réglé(s) nécessitant encore une preuve de rapprochement.",
++  "released, partially settled, or settled payroll payment batch is missing batch evidence, a linked payment transaction, or reconciliation status.": "lot(s) de paiement de paie libéré(s), partiellement réglé(s) ou réglé(s), sans justificatif du lot, transaction de paiement liée ou statut de rapprochement.",
++  "settled or partially settled payroll payment batch is missing source payroll register proof.": "lot(s) de paiement de paie réglé(s) ou partiellement réglé(s) sans preuve du registre de paie source.",
++  "settled or partially settled payroll payment batch is missing statutory component register proof or payroll component mapping proof.": "lot(s) de paiement de paie réglé(s) ou partiellement réglé(s) sans preuve du registre des composantes réglementaires ou de leur correspondance en paie.",
++  "released, partially settled, or settled payroll payment batch is missing provider adapter proof or adapter contract hash.": "lot(s) de paiement de paie libéré(s), partiellement réglé(s) ou réglé(s), sans preuve du connecteur prestataire ou empreinte de son contrat.",
++  "released, partially settled, or settled payroll payment batch has no payslip allocations for register tie-out.": "lot(s) de paiement de paie libéré(s), partiellement réglé(s) ou réglé(s), sans affectation aux bulletins pour la concordance du registre.",
++  "emitted payroll run has payslip evidence but no completed ledger posting transition.": "paie(s) émise(s) avec justificatifs de bulletin, mais sans transition de comptabilisation terminée.",
++  "post-cutover payroll run lacks a complete verified review, approval, emission, or posting transition ledger.": "paie(s) après bascule sans registre complet et vérifié des transitions de révision, d’approbation, d’émission ou de comptabilisation.",
++  "historical payroll run is explicitly disclosed as legacy partial evidence and cannot be represented as verified runtime proof.": "paie(s) historique(s) explicitement déclarée(s) comme preuve ancienne partielle, ne pouvant être présentée(s) comme preuve d’exécution vérifiée.",
++  "posted or paid payroll run is missing a ledger posting batch.": "paie(s) comptabilisée(s) ou payée(s) sans lot de comptabilisation au grand livre.",
++  "posted or paid payroll run is missing statutory component register proof in accounting evidence.": "paie(s) comptabilisée(s) ou payée(s) sans preuve du registre des composantes réglementaires dans les justificatifs comptables.",
++  "posted or paid payroll run is missing explicit certified HRIS readiness, payroll readiness, or engine input proof required for close evidence.": "paie(s) comptabilisée(s) ou payée(s) sans preuve explicite et certifiée de préparation RH, de préparation de paie ou des données du moteur requise pour la clôture.",
++  "posted or paid payroll run line lacks effective-dated allowance, benefit, leave, or overtime proof needed for certified close evidence.": "ligne(s) de paie comptabilisée(s) ou payée(s) sans justificatif daté d’applicabilité des indemnités, avantages, congés ou heures supplémentaires nécessaire à une clôture certifiée.",
++  "posted or paid payroll run line has no emitted payslip evidence for register tie-out.": "ligne(s) de paie comptabilisée(s) ou payée(s) sans bulletin émis pour la concordance du registre.",
++  "emitted payroll payslip has an empty document hash and cannot support certified close evidence.": "bulletin(s) de paie émis avec une empreinte documentaire vide, inutilisable(s) comme preuve de clôture certifiée.",
++  "paid payroll run has no settled payment batch for register tie-out.": "paie(s) payée(s) sans lot de paiement réglé pour la concordance du registre.",
++  "released or partially settled payroll payment batch is missing a ledger posting batch.": "lot(s) de paiement de paie libéré(s) ou partiellement réglé(s) sans lot de comptabilisation au grand livre.",
++  "posted payroll ledger batch is missing accounting source-link evidence.": "lot(s) de paie comptabilisé(s) sans preuve de lien source comptable.",
++  "fiscal document rejection needs correction or authority follow-up evidence.": "rejet(s) de document fiscal nécessitant une preuve de correction ou de suivi auprès de l’autorité.",
++  "fiscal document is queued or submitted but not certified yet.": "document(s) fiscal(aux) en attente ou soumis, mais pas encore certifié(s).",
++  "offline POS conflict requires manager review before certification or close.": "conflit(s) de caisse hors ligne nécessitant une revue du responsable avant certification ou clôture.",
++  "offline POS sync certificate is blocking close readiness.": "certificat(s) de synchronisation de caisse hors ligne bloquant la préparation à la clôture.",
++  "accepted offline POS event is still provisional and pending replay/certification.": "événement(s) accepté(s) de caisse hors ligne encore provisoire(s), en attente de reprise ou de certification.",
++}
++
++export function portalEvidenceText(value: string, locale: Locale): string {
++  if (locale !== "fr") return value
++  if (Object.prototype.hasOwnProperty.call(frenchEvidence, value)) return frenchEvidence[value]
++  if (/^\d+(?:\.\d+)?%$/.test(value)) return value.replace(".", ",").replace("%", "\u00a0%")
++  const count = /^(\d+) (.+)$/.exec(value)
++  if (count && Object.prototype.hasOwnProperty.call(countedFrenchEvidence, count[2])) {
++    return `${count[1]} ${countedFrenchEvidence[count[2]]}`
++  }
++  return value
++}
+diff --git a/components/accounting/__tests__/AccountantPortal.localization.test.tsx b/components/accounting/__tests__/AccountantPortal.localization.test.tsx
+new file mode 100644
+--- /dev/null
++++ b/components/accounting/__tests__/AccountantPortal.localization.test.tsx
+@@ -0,0 +1,82 @@
++import { fireEvent, render, screen, within } from "@testing-library/react"
++import type { AccountantPortalData } from "@/actions/accounting/data-trust.actions"
++import { AccountantPortal } from "../AccountantPortal"
++import { portalEvidenceText } from "../accountantPortalCopy"
++
++const mockQuery = jest.fn()
++const mockExport = jest.fn()
++const mockRefresh = jest.fn()
++jest.mock("@/hooks/useAccountantPortal", () => ({
++  useAccountantPortal: (options: unknown) => mockQuery(options),
++  useExportAccountantTrustPack: () => ({ mutateAsync: mockExport, isPending: false }),
++}))
++
++function fixture(): AccountantPortalData {
++  const figure = { available: false as const, amount: null, currency: "XAF", provenance: "UNAVAILABLE" as const, reason: "Critical data-trust blockers must be resolved before this financial figure is rendered.", asOf: "2026-10-15T10:00:00Z", periodStatus: "OPEN" as const, sourceTables: ["journal_entries"], sourceQueryId: "test-query" }
++  return {
++    source: { mode: "LEDGER_BACKED_DATA_TRUST", asOf: "2026-10-15T10:00:00Z", organizationScoped: true, trustLevel: "T0", certificationStatus: "NON_COMPLIANT", scopeHash: "scope-test", sourceTables: ["journal_entries"] },
++    scope: { organizationId: "org-test", periodId: "period-test", periodName: "October", periodStatus: "OPEN", startDate: null, endDate: null },
++    certificate: { surface: "dashboard/accounting/accountant-portal", level: "T0", verdict: "NON_COMPLIANT", generatedAt: "2026-10-15T10:00:00Z", evidence: [], requiredForNextLevel: [] },
++    summary: { postedJournalEntries: 3, journalLines: 6, sourceLinks: 0, linkedPostedEntries: 0, sourceLinkCoveragePct: 0, ledgerBalanced: true, blockerCount: 1, criticalBlockers: 1, highBlockers: 0 },
++    figures: { activityDebit: figure, activityCredit: figure },
++    moduleEvidence: [{ module: "ledger", status: "blocked", label: "Ledger source of truth", detail: "Posted journal entries, journal lines, posting batches, and source links.", facts: [{ label: "Journal lines", value: 6 }] }],
++    blockers: [{ id: "missing-link", severity: "critical", gate: "ledger.source-link", title: "Posted journals lack source links", detail: "3 posted journal entry or reversal has no accounting source link.", sourceTables: ["journal_entries", "accounting_source_links"] }],
++    latestSourceLinks: [], latestAuditEvents: [],
++    exportReadiness: { canExportCertifiedPack: false, disabledReason: "Certified accountant trust-pack export requires T4: balanced ledger, source-link coverage, no failed events, no open high-risk exceptions, and no unresolved statutory blockers.", requiredPermission: "accounting.exports.create", sensitivity: "statutory" },
++  }
++}
++
++beforeEach(() => {
++  jest.clearAllMocks()
++  mockQuery.mockReturnValue({ data: fixture(), isError: false, isLoading: false, isFetching: false, refetch: mockRefresh })
++})
++
++it.each(["en", "fr"] as const)("keeps certification and financial withholding intact in %s", locale => {
++  render(<AccountantPortal locale={locale} />)
++  const button = screen.getByRole("button", { name: locale === "fr" ? "Exporter le dossier certifié" : "Export trust pack" })
++  expect(button).toBeDisabled()
++  fireEvent.click(button)
++  expect(mockExport).not.toHaveBeenCalled()
++  expect(screen.getByText("T0 " + (locale === "fr" ? "Non conforme" : "Non-compliant"))).toBeInTheDocument()
++  expect(screen.getAllByText(locale === "fr" ? "Indisponible" : "Unavailable", { exact: true })).toHaveLength(2)
++  expect(screen.getByText("ledger.source-link")).toBeInTheDocument()
++  expect(screen.getByText("journal_entries, accounting_source_links")).toBeInTheDocument()
++})
++
++it("translates evidence counts and searches by the French blocker title", () => {
++  render(<AccountantPortal locale="fr" />)
++  expect(screen.getByText("6 lignes du grand livre issues d’écritures comptabilisées ou extournées")).toBeInTheDocument()
++  expect(screen.getByText("Grand livre de référence")).toBeInTheDocument()
++  expect(screen.getByText("3 écriture(s) comptabilisée(s) ou extournée(s) sans lien source comptable.")).toBeInTheDocument()
++  const section = document.getElementById("portal-blockers")!
++  fireEvent.change(within(section).getByRole("textbox", { name: "Rechercher les blocages de clôture..." }), { target: { value: "Écritures comptabilisées" } })
++  expect(within(section).getByText("Écritures comptabilisées sans lien source")).toBeVisible()
++})
++
++it("hides stale results after a failed read and offers French recovery", () => {
++  mockQuery.mockReturnValue({ data: fixture(), isError: true, isLoading: false, error: new Error("Accountant portal evidence is unavailable."), refetch: mockRefresh })
++  render(<AccountantPortal locale="fr" />)
++  expect(screen.queryByText("T0 Non conforme")).not.toBeInTheDocument()
++  expect(screen.queryByRole("button", { name: "Exporter le dossier certifié" })).not.toBeInTheDocument()
++  expect(screen.getByRole("heading", { name: "Portail comptable indisponible" })).toBeInTheDocument()
++  fireEvent.click(screen.getByRole("button", { name: "Actualiser" }))
++  expect(mockRefresh).toHaveBeenCalledTimes(1)
++})
++
++it("keeps loading separate from financial results", () => {
++  mockQuery.mockReturnValue({ data: undefined, isError: false, isLoading: true })
++  render(<AccountantPortal locale="fr" />)
++  expect(screen.getByRole("heading", { name: "Chargement des preuves comptables" })).toBeInTheDocument()
++  expect(screen.queryByRole("table")).not.toBeInTheDocument()
++  expect(mockExport).not.toHaveBeenCalled()
++})
++
++it("preserves unfamiliar diagnostics and counts without inventing readiness", () => {
++  for (const value of ["NEW_UNKNOWN_STATE", "7 changed server diagnostic.", "constructor"]) expect(portalEvidenceText(value, "fr")).toBe(value)
++  expect(portalEvidenceText("needs_review", "fr")).toBe("À vérifier")
++  expect(portalEvidenceText("recorded", "fr")).toBe("Enregistré")
++  expect(portalEvidenceText("97.5%", "fr")).toBe("97,5\u00a0%")
++  expect(portalEvidenceText("97.5%", "en")).toBe("97.5%")
++  expect(portalEvidenceText("003 posted journal entry or reversal has no accounting source link.", "fr")).toMatch(/^003 /)
++  expect(portalEvidenceText("blocked", "en")).toBe("blocked")
++})
+diff --git a/components/accounting/__tests__/AccountantAccessPage.localization.test.tsx b/components/accounting/__tests__/AccountantAccessPage.localization.test.tsx
+new file mode 100644
+--- /dev/null
++++ b/components/accounting/__tests__/AccountantAccessPage.localization.test.tsx
+@@ -0,0 +1,39 @@
++import { render, screen } from "@testing-library/react"
++import Page from "@/app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page"
++import { getAccountantAccessRegisterAction } from "@/actions/accounting/accountant-access.actions"
++import { checkPermission } from "@/config/useAuth"
++import { withAccountingSurfaceAccess } from "@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access"
++
++jest.mock("@/actions/accounting/accountant-access.actions", () => ({ getAccountantAccessRegisterAction: jest.fn() }))
++jest.mock("@/config/useAuth", () => ({ checkPermission: jest.fn() }))
++jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({ routeByKey: () => ({ key: "accounting-accountant-access" }), withAccountingSurfaceAccess: jest.fn() }))
++jest.mock("@/components/accounting/AccountantAccessManager", () => ({ AccountantAccessManager: ({ locale }: { locale: string }) => <div data-testid="manager">{locale}</div> }))
++jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui", () => ({ AccountingPageShell: ({ title, children }: { title: string; children: React.ReactNode }) => <main><h1>{title}</h1>{children}</main> }))
++
++beforeEach(() => {
++  jest.clearAllMocks()
++  jest.mocked(withAccountingSurfaceAccess).mockImplementation(async ({ onAllowed }: any) => onAllowed())
++  jest.mocked(getAccountantAccessRegisterAction).mockResolvedValue({ success: true, data: [], error: null, status: 200 } as any)
++})
++
++it.each(["en", "fr"])("passes %s to the access form after the existing permission check", async locale => {
++  render(await Page({ params: Promise.resolve({ locale }) }))
++  expect(screen.getByRole("heading", { name: locale === "fr" ? "Accès comptable" : "Accountant Access" })).toBeInTheDocument()
++  expect(screen.getByTestId("manager")).toHaveTextContent(locale)
++  expect(checkPermission).toHaveBeenCalledWith("accounting.close.accountant.invite")
++})
++
++it("does not read grants or render a form when the route guard denies access", async () => {
++  jest.mocked(withAccountingSurfaceAccess).mockResolvedValue(<p>Accès refusé</p>)
++  render(await Page({ params: Promise.resolve({ locale: "fr" }) }))
++  expect(getAccountantAccessRegisterAction).not.toHaveBeenCalled()
++  expect(screen.queryByTestId("manager")).not.toBeInTheDocument()
++})
++
++it("shows localized read failure without inventing an empty register", async () => {
++  jest.mocked(getAccountantAccessRegisterAction).mockResolvedValue({ success: false, data: null, error: "Safe diagnostic", status: 500 } as any)
++  render(await Page({ params: Promise.resolve({ locale: "fr" }) }))
++  expect(screen.getByText("Impossible de charger les accès comptables.")).toBeInTheDocument()
++  expect(screen.getByText("Safe diagnostic")).toBeInTheDocument()
++  expect(screen.queryByTestId("manager")).not.toBeInTheDocument()
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-localization.config.cjs b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-localization.config.cjs
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-localization.config.cjs
+@@ -0,0 +1,11 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Mocked UI/page lane, without application config, env or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1', '^lucide-react$': require.resolve('lucide-react', { paths: [root] }) },
++  roots: ['<rootDir>/components/accounting/__tests__'],
++  testMatch: ['**/AccountantAccessManager.test.tsx', '**/AccountantPortal.localization.test.tsx', '**/AccountantAccessPage.localization.test.tsx'],
++  collectCoverage: false,
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-localization.json b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-localization.json
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-localization.json
+@@ -0,0 +1,12 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
++  "files": [
++    "../../../../next-env.d.ts",
++    "../../../../components/accounting/AccountantAccessManager.tsx",
++    "../../../../components/accounting/AccountantPortal.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx"
++  ],
++  "include": [],
++  "exclude": []
++}
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-15.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-15.md
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-15.md
+@@ -0,0 +1,75 @@
++# Delivery 15 — French accountant access and portal
++
++Date: 15 October 2026. Status: implemented locally, with actual Accountant browser checks; broader role and release acceptance remains open. Unrelated working-tree edits are preserved.
++
++## Delivered behavior
++
++- Accountant Access now uses French page headings, form labels, consent explanations, roles, grant statuses, expiry dates, table controls and action outcomes. English remains supported. Required consent evidence and expiry, raw role values, datetime-to-ISO conversion, authorization and revocation eligibility remain unchanged. Expired access is described as expired rather than incorrectly claiming revocation. Outcomes are announced through a status region.
++- The portal translates known trust explanations, blockers, severity, module headings, facts, provenance and recorded statuses at the presentation boundary. French percentage formatting displays `97,5 %` without changing the supplied number or precision. Unknown evidence text falls back unchanged; identifiers and diagnostic evidence remain inspectable. This is not a guarantee that future service strings are translated.
++- Blocker control identifiers are available under a disclosure. Long metric and module labels wrap. Financial figures remain withheld when critical blockers exist; certified export remains disabled at T0.
++- French blocker search now searches the translated narrative. A failing component test exposed that the shared search bar searches raw row values rather than rendered column accessors. A local derived search field fixes this without changing shared table behavior or source evidence.
++
++The Access read-failure state retains the safe action error and adds a localized explanation; it does not render an empty register or an invitation form on a failed read. Arbitrary server error text is not translated speculatively. Native browser datetime placeholders can still follow browser language preferences. The shared shell's `Accountant` role badge remains English and is a separate follow-up.
++
++## Live coverage
++
++Application: `http://localhost:3000`, existing Edge Accountant session, existing dark presentation. Dimensions below are measured CSS viewports. No Owner or Cashier session was available; Chrome also showed Accountant at inspection. An Owner sign-in handoff was requested in Chrome, keeping Edge for Accountant checks. Firefox was unavailable to the browser tool.
++
++| Route | Locale / viewport | State and evidence |
++|---|---|---|
++| `/fr/dashboard/accounting/accountant-access` | FR / desktop 1542×802 | Empty access register and complete localized form rendered. Screenshot inspected. No grant or invitation submitted. |
++| Same Access route | FR / phone 390×844 | Document scroll width 371; main width about 370.83. All seven fields and search remained within the page. Tab from email reached the firm-name field. Phone screenshot timed out; geometry and focus checks are not a visual acceptance pass. |
++| Same Access route | FR / tablet 1024×767 | Document scroll width 1005; no page-wide horizontal overflow. Geometry saved. |
++| `/fr/dashboard/accounting/accountant-portal` | FR / desktop 1542×802 | T0 Non conforme, 12 blockers, 80 posted entries and 78 linked entries rendered. Export disabled and unavailable financial figures preserved. Translated recorded status verified. Screenshot inspected. |
++| Same portal route | FR / desktop, search | Searching `écritures comptabilisées` returned the two relevant source-link/posting-batch blockers. Search cleared afterward. |
++| Same portal route | FR / phone 390×844 | Document scroll width 371. Three named table regions each contained 1040 px content in a 305 px scroll region; no page-wide horizontal overflow. Geometry saved. |
++| Same portal route | FR / tablet 1024×767 | Document scroll width 1005; no page-wide horizontal overflow. Geometry saved. |
++| `/en/dashboard/accounting/accountant-portal` | EN / desktop 1542 px wide | Language switch reached English portal with the same blocked certification state. `97.5%` retained; export disabled. DOM evidence saved. |
++| `/fr/dashboard/accounting/accountant-portal` after returning from EN | FR / desktop 1542 px wide | Final formatting verified: both percentage occurrences display `97,5 %`; export remains disabled; document scroll width 1523. |
++| Owner / Cashier | All locales / sizes | Actual sessions unavailable. Accountant and earlier SUPER_ADMIN observations cannot substitute for these roles. |
++
++Temporary viewport overrides were reset and normal desktop dimensions confirmed. No browser zoom was changed. The portal desktop screenshot and responsive measurements precede only the final percentage typography change; the final French DOM observation verifies that change. Exact 1440×900, complete phone/tablet visual review, light theme, zoom, screen reader, touch ergonomics and the full role/state matrix remain unaccepted.
++
++## Evidence and browser limitations
++
++- [French Access desktop](evidence/delivery-15-access-fr-desktop.png), [Access DOM](evidence/delivery-15-access-fr-dom.txt), [tablet geometry](evidence/delivery-15-access-tablet.json).
++- [French portal desktop](evidence/delivery-15-portal-fr-desktop.png), [portal DOM before percentage formatting](evidence/delivery-15-portal-fr-dom.txt), [responsive geometry](evidence/delivery-15-portal-responsive.json).
++- [English portal read](evidence/delivery-15-portal-en-dom.json), [final French formatting and disabled export](evidence/delivery-15-portal-fr-final.json).
++- [Mocked test results](evidence/delivery-15-tests.json).
++
++A fresh tab in the same Edge browser recovered inspection when an existing tab's navigation stalled. Intermittent navigation and screenshot timeouts continued; the connection is usable but not certified as permanently repaired. Browser-tool telemetry emitted unrelated third-party network errors. These do not prove a Stoquify application defect or explain the timeouts. No extension reinstall, protection change, cache deletion, browser process termination or application-server restart was performed.
++
++## Verification by layer
++
++**Source inspection:** current Access page/manager, portal, shared table/search, action/read-model contracts and existing tests reviewed. Static comparison covered current service labels and counted narrative patterns; future unknown text intentionally remains unchanged. Existing graph evidence was used for discovery and corroborated with source. ECC workflow, design master, UI constitution and relevant AP/payment controls were read; no dedicated Accountant page contract was found in the inspected set. Project UI/UX Pro Max guidance on labels and feedback was applied.
++
++**Workflow:** `npm run agent:workflow:check` passed, exit 0; 196 scripts remain unclassified. Current command definitions, hooks and registry were reviewed before verification. No migration-bearing build was used.
++
++**Mocked tests:** 16 tests passed across three suites. Coverage includes required consent/expiry, raw role values, allowed revocation states, unchanged expiry evidence and payloads, expiry-race outcomes, French search, unknown-text fallback, count/percentage preservation, blocked export, withheld figures, loading/failed reads and denied-page behavior. Actions, hooks and access guards are mocked. These tests do not certify actual server authorization or real transactions.
++
++**Static checks:** scoped TypeScript passed with `noEmit`; the final production-file lint run passed. The isolated Jest config uses jsdom and installed CJS icon exports; it does not load application database setup. No full-project build or full-suite result is claimed.
++
++**Rendered checks:** actual Accountant normal-read states and limited responsive/focus behaviors are listed above. Error, denied, populated-access and consent transition coverage is mocked, not a live browser observation.
++
++**Real database tests:** not run. No invitation, grant, revoke, export, business transaction, migration, seed, deployment or commit was performed. Ordinary application reads may generate audit records, as the portal's audit trail itself shows.
++
++Commands:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-localization.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-15-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-localization.json --pretty false
++node node_modules/eslint/bin/eslint.js components/accounting/AccountantAccessManager.tsx components/accounting/AccountantPortal.tsx components/accounting/accountantAccessCopy.ts components/accounting/accountantPortalCopy.ts "app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx"
++```
++
++## Remaining acceptance work
++
++1. Actual Owner: inspect first-screen priorities and recommendation/action alignment, then purchasing, inventory and payroll destinations in EN/FR across phone/tablet/desktop. Record role, state, destination and retained context. Requires an existing Owner session, not changed permissions.
++2. Actual Cashier: inspect daily dashboard, POS entry/recovery, allowed navigation and denied accountant destinations in EN/FR at the same sizes. Do not submit a sale or change shifts to manufacture coverage.
++3. Complete visual and accessibility coverage: final screenshots at required sizes, keyboard navigation through table/disclosure controls, light theme, zoom and screen reader. Use isolated fixtures for populated grants, denied/error/expired states and consent actions.
++4. Shared follow-ups: inspect hardcoded dashboard loading copy and finance skeleton semantics under their contracts; localize the shared role badge. These remain separate from the delivered Accountant surfaces.
++5. Localization maintenance: unknown service text must remain truthful; add reviewed translations when service vocabulary changes. A dedicated bilingual review of specialist accounting terminology remains desirable before release.
++
++## Ownership and rollback
++
++Pre-edit bytes and hashes are in `evidence/delivery-15-baseline.json`. The owned patch is relative to that already-dirty baseline, not HEAD. `evidence/delivery-15-owned.patch` covers the five production files, three test files, two scoped configurations and this report/roadmap; `evidence/delivery-15-files.json` records final hashes. Evidence artifacts are retained separately. Reverse only owned changes after checking later overlaps; never restore whole files to HEAD. This delivery does not certify completion of the broader roadmap.

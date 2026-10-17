@@ -1,0 +1,140 @@
+{
+  "utc": "2026-10-17T10:13:59.062Z",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "fixture": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+  "steps": [
+    {
+      "step": "original retained intent and exact retry available",
+      "status": "PASS"
+    },
+    {
+      "step": "response lost after independently confirmed commit; original intent retained",
+      "status": "PASS"
+    },
+    {
+      "step": "reload recovers original recorded sale without a second effect set",
+      "status": "PASS"
+    },
+    {
+      "step": "French recovery of captured original intent preserves financial result",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "before": {
+    "sale": {
+      "id": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "orderNumber": "85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "status": "DRAFT",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "5",
+      "totalValue": "20"
+    },
+    "customer": {
+      "currentBalance": "0"
+    },
+    "records": [],
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "ledger": 0
+  },
+  "committedBeforeResponseDrop": {
+    "utc": "2026-10-17T10:15:45.223Z",
+    "state": {
+      "sale": {
+        "id": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+        "orderNumber": "85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+        "status": "COMPLETED",
+        "total": "10"
+      },
+      "stock": {
+        "quantityOnHand": "4",
+        "totalValue": "16"
+      },
+      "customer": {
+        "currentBalance": "4"
+      },
+      "records": [
+        {
+          "clientCommitId": "pos:ccf90246-26bd-4d99-99d1-1e39c2d7ab2e",
+          "salesOrderId": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+          "status": "COMPLETED"
+        }
+      ],
+      "payments": 2,
+      "movements": 1,
+      "journals": 2,
+      "postings": 2,
+      "ledger": 1
+    }
+  },
+  "uncertainText": "Skip to main content\nq\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nSynthetic full POS transaction test\n\nSYNTHETIC CASHIER\nSession\nMODULES\n3\nOPERATIONS\n2\nInventory\nItems, loss control, stock movements, transfers, and units\n3\nSales\nCustomers, sales, and POS entry points\n3\nOverview\nCustomers\nPOS\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n3\nTC\n\nTest Cashier\n\nactor-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8@retention.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nTC\n\nLOAD FAILED\n\nPOS data could not be verified\n\nYour current access, shift, stock or cart could not be loaded. No empty cart or closed shift has been confirmed. Refresh to recover your work.\n\nTry again\nResolve the previous sale attempt. The result could not be verified. Your request is retained. Check your access or connection and try checking again.\nResolve the previous sale attempt\nNEW\n\nThe result could not be verified. Your request is retained. Check your access or connection and try checking again.\n\n17 Oct, 11:15\nSales\nHigh priority\nDisplayed In This Tab\nMark read",
+  "retainedAfterDrop": "{\"version\":1,\"organizationId\":\"org-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"actorId\":\"actor-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"request\":{\"expectedCartRevision\":\"21a5819854390f1c50b7bc82f516ce9c75b4f490eb21375093cc227491e5eaa5\",\"clientCommitId\":\"pos:ccf90246-26bd-4d99-99d1-1e39c2d7ab2e\",\"salesOrderId\":\"sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"locationId\":\"location-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"terminalId\":\"terminal-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"sessionId\":\"shift-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8\",\"tenders\":[{\"method\":\"CASH\",\"amount\":6},{\"method\":\"ON_ACCOUNT\",\"amount\":4}]}}",
+  "englishRecoveredText": "A previous submission was recorded as sale 85c4e7dd-07f9-4af0-aac8-7667d6f5fab8, FCFA 10. Find this sale in Sales for its current status and receipt.",
+  "afterEnglishRecovery": {
+    "sale": {
+      "id": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "orderNumber": "85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "status": "COMPLETED",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "4",
+      "totalValue": "16"
+    },
+    "customer": {
+      "currentBalance": "4"
+    },
+    "records": [
+      {
+        "clientCommitId": "pos:ccf90246-26bd-4d99-99d1-1e39c2d7ab2e",
+        "salesOrderId": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+        "status": "COMPLETED"
+      }
+    ],
+    "payments": 2,
+    "movements": 1,
+    "journals": 2,
+    "postings": 2,
+    "ledger": 1
+  },
+  "frenchFixture": "Exact captured pending bytes restored in same tab; original operation unchanged",
+  "frenchRecoveredText": "Une tentative précédente a été enregistrée comme vente 85c4e7dd-07f9-4af0-aac8-7667d6f5fab8, 10 FCFA. Retrouvez cette vente dans Ventes pour consulter son statut actuel et son reçu.",
+  "afterFrenchRecovery": {
+    "sale": {
+      "id": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "orderNumber": "85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+      "status": "COMPLETED",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "4",
+      "totalValue": "16"
+    },
+    "customer": {
+      "currentBalance": "4"
+    },
+    "records": [
+      {
+        "clientCommitId": "pos:ccf90246-26bd-4d99-99d1-1e39c2d7ab2e",
+        "salesOrderId": "sale-full-pos-85c4e7dd-07f9-4af0-aac8-7667d6f5fab8",
+        "status": "COMPLETED"
+      }
+    ],
+    "payments": 2,
+    "movements": 1,
+    "journals": 2,
+    "postings": 2,
+    "ledger": 1
+  },
+  "status": "PASS",
+  "url": "http://127.0.0.1:3187/fr/dashboard/pos"
+}

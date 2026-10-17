@@ -1,0 +1,95 @@
+{
+  "at": "2026-09-30T15:52:41.258Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_CONTRAST_AND_LATENCY_2026-09-30.md",
+  "sourceHashes": {
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+    "services/cash-command/cash-command-sources.service.ts": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+    "components/finance/finance-dashboard-theme.ts": "2bfa00818a1520ec5683c1ca43152cc95da03edf7b11c44fb845504f5bc8208d",
+    "components/cash-command/cash-command.module.css": "d98dc31d5e95fab331464b1a1096fc2ab7ed126ae069bf59fe42628a7bdcf761"
+  },
+  "priorReview": "evidence/cash-accessibility-review-2026-09-30.json",
+  "priorImpact": [
+    {
+      "file": "components/cash-command/CashCommandDashboard.tsx",
+      "before": "3c7130bc83ada53cc17bd81c0e53ca57858e412167492303a0d2d52fe6ed7f23",
+      "after": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837"
+    }
+  ],
+  "layoutInheritance": {
+    "component": "components/cash-command/CashCommandDashboard.tsx",
+    "reconstructedSha256": "3c7130bc83ada53cc17bd81c0e53ca57858e412167492303a0d2d52fe6ed7f23",
+    "reviewedChange": "CSS import/root scope plus background/color-only scoped stylesheet; no layout or behavior changes"
+  },
+  "verifiedSubcriteria": [
+    "cash_rendered_text_contrast_en_desktop_fr_mobile_and_primary_hover_focus",
+    "cash_local_direct_service_and_route_latency_baseline"
+  ],
+  "receipts": [
+    {
+      "file": "lanes/environment/cash-contrast-latency-a419f8f9-772b-4cc1-9f48-7d92c175c45c.json",
+      "sha256": "7a370aefa933d6989562ea85e85d489567c3a991acd37195299d6c9d7e4bee09"
+    },
+    {
+      "file": "lanes/environment/cash-contrast-latency-20b309df-69c7-432c-983c-2a558d2d1430.json",
+      "sha256": "124c7eed1c3f224daaca7dff2390a734c2471344688be6b24fd3ab0092043b04"
+    },
+    {
+      "file": "evidence/cash-contrast-checks-aa7e9690-44ee-4047-8de3-f3d86f9e38af.json",
+      "sha256": "7e13c099dc95c1de77f002e2113589f18bf9c2ad645e8d0d9004dd972c58a099"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CASH_CONTRAST_AND_LATENCY_2026-09-30.md",
+      "sha256": "2564903ee7e48aa8c7f3ef809b97f7178a715c71a738c97908df12b1ceda2e84"
+    },
+    {
+      "file": "run-cash-contrast-checks.cjs",
+      "sha256": "4d32496428bed514ef5e69557a0843c803280eebd268b2fef0be6a7c71ded631"
+    },
+    {
+      "file": "lanes/environment/verify-cash-contrast-latency.cjs",
+      "sha256": "13975f677c4e9fc6c4f93f79ea5697c1a04859c279b163a858058a3b57360ed4"
+    },
+    {
+      "file": "lanes/environment/measure-rendered-contrast.cjs",
+      "sha256": "c24549a012dc5701630fc0fa550a0459a6b0c13acbd5c2352c4c06d8d72cb27c"
+    },
+    {
+      "file": "lanes/environment/cash-contrast-latency-20b309df-69c7-432c-983c-2a558d2d1430-en.png",
+      "sha256": "30540c62b3660a763a6f03f14b58b6a40253f65ea0a03d618fd3a524eb0da9f0"
+    },
+    {
+      "file": "lanes/environment/cash-contrast-latency-20b309df-69c7-432c-983c-2a558d2d1430-fr.png",
+      "sha256": "2f7ec339f0664ad76ed0add035c2134da994802f98bb26c9ad7e06eb3ddb317d"
+    }
+  ],
+  "remaining": [
+    "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Profile actual Next request spans for session/RBAC, module navigation, source reads, response streaming/assets and hydration. Local Cash service and full-route timing baselines are recorded; repeated page readiness remains materially slower than separately measured direct service reads. No approved Cash production budget or optimization is claimed. Investigate any recurrence of the original unattributed hydration trace.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "limits": [
+    "Current authorized synthetic content/theme only",
+    "Native assistive technology, browser zoom and non-text contrast remain open",
+    "Timing baseline is local development, not production or a performance improvement",
+    "Existing financial/statutory lifecycle requirements remain"
+  ]
+}

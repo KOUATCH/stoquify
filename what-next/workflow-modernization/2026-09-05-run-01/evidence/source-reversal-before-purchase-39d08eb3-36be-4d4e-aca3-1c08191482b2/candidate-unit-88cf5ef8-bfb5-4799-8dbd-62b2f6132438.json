@@ -1,0 +1,100 @@
+{
+  "scope": "Isolated candidate code with explicit in-memory dependencies; no database or runtime publication proof.",
+  "checks": [
+    {
+      "name": "Posted return preparation binds complete original, retained batch and cumulative scope before writes",
+      "status": "passed"
+    },
+    {
+      "name": "Exact journal mirror is separate from final invalidation and retains event-family order",
+      "status": "passed"
+    },
+    {
+      "name": "PURCHASE_RETURN unposted cancellation preserves null journal and truthful invalidation",
+      "status": "passed"
+    },
+    {
+      "name": "SUPPLIER_CREDIT_NOTE unposted cancellation preserves null journal and truthful invalidation",
+      "status": "passed"
+    },
+    {
+      "name": "Credit class-3 dependency opts into cumulative periods",
+      "status": "passed"
+    },
+    {
+      "name": "Hidden journal, mismatched batch and closed period refuse before financial writes",
+      "status": "passed"
+    },
+    {
+      "name": "Changed tenant/date and a different transaction cannot reuse preparation",
+      "status": "passed"
+    },
+    {
+      "name": "return owner ordering, explicit isolation and noValue=false",
+      "status": "passed"
+    },
+    {
+      "name": "return owner ordering, explicit isolation and noValue=true",
+      "status": "passed"
+    },
+    {
+      "name": "credit owner ordering, explicit isolation and noValue=false",
+      "status": "passed"
+    },
+    {
+      "name": "credit owner ordering, explicit isolation and noValue=true",
+      "status": "passed"
+    },
+    {
+      "name": "return post-wait authority refusal has no number, ledger, stock, balance or source effects",
+      "status": "passed"
+    },
+    {
+      "name": "credit post-wait authority refusal has no number, ledger, stock, balance or source effects",
+      "status": "passed"
+    },
+    {
+      "name": "return exact retry preserves replay before closed-period preparation",
+      "status": "passed"
+    },
+    {
+      "name": "credit exact retry preserves replay before closed-period preparation",
+      "status": "passed"
+    },
+    {
+      "name": "Stock same-transaction control defers invalidation without changing event payload or movement values",
+      "status": "passed"
+    },
+    {
+      "name": "Stock exact scope is forwarded and wrong tenant, transaction or posting period refuses before effects",
+      "status": "passed"
+    }
+  ],
+  "productionBefore": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "4c050e2d0aa21a53ca4d59e62586e5c90d2f932673d5b1ae91a50c22b59dbb57",
+    "services/inventory/inventory-stock-event.service.ts": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+    "services/accounting/close-assurance-pack.service.ts": "30aa8798ad25b1dbaaa5c9785bd42921110e405ff05dd1127f019b73089cab30"
+  },
+  "candidatesBefore": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "2f03c47cbfc198419c00eb3800a98a0d9fd66e4907fcb1da6bc0d1960eaff516",
+    "services/purchasing/purchase-return-credit.service.ts": "599e8110c2c506c82f8ec006d7d59da93983e66f251f674b48c6f80e629d629c",
+    "services/inventory/inventory-stock-event.service.ts": "98b1acd43cd596edd4be633d1edff6847dc7a4337ddaf03e93409d8da4b1f668",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5"
+  },
+  "productionAfter": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "4c050e2d0aa21a53ca4d59e62586e5c90d2f932673d5b1ae91a50c22b59dbb57",
+    "services/inventory/inventory-stock-event.service.ts": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+    "services/accounting/close-assurance-pack.service.ts": "30aa8798ad25b1dbaaa5c9785bd42921110e405ff05dd1127f019b73089cab30"
+  },
+  "candidatesAfter": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "2f03c47cbfc198419c00eb3800a98a0d9fd66e4907fcb1da6bc0d1960eaff516",
+    "services/purchasing/purchase-return-credit.service.ts": "599e8110c2c506c82f8ec006d7d59da93983e66f251f674b48c6f80e629d629c",
+    "services/inventory/inventory-stock-event.service.ts": "98b1acd43cd596edd4be633d1edff6847dc7a4337ddaf03e93409d8da4b1f668",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5"
+  },
+  "productionUnchanged": true,
+  "candidatesStable": true,
+  "passed": true
+}

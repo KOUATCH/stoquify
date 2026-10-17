@@ -9,6 +9,7 @@ jest.mock("next/cache", () => ({ revalidateTag: jest.fn(), revalidatePath: jest.
 jest.mock("@/lib/security/rbac", () => ({ requirePermission: jest.fn() }))
 jest.mock("@/lib/security/auth-session", () => ({ requireSession: jest.fn() }))
 jest.mock("@/services/purchase-order/purchase-receiving-workbench.service", () => ({ getPurchaseReceivingWorkbench: jest.fn(), previewPurchaseReceiving: jest.fn(), confirmPurchaseReceiving: jest.fn() }))
+jest.mock("@/services/purchase-order/receipt-ledger-recovery.service", () => ({ previewReceiptLedgerRecovery: jest.fn(), confirmReceiptLedgerRecovery: jest.fn() }))
 const scope = { organizationId: "server-org", actorId: "server-actor", sessionId: "server-session", sessionToken: "private-test-session" }
 const draft = { kind: "receive" as const, orderId: "po-1", inspectionOutcome: "PASSED" as const, items: [{ lineId: "line-1", receivedQuantity: 0.125 }] }
 const command = { draft, expectedRevision: "a".repeat(64), idempotencyKey: "receiving-request-1" }

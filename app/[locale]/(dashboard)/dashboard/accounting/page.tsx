@@ -10,9 +10,10 @@ import {
   AccountingPageShell,
   AccountingPanel,
   AccountingStatCard,
-  accountingDate,
   formatAccountingMoney,
 } from "./_components/accounting-ui"
+import { accountingOverviewCopy } from "./_components/accounting-overview-copy"
+import { getJournalWorkflowCopy } from "@/components/accounting/journal-workflow-copy"
 import { routeByKey, withAccountingSurfaceAccess } from "./accounting-route-access"
 
 type AccountingSummary = {
@@ -36,7 +37,11 @@ type AccountingSummary = {
   }>
 }
 
-async function AccountingDashboardPageImpl() {
+async function AccountingDashboardPageImpl(locale: "en" | "fr") {
+  const t = accountingOverviewCopy[locale]
+  const { page: journal, statuses } = getJournalWorkflowCopy(locale)
+  const accountingDate = (value: Date) => new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value))
+  const entryStatus = (value: string) => statuses[value as keyof typeof statuses] ?? statuses.UNKNOWN
   await checkPermission("accounting.reports.read")
 
   const summaryResponse = await getAccountingDashboardSummaryAction({})
@@ -45,78 +50,78 @@ async function AccountingDashboardPageImpl() {
 
   return (
     <AccountingPageShell
-      eyebrow="Accounting backbone"
-      title="Accounting Ledger"
-      description="Manual journal control, posting discipline, and financial reporting from the double-entry kernel."
+      eyebrow={t.eyebrow}
+      title={t.title}
+      description={t.description}
       icon={Landmark}
       actions={
         <>
           <AccountingLinkButton href="/dashboard/accounting/journals/new">
             <FilePlus2 className="h-4 w-4" />
-            <span>New entry</span>
+            <span>{t.newEntry}</span>
           </AccountingLinkButton>
           <AccountingLinkButton href="/dashboard/accounting/setup" variant="outline">
             <Settings2 className="h-4 w-4" />
-            <span>Setup</span>
+            <span>{t.setup}</span>
           </AccountingLinkButton>
           <AccountingLinkButton href="/dashboard/accounting/control-center" variant="outline">
             <ShieldCheck className="h-4 w-4" />
-            <span>Control center</span>
+            <span>{t.control}</span>
           </AccountingLinkButton>
           <AccountingLinkButton href="/dashboard/accounting/accountant-portal" variant="outline">
             <FileSearch className="h-4 w-4" />
-            <span>Accountant portal</span>
+            <span>{t.portal}</span>
           </AccountingLinkButton>
           <AccountingLinkButton href="/dashboard/accounting/close" variant="outline">
             <ClipboardCheck className="h-4 w-4" />
-            <span>Close center</span>
+            <span>{t.close}</span>
           </AccountingLinkButton>
         </>
       }
     >
       {!summary ? (
-        <AccountingPanel title="Accounting access" description={summaryResponse.error || "Accounting data is unavailable."}>
-          <div className="p-6 text-sm text-[var(--dash-text-soft)]">Check the accounting permissions for this role.</div>
+        <AccountingPanel title={t.access} description={summaryResponse.error || t.unavailable}>
+          <div className="p-6 text-sm text-[var(--dash-text-soft)]">{t.permissions}</div>
         </AccountingPanel>
       ) : (
         <div className="space-y-6">
           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
             <AccountingStatCard
-              label="Setup status"
-              value={summary.settings?.setupStatus || "Not started"}
-              sub={summary.settings?.accountingEnabled ? "Ledger enabled" : "Ledger disabled"}
+              label={t.setupStatus}
+              value={t.setupStates[(summary.settings?.setupStatus || "NOT_STARTED") as keyof typeof t.setupStates] ?? t.unknownSetup}
+              sub={summary.settings?.accountingEnabled ? t.enabled : t.disabled}
               icon={Settings2}
               accent="var(--dash-brand)"
               soft="var(--dash-brand-soft)"
             />
             <AccountingStatCard
-              label="Accounts"
+              label={t.accounts}
               value={summary.counts.accounts.toString()}
-              sub="Chart nodes"
+              sub={t.chartNodes}
               icon={ListTree}
               accent="var(--dash-info)"
               soft="var(--dash-info-soft)"
             />
             <AccountingStatCard
-              label="Open periods"
+              label={t.openPeriods}
               value={summary.counts.openPeriods.toString()}
-              sub="Posting windows"
+              sub={t.postingWindows}
               icon={BookOpenCheck}
               accent="var(--dash-success)"
               soft="var(--dash-success-soft)"
             />
             <AccountingStatCard
-              label="Draft entries"
+              label={t.drafts}
               value={summary.counts.draftEntries.toString()}
-              sub="Awaiting post"
+              sub={t.awaitingPost}
               icon={FilePlus2}
               accent="var(--dash-warning)"
               soft="var(--dash-warning-soft)"
             />
             <AccountingStatCard
-              label="Posted entries"
+              label={t.posted}
               value={summary.counts.postedEntries.toString()}
-              sub="Ledger activity"
+              sub={t.ledgerActivity}
               icon={Scale}
               accent="var(--dash-gold)"
               soft="var(--dash-gold-soft)"
@@ -125,14 +130,14 @@ async function AccountingDashboardPageImpl() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Control center", href: "/dashboard/accounting/control-center", text: "Readiness gates and setup lock" },
-              { label: "Accountant portal", href: "/dashboard/accounting/accountant-portal", text: "Trust packs and source links" },
-              { label: "Close center", href: "/dashboard/accounting/close", text: "Blockers, evidence, provenance" },
-              { label: "Setup", href: "/dashboard/accounting/setup", text: "Settings, journals, and periods" },
-              { label: "Accounts", href: "/dashboard/accounting/accounts", text: "Chart of accounts" },
-              { label: "Journals", href: "/dashboard/accounting/journals", text: "Drafts, posting, reversals" },
-              { label: "Financial reports", href: "/dashboard/accounting/reports/financial-statements", text: "P&L, EBITDA, and Balance Sheet" },
-              { label: "Trial balance", href: "/dashboard/accounting/reports/trial-balance", text: "Posted ledger report" },
+              { label: t.control, href: "/dashboard/accounting/control-center", text: t.controlHelp },
+              { label: t.portal, href: "/dashboard/accounting/accountant-portal", text: t.portalHelp },
+              { label: t.close, href: "/dashboard/accounting/close", text: t.closeHelp },
+              { label: t.setup, href: "/dashboard/accounting/setup", text: t.setupHelp },
+              { label: t.accounts, href: "/dashboard/accounting/accounts", text: t.accountsHelp },
+              { label: t.journals, href: "/dashboard/accounting/journals", text: t.journalsHelp },
+              { label: t.reports, href: "/dashboard/accounting/reports/financial-statements", text: t.reportsHelp },
+              { label: t.trialBalance, href: "/dashboard/accounting/reports/trial-balance", text: t.trialHelp },
             ].map((item) => (
               <Link
                 key={item.href}
@@ -145,19 +150,20 @@ async function AccountingDashboardPageImpl() {
             ))}
           </div>
 
-          <AccountingPanel title="Latest journal entries" description="Recent activity from draft and posted journals.">
+          <AccountingPanel title={t.latest} description={t.recent}>
             <div className="overflow-x-auto">
               <AccountingDataTable
-                caption={"Latest journal entries"}
-                emptyMessage={"No journal entries yet."}
+                caption={t.latest}
+                locale={locale}
+                emptyMessage={t.empty}
                 columns={[
-                  { label: "Entry" },
-                  { label: "Date" },
-                  { label: "Journal" },
-                  { label: "Period" },
-                  { label: "Debit", className: "text-right" },
-                  { label: "Credit", className: "text-right" },
-                  { label: "Status" },
+                  { label: journal.entry },
+                  { label: journal.date },
+                  { label: journal.journal },
+                  { label: journal.period },
+                  { label: journal.debit, className: "text-right" },
+                  { label: journal.credit, className: "text-right" },
+                  { label: journal.status },
                 ]}
                 rows={summary.latestEntries.map((entry) => {
                   return {
@@ -169,7 +175,7 @@ async function AccountingDashboardPageImpl() {
                       entry.periodName,
                       entry.debit,
                       entry.credit,
-                      entry.status,
+                      entryStatus(entry.status),
                     ]
                       .filter((value) => value !== null && value !== undefined)
                       .join(" "),
@@ -193,7 +199,7 @@ async function AccountingDashboardPageImpl() {
                         {formatAccountingMoney(entry.credit, currency)}
                       </div>,
                       <div key="cell-6" className="text-[var(--dash-text-soft)]">
-                        {entry.status}
+                        {entryStatus(entry.status)}
                       </div>,
                     ],
                   }
@@ -219,6 +225,6 @@ export default async function AccountingRoutePage(props: any = {}) {
   return withAccountingSurfaceAccess({
     params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
     surface,
-    onAllowed: async () => AccountingDashboardPageImpl(),
+    onAllowed: async (_context, locale) => AccountingDashboardPageImpl(locale),
   })
 }

@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-30T16:35:22.049Z",
+  "baseline": true,
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+  },
+  "stages": [
+    {
+      "stage": "confirmed-without-match",
+      "expected": "operational",
+      "actual": "operational",
+      "reason": "Payment transaction is confirmed but not yet reconciled.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "proposal-awaiting-independent-approval",
+      "expected": "operational",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "approved-partial-60-of-100",
+      "expected": "operational",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "remaining-proposal-not-yet-approved",
+      "expected": "operational",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "independently-approved-full-coverage",
+      "expected": "reconciled",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "accepted-coverage-outside-ten-display-rows",
+      "expected": "reconciled",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuobtjrq0000ma6g7h1l2jh3",
+    "paymentId": "cmuobtjvk000ama6g0lpkylpu",
+    "makerId": "cmuobtjsx0002ma6g0dj4tvos",
+    "checkerId": "cmuobtjtg0004ma6g5qxmdxbx"
+  },
+  "passed": true,
+  "reproducedIncorrectStages": [
+    "proposal-awaiting-independent-approval",
+    "approved-partial-60-of-100",
+    "remaining-proposal-not-yet-approved"
+  ],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+  },
+  "sourceStable": true
+}

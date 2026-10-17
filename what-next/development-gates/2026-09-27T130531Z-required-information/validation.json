@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-09-27T13:18:46.053Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "database_enforced_readonly",
+      "pass": true,
+      "detail": {
+        "database": "stoquify_replay_next_20260830",
+        "observed_at": "2026-09-27T13:09:52.689Z",
+        "transaction_read_only": "on",
+        "default_transaction_read_only": "on",
+        "timezone": "UTC"
+      }
+    },
+    {
+      "id": "all_selected_models_resolved",
+      "pass": true,
+      "detail": "61 implemented models; stock-source events use BusinessEvent"
+    },
+    {
+      "id": "all_timestamp_values_trace_to_snapshot",
+      "pass": true,
+      "detail": "16165 timestamp rows including nulls and conditional empty models"
+    },
+    {
+      "id": "every_date_field_represented",
+      "pass": true,
+      "detail": "269 DateTime fields"
+    },
+    {
+      "id": "present_dates_parse",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "people_and_roles_tenant_consistent",
+      "pass": true,
+      "detail": "180 user records"
+    },
+    {
+      "id": "no_role_assignment_date_invented",
+      "pass": true,
+      "detail": [
+        "A",
+        "B"
+      ]
+    },
+    {
+      "id": "all_g1_role_obligations_prefilled",
+      "pass": true,
+      "detail": "33 role obligations,11 decisions, existing nominees"
+    },
+    {
+      "id": "no_g1_approval_or_time_fabricated",
+      "pass": true,
+      "detail": "Detached register has no approval entries"
+    },
+    {
+      "id": "g1_expiry_at_decision_scope",
+      "pass": true,
+      "detail": "Decision expiry is not an approval-child field"
+    },
+    {
+      "id": "credential_rotation_conditional_dates_complete",
+      "pass": true,
+      "detail": "15 classes x 7 dates, conditional on applicable disposition"
+    },
+    {
+      "id": "source_documents_unchanged",
+      "pass": true,
+      "detail": "Read-only source documents hashed"
+    },
+    {
+      "id": "all_input_families_have_date_instructions",
+      "pass": true,
+      "detail": "9 input families"
+    },
+    {
+      "id": "markdown_has_no_object_placeholders",
+      "pass": true,
+      "detail": "Human-readable output checked"
+    },
+    {
+      "id": "secret_value_fields_excluded",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "limits": "Artifact consistency and date format checks; not certification of seeded dates, human authority, source truth or live action eligibility."
+}

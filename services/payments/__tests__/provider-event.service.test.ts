@@ -1,4 +1,7 @@
 import { createHmac } from "node:crypto"
+jest.mock("server-only", () => ({}))
+jest.mock("@/services/reconciliation/reconciliation-close-order.service", () => ({ lockReconciliationCloseCatalogInTx: jest.fn(), lockReconciliationClosePeriodsInTx: jest.fn() }))
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "@/services/reconciliation/reconciliation-close-order.service"
 
 import {
   ExceptionSeverity,
@@ -16,6 +19,7 @@ import { captureProviderEvent } from "../provider-event.service"
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     providerAccount: { findFirst: jest.fn() },
     providerEvent: { findFirst: jest.fn(), create: jest.fn() },
     paymentReconciliationInboxItem: { upsert: jest.fn() },
@@ -36,6 +40,7 @@ jest.mock("@/lib/error-handling/monitoring", () => ({
 
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
   providerAccount: { findFirst: jest.Mock }
   providerEvent: { findFirst: jest.Mock; create: jest.Mock }
   paymentReconciliationInboxItem: { upsert: jest.Mock }
@@ -94,7 +99,10 @@ function arrangeCertifiedCloseTarget() {
 describe("provider event ingestion", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(lockReconciliationCloseCatalogInTx as jest.Mock).mockReset()
+    ;(lockReconciliationClosePeriodsInTx as jest.Mock).mockReset().mockResolvedValue(["prior-period", "period-1"])
     mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
+    mockedDb.$queryRaw.mockResolvedValue([{ id: "close-run-1" }])
     mockedDb.providerAccount.findFirst.mockResolvedValue({
       id: "provider-account-1",
       status: ProviderAccountStatus.ACTIVE,
@@ -115,6 +123,26 @@ describe("provider event ingestion", () => {
     mockedDb.closePackExport.findFirst.mockResolvedValue(null)
     mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
     mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
+  })
+
+  it.each(["signature", "altered"])("invalidates critical %s rejection using exception evidence", async kind => {
+    arrangeCertifiedCloseTarget()
+    const rawBody = rawEvent()
+    if (kind === "altered") mockedDb.providerEvent.findFirst.mockResolvedValue({ id: "original", rawPayloadHash: "retained-original-hash" })
+    const result = await captureProviderEvent({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawBody,
+      headers: headersFor(rawBody, now.getTime(), kind === "signature" ? "wrong-secret" : secret), secret, now })
+    expect(result.status).toBe(kind === "signature" ? "REJECTED" : "TAMPERED")
+    expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ eventType: "close.certification.invalidated",
+      payload: expect.objectContaining({ sourceCode: "PAYMENT_PROVIDER_EVENT_REJECTED", sourceId: "exception-1", sourceModel: "PaymentException", sourceTable: "payment_exceptions" }) }) }))
+    if (kind === "altered") expect(mockedDb.providerEvent.create).not.toHaveBeenCalled()
+    else expect(mockedDb.providerEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "TAMPERED", signatureValid: false }) }))
+  })
+
+  it("rechecks provider status after the coordination wait before writing", async () => {
+    mockedDb.providerAccount.findFirst.mockResolvedValueOnce({ id: "provider-account-1", status: ProviderAccountStatus.ACTIVE }).mockResolvedValueOnce({ status: ProviderAccountStatus.SUSPENDED })
+    const rawBody = rawEvent()
+    await expect(captureProviderEvent({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawBody, headers: headersFor(rawBody), secret, now })).rejects.toMatchObject({ reason: "PROVIDER_ACCOUNT_INACTIVE" })
+    expect(mockedDb.providerEvent.create).not.toHaveBeenCalled(); expect(mockedDb.paymentException.create).not.toHaveBeenCalled()
   })
 
   it("captures a valid provider event as verified evidence", async () => {
@@ -172,7 +200,7 @@ describe("provider event ingestion", () => {
     )
   })
 
-  it("invalidates certified close evidence when a captured provider event overlaps the closed period", async () => {
+  it("coordinates all tenant periods before provider rows and invalidates captured evidence", async () => {
     arrangeCertifiedCloseTarget()
     const rawBody = rawEvent()
 
@@ -186,6 +214,11 @@ describe("provider event ingestion", () => {
       now,
       correlationId: "corr-close-provider",
     })
+
+    expect((lockReconciliationCloseCatalogInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0])
+    expect((lockReconciliationClosePeriodsInTx as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(mockedDb.$queryRaw.mock.invocationCallOrder[0])
+    expect(mockedDb.closeRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ AND: expect.arrayContaining([{ OR: [{ periodId: { in: ["period-1", "prior-period"] } }] }]) }) }))
+    expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "ReadCommitted" })
 
     expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({

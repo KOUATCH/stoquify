@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-16",
+  "browser": "Chrome",
+  "role": "ACCOUNTANT",
+  "otherSession": {
+    "browser": "Edge",
+    "role": "SUPER_ADMIN"
+  },
+  "themePreference": "light during checks; restored to dark",
+  "themeBoundary": "Authenticated dashboard remains intentionally dark under the approved contract",
+  "portal": {
+    "route": "/fr/dashboard/accounting/accountant-portal",
+    "viewports": [
+      {
+        "client": 1420,
+        "height": 900,
+        "html": "light",
+        "main": 1,
+        "scroll": 1420,
+        "width": 1440
+      },
+      {
+        "client": 1004,
+        "height": 768,
+        "scroll": 1004,
+        "width": 1024
+      },
+      {
+        "client": 371,
+        "height": 844,
+        "regions": [
+          {
+            "name": "Blocages de clôture",
+            "scrollWidth": 1040,
+            "tabindex": "0",
+            "width": 305
+          },
+          {
+            "name": "Liens sources récents",
+            "scrollWidth": 1040,
+            "tabindex": "0",
+            "width": 305
+          },
+          {
+            "name": "Audit et contrôles",
+            "scrollWidth": 1040,
+            "tabindex": "0",
+            "width": 305
+          }
+        ],
+        "scroll": 371,
+        "width": 391
+      }
+    ],
+    "keyboard": {
+      "skipLink": "Focus -> MAIN#dashboard-main-content -> first page anchor",
+      "mobileDialog": "Enter opens; Shift+Tab/Tab wrap close/sign-out; Escape returns to trigger",
+      "accountMenu": "Enter opens; End reaches visible Sign out; Escape returns to trigger",
+      "tables": "All three named regions scrolled with ArrowRight"
+    },
+    "english": {
+      "role": "Accountant",
+      "skip": {
+        "client": 371,
+        "focus": "Skip to main content",
+        "height": 844,
+        "rect": {
+          "bottom": 60,
+          "height": 48,
+          "left": 12,
+          "right": 195.125,
+          "top": 12,
+          "width": 183.125,
+          "x": 12,
+          "y": 12
+        },
+        "scroll": 371,
+        "width": 391
+      }
+    }
+  },
+  "access": {
+    "route": "/fr/dashboard/accounting/accountant-access",
+    "states": [
+      "Empty register",
+      "Unsubmitted form"
+    ],
+    "viewports": [
+      {
+        "width": 391,
+        "height": 844,
+        "client": 371,
+        "scroll": 371
+      },
+      {
+        "width": 320,
+        "height": 844,
+        "client": 300,
+        "scroll": 300
+      }
+    ],
+    "keyboard": "Email to firm Tab focus visible; native date segments keyboard reachable; no form submitted",
+    "dateColorScheme": {
+      "before": "light with dark panel and black calendar icons",
+      "after": "dark with visible white icons"
+    },
+    "language": {
+      "before": "French page with html lang en after client transition",
+      "after": "EN en -> FR fr verified"
+    }
+  },
+  "reconciliation": {
+    "client": 300,
+    "heading": "Rapprochement des paiements",
+    "height": 844,
+    "lang": "fr",
+    "mains": 1,
+    "regions": [
+      {
+        "name": "Synthèse par moyen de paiement",
+        "scroll": 1040,
+        "width": 216
+      },
+      {
+        "name": "Anomalies à examiner pour mise en attente",
+        "scroll": 1040,
+        "width": 216
+      }
+    ],
+    "scroll": 300,
+    "width": 320,
+    "route": "/fr/dashboard/finance/reconciliation",
+    "state": "Populated evidence and restricted proposal controls",
+    "navigation": "Initial client-link navigation stayed on previous page; direct observed URL reached loading then populated content",
+    "keyboard": "Lieu Enter opens, Escape restores unchanged Tous les lieux; two named table regions scroll with ArrowRight"
+  },
+  "mobileTrigger": {
+    "before": {
+      "background": "rgb(255,255,255)",
+      "icon": "rgb(247,250,248)"
+    },
+    "after": {
+      "background": "rgba(24, 38, 45, 0.72)",
+      "color": "rgb(247, 250, 248)",
+      "rect": {
+        "bottom": 46,
+        "height": 36,
+        "left": 8,
+        "right": 44,
+        "top": 10,
+        "width": 36,
+        "x": 8,
+        "y": 10
+      },
+      "svgColor": "rgb(247, 250, 248)"
+    }
+  },
+  "restoration": {
+    "width": 1381,
+    "height": 688,
+    "client": 1361,
+    "scroll": 1361,
+    "theme": "dark"
+  },
+  "gaps": [
+    "No connected owner/cashier session",
+    "No actual screen-reader testing",
+    "No forced-colors or reduced-motion rendering check",
+    "No full contrast audit or every-module acceptance"
+  ],
+  "businessWrites": "No invitation, grant, revocation, export or payment action; normal reads can create audit records"
+}

@@ -1,0 +1,120 @@
+{
+  "recordedAt": "2026-10-07T05:26:02.465Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "head": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "baselineHead": "62a56036",
+  "initialDirtyWorktree": {
+    "modifiedTracked": 331,
+    "untrackedEntries": 4092
+  },
+  "scope": "Cameroon-first continuation; bounded fixes and source discovery, not programme completion or release qualification",
+  "installedVersions": {
+    "next": "15.5.18",
+    "react": "19.2.6",
+    "typescript": "5.8.3",
+    "prisma": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "better-auth": "1.6.14",
+    "tailwindcss": "3.4.19",
+    "jest": "30.4.2",
+    "@playwright/test": "1.61.1"
+  },
+  "ordinaryFocusedTests": {
+    "passed": 59,
+    "failed": 0,
+    "suites": 6,
+    "success": true
+  },
+  "postgresTests": {
+    "passed": 4,
+    "failed": 0,
+    "suites": 1,
+    "success": true,
+    "database": "stoquify_local_ui_workflow_hris_20261007",
+    "server": "PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit",
+    "migrated": true,
+    "migrations": 93
+  },
+  "lint": {
+    "exitCode": 0,
+    "timedOut": false
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "timedOut": false,
+    "initialStaleClientErrors": 2118,
+    "postGenerationErrors": 2,
+    "finalReceipt": "runner/modernization-types-final-20261007.result.json"
+  },
+  "sourceHashes": [
+    {
+      "file": "components/hris/HrisApprovalInbox.tsx",
+      "sha256": "5fac70f5b9412e7a3d4dfacb8f98ded8a3472302222901a396691b3f28735803"
+    },
+    {
+      "file": "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+      "sha256": "0f1f4ab01919068ff3acd8aee430115706d784ec19c0f044b7a9b516cf90c9e3"
+    },
+    {
+      "file": "services/hris/operational-time.service.ts",
+      "sha256": "6c4c69ce0c813ef2152932864093982d8a8891e20458c3194b4ffddaa70d5db5"
+    },
+    {
+      "file": "services/hris/__tests__/operational-time.service.test.ts",
+      "sha256": "b1a4bb6ca55b9dddd9e193894f4bfeaf41d6f86034b5ecc1228673023bc9da4e"
+    },
+    {
+      "file": "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+      "sha256": "5bbba9b7d7c47fba252df73421f1d4fbea91792504dd6c2c572e55d734a05e51"
+    },
+    {
+      "file": "tests/postgres/ui-workflow/hris-time-decision.test.ts",
+      "sha256": "d8d2206ad9743fac43be1146b5d089127121e4c072a0dc1637ad5d472be4dbee"
+    },
+    {
+      "file": "services/accounting/close-evidence-workflow.service.ts",
+      "sha256": "50aac12b80abddffa101adc8fe8ea1b8e28e977bf7bd649561dda1b34086b5bb"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "c2f637a999160da10d41737afdf3fbf17cc9a60471fefdc915938f4ebecef22e"
+    },
+    {
+      "file": "jest.config.ts",
+      "sha256": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59"
+    },
+    {
+      "file": "jest.ui-workflow-postgres.config.cjs",
+      "sha256": "56aa7879f495490641f17d85927600d76b87a691bfef10e4bed3ccea4f761bfe"
+    },
+    {
+      "file": "tsconfig.json",
+      "sha256": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328"
+    }
+  ],
+  "hashScope": "Post-verification fingerprints for continuation; not a frozen full-application build candidate.",
+  "untrackedSourceRepair": {
+    "file": "services/accounting/close-evidence-workflow.service.ts",
+    "beforeSha256": "e88991915a535677cd06a17ae4f97ec7cc52a770c2eb9ca4c40ddf0ecd2d7c49",
+    "change": "Only narrow false and UNAVAILABLE literals with as const. All inherited source preserved and not staged wholesale."
+  },
+  "checkpoints": {
+    "a1Red": "97eef25b",
+    "a1Green": "48252ea2",
+    "a2Red": "41a6496d",
+    "a2Green": "6f7f6741"
+  },
+  "limitations": [
+    "Shared-balance concurrency across distinct requests and adjustments remains open.",
+    "PostgreSQL tests use controlled stale reads, not explicit UPDATE lock-wait observation.",
+    "Manager-scope resolution is mocked in PostgreSQL tests; not full authorization qualification.",
+    "Authenticated browser, integrated build/package and recovery were not qualified in this continuation.",
+    "Country source discovery is not legal validation; no statutory rates or activation changed."
+  ],
+  "production": {
+    "deployed": false,
+    "applicationDatabaseChanged": false,
+    "realPayments": false,
+    "statutoryFilings": false
+  }
+}

@@ -1,0 +1,23 @@
+# Current progress
+
+Updated 2026-10-01T07:46:06.658Z; HEAD 62a56036a5ac9b37236a20c9b148052199069479, branch codex/migration-control-plane-release-2026-08-29. Shared changes preserved. Register SHA256: 2e6629a65ed6cc898c28ed2b6950dea7608ca35c7e6f2a852aa4bdc67e34856f.
+
+**Position:** 270 workflows, 17 families, 191 unmapped entries; discovery incomplete. Queued 264, In progress 2, Complete—verified 4; other statuses zero. Historical closures have not all been revalidated. No workflow completed or added since the previous checkpoint.
+
+| Priority | Workflow and outcome | Status | Delivered/verified | Remaining closure | Owner/blocker | Next action |
+|---|---|---|---|---|---|---|
+| Primary | FA-CASH-COMMAND: truthful financial actions | In progress | Manual-post concurrency, rollback and expiry controls | Earlier-period evidence and full lifecycle | Engineering; scope approval needs user | Decide exact period-lock proposal |
+| Supporting | FA-CLOSE-PACK: reliable retained evidence | In progress | Actual publication order and transactional invalidation | Complete producer scope, freshness, delivery | Engineering; two runtime scope failures | Apply/reverify scope only if approved |
+| Next 1 | PR-17: reconciliation exceptions | Queued | Prior scoped handoffs | Financial/legacy treatment and recovery | Engineering | Reconcile original closure scope |
+| Next 2 | ID-04: invitation redemption | Queued | Prior authority/recipient evidence | Accessibility, onboarding, transport | Identity owner | Verify transport boundary |
+| Next 3 | MC-11: permitted workspace | Queued | Selected route/action boundaries | Cross-domain transport/scanner gaps | Engineering | Preserve guards; improve diagnostics |
+
+**Delivered:** Manual posting now locks and rereads the draft, preventing competing duplicate posts. It prepares its currently supported date/class-3 period scope before financial effects. Authentication age advances during waits, and the server action rechecks fresh session, permission and identity using actual assurance time. Original balancing, FX, source and period rules remain.
+
+**Verification:** 714 tests in 27 suites, full TypeScript and eight-file lint passed. Actual PostgreSQL: seven scenarios passed; two failed. Passing cases prove both assessment/posting race orders, catalog contention, one concurrent/repeated posting effect, late rollback/retry, authentication expiry and tenant/object refusal. Sources and observed outside-fixture records stayed stable.
+
+**Failure and decision:** Earlier Close records and exports remained CERTIFIED without stale markers in ordinary and backdated posting. Current-period Cash recovery and later class-3 blockers were observed, but neither full-scope journey passed. Automatic approval review rejected the concrete all-period helper twice for contention risk and requires explicit user approval. It remains unapplied. [Implementation, results and recovery](MANUAL_POSTING_ORDER_2026-10-01.md); [exact scope review](MANUAL_POSTING_SCOPE_REVIEW_2026-10-01.md).
+
+**Remaining:** Manual posting now prevents duplicate races and checks current authority after waits, but its full evidence scope is incomplete: two PostgreSQL scenarios left earlier Close records certified without stale markers. The exact all-period helper remains unapplied after automatic approval review required explicit user authorization for its contention risk. Other source writers, draft creation, broad forecast freshness, purchase-specific publication/recovery, interrupted processing and outbox delivery remain open. Genuine country/payroll prerequisites, complete UI/EN-FR/accessibility, production capacity and source reconciliation also remain. No new browser evidence or release certification is claimed.
+
+All 17 original families remain in the [register](WORKFLOW_REGISTER.json): identity, organization/access, modules, master data, sales, POS/offline, inventory, purchasing/AP, payments, finance/close, HRIS/payroll, compliance, analytics, evidence/governance, notifications, integrations and AI. Unrelated 268 rows, all families and statuses are unchanged. No migration, reset, deployment, live activation, customer payment, external message or X1 clearance occurred. The full goal remains active; ETA is not reliable.

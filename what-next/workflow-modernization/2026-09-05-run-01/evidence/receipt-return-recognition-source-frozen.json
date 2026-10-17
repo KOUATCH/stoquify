@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-30T22:25:19Z",
+  "scope": "Receipt return recognition, stock-retaining accounting blockers, source-owned recovery and exact reversal",
+  "beforeSnapshot": "evidence/receipt-return-recognition-before-f9332797-759d-4761-9aed-9e7b76f91047.json",
+  "files": [
+    { "path": "services/purchasing/receipt-return-recognition.ts", "sha256": "201084d8a099323d1bddd138e1bd6bc282f7256b9b61d388a747df5250b9a7e1" },
+    { "path": "services/purchasing/purchase-return-credit.service.ts", "sha256": "5101e693d122d85d6865ce2e91b2b35739d9e1d2e98c91e90caacb7b0da5dde9" },
+    { "path": "services/purchasing/__tests__/receipt-return-recognition.test.ts", "sha256": "254e881b99688f6455d4720d93d1ee8660d4f9676316c153a9346a83eda5c3b9" },
+    { "path": "services/purchasing/__tests__/purchase-return-credit.service.test.ts", "sha256": "9efd6e4f4990c0a27a6f907b9733382658e6af6732a8139de5295345c9add6a7" }
+  ],
+  "verification": [
+    { "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/purchasing/__tests__/receipt-return-recognition.test.ts services/purchasing/__tests__/purchase-return-credit.service.test.ts", "sessionId": 58238, "exitCode": 0, "suites": 2, "tests": 34, "result": "passed", "durationSeconds": 5.768 },
+    { "command": "node node_modules/eslint/bin/eslint.js services/purchasing/receipt-return-recognition.ts services/purchasing/purchase-return-credit.service.ts services/purchasing/__tests__/receipt-return-recognition.test.ts services/purchasing/__tests__/purchase-return-credit.service.test.ts", "exitCode": 0, "result": "passed" }
+  ],
+  "captureNote": "Earlier PowerShell Tee-Object/Set-Content evidence capture was denied by the filesystem; those observation attempts are not counted as verification. Commands were rerun without file redirection, polled to terminal and this record was written through apply_patch.",
+  "limitations": [
+    "Root owns combined TypeScript, actual PostgreSQL and browser verification; not claimed by this unit verification.",
+    "Independent fractional stock costs that round every return to zero cannot discharge a nonzero original receipt accrual without a coordinated stock valuation allocation contract. Such returns remain visibly source-review blocked, never reported as posted journals.",
+    "Unmarked legacy uninvoiced receipts do not establish GRNI; physical stock returns remain retained with an accounting source-review blocker."
+  ]
+}

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto"
 import { Prisma } from "@prisma/client"
 jest.unmock("@/prisma/db")
 import { db } from "@/prisma/db"
-import { acquirePOSCheckout, preparePOSCheckout } from "../checkout.service"
+import { acquirePOSCheckout, preparePOSCheckout, renewPOSCheckout } from "../checkout.service"
 import { assertCheckoutLeaseInTx, retireShiftDraftsInTx } from "../checkout-state"
 import { getPOSSaleCommitStatus } from "../pos.service"
 
@@ -56,6 +56,56 @@ suite("POS lifecycle PostgreSQL boundaries (disposable schema)", () => {
     return { scope, cart }
   }
 
+  it("renews the valid owner while preserving retained intent and denying expired, foreign and closed-shift renewal", async () => {
+    const { scope, cart } = await fixture()
+    await acquirePOSCheckout(scope)
+    const request = { ...scope, salesOrderId: cart.id, clientCommitId: `pos:${randomUUID()}`, expectedCartRevision: "a".repeat(64), tenders: [{ method: "CASH", amount: 100 }] }
+    await preparePOSCheckout(request)
+    const before = await db.pOSCheckoutWorkspace.findUniqueOrThrow({ where: { sessionId: scope.sessionId } })
+    await renewPOSCheckout(scope)
+    const renewed = await db.pOSCheckoutWorkspace.findUniqueOrThrow({ where: { sessionId: scope.sessionId } })
+    expect(renewed.pendingRequest).toEqual(before.pendingRequest)
+    expect(renewed.leaseExpiresAt!.getTime()).toBeGreaterThanOrEqual(before.leaseExpiresAt!.getTime())
+    await expect(renewPOSCheckout({ ...scope, checkoutLeaseId: randomUUID() })).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+    await expect(renewPOSCheckout({ ...scope, userId: "other" })).rejects.toThrow("POS_CHECKOUT_SHIFT_UNAVAILABLE")
+    await expect(renewPOSCheckout({ ...scope, organizationId: "other" })).rejects.toThrow("POS_CHECKOUT_SHIFT_UNAVAILABLE")
+    await db.pOSCheckoutWorkspace.update({ where: { sessionId: scope.sessionId }, data: { leaseExpiresAt: new Date(0) } })
+    await expect(renewPOSCheckout(scope)).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+    await acquirePOSCheckout(scope)
+    await db.pOSSession.update({ where: { id: scope.sessionId }, data: { status: "CLOSED", endTime: new Date() } })
+    await expect(renewPOSCheckout(scope)).rejects.toThrow("POS_CHECKOUT_SHIFT_UNAVAILABLE")
+  })
+
+  it("fences renewal racing shift closure and rejects subsequent renewal", async () => {
+    const { scope } = await fixture()
+    await acquirePOSCheckout(scope)
+    const results = await Promise.allSettled([
+      renewPOSCheckout(scope),
+      db.$transaction(async tx => {
+        await tx.pOSSession.update({ where: { id: scope.sessionId }, data: { status: "CLOSED", endTime: new Date() } })
+        await retireShiftDraftsInTx(tx, scope)
+      }),
+    ])
+    expect(results[1].status).toBe("fulfilled")
+    expect((await db.pOSCheckoutWorkspace.findUniqueOrThrow({ where: { sessionId: scope.sessionId } })).leaseId).toBeNull()
+    await expect(renewPOSCheckout(scope)).rejects.toThrow("POS_CHECKOUT_SHIFT_UNAVAILABLE")
+  })
+
+  it("keeps every retained request discoverable while advancing a bounded reconciliation cursor", async () => {
+    const { scope } = await fixture()
+    await acquirePOSCheckout(scope)
+    const ids = Array.from({ length: 25 }, (_, n) => `old-${scope.sessionId}-${String(n).padStart(2, '0')}`)
+    await db.pOSSession.createMany({ data: ids.map(id => ({ id, organizationId: scope.organizationId, userId: scope.userId, locationId: scope.locationId, terminalId: scope.terminalId, sessionNumber: id, openingBalance: 0, status: "CLOSED" as const, endTime: new Date() })) })
+    await db.pOSCheckoutWorkspace.createMany({ data: ids.map(id => ({ sessionId: id, organizationId: scope.organizationId, actorId: scope.userId, pendingRequest: { clientCommitId: `pos:${id}`, salesOrderId: `missing-${id}`, locationId: scope.locationId, terminalId: scope.terminalId, sessionId: id, expectedCartRevision: "a".repeat(64), tenders: [{ method: "CASH", amount: 100 }] } })) })
+    const first = await acquirePOSCheckout(scope)
+    expect(first.historicalRequests).toHaveLength(25)
+    expect(first.recoveryAfter).toBe(ids[19])
+    const next = await acquirePOSCheckout({ ...scope, recoveryAfter: first.recoveryAfter! })
+    expect(next.historicalRequests).toHaveLength(25)
+    expect(next.recoveryAfter).toBeNull()
+    expect(await db.pOSCheckoutWorkspace.count({ where: { organizationId: scope.organizationId, pendingRequest: { not: Prisma.DbNull } } })).toBe(25)
+  })
+
   it("grants one of two concurrent owners and fences the losing tab's writes", async () => {
     const { scope } = await fixture()
     const competitor = { ...scope, checkoutLeaseId: randomUUID() }
@@ -63,6 +113,19 @@ suite("POS lifecycle PostgreSQL boundaries (disposable schema)", () => {
     expect(attempts.filter(result => result.status === "fulfilled")).toHaveLength(1)
     const loser = attempts[0].status === "fulfilled" ? competitor : scope
     await expect(db.$transaction(tx => assertCheckoutLeaseInTx(tx, loser, loser.checkoutLeaseId))).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+  })
+
+  it("preserves unknown intent across lease expiry and fences the previous tab", async () => {
+    const { scope, cart } = await fixture()
+    await acquirePOSCheckout(scope)
+    const request = { ...scope, salesOrderId: cart.id, clientCommitId: `pos:${randomUUID()}`, expectedCartRevision: "a".repeat(64), tenders: [{ method: "CASH", amount: 100 }] }
+    await preparePOSCheckout(request)
+    await db.pOSCheckoutWorkspace.update({ where: { sessionId: scope.sessionId }, data: { leaseExpiresAt: new Date(0) } })
+    const nextTab = { ...scope, checkoutLeaseId: randomUUID() }
+    const recovered = await acquirePOSCheckout(nextTab)
+    expect(recovered.pendingRequest).toMatchObject({ clientCommitId: request.clientCommitId, salesOrderId: cart.id })
+    await expect(db.$transaction(tx => assertCheckoutLeaseInTx(tx, scope, scope.checkoutLeaseId, true))).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+    expect(await db.pOSCommitResult.count({ where: { organizationId: scope.organizationId } })).toBe(0)
   })
 
   it("preserves a request through shift closure and proves its retired nonempty cart cannot submit later", async () => {

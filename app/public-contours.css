@@ -1,0 +1,88 @@
+/* Sculpted flow: static, shared artwork with a quiet center for reading.
+   The isolated negative layers sit above the canvas, below every control. */
+.public-contour-page {
+  --contour-blue: var(--product-brand);
+  --contour-sea: var(--product-spruce);
+  --contour-gold: var(--product-gold);
+  --contour-strength: 0.42;
+  --contour-light: 0.75;
+}
+
+.auth-contour-shell {
+  --contour-blue: var(--auth-brand);
+  --contour-sea: var(--auth-spruce-ink);
+  --contour-gold: var(--auth-gold-ink);
+  --contour-strength: 0.26;
+  --contour-light: 0.48;
+}
+
+.public-contour-page > section,
+.auth-contour-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.public-contour-page > section::before,
+.public-contour-page > section::after,
+.auth-contour-shell::before,
+.auth-contour-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.public-contour-page > section::before,
+.auth-contour-shell::before {
+  z-index: -2;
+  opacity: var(--contour-light);
+  background:
+    radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--contour-blue) 26%, transparent), transparent 58%),
+    radial-gradient(ellipse at 93% 45%, color-mix(in srgb, var(--contour-sea) 14%, transparent), transparent 42%),
+    radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--contour-gold) 12%, transparent), transparent 45%);
+}
+
+.public-contour-page > section::after,
+.auth-contour-shell::after {
+  z-index: -1;
+  opacity: var(--contour-strength);
+  background: linear-gradient(145deg, var(--contour-blue) 12%, var(--contour-sea) 56%, var(--contour-gold) 94%);
+  -webkit-mask: url("/motifs/stoquify-contours.svg") center / 100% 100% no-repeat;
+  mask: url("/motifs/stoquify-contours.svg") center / 100% 100% no-repeat;
+}
+
+/* Secondary sections echo the motif without repeating the hero's intensity. */
+.public-contour-page > section:not(:first-child) {
+  --contour-strength: 0.19;
+  --contour-light: 0.28;
+}
+
+.auth-contour-shell::after {
+  max-height: 72rem;
+}
+
+@media (max-width: 640px) {
+  .public-contour-page > section,
+  .auth-contour-shell {
+    --contour-strength: 0.24;
+    --contour-light: 0.4;
+  }
+
+  .public-contour-page > section::after,
+  .auth-contour-shell::after {
+    -webkit-mask-size: auto 100%;
+    mask-size: auto 100%;
+    -webkit-mask-position: 68% center;
+    mask-position: 68% center;
+  }
+}
+
+/* No animation, parallax, filters, or JS: reduced-motion is the default. */
+@media (forced-colors: active) {
+  .public-contour-page > section::before,
+  .public-contour-page > section::after,
+  .auth-contour-shell::before,
+  .auth-contour-shell::after {
+    display: none;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "at": "2026-09-27T13:56:08.037Z",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "currentReceiptBindings": [
+    {
+      "file": "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\recovery-statement-2b1e8a8c-4429-457b-bc24-6d7ac7ac98a1.json",
+      "sha256": "ed28e2da4636e72c3e349c1d850f0aef985a4754253bb99342606872af769a39",
+      "overallPassed": false,
+      "scope": "First positive lifecycle check only; subsequent mutation hypothesis failed as documented"
+    },
+    {
+      "file": "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\recovery-statement-f40e3fe8-59b7-4056-96d2-e7374c09d0d0.json",
+      "sha256": "90e86ef6c3a9d3317a2f6888dd2ac524a1a1e036875057bc34c6f80bbdc21377",
+      "overallPassed": true,
+      "scope": "All recorded checks"
+    },
+    {
+      "file": "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\recovery-reverse-order-a6d00e74-0d8a-4124-980d-45a79ddfbcb4.json",
+      "sha256": "7eaa1cca7444eb41bf358d342db7938cde5770fea62ea5501ef7af663d7eb0a6",
+      "overallPassed": true,
+      "scope": "All recorded checks"
+    },
+    {
+      "file": "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\retained-statement-investigation-9bc7a155-4031-4d96-b51b-a8ab5439b1e2.json",
+      "sha256": "d050130d1bcac1794e09ed2575ae11faaed3baa04bbfc2ca8d53bdcdaded8b1b",
+      "overallPassed": true,
+      "scope": "All recorded checks"
+    }
+  ],
+  "verificationScripts": {
+    "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-statement.cjs": "338ced693cd7e6511b4f136c638d19d1683e280c79287b313d398a7d42e63dcb",
+    "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-recovery-reverse-order.cjs": "199e522f4389487a30322f5b5e5c84ccf0f208dd8dd414ca39016da6dd763a1a",
+    "what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-retained-statement-investigation.cjs": "6db7d2e7a48968c576311111738ed1e0adc157ea59ae1b3a95fb62df3872c424"
+  },
+  "migration": {
+    "file": "prisma/migrations/20260815190000_payment_reconciliation_evidence_immutability/migration.sql",
+    "sha256": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e"
+  },
+  "applicationChanged": false,
+  "wholeWorkflowComplete": false
+}

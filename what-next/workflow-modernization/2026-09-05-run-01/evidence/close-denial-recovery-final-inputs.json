@@ -1,0 +1,45 @@
+{
+  "report": "CLOSE_DENIAL_RETENTION_2026-10-01.md",
+  "receipts": {
+    "jest": "evidence/close-denial-recovery-jest-5b9c9862-6d66-415b-a451-b0bc16fafbad.json",
+    "lint": "evidence/close-denial-recovery-lint-f6518bc4-1797-4eef-b05b-290973392bad.json",
+    "typecheck": "evidence/close-denial-recovery-typecheck-5af74d27-e65b-4321-8f5e-5998405ac556.json",
+    "boundary": "evidence/close-denial-recovery-boundary-bc053f57-f3e2-46d6-bff7-b90e5dc0deab.json",
+    "ledger": "evidence/close-denial-recovery-ledger-c43d191f-6b90-455c-9fae-ecdb3b6c2370.json",
+    "uiJest": "evidence/close-denial-copy-jest-e163a10f-9eb6-4d72-b483-4ad54aad7945.json",
+    "uiLint": "evidence/close-denial-copy-lint-c9968f61-b539-4ce8-97c1-b7c0c0cf222d.json",
+    "uiTypecheck": "evidence/close-denial-copy-typecheck-d76d3d8b-61f4-4a53-98ec-e55ff7a391fb.json",
+    "database": "lanes/environment/close-denial-recovery-runtime-08a45f7e-01e5-4eb7-9b2e-34608f66c393.json",
+    "aggregate": "lanes/environment/cash-close-recovery-readonly-4e711acb-b190-418a-826a-f6e8400bf410.json",
+    "browser": "lanes/environment/close-denial-recovery-browser-9e554a0b-3a0a-4c77-8d1f-4e926cc42905.json"
+  },
+  "supersededBindings": {
+    "hooks/accounting/useCloseAssurance.ts": {
+      "predecessor": "707e044159b0977368508429af94d0c1a9403450a351a9f923502f6d006920e0",
+      "current": "b7471101c6298332d5ff8e7610a3794619a99adb4f3115d7dcc168772e231e90",
+      "reason": "French certification guidance shortened to fit the unchanged safe-message limit; actual hook-to-banner EN/FR tests and browser verification repeated."
+    },
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": {
+      "predecessor": "26981a4109a602900759f264d5ec3c3264d06cae4cd4d188449894c9b53d45ac",
+      "current": "d227b92243a19e9763519f5b5a75d83fa6f8a6250db8b7ab3a7d801f44eb4b74",
+      "reason": "Expected French guidance updated and affected suite repeated."
+    },
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": {
+      "predecessor": "fd7c0f58741ca44b2f934b1a728402add1522dfa8f98b68fb2a66b17a1ebb21b",
+      "current": "54084ae3fe9658a5b84641f64ec626982423cd4c44ea625a81a221dd0eb373ba",
+      "reason": "Two composed tests added using the actual export hook and real safe-message banner; affected suite repeated."
+    }
+  },
+  "visualReview": [
+    "lanes/environment/close-denial-recovery-browser-9e554a0b-3a0a-4c77-8d1f-4e926cc42905-en1440-certified-current-evidence.png",
+    "lanes/environment/close-denial-recovery-browser-9e554a0b-3a0a-4c77-8d1f-4e926cc42905-fr320-denied-actionable-alert.png",
+    "lanes/environment/close-denial-recovery-browser-9e554a0b-3a0a-4c77-8d1f-4e926cc42905-fr320-certified-current-evidence.png"
+  ],
+  "retainedAttempts": [
+    "lanes/environment/close-denial-recovery-browser-5dbf54af-742f-4103-a52b-32db77c02caa.json",
+    "lanes/environment/close-denial-recovery-browser-2ed54623-d728-4223-a396-193e40a86496.json",
+    "lanes/environment/close-denial-browser-diagnostic-bd54bebe-51a9-4738-b252-f39ff7ea0ab9.json",
+    "evidence/close-export-denial-recovery-2026-10-01/before-french-recovery-repair.json",
+    "evidence/close-export-denial-recovery-2026-10-01/before-export-identity-binding.json"
+  ]
+}

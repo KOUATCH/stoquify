@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-04T09:38:32.959Z",
+  "finalizedAt": "2026-10-04T09:40:23.400Z",
+  "report": "RECONCILIATION_PRODUCER_CLOSE_2026-10-04.md",
+  "registerBefore": "6bfcb8c464a8778733feae9d589b6f06ccf555725758912b08872a3f805aa8f2",
+  "registerAfter": "255f4bffc4c628969b0b53565b804dc656699fe3744a14a03ef17e1ce4a5ad6c",
+  "progressBefore": "8ce8c57831545ba32a5eb69379f9ec7682e8f46cdb1ce0c176396696bf906926",
+  "progressAfter": "0316e63d43a7999aecc78d45b567702cb33e168a53a278b3bdf2777c187f7f11",
+  "counts": {
+    "Queued": 264,
+    "Complete—verified": 4,
+    "In progress": 2
+  },
+  "bindings": {
+    "evidence/reconciliation-producer-close-jest-553deadc-8136-4f31-9068-740c8ef2c3ea.json": "7d5837992e42dd4d2dfb62cc89295098ea1210e72a5439a19f5d931b7ea2e0bd",
+    "evidence/reconciliation-producer-close-typecheck-8f2a5cee-93c2-4889-8848-8146f576e072.json": "08e21bf8275d1c434e514f02a546f22a35555393092a17e73224eb9a5e27b4d2",
+    "evidence/reconciliation-producer-close-lint-9ff977cf-1f1d-4854-9c7d-5865550f5cc0.json": "05dd2a5e7847cb6163193ace23693798b6ec4fc3b19d8b142339feb07420dca7",
+    "lanes/environment/reconciliation-producer-close-acceptance-8d5e9fc4-2a23-4610-afcd-4cec704963e1.json": "628ec9326c3067e45ada7489a024c450b0e096eb688b45b6aca538a12fb11930",
+    "RECONCILIATION_PRODUCER_CLOSE_2026-10-04.md": "18545796803b955f72a59b665fe9e28c1ca099babe6da509ed592221e6cc4d0d",
+    "RECONCILIATION_PRODUCER_CLOSE_CHECKLIST_2026-10-04.md": "7d222fe82254b29788680071f5ecdca2a6349413fe90851a8c6e63476bd17105",
+    "lanes/environment/reconciliation-producer-close-baseline-bdb77cb4-a781-4905-85b0-3b9ef5b34b56.json": "2ded5401909091521e982e36006f93ba91614520bfb8e9b87572e96fad12bd29",
+    "lanes/environment/reconciliation-producer-close-baseline-0b2e3b72-324e-4fea-ad0d-3855d15f28a3.json": "26a5ed91c9d88088c55c20400eba68f4417d4f1a97143a0ef1882bcb5fbe2949"
+  },
+  "currentReceipts": {
+    "jest": "evidence/reconciliation-producer-close-jest-553deadc-8136-4f31-9068-740c8ef2c3ea.json",
+    "typecheck": "evidence/reconciliation-producer-close-typecheck-8f2a5cee-93c2-4889-8848-8146f576e072.json",
+    "lint": "evidence/reconciliation-producer-close-lint-9ff977cf-1f1d-4854-9c7d-5865550f5cc0.json",
+    "runtime": "lanes/environment/reconciliation-producer-close-acceptance-8d5e9fc4-2a23-4610-afcd-4cec704963e1.json"
+  },
+  "reproducedDefectsCorrected": 3,
+  "workflowClosures": 0,
+  "goalComplete": false,
+  "priorAttempt": {
+    "exitCode": 1,
+    "registerUpdated": true,
+    "progressWriteFailed": true,
+    "recoveredThroughFileEditTool": true,
+    "registerWriterRerun": false
+  },
+  "passed": true
+}

@@ -1,0 +1,63 @@
+{
+  "at": "2026-10-04T08:49:21.321Z",
+  "report": "PURCHASE_CLOSE_SETTLED_RECOVERY_2026-10-04.md",
+  "registerBefore": "be86008af8b3673309e87d03a9582c798fc12e51ed1077258648bd792d33db8c",
+  "registerAfter": "60a25d43a5f62e2d249ae3478e62368c2b45521ce73e35ec9f1236c900770d52",
+  "progressBefore": "a422b79c6e6d20e2b501dcf6c3c530b6d10f46985c6fa534657fc2a531130b00",
+  "counts": {
+    "Queued": 264,
+    "Complete—verified": 4,
+    "In progress": 2
+  },
+  "bindings": {
+    "lanes/environment/purchase-close-settled-runtime-66855dd3-582c-41d2-a0fb-4db41c82a227.json": "436bdeeedc9a580b75dc777579adf2b3ca0688c459fa012407f5ede6f5ed0f7a",
+    "PURCHASE_CLOSE_SETTLED_RECOVERY_2026-10-04.md": "8a6b72bf285aeff6ce432f894d17396e8fe05fdf4764927baaffbae9ebea3a20"
+  },
+  "previousCriteria": {
+    "FA-CASH-COMMAND": [
+      {
+        "name": "Credit then return invalidate retained Close and recover genuine Cash certification",
+        "status": "failed"
+      },
+      {
+        "name": "No-run period actual publication race: creator first",
+        "status": "passed"
+      },
+      {
+        "name": "No-run period actual publication race: reversal first",
+        "status": "failed"
+      },
+      {
+        "name": "Late real invalidation rollback, independent retry and exact replay",
+        "status": "failed"
+      }
+    ],
+    "FA-CLOSE-PACK": [
+      {
+        "name": "Credit then return invalidate retained Close and recover genuine Cash certification",
+        "status": "failed"
+      },
+      {
+        "name": "No-run period actual publication race: creator first",
+        "status": "passed"
+      },
+      {
+        "name": "No-run period actual publication race: reversal first",
+        "status": "failed"
+      },
+      {
+        "name": "Late real invalidation rollback, independent retry and exact replay",
+        "status": "failed"
+      }
+    ]
+  },
+  "newlyVerifiedCriteria": 3,
+  "revalidatedCriteria": 1,
+  "workflowClosures": 0,
+  "goalComplete": false,
+  "registerVerified": true,
+  "progressUpdatePending": false,
+  "finalizedAt": "2026-10-04T08:50:52.226Z",
+  "progressAfter": "137ebcd115bcd1fe066f80763201b8c4ab688756d1eee6ed043d26850f094710",
+  "passed": true
+}

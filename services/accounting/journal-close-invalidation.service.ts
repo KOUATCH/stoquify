@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client"
+import { ConflictError } from "@/services/_shared/action-errors"
 
 import {
   recordCloseCertificationInvalidationsForSourceInTx,
@@ -8,6 +9,7 @@ import {
 type PostedJournalCloseInvalidationInput = {
   journalEntryId: string
   periodId: string
+  affectedPeriodIds?: readonly string[]
   entryDate?: Date | string | null
   correlationId?: string | null
   staleReason?: string
@@ -29,12 +31,18 @@ export async function recordPostedJournalCloseInvalidationInTx(
   input: PostedJournalCloseInvalidationInput,
   control: ExportClosePackControl = {},
 ) {
+  const periodIds = input.affectedPeriodIds === undefined ? undefined : [...new Set(input.affectedPeriodIds)].sort()
+  if (periodIds && !periodIds.includes(input.periodId)) {
+    throw new ConflictError("Journal posting evidence scope is incomplete.")
+  }
   return recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, {
     sourceCode: "LEDGER_JOURNAL_POSTED",
     sourceId: input.journalEntryId,
-    periodId: input.periodId,
-    periodStart: input.entryDate ?? null,
-    periodEnd: input.entryDate ?? null,
+    ...(periodIds ? { periodIds } : {
+      periodId: input.periodId,
+      periodStart: input.entryDate ?? null,
+      periodEnd: input.entryDate ?? null,
+    }),
     staleReason: input.staleReason ?? "Ledger journal posting changed certified close evidence.",
     newEvidenceHash: input.journalEntryId,
     correlationId: input.correlationId ?? null,
@@ -47,9 +55,10 @@ export async function recordReversedJournalCloseInvalidationsInTx(
   input: ReversedJournalCloseInvalidationInput,
   control: ExportClosePackControl = {},
 ) {
+  // Compatibility for source-owned writers that have not yet adopted the
+  // complete pre-write period boundary. This is not an ordering guarantee.
   const periodIds = [...new Set([input.originalPeriodId, input.reversalPeriodId])]
   const results = []
-
   for (const periodId of periodIds) {
     results.push(await recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, {
       sourceCode: "LEDGER_JOURNAL_REVERSED",
@@ -62,9 +71,30 @@ export async function recordReversedJournalCloseInvalidationsInTx(
       correlationId: input.correlationId ?? null,
     }, control))
   }
-
   return {
     invalidatedCount: results.reduce((total, result) => total + result.invalidatedCount, 0),
     results: results.flatMap((result) => result.results),
   }
+}
+
+export async function recordOrderedReversedJournalCloseInvalidationsInTx(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  input: ReversedJournalCloseInvalidationInput & { affectedPeriodIds: readonly string[] },
+  control: ExportClosePackControl = {},
+) {
+  const periodIds = [...new Set(input.affectedPeriodIds)].sort()
+  if (![input.originalPeriodId, input.reversalPeriodId].every(id => periodIds.includes(id))) {
+    throw new ConflictError("Journal reversal evidence scope is incomplete.")
+  }
+  // One query and one globally ordered run-lock set, including overlaps.
+  // Callers acquire the complete period boundary before financial writes.
+  return recordCloseCertificationInvalidationsForSourceInTx(tx, organizationId, {
+    sourceCode: "LEDGER_JOURNAL_REVERSED",
+    sourceId: input.originalJournalEntryId,
+    periodIds,
+    staleReason: input.staleReason ?? "Ledger journal reversal changed certified close evidence.",
+    newEvidenceHash: input.reversalJournalEntryId,
+    correlationId: input.correlationId ?? null,
+  }, control)
 }

@@ -1,4 +1,6 @@
 "use client"
+import { ReconciliationAlertProcessing } from "./ReconciliationAlertProcessing"
+import { AlertScanRecovery } from "./AlertScanRecovery"
 
 import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
 
@@ -55,6 +57,8 @@ import type { CertificateHistoryRun } from "@/services/reconciliation/reconcilia
 import { ReconciliationSignReview, type SignedRunForExport } from "./ReconciliationSignReview"
 import type { ReconciliationCertificateExportCommand } from "@/services/reconciliation/reconciliation-certificate-export.contracts"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { localizePath } from "@/i18n/routing"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { usePermissions } from "@/hooks/usePermissions"
 import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
@@ -199,22 +203,33 @@ function paymentTransactionProofSubject(input: {
   }
 }
 
-function LoadingState() {
+function LoadingState({ locale }: { locale: string }) {
+  const isFrench = locale === "fr"
   return (
-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4">
-        <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
-        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+        <div role="status" aria-live="polite" className="space-y-2 text-[var(--dash-text)]">
+          <h1 className="text-xl font-semibold">{isFrench ? "Chargement du rapprochement" : "Loading reconciliation"}</h1>
+          <p className="text-sm text-[var(--dash-text-soft)]">{isFrench
+            ? "Vérification de vos accès et chargement des justificatifs de paiement. Aucun résultat n’est encore disponible."
+            : "Checking your access and loading payment evidence. Results are not available yet."}</p>
+        </div>
+        <a href={localizePath("/dashboard", isFrench ? "fr" : "en")}
+          className="inline-flex min-h-10 items-center rounded-lg border border-[var(--dash-border-subtle)] px-4 py-2 text-sm font-semibold text-[var(--dash-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-focus)]">
+          {isFrench ? "Retour au tableau de bord" : "Back to dashboard"}
+        </a>
+        <Skeleton aria-hidden="true" className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
+        <div aria-hidden="true" className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           {Array.from({ length: 5 }).map((_, index) => (
             <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
           ))}
         </div>
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div aria-hidden="true" className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
           <Skeleton className="h-[480px] rounded-lg bg-[var(--dash-surface-raised)]" />
           <Skeleton className="h-[480px] rounded-lg bg-[var(--dash-surface-raised)]" />
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 
@@ -321,7 +336,7 @@ export function PaymentTrustBanner({
             <div key={signal.key} className={cn("min-w-0 rounded-lg border p-3", trustSignalClass(signal.tone))}>
               <div className="flex items-center gap-2 text-[0.7rem] font-semibold uppercase leading-4">
                 <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate">{signal.label}</span>
+                <span className="min-w-0 break-words">{signal.label}</span>
               </div>
               <div className="mt-2 break-words text-lg font-semibold leading-tight tabular-nums">{signal.value}</div>
               {signal.detail ? <div className="mt-1 text-xs leading-4 opacity-85">{signal.detail}</div> : null}
@@ -373,6 +388,8 @@ function MetricCard({
 export default function PaymentReconciliationWorkbench({ initialSignRunId }: { initialSignRunId?: string } = {}) {
   const t = useTranslations("paymentReconciliationWorkbench")
   const locale = useLocale()
+  // Subscribe before data loads; nested panels share this live permission result.
+  const authority = usePermissions()
   const notifications = useNotifications()
   const [period, setPeriod] = useState<PaymentReconciliationWorkbenchPeriod>("mtd")
   const [locationId, setLocationId] = useState(allLocationsValue)
@@ -506,11 +523,25 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
     return exportCertificate.mutateAsync(command)
   }
 
-  if (workbenchQuery.isLoading && !workbench) return <LoadingState />
+  if (workbenchQuery.isLoading && !workbench) return <LoadingState locale={locale} />
 
   if (errorMessage && !workbench) {
-    return <DashboardErrorState locale={locale === "fr" ? "fr" : "en"} error="Payment reconciliation workbench unavailable"
-      reset={(workbenchQuery.error as { code?: string })?.code === "FORBIDDEN" ? undefined : () => { void workbenchQuery.refetch() }} />
+    if ((workbenchQuery.error as { code?: string })?.code === "FORBIDDEN") {
+      const isFrench = locale === "fr"
+      return <DashboardRouteState embedded kind="permission_denied" locale={isFrench ? "fr" : "en"}
+        title={isFrench ? "L’accès au rapprochement doit être vérifié" : "Reconciliation access needs review"}
+        message={isFrench
+          ? "Votre accès actuel n’a pas pu être confirmé. Consultez vos autorisations ou relancez leur vérification."
+          : "Your current access could not be confirmed. Review your permissions or refresh the access check."}
+        primaryHref={localizePath("/dashboard/access-requests", isFrench ? "fr" : "en")}
+        primaryLabel={isFrench ? "Vérifier mes autorisations" : "Review my access"}
+        actions={<Button type="button" variant="outline" className="h-auto min-h-10 whitespace-normal"
+          onClick={() => { void authority.refreshPermissions() }}>
+          {isFrench ? "Actualiser les autorisations" : "Refresh access check"}
+        </Button>} />
+    }
+    return <DashboardErrorState embedded locale={locale === "fr" ? "fr" : "en"} error="Payment reconciliation workbench unavailable"
+      reset={() => { void workbenchQuery.refetch() }} />
   }
 
   const canonicalTableQuery = createCanonicalTableQuery(paymentReconciliationTableContract, {
@@ -524,7 +555,7 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
       query={canonicalTableQuery}
       state={workbenchQuery.isFetching ? "refreshing" : workbench ? "ready" : "empty"}
     >
-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
       <section className={cn(glassPanelClass, "p-4")}>
         <div className="flex min-w-0 flex-col gap-5">
@@ -564,7 +595,7 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
                 {t("filters.location")}
               </div>
               <Select value={locationId} onValueChange={setLocationId}>
-                <SelectTrigger className="dashboard-control h-10 rounded-lg">
+                <SelectTrigger aria-label={t("filters.location")} className="dashboard-control h-10 rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -584,7 +615,7 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
                 {t("filters.period")}
               </div>
               <Select value={period} onValueChange={(value) => setPeriod(value as PaymentReconciliationWorkbenchPeriod)}>
-                <SelectTrigger className="dashboard-control h-10 rounded-lg">
+                <SelectTrigger aria-label={t("filters.period")} className="dashboard-control h-10 rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -648,6 +679,7 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
 
       <section id="reconciliation-evidence" className="min-w-0 scroll-mt-24">
         <DurableEvidencePanel
+          authority={authority}
           initialSignRunId={initialSignRunId}
           dashboard={durableDashboard}
           isLoading={durableDashboardQuery.isLoading}
@@ -773,12 +805,13 @@ export default function PaymentReconciliationWorkbench({ initialSignRunId }: { i
         </>
       ) : null}
       </div>
-    </main>
+    </div>
     </CanonicalTableBoundary>
   )
 }
 
 function DurableEvidencePanel({
+  authority,
   initialSignRunId,
   dashboard,
   isLoading,
@@ -793,6 +826,7 @@ function DurableEvidencePanel({
   formatDateTime,
   t,
 }: {
+  authority: ReturnType<typeof usePermissions>
   initialSignRunId?: string
   dashboard: PaymentReconciliationDashboardData | undefined
   isLoading: boolean
@@ -810,7 +844,6 @@ function DurableEvidencePanel({
   const locale = useLocale()
   const [manualAmounts, setManualAmounts] = useState<Record<string, string>>({})
   const manualWorkflow = useManualMatchWorkflow()
-  const authority = usePermissions()
   const [exportRunId, setExportRunId] = useState<string | null>(null)
   const [historicalExport, setHistoricalExport] = useState<{ organizationId: string; actorId: string; run: CertificateHistoryRun; request?: ReconciliationCertificateExportCommand } | null>(null)
   const exportOpener = useRef<HTMLButtonElement | null>(null)
@@ -896,6 +929,7 @@ function DurableEvidencePanel({
             t={t}
           />
           <ManualMatchLane
+            authority={authority}
             candidates={dashboard.manualMatchCandidates}
             proposals={dashboard.manualMatchProposals}
             preparation={dashboard.manualMatchPreparation}
@@ -923,10 +957,10 @@ function DurableEvidencePanel({
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-medium">{account.displayName}</span>
                       <Badge variant="outline" className={filterChipClass}>
-                        {account.railType}
+                        {["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "WALLET", "QR", "CHEQUE", "INTERNAL_TRANSFER", "OTHER"].includes(account.railType) ? t(`rails.${account.railType}`) : account.railType}
                       </Badge>
                       <Badge variant="outline" className={filterChipClass}>
-                        {account.status}
+                        {["DRAFT", "ACTIVE", "SUSPENDED", "ARCHIVED", "UNMAPPED"].includes(account.status) ? t(`certification.providerStatuses.${account.status}`) : account.status}
                       </Badge>
                     </div>
                     <div className={cn("mt-1 text-xs", mutedTextClass)}>
@@ -962,14 +996,13 @@ function DurableEvidencePanel({
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-medium">{formatDateTime(run.businessDate)}</span>
                         <Badge variant="outline" className={filterChipClass}>
-                          {run.status}
+                          {["DRAFT", "RUNNING", "NEEDS_REVIEW", "BLOCKED", "READY_FOR_SIGNOFF", "SIGNED", "FAILED", "VOIDED"].includes(run.status) ? t(`certification.runStatuses.${run.status}`) : run.status}
                         </Badge>
                       </div>
                       <div className={cn("mt-1 text-xs", mutedTextClass)}>
                         {t("certification.runFacts", {
                           matches: number(run.matchCount),
                           exceptions: number(run.exceptionCount),
-                          suspense: money(run.suspenseAmount),
                         })}
                       </div>
                     </div>
@@ -1047,6 +1080,7 @@ function DurableEvidencePanel({
 
         <div className="grid min-w-0 grid-cols-1 gap-4">
           <DurableSuspensePostingQueue
+            authority={authority}
             scope={dashboard.scope}
             items={dashboard.suspenseQueue}
             money={money}
@@ -1059,6 +1093,9 @@ function DurableEvidencePanel({
             formatDateTime={formatDateTime}
             t={t}
           />
+          {dashboard.alertScan && exportScopeReady && authority.hasPermission("payments.reconciliation.read") && authority.hasPermission("payments.reconciliation.run") && <AlertScanRecovery
+            key={`${dashboard.scope.organizationId}:${dashboard.scope.actorId}:${dashboard.alertScan.scanId}`}
+            scanId={dashboard.alertScan.scanId} locale={locale} />}
         </div>
       </CardContent>
     </Card>
@@ -1198,7 +1235,7 @@ function StatementImportLane({
                   <div className={cn("mt-1 text-xs", mutedTextClass)}>{file.providerAccountName} / {formatDateTime(file.importedAt)}</div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <Badge variant="outline" className={filterChipClass}>{file.status}</Badge>
+                  <Badge variant="outline" className={filterChipClass}>{["IMPORTED", "PROCESSING", "PROCESSED", "REJECTED", "ARCHIVED"].includes(file.status) ? t(`statementImport.statuses.${file.status}`) : file.status}</Badge>
                   <Badge variant="outline" className={filterChipClass}>{t("statementImport.lineCount", { count: file.lineCount })}</Badge>
                 </div>
               </div>
@@ -1211,6 +1248,7 @@ function StatementImportLane({
 }
 
 function ManualMatchLane({
+  authority,
   candidates,
   proposals,
   preparation,
@@ -1221,6 +1259,7 @@ function ManualMatchLane({
   t,
   onOpenPaymentProof,
 }: {
+  authority: ReturnType<typeof usePermissions>
   candidates: PaymentReconciliationDashboardData["manualMatchCandidates"]
   proposals: PaymentReconciliationDashboardData["manualMatchProposals"]
   preparation: PaymentReconciliationDashboardData["manualMatchPreparation"]
@@ -1244,7 +1283,7 @@ function ManualMatchLane({
     const parts = typeof value === "string" ? /^(\d+)(?:[.,](\d{1,2}))?$/.exec(value) : null
     return parts ? BigInt(parts[1]) * BigInt(100) + BigInt((parts[2] ?? "").padEnd(2, "0")) : null
   }
-  const { hasPermission, user, permissionState, refreshPermissions } = usePermissions()
+  const { hasPermission, user, permissionState, refreshPermissions } = authority
   const [feedback, setFeedback] = useState<{ error: boolean; text: string } | null>(null)
   const [authProposalId, setAuthProposalId] = useState<string | null>(null)
   const [verifying, setVerifying] = useState(false)
@@ -1448,6 +1487,7 @@ function ManualMatchLane({
 }
 
 function DurableSuspensePostingQueue(props: {
+  authority: ReturnType<typeof usePermissions>
   scope: PaymentReconciliationDashboardData["scope"]
   items: PaymentReconciliationDashboardData["suspenseQueue"]
   money: (value: number | null | undefined) => string
@@ -1489,7 +1529,7 @@ function DurableNotificationInbox({
           {notifications.map((item) => (
             <div key={item.id} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline" className={cn("shrink-0", severityClass(item.severity ?? "MEDIUM"))}>
+                <Badge variant="outline" className={cn("shrink-0", ["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(item.severity ?? "") ? severityClass(item.severity!) : filterChipClass)}>
                   {t(`inbox.severities.${["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(item.severity ?? "") ? item.severity : "INFO"}`)}
                 </Badge>
                 <Badge variant="outline" className={filterChipClass}>
@@ -1502,6 +1542,7 @@ function DurableNotificationInbox({
                 {item.dueAt ? <span>{t("inbox.due", { time: formatDateTime(item.dueAt) })}</span> : null}
                 {item.amount !== null ? <span>{/^-?\d+\.\d{2}$/.test(item.amount) && item.currency ? `${formatReconciliationAmount(item.amount, locale)} ${item.currency}` : t("inbox.amountUnavailable")}</span> : null}
               </div>
+              {item.processing && <ReconciliationAlertProcessing processing={item.processing} locale={locale} formatDateTime={formatDateTime} />}
             </div>
           ))}
         </div>

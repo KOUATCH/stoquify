@@ -1,4 +1,5 @@
 import { Prisma, SupplierInvoiceStatus, SupplierPaymentStatus } from "@prisma/client"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 type Invoice = Prisma.SupplierInvoiceGetPayload<{ include: { paymentAllocations: { include: { supplierPayment: true } }; supplierCreditNotes: true } }>
 type Payment = Prisma.SupplierPaymentGetPayload<Record<string, never>>
@@ -10,21 +11,24 @@ const released = new Set<SupplierPaymentStatus>(["RELEASED", "POSTED"])
 const zero = () => new Prisma.Decimal(0)
 
 /** Current operational supplier-ledger evidence; not a general-ledger or historical balance certificate. */
-export async function resolveAPHistoryFinancials(client: LedgerClient, organizationId: string, invoices: Invoice[], payments: Payment[], recordedThrough: Date, defaultCurrency: string) {
+export async function resolveAPHistoryFinancials(client: LedgerClient, organizationId: string, invoices: Invoice[], payments: Payment[], recordedThrough: Date, defaultCurrency: string, evidenceLimit?: number) {
+  const invoiceBalances = new Map<string, { paid: string; credits: string; outstanding: string } | null>()
   const paymentSources = new Map(payments.map(row => [row.id, row]))
   for (const invoice of invoices) for (const allocation of invoice.paymentAllocations) paymentSources.set(allocation.supplierPayment.id, allocation.supplierPayment)
   const notes = invoices.flatMap(row => row.supplierCreditNotes)
   const ids = [...invoices.map(row => row.id), ...paymentSources.keys(), ...notes.map(row => row.id)]
-  const ledger = ids.length ? await client.supplierLedgerEntry.findMany({ where: { organizationId, referenceId: { in: ids }, referenceType: { in: ["SUPPLIER_INVOICE", "SUPPLIER_PAYMENT", "SUPPLIER_CREDIT_NOTE", "SUPPLIER_CREDIT_NOTE_REVERSAL"] } } }) : []
+  const ledger = ids.length ? await client.supplierLedgerEntry.findMany({ where: { organizationId, referenceId: { in: ids }, referenceType: { in: ["SUPPLIER_INVOICE", "SUPPLIER_PAYMENT", "SUPPLIER_CREDIT_NOTE", "SUPPLIER_CREDIT_NOTE_REVERSAL"] } }, ...(evidenceLimit ? { take: evidenceLimit + 1 } : {}) }) : []
+  if (evidenceLimit && ledger.length > evidenceLimit) throw new BusinessRuleError("AP evidence exceeds the dashboard limit. Narrow the scope.")
   // Check every allocation of a relevant released payment, including invoices outside the view.
   const releasedIds = [...paymentSources.values()].filter(row => released.has(row.status)).map(row => row.id)
   const allocationSources = releasedIds.length ? await client.supplierPayment.findMany({
     where: { organizationId, id: { in: releasedIds } },
-    select: { id: true, allocations: { select: {
+    select: { id: true, allocations: { ...(evidenceLimit ? { take: evidenceLimit + 1 } : {}), select: {
       organizationId: true, supplierPaymentId: true, supplierInvoiceId: true, amount: true, createdAt: true,
       supplierInvoice: { select: { id: true, organizationId: true, supplierId: true, currency: true } },
     } } },
   }) : []
+  if (evidenceLimit && allocationSources.reduce((sum, row) => sum + row.allocations.length, 0) > evidenceLimit) throw new BusinessRuleError("AP allocation evidence exceeds the dashboard limit. Narrow the scope.")
   const validAllocations = new Map<string, boolean>()
   for (const source of allocationSources) {
     const payment = paymentSources.get(source.id)!
@@ -53,6 +57,7 @@ export async function resolveAPHistoryFinancials(client: LedgerClient, organizat
   const groups = new Map<string, {document: Prisma.Decimal; paid: Prisma.Decimal; credits: Prisma.Decimal; remainder: Prisma.Decimal; payments: Prisma.Decimal; invoiceUnknown: number; paymentUnknown: number}>()
   const group = (currency: string) => { let value = groups.get(currency); if (!value) {value = {document: zero(), paid: zero(), credits: zero(), remainder: zero(), payments: zero(), invoiceUnknown: 0, paymentUnknown: 0}; groups.set(currency, value)} return value }
   for (const invoice of invoices) {
+    invoiceBalances.set(invoice.id, null)
     const totals = group(invoice.currency); totals.document = totals.document.plus(invoice.total)
     const recognized = posted.has(invoice.status)
     const evidence = valid("SUPPLIER_INVOICE", invoice, invoice.total, invoice.invoiceDate, "PURCHASE", true)
@@ -76,6 +81,7 @@ export async function resolveAPHistoryFinancials(client: LedgerClient, organizat
     }
     if (!paid.eq(invoice.amountPaid)) verified = false
     if (!verified) {totals.invoiceUnknown++; continue}
+    invoiceBalances.set(invoice.id, { paid: paid.toFixed(2), credits: credits.toFixed(2), outstanding: invoice.total.minus(paid).minus(credits).toFixed(2) })
     totals.paid = totals.paid.plus(paid); totals.credits = totals.credits.plus(credits); totals.remainder = totals.remainder.plus(invoice.total.minus(paid).minus(credits))
   }
   for (const payment of payments) {
@@ -86,5 +92,5 @@ export async function resolveAPHistoryFinancials(client: LedgerClient, organizat
   }
   if (!groups.size) group(defaultCurrency)
   const currencyTotals: APCurrencyTotals[] = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([currency, g]) => ({currency, invoiceTotal: g.document.toFixed(2), paidTotal: g.invoiceUnknown ? null : g.paid.toFixed(2), creditTotal: g.invoiceUnknown ? null : g.credits.toFixed(2), openPayable: g.invoiceUnknown ? null : g.remainder.toFixed(2), releasedPaymentTotal: g.paymentUnknown ? null : g.payments.toFixed(2), unverifiedCount: g.invoiceUnknown + g.paymentUnknown}))
-  return {movements, currencyTotals, unverifiedCount: currencyTotals.reduce((sum, row) => sum + row.unverifiedCount, 0)}
+  return {movements, currencyTotals, invoiceBalances, unverifiedCount: currencyTotals.reduce((sum, row) => sum + row.unverifiedCount, 0)}
 }

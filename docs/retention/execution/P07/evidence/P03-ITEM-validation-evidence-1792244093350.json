@@ -1,0 +1,90 @@
+{
+  "manifest": {
+    "batch": {
+      "id": "cmvcfuuok0064ma1s09zfex2u",
+      "status": "VALIDATED",
+      "target": "ITEM",
+      "uploadedAt": "2026-10-17T13:34:50.279Z",
+      "contentHash": "sha256:0da73948e02e82ec34282f8c1b0ec986d26de9458d25b3d56c4e633f58e3c85c",
+      "replayCount": 0,
+      "uploadedById": "p07-maker-97ee2d2e0f76",
+      "sourceByteSize": 147,
+      "sourceFilename": "p03-ITEM.csv",
+      "sourceMimeType": "text/csv",
+      "retentionExpiresAt": "2026-11-16T13:34:50.279Z"
+    },
+    "result": {
+      "readiness": "IMPORTED",
+      "committedRecordIds": []
+    },
+    "schema": "stoquify.master-data-onboarding.evidence.v1",
+    "mapping": {
+      "id": "cmvcfuuni0062ma1slp4gzv83",
+      "version": 1,
+      "schemaVersion": "1",
+      "requiredFields": [
+        "sku",
+        "nameEn"
+      ]
+    },
+    "approval": {
+      "digest": "sha256:9896b197968f11c65a235e2943690c47607df7f5417ad4660cd74a3dd86ffc26",
+      "riskLevel": "HIGH",
+      "approvedAt": null,
+      "riskReasons": [
+        "ITEM_PRICING"
+      ],
+      "approvedById": null,
+      "makerCheckerSatisfied": false,
+      "separateApproverRequired": true
+    },
+    "controls": {
+      "committedRecordCount": 0,
+      "preCommitRecordCount": null,
+      "postCommitRecordCount": null,
+      "destinationRequiredTotals": null,
+      "sourceRequiredFieldTotals": {
+        "sku": 2,
+        "nameEn": 2
+      }
+    },
+    "validation": {
+      "errorRecordCount": 0,
+      "unresolvedIssues": [],
+      "validRecordCount": 2,
+      "sourceRecordCount": 2,
+      "requiredFieldTotals": {
+        "sku": 2,
+        "nameEn": 2
+      },
+      "dryRunBusinessWrites": 0,
+      "duplicateRecordCount": 0
+    },
+    "generatedAt": "2026-10-17T13:34:50.369Z",
+    "organizationId": "p07-org-97ee2d2e0f76",
+    "controlBoundary": {
+      "excluded": [
+        "customer or supplier current balances",
+        "opening accounting balances",
+        "inventory opening quantities or stock movements",
+        "journal or ledger postings",
+        "historical transaction or statutory-document migration",
+        "updates, merges, hard deletes, destructive resets, or automatic rollback"
+      ],
+      "included": [
+        "customer identity and contact master data",
+        "supplier identity and contact master data",
+        "item catalogue identity, description, and prices",
+        "tenant-scoped staging, mappings, validation, approvals, controls, evidence, and readiness"
+      ],
+      "compensation": "Any remediation is a separately authorized domain archive or correction; this slice never resets or hard-deletes business truth.",
+      "domainWriteOwners": [
+        "services/customer/customer.service.ts#createCustomer",
+        "services/supplier/supplier.service.ts#createSupplier",
+        "services/item/item.service.ts#createItem"
+      ]
+    }
+  },
+  "evidenceHash": "sha256:6f207bda38fc04ede5e1c0727ee405f924904715dd5d2e19d77bfe5c96d420dc",
+  "exportedAt": "2026-10-17T13:34:52.894Z"
+}

@@ -1,0 +1,50 @@
+{
+  "steps": [
+    "S10",
+    "S11"
+  ],
+  "ownedFiles": [
+    ".github/workflows/ci.yml",
+    "AGENTS.md",
+    "actions/pos/checkout.actions.ts",
+    "docs/ecc/WORKFLOW.md",
+    "docs/ecc/command-registry.json",
+    "docs/ecc/test-lanes.md",
+    "docs/prompt-execution/S10-S11_EXECUTION_2026-10-16.md",
+    "docs/prompt-execution/S10-S11_SCOPE_2026-10-16.json",
+    "docs/release/ARTIFACT_SCHEMA_PROMOTION.md",
+    "hooks/posHooks/__tests__/checkout-lifecycle-races.test.tsx",
+    "hooks/posHooks/usePOSCheckoutLifecycle.ts",
+    "jest.s10-s11.config.cjs",
+    "package.json",
+    "scripts/__tests__/ci-release-readiness-gate.test.js",
+    "scripts/__tests__/prisma-production-migration-gate.test.js",
+    "scripts/ci-release-readiness-gate.js",
+    "scripts/prisma-production-migration-gate.js",
+    "scripts/promote-release-schema.cjs",
+    "scripts/record-s10-s11-evidence.cjs",
+    "scripts/release-artifact.cjs",
+    "scripts/run-s10-benchmark.cjs",
+    "scripts/s11-fixture-build.cjs",
+    "scripts/verify-s11-artifact-runtime.cjs",
+    "scripts/verify-s11-fixture-rebuild.cjs",
+    "scripts/verify-s11-local.cjs",
+    "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+    "services/pos/__tests__/checkout-lifecycle.service.test.ts",
+    "services/pos/checkout.service.ts",
+    "services/pos/pos.schemas.ts",
+    "tests/s10-s11/lease-benchmark.postgres.test.ts",
+    "tests/s10-s11/release-artifact.test.js",
+    "tests/s10-s11/renew-action.test.ts",
+    "tsconfig.s10-s11.json"
+  ],
+  "boundary": "Only new hunks relative to the recorded shared working-tree baseline; existing unrelated edits remain owned by their authors",
+  "productionAuthorized": false,
+  "unchangedRolloutGates": [
+    "S06",
+    "S07",
+    "S08",
+    "S09"
+  ],
+  "localEvidenceDoesNotAuthorizeRollout": true
+}

@@ -1,0 +1,17 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=__dirname,repo=path.resolve(root,'../../..'),read=file=>JSON.parse(fs.readFileSync(path.join(root,file))),digest=value=>crypto.createHash('sha256').update(value).digest('hex');
+const previous='evidence/cash-authority-batch-review-2026-09-30.json',next='evidence/cash-authority-batch-review-2026-09-30-v2.json',review=read(previous),file='services/cash-command/__tests__/cash-command-sources.service.test.ts';
+let original=fs.readFileSync(path.join(repo,file),'utf8');assert.equal(digest(original),review.sourceHashes[file]);
+const replace=(a,b)=>{assert.ok(original.includes(a),a);original=original.split(a).join(b);};
+replace('@/services/modules/module-access-batch.service','@/services/modules/module-entitlement.service');replace('observeModuleReadAccessBatch','observeModuleAccess');
+replace('const decisions = (allowed: boolean) => ({ moduleSlugs }: { moduleSlugs: readonly string[] }) => new Map(moduleSlugs.map(slug => [slug, { allowed }]))\n','');
+replace('gate.mockImplementation(decisions(true))','gate.mockResolvedValue({ allowed: true, readOnly: true })');replace('gate.mockImplementation(decisions(false))','gate.mockResolvedValue({ allowed: false })');
+replace('moduleSlugs: [moduleSlug], audit: true','moduleSlug, accessIntent: "read", mode: "enforce", audit: true');
+const start=original.indexOf('it("batches only permitted modules'),end=original.indexOf('it("keeps a successful empty cash query',start);assert.ok(start>0&&end>start);original=original.slice(0,start)+original.slice(end);
+const priorReview='evidence/cash-release-readiness-review-2026-09-30.json',expected=read(priorReview).sourceHashes[file];assert.equal(digest(original),expected,'Exact inverse of this turn must reproduce the actual latest historical test');
+const row=review.priorImpact.find(row=>row.file===file);assert.equal(row.before,read(row.priorReview).sourceHashes[file]);
+review.at=new Date().toISOString();review.supersedes={file:previous,sha256:digest(fs.readFileSync(path.join(root,previous))),reason:'Initial review chose the September 28 test binding; reconciliation correctly rejected it. Exact inverse of the current patch reconstructs the later September 30 test byte-for-byte.'};row.before=expected;row.priorReview=priorReview;
+review.bindingCorrection={file,reconstructedSha256:expected,applicationSourceChanged:false};
+let source=fs.readFileSync(path.join(root,'reconcile-current-progress.cjs'),'utf8');assert.equal(source.split(previous).length-1,2);source=source.split(previous).join(next);
+fs.writeFileSync(path.join(root,next),JSON.stringify(review,null,2)+'\n',{flag:'wx'});
+const target=path.join(root,'reconcile-current-progress.cjs');fs.writeFileSync(target+'.retained-'+crypto.randomUUID(),fs.readFileSync(target),{flag:'wx'});const fd=fs.openSync(target,'r+');try{fs.writeFileSync(fd,source);fs.ftruncateSync(fd,Buffer.byteLength(source));}finally{fs.closeSync(fd);}console.log(JSON.stringify({review:next,reconstructedSha256:expected}));

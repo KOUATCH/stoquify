@@ -1,0 +1,33 @@
+{
+  "receipts": [
+    "evidence/close-authority-jest-ffefee98-ea98-4992-8c10-ce904e1dd71d.json",
+    "evidence/close-authority-typecheck-29e4e019-c593-40e9-9000-a91a3f02ce96.json",
+    "evidence/close-authority-lint-4534f591-f4e4-4829-a68b-ce0da38685e3.json",
+    "lanes/environment/close-acceptance-authority-runtime-1b9e4ead-ae52-4167-9aff-68f6ffba655e.json",
+    "lanes/environment/close-acceptance-authority-browser-b03ef31d-efe6-4d95-8f65-862f5d78759f.json"
+  ],
+  "artifacts": [
+    "CLOSE_ACCEPTANCE_AUTHORITY_2026-10-01.md",
+    "evidence/close-authority-before-28ee45e0-6457-402a-a934-c81d2f568582.json",
+    "evidence/close-authority-jest-f675e7a6-d3b6-4c0a-a15c-777b6cba3fe9.json",
+    "evidence/close-authority-jest-f675e7a6-d3b6-4c0a-a15c-777b6cba3fe9-jest.json",
+    "evidence/close-authority-jest-f675e7a6-d3b6-4c0a-a15c-777b6cba3fe9.log",
+    "evidence/close-authority-test-repair-before-7bbddd06-e271-4c96-96a7-744a47b7b6d9.json",
+    "evidence/complete-close-authority-report.cjs"
+  ],
+  "verificationSummary": "478 tests across twelve suites, TypeScript, changed-file lint, 38 actual PostgreSQL checks and EN1440/FR320 browser recovery passed. Role/session revocation races verified both transaction orders. Actual password confirmation, three authority refusals and explicit recovery matched persisted acceptance. Source, outside-fixture and operation-financial hashes stayed stable. The initial two test failures were corrected and retained.",
+  "verifiedCriteria": [
+    "Acceptance derives exact session proof from trusted action context, never forms; direct/work-desk surface permissions remain distinct.",
+    "Persisted home roles/account/organizations/session/delegation and canonical module authority are locked through acceptance; post-wait expiry rechecked before effects.",
+    "38 actual PostgreSQL authority checks include role/session revocation races in both orders, denied replay, retained history and financial no-effects.",
+    "Actual delegated EN1440/FR320 password challenge, permission/module/grant refusal and explicit recovery match one source-bound persisted acceptance."
+  ],
+  "limitations": [
+    "Full-register reconciliation incomplete;270workflows/17families/191unmapped;parent Cash/Close remain In progress.",
+    "Actual concurrency races cover role update and session deletion; other writer order is source-reviewed rather than comprehensively raced.",
+    "Synthetic owned test sessions/consent are not real-client authority; browser authenticates normally.",
+    "Producer discovery/multi-period ordering, interruption/delivery and whole Cash lifecycle remain open.",
+    "Native assistive technology, whole accessibility, production performance, authentic country/payroll prerequisites and retained financial/legacy conflicts remain unverified.",
+    "No migration, deployment, live activation, external message, real payment or X1 clearance."
+  ]
+}

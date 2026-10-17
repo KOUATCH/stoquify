@@ -1,4 +1,6 @@
 import "server-only";
+import { assertPayrollProductionAdmissionInTx } from "./payroll-production-admission";
+import { NotFoundError } from "@/services/_shared/action-errors";
 
 import { z } from "zod";
 
@@ -421,7 +423,15 @@ export async function processPayrollAuthorityAdapterWorkerBatch(
     }
 
     let outcome: PayrollAuthorityAdapterOutcome;
+    let submissionAttempted = false;
     try {
+      const declaration = await db.payrollDeclaration.findFirst({
+        where: { id: execution.declarationId, organizationId: parsed.organizationId },
+        select: { payrollRunId: true },
+      });
+      if (!declaration) throw new NotFoundError("Payroll declaration not found");
+      await assertPayrollProductionAdmissionInTx(db, parsed.organizationId, declaration.payrollRunId);
+      submissionAttempted = true;
       outcome = await adapter.submit({
         organizationId: parsed.organizationId,
         workerId: parsed.workerId,
@@ -431,9 +441,10 @@ export async function processPayrollAuthorityAdapterWorkerBatch(
     } catch {
       outcome = {
         status: "failed",
-        errorCode: "ADAPTER_UNSAFE_ERROR",
-        errorMessage:
-          "Payroll authority adapter threw an unsafe error. Raw error details were suppressed.",
+        errorCode: submissionAttempted ? "ADAPTER_UNSAFE_ERROR" : "PAYROLL_PRODUCTION_ADMISSION_BLOCKED",
+        errorMessage: submissionAttempted
+          ? "Payroll authority adapter threw an unsafe error. Raw error details were suppressed."
+          : "Payroll production admission could not be established. Review run and rule evidence before retrying.",
         responseHash: prefixedHash({
           kind: "payroll-authority-adapter-unsafe-error",
           declarationEvidenceId: execution.declarationEvidenceId,

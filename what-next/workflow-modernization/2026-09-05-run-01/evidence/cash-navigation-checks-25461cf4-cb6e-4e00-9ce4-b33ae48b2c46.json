@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-28T10:17:35.494Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-navigation.ts": "b8e544122e46f32953381dbf6887be093d3389ccf6f18e0884c3a977408b4a5a",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "80a29913e0b60b152415fd6e71353c45e926029f0df3f7c9378d08af17fd5501",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "57cc322ed24a85d90e58bb897d56a65d924c717357acea47f56f2edfa77d513c",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts",
+        "services/daily-habit/__tests__/daily-habit-digest.service.test.ts",
+        "services/bi/__tests__/bi-evidence-adapter.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/cash-command/__tests__/cash-command.service.test.ts\n  ● Test suite failed to run\n\n    Jest encountered an unexpected token\n\n    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.\n\n    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.\n\n    By default \"node_modules\" folder is ignored by transformers.\n\n    Here's what you can do:\n     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.\n     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript\n     • To have some of your \"node_modules\" files transformed, you can specify a custom \"transformIgnorePatterns\" in your config.\n     • If you need a custom transformation, specify a \"transform\" option in your config.\n     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the \"moduleNameMapper\" config option.\n\n    You'll find more details and examples of these config options in the docs:\n    https://jestjs.io/docs/configuration\n    For information about custom transformations, see:\n    https://jestjs.io/docs/code-transformation\n\n    Details:\n\n    E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next-intl@4.13.6_next@15.5._4e487a82f2eac10cd395f447fcd1926a\\node_modules\\next-intl\\dist\\esm\\production\\routing.js:1\n    export{default as defineRouting}from\"./routing/defineRouting.js\";\n    ^^^^^^\n\n    SyntaxError: Unexpected token 'export'\n\n      32 | export function localizePath(href: string, locale: Locale): string {\n      33 |   if (!href.startsWith(\"/\") || href.startsWith(\"//\")) {\n    > 34 |     return href;\n         |                 ^\n      35 |   }\n      36 |\n      37 |   const [, pathname = \"/\", suffix = \"\"] = href.match(/^([^?#]*)(.*)$/) ?? [];\n\n      at ModuleExecutor.compile (node_modules/.pnpm/jest-runtime@30.4.2_supports-color@8.1.1/node_modules/jest-runtime/build/index.js:2104:44)\n      at Object.<anonymous> (i18n/routing.ts:34:18)\n      at Object.<anonymous> (services/cash-command/cash-command-navigation.ts:22:18)\n      at Object.<anonymous> (services/cash-command/__tests__/cash-command.service.test.ts:73:32)\n\n\nTest Suites: 1 failed, 6 passed, 7 total\nTests:       155 passed, 155 total\nSnapshots:   0 total\nTime:        7.442 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\", \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\", \"services/bi/__tests__/bi-evidence-adapter.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-navigation.ts": "b8e544122e46f32953381dbf6887be093d3389ccf6f18e0884c3a977408b4a5a",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "80a29913e0b60b152415fd6e71353c45e926029f0df3f7c9378d08af17fd5501",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "57cc322ed24a85d90e58bb897d56a65d924c717357acea47f56f2edfa77d513c",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "8b11a25f6a1f8af54f629e0092b3d0f1dca35a0c33774975502527c4cfaec662",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "a5f5bb3bc588ffc474bcb6053426cbc02ab0f21053243628f81c17328ffe92f1",
+    "services/bi/__tests__/bi-evidence-adapter.service.test.ts": "c55e3367e77b15fd7b661fa314b803a6028becaef0f665eae3052075970638a8",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "9ae469d508f78b7566da73d5ad5b708ae0d1d5fd924fdf9a3a772d825e0dd0da",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "services/snapshots/snapshot-contracts.ts": "6521ac0f24e11baa65828bac5db763e2b19df48145474c13197139ea348bed0d",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb"
+  },
+  "sourceStable": true,
+  "passed": false
+}

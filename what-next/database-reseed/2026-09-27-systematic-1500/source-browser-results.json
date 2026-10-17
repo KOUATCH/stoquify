@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-09-27T11:39:37.338Z",
+  "target": "stoquify_replay_next_20260830",
+  "results": [
+    {
+      "organizationId": "rds_org_001",
+      "role": "inventory_adjustment_maker",
+      "status": "PASS",
+      "httpStatus": 200,
+      "route": "/en/dashboard/inventory/items",
+      "finalPath": "/en/dashboard/inventory/items",
+      "tenantVerified": true,
+      "inventoryTableVisible": true,
+      "renderedRows": [
+        "BriocheITEMH6QIB4V6HFCFA 300FCFA 4201500 in stockFCFA 450,000Sep 19, 2026Open menu",
+        "Spring water 1.5 LRDS001-SKU-001FCFA 350FCFA 5001500 in stockFCFA 525,000Aug 30, 2026Open menu",
+        "Orange juice 1 LRDS001-SKU-002FCFA 900FCFA 1,2501500 in stockFCFA 1,350,000Aug 30, 2026Open menu",
+        "Long-grain riceRDS001-SKU-003FCFA 650FCFA 8501500 in stockFCFA 975,000Aug 30, 2026Open menu",
+        "Wheat flourRDS001-SKU-004FCFA 550FCFA 7501532 in stockFCFA 842,600Aug 30, 2026Open menu",
+        "Sardines in tomato sauce 155 gRDS001-SKU-005FCFA 650FCFA 9001587 in stockFCFA 1,031,550Aug 30, 2026Open menu",
+        "Tomato paste 400 gRDS001-SKU-006FCFA 700FCFA 1,0001662 in stockFCFA 1,163,400Aug 30, 2026Open menu",
+        "Laundry detergent 1 kgRDS001-SKU-007FCFA 1,600FCFA 2,2001701 in stockFCFA 2,721,600Aug 30, 2026Open menu",
+        "Dishwashing liquid 750 mlRDS001-SKU-008FCFA 900FCFA 1,3001680 in stockFCFA 1,512,000Aug 30, 2026Open menu",
+        "Bath soap 100 gRDS001-SKU-009FCFA 350FCFA 5001696 in stockFCFA 644,775Aug 30, 2026Open menu"
+      ],
+      "pageErrors": [],
+      "screenshot": "source-browser-rds_org_001-inventory_adjustment_maker.png"
+    },
+    {
+      "organizationId": "rds_org_002",
+      "role": "inventory_adjustment_maker",
+      "status": "PASS",
+      "httpStatus": 200,
+      "route": "/fr/dashboard/inventory/items",
+      "finalPath": "/fr/dashboard/inventory/items",
+      "tenantVerified": true,
+      "inventoryTableVisible": true,
+      "renderedRows": [
+        "Spring water 1.5 LRDS002-SKU-001FCFA 350FCFA 5001500 in stockFCFA 525,000Aug 30, 2026Open menu",
+        "Orange juice 1 LRDS002-SKU-002FCFA 900FCFA 1,2501500 in stockFCFA 1,350,000Aug 30, 2026Open menu",
+        "Long-grain riceRDS002-SKU-003FCFA 650FCFA 8501500 in stockFCFA 975,000Aug 30, 2026Open menu",
+        "Wheat flourRDS002-SKU-004FCFA 550FCFA 7501500 in stockFCFA 825,000Aug 30, 2026Open menu",
+        "Sardines in tomato sauce 155 gRDS002-SKU-005FCFA 650FCFA 9001547 in stockFCFA 1,005,550Aug 30, 2026Open menu",
+        "Tomato paste 400 gRDS002-SKU-006FCFA 700FCFA 1,0001612 in stockFCFA 1,128,400Aug 30, 2026Open menu",
+        "Laundry detergent 1 kgRDS002-SKU-007FCFA 1,600FCFA 2,2001677 in stockFCFA 2,683,200Aug 30, 2026Open menu",
+        "Dishwashing liquid 750 mlRDS002-SKU-008FCFA 900FCFA 1,3001742 in stockFCFA 1,567,800Aug 30, 2026Open menu",
+        "Bath soap 100 gRDS002-SKU-009FCFA 350FCFA 5001687 in stockFCFA 641,625Aug 30, 2026Open menu",
+        "Toothpaste 125 mlRDS002-SKU-010FCFA 750FCFA 1,1001872 in stockFCFA 1,404,000Aug 30, 2026Open menu"
+      ],
+      "pageErrors": [],
+      "screenshot": "source-browser-rds_org_002-inventory_adjustment_maker.png"
+    },
+    {
+      "organizationId": "rds_org_001",
+      "role": "viewer",
+      "status": "PASS",
+      "httpStatus": 200,
+      "route": "/en/dashboard/settings/roles",
+      "finalPath": "/en/unauthorized",
+      "tenantVerified": true,
+      "inventoryTableVisible": false,
+      "readOnlyNegativeCheck": true,
+      "pageErrors": [],
+      "screenshot": "source-browser-rds_org_001-viewer.png"
+    }
+  ]
+}

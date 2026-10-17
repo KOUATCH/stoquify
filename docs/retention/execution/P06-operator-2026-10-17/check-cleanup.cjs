@@ -1,0 +1,6 @@
+const fs=require('node:fs'),path=require('node:path'),net=require('node:net')
+const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,name),'utf8'))
+const target=read('DATABASE_TARGET.json'),app=read('APPLICATION_TARGET.json')
+if(target.host!=='localhost'||!/^stoquify_pos_audit_20261017_[a-f0-9]+$/.test(target.database)||app.origin!=='http://127.0.0.1:3187')throw Error('Unexpected target')
+async function probe(port){return new Promise(resolve=>{const socket=net.connect({host:'127.0.0.1',port});socket.setTimeout(2000);socket.once('connect',()=>{socket.destroy();resolve({port,closed:false})});socket.once('error',error=>resolve({port,closed:error.code==='ECONNREFUSED',code:error.code}));socket.once('timeout',()=>{socket.destroy();resolve({port,closed:false,code:'TIMEOUT'})})})}
+Promise.all([probe(target.port),probe(3187)]).then(ports=>{const result={utc:new Date().toISOString(),ports,success:ports.every(p=>p.closed),retainedDisposableDirectory:target.directory,applicationOutput:app.distDir,deletedData:false};const file=path.join(__dirname,'CLEANUP.json');if(fs.existsSync(file))fs.renameSync(file,path.join(__dirname,`CLEANUP.prior-${Date.now()}.json`));fs.writeFileSync(file,JSON.stringify(result,null,2));console.log(JSON.stringify(result));if(!result.success)process.exitCode=1})

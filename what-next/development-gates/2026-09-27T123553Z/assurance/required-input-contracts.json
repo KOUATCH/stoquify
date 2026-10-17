@@ -1,0 +1,3849 @@
+{
+  "generatedAt": "2026-09-27T12:48:35.235Z",
+  "noAuthorityFabricated": true,
+  "noSecretValuesIncluded": true,
+  "contractCount": 7,
+  "contracts": [
+    {
+      "id": "CM_CNPS_PRODUCTION_APPROVAL",
+      "stage": "Production CNPS authority; not a development-code prerequisite",
+      "gate": "statutory-country-pack-production-gate:source_artifact_expert_approval",
+      "storage": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+      "source": [
+        {
+          "file": "scripts/statutory-country-pack-production-gate.js",
+          "line": 122,
+          "marker": "const requiredFixtureFamilies"
+        },
+        {
+          "file": "scripts/statutory-country-pack-production-gate.js",
+          "line": 129,
+          "marker": "const approvalArtifactVerified"
+        },
+        {
+          "file": "services/regulatory/country-packs/cameroon.ts",
+          "line": 16,
+          "marker": "const CNPS_CAPABILITY_STATUS"
+        },
+        {
+          "file": "services/regulatory/country-packs/schemas.ts",
+          "line": 243,
+          "marker": "countryPackHeaderSchema"
+        }
+      ],
+      "fields": [
+        {
+          "name": "requiredApproval.reviewerIdentity",
+          "type": "string",
+          "format": "Nonempty. Must resolve to an actual appointed qualified reviewer; plain seed display name is not sufficient authority.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Qualified statutory reviewer / appointing governance"
+        },
+        {
+          "name": "requiredApproval.reviewedAt",
+          "type": "string",
+          "format": "Gate checks nonempty only; supply actual ISO-8601 UTC timestamp of review.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual reviewer"
+        },
+        {
+          "name": "requiredApproval.effectiveFrom",
+          "type": "string",
+          "format": "Gate checks nonempty only; document YYYY-MM-DD effective date tied to reviewed law/pack.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual reviewer"
+        },
+        {
+          "name": "requiredApproval.effectiveTo",
+          "type": "string|null",
+          "format": "Present in manifest but NOT enforced by this static gate; document end date or explicit open-ended validity.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual reviewer"
+        },
+        {
+          "name": "requiredApproval.approvalArtifactFile",
+          "type": "string",
+          "format": "Existing basename only, co-located with manifest; no path traversal.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Reviewer supplies signed/attested review artifact; evidence custodian stores"
+        },
+        {
+          "name": "requiredApproval.approvalArtifactHash",
+          "type": "string",
+          "format": "64 lowercase hexadecimal SHA-256 of actual artifact bytes, WITHOUT sha256: prefix.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Evidence custodian computes from reviewer artifact"
+        },
+        {
+          "name": "requiredApproval.approvedFixtureFamilies",
+          "type": "string[]",
+          "format": "All four distinct families: payroll.cnps.pensionRatesBps, payroll.cnps.familyAllowanceRatesBps, payroll.cnps.occupationalRiskRatesBps, payroll.cnps.employerRules.",
+          "currentValue": [],
+          "currentState": "MISSING",
+          "providedBy": "Qualified reviewer"
+        },
+        {
+          "name": "reviewStatus",
+          "type": "enum",
+          "format": "EXPERT_REVIEWED or REGULATOR_CONFIRMED only after authentic review.",
+          "currentValue": "PENDING_EXPERT_REVIEW",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Evidence custodian after reviewer decision"
+        },
+        {
+          "name": "productionUseAllowed",
+          "type": "boolean",
+          "format": "true only after authentic approval; current false is intentional.",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Accountable release authority after review"
+        },
+        {
+          "name": "artifacts[0].file",
+          "type": "string",
+          "format": "Existing local basename; SHA256 must match declared sourceEvidenceHash in runtime pack.",
+          "currentValue": "CNPS-Decree-2016-072-contribution-rates.pdf",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Evidence custodian"
+        },
+        {
+          "name": "artifacts[0].sha256",
+          "type": "string",
+          "format": "64 lowercase hex SHA256 of artifact bytes, without prefix.",
+          "currentValue": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Evidence custodian"
+        },
+        {
+          "name": "artifacts[0].reviewStatus",
+          "type": "enum",
+          "format": "EXPERT_REVIEWED or REGULATOR_CONFIRMED after actual review.",
+          "currentValue": "PENDING_EXPERT_REVIEW",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Qualified reviewer"
+        },
+        {
+          "name": "artifacts[0].productionUseAllowed",
+          "type": "boolean",
+          "format": "true after authentic approval.",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Accountable release authority"
+        },
+        {
+          "name": "artifacts[1].file",
+          "type": "string",
+          "format": "Existing local basename; SHA256 must match declared sourceEvidenceHash in runtime pack.",
+          "currentValue": "CNPS-employer-general-rules.html",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Evidence custodian"
+        },
+        {
+          "name": "artifacts[1].sha256",
+          "type": "string",
+          "format": "64 lowercase hex SHA256 of artifact bytes, without prefix.",
+          "currentValue": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Evidence custodian"
+        },
+        {
+          "name": "artifacts[1].reviewStatus",
+          "type": "enum",
+          "format": "EXPERT_REVIEWED or REGULATOR_CONFIRMED after actual review.",
+          "currentValue": "PENDING_EXPERT_REVIEW",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Qualified reviewer"
+        },
+        {
+          "name": "artifacts[1].productionUseAllowed",
+          "type": "boolean",
+          "format": "true after authentic approval.",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Accountable release authority"
+        }
+      ],
+      "additionalBinding": {
+        "packVersion": "CM-2026.1",
+        "packVersionSource": "services/regulatory/country-packs/cameroon.ts:40",
+        "runtimeCapability": "CNPS_CAPABILITY_STATUS must become SUPPORTED or SUPPORTED_CERTIFIED through reviewed code publication",
+        "runtimeVerification": "CNPS_VERIFICATION_STATUS must become EXPERT_REVIEWED or REGULATOR_CONFIRMED",
+        "requiredReviewerArtifactContent": [
+          "Qualified reviewer identity and appointment/independence evidence",
+          "Qualification evidence reference and issuer",
+          "Exact country, packVersion, source artifact hashes and fixture families",
+          "Actual reviewed/effective dates, decision, conditions and signature/attestation"
+        ]
+      },
+      "validationLimits": [
+        "This static gate does not authenticate reviewer qualification or cryptographically verify artifact signature. It hashes bytes and checks fields/statuses.",
+        "requiredApproval.reviewedAt/effectiveFrom are only checked as nonempty strings here; effectiveTo is not evaluated.",
+        "Fixture-family check tests length and membership but not uniqueness; authentic review must cover all four distinct families.",
+        "Qualifying CNPS does not authorize IRPP or production e-invoicing, which remain separately blocked."
+      ]
+    },
+    {
+      "id": "AGENT_EXTERNAL_INPUTS",
+      "stage": "Internal pilot evidence capture and independent operational release; not generic local development",
+      "storage": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json",
+      "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer",
+      "gate": "agent-external-input-readiness",
+      "fields": [
+        {
+          "name": "schemaVersion",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 1,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "environment",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "INTERNAL_PILOT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.packageId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.releaseVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.commitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.artifactReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.deploymentReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.manifestHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.evidenceBundleHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.browserReportHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.pilotAllowlistReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "release.roleAllowlistReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.product.decision",
+          "type": "string",
+          "format": "APPROVED only after deliberate genuine human decision",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.product.actorDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.product.approvalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.product.decidedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.product.expiresAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.security.decision",
+          "type": "string",
+          "format": "APPROVED only after deliberate genuine human decision",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.security.actorDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.security.approvalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.security.decidedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "approvers.security.expiresAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ROLLOUT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[0].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ROLLBACK",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[1].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "SUPPORT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[2].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "PILOT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[3].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "SECURITY_INCIDENT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[4].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ON_CALL_BACKUP",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "owners[5].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.ci.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.ci.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.ci.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.governance.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.governance.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.governance.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.scheduler.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.scheduler.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.scheduler.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.reconciler.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.reconciler.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.reconciler.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.alert.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.alert.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.alert.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.credential.url",
+          "type": "string",
+          "format": "https URL without username, password, query or fragment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.credential.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "evidenceEndpoints.credential.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "managedCredentials.workloadIdentityReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "managedCredentials.collectorIdentityReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "managedCredentials.secretManagerNamespaceReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "managedCredentials.rotationAuthorityReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "managedCredentials.credentialInventoryReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.decision",
+          "type": "string",
+          "format": "APPROVED only after deliberate genuine human decision",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.reviewerDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.qualificationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.sourceArtifactHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.approvalArtifactReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.approvalArtifactHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "statutoryApproval.reviewedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.cohortReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.tenantScopeHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.roleScopeHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.supportCoverageReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.rollbackPlanReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.activationAuthorityDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.activationDecision",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.activationDecisionReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "pilot.activationDecidedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "safety.activationRequested",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "safety.activationAuthorized",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "safety.activatedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "safety.phase3Authorized",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        },
+        {
+          "name": "safety.secretValuesIncluded",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Product/Security approvers, Release Manager, Platform/SRE and qualified statutory reviewer"
+        }
+      ],
+      "crossFieldRules": [
+        "Product and Security identities distinct; decisions past, expiries future.",
+        "Six owner roles, each one distinct primary/backup and accepted runbook/coverage/escalation.",
+        "Six evidence endpoints: CI, governance, scheduler, reconciler, alert, credential; no collectors run in this audit.",
+        "Qualified statutory approval includes reviewerDirectoryId, qualificationReference, sourceArtifactHash, approvalArtifactReference/hash and reviewedAt.",
+        "Safety activationRequested/activationAuthorized/phase3Authorized remain false; activatedAt remains null."
+      ]
+    },
+    {
+      "id": "AGENT_OPERATIONAL_RELEASE",
+      "stage": "Internal pilot evidence capture and independent operational release; not generic local development",
+      "storage": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+      "providedBy": "Actual operational owners and independent release authority; source systems provide attestations",
+      "gate": "agent-operational-release-gate",
+      "fields": [
+        {
+          "name": "schemaVersion",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 1,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "registerId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "stoquify-agent-runtime-operational-release-2026-07-25",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "declaredStatus",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "BLOCKED",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.environment",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "INTERNAL_PILOT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.packageId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.releaseVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.packageState",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "PILOT_CERTIFIED",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.commitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.artifactReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.deploymentReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.packageCertificationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.packageCertificationHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.manifestHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.evidenceBundleHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.browserReportHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.pilotAllowlistReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.roleAllowlistReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.ciEvidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "release.activatedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.status",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.sourceTreeClean",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.commitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.branchReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.runReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.artifactReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.browserReportHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.completedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.attestationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.attestationDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.attestedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.evidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "ci.invalidAuthEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.environment",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "INTERNAL_PILOT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.attestationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.attestationDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.attestedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.evidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.invalidAuthEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.packageId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.releaseVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.commitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.manifestHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "governance.evidenceBundleHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.decision",
+          "type": "string",
+          "format": "APPROVED only after deliberate genuine human decision",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.actorDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.approvalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.decidedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.expiresAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.manifestHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.product.evidenceBundleHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.decision",
+          "type": "string",
+          "format": "APPROVED only after deliberate genuine human decision",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.actorDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.approvalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.decidedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.expiresAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.manifestHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "approvals.security.evidenceBundleHash",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ROLLOUT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[0].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ROLLBACK",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[1].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "SUPPORT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[2].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "PILOT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[3].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "SECURITY_INCIDENT",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[4].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].role",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "ON_CALL_BACKUP",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].primaryDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].backupDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].acceptedRunbookVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].acceptedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].coverageStartsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].coverageEndsAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "owners[5].escalationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.provider",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.scheduleReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.workloadReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.authType",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.managedCredentialReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.intervalMinutes",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 5,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.singleConcurrency",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.leaseSafe",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": true,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.concurrencyEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.timeoutMs",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 120000,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deployedCommitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deployedArtifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deployedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentSourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentAttestationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentAttestationDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentAttestedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentEvidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.deploymentAuthorityInvalidAuthEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.readinessStatus",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.readinessCheckedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.readinessEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.readinessEvidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.heartbeatFreshUntil",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.invalidAuthEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.missingConfigEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.failureAlertReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[0].runId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[0].scheduledAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[0].completedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[0].status",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[0].evidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[1].runId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[1].scheduledAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[1].completedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[1].status",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[1].evidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[2].runId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[2].scheduledAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[2].completedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[2].status",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "scheduler.windows[2].evidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.transportStatus",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "PENDING",
+          "currentState": "PENDING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.evidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.transportReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.managedSecretReference",
+          "type": "string",
+          "format": "Value-free secret-manager://, vault:// or keyvault:// controlled reference; never secret bytes",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.httpsDeliveryReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.externalRequestReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.deliveredAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.acknowledgementSloMinutes",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 15,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.acknowledgedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.acknowledgedByDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.acknowledgementReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.retryEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.deadLetterEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.recoveryEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.escalationTestedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.escalatedToDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.escalationEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "alerting.secretRotationEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "credentialRotation.registerReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "credentialRotation.registerSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "credentialRotation.securityApprovalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "credentialRotation.evidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "credentialRotation.attestationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "activation.requested",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "activation.authorized",
+          "type": "boolean",
+          "format": "Exact documented safety/control value; never change solely to make audit pass",
+          "currentValue": false,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        },
+        {
+          "name": "activation.activatedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual operational owners and independent release authority; source systems provide attestations"
+        }
+      ],
+      "crossFieldRules": [
+        "CI and governance attestations <=24h and exact commit/artifact/manifest/evidence bundle binding.",
+        "Product/security approvals require matching manifestHash, artifactDigest and evidenceBundleHash, distinct people and current expiry.",
+        "Scheduler managed secret/workload identity; interval 5min; timeout integer >0 and <300000ms; singleConcurrency or leaseSafe true.",
+        "At least three unique completed scheduler windows at 5min cadence +/-30s; readiness <=10min and heartbeat future.",
+        "Deployment attestation <=24h; deployment predates attestation; release commit/digest match.",
+        "Alert delivery <=24h; acknowledgement after delivery within SLO 1..120min, real incident owner and backup identities; retry/dead-letter/recovery/escalation proof.",
+        "Credential register exact SHA256 and approval/authority evidence binding; still no activation authorized."
+      ]
+    },
+    {
+      "id": "CREDENTIAL_CLASSIFICATION_AND_ROTATION",
+      "stage": "Internal pilot evidence capture and independent operational release; not generic local development",
+      "storage": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+      "providedBy": "Actual Security owner and credential custodian",
+      "gate": "agent-credential-rotation-gate",
+      "fields": [
+        {
+          "name": "schemaVersion",
+          "type": "number",
+          "format": "Gate-bounded integer; see family-specific rules",
+          "currentValue": 1,
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "registerId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "stoquify-agent-runtime-credential-response-2026-07-25",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "incidentReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": "unsafe-local-browser-report-environment-scope",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "declaredStatus",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "BLOCKED",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "securityOwnerDirectoryId",
+          "type": "string",
+          "format": "directory:// or identity:// URI for actual identity; rejects e2e/test/seed/fixture/demo segments; appointment/qualification verified separately",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "securityApprovalReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.environment",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.sourceSystemReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.attestationReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.attestationDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.attestedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.evidenceSha256",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "authority.invalidAuthEvidenceReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.environment",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.packageId",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.releaseVersion",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.packageState",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "PILOT_CERTIFIED",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.commitSha",
+          "type": "string",
+          "format": "40 hexadecimal commit SHA (operational evaluator also accepts 64); same across release/CI/governance/deployment",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.artifactDigest",
+          "type": "string",
+          "format": "sha256: followed by 64 hex digits; compute from authoritative bytes and bind exact release",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.deploymentReference",
+          "type": "string",
+          "format": "Value-free scheme:// reference matching gate regex; no query strings or credential content",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "releaseBinding.activatedAt",
+          "type": "string|null",
+          "format": "Actual ISO-8601 timestamp; accepted/decided/verified times not future, expiry/coverage end future; see family freshness rules",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[0].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "primary-database-credential",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[0].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Primary PostgreSQL application and migration access",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[0].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "DATABASE_URL"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[0].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "migration-runner",
+            "agent-reconciler"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[0].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[1].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "payroll-immutability-database-credential",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[1].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Payroll immutability verification database access",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[1].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "PAYROLL_IMMUTABILITY_DATABASE_URL"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[1].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "payroll-immutability-verifier"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[1].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[2].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "application-auth-signing-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[2].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Application authentication and session signing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[2].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "AUTH_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[2].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "authentication-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[2].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[3].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "legacy-nextauth-signing-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[3].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Legacy or compatibility authentication signing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[3].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "NEXTAUTH_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[3].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "authentication-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[3].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[4].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "google-oauth-client-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[4].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Google OAuth client authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[4].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "GOOGLE_CLIENT_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[4].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "authentication-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[4].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[5].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "email-server-credential",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[5].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Transactional email server authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[5].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "EMAIL_SERVER_USER",
+            "EMAIL_SERVER_PASSWORD"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[5].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "email-delivery-worker"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[5].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[6].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "redis-connection-credential",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[6].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Redis cache, rate-limit, or queue access",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[6].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "REDIS_URL"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[6].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "background-workers"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[6].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[7].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "public-identity-hmac-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[7].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Public identity abuse-protection hashing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[7].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "PUBLIC_IDENTITY_ABUSE_HASH_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[7].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[7].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[8].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "public-receipt-signing-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[8].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Public receipt token signing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[8].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "AQSTOQFLOW_RECEIPT_TOKEN_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[8].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "receipt-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[8].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[9].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "history-cursor-signing-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[9].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Transaction-history cursor signing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[9].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "AQSTOQFLOW_HISTORY_CURSOR_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[9].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "transaction-history-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[9].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[10].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "payroll-destination-hmac-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[10].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Payroll payment-destination integrity hashing",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[10].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "PAYROLL_PAYMENT_DESTINATION_HASH_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[10].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "payroll-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[10].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[11].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "upload-provider-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[11].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Managed upload-provider authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[11].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "UPLOADTHING_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[11].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "upload-service"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[11].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[12].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "error-monitoring-dsn",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[12].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Error-monitoring ingestion authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[12].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "SENTRY_DSN"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[12].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "background-workers"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[12].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[13].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "agent-reconciler-credential",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[13].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Five-minute Agent Runtime reconciler authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[13].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "STOQUIFY_AGENT_RECONCILER_SECRET",
+            "STOQUIFY_AGENT_RECONCILER_SECRET_PREVIOUS"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[13].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "agent-reconciler-scheduler"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[13].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[14].id",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "workflow-assurance-webhook-secret",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[14].purpose",
+          "type": "string",
+          "format": "Nonempty identifier/version/text tied to the actual scope",
+          "currentValue": "Workflow Assurance webhook authentication",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[14].environmentVariables",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "STOQUIFY_ASSURANCE_ALERT_WEBHOOK_SECRET"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[14].dependentWorkloads",
+          "type": "array",
+          "format": "Authentic scope/evidence entries; an empty evidence array does not satisfy execution proof",
+          "currentValue": [
+            "web-application",
+            "agent-reconciler",
+            "alert-endpoint"
+          ],
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Actual Security owner and credential custodian"
+        },
+        {
+          "name": "entries[14].disposition",
+          "type": "string",
+          "format": "Gate enum; actual evidence required for ready states",
+          "currentValue": "UNRESOLVED",
+          "currentState": "PENDING",
+          "providedBy": "Actual Security owner and credential custodian"
+        }
+      ],
+      "crossFieldRules": [
+        "Every credential class disposition ROTATED_AND_REVOKED, TEST_ONLY_CONFIRMED or NOT_PRESENT_CONFIRMED requires independent evidence.",
+        "Classification fields: rotationOwnerDirectoryId, evidenceReference, securityApprovalReference, reviewedAt.",
+        "Rotation additionally requires secretManagerReference, rotationStartedAt, newVersionActivatedAt, oldVersionRevokedAt, dependentWorkloadsRestartedAt, newVersionVerifiedAt, oldVersionRejectedAt.",
+        "Authority sourceSystemReference, attestationReference/digest, attestedAt <=24h, evidenceSha256 and invalidAuthEvidenceReference; bind actual environment and release.",
+        "No rotation performed or secret values inspected by this audit."
+      ]
+    },
+    {
+      "id": "POS_G1_ACCOUNTABLE_APPROVAL",
+      "stage": "G1 architecture/control promotion; limited local development remains contract-scoped",
+      "gate": "pos-g1-contract-gate",
+      "storage": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+      "currentStatus": "BLOCKED_0_OF_11",
+      "source": [
+        {
+          "file": "scripts/pos-g1-contract-gate.js",
+          "line": 97,
+          "marker": "function approvalBinding"
+        },
+        {
+          "file": "scripts/pos-g1-contract-gate.js",
+          "line": 121,
+          "marker": "function hasApprovalEvidence"
+        },
+        {
+          "file": "scripts/pos-governance-evidence.js",
+          "line": 65,
+          "marker": "function verifyAttestation"
+        }
+      ],
+      "alreadySupplied": "17 candidate role/name nominations and frozen technical decisions exist; parent inventory joins current User/PayrollEmployee IDs. No need to resubmit candidate names.",
+      "fields": [
+        {
+          "name": "contractArtifactId / contractVersion / contractPath / contractSha256",
+          "type": "string",
+          "format": "Must equal exact frozen contract artifact/version/path and SHA256 of unchanged bytes.",
+          "currentValue": {
+            "contractArtifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+            "contractVersion": "0.2.0",
+            "contractPath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+            "contractSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db"
+          },
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Engineering evidence custodian"
+        },
+        {
+          "name": "decisionApprovals[].decisionId",
+          "type": "enum",
+          "format": "D-01 through D-11, unique, all represented.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Decision evidence custodian"
+        },
+        {
+          "name": "decisionApprovals[].selectedOption / rationale / effectiveVersion",
+          "type": "string",
+          "format": "Exact selected option; nonempty rationale; effectiveVersion equals contractVersion.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Accountable decision signers"
+        },
+        {
+          "name": "decisionApprovals[].reviewOrExpiryAt",
+          "type": "UTC timestamp",
+          "format": "Future strict ISO UTC timestamp.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Accountable decision signers"
+        },
+        {
+          "name": "decisionApprovals[].evidenceLinks / affectedCapabilities",
+          "type": "string[]",
+          "format": "Nonempty arrays of nonempty strings.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Decision owner"
+        },
+        {
+          "name": "decisionApprovals[].rollbackOrDisablePolicy",
+          "type": "string",
+          "format": "Nonempty concrete policy.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Decision owner and rollback owner"
+        },
+        {
+          "name": "decisionApprovals[].approvalStatus",
+          "type": "enum",
+          "format": "APPROVED only when authentic obligations have completed.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Actual accountable approvers"
+        },
+        {
+          "name": "decisionApprovals[].approvals[].accountableApprover / approverRole / authorityReference",
+          "type": "string",
+          "format": "Actual identified appointed person, required exact role and authentic scoped authority reference.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Appointing governance plus actual signer"
+        },
+        {
+          "name": "decisionApprovals[].approvals[].freshAuthenticatedAt / approvedAt",
+          "type": "UTC timestamps",
+          "format": "Strict ISO UTC; approvedAt not future, >=freshAuthenticatedAt, within 10 minutes.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Signer authenticated session and controlled approval ceremony"
+        },
+        {
+          "name": "decisionApprovals[].approvals[].signatureReference",
+          "type": "relative file path",
+          "format": "Existing file contained in workspace; valid trusted ARTIFACT_BOUND_APPROVAL envelope.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Independent trusted attestation issuer"
+        },
+        {
+          "name": "decisionApprovals[].approvals[].signatureEvidenceSha256",
+          "type": "string",
+          "format": "64 lowercase hex SHA256 of actual envelope bytes, no prefix.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Independent evidence verifier"
+        },
+        {
+          "name": "POS_GATE_TRUSTED_PUBLIC_KEYS_PATH",
+          "type": "absolute filesystem path",
+          "format": "Operator-managed JSON file OUTSIDE candidate repository; values are public keys only.",
+          "currentValue": "TRUST_ANCHORS_NOT_CONFIGURED",
+          "currentState": "PRESENT_NOT_AUTOMATICALLY_AUTHORITY",
+          "providedBy": "Independent Security/CI trust-anchor operator"
+        },
+        {
+          "name": "trustedKeys[keyId].publicKeyPem / evidenceClasses / validFrom / validUntil",
+          "type": "object",
+          "format": "Ed25519 PEM, authorized evidenceClasses, strict UTC validity covering envelope verification and expiry.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Independent trusted issuer/CI operator"
+        },
+        {
+          "name": "envelope.schemaVersion / keyId / signature / payload",
+          "type": "object",
+          "format": "schemaVersion 1.0.0; known keyId; Ed25519 signature base64; canonical JSON payload.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Independent trusted issuer"
+        },
+        {
+          "name": "payload.result / evidenceClass / binding / verifiedAt / reviewOrExpiryAt / artifacts",
+          "type": "object",
+          "format": "VERIFIED; ARTIFACT_BOUND_APPROVAL; exact contract/decision/person/time binding; nonexpired; every relative artifact path unique, contained and hash-matching.",
+          "currentValue": null,
+          "currentState": "MISSING",
+          "providedBy": "Independent trusted issuer"
+        }
+      ],
+      "requiredRolesByDecision": [
+        {
+          "decisionId": "D-01",
+          "requiredRoles": [
+            "Product owner",
+            "Financial controller",
+            "Payments owner"
+          ]
+        },
+        {
+          "decisionId": "D-02",
+          "requiredRoles": [
+            "Retail operations owner",
+            "POS architect",
+            "Security owner"
+          ]
+        },
+        {
+          "decisionId": "D-03",
+          "requiredRoles": [
+            "Payments owner",
+            "Treasury owner",
+            "Security owner"
+          ]
+        },
+        {
+          "decisionId": "D-04",
+          "requiredRoles": [
+            "Product owner",
+            "Risk owner",
+            "Retail operations owner"
+          ]
+        },
+        {
+          "decisionId": "D-05",
+          "requiredRoles": [
+            "Retail operations owner",
+            "QA owner",
+            "Support owner"
+          ]
+        },
+        {
+          "decisionId": "D-06",
+          "requiredRoles": [
+            "Financial controller",
+            "Retail operations owner",
+            "Risk owner"
+          ]
+        },
+        {
+          "decisionId": "D-07",
+          "requiredRoles": [
+            "Product owner",
+            "Financial controller",
+            "Qualified Cameroon country-pack reviewer"
+          ]
+        },
+        {
+          "decisionId": "D-08",
+          "requiredRoles": [
+            "SRE owner",
+            "Product owner",
+            "Support owner"
+          ]
+        },
+        {
+          "decisionId": "D-09",
+          "requiredRoles": [
+            "Financial controller",
+            "Order-to-cash product owner",
+            "Qualified accounting reviewer"
+          ]
+        },
+        {
+          "decisionId": "D-10",
+          "requiredRoles": [
+            "Inventory controller",
+            "Fulfillment owner",
+            "Accounting owner"
+          ]
+        },
+        {
+          "decisionId": "D-11",
+          "requiredRoles": [
+            "Financial controller",
+            "Treasury owner",
+            "Retail operations owner"
+          ]
+        }
+      ],
+      "validation": "Rerun pos-g1-contract-gate with authentic evidence and externally provisioned public trust anchors. A signature image or seeded RBAC assignment is not this attestation."
+    },
+    {
+      "id": "MODULE_SETUP_AND_ENTITLEMENT",
+      "stage": "Operation-specific module readiness; not corporate appointment",
+      "storage": "Domain tables via canonical services, TenantModuleLifecycleOperation.setupInputs and evidence",
+      "source": [
+        {
+          "file": "services/modules/module-lifecycle-readiness.service.ts",
+          "line": 60,
+          "marker": "observeModulePreparationInTx"
+        },
+        {
+          "file": "services/modules/module-composition.service.ts",
+          "line": 155,
+          "marker": "assertSetupScopePermission"
+        }
+      ],
+      "currentState": "Current database/setup scope supplied by parent read-only lane; previous reseed WAITING_INPUT reports are historical only.",
+      "fields": [
+        {
+          "name": "organizationAccountingSettings.accountingEnabled / setupStatus",
+          "type": "boolean / enum",
+          "format": "true / READY and zero collectAccountingSetupReadinessIssues: required active leaf mappings with type/normal balance/SYSCOHADA refs, default journals, open current period, balanced posting scaffolds.",
+          "currentState": "MISSING",
+          "providedBy": "Accounting owner through accounting setup service"
+        },
+        {
+          "name": "ProviderAccount.status / paymentRail.isActive / settlementLedgerAccountId / suspenseLedgerAccountId",
+          "type": "enum / boolean / IDs",
+          "format": "ACTIVE, active rail, same-tenant active leaf mapped accounts.",
+          "currentState": "MISSING",
+          "providedBy": "Payments/treasury administrator"
+        },
+        {
+          "name": "SettlementAccount.approvalStatus / effectiveFrom / effectiveTo",
+          "type": "enum / dates",
+          "format": "APPROVED and current effective window, through genuine destination controls.",
+          "currentState": "MISSING",
+          "providedBy": "Independent payments approver"
+        },
+        {
+          "name": "setupInputs.payrollPeriodId",
+          "type": "string",
+          "format": "Existing same-tenant non-CLOSED period; user has one payroll.runs.calculate/approve/post; getPayrollSetupReadiness must return READY.",
+          "currentState": "MISSING",
+          "providedBy": "Authorized payroll operator chooses existing real scope"
+        },
+        {
+          "name": "setupInputs.complianceAdapterId",
+          "type": "string",
+          "format": "Existing same-tenant CM sandbox adapter; user has compliance.documents.read.",
+          "currentState": "MISSING",
+          "providedBy": "Authorized compliance operator"
+        },
+        {
+          "name": "ComplianceAdapterConfig.environment / adapterKey / status",
+          "type": "enum / string",
+          "format": "SANDBOX / CAMEROON DGI sandbox constant / ACTIVE, never production for this readiness path.",
+          "currentState": "MISSING",
+          "providedBy": "Compliance administrator"
+        },
+        {
+          "name": "ComplianceAdapterConfig.credentialReference / credentialExpiresAt",
+          "type": "string / Date|null",
+          "format": "Valid vault reference and unexpired; no secret stored in report.",
+          "currentState": "MISSING",
+          "providedBy": "Credential custodian"
+        },
+        {
+          "name": "ComplianceAdapterConfig.officialSpecHash / officialSpecVersion / officialSpecPublishedAt / officialSpecReference",
+          "type": "strings / date",
+          "format": "Actual official-spec artifact/version/date/reference; all present.",
+          "currentState": "MISSING",
+          "providedBy": "Compliance evidence custodian"
+        },
+        {
+          "name": "ComplianceAdapterConfig.reviewStatus / reviewEvidenceHash / reviewedAt / reviewedById",
+          "type": "enum / string / Date / User.id",
+          "format": "EXPERT_APPROVED or REGULATOR_CONFIRMED plus real scoped review proof; matching countryPackVersion/capabilityStatus.",
+          "currentState": "MISSING",
+          "providedBy": "Actual qualified reviewer with verified appointment"
+        },
+        {
+          "name": "module composition expectedRevision / previewHash / idempotencyKey / selectedModules",
+          "type": "integer / hash / string / string[]",
+          "format": "Fresh canonical preview, current user permissions, existing entitlements/dependencies; cannot purchase/grant entitlement via workspace selection.",
+          "currentState": "MISSING",
+          "providedBy": "Current authorized module administrator"
+        }
+      ],
+      "validation": "Observe-only readiness is distinct from apply. No configuration or entitlement was changed by this audit."
+    },
+    {
+      "id": "RELEASE_ENVIRONMENT_INPUTS",
+      "stage": "Deployment/release only",
+      "source": [
+        {
+          "file": "scripts/release-evidence-ratchet.js",
+          "line": 266,
+          "marker": "const releaseConditions"
+        }
+      ],
+      "fields": [
+        {
+          "name": "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+          "type": "secret environment variable",
+          "format": "At least 32 characters in intended runtime; provided through managed deployment secrets; never supplied in chat/docs.",
+          "currentState": "NOT_CONFIGURED_IN_GATE_PROCESS; DEPLOYED_ENVIRONMENT_NOT_QUERIED",
+          "providedBy": "Security/platform secret custodian"
+        },
+        {
+          "name": "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+          "type": "secret environment variable",
+          "format": "At least 32 characters in intended runtime; provided through managed deployment secrets; never supplied in chat/docs.",
+          "currentState": "NOT_CONFIGURED_IN_GATE_PROCESS; DEPLOYED_ENVIRONMENT_NOT_QUERIED",
+          "providedBy": "Security/platform secret custodian"
+        },
+        {
+          "name": "AQSTOQFLOW_HISTORY_CURSOR_SECRET",
+          "type": "secret environment variable",
+          "format": "At least 32 characters in intended runtime; provided through managed deployment secrets; never supplied in chat/docs.",
+          "currentState": "NOT_CONFIGURED_IN_GATE_PROCESS; DEPLOYED_ENVIRONMENT_NOT_QUERIED",
+          "providedBy": "Security/platform secret custodian"
+        }
+      ],
+      "additional": "Production database target validated by dedicated production preflight. Current read-only audit did not load or disclose credentials. Readiness aggregate also consumes historical default Prisma deployment report."
+    }
+  ],
+  "priorSuppliedIdentityEvidence": {
+    "files": [
+      {
+        "source": "docs/blockers-and-gates/hris-payroll-compliance-prefill/COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_RECONCILED_WORKING_COPY_2026-08-19.docx",
+        "sha256": "8230169b4374159751f58bf7f81b7ae69ac2e5c19e08430f96b3e1a0cdf9f87e",
+        "paragraphCount": 2192,
+        "extractedFile": "COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_RECONCILED_WORKING_COPY_2026-08-19.txt",
+        "method": "Read only DOCX zip word/document.xml w:p/w:t; no document edited; signatures/images not interpreted as authenticated approvals"
+      },
+      {
+        "source": "docs/blockers-and-gates/hris-payroll-compliance-prefill/COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.docx",
+        "sha256": "fbcd7aada0b3850b603121cae37b4e87521cc53395e325caedc205efdfd62dd2",
+        "paragraphCount": 3478,
+        "extractedFile": "COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.txt",
+        "method": "Read only DOCX zip word/document.xml w:p/w:t; no document edited; signatures/images not interpreted as authenticated approvals"
+      },
+      {
+        "source": "docs/blockers-and-gates/hris-payroll-compliance-prefill/COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_WORKING_COPY_2026-08-22.docx",
+        "sha256": "f313feed37d46514754d0358e573d8f0ef2adb38aa4f9dbe1466aadc9c245008",
+        "paragraphCount": 3478,
+        "extractedFile": "COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_WORKING_COPY_2026-08-22.txt",
+        "method": "Read only DOCX zip word/document.xml w:p/w:t; no document edited; signatures/images not interpreted as authenticated approvals"
+      }
+    ],
+    "classification": "Supplied candidate names and working-copy assertions are preserved. Refreshed working copy expressly denies authority/signature/approval credit. Historical identity counts must be superseded by parent current DB joins.",
+    "discrepancy": {
+      "source": "COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.docx",
+      "paragraph": 38,
+      "value": "Checker name: Yonga Claude",
+      "otherSource": "prisma/compliance-hris-role-seed.ts DOCUMENT_G1_CANDIDATE_ROLES / current DB join by parent",
+      "otherValue": "Yonga Springfield",
+      "requiredResolution": "Confirm the intended person and exact scope for the legacy maker/checker nomination, keeping the security-owner nomination distinct; do not merge names automatically."
+    }
+  }
+}

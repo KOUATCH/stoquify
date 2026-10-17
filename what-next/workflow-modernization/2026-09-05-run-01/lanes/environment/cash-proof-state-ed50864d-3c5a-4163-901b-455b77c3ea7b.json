@@ -1,0 +1,25 @@
+{
+  "purpose": "Synthetic proof read and transport recovery; no financial processing",
+  "at": "2026-09-28T09:06:42.389Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "085d20f367900073f7692dcc90347b876935a30ca745ee04cb0dce941cc4a606",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [],
+  "passed": false,
+  "error": "expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('dialog')\nExpected: 1\nReceived: 0\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 60000ms\n  - waiting for getByRole('dialog')\n    118 × locator resolved to 0 elements\n        - unexpected value \"0\"\n",
+  "failureScreenshot": "cash-proof-state-ed50864d-3c5a-4163-901b-455b77c3ea7b-failed.png",
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "components/cash-command/CashCommandDashboard.tsx": "085d20f367900073f7692dcc90347b876935a30ca745ee04cb0dce941cc4a606",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true
+}

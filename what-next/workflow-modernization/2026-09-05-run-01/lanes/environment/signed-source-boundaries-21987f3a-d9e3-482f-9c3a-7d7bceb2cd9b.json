@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-27T17:44:06.694Z",
+  "baseline": false,
+  "sourcesBefore": {
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65"
+  },
+  "cases": [
+    {
+      "kind": "event",
+      "organizationId": "cmuk3ye6u0000ma8o6yz6bd4g",
+      "runId": "cmuk3yedi001ama8ofx4ry816",
+      "passed": true,
+      "retainedCertificateHash": "fa07f02cc3c80ab0e93948d1974120c876fd631c793d930d860623ab4e35c402",
+      "newCertificateHash": "7059503202450e70d36eedfdd31a869aaa7f25e4793015e83335e79a88d1a816",
+      "denialsRollbackConcurrencyRetry": true,
+      "originalMatchesUnchanged": true,
+      "noFinancialPosting": true,
+      "independentPrepareSignExport": true,
+      "corruptCertificateRefused": true,
+      "actualProviderDriftRefused": true,
+      "syntheticCertifiedCloseInvalidated": true,
+      "oneReopeningInboxObservation": true
+    },
+    {
+      "kind": "statement",
+      "organizationId": "cmuk3yfqn0034ma8oaadxnm14",
+      "runId": "cmuk3yftn004ema8oygzgugpp",
+      "passed": true,
+      "retainedCertificateHash": "94ce4df3ee163859ca4715cc308c15b51d6a6b4e9360bb0d5efbb9fc0297b6ed",
+      "newCertificateHash": "0f110f6029a16b1e941f4c4e8aa4a47c6e465e218cd186795744f4507a8eb0c4",
+      "denialsRollbackConcurrencyRetry": true,
+      "originalMatchesUnchanged": true,
+      "noFinancialPosting": true,
+      "independentPrepareSignExport": true,
+      "corruptCertificateRefused": true,
+      "actualProviderDriftRefused": true,
+      "syntheticCertifiedCloseInvalidated": true,
+      "oneReopeningInboxObservation": true
+    }
+  ],
+  "passed": true,
+  "sourcesAfter": {
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/reconciliation-additional-sources.service.ts": "22864ef53a875aa970c5aeb4386d7dc87827f4d8afded6ade63e20005bf59527",
+    "services/reconciliation/reconciliation-retained-signature.ts": "9a44b69f031d4f5f8f18ee1c2b9e81ac659c802d597d603e3012b98452ac00dd",
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65"
+  },
+  "sourceStable": true
+}

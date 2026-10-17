@@ -1,0 +1,24 @@
+{
+  "task": "S08 initial POS/AP operator cohort and S09 one POS result projection extraction",
+  "baseHead": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "ownedFiles": [
+    "components/pos/ProfessionalPOSSystem.tsx",
+    "components/purchasing/PaymentExecutionWorkbench.tsx",
+    "components/purchasing/__tests__/PaymentExecutionWorkbench.test.tsx",
+    "messages/payment-execution/en.json",
+    "messages/payment-execution/fr.json",
+    "services/pos/pos.service.ts",
+    "services/pos/commit-result.ts",
+    "tests/s08-s09/commit-result.test.ts",
+    "tests/s08-s09/browser/adapters.tsx",
+    "tests/s08-s09/browser/journey.tsx",
+    "scripts/verify-s08-s09-browser.cjs",
+    "jest.s08-s09.config.cjs",
+    "tsconfig.s08-s09.json",
+    "docs/prompt-execution/S08-S09_SCOPE_2026-10-15.json",
+    "docs/prompt-execution/S08-S09_EXECUTION_2026-10-15.md"
+  ],
+  "productionAccess": false,
+  "committedOrStaged": false,
+  "rollout": "S06 trusted ingress, shared enforcement/outage/NAT proof and S07 hosted full journeys/browser qualification remain open. S08 synthetic operator journeys do not close those gates. Payroll UI and representative operator benefit measurement remain follow-up cohorts."
+}

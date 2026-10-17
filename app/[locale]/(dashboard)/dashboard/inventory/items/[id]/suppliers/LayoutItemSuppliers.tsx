@@ -43,9 +43,9 @@ export default function LayoutItemSuppliers({
     }
   })) || []
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-600px)]">
+    <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)]">
       {/* Left Column - Suppliers List */}
-      <div className="border rounded-lg">
+      <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
         <SuppliersList
           itemSuppliers={allItemSuppliers}
           selectedSupplier={selectedSupplier}
@@ -57,7 +57,7 @@ export default function LayoutItemSuppliers({
       </div>
 
       {/* Right Column - Edit Form */}
-      <div className="border rounded-lg">
+      <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
         <SupplierEditForm
           itemId={itemId}
           selectedSupplier={selectedSupplier}

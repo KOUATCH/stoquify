@@ -251,8 +251,8 @@ importers:
         specifier: ^19.1.1
         version: 19.2.8
       react-day-picker:
-        specifier: 8.10.1
-        version: 8.10.1(date-fns@3.6.0)(react@19.2.8)
+        specifier: 8.10.2
+        version: 8.10.2(date-fns@3.6.0)(react@19.2.8)
       react-dom:
         specifier: ^19.1.1
         version: 19.2.8(react@19.2.8)
@@ -268,9 +268,6 @@ importers:
       react-resizable-panels:
         specifier: ^2.1.7
         version: 2.1.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react-tailwindcss-select:
-        specifier: ^1.8.5
-        version: 1.8.5(react@19.2.8)
       react-to-print:
         specifier: ^3.2.0
         version: 3.3.0(react@19.2.8)
@@ -356,6 +353,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.4(@types/react@19.2.18)
+      axe-core:
+        specifier: ^4.11.4
+        version: 4.13.0
       eslint:
         specifier: ^8.57.1
         version: 8.57.1(supports-color@8.1.1)
@@ -5626,11 +5626,11 @@ packages:
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
 
-  react-day-picker@8.10.1:
-    resolution: {integrity: sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==}
+  react-day-picker@8.10.2:
+    resolution: {integrity: sha512-LK68OTbHB3oJNhl9cA0qVizzp3o26w61YSjAFkYi67N86iro32wx86kSNeFU/hq+gI8m1yzWhnomMLfZ041RzQ==}
     peerDependencies:
       date-fns: ^2.28.0 || ^3.0.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-dom@19.2.8:
     resolution: {integrity: sha512-rVprimfGBG3DR+Tq0IQG2DT5PxKth1WIGDmj5yPmlzr4YBe7uyE+Du4oVqTDXZSHGGGXRtTJEGSSePyQCMBglQ==}
@@ -5709,11 +5709,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  react-tailwindcss-select@1.8.5:
-    resolution: {integrity: sha512-x29IrLiqBT5FnkC9oFQReOr05tEOZHtDtZdha84nlSWcj3qD67yonKFHXIf69yc8ElFlKUxCEv0zCllN8jHBFA==}
-    peerDependencies:
-      react: ^18.2.0
 
   react-to-print@3.3.0:
     resolution: {integrity: sha512-7j9GIeNZA9glZlbv9mIbIHDOOx+WYfRMbJzh04NiSKjdaeGkxJuKjJQrtRuNKtt5AvEVVjrLCPokZ9yJX51Fvg==}
@@ -12222,7 +12217,7 @@ snapshots:
       defu: 6.1.7
       destr: 2.0.5
 
-  react-day-picker@8.10.1(date-fns@3.6.0)(react@19.2.8):
+  react-day-picker@8.10.2(date-fns@3.6.0)(react@19.2.8):
     dependencies:
       date-fns: 3.6.0
       react: 19.2.8
@@ -12296,10 +12291,6 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.18
-
-  react-tailwindcss-select@1.8.5(react@19.2.8):
-    dependencies:
-      react: 19.2.8
 
   react-to-print@3.3.0(react@19.2.8):
     dependencies:

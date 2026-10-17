@@ -1,0 +1,369 @@
+--- a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx
+@@ -2,6 +2,8 @@
+ 
+ import { getTrialBalanceAction } from "@/actions/accounting/reports.actions"
+ import { checkPermission } from "@/config/useAuth"
++import { localizePath } from "@/i18n/routing"
++import type { Locale } from "@/types/bilingual"
+ import {
+   AccountingPageShell,
+   AccountingPanel,
+@@ -32,54 +34,101 @@
+   }
+ }
+ 
+-async function TrialBalancePageImpl() {
++const copy = {
++  en: {
++    eyebrow: "Accounting reports", title: "Trial Balance",
++    description: "A ledger-first report generated from posted and reversed journal entry lines.",
++    unavailable: "Trial balance unavailable", denied: "Trial balance access",
++    fallback: "Report data is unavailable.",
++    currencyEvidence: "Functional-currency evidence is missing from a journal line. Review the historical entry before reporting.",
++    evidenceRecovery: "Review the affected journal entries with your accounting administrator, then reload this report. Totals are withheld until the evidence is complete.",
++    permissionRecovery: "Ask your organization administrator to review your accounting report access.",
++    retryRecovery: "The report could not be loaded. Review the message above, then try again.",
++    journals: "Review journal entries", access: "Review my access", retry: "Reload report",
++    activityDebit: "Activity debit", activityCredit: "Activity credit",
++    debitMovement: "Posted and reversed debit movement", creditMovement: "Posted and reversed credit movement",
++    balanceCheck: "Balance check", balanced: "Balanced", unbalanced: "Out of balance",
++    debit: "Debit", credit: "Credit", balances: "Account balances",
++    balancesDescription: "Search, filter, and review the canonical report without losing full-report totals.",
++  },
++  fr: {
++    eyebrow: "Rapports comptables", title: "Balance générale",
++    description: "Rapport établi à partir des lignes d’écritures comptabilisées et extournées du grand livre.",
++    unavailable: "Balance générale indisponible", denied: "Accès à la balance générale",
++    fallback: "Les données du rapport sont indisponibles.",
++    currencyEvidence: "Les montants en devise fonctionnelle manquent sur une ligne d’écriture. Vérifiez l’écriture historique avant de produire le rapport.",
++    evidenceRecovery: "Vérifiez les écritures concernées avec votre responsable comptable, puis rechargez ce rapport. Les totaux restent masqués tant que les justificatifs sont incomplets.",
++    permissionRecovery: "Demandez à votre administrateur de vérifier vos droits d’accès aux rapports comptables.",
++    retryRecovery: "Le rapport n’a pas pu être chargé. Consultez le message ci-dessus, puis réessayez.",
++    journals: "Consulter les écritures", access: "Vérifier mes autorisations", retry: "Recharger le rapport",
++    activityDebit: "Mouvements au débit", activityCredit: "Mouvements au crédit",
++    debitMovement: "Mouvements débiteurs comptabilisés et extournés", creditMovement: "Mouvements créditeurs comptabilisés et extournés",
++    balanceCheck: "Contrôle de l’équilibre", balanced: "Équilibrée", unbalanced: "Déséquilibrée",
++    debit: "Débit", credit: "Crédit", balances: "Soldes des comptes",
++    balancesDescription: "Recherchez, filtrez et consultez le rapport sans perdre les totaux de l’ensemble du rapport.",
++  },
++} as const
++
++async function TrialBalancePageImpl(locale: Locale) {
+   await checkPermission("accounting.reports.read")
+ 
++  const labels = copy[locale]
+   const reportResponse = await getTrialBalanceAction({ includeZeroBalance: true })
+   const report = reportResponse.success ? (reportResponse.data as TrialBalance) : null
++  const denied = !reportResponse.success && reportResponse.code === "FORBIDDEN"
++  const missingCurrencyEvidence = !reportResponse.success && reportResponse.error === copy.en.currencyEvidence
++  const recoveryHref = denied ? "/dashboard/access-requests" : missingCurrencyEvidence
++    ? "/dashboard/accounting/journals" : "/dashboard/accounting/reports/trial-balance"
+ 
+   return (
+     <AccountingPageShell
+-      eyebrow="Accounting reports"
+-      title="Trial Balance"
+-      description="A ledger-first report generated from posted and reversed journal entry lines."
++      eyebrow={labels.eyebrow}
++      title={labels.title}
++      description={labels.description}
+       icon={Scale}
+     >
+       {!report ? (
+-        <AccountingPanel title="Trial balance access" description={reportResponse.error || "Report data is unavailable."}>
+-          <div className="p-6 text-sm text-[var(--dash-text-soft)]">Check accounting report permissions for this role.</div>
++        <AccountingPanel title={denied ? labels.denied : labels.unavailable}
++          description={missingCurrencyEvidence ? labels.currencyEvidence : reportResponse.error || labels.fallback}>
++          <div className="space-y-4 p-6 text-sm text-[var(--dash-text-soft)]">
++            <p>{denied ? labels.permissionRecovery : missingCurrencyEvidence ? labels.evidenceRecovery : labels.retryRecovery}</p>
++            <a href={localizePath(recoveryHref, locale)}
++              className="inline-flex min-h-10 max-w-full items-center justify-center whitespace-normal break-words rounded-lg border border-[var(--dash-border-subtle)] px-4 py-2 font-semibold text-[var(--dash-text)] hover:bg-[var(--dash-surface-raised)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-focus)]">
++              {denied ? labels.access : missingCurrencyEvidence ? labels.journals : labels.retry}
++            </a>
++          </div>
+         </AccountingPanel>
+       ) : (
+         <div className="space-y-6">
+           <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
+             <AccountingStatCard
+-              label="Activity debit"
++              label={labels.activityDebit}
+               value={formatAccountingMoney(report.totals.activityDebit)}
+-              sub="Posted and reversed debit movement"
++              sub={labels.debitMovement}
+               icon={Scale}
+               accent="var(--dash-brand)"
+               soft="var(--dash-brand-soft)"
+             />
+             <AccountingStatCard
+-              label="Activity credit"
++              label={labels.activityCredit}
+               value={formatAccountingMoney(report.totals.activityCredit)}
+-              sub="Posted and reversed credit movement"
++              sub={labels.creditMovement}
+               icon={Scale}
+               accent="var(--dash-info)"
+               soft="var(--dash-info-soft)"
+             />
+             <AccountingStatCard
+-              label="Balance check"
+-              value={report.totals.isBalanced ? "Balanced" : "Out of balance"}
+-              sub={`Debit ${formatAccountingMoney(report.totals.debitBalance)} · Credit ${formatAccountingMoney(report.totals.creditBalance)}`}
++              label={labels.balanceCheck}
++              value={report.totals.isBalanced ? labels.balanced : labels.unbalanced}
++              sub={`${labels.debit} ${formatAccountingMoney(report.totals.debitBalance)} · ${labels.credit} ${formatAccountingMoney(report.totals.creditBalance)}`}
+               icon={Scale}
+               accent={report.totals.isBalanced ? "var(--dash-success)" : "var(--dash-danger)"}
+               soft={report.totals.isBalanced ? "var(--dash-success-soft)" : "var(--dash-danger-soft)"}
+             />
+           </div>
+ 
+-          <AccountingPanel title="Account balances" description="Search, filter, and review the canonical report without losing full-report totals.">
+-            <TrialBalanceTable rows={report.rows} totals={report.totals} />
++          <AccountingPanel title={labels.balances} description={labels.balancesDescription}>
++            <TrialBalanceTable rows={report.rows} totals={report.totals} locale={locale} />
+           </AccountingPanel>
+         </div>
+       )}
+@@ -100,6 +149,6 @@
+   return withAccountingSurfaceAccess({
+     params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+     surface,
+-    onAllowed: async () => TrialBalancePageImpl(),
++    onAllowed: async (_context, locale) => TrialBalancePageImpl(locale),
+   })
+ }
+--- a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/page.test.tsx
+@@ -7,8 +7,10 @@
+ 
+ jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
+   routeByKey: jest.fn(() => ({ key: "accounting-test" })),
+-  withAccountingSurfaceAccess: jest.fn(({ onAllowed }) => onAllowed({ orgId: "org-1" }, "en")),
++  withAccountingSurfaceAccess: jest.fn(async ({ params, onAllowed }) => onAllowed({ orgId: "org-1" }, (await params).locale)),
+ }))
++
++jest.mock("@/i18n/routing", () => ({ localizePath: (href: string, locale: string) => `/${locale}${href}` }))
+ 
+ jest.mock("@/config/useAuth", () => ({
+   checkPermission: jest.fn(),
+@@ -134,7 +136,41 @@
+ 
+     expect(mockCheckPermission).toHaveBeenCalledWith("accounting.reports.read")
+     expect(mockGetTrialBalanceAction).toHaveBeenCalledWith({ includeZeroBalance: true })
+-    expect(screen.getByText("Trial balance access")).toBeInTheDocument()
+-    expect(screen.getByText("Trial balance unavailable")).toBeInTheDocument()
++    expect(screen.getByRole("heading", { name: "Trial balance unavailable" })).toBeInTheDocument()
++    expect(screen.getAllByText("Trial balance unavailable")).toHaveLength(2)
++    expect(screen.getByRole("link", { name: "Reload report" })).toHaveAttribute("href", "/en/dashboard/accounting/reports/trial-balance")
++    expect(screen.queryByText(/Check accounting report permissions/)).not.toBeInTheDocument()
++  })
++
++  it.each([
++    ["en", "Trial balance unavailable", "Review journal entries", /Totals are withheld/],
++    ["fr", "Balance générale indisponible", "Consulter les écritures", /Les totaux restent masqués/],
++  ] as const)("routes incomplete currency evidence to journal review in %s without displaying totals", async (locale, title, link, message) => {
++    mockGetTrialBalanceAction.mockResolvedValue({
++      success: false, code: "BUSINESS_RULE_VIOLATION", status: 422,
++      error: "Functional-currency evidence is missing from a journal line. Review the historical entry before reporting.",
++    })
++    render(await TrialBalancePage({ params: Promise.resolve({ locale }) }))
++    expect(screen.getByRole("heading", { name: title })).toBeVisible()
++    expect(screen.getByText(message)).toBeVisible()
++    expect(screen.getByRole("link", { name: link })).toHaveAttribute("href", `/${locale}/dashboard/accounting/journals`)
++    expect(screen.queryByRole("table")).not.toBeInTheDocument()
++    expect(screen.queryByText(/Balanced|Équilibrée|Check accounting report permissions/)).not.toBeInTheDocument()
++    if (locale === "fr") expect(screen.queryByText(/Functional-currency evidence/)).not.toBeInTheDocument()
++  })
++
++  it("offers access review only when the protected action actually denies access", async () => {
++    mockGetTrialBalanceAction.mockResolvedValue({ success: false, code: "FORBIDDEN", status: 403, error: "Access denied" })
++    render(await TrialBalancePage({ params: Promise.resolve({ locale: "fr" }) }))
++    expect(screen.getByRole("heading", { name: "Accès à la balance générale" })).toBeVisible()
++    expect(screen.getByRole("link", { name: "Vérifier mes autorisations" })).toHaveAttribute("href", "/fr/dashboard/access-requests")
++    expect(screen.queryByRole("table")).not.toBeInTheDocument()
++  })
++
++  it("passes the French route locale into the existing table and summary", async () => {
++    render(await TrialBalancePage({ params: Promise.resolve({ locale: "fr" }) }))
++    expect(screen.getByRole("heading", { name: "Balance générale", level: 1 })).toBeVisible()
++    expect(screen.getByText("Équilibrée")).toBeVisible()
++    expect(screen.getByRole("searchbox", { name: "Rechercher des comptes" })).toBeVisible()
+   })
+ })
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**14 October — Delivery 13:** live Accountant role reconfirmed; reconciliation's persistent loading skeleton and trial balance's misleading permissions recovery reproduced. Local fixes add an announced EN/FR reconciliation loading state with a dashboard exit, correct trial-balance recovery by failure type, and connect the French route to its bilingual table. Browser control remains intermittent; phone inspection failed and the viewport was restored. Actual owner/cashier and responsive acceptance remain open. See [Delivery 13](EXECUTION-13.md).
++
+ **14 October — Delivery 12:** finance denial instructions now use organization terminology and explain administrator recovery; both Cash and Payment History module-denial branches are localized in EN/FR. Activation dependency/audit/authentication disclosures remain intact. All 28 mocked route/component tests, scoped TypeScript and production-file lint passed. Edge now lists dashboard/accountant destinations, but page inspection and navigation still time out; this is a browser-control gap, not evidence that another sign-in is required. Real accountant, owner/cashier and responsive acceptance remain open. See [Delivery 12](EXECUTION-12.md).
+ 
+ **14 October — Delivery 11:** reconciliation now distinguishes an unconfirmed access check from a generic service failure, offers localized access review and refreshes the existing permission lookup. Local runtime recovered on port 3003; browser currently requires sign-in. This does not close the unresolved populated-accountant or responsive checks. See [Delivery 11](EXECUTION-11.md).
+--- a/components/finance/PaymentReconciliationWorkbench.tsx
++++ b/components/finance/PaymentReconciliationWorkbench.tsx
+@@ -203,22 +203,33 @@
+   }
+ }
+ 
+-function LoadingState() {
++function LoadingState({ locale }: { locale: string }) {
++  const isFrench = locale === "fr"
+   return (
+-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
++    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4">
+-        <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
+-        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
++        <div role="status" aria-live="polite" className="space-y-2 text-[var(--dash-text)]">
++          <h1 className="text-xl font-semibold">{isFrench ? "Chargement du rapprochement" : "Loading reconciliation"}</h1>
++          <p className="text-sm text-[var(--dash-text-soft)]">{isFrench
++            ? "Vérification de vos accès et chargement des justificatifs de paiement. Aucun résultat n’est encore disponible."
++            : "Checking your access and loading payment evidence. Results are not available yet."}</p>
++        </div>
++        <a href={localizePath("/dashboard", isFrench ? "fr" : "en")}
++          className="inline-flex min-h-10 items-center rounded-lg border border-[var(--dash-border-subtle)] px-4 py-2 text-sm font-semibold text-[var(--dash-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-focus)]">
++          {isFrench ? "Retour au tableau de bord" : "Back to dashboard"}
++        </a>
++        <Skeleton aria-hidden="true" className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
++        <div aria-hidden="true" className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+           {Array.from({ length: 5 }).map((_, index) => (
+             <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
+           ))}
+         </div>
+-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
++        <div aria-hidden="true" className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+           <Skeleton className="h-[480px] rounded-lg bg-[var(--dash-surface-raised)]" />
+           <Skeleton className="h-[480px] rounded-lg bg-[var(--dash-surface-raised)]" />
+         </div>
+       </div>
+-    </main>
++    </div>
+   )
+ }
+ 
+@@ -512,7 +523,7 @@
+     return exportCertificate.mutateAsync(command)
+   }
+ 
+-  if (workbenchQuery.isLoading && !workbench) return <LoadingState />
++  if (workbenchQuery.isLoading && !workbench) return <LoadingState locale={locale} />
+ 
+   if (errorMessage && !workbench) {
+     if ((workbenchQuery.error as { code?: string })?.code === "FORBIDDEN") {
+--- a/components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx
++++ b/components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx
+@@ -403,6 +403,20 @@
+     ;(usePermissions as jest.Mock).mockReturnValue({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })
+   })
+ 
++  it.each(["en", "fr"])("announces pending reads and keeps a safe exit without duplicating main in %s", locale => {
++    jest.mocked(useLocale).mockReturnValue(locale)
++    const page = setupWorkbench()
++    mockUsePaymentReconciliationWorkbench.mockReturnValue({ data: undefined, isLoading: true, error: null, refetch: jest.fn() })
++    page.rerender(<main><PaymentReconciliationWorkbench /></main>)
++    expect(screen.getAllByRole("main")).toHaveLength(1)
++    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Chargement du rapprochement" : "Loading reconciliation")
++    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Aucun résultat n’est encore disponible" : "Results are not available yet")
++    expect(screen.getByRole("link", { name: locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard" })).toHaveAttribute("href", `/${locale}/dashboard`)
++    expect(screen.queryByRole("table")).not.toBeInTheDocument()
++    expect(page.importStatement.mutateAsync).not.toHaveBeenCalled()
++    expect(page.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
++  })
++
+   it.each(["en", "fr"])("offers a scoped access review and permission refresh in %s", locale => {
+     jest.mocked(useLocale).mockReturnValue(locale)
+     const refreshPermissions = jest.fn()
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-13.md
+@@ -0,0 +1,63 @@
++# Delivery 13 — Live accountant findings and recovery fixes
++
++Date: 14 October 2026. Source revision: `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`, with unrelated working-tree changes preserved. Status: two local fixes; live role/responsive acceptance incomplete.
++
++## Live findings
++
++The existing Edge session was confirmed as **Accountant** by both the page DOM and browser accessibility tree, in the same organization used for the earlier accountant checks. Reconciliation reached its authenticated shell and loading skeleton. Later accessibility/screenshot inspection still showed loading placeholders rather than financial results. This is an observed loading problem, not proof of its cause.
++
++The trial-balance page displayed a specific failure: functional-currency evidence is missing from a historical journal line. Immediately below, it instructed the accountant to check permissions. Source inspection confirmed that every report failure received this permissions hint. The ledger service deliberately refuses to produce the report when functional amounts are absent; that control remains intact.
++
++## Changes
++
++1. **Trial-balance recovery follows the actual failure.** A protected-action `FORBIDDEN` response offers access review. The known missing-currency-evidence response offers journal review, explains that totals are withheld, and retains the underlying reporting block. Other read failures offer a full report reload. No synthetic totals or accounting corrections are introduced. Each link preserves EN/FR locale; destination guards still control admission.
++2. **French trial-balance presentation.** The route locale now reaches the existing bilingual table. Page heading, summary labels, balance status and recovery instructions are translated. The known currency-evidence diagnostic is translated at the presentation boundary. Other server-supplied safe error messages remain as supplied; this does not claim complete translation of every backend error or account name.
++3. **Reconciliation loading is understandable and escapable.** Loading now has a visible EN/FR heading, polite status announcement, explicit statement that results are not yet available and a dashboard return link. Decorative skeletons are hidden from assistive technology. The loading branch no longer creates a second main landmark inside the dashboard shell. No permission lookup, refresh interval, query, timeout or transaction behavior changed. This presentation fix does not claim to resolve the underlying stalled read.
++
++## Browser recovery attempts and coverage
++
++The selected Edge connection initially responded to DOM inspection. Opening reconciliation was followed by timeouts in page evaluation, screenshot focus and other tab inspection. Closing the owned stalled tab did not restore DOM control. Reinitializing the tool session and reconnecting existing tabs provided intermittent recovery. A fresh browser inventory showed a changed Edge extension instance and newly available Chrome. The browser's accessibility interface and screenshot interface then supplied actual accountant/reconciliation evidence, while DOM actions still timed out. A Chrome session inventory attempt also timed out before any role was confirmed there.
++
++An empty diagnostic-tab observation was refused by the browser URL policy; the tab was closed without a workaround. No browser profile, extension cache or user browser process was modified or terminated. No application server was restarted. The user was asked to bring Edge to the foreground and reconnect the Codex extension; no credentials or new sign-in were requested. That connection assistance remains pending.
++
++| Route / browser | Role / locale / viewport | State and result |
++|---|---|---|
++| `/en/dashboard/accounting/reports/trial-balance`, Edge | Accountant confirmed; EN; normal browser size, CSS viewport not measured | Live missing-currency-evidence failure and misleading permissions hint reproduced before editing; post-change browser check unavailable |
++| `/en/dashboard/finance/reconciliation`, Edge | Accountant confirmed; EN; normal size; screenshot 1523×733 pixels, not a measured CSS viewport | Authenticated shell and persistent loading placeholders observed; populated/error/denied resolution not verified |
++| French reconciliation language link | Same session; intended FR | Click/direct navigation timed out; French route arrival not verified |
++| Reconciliation phone attempt, Edge | Intended 390×844 override | Supported viewport setting succeeded; tab inspection timed out. No layout acceptance claimed. Override reset successfully |
++| Chrome role session | Role unconfirmed | Session setup/inventory timed out. No Chrome role coverage credited |
++| Owner and cashier | Actual sessions unavailable to reliable inspection | Open; no substitution with Accountant or SUPER ADMIN evidence |
++
++Captured pre-fix loading evidence: [reconciliation screenshot](evidence/delivery-13-reconciliation-loading.jpg). Neither screenshot nor jsdom tests establish responsive behavior, visual contrast, keyboard focus or screen-reader operation. Accountant portal/access-review destination journeys, 1440×900 and 1024×768 checks, and successful phone inspection remain open.
++
++## Verification and controls
++
++- Workflow contract: passed, exit 0; 196 package scripts outside the reviewed manifest. Current script, lifecycle and registry definition inspected first.
++- Trial-balance page/table mocked tests: **9 passed in 2 suites**, exit 0. Includes known evidence failure in EN/FR, real denial classification, unchanged report permissions, hidden report totals on failure, French table wiring and existing filtering/full-total invariance. Evidence: `evidence/delivery-13-tests.json`.
++- Reconciliation mocked tests: **54 passed in 2 suites**, exit 0; `evidence/delivery-13-reconciliation-tests.json`. Includes the new EN/FR loading announcement, single main landmark, safe exit, absence of financial results during loading and no mutation submission, plus the existing actor/organization scope and recovery tests. Combined with trial balance: **63 tests passed across 4 suites**.
++- Scoped TypeScript: both trial-balance and reconciliation configurations passed, exit 0. Normal dependency resolution, `noEmit`, incremental metadata disabled.
++- ESLint: both changed production files passed, exit 0.
++- Real database tests, migrations, seeds, builds and deployment: not run. No business transaction, permission/module change, invitation or external message submitted. Normal application reads may create audit records.
++
++The two isolated Jest configurations use installed Next/Jest without an application directory, avoiding application config/environment setup. Server actions and authority dependencies are mocked. Checks preserve actor/organization boundaries and do not certify a real database workflow.
++
++Commands:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-recovery.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-13-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-recovery.json --pretty false
++node node_modules/eslint/bin/eslint.js "app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx"
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.reconciliation-recovery.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-13-reconciliation-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.reconciliation-recovery.json --pretty false
++node node_modules/eslint/bin/eslint.js components/finance/PaymentReconciliationWorkbench.tsx
++```
++
++Project UI/UX Pro Max focused query: `error recovery actionable messages`, domain `ux`, returned **Accessibility / Error Messages** and **Feedback / Error Recovery** from `ux-guidelines.csv`. Clear recovery paths and status announcements apply without a framework upgrade or palette change. The design master and reconciliation/AP evidence controls remain authoritative. The dated route graph had no exact current trial-balance page match; current source supplied the behavioral evidence.
++
++## Next acceptance and rollback
++
++Once browser actions respond reliably: inspect the permission/data-read outcome behind the reconciliation loading state, verify the changed EN/FR panels and their actual destinations, then complete accountant phone/tablet/desktop and owner/cashier journeys. Do not weaken permission guards or repair historical financial data to manufacture a passing UI check.
++
++Pre-edit bytes/hashes are retained in `evidence/delivery-13-baseline.json`. Reverse only `evidence/delivery-13-owned.patch` after checking later overlapping edits; do not reset files to HEAD. Post-edit hashes are in `evidence/delivery-13-files.json`. No commit or deployment was performed. The connection issue and broader roadmap remain unfinished.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.accountant-recovery.config.cjs
+@@ -0,0 +1,11 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Bounded mocked page/table checks; no application configuration or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/app'],
++  testMatch: ['<rootDir>/app/**/accounting/reports/trial-balance/__tests__/*.test.tsx'],
++  collectCoverage: false,
++})
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.accountant-recovery.json
+@@ -0,0 +1,7 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
++  "files": ["../../../../next-env.d.ts", "../../../../app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx"],
++  "include": [],
++  "exclude": []
++}

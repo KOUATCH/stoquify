@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-28T10:36:07.138Z",
+  "sourceBefore": {
+    "actions/pos/drawer-dashboard.actions.ts": "d92847a55e816a276764a38b12c0713c4878edf17d98fb7b1246e4208bc031e8",
+    "hooks/posHooks/useDrawerDashboard.ts": "67d7c33b20b084eeca250615070512045a325779ebedc507f16d22af191369f8",
+    "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75",
+    "components/pos/CashDrawerManagementDashboard.tsx": "e81550d6fc74a7687ee815b82d9609f531e3a839eddcbd48765230a398015871",
+    "services/cash-command/cash-command-navigation.ts": "45281a6fc886e1a998e450bc4bf31c6cbfc2072dfb5c5e7bdc5369ff05f0fc22",
+    "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts": "9c660fd23ff09717d4cb5ce91d02aa940e5bf174b6e3c2d8ea8f4d3beba816e7",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "actions/payroll/payroll-control.actions.ts": "a7d72904c319ec608c5b5303d263a94e9a4b99149b3f004ac4f36d36931e4b71",
+    "services/cash-command/cash-command-sources.service.ts": "03a970eb54b9f522c18684aa04d738e51fe7f71b5cbade4fc130f250771c17b0",
+    "services/payroll/payroll-finance-forecast.service.ts": "e1ab8742d63466e9ebd9ec4f8f189906a55269c8c728b67b617863326dcb052a",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command.service.ts": "894d2b733c46ac8b4eb0620fcb122a5ebb39a683f6f4b947a4159495fe26f22d",
+    "services/cash-command/cash-command-visibility.service.ts": "10cc2715a9980bf1e5708c70f2b4a7ba549e89ce6d01ff0b802b5e86b3e635bd",
+    "services/cash-command/cash-command-contracts.ts": "365275561e6ae6b64a8e17037d6f8cae7f50b91150dc269c4ed966f0435da002",
+    "components/cash-command/CashCommandDashboard.tsx": "178cc880fad07fefc536bcbc59af95ed759f56954c3f54a77f99a789dcb9a056",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "c89603f9a9dfc61919ae2ca5810cbd3543fc81069f72ff6f068ca772908d5a27",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [],
+  "stage": "drawer-0 en",
+  "pageErrors": [
+    {
+      "stage": "drawer-0 en",
+      "url": "http://127.0.0.1:3110/en/dashboard/finance/cash-command",
+      "detail": "ng.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n      <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n        <SegmentTrieNode>\n        <CashCommandPage>\n          <CashCommandDashboard data={{...}} locale=\"en\" title=\"Cash Comma...\" subtitle=\"Read-only ...\">\n            <main className=\"dashboard-...\">\n              <div className=\"dashboard-...\">\n                <p>\n                <BICommandBriefHeader brief={{id:\"cash-c...\", ...}} mode=\"brief\" ...>\n                  <section className=\"dashboard-...\">\n                    <div className=\"flex flex-...\">\n                      <div>\n                      <aside className=\"flex w-ful...\">\n                        <BICommandModeTabs>\n                        <div className=\"rounded-lg...\">\n                          <MetaLine icon={<CalendarDays>} label=\"Period\">\n                            <div className=\"flex min-w...\">\n                              <span>\n                              <p className=\"min-w-0\">\n                                <span>\n                                <span className=\"break-words\">\n+                                 Sep 27 - Sep 28\n-                                 Sep 28 - Sep 29\n                          ...\n                        ...\n                ...\n      ...\n"
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('article').filter({ has: getByRole('heading', { name: 'Drawer risk', exact: true }) }).first().locator('a')\nExpected: 0\nReceived: 2\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 60000ms\n  - waiting for locator('article').filter({ has: getByRole('heading', { name: 'Drawer risk', exact: true }) }).first().locator('a')\n    118 × locator resolved to 2 elements\n        - unexpected value \"2\"\n",
+  "failedUrl": "http://127.0.0.1:3110/en/dashboard/finance/cash-command",
+  "failedScreen": "cash-drawer-5c554d14-0c2b-4ef6-9d17-a68b301cbf28-failed.png"
+}

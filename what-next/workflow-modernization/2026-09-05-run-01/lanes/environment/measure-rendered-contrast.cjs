@@ -22,7 +22,15 @@ module.exports = async function measureRenderedContrast(page, nodes) {
         }
         if (clipped) continue;
         const range = document.createRange(); range.selectNodeContents(text);
-        for (const rect of range.getClientRects()) if (rect.width > 0 && rect.height > 0) boxes.push({ x: rect.x + scrollX, y: rect.y + scrollY, width: rect.width, height: rect.height, color: getComputedStyle(text.parentElement).color });
+        for (const rect of range.getClientRects()) {
+          let left = rect.left, right = rect.right, top = rect.top, bottom = rect.bottom;
+          for (let parent = text.parentElement; parent && parent !== document.body && parent !== document.documentElement; parent = parent.parentElement) {
+            const current = getComputedStyle(parent), bounds = parent.getBoundingClientRect();
+            if (/(auto|scroll|hidden|clip)/.test(current.overflowX)) { left = Math.max(left, bounds.left); right = Math.min(right, bounds.right); }
+            if (/(auto|scroll|hidden|clip)/.test(current.overflowY)) { top = Math.max(top, bounds.top); bottom = Math.min(bottom, bounds.bottom); }
+          }
+          if (right > left && bottom > top) boxes.push({ x: left + scrollX, y: top + scrollY, width: right - left, height: bottom - top, color: getComputedStyle(text.parentElement).color });
+        }
       }
       return { text: element.textContent.trim().slice(0, 140), color: style.color, unsupported, boxes, disabled: !!element.closest(':disabled,[aria-disabled="true"]') };
     });

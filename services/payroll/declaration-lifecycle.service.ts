@@ -1,4 +1,5 @@
 import "server-only";
+import { assertPayrollProductionAdmissionInTx } from "./payroll-production-admission";
 
 import {
   PayrollDeclarationEvidenceTransition,
@@ -1428,6 +1429,10 @@ export async function recordPayrollDeclarationEvidence(
     });
     await auditSensitiveActionDecision(tx, controlDecision);
     assertSensitiveActionAllowed(controlDecision);
+
+    if (parsed.transition === "submit" || parsed.transition === "amend") {
+      await assertPayrollProductionAdmissionInTx(tx, parsed.organizationId, declaration.payrollRunId);
+    }
 
     const createdEvidence = await tx.payrollDeclarationEvidence.create({
       data: {

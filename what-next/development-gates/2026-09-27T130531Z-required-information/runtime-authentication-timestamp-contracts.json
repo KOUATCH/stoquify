@@ -1,0 +1,26 @@
+[
+  {
+    "model": "Session",
+    "field": "assuranceVerifiedAt",
+    "type": "DateTime?",
+    "value": null,
+    "status": "NOT_EXTRACTED_TRANSIENT_SERVER_FACT",
+    "rule": "Actual successful protected authentication; tenant/session binding and operation-specific maximum age. User must authenticate; must not submit an invented time."
+  },
+  {
+    "model": "Session",
+    "field": "expiresAt",
+    "type": "DateTime",
+    "value": null,
+    "status": "NOT_EXTRACTED_TRANSIENT_SERVER_FACT",
+    "rule": "Must remain after the action time for the actual session."
+  },
+  {
+    "model": "Session",
+    "field": "assuranceLockedUntil",
+    "type": "DateTime?",
+    "value": null,
+    "status": "NOT_EXTRACTED_TRANSIENT_SERVER_FACT",
+    "rule": "Must not represent a currently locked authentication challenge."
+  }
+]

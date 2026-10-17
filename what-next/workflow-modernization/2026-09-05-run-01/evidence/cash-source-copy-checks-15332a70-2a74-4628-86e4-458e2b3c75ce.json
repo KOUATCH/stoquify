@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-30T10:17:50.569Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-presentation.ts": "c0b0ef2898a81c6bf94096ef507243243cb6f6d825b5255e7e7c28731152a9a0",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "9911d46e47231f510f2152c5a8b9dc4ac7d94cd03f1f2d67dd06cff2cd6cf39e",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "10a374b63d725843244cb5a3d032a77403dfc5d59d50085a81b3e9355e62f865",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "6a586a6ddb750c4aa94c57c591d28f674731b28f83a95939bf00a522821a3f04"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 3 passed, 3 total\nTests:       104 passed, 104 total\nSnapshots:   0 total\nTime:        9.641 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"services/cash-command/__tests__/cash-command-sources.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/cash-command-presentation.ts",
+        "services/cash-command/cash-command.service.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 2,
+      "error": null,
+      "stdout": "services/cash-command/cash-command-presentation.ts(206,297): error TS2345: Argument of type 'BIDrillThrough | null' is not assignable to parameter of type 'BIDrillThrough'.\r\n  Type 'null' is not assignable to type 'BIDrillThrough'.\r\n",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-presentation.ts": "c0b0ef2898a81c6bf94096ef507243243cb6f6d825b5255e7e7c28731152a9a0",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "9911d46e47231f510f2152c5a8b9dc4ac7d94cd03f1f2d67dd06cff2cd6cf39e",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "10a374b63d725843244cb5a3d032a77403dfc5d59d50085a81b3e9355e62f865",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "93fa2eaf37bab08a82fa3a63153b62f11c8c5b95f0ebc11de16ada216c6ddf62",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "6a586a6ddb750c4aa94c57c591d28f674731b28f83a95939bf00a522821a3f04"
+  },
+  "sourceStable": true,
+  "passed": false
+}

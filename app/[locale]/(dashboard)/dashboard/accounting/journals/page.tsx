@@ -1,293 +1,139 @@
+import { randomUUID } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { BookOpenCheck, FilePlus2, Scale } from "lucide-react"
+
+import { listJournalEntriesAction, listJournalsAction } from "@/actions/accounting/journals.actions"
 import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
-
-import { redirect } from "next/navigation"
-import { getTranslations } from "next-intl/server"
-import { BookOpenCheck, FilePlus2, RotateCcw, Scale } from "lucide-react"
-
-import {
-  listJournalEntriesAction,
-  listJournalsAction,
-  postJournalEntryAction,
-  reverseJournalEntryAction,
-} from "@/actions/accounting/journals.actions"
+import { JournalEntryActions, JournalWorkflowFeedback } from "@/components/accounting/JournalEntryActions"
+import { getJournalWorkflowCopy } from "@/components/accounting/journal-workflow-copy"
+import { accountingDraftJournalEntriesTableContract, accountingPostedJournalEntriesTableContract } from "@/components/DataTableComponents"
 import { checkPermission } from "@/config/useAuth"
-import {
-  accountingDraftJournalEntriesTableContract,
-  accountingPostedJournalEntriesTableContract,
-} from "@/components/DataTableComponents"
-import {
-  AccountingLinkButton,
-  AccountingMessage,
-  AccountingPageShell,
-  AccountingPanel,
-  AccountingStatCard,
-  accountingDate,
-  formatAccountingMoney,
-} from "../_components/accounting-ui"
+import { canUsePermission, type RbacContext } from "@/lib/security/rbac"
+import { AccountingLinkButton, AccountingPageShell, AccountingPanel, AccountingStatCard } from "../_components/accounting-ui"
 import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type JournalEntryRow = {
   id: string
   entryNumber: string
-  entryDate: Date
+  entryDate: Date | string
   status: string
-  sourceType?: string
+  sourceType?: string | null
   memo: string | null
-  journal: { code: string; nameEn: string }
+  journal: { code: string }
   period: { name: string }
-  lines: Array<{ debit: string | number; credit: string | number }>
+  postingBatch?: { metadata?: unknown } | null
+  lines: Array<{ debit: string | number; credit: string | number; currency?: string | null }>
+}
+type JournalRow = { id: string; isActive: boolean }
+type PageProps = { params: Promise<{ locale: string }> }
+type Access = { post: boolean; reverse: boolean }
+
+const Amount = Prisma.Decimal.clone({ precision: 40 })
+
+// A journal can contain several currencies. Never label their nominal sum XAF.
+function currencyTotals(lines: JournalEntryRow["lines"], locale: string) {
+  if (!lines.length) return null
+  const totals = new Map<string, { debit: Prisma.Decimal; credit: Prisma.Decimal }>()
+  for (const line of lines) {
+    if (!line.currency || !/^[A-Z]{3}$/.test(line.currency)) return null
+    const total = totals.get(line.currency) ?? { debit: new Amount(0), credit: new Amount(0) }
+    for (const side of ["debit", "credit"] as const) {
+      if (line[side] === null || line[side] === undefined || !/^\d+(\.\d{1,2})?$/.test(String(line[side]))) return null
+      total[side] = total[side].plus(String(line[side]))
+    }
+    totals.set(line.currency, total)
+  }
+  const format = (amount: Prisma.Decimal) => {
+    const [whole, fraction] = amount.toFixed(2).split(".")
+    return `${new Intl.NumberFormat(locale).format(BigInt(whole))}${locale === "fr" ? "," : "."}${fraction}`
+  }
+  return [...totals].map(([currency, total]) => ({ currency, debit: format(total.debit), credit: format(total.credit) }))
 }
 
-type JournalRow = {
-  id: string
-  code: string
-  isActive: boolean
-}
-
-type PageProps = {
-  params: Promise<{ locale: string }>
-  searchParams?: Promise<Record<string, string | string[] | undefined>>
-}
-
-function sumLines(lines: JournalEntryRow["lines"], side: "debit" | "credit") {
-  return lines.reduce((total, line) => total + Number(line[side] || 0), 0)
-}
-
-function resultPath(locale: string, ok: boolean, text: string) {
-  const key = ok ? "notice" : "error"
-  return `/${locale}/dashboard/accounting/journals?${key}=${encodeURIComponent(text)}`
-}
-
-type JournalAction = (formData: FormData) => Promise<void>
-
-function JournalEntriesTable({
-  entries,
-  locale,
-  mode,
-  postEntry,
-  reverseEntry,
-  suspenseReversalNotice,
-}: {
-  entries: JournalEntryRow[]
-  locale: string
-  mode: "draft" | "posted"
-  postEntry: JournalAction
-  reverseEntry: JournalAction
-  suspenseReversalNotice: string
+function JournalEntriesTable({ entries, locale, mode, access }: {
+  entries: JournalEntryRow[]; locale: string; mode: "draft" | "posted" | "retained"; access: Access
 }) {
-  const contract = mode === "draft" ? accountingDraftJournalEntriesTableContract : accountingPostedJournalEntriesTableContract
-
-  return (
-    <div data-journal-scope={mode}>
-      <AccountingDataTable
-        caption={mode === "draft" ? "Draft journal entries" : "Posted journal evidence"}
-        locale={locale === "fr" ? "fr" : "en"}
-        emptyMessage={mode === "draft" ? "No journal entries yet." : "No posted journal entries yet."}
-        contract={contract}
-        scopeFilters={{ status: mode === "draft" ? ["DRAFT"] : ["POSTED", "REVERSED"] }}
-        columns={[
-          { label: "Entry" },
-          { label: "Date" },
-          { label: "Journal" },
-          { label: "Period" },
-          { label: "Debit", className: "text-right" },
-          { label: "Credit", className: "text-right" },
-          { label: "Status" },
-          { label: "Action", className: "text-right" },
-        ]}
-        rows={entries.map((entry) => {
-          return {
-            id: entry.id,
-            searchText: [
-              entry.entryNumber,
-              entry.memo,
-              accountingDate(entry.entryDate),
-              entry.journal.code,
-              entry.period.name,
-              sumLines(entry.lines, "debit"),
-              sumLines(entry.lines, "credit"),
-              entry.status,
-            ]
-              .filter((value) => value !== null && value !== undefined)
-              .join(" "),
-            cells: [
-              <div key="cell-0">
-                <div className="font-medium text-[var(--dash-text)]">{entry.entryNumber}</div>
-                <div className="mt-1 max-w-[18rem] truncate text-xs text-[var(--dash-text-faint)]">
-                  {entry.memo || "No memo"}
-                </div>
-              </div>,
-              <div key="cell-1" className="text-[var(--dash-text-soft)]">
-                {accountingDate(entry.entryDate)}
-              </div>,
-              <div key="cell-2" className="text-[var(--dash-text-soft)]">
-                {entry.journal.code}
-              </div>,
-              <div key="cell-3" className="text-[var(--dash-text-soft)]">
-                {entry.period.name}
-              </div>,
-              <div key="cell-4" className="text-right text-[var(--dash-text)]">
-                {formatAccountingMoney(sumLines(entry.lines, "debit"))}
-              </div>,
-              <div key="cell-5" className="text-right text-[var(--dash-text)]">
-                {formatAccountingMoney(sumLines(entry.lines, "credit"))}
-              </div>,
-              <div key="cell-6" className="text-[var(--dash-text-soft)]">
-                {entry.status}
-              </div>,
-              <div key="cell-7">
-                <div className="flex justify-end gap-2">
-                  {mode === "draft" && entry.status === "DRAFT" ? (
-                    <form action={postEntry}>
-                      <input type="hidden" name="journalEntryId" value={entry.id} />
-                      <button className="dashboard-button-create h-9 rounded-lg px-3 text-xs font-medium">
-                        Post
-                      </button>
-                    </form>
-                  ) : null}
-                  {mode === "posted" && entry.status === "POSTED" && entry.sourceType === "PAYMENT_SUSPENSE" ? (
-                    <p className="max-w-64 whitespace-normal text-xs text-[var(--dash-warning)]">
-                      {suspenseReversalNotice}
-                    </p>
-                  ) : null}
-                  {mode === "posted" && entry.status === "POSTED" && entry.sourceType !== "PAYMENT_SUSPENSE" ? (
-                    <form action={reverseEntry}>
-                      <input type="hidden" name="journalEntryId" value={entry.id} />
-                      <input type="hidden" name="reason" value="Manual reversal" />
-                      <button className="dashboard-button-secondary inline-flex h-9 items-center gap-2 rounded-lg px-3 text-xs font-medium">
-                        <RotateCcw className="h-3.5 w-3.5" />
-                        Reverse
-                      </button>
-                    </form>
-                  ) : null}
-                </div>
-              </div>,
-            ],
-          }
-        })}
-      />
-    </div>
-  )
+  const { page: t, statuses } = getJournalWorkflowCopy(locale)
+  const caption = mode === "draft" ? t.draftTitle : mode === "posted" ? t.postedTitle : t.retainedTitle
+  return <div data-journal-scope={mode}>
+    <AccountingDataTable
+      caption={caption}
+      locale={locale === "fr" ? "fr" : "en"}
+      emptyMessage={mode === "draft" ? t.emptyDrafts : mode === "posted" ? t.emptyPosted : t.emptyRetained}
+      contract={mode === "draft" ? accountingDraftJournalEntriesTableContract : mode === "posted" ? accountingPostedJournalEntriesTableContract : undefined}
+      scopeFilters={{ status: mode === "draft" ? ["DRAFT"] : mode === "posted" ? ["POSTED", "REVERSED"] : ["VOIDED"] }}
+      columns={[
+        { label: t.entry }, { label: t.date }, { label: t.journal }, { label: t.period },
+        { label: t.debit, className: "text-right" }, { label: t.credit, className: "text-right" },
+        { label: t.status }, { label: t.actionColumn, className: "text-right" },
+      ]}
+      rows={entries.map(entry => {
+        const totals = currencyTotals(entry.lines, locale)
+        const date = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(entry.entryDate))
+        const status = statuses[entry.status as keyof typeof statuses] ?? statuses.UNKNOWN
+        const metadata = entry.postingBatch?.metadata
+        const recoveryOwned = !!metadata && typeof metadata === "object" && "resolutionRecoveryReceiptId" in metadata && !!metadata.resolutionRecoveryReceiptId
+        const manual = entry.sourceType === "MANUAL" && !recoveryOwned
+        const operation = entry.status === "DRAFT" ? "post" : entry.status === "POSTED" ? "reverse" : null
+        const amountCell = (side: "debit" | "credit") => <div key={side} className="text-right tabular-nums text-[var(--dash-text)]">
+          {totals ? totals.map(total => <div key={total.currency} className="whitespace-nowrap">{total[side]} {total.currency}</div>) : t.unavailable}
+        </div>
+        return {
+          id: entry.id,
+          searchText: [entry.entryNumber, entry.memo, date, entry.journal.code, entry.period.name, status, ...(totals?.map(total => `${total.debit} ${total.credit} ${total.currency}`) ?? [])].filter(Boolean).join(" "),
+          cells: [
+            <div key="entry"><div className="font-medium text-[var(--dash-text)]">{entry.entryNumber}</div><div className="mt-1 max-w-72 whitespace-normal break-words text-xs text-[var(--dash-text-faint)]">{entry.memo || t.noMemo}</div></div>,
+            <span key="date">{date}</span>, <span key="journal">{entry.journal.code}</span>, <span key="period">{entry.period.name}</span>,
+            amountCell("debit"), amountCell("credit"), <span key="status">{status}</span>,
+            <div key="action" className="flex justify-end">
+              {operation && manual && access[operation] ? <JournalEntryActions locale={locale} entryId={entry.id} entryNumber={entry.entryNumber} operation={operation} />
+                : operation ? <p className="max-w-64 whitespace-normal text-xs text-[var(--dash-text-soft)]">{!manual ? entry.sourceType === "PAYMENT_SUSPENSE" ? t.suspenseSourceOwned : t.sourceOwned : t.actionUnavailable}</p> : null}
+            </div>,
+          ],
+        }
+      })}
+    />
+  </div>
 }
 
-async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
+async function AccountingJournalsPageImpl({ params }: PageProps, context: RbacContext) {
   await checkPermission("accounting.journal.read")
+  const { locale: requestedLocale } = await params
+  const locale = requestedLocale === "fr" ? "fr" : "en"
+  const { page: t } = getJournalWorkflowCopy(locale)
+  const [journalsResponse, entriesResponse] = await Promise.all([listJournalsAction({}), listJournalEntriesAction({ take: 100 })])
+  const journals = journalsResponse.success ? journalsResponse.data as JournalRow[] : null
+  const entries = entriesResponse.success ? entriesResponse.data as JournalEntryRow[] : null
+  const drafts = entries?.filter(entry => entry.status === "DRAFT")
+  const posted = entries?.filter(entry => ["POSTED", "REVERSED"].includes(entry.status))
+  const retained = entries?.filter(entry => !["DRAFT", "POSTED", "REVERSED"].includes(entry.status))
+  const access = { post: canUsePermission(context, "accounting.journal.post"), reverse: canUsePermission(context, "accounting.journal.reverse") }
+  const readState = journals && entries ? "ready" : journals || entries ? "partial" : "error"
+  const loadedAt = new Date()
+  const unavailable = (message: string) => <div className="space-y-3 p-5" role="alert">
+    <p className="text-sm text-[var(--dash-text)]">{message}</p>
+    <AccountingLinkButton href="/dashboard/accounting/journals" variant="outline">{t.retry}</AccountingLinkButton>
+  </div>
 
-  const { locale } = await params
-  const t = await getTranslations({ locale, namespace: "paymentReconciliationWorkbench.suspenseWorkflow" })
-  const resolvedSearchParams = searchParams ? await searchParams : {}
-  const [journalsResponse, entriesResponse] = await Promise.all([
-    listJournalsAction({}),
-    listJournalEntriesAction({ take: 100 }),
-  ])
-  const journals = journalsResponse.success ? (journalsResponse.data as JournalRow[]) : []
-  const entries = entriesResponse.success ? (entriesResponse.data as JournalEntryRow[]) : []
-
-  async function postEntry(formData: FormData) {
-    "use server"
-    const result = await postJournalEntryAction({
-      journalEntryId: String(formData.get("journalEntryId") || ""),
-    })
-
-    redirect(resultPath(locale, result.success, result.success ? "Journal entry posted" : result.error))
-  }
-
-  async function reverseEntry(formData: FormData) {
-    "use server"
-    const result = await reverseJournalEntryAction({
-      journalEntryId: String(formData.get("journalEntryId") || ""),
-      reason: String(formData.get("reason") || "Manual reversal"),
-    })
-
-    redirect(resultPath(locale, result.success, result.success ? "Journal entry reversed" : result.error))
-  }
-
-  return (
-    <AccountingPageShell
-      eyebrow="Manual ledger"
-      title="Journal Entries"
-      description="Create balanced drafts, post them to the ledger, and reverse posted entries with an audit trail."
-      icon={BookOpenCheck}
-      actions={
-        <AccountingLinkButton href="/dashboard/accounting/journals/new">
-          <FilePlus2 className="h-4 w-4" />
-          <span>New entry</span>
-        </AccountingLinkButton>
-      }
-    >
-      <AccountingMessage error={resolvedSearchParams.error} notice={resolvedSearchParams.notice} />
-
-      <div className="mb-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3" data-finance-result="journals" data-finance-result-state={journalsResponse.success && entriesResponse.success ? "ready" : "error"}>
-        <AccountingStatCard
-          label="Journals"
-          value={journals.filter((journal) => journal.isActive).length.toString()}
-          sub="Active books"
-          icon={BookOpenCheck}
-          accent="var(--dash-brand)"
-          soft="var(--dash-brand-soft)"
-        />
-        <AccountingStatCard
-          label="Drafts"
-          value={entries.filter((entry) => entry.status === "DRAFT").length.toString()}
-          sub="Awaiting post"
-          icon={FilePlus2}
-          accent="var(--dash-warning)"
-          soft="var(--dash-warning-soft)"
-        />
-        <AccountingStatCard
-          label="Posted"
-          value={entries.filter((entry) => entry.status === "POSTED" || entry.status === "REVERSED").length.toString()}
-          sub="Ledger-visible"
-          icon={Scale}
-          accent="var(--dash-success)"
-          soft="var(--dash-success-soft)"
-        />
-      </div>
-
-      <AccountingPanel
-        title="Draft journal entries"
-        description={entriesResponse.success ? "Editable drafts awaiting controlled post." : entriesResponse.error || "Entries unavailable."}
-      >
-        <JournalEntriesTable
-          entries={entries.filter((entry) => entry.status === "DRAFT")}
-          locale={locale}
-          mode="draft"
-          suspenseReversalNotice={t("reversalUnavailable")}
-          postEntry={postEntry}
-          reverseEntry={reverseEntry}
-        />
-      </AccountingPanel>
-
-      <AccountingPanel
-        title="Posted journal evidence"
-        description="Posted and reversed entries remain evidence-backed; reversal is a protected action."
-      >
-        <JournalEntriesTable
-          entries={entries.filter((entry) => entry.status === "POSTED" || entry.status === "REVERSED")}
-          locale={locale}
-          mode="posted"
-          suspenseReversalNotice={t("reversalUnavailable")}
-          postEntry={postEntry}
-          reverseEntry={reverseEntry}
-        />
-      </AccountingPanel>
-    </AccountingPageShell>
-  )
+  return <JournalWorkflowFeedback key={`${context.orgId}:${context.userId}`} readRevision={entries ? randomUUID() : null}><AccountingPageShell eyebrow={t.eyebrow} title={t.title} description={t.description} icon={BookOpenCheck}
+    actions={canUsePermission(context, "accounting.journal.create") ? <AccountingLinkButton href="/dashboard/accounting/journals/new"><FilePlus2 className="h-4 w-4" /><span>{t.newEntry}</span></AccountingLinkButton> : undefined}>
+    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3" data-finance-result="journals" data-finance-result-state={readState}>
+      <AccountingStatCard label={t.journals} value={journals ? String(journals.filter(journal => journal.isActive).length) : t.unavailable} sub={t.activeBooks} icon={BookOpenCheck} accent="var(--dash-brand)" soft="var(--dash-brand-soft)" />
+      <AccountingStatCard label={t.drafts} value={drafts ? String(drafts.length) : t.unavailable} sub={t.awaitingPost} icon={FilePlus2} accent="var(--dash-info)" soft="var(--dash-info-soft)" />
+      <AccountingStatCard label={t.posted} value={posted ? String(posted.length) : t.unavailable} sub={t.ledgerVisible} icon={Scale} accent="var(--dash-gold)" soft="var(--dash-gold-soft)" />
+    </div>
+    {!journals ? unavailable(t.loadJournalsFailed) : null}
+    {entries ? <div className="space-y-1 text-xs text-[var(--dash-text-soft)]"><p>{t.scope}</p><p>{t.amountsByCurrency}</p><p>{t.refreshedAt} <time dateTime={loadedAt.toISOString()}>{new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(loadedAt)} UTC</time></p></div> : unavailable(t.loadEntriesFailed)}
+    {entries ? <>
+      <AccountingPanel title={t.draftTitle} description={t.draftDescription}><JournalEntriesTable entries={drafts!} locale={locale} mode="draft" access={access} /></AccountingPanel>
+      <AccountingPanel title={t.postedTitle} description={t.postedDescription}><JournalEntriesTable entries={posted!} locale={locale} mode="posted" access={access} /></AccountingPanel>
+      {retained?.length ? <AccountingPanel title={t.retainedTitle} description={t.retainedDescription}><JournalEntriesTable entries={retained} locale={locale} mode="retained" access={access} /></AccountingPanel> : null}
+    </> : null}
+  </AccountingPageShell></JournalWorkflowFeedback>
 }
 
-
-
-
-export default async function AccountingRoutePage(props: any = {}) {
+export default async function AccountingRoutePage(props: PageProps) {
   const surface = routeByKey("accounting-journals")
-
-  if (!surface) {
-    throw new Error("Missing accounting route surface definition: accounting-journals")
-  }
-
-  return withAccountingSurfaceAccess({
-    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
-    surface,
-    onAllowed: async () => AccountingJournalsPageImpl(props),
-  })
+  if (!surface) throw new Error("Missing accounting route surface definition: accounting-journals")
+  return withAccountingSurfaceAccess({ params: props.params, surface, onAllowed: context => AccountingJournalsPageImpl(props, context) })
 }

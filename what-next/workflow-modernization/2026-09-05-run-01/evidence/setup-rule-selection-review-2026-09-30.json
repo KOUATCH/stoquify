@@ -1,0 +1,169 @@
+{
+  "at": "2026-09-30T19:14:05.376Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "SETUP_RULE_SELECTION_2026-09-30.md",
+  "sourceHashes": {
+    "services/accounting/accounting-settings.service.ts": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/__tests__/posting-rules.service.test.ts": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f",
+    "services/accounting/__tests__/control-center.service.test.ts": "c24d14d24b228ec146a0cd208e687486d72d74b2dbc3e9eb724d62e18dcbc89e",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "3d7b6410eece0e5d97f537f143ea5663470d51de5c4ff4b8a6e2e1ee6f64f6b8",
+    "services/accounting/__tests__/data-trust.service.test.ts": "06ec35f53585e2651619de8921499ce055e817017123e3f792483fc547bf358b",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+    "components/accounting/AccountingControlCenter.tsx": "0fc07f84a40c9b4526520594fd69eb3bc3eaf4caf25af4cf9c3578336b29b25b",
+    "actions/accounting/settings.actions.ts": "dbfddc9a9325faaef7fcb8f7dfd5a8af0c9ca6573d71bda678a486d3307ea4bf"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/__tests__/posting-rules.service.test.ts",
+      "before": "c03bf9b74ab8d16f980a5cc4d760dc1f27c3907b012720c35f5de7b9f0cbe977",
+      "after": "281eeaedd6c96e84773d5e16f6a4f537537073af6c255e96b5a46b7c56b2a03c",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "before": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+      "after": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    },
+    {
+      "file": "services/accounting/control-center.service.ts",
+      "before": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227",
+      "after": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    },
+    {
+      "file": "services/accounting/__tests__/accounting-settings.service.test.ts",
+      "before": "d94db043140383949dc6f791e726f0852538bf3486973e8746808497a357cd9d",
+      "after": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    },
+    {
+      "file": "services/accounting/posting-rules.service.ts",
+      "before": "bc0901046581189e1469cbb73c193c59dd03846ab27c1a3640c93a1476984af2",
+      "after": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    },
+    {
+      "file": "services/accounting/__tests__/control-center.service.test.ts",
+      "before": "3adfb398d1e5fc8404c770084428edbf7b9c35d68f59d878996a1fd4fec2f9df",
+      "after": "c24d14d24b228ec146a0cd208e687486d72d74b2dbc3e9eb724d62e18dcbc89e",
+      "priorReview": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "services/accounting/posting-rules.service.ts",
+      "changed": [
+        "getActivePostingRule"
+      ],
+      "added": [
+        "activePostingRuleOrder",
+        "getPostingRuleReadiness"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "changed": [
+        "collectAccountingSetupReadinessIssues",
+        "import:@prisma/client"
+      ],
+      "added": [
+        "REQUIRED_READY_POSTING_SOURCES",
+        "getAccountingSetupReadiness",
+        "import:./posting-rules.service"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/control-center.service.ts",
+      "changed": [
+        "classifySetupIssue",
+        "getAccountingControlCenterData",
+        "import:./accounting-settings.service"
+      ],
+      "added": [],
+      "deleted": [
+        "import:./posting-rules.service",
+        "isEffective"
+      ],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Setup transition, control-center display and operational posting now agree on source/purpose, selected-rule precedence and current account/reference validation. Actual negative database cases and EN/FR control-center guidance are verified. Resolve producer applicability and legitimate defaults for four required purposes, then eligible close certification, invalidation/recovery, current-configuration concurrency, native accessibility and fully populated/production latency.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "setup_source_purpose_selection",
+    "setup_no_invalid_winner_fallback",
+    "setup_current_account_validation",
+    "setup_control_center_shared_readiness",
+    "setup_selected_rule_en_fr_browser"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/setup-rule-selection-checks-4f0cdb6a-b651-463e-af49-0df9af39a737.json",
+      "sha256": "694a44e1025f62b4ab5378653d3277bb2fef24cb3a100cb1c156043d9f74964a"
+    },
+    {
+      "file": "lanes/environment/setup-rule-selection-corrected-4f1e4e34-0356-4e9e-855f-69ca85919f26.json",
+      "sha256": "7ebb108aa4cc5e99a8068165b0650ce4e9efe1d0a063a7637b3344e5d868d028"
+    },
+    {
+      "file": "lanes/environment/setup-rule-browser-bcf12e62-58cd-4477-b705-6e98eb23c8e6.json",
+      "sha256": "ae0f2287be2e379758926dfc78fec2f5a28931ba948706b424f2ff8a63ad752c"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "SETUP_RULE_SELECTION_2026-09-30.md",
+      "sha256": "b50a514bddf0214dce5309c8a3f4106b02d85d32c616d898f6ec6edfee7df78f"
+    },
+    {
+      "file": "evidence/close-readiness-followup-review-2026-09-30.json",
+      "sha256": "b4ae045cb9d3e8de455dbf369861da42d265adeb02f19f2172228e5861ff0ea6"
+    },
+    {
+      "file": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json",
+      "sha256": "ce5c09a41626ad56879d07401b0cbba10cbbce5364b025d2f1d892a73d0dfa22"
+    },
+    {
+      "file": "lanes/environment/setup-rule-selection-reproduced-936e786c-1db3-4594-aca5-e16fadd0374f.json",
+      "sha256": "8509814d601bbde7d72b5c820aceef67e0f194a8c987296a42eda1b37d6f41c1"
+    },
+    {
+      "file": "apply-setup-rule-readiness.cjs",
+      "sha256": "15d244c258016598b7f30b71fbf58f52c280292a2e91c37cf7702a25d48744e2"
+    },
+    {
+      "file": "run-setup-rule-selection-checks.cjs",
+      "sha256": "9b060d00a8c8c80ffa845d935c2f57903b4bcd496aac798006a8942502574426"
+    },
+    {
+      "file": "lanes/environment/verify-setup-rule-selection.cjs",
+      "sha256": "28b786582384ed69abe829d6aee9b6287682cd468ba76aa9f402063dca317676"
+    },
+    {
+      "file": "lanes/environment/verify-setup-rule-browser.cjs",
+      "sha256": "a662e77a8d421895c2b42dc75b4d724248a6bd8b57ddd6ae4e9e378797b67b59"
+    },
+    {
+      "file": "lanes/environment/setup-rule-browser-bcf12e62-58cd-4477-b705-6e98eb23c8e6-en1440.png",
+      "sha256": "33c0d6b15b1815d1eda7ff893bf1a5c358ab40f888a2162ce0a926f88e28b932"
+    },
+    {
+      "file": "lanes/environment/setup-rule-browser-bcf12e62-58cd-4477-b705-6e98eb23c8e6-fr320.png",
+      "sha256": "20c85fb73814ad8eeb26e5fb61d839debe8d3eb8ad4e9a35b2bc8617e83a763f"
+    }
+  ]
+}

@@ -6,6 +6,8 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 
 import FinanceReconciliationPage from "../page"
 
+jest.mock("next/navigation", () => ({ useRouter: () => ({ refresh: jest.fn() }) }))
+
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
     const Icon = (props: SVGProps<SVGSVGElement>) => <svg data-testid={`icon-${name}`} {...props} />
@@ -141,7 +143,7 @@ describe("FinanceReconciliationPage", () => {
     render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "en" }) }))
 
     expect(screen.getByText("Module locked")).toBeInTheDocument()
-    expect(screen.getByText("Payment reconciliation is not enabled for this tenant")).toBeInTheDocument()
+    expect(screen.getByText("Payment reconciliation is not enabled for this organization")).toBeInTheDocument()
     expect(screen.queryByText("Payment reconciliation workbench rendered")).not.toBeInTheDocument()
     expect(mockPaymentReconciliationWorkbench).not.toHaveBeenCalled()
   })
@@ -182,10 +184,10 @@ describe("FinanceReconciliationPage", () => {
     expect(screen.getByText("Module verrouillé")).toBeInTheDocument()
     expect(
       screen.getByRole("heading", {
-        name: "Le rapprochement des paiements n’est pas activé pour ce locataire",
+        name: "Le rapprochement des paiements n’est pas activé pour cette organisation",
       }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/Activez le module de rapprochement des paiements/)).toBeInTheDocument()
+    expect(screen.getByText(/Un administrateur doit activer le rapprochement des paiements/)).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
       "href",
       "/fr/dashboard",
@@ -206,7 +208,7 @@ describe("FinanceReconciliationPage", () => {
         name: "Le rapprochement des paiements n’est pas accessible à ce rôle",
       }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/Le refus a été enregistré par le contrôle RBAC/)).toBeInTheDocument()
+    expect(screen.getByText(/Ce refus d’accès a été enregistré/)).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Retour au tableau de bord" })).toHaveAttribute(
       "href",
       "/fr/dashboard",

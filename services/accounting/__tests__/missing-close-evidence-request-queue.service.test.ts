@@ -2,6 +2,7 @@ jest.mock("server-only", () => ({}));
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    ledgerAuditEvent: { findMany: jest.fn().mockResolvedValue([]) },
     user: {
       findFirst: jest.fn(),
     },
@@ -88,6 +89,10 @@ function findingFixture(overrides: FindingFixtureOverrides = {}) {
     comments: [
       {
         id: `request-${id}`,
+        organizationId: INPUT.organizationId,
+        periodId: "period 1",
+        closeRunId: `close-run-${id}`,
+        findingId: id,
         authorId,
         body: overrides.body ?? "Upload the supplier statement.",
         correlationId,
@@ -160,6 +165,49 @@ describe("client missing close evidence request queue service", () => {
   afterEach(() => {
     jest.useRealTimers();
   });
+
+  it("pages assigned work inside period and actor scope even when the previous row is no longer open", async () => {
+    const rows = Array.from({ length: 101 }, (_, i) => {
+      const row = findingFixture({ id: `finding-${String(i).padStart(3, "0")}` });
+      return { ...row, comments: row.comments.map(comment => ({ ...comment, visibility: "CLIENT_ACTION_REQUIRED" })) };
+    });
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValueOnce(rows).mockResolvedValueOnce([rows[100]]);
+    const first = await getClientMissingCloseEvidenceRequestQueue({ ...INPUT, page: { periodId: "period 1" } });
+    expect(first.requests).toHaveLength(100); expect(first.nextCursor).toBeTruthy(); expect(first.summary.truncated).toBe(false);
+    const next = await getClientMissingCloseEvidenceRequestQueue({ ...INPUT, page: { periodId: "period 1", cursor: first.nextCursor! } });
+    expect(next.requests.map(row => row.findingId)).toEqual(["finding-100"]); expect(next.nextCursor).toBeNull();
+    expect(mockDb.closeAssuranceFinding.findMany).toHaveBeenLastCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: INPUT.organizationId, ownerId: INPUT.actorId, periodId: "period 1", OR: expect.arrayContaining([{ createdAt: rows[99].createdAt, id: { gt: "finding-099" } }]) }) }));
+    expect(mockDb.accountantComment.findMany).not.toHaveBeenCalled();
+  });
+
+  it("keeps malformed evidence isolated to its own finding on a page", async () => {
+    const bad = findingFixture({ id: "bad" }), good = findingFixture({ id: "good" });
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([
+      { ...bad, comments: Array.from({ length: 3 }, () => ({ ...bad.comments[0], visibility: "CLIENT_ACTION_REQUIRED" })) },
+      { ...good, comments: [{ ...good.comments[0], visibility: "CLIENT_ACTION_REQUIRED" }] },
+    ]);
+    const result = await getClientMissingCloseEvidenceRequestQueue({ ...INPUT, page: { periodId: "period 1" } });
+    expect(result.requests.map(row => row.findingId)).toEqual(["good"]); expect(result.blockers).toHaveLength(1);
+  });
+
+  it("does not choose the latest request from conflicting legacy history", async () => {
+    const finding = findingFixture()
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([{ ...finding, comments: [finding.comments[0], { ...finding.comments[0], id: "older-malformed", metadata: null }] }])
+    const result = await getClientMissingCloseEvidenceRequestQueue(INPUT)
+    expect(result.requests).toEqual([])
+    expect(result.blockers).toHaveLength(1)
+    const query = mockDb.closeAssuranceFinding.findMany.mock.calls[0][0]
+    expect(query.select.comments.take).toBe(2)
+    expect(query.select.comments.where).toEqual({ organizationId: INPUT.organizationId, visibility: "CLIENT_ACTION_REQUIRED" })
+  })
+
+  it("includes retained acceptance rows when deciding whether new response work is safe", async () => {
+    const finding = findingFixture()
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([{ ...finding, comments: [{ ...finding.comments[0], visibility: "CLIENT_ACTION_REQUIRED" }, { ...finding.comments[0], id: "acceptance", visibility: "ACCOUNTANT_RESPONSE_ACCEPTED" }] }])
+    const result = await getClientMissingCloseEvidenceRequestQueue({ ...INPUT, page: { periodId: "period 1" } })
+    expect(result.requests).toEqual([])
+    expect(result.blockers).toHaveLength(1)
+  })
 
   it("fails closed on RBAC before reading tenant data", async () => {
     await expect(
@@ -275,20 +323,6 @@ describe("client missing close evidence request queue service", () => {
             some: expect.objectContaining({
               organizationId: INPUT.organizationId,
               visibility: "CLIENT_ACTION_REQUIRED",
-              AND: expect.arrayContaining([
-                {
-                  metadata: {
-                    path: ["requestType"],
-                    equals: "MISSING_CLOSE_EVIDENCE",
-                  },
-                },
-                {
-                  metadata: {
-                    path: ["requestedFromId"],
-                    equals: INPUT.actorId,
-                  },
-                },
-              ]),
             }),
           },
         },
@@ -299,11 +333,7 @@ describe("client missing close evidence request queue service", () => {
       where: {
         organizationId: INPUT.organizationId,
         findingId: { in: ["overdue", "soon", "scheduled"] },
-        visibility: "CLIENT_RESPONSE_SUBMITTED",
-        metadata: {
-          path: ["responseType"],
-          equals: "MISSING_CLOSE_EVIDENCE_RESPONSE",
-        },
+        visibility: { in: ["CLIENT_RESPONSE_SUBMITTED", "ACCOUNTANT_RESPONSE_ACCEPTED"] },
       },
       select: {
         id: true,

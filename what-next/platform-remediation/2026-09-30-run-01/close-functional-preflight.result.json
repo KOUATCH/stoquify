@@ -1,0 +1,19 @@
+{
+  "name": "close-functional-preflight",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--runTestsByPath",
+    "services/accounting/__tests__/periods.service.test.ts",
+    "actions/accounting/__tests__/settings.actions.test.ts"
+  ],
+  "startedAt": "2026-09-30T20:51:14.733Z",
+  "endedAt": "2026-09-30T20:52:12.981Z",
+  "code": 0,
+  "signal": null,
+  "timedOut": false,
+  "databaseTarget": "disabled localhost:1; no live database",
+  "stdoutBytes": 0,
+  "stderrBytes": 255
+}

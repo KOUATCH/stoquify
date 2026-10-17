@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 
 import { protect } from "@/services/_shared/protect"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { settlementProofSelectionSchema } from "@/services/payroll/payment-settlement-proof-contracts"
 import {
   getPayrollPaymentReconciliation,
   payrollPaymentReconciliationInputSchema,
@@ -39,8 +41,20 @@ const getReconciliation = protect<unknown, PayrollPaymentReconciliationReadModel
     },
   },
   async (input, ctx) => {
+    const moduleDecision = await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "payroll",
+      surfaceType: "action",
+      surface: "payroll.payments.reconciliation.read",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: false,
+    })
     const parsed = payrollPaymentReconciliationInputSchema.parse({
       ...asRecord(input),
+      moduleDecision,
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
@@ -68,13 +82,27 @@ const recordSettlement = protect<unknown, PayrollPaymentSettlementResult>(
     },
   },
   async (input, ctx) => {
+    const moduleDecision = undefined
     const now = new Date()
+    const values = asRecord(input)
     const parsed = recordPayrollPaymentSettlementInputSchema.parse({
-      ...asRecord(input),
+      payrollPaymentBatchId: values.payrollPaymentBatchId,
+      settlementStatus: values.settlementStatus,
+      settlementAmount: recordPayrollPaymentSettlementInputSchema.shape.settlementAmount.unwrap().parse(values.settlementAmount),
+      expectedBalanceEventId: recordPayrollPaymentSettlementInputSchema.shape.expectedBalanceEventId.unwrap().parse(values.expectedBalanceEventId),
+      idempotencyKey: values.idempotencyKey,
+      notes: values.notes,
+      proofSelection: settlementProofSelectionSchema.parse(values.proofSelection),
+      evidenceHash: "GUIDED_RECORDS_V1",
+      metadata: { sourceSurface: "/dashboard/payroll/payments" },
+      moduleDecision,
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
       lastAuthAt: ctx.freshAuth?.lastAuthAt ?? now,
+      sessionId: ctx.freshAuth?.claims.sessionId,
+      sessionToken: ctx.freshAuth?.claims.sessionToken,
+      correlationId: ctx.correlationId,
       now,
     })
     const result = await recordPayrollPaymentSettlementEvidence(parsed)

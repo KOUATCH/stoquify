@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-30T10:45:57.268Z",
+  "sourceBefore": {
+    "components/evidence/proof-trail-presentation.ts": "6f3b89192be0c5354a11feb664c238acff04f8e8d062eb1412697e2c0924e04e",
+    "components/evidence/ProofTrailDrawer.tsx": "1241ab49fb3a2d8378c16a580e1a555d6b09ed79249b1c214a310abbbc608dbf",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "actions/evidence/__tests__/proof-trail.module-boundary.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       61 passed, 61 total\nSnapshots:   0 total\nTime:        8.242 s, estimated 10 s\nRan all test suites within paths \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"services/evidence/__tests__/proof-trail.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"actions/evidence/__tests__/proof-trail.module-boundary.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/evidence/proof-trail-presentation.ts",
+        "components/evidence/ProofTrailDrawer.tsx",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/evidence/proof-trail-presentation.ts": "6f3b89192be0c5354a11feb664c238acff04f8e8d062eb1412697e2c0924e04e",
+    "components/evidence/ProofTrailDrawer.tsx": "1241ab49fb3a2d8378c16a580e1a555d6b09ed79249b1c214a310abbbc608dbf",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "8085d64d80245d163a136f0976b255e5ae3ec551411e1f3431cbd1d54b30209a",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/cash-command/CashCommandDashboard.tsx": "68ab449305ca83bc7b45bc9fe02874bfaa67fb8b6ed61ca7d366337980c87b28"
+  },
+  "sourceStable": true,
+  "passed": true
+}

@@ -1,4 +1,4 @@
-import { FinanceReceivablesSurface } from "@/components/finance/FinanceSpecializedLedgerSurfaces"
+import { OpenItemsDashboard } from "@/components/finance/OpenItemsDashboard"
 
 import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
 
@@ -17,6 +17,6 @@ export default async function FinanceReceivablesPage({ params }: { params: Promi
   return withFinanceSurfaceAccess({
     params,
     surface,
-    onAllowed: () => <FinanceReceivablesSurface />,
+    onAllowed: () => <OpenItemsDashboard view="receivables" />,
   })
 }

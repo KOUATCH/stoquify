@@ -1,0 +1,90 @@
+{
+  "at": "2026-09-30T21:22:07.826Z",
+  "workflow": "FA-CASH-COMMAND",
+  "scope": "Read-only source review of concurrent accounting settings dependency",
+  "verificationStatus": "source-only; tests not run by this review",
+  "reconstructionInputs": [
+    {
+      "file": "evidence/setup-rule-selection-before-13df1895-7062-4223-b5d6-5f384a2006d8.json",
+      "sha256": "ce5c09a41626ad56879d07401b0cbba10cbbce5364b025d2f1d892a73d0dfa22"
+    },
+    {
+      "file": "apply-setup-rule-readiness.cjs",
+      "sha256": "15d244c258016598b7f30b71fbf58f52c280292a2e91c37cf7702a25d48744e2"
+    }
+  ],
+  "predecessorSnapshot": {
+    "file": "evidence/accounting-settings-currency-before-2026-09-30.json",
+    "sha256": "0ef70c1ab0d33275869ed09192cab1e10ab24485be1f33fe1f87241628ab44b1"
+  },
+  "reviewScript": {
+    "file": "evidence/review-accounting-settings-currency-drift.cjs",
+    "sha256": "67b67ae96af04bca0023d8df8c239c34bfcf3aa22698968a06058ddf79c75c62"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "before": "44c4704a1e67c348c7b7751825e97b5676ee89f6414fe476d7d826e9cbdaf233",
+      "after": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+      "priorReview": "evidence/accounting-settings-currency-before-2026-09-30.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "changed": [
+        "import:@/services/_shared/action-errors",
+        "ensureAccountingSettings",
+        "updateAccountingSettings"
+      ],
+      "added": [],
+      "deleted": [],
+      "unchanged": [
+        "import:@prisma/client",
+        "import:@/prisma/db",
+        "import:./posting-rules.service",
+        "import:@/services/controls/sensitive-action.service",
+        "AccountingSettingsUpdateInput",
+        "AccountingSetupControlContext",
+        "ControlledResult",
+        "REQUIRED_ACCOUNTING_MAPPINGS",
+        "REQUIRED_DEFAULT_JOURNAL_TYPES",
+        "REQUIRED_READY_POSTING_PURPOSES",
+        "REQUIRED_READY_POSTING_SOURCES",
+        "normalizeCurrency",
+        "normalizeMappingKey",
+        "normalizeSyscohadaClass",
+        "formatIssueList",
+        "settingsAudit",
+        "getAccountingSettings",
+        "collectAccountingSetupReadinessIssues",
+        "getAccountingSetupReadiness",
+        "markAccountingSetupReady"
+      ],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "changes": [
+    "Import NotFoundError for missing organization/settings source.",
+    "Initialize baseCurrency from normalized organization.currency instead of hardcoded XAF; reject missing organization.",
+    "On an explicit baseCurrency edit, load current settings; reject missing settings and any normalized denomination change as requiring controlled migration. Same normalized currency and unrelated fields retain existing behavior."
+  ],
+  "neededTests": [
+    {
+      "file": "services/accounting/__tests__/accounting-settings.service.test.ts",
+      "scope": "Unchanged readiness, controls and selected-rule rejection regression",
+      "currentSha256": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de"
+    },
+    {
+      "file": "services/accounting/__tests__/journal-currency-regression.service.test.ts",
+      "scope": "Currency-change rejection at NOT_STARTED/IN_PROGRESS/READY/LOCKED; normalized same-currency edit; organization-denomination initialization; related journal functional-currency contract",
+      "currentSha256": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7"
+    }
+  ],
+  "evidenceLimitations": [
+    "Existing setup-rule evidence binds the predecessor hash; it does not directly test changed currency initialization/update behavior.",
+    "The currency regression file defines six settings cases (four setup-state variants plus same-currency and initialization). Its presence is not evidence that they passed.",
+    "Missing-organization and missing-settings branches, audit outcomes and actual action/database execution are not established by source inspection.",
+    "No matching current-source passed receipt was found in the narrowly inspected workflow RUN evidence/environment or named accounting report directories; no repository-wide author search was performed."
+  ]
+}

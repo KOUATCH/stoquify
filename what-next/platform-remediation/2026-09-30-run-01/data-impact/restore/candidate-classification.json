@@ -1,0 +1,160 @@
+{
+  "capturedAt": "2026-09-30T20:59:58.519Z",
+  "source": "verified retained restored local copy",
+  "target": "stoquify_restore_local_remediation_20260930_run01",
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "checks": [
+    {
+      "name": "lineClassification",
+      "status": "EXECUTED",
+      "sql": "SELECT COALESCE(j.\"sourceType\"::text, 'UNCLASSIFIED') AS source_type,\n    UPPER(TRIM(l.currency)) AS currency, l.\"exchangeRate\" IS NOT NULL AS rate_present,\n    l.\"exchangeRate\" > 0 AS rate_positive, l.\"exchangeRate\" = 1 AS rate_is_one,\n    UPPER(TRIM(l.currency)) = UPPER(TRIM(s.\"baseCurrency\")) AS denomination_matches_current_settings,\n    COUNT(*)::text AS posted_or_reversed_lines, COUNT(DISTINCT j.id)::text AS journal_entry_denominator,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)::text AS missing_base_lines,\n    COUNT(DISTINCT j.id) FILTER (WHERE l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)::text AS entries_with_missing_base,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NOT NULL AND l.\"baseCredit\" IS NOT NULL)::text AS complete_base_lines,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NOT NULL AND l.\"baseCredit\" IS NOT NULL AND\n      (l.\"baseDebit\" <> ROUND(l.debit * l.\"exchangeRate\",2) OR l.\"baseCredit\" <> ROUND(l.credit * l.\"exchangeRate\",2)))::text AS conversion_candidates\n    FROM public.journal_entry_lines l JOIN public.journal_entries j ON j.id=l.\"journalEntryId\"\n    LEFT JOIN public.organization_accounting_settings s ON s.\"organizationId\"=j.\"organizationId\"\n    WHERE j.status::text IN ('POSTED','REVERSED')\n    GROUP BY j.\"sourceType\", UPPER(TRIM(l.currency)), l.\"exchangeRate\" IS NOT NULL, l.\"exchangeRate\">0, l.\"exchangeRate\"=1,\n      UPPER(TRIM(l.currency))=UPPER(TRIM(s.\"baseCurrency\")) ORDER BY 1,2,3,4,5,6",
+      "rows": [
+        {
+          "source_type": "OPENING_BALANCE",
+          "currency": "XAF",
+          "rate_present": true,
+          "rate_positive": true,
+          "rate_is_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_lines": "4",
+          "journal_entry_denominator": "2",
+          "missing_base_lines": "0",
+          "entries_with_missing_base": "0",
+          "complete_base_lines": "4",
+          "conversion_candidates": "0"
+        },
+        {
+          "source_type": "POS_PAYMENT",
+          "currency": "XAF",
+          "rate_present": true,
+          "rate_positive": true,
+          "rate_is_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_lines": "12",
+          "journal_entry_denominator": "6",
+          "missing_base_lines": "0",
+          "entries_with_missing_base": "0",
+          "complete_base_lines": "12",
+          "conversion_candidates": "0"
+        },
+        {
+          "source_type": "POS_SALE",
+          "currency": "XAF",
+          "rate_present": true,
+          "rate_positive": true,
+          "rate_is_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_lines": "150",
+          "journal_entry_denominator": "30",
+          "missing_base_lines": "120",
+          "entries_with_missing_base": "24",
+          "complete_base_lines": "30",
+          "conversion_candidates": "0"
+        },
+        {
+          "source_type": "STOCK_ADJUSTMENT",
+          "currency": "XAF",
+          "rate_present": true,
+          "rate_positive": true,
+          "rate_is_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_lines": "190",
+          "journal_entry_denominator": "95",
+          "missing_base_lines": "0",
+          "entries_with_missing_base": "0",
+          "complete_base_lines": "190",
+          "conversion_candidates": "0"
+        },
+        {
+          "source_type": "UNCLASSIFIED",
+          "currency": "EUR",
+          "rate_present": true,
+          "rate_positive": true,
+          "rate_is_one": false,
+          "denomination_matches_current_settings": false,
+          "posted_or_reversed_lines": "8",
+          "journal_entry_denominator": "4",
+          "missing_base_lines": "0",
+          "entries_with_missing_base": "0",
+          "complete_base_lines": "8",
+          "conversion_candidates": "0"
+        }
+      ]
+    },
+    {
+      "name": "periodClassification",
+      "status": "EXECUTED",
+      "sql": "WITH line_facts AS (SELECT \"journalEntryId\", BOOL_AND(\"exchangeRate\" IS NOT NULL) AS rates_present,\n      BOOL_AND(\"exchangeRate\">0) AS rates_positive, BOOL_AND(\"exchangeRate\"=1) AS all_rates_one\n      FROM public.journal_entry_lines GROUP BY \"journalEntryId\")\n    SELECT COALESCE(j.\"sourceType\"::text,'UNCLASSIFIED') AS source_type, UPPER(TRIM(j.currency)) AS currency,\n      l.rates_present,l.rates_positive,l.all_rates_one,\n      UPPER(TRIM(j.currency))=UPPER(TRIM(s.\"baseCurrency\")) AS denomination_matches_current_settings,\n      COUNT(*)::text AS posted_or_reversed_entry_denominator,\n      COUNT(*) FILTER(WHERE j.\"entryDate\"<p.\"startDate\")::text AS before_period_start,\n      COUNT(*) FILTER(WHERE j.\"entryDate\">p.\"endDate\")::text AS after_period_end,\n      COUNT(*) FILTER(WHERE j.\"entryDate\">p.\"endDate\" AND j.\"entryDate\"::date=p.\"endDate\"::date)::text AS after_end_same_calendar_date\n    FROM public.journal_entries j JOIN public.accounting_periods p ON p.id=j.\"periodId\"\n    LEFT JOIN line_facts l ON l.\"journalEntryId\"=j.id\n    LEFT JOIN public.organization_accounting_settings s ON s.\"organizationId\"=j.\"organizationId\"\n    WHERE j.status::text IN ('POSTED','REVERSED') GROUP BY j.\"sourceType\", UPPER(TRIM(j.currency)), l.rates_present,l.rates_positive,l.all_rates_one,\n      UPPER(TRIM(j.currency))=UPPER(TRIM(s.\"baseCurrency\")) ORDER BY 1,2,3,4,5,6",
+      "rows": [
+        {
+          "source_type": "OPENING_BALANCE",
+          "currency": "XAF",
+          "rates_present": true,
+          "rates_positive": true,
+          "all_rates_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_entry_denominator": "2",
+          "before_period_start": "0",
+          "after_period_end": "0",
+          "after_end_same_calendar_date": "0"
+        },
+        {
+          "source_type": "POS_PAYMENT",
+          "currency": "XAF",
+          "rates_present": true,
+          "rates_positive": true,
+          "all_rates_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_entry_denominator": "6",
+          "before_period_start": "0",
+          "after_period_end": "0",
+          "after_end_same_calendar_date": "0"
+        },
+        {
+          "source_type": "POS_SALE",
+          "currency": "XAF",
+          "rates_present": true,
+          "rates_positive": true,
+          "all_rates_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_entry_denominator": "30",
+          "before_period_start": "14",
+          "after_period_end": "8",
+          "after_end_same_calendar_date": "0"
+        },
+        {
+          "source_type": "STOCK_ADJUSTMENT",
+          "currency": "XAF",
+          "rates_present": true,
+          "rates_positive": true,
+          "all_rates_one": true,
+          "denomination_matches_current_settings": true,
+          "posted_or_reversed_entry_denominator": "95",
+          "before_period_start": "0",
+          "after_period_end": "0",
+          "after_end_same_calendar_date": "0"
+        },
+        {
+          "source_type": "UNCLASSIFIED",
+          "currency": "EUR",
+          "rates_present": true,
+          "rates_positive": true,
+          "all_rates_one": false,
+          "denomination_matches_current_settings": false,
+          "posted_or_reversed_entry_denominator": "4",
+          "before_period_start": "0",
+          "after_period_end": "0",
+          "after_end_same_calendar_date": "0"
+        }
+      ]
+    }
+  ],
+  "recordIdentifiersEmitted": false,
+  "snapshot": {
+    "database_name": "stoquify_restore_local_remediation_20260930_run01",
+    "as_of": "2026-09-30T20:59:58.870Z",
+    "read_only": "on",
+    "isolation": "repeatable read",
+    "timezone": "Africa/Lagos"
+  }
+}

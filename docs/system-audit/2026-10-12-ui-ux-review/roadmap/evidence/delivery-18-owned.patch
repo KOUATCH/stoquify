@@ -1,0 +1,250 @@
+diff --git a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx
+--- a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx
+@@ -287,25 +287,26 @@
+     <CanonicalTableBoundary contract={accountingTrialBalanceTableContract} locale={locale} query={canonicalQuery} state={canonicalState} density={density}>
+       <div data-statement-context="period-and-entity-required">
+         <div className="dashboard-table-toolbar border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/55 p-4">
+-          <div className="flex flex-nowrap items-center gap-3 overflow-x-auto">
+-            <div className="min-w-48 flex-1"><DataTableSearch value={query} onChange={(value) => { setQuery(value); resetPage() }} ariaLabel={copy.search} placeholder={copy.searchPlaceholder} clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"} /></div>
+-            <select aria-label={copy.accountType} value={accountType} onChange={(event) => { setAccountType(event.target.value); resetPage() }} className="dashboard-control h-9 shrink-0 rounded-lg px-3 text-sm text-[var(--dash-text)]"><option value="all">{copy.allTypes}</option>{accountTypes.map((type) => <option key={type} value={type}>{ledgerLabel(type, locale)}</option>)}</select>
+-            <select aria-label={copy.activity} value={activityFilter} onChange={(event) => { setActivityFilter(event.target.value as ActivityFilter); resetPage() }} className="dashboard-control h-9 shrink-0 rounded-lg px-3 text-sm text-[var(--dash-text)]"><option value="all">{copy.allAccounts}</option><option value="with-activity">{copy.withActivity}</option></select>
++          <div className="flex flex-wrap items-center gap-3">
++            <div className="min-w-0 basis-full sm:min-w-48 sm:flex-1 sm:basis-0"><DataTableSearch value={query} onChange={(value) => { setQuery(value); resetPage() }} ariaLabel={copy.search} placeholder={copy.searchPlaceholder} clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"} /></div>
++            <select aria-label={copy.accountType} value={accountType} onChange={(event) => { setAccountType(event.target.value); resetPage() }} className="dashboard-control h-9 w-full shrink-0 rounded-lg sm:w-auto px-3 text-sm text-[var(--dash-text)]"><option value="all">{copy.allTypes}</option>{accountTypes.map((type) => <option key={type} value={type}>{ledgerLabel(type, locale)}</option>)}</select>
++            <select aria-label={copy.activity} value={activityFilter} onChange={(event) => { setActivityFilter(event.target.value as ActivityFilter); resetPage() }} className="dashboard-control h-9 w-full shrink-0 rounded-lg sm:w-auto px-3 text-sm text-[var(--dash-text)]"><option value="all">{copy.allAccounts}</option><option value="with-activity">{copy.withActivity}</option></select>
+             <div className="shrink-0"><CanonicalTableDensityControl density={density} locale={locale} onDensityChange={setDensity} /></div>
+           </div>
+           <div className="mt-3 flex min-h-8 flex-wrap items-center justify-between gap-2 text-xs text-[var(--dash-text-soft)]"><p aria-live="polite">{copy.showing} <span className="font-semibold text-[var(--dash-text)]">{visibleStart}-{visibleEnd}</span> {copy.of} <span className="font-semibold text-[var(--dash-text)]">{filteredRows.length}</span> {copy.accounts}{filteredRows.length !== rows.length ? ` (${rows.length} ${copy.total})` : ""}</p>{hasActiveFilters ? <button type="button" onClick={clearFilters} className="dashboard-button-secondary h-8 rounded-lg px-3 font-medium">{copy.clear}</button> : null}</div>
+         </div>
+ 
++        {/* Frozen identity columns must not cover the numeric columns on narrow screens. */}
+         <div className="max-h-[36rem] overflow-auto" role="region" tabIndex={0} aria-label={copy.tableLabel}>
+           <table className="dashboard-table-base w-full min-w-[1160px] text-sm">
+             <caption className="sr-only">{copy.caption}</caption>
+             <thead className="sticky top-0 z-20 border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-left text-[0.68rem] font-semibold uppercase tracking-[0.08em] text-[var(--dash-text-faint)] shadow-sm">
+-              {table.getHeaderGroups().map((headerGroup) => <tr key={headerGroup.id}>{headerGroup.headers.map((header) => <th key={header.id} scope="col" data-column-id={header.column.id} data-frozen={header.column.id === "code" || header.column.id === "name" ? "start" : undefined} className={`whitespace-nowrap px-4 py-3 ${header.column.id === "code" ? "sticky left-0 z-30 min-w-36 bg-[var(--dash-surface-raised)]" : ""} ${header.column.id === "name" ? "sticky left-36 z-30 min-w-56 bg-[var(--dash-surface-raised)]" : ""} ${["activityDebit", "activityCredit", "debitBalance", "creditBalance"].includes(header.column.id) ? "text-right" : ""}`}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</th>)}</tr>)}
++              {table.getHeaderGroups().map((headerGroup) => <tr key={headerGroup.id}>{headerGroup.headers.map((header) => <th key={header.id} scope="col" aria-sort={header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : undefined} data-column-id={header.column.id} data-frozen={header.column.id === "code" || header.column.id === "name" ? "start" : undefined} className={`whitespace-nowrap px-4 py-3 ${header.column.id === "code" ? "md:sticky md:left-0 z-30 min-w-36 bg-[var(--dash-surface-raised)]" : ""} ${header.column.id === "name" ? "md:sticky md:left-36 z-30 min-w-56 bg-[var(--dash-surface-raised)]" : ""} ${["activityDebit", "activityCredit", "debitBalance", "creditBalance"].includes(header.column.id) ? "text-right" : ""}`}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</th>)}</tr>)}
+             </thead>
+             <tbody>
+-              {table.getRowModel().rows.length ? table.getRowModel().rows.map((row) => <tr key={row.id} className="border-b border-[var(--dash-border-subtle)] transition-colors hover:bg-[var(--dash-brand-soft)]/35">{row.getVisibleCells().map((cell) => <td key={cell.id} data-column-id={cell.column.id} data-frozen={cell.column.id === "code" || cell.column.id === "name" ? "start" : undefined} className={`px-4 py-2.5 ${cell.column.id === "code" ? "sticky left-0 z-10 min-w-36 bg-[var(--dash-surface)] shadow-[1px_0_0_var(--dash-border-subtle)]" : ""} ${cell.column.id === "name" ? "sticky left-36 z-10 min-w-56 bg-[var(--dash-surface)] shadow-[1px_0_0_var(--dash-border-subtle)]" : ""}`}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}</tr>) : <tr><td colSpan={9} className="px-4 py-14 text-center"><p className="font-medium text-[var(--dash-text)]">{rows.length ? copy.noMatch : copy.noData}</p><p className="mt-1 text-sm text-[var(--dash-text-soft)]">{rows.length ? copy.adjust : copy.configure}</p></td></tr>}
++              {table.getRowModel().rows.length ? table.getRowModel().rows.map((row) => <tr key={row.id} className="border-b border-[var(--dash-border-subtle)] transition-colors hover:bg-[var(--dash-brand-soft)]/35">{row.getVisibleCells().map((cell) => <td key={cell.id} data-column-id={cell.column.id} data-frozen={cell.column.id === "code" || cell.column.id === "name" ? "start" : undefined} className={`px-4 py-2.5 ${cell.column.id === "code" ? "md:sticky md:left-0 z-10 min-w-36 bg-[var(--dash-surface)] shadow-[1px_0_0_var(--dash-border-subtle)]" : ""} ${cell.column.id === "name" ? "md:sticky md:left-36 z-10 min-w-56 bg-[var(--dash-surface)] shadow-[1px_0_0_var(--dash-border-subtle)]" : ""}`}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>)}</tr>) : <tr><td colSpan={9} className="px-4 py-14 text-center"><p className="font-medium text-[var(--dash-text)]">{rows.length ? copy.noMatch : copy.noData}</p><p className="mt-1 text-sm text-[var(--dash-text-soft)]">{rows.length ? copy.adjust : copy.configure}</p></td></tr>}
+             </tbody>
+-            <tfoot className="sticky bottom-0 z-20 border-t border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-sm font-semibold text-[var(--dash-text)] shadow-[0_-4px_12px_rgba(0,0,0,0.12)]"><tr><th scope="row" className="sticky left-0 z-30 bg-[var(--dash-surface-raised)] px-4 py-3 text-left" colSpan={4}>{copy.totals}<span className="ms-2 text-xs font-normal text-[var(--dash-text-faint)]">{copy.all} {rows.length} {copy.accounts}</span></th><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.activityDebit, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.activityCredit, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.debitBalance, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.creditBalance, locale, currency)}</td><td /></tr></tfoot>
++            <tfoot className="sticky bottom-0 z-20 border-t border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-sm font-semibold text-[var(--dash-text)] shadow-[0_-4px_12px_rgba(0,0,0,0.12)]"><tr><th scope="row" className="md:sticky md:left-0 z-30 bg-[var(--dash-surface-raised)] px-4 py-3 text-left" colSpan={4}>{copy.totals}<span className="ms-2 text-xs font-normal text-[var(--dash-text-faint)]">{copy.all} {rows.length} {copy.accounts}</span></th><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.activityDebit, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.activityCredit, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.debitBalance, locale, currency)}</td><td className="whitespace-nowrap px-4 py-3 text-right tabular-nums">{formatMoney(totals.creditBalance, locale, currency)}</td><td /></tr></tfoot>
+           </table>
+         </div>
+ 
+diff --git a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx
+--- a/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx
+@@ -9,6 +9,19 @@
+ import { TrialBalanceTable } from "../trial-balance-table"
+ 
+ describe("TrialBalanceTable canonical surface", () => {
++  it("exposes the current sort direction and moves it to the newly sorted column", () => {
++    const { container } = render(<TrialBalanceTable rows={[]} totals={{ activityDebit: "0", activityCredit: "0", debitBalance: "0", creditBalance: "0" }} />)
++    const code = screen.getByRole("button", { name: "Sort by Account code", exact: true })
++    expect(code.closest("th")).toHaveAttribute("aria-sort", "ascending")
++    fireEvent.click(code)
++    expect(code.closest("th")).toHaveAttribute("aria-sort", "descending")
++    const debit = screen.getByRole("button", { name: "Sort by Activity debit", exact: true })
++    fireEvent.click(debit)
++    expect(debit.closest("th")).toHaveAttribute("aria-sort", "ascending")
++    expect(code.closest("th")).not.toHaveAttribute("aria-sort")
++    expect(container.querySelectorAll("th[aria-sort]")).toHaveLength(1)
++  })
++
+   it("keeps ledger totals unchanged when searching accounts from another page", () => {
+     const { container } = render(<TrialBalanceTable
+       rows={Array.from({ length: 12 }, (_, index) => ({
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**16 October — Delivery 18:** Accountant trial-balance phone amounts are reachable, filters wrap and sorting exposes its direction; desktop frozen identities and full-report totals remain intact. French portfolio loading/empty states checked. Refresh focus loss fixed with duplicate-load prevention; final live focus check and viewport restoration were interrupted by browser timeouts. All 23 mocked tests, scoped TypeScript and lint passed. Owner/Cashier sessions and broader accessibility acceptance remain open. See [Delivery 18](EXECUTION-18.md).
++
+ **16 October — Delivery 17:** actual Chrome Accountant session restored to the acceptance matrix. Fixed the missing EN/FR keyboard bypass, low-contrast mobile navigation under light preference, stale document language after locale navigation, and dark date-picker icons on the Accountant Access form. All 15 mocked tests, scoped TypeScript and production lint passed. Portal desktop/tablet/phone checks, all three table keyboard scroll regions, menu focus trapping/return, Accountant Access narrow reflow, and populated reconciliation at 320px verified. Original dark preference and normal viewport restored. Owner/Cashier sessions and actual screen-reader/forced-colors/reduced-motion acceptance remain open; the approved dashboard remains dark under the global light preference. See [Delivery 17](EXECUTION-17.md).
+ 
+ **16 October — Delivery 16:** shared role badges/account-menu role names now use the supplied locale-specific role name. Remaining scoped loading narratives are bilingual, nested fallbacks retain one shell main, and silent finance/sales/customer skeletons have status text. All 18 mocked tests, scoped TypeScript and production lint passed. Edge recovered after the user opened the portal. Fresh Super Administrator checks passed for French desktop/tablet/phone containment, account/mobile menu keyboard focus return, blocker-table keyboard scrolling, control disclosure and actual EN/FR outer loading transitions. Screenshots recorded; normal viewport restored. Actual restricted roles, other route-specific pending renders and broader theme/assistive-technology acceptance remain open. See [Delivery 16](EXECUTION-16.md).
+diff --git a/components/accounting/AccountantWorkDesk.tsx b/components/accounting/AccountantWorkDesk.tsx
+--- a/components/accounting/AccountantWorkDesk.tsx
++++ b/components/accounting/AccountantWorkDesk.tsx
+@@ -165,7 +165,7 @@
+     <h2 id="accountant-work-title" className="text-lg font-semibold">{copy.title}</h2>
+     <p className="mt-2 text-sm text-[var(--dash-text-soft)]">{copy.scope}</p>
+     <div className="my-4 flex flex-wrap gap-2">
+-      <button className={button} onClick={() => void load()} disabled={pending}>{copy.refresh}</button>
++      <button className={`${button} aria-disabled:opacity-50`} onClick={() => { if (!pending) void load() }} aria-disabled={pending}>{copy.refresh}</button>
+       {data?.nextCursor && <button className={button} disabled={pending} onClick={() => void load(data.nextCursor!)}>{copy.next}</button>}
+     </div>
+     <p role="status" aria-live="polite">{pending ? copy.loading : message}</p>
+diff --git a/components/accounting/__tests__/AccountantWorkDesk.test.tsx b/components/accounting/__tests__/AccountantWorkDesk.test.tsx
+--- a/components/accounting/__tests__/AccountantWorkDesk.test.tsx
++++ b/components/accounting/__tests__/AccountantWorkDesk.test.tsx
+@@ -1,4 +1,4 @@
+-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
++import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+ import { AccountantWorkDesk } from "../AccountantWorkDesk"
+ import { getAccountantWorkDeskAction, getAccountantWorkDetailAction, acceptAccountantWorkItemAction } from "@/actions/accounting/accountant-work-desk.actions"
+ import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+@@ -39,6 +39,25 @@
+   Object.defineProperty(global.crypto, "randomUUID", { configurable: true, value: jest.fn(() => "stable-command-id") })
+   list.mockResolvedValue(result)
+   detail.mockResolvedValue({ success: true, data: detailData })
++})
++
++it.each(["en", "fr"] as const)("retains %s refresh focus and prevents duplicate loads while pending", async locale => {
++  render(<AccountantWorkDesk locale={locale} />)
++  await screen.findByText("Client A")
++  let resolveRefresh!: (value: typeof result) => void
++  list.mockImplementationOnce(() => new Promise(resolve => { resolveRefresh = resolve }))
++  const refresh = screen.getByRole("button", { name: copy[locale].refresh })
++  refresh.focus()
++  fireEvent.click(refresh)
++  expect(refresh).toHaveAttribute("aria-disabled", "true")
++  expect(refresh).not.toBeDisabled()
++  expect(refresh).toHaveFocus()
++  fireEvent.click(refresh)
++  expect(list).toHaveBeenCalledTimes(2)
++  await act(async () => { resolveRefresh(result) })
++  expect(refresh).toHaveAttribute("aria-disabled", "false")
++  expect(refresh).toHaveFocus()
++  expect(accept).not.toHaveBeenCalled()
+ })
+ 
+ it("preserves an open review and notes while retrying client continuation in French", async () => {
+@@ -152,7 +171,7 @@
+   render(<AccountantWorkDesk />)
+   fireEvent.click(await screen.findByRole("button", { name: "Next clients" }))
+   await waitFor(() => expect(list).toHaveBeenLastCalledWith({ afterGrantId: "g10" }))
+-  await waitFor(() => expect(screen.getByRole("button", { name: "Refresh" })).not.toBeDisabled())
++  await waitFor(() => expect(screen.getByRole("button", { name: "Refresh" })).toHaveAttribute("aria-disabled", "false"))
+   fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
+   await waitFor(() => expect(list).toHaveBeenLastCalledWith({}))
+ })
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery18.config.cjs b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery18.config.cjs
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery18.config.cjs
+@@ -0,0 +1,11 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Isolated component lane: no app config, environment loading or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  roots: ['<rootDir>/app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__', '<rootDir>/components/accounting/__tests__'],
++  testMatch: ['**/trial-balance-table.test.tsx', '**/AccountantWorkDesk.test.tsx'],
++  collectCoverage: false,
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery18.json b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery18.json
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery18.json
+@@ -0,0 +1,7 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": { "incremental": false, "noEmit": true, "plugins": [] },
++  "files": ["../../../../next-env.d.ts", "../../../../app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx", "../../../../components/accounting/AccountantWorkDesk.tsx"],
++  "include": [],
++  "exclude": []
++}
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-18.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-18.md
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-18.md
+@@ -0,0 +1,73 @@
++# Delivery 18 — Accountant report reflow and keyboard follow-up
++
++Date: 16 October 2026. Packages: UX06 and UX10. Local implementation; no release certification.
++
++## Delivered
++
++- **Trial balance, narrow screens:** account identity columns previously covered the numeric columns even after scrolling. They now scroll normally below `md`; desktop retains frozen identity columns. The footer label follows the same breakpoint. Filters wrap, with full-width search and selects on phones.
++- **Trial balance, sorting:** the active column header exposes `aria-sort` and updates ascending/descending state. Native buttons retain keyboard activation. This supplies accessibility semantics; actual screen-reader announcements are not certified.
++- **Accountant portfolio, refresh:** a live Enter-triggered refresh dropped focus when its button became natively disabled. The refresh button now remains focusable with `aria-disabled`, a pending appearance and a guarded click handler. Duplicate activation while pending does not issue another request. Live post-fix focus verification remains open after browser timeouts; EN/FR mocked regression checks passed.
++
++No accounting calculations, row data, authorization, consent, review acceptance or identity controls changed. Account names supplied through the existing `nameEn` field remain business data; this delivery does not translate or replace the account catalogue.
++
++The [dated responsive decision](../../../UI/UX/2026-10-16-trial-balance-responsive-decision.md) records why narrow-screen identity cells differ from desktop frozen-column guidance.
++
++## Live coverage
++
++Chrome's existing session confirmed **ACCOUNTANT / Comptable**, with four visible modules. User is arranging Owner and Cashier sessions; no additional sign-in was requested. Original page was `/en/dashboard`. Theme preference and browser zoom were not deliberately changed during this delivery. The authenticated canvas retains its approved dark design.
++
++| Route / state | Locale | Measured CSS viewport | Result |
++|---|---|---|---|
++| `/dashboard`, permission-limited recovery | EN | Existing browser window | Actual Accountant role, truthful limited-access message and access-review action |
++| `/dashboard/accounting/reports/trial-balance`, populated 18-account report | EN | 320×844 | Before fix: local table viewport 245px, identity columns total 368px; numeric values obscured after ten ArrowRight presses and scroll offset approximately 458px |
++| Same, populated and sorted | EN | 320×844 | After fix: identity cells static, numeric values visible while horizontally scrolled; Enter changes activity-debit sorting ascending then descending with matching `aria-sort` |
++| Same, search and clear | EN | Phone | Search for account 401 preserves full-report footer; clearing restores rows |
++| Same, localized filters and no-match state | FR | 320×844 | `html.lang=fr`; document client/scroll widths 300/300; search-to-select keyboard traversal; both selects contained within viewport; no-match search preserves full-report footer; clear restores ten displayed rows |
++| Same, desktop | FR | 1440×900 | Document client/scroll widths 1420/1420; both identity headers remain sticky; ten rows displayed |
++| `/dashboard/accounting/accountant-portfolio`, no active mandates / no outstanding evidence | FR | 1440×900 and 320×844 | Localized scope, empty and loading copy; phone document client/scroll widths 300/300; one main landmark; Enter refresh returns to empty state |
++| Portfolio refresh after focus fix | FR | Phone | **Not verified live:** repeated DOM/native browser command timeouts; source and mocked tests only |
++
++No grants were created, evidence accepted, identities confirmed, journal entries submitted, files exported or financial actions performed. Authenticated reads may produce ordinary audit records. No real database test suite was run.
++
++Client-link attempts from dashboard to trial balance and from trial balance to portfolio remained on the previous route during observation. Direct navigation to the exact observed destination URL loaded each page. This is unresolved navigation/runtime evidence, not a diagnosed or fixed application defect.
++
++The final browser commands repeatedly timed out and one reset attempt reported the debugger was detached. Reclaiming the existing tab also timed out. **Normal viewport restoration could not be confirmed**; last confirmed override was 320×844. Last confirmed page was the French portfolio. No other user tabs were closed or modified as recovery.
++
++## Verification by layer
++
++| Layer | Result | Limits |
++|---|---|---|
++| Source inspection | Complete for changed components and focused test dependencies | Workflow, registry, master, table controls and relevant contract, Work Desk and notification history imports reviewed |
++| Workflow contract | Pass, exit 0 | 196 unclassified commands remain; check itself runs no application/database command |
++| Mocked component tests | **23 passed, 2 suites**, exit 0 | Trial-balance totals/filter/localization/sort and existing Work Desk permission/review/retry controls, plus EN/FR focus and duplicate-refresh regression; server actions mocked |
++| Scoped TypeScript | Pass, exit 0 | Both changed production components and imported dependencies, no emit/incremental writes |
++| Production ESLint | Pass, exit 0 | Both changed production components |
++| Rendered browser checks | Trial balance and portfolio states as above | Refresh focus after patch, intermediate viewports and broader role matrix remain open |
++| Real database tests | Not run | No migration, seed or transactional verification |
++
++The focused project UI/UX Pro Max query `table sort keyboard filter labels` returned Chip Collection Reflow and Form Labels from `ux-guidelines.csv`. Reflow and accessible label guidance applied; no generated palette or framework migration was adopted.
++
++Reviewed commands:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery18.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-18-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery18.json --pretty false
++node node_modules/eslint/bin/eslint.js "app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx" components/accounting/AccountantWorkDesk.tsx
++```
++
++The first narrow trial-balance run passed three tests. After the additional refresh fix, the expanded final run passed all 23 tests in 23.294 seconds. Jest uses an isolated Next transform without app configuration/environment or database setup. No build, installation, migration, seed, commit or deployment ran.
++
++## Evidence and remaining acceptance
++
++- [Structured observations](evidence/delivery-18-browser-observations.json)
++- [Phone before scrolling fix](evidence/delivery-18-trial-phone-before-scrolled.png) and [after](evidence/delivery-18-trial-phone-after-scrolled.png)
++- [French phone filters](evidence/delivery-18-trial-fr-phone-filters.png) and [desktop report](evidence/delivery-18-trial-fr-desktop.png)
++- [French portfolio phone](evidence/delivery-18-portfolio-fr-phone.png) and [desktop](evidence/delivery-18-portfolio-fr-desktop.png)
++- [Test results](evidence/delivery-18-tests.json), [owned patch](evidence/delivery-18-owned.patch), [file manifest](evidence/delivery-18-files.json)
++
++Next: restore/confirm browser viewport, verify refresh focus in the rendered portfolio, then exercise actual Owner and Cashier journeys when sessions are connected. Populated delegated-client portfolio/review states require authorized fixtures; the empty portfolio does not certify them. Actual screen reader, forced colors, reduced motion, exhaustive contrast and the wider state/theme matrix remain open. Delivery 17 holds earlier light-preference portal/access/reconciliation evidence; those checks were not re-certified here.
++
++## Ownership and rollback
++
++Source revision: `6f7f6741cabfdeff61989a40455d6f3ea37b33c9`. Extensive unrelated working-tree changes were preserved. Pre-edit bytes are retained in `delivery-18-baseline.json`; the owned patch is relative to those bytes rather than HEAD. Revert only these owned hunks after checking subsequent overlap. Do not reset complete files to HEAD. The added configuration, report and decision files are listed separately in the manifest.
+diff --git a/docs/UI/UX/2026-10-16-trial-balance-responsive-decision.md b/docs/UI/UX/2026-10-16-trial-balance-responsive-decision.md
+new file mode 100644
+--- /dev/null
++++ b/docs/UI/UX/2026-10-16-trial-balance-responsive-decision.md
+@@ -0,0 +1,11 @@
++# Trial balance: narrow-screen identity columns
++
++Date: 2026-10-16. Scope: trial-balance presentation only.
++
++The 144px account-code and 224px account-name columns together exceeded the 245px usable table viewport at a measured 320px CSS screen width. Keeping both sticky covered the numeric columns even after keyboard horizontal scrolling.
++
++Use ordinary horizontally scrolling identity cells below the existing `md` breakpoint; preserve sticky identity cells at `md` and above. Apply the same breakpoint to the footer's total label so it does not cover narrow-screen amounts. Keep canonical column metadata, order, widths, numeric formatting, full-report totals, table scroll region and server authorization unchanged. Filters wrap outside the table's horizontal scroll region.
++
++This is a scoped resolution of frozen-identity guidance against the design master's requirement that essential table content remain reachable. It does not authorize changing other table contracts. Browser evidence verifies 320×844 and 1440×900; intermediate breakpoints and assistive technology remain separate acceptance work.
++
++Evidence and verification: [Delivery 18](../../system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-18.md).

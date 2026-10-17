@@ -1,0 +1,2721 @@
+{
+  "startedAt": "2026-09-27T16:09:19.903Z",
+  "sourceBefore": {
+    "components/finance/ReconciliationSignReview.tsx": "ba40dd0c83ff42cd8f28ce60e37e6ad63f4f4413f6f5cd1318f24c6e359f5054",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "organizationId": "cmuk0kicd0000malodagfvddz",
+      "runId": "cmuk0kihm001amalopodsx71g",
+      "scans": [],
+      "screenshots": [
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-en-ready-320.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-en-ready-1440.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-en-authority-withdrawn.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-en-signed.png"
+      ],
+      "requests": [
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525361327,
+          "elapsedMs": 898
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525364162,
+          "elapsedMs": 162
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525364334,
+          "elapsedMs": 167
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525365440,
+          "elapsedMs": 1161
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525368251,
+          "elapsedMs": 1517
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525371414,
+          "elapsedMs": 190
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525371612,
+          "elapsedMs": 206
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525373080,
+          "elapsedMs": 1317
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startedAt": 1790525383030,
+          "elapsedMs": 847
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525385758,
+          "elapsedMs": 279
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525386051,
+          "elapsedMs": 234
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525387398,
+          "elapsedMs": 861
+        },
+        {
+          "phase": "restored-sign",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525393221,
+          "elapsedMs": 633
+        }
+      ],
+      "errors": [],
+      "phase": "restored-sign",
+      "firstEntryMs": 6831,
+      "warmEntryMs": 7928,
+      "navigation": {
+        "responseStart": 748.7999999821186,
+        "responseEnd": 1514.2999999821186,
+        "domContentLoadedEventEnd": 1520.3999999761581,
+        "loadEventEnd": 2633.2999999821186
+      },
+      "warmResources": [
+        {
+          "pathname": "/api/auth/get-session",
+          "startTime": 3166.5999999940395,
+          "responseStart": 3352,
+          "responseEnd": 3353.0999999940395,
+          "duration": 186.5
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 3362.5,
+          "responseStart": 3567.2999999821186,
+          "responseEnd": 3568.5,
+          "duration": 206
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 3585.899999976158,
+          "responseStart": 4031.0999999940395,
+          "responseEnd": 4479.199999988079,
+          "duration": 893.3000000119209
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 4247.699999988079,
+          "responseStart": 4854.799999982119,
+          "responseEnd": 5772.899999976158,
+          "duration": 1525.199999988079
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 4451.399999976158,
+          "responseStart": 5765.0999999940395,
+          "responseEnd": 5766.399999976158,
+          "duration": 1315
+        },
+        {
+          "pathname": "/en/dashboard/finance/reconciliation",
+          "startTime": 6527.699999988079,
+          "responseStart": 7289.5,
+          "responseEnd": 7639.299999982119,
+          "duration": 1111.5999999940395
+        }
+      ],
+      "reusedReadyContrast": "sign-authority-browser-518f0abb-c9f7-46f6-b3e4-6d8c4c5f85c8.json#journeys[0].scans[0]",
+      "actualServerReadWithdrawalDenied": true,
+      "currentAuthorityReread": true,
+      "reusedSignedContrast": "sign-authority-browser-52ea9907-6b7f-4215-97b6-1e16101926aa.json#journeys[0].scans[0]",
+      "emulatedVisibilityTransitionRefresh": true,
+      "signedViewWithdrawn": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "organizationId": "cmuk0l8kw001imalo5yjlyspc",
+      "runId": "cmuk0l8oy002smalo9kwxmcbu",
+      "scans": [
+        {
+          "state": "ready",
+          "scan": {
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "impact": "serious",
+                "nodes": [
+                  {
+                    "target": [
+                      "h4"
+                    ],
+                    "html": "<h4 class=\"font-semibold\">Signature indépendante du rapprochement</h4>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.justify-between.gap-2 > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(2)"
+                    ],
+                    "html": "<p>Examinez le rapprochement et les preuves actuelles. La confirmation signe cette version examinée ; toute modification des preuves exige un nouvel examen.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(3)"
+                    ],
+                    "html": "<p>Rapprochement : cmuk0l8oy002smalo9kwxmcbu</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(4)"
+                    ],
+                    "html": "<p class=\"font-medium\">Owned request ordering · XAF · 27/09/2026</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(5)"
+                    ],
+                    "html": "<p>Vérifié le 27/09/2026 17:10:11</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "p:nth-child(6)"
+                    ],
+                    "html": "<p>Les contrôles des preuves ont réussi pour cet examen. Confirmez uniquement après avoir examiné les montants et les enregistrements.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > .space-y-3 > p"
+                    ],
+                    "html": "<p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "h5"
+                    ],
+                    "html": "<h5 class=\"font-semibold\">XAF</h5>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(1) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Paiements internes</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(1) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(2) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Preuves des notifications du prestataire</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(2) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(3) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Preuves des relevés</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(3) > dd"
+                    ],
+                    "html": "<dd>0.00 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(4) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Affectations rapprochées</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(4) > dd"
+                    ],
+                    "html": "<dd>100.25 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(5) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Dossiers de suspens non résolus</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2 > dl > div:nth-child(5) > dd"
+                    ],
+                    "html": "<dd>0.00 XAF</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Paiements internes</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Événements du prestataire</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Fichiers de relevé</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Lignes de relevé</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Correspondances</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dd"
+                    ],
+                    "html": "<dd>1</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(6) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Anomalies conservées</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(6) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(7) > dt"
+                    ],
+                    "html": "<dt class=\"text-[var(--dash-text-soft)]\">Éléments d’attente conservés</dt>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      "div:nth-child(7) > dd"
+                    ],
+                    "html": "<dd>0</dd>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.gap-2.flex:nth-child(9) > .dashboard-button-primary.bg-blue-600.hover\\:bg-blue-700"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.gap-2.flex:nth-child(9) > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "passes": [
+              "aria-allowed-attr",
+              "aria-conditional-attr",
+              "aria-deprecated-role",
+              "aria-prohibited-attr",
+              "aria-required-attr",
+              "aria-roles",
+              "aria-valid-attr-value",
+              "aria-valid-attr",
+              "button-name",
+              "definition-list",
+              "dlitem",
+              "nested-interactive"
+            ]
+          },
+          "rendered": [
+            {
+              "target": [
+                "h4"
+              ],
+              "text": "Signature indépendante du rapprochement",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2173,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".flex-wrap.justify-between.gap-2 > .rounded-md.px-4.hover\\:bg-accent"
+              ],
+              "text": "Fermer l’examen de signature",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 15.612080826530466,
+              "sample": {
+                "x": 1170,
+                "y": 2183,
+                "background": [
+                  21,
+                  33,
+                  40
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > p:nth-child(2)"
+              ],
+              "text": "Examinez le rapprochement et les preuves actuelles. La confirmation signe cette version examinée ; toute modification des preuves exige un n",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2225,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > p:nth-child(3)"
+              ],
+              "text": "Rapprochement : cmuk0l8oy002smalo9kwxmcbu",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2257,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "p:nth-child(4)"
+              ],
+              "text": "Owned request ordering · XAF · 27/09/2026",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2289,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "p:nth-child(5)"
+              ],
+              "text": "Vérifié le 27/09/2026 17:10:11",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2321,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "p:nth-child(6)"
+              ],
+              "text": "Les contrôles des preuves ont réussi pour cet examen. Confirmez uniquement après avoir examiné les montants et les enregistrements.",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2353,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > .space-y-3 > p"
+              ],
+              "text": "Montants bruts par source et devise, opérations entrantes et sortantes comprises. Les notifications et relevés peuvent décrire le même paiem",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2385,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "h5"
+              ],
+              "text": "XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2437,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(1) > dt"
+              ],
+              "text": "Paiements internes",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2465,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(1) > dd"
+              ],
+              "text": "100.25 XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2485,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(2) > dt"
+              ],
+              "text": "Preuves des notifications du prestataire",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 864,
+                "y": 2465,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(2) > dd"
+              ],
+              "text": "100.25 XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 864,
+                "y": 2485,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(3) > dt"
+              ],
+              "text": "Preuves des relevés",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2513,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(3) > dd"
+              ],
+              "text": "0.00 XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2533,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(4) > dt"
+              ],
+              "text": "Affectations rapprochées",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 864,
+                "y": 2513,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(4) > dd"
+              ],
+              "text": "100.25 XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 864,
+                "y": 2533,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(5) > dt"
+              ],
+              "text": "Dossiers de suspens non résolus",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2561,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2 > dl > div:nth-child(5) > dd"
+              ],
+              "text": "0.00 XAF",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2581,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dt"
+              ],
+              "text": "Paiements internes",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2613,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(1) > dd"
+              ],
+              "text": "1",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.695216544847257,
+              "sample": {
+                "x": 346,
+                "y": 2633,
+                "background": [
+                  28,
+                  44,
+                  52
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dt"
+              ],
+              "text": "Événements du prestataire",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 864,
+                "y": 2613,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(2) > dd"
+              ],
+              "text": "1",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 864,
+                "y": 2633,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dt"
+              ],
+              "text": "Fichiers de relevé",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2661,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(3) > dd"
+              ],
+              "text": "0",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.695216544847257,
+              "sample": {
+                "x": 346,
+                "y": 2681,
+                "background": [
+                  28,
+                  44,
+                  52
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dt"
+              ],
+              "text": "Lignes de relevé",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 864,
+                "y": 2661,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(4) > dd"
+              ],
+              "text": "0",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 864,
+                "y": 2681,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dt"
+              ],
+              "text": "Correspondances",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2709,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > dl > div:nth-child(5) > dd"
+              ],
+              "text": "1",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.695216544847257,
+              "sample": {
+                "x": 346,
+                "y": 2729,
+                "background": [
+                  28,
+                  44,
+                  52
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div:nth-child(6) > dt"
+              ],
+              "text": "Anomalies conservées",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 864,
+                "y": 2709,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div:nth-child(6) > dd"
+              ],
+              "text": "0",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 864,
+                "y": 2729,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div:nth-child(7) > dt"
+              ],
+              "text": "Éléments d’attente conservés",
+              "color": "rgb(169, 184, 178)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.887110223384607,
+              "sample": {
+                "x": 366,
+                "y": 2757,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  169,
+                  184,
+                  178
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                "div:nth-child(7) > dd"
+              ],
+              "text": "0",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.695216544847257,
+              "sample": {
+                "x": 346,
+                "y": 2777,
+                "background": [
+                  28,
+                  44,
+                  52
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".flex-wrap.gap-2.flex:nth-child(9) > .dashboard-button-primary.bg-blue-600.hover\\:bg-blue-700"
+              ],
+              "text": "Confirmer et signer le rapprochement examiné",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.028074514125823,
+              "sample": {
+                "x": 658,
+                "y": 2834,
+                "background": [
+                  63,
+                  110,
+                  189
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".flex-wrap.gap-2.flex:nth-child(9) > .rounded-md.px-4.hover\\:bg-accent"
+              ],
+              "text": "Abandonner cet examen et examiner les preuves actuelles",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 15.612080826530466,
+              "sample": {
+                "x": 703,
+                "y": 2819,
+                "background": [
+                  21,
+                  33,
+                  40
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        },
+        {
+          "state": "signed",
+          "scan": {
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "impact": "serious",
+                "nodes": [
+                  {
+                    "target": [
+                      "h4"
+                    ],
+                    "html": "<h4 class=\"font-semibold\">Signature indépendante du rapprochement</h4>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".flex-wrap.justify-between.gap-2 > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(2)"
+                    ],
+                    "html": "<p>Examinez le rapprochement et les preuves actuelles. La confirmation signe cette version examinée ; toute modification des preuves exige un nouvel examen.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".ReconciliationSignReview_root__d_g8C > p:nth-child(3)"
+                    ],
+                    "html": "<p>Rapprochement : cmuk0l8oy002smalo9kwxmcbu</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2[role=\"status\"] > p:nth-child(1)"
+                    ],
+                    "html": "<p>Le rapprochement examiné a été signé le 27/09/2026 17:12:09.</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2[role=\"status\"] > p:nth-child(2)"
+                    ],
+                    "html": "<p>Empreinte du certificat : b401dd3f41f0d78a2766a92eacb1400fec7dcd23c0e9566758ff28fd4c6b8b76</p>",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  },
+                  {
+                    "target": [
+                      ".space-y-2[role=\"status\"] > .rounded-md.px-4.hover\\:bg-accent"
+                    ],
+                    "html": "<button class=\"inline-flex items-ce...\">",
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "fontSize": "10.5pt (14px)",
+                          "fontWeight": "normal",
+                          "messageKey": "pseudoContent",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [
+                          {
+                            "html": "<main class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden\">",
+                            "target": [
+                              ".dashboard-landing-theme"
+                            ]
+                          }
+                        ],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined due to a pseudo element"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "passes": [
+              "aria-allowed-attr",
+              "aria-conditional-attr",
+              "aria-deprecated-role",
+              "aria-prohibited-attr",
+              "aria-required-attr",
+              "aria-roles",
+              "aria-valid-attr-value",
+              "aria-valid-attr",
+              "button-name",
+              "nested-interactive"
+            ]
+          },
+          "rendered": [
+            {
+              "target": [
+                "h4"
+              ],
+              "text": "Signature indépendante du rapprochement",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2075,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".flex-wrap.justify-between.gap-2 > .rounded-md.px-4.hover\\:bg-accent"
+              ],
+              "text": "Fermer l’examen de signature",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 15.612080826530466,
+              "sample": {
+                "x": 1170,
+                "y": 2085,
+                "background": [
+                  21,
+                  33,
+                  40
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > p:nth-child(2)"
+              ],
+              "text": "Examinez le rapprochement et les preuves actuelles. La confirmation signe cette version examinée ; toute modification des preuves exige un n",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2127,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".ReconciliationSignReview_root__d_g8C > p:nth-child(3)"
+              ],
+              "text": "Rapprochement : cmuk0l8oy002smalo9kwxmcbu",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2159,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2[role=\"status\"] > p:nth-child(1)"
+              ],
+              "text": "Le rapprochement examiné a été signé le 27/09/2026 17:12:09.",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2191,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2[role=\"status\"] > p:nth-child(2)"
+              ],
+              "text": "Empreinte du certificat : b401dd3f41f0d78a2766a92eacb1400fec7dcd23c0e9566758ff28fd4c6b8b76",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 13.512150370254489,
+              "sample": {
+                "x": 366,
+                "y": 2219,
+                "background": [
+                  29,
+                  45,
+                  53
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            },
+            {
+              "target": [
+                ".space-y-2[role=\"status\"] > .rounded-md.px-4.hover\\:bg-accent"
+              ],
+              "text": "Examiner l’export du certificat signé",
+              "color": "rgb(247, 250, 248)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 15.612080826530466,
+              "sample": {
+                "x": 366,
+                "y": 2257,
+                "background": [
+                  21,
+                  33,
+                  40
+                ],
+                "foreground": [
+                  247,
+                  250,
+                  248
+                ]
+              },
+              "passes": true
+            }
+          ]
+        }
+      ],
+      "screenshots": [
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-fr-ready-320.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-fr-ready-1440.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-fr-authority-withdrawn.png",
+        "sign-authority-browser-09653c21-2aab-4356-bfc5-57d461f5908c-fr-signed.png"
+      ],
+      "requests": [
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525395607,
+          "elapsedMs": 1261
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525399394,
+          "elapsedMs": 205
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525399617,
+          "elapsedMs": 273
+        },
+        {
+          "phase": "cold-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525401163,
+          "elapsedMs": 1030
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525404130,
+          "elapsedMs": 1295
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525407183,
+          "elapsedMs": 326
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525407524,
+          "elapsedMs": 239
+        },
+        {
+          "phase": "warm-entry",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525408997,
+          "elapsedMs": 1228
+        },
+        {
+          "phase": "warm-entry",
+          "method": "POST",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525441011,
+          "elapsedMs": 1140
+        },
+        {
+          "phase": "warm-entry",
+          "method": "POST",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525503109,
+          "elapsedMs": 1990
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "POST",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525519051,
+          "elapsedMs": 935
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525521369,
+          "elapsedMs": 1539
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/auth/get-session",
+          "startedAt": 1790525524622,
+          "elapsedMs": 190
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525524820,
+          "elapsedMs": 172
+        },
+        {
+          "phase": "server-read-withdrawal",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525526119,
+          "elapsedMs": 1110
+        },
+        {
+          "phase": "restored-sign",
+          "method": "POST",
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startedAt": 1790525529309,
+          "elapsedMs": 1360
+        },
+        {
+          "phase": "restored-sign",
+          "method": "GET",
+          "pathname": "/api/me/permissions",
+          "startedAt": 1790525550862,
+          "elapsedMs": 555
+        }
+      ],
+      "errors": [],
+      "phase": "restored-sign",
+      "firstEntryMs": 8522,
+      "warmEntryMs": 8276,
+      "navigation": {
+        "responseStart": 611,
+        "responseEnd": 1289.7000000178814,
+        "domContentLoadedEventEnd": 1294.4000000059605,
+        "loadEventEnd": 3061.7000000178814
+      },
+      "warmResources": [
+        {
+          "pathname": "/api/auth/get-session",
+          "startTime": 3055.0999999940395,
+          "responseStart": 3373.5,
+          "responseEnd": 3374.800000011921,
+          "duration": 319.7000000178814
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 3390.5,
+          "responseStart": 3631.4000000059605,
+          "responseEnd": 3633.0999999940395,
+          "duration": 242.59999999403954
+        },
+        {
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startTime": 3650.2000000178814,
+          "responseStart": 4090.300000011921,
+          "responseEnd": 4621.5999999940395,
+          "duration": 971.3999999761581
+        },
+        {
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startTime": 4307.5999999940395,
+          "responseStart": 5043.300000011921,
+          "responseEnd": 5679.200000017881,
+          "duration": 1371.6000000238419
+        },
+        {
+          "pathname": "/api/me/permissions",
+          "startTime": 4500.5,
+          "responseStart": 5665.4000000059605,
+          "responseEnd": 5666.5999999940395,
+          "duration": 1166.0999999940395
+        },
+        {
+          "pathname": "/fr/dashboard/finance/reconciliation",
+          "startTime": 6757.300000011921,
+          "responseStart": 7298.5999999940395,
+          "responseEnd": 7587,
+          "duration": 829.6999999880791
+        }
+      ],
+      "actualServerReadWithdrawalDenied": true,
+      "currentAuthorityReread": true,
+      "emulatedVisibilityTransitionRefresh": true,
+      "signedViewWithdrawn": true,
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Owned local Chromium development application; no live customer changes.",
+    "Automated accessibility and controlled text enlargement are not native speech or browser zoom certification."
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "components/finance/ReconciliationSignReview.tsx": "ba40dd0c83ff42cd8f28ce60e37e6ad63f4f4413f6f5cd1318f24c6e359f5054",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "098e8c5b51671cb3c74ed939177c67345d991d560d7de10d8cbfa22dd1a831dc",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "bd4bc7d8a2d5352767174c56f7b1a2419e2a2693e2b41fa76fba8653b7b2b869",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "messages/en.json": "010decf0c7abb78f1e71b5186fc2cd30c835b6c2351e5eea5c5b2c16196cde33",
+    "messages/fr.json": "0ac82ddb99348cfb6f43ae54a87d36eb9983a10cb93db87fe71f21268cc13408",
+    "components/finance/ReconciliationSignReview.module.css": "892ae159c15410995f9f0e5f5b86e7ef3e81769cd1b3bcaa518787f2f8998975"
+  },
+  "sourceStable": true,
+  "endedAt": "2026-09-27T16:12:32.232Z"
+}

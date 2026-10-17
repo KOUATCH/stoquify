@@ -8,7 +8,7 @@ type PageProps = { params: Promise<{ locale: string }> }
 export async function generateMetadata({ params }: PageProps) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "moduleComposition" })
-  return { title: `${t("title")} | Stoquify`, description: t("subtitle") }
+  return { title: `${t("experience.title")} | Stoquify`, description: t("experience.subtitle") }
 }
 
 export default async function SettingsRoutePage({ params }: PageProps) {

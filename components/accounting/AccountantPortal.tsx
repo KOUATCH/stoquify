@@ -25,11 +25,14 @@ import type { Locale } from "@/types/bilingual"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import DataTable from "@/components/DataTableComponents/DataTable"
+import { portalEvidenceText } from "./accountantPortalCopy"
 
 type AccountantPortalProps = {
   initialData?: AccountantPortalData | null
   initialError?: string | null
   locale?: Locale
+  clientOrganizationId?: string
+  periodId?: string
 }
 
 const copy = {
@@ -78,31 +81,31 @@ const copy = {
   },
   fr: {
     loadingTitle: "Chargement des preuves comptables",
-    loadingBody: "Verification de la provenance ledger, des liens source, des audits et blocages de certification.",
+    loadingBody: "Vérification de la provenance du grand livre, des liens sources, des audits et des blocages de certification.",
     errorTitle: "Portail comptable indisponible",
     retry: "Actualiser",
-    export: "Exporter le pack",
-    exporting: "Export",
-    trustLevel: "Niveau confiance",
-    postedEntries: "Ecritures postees",
-    sourceCoverage: "Couverture source",
+    export: "Exporter le dossier certifié",
+    exporting: "Export en cours",
+    trustLevel: "Niveau de confiance",
+    postedEntries: "Écritures comptabilisées",
+    sourceCoverage: "Couverture des liens sources",
     blockers: "Blocages",
-    asOf: "A la date",
-    period: "Periode",
-    figures: "Figures postees",
-    figuresDescription: "Les montants financiers s'affichent seulement apres resolution des blocages critiques.",
-    debit: "Debit activite",
-    credit: "Credit activite",
+    asOf: "Au",
+    period: "Période",
+    figures: "Montants comptabilisés",
+    figuresDescription: "Les montants financiers s’affichent uniquement après résolution des blocages critiques de fiabilité des données.",
+    debit: "Mouvements au débit",
+    credit: "Mouvements au crédit",
     provenance: "Provenance",
     unavailable: "Indisponible",
     modules: "Modules de preuve",
-    blockersTitle: "Blocages de cloture",
-    noBlockers: "Aucun blocage de confiance detecte.",
-    sourceLinks: "Liens source recents",
-    auditEvents: "Audit et controles",
+    blockersTitle: "Blocages de clôture",
+    noBlockers: "Aucun blocage de fiabilité détecté.",
+    sourceLinks: "Liens sources récents",
+    auditEvents: "Audit et contrôles",
     emptyRows: "Aucun enregistrement disponible.",
-    gate: "Porte",
-    detail: "Detail",
+    gate: "Contrôle",
+    detail: "Détail",
     source: "Source",
     journal: "Journal",
     batch: "Lot",
@@ -114,10 +117,10 @@ const copy = {
     actor: "Acteur",
     time: "Date",
     status: "Statut",
-    certified: "Certifie",
+    certified: "Certifié",
     partial: "Partiel",
     nonCompliant: "Non conforme",
-    disabledExport: "Export certifie bloque",
+    disabledExport: "Export certifié bloqué",
   },
 } as const
 
@@ -216,7 +219,7 @@ function MetricTile({
     <div className="min-h-[7.5rem] rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.46)] p-4">
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
+          <p className="break-words text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
           <p className="mt-2 break-words text-2xl font-semibold leading-tight text-[var(--dash-text)]">{value}</p>
         </div>
         <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", tones[tone])}>
@@ -242,11 +245,14 @@ export function AccountantPortal({
   initialData = null,
   initialError = null,
   locale = "en",
+  clientOrganizationId,
+  periodId,
 }: AccountantPortalProps) {
-  const query = useAccountantPortal({ initialData, limit: 12 })
-  const data = query.data
+  const query = useAccountantPortal({ initialData, limit: 12, clientOrganizationId, periodId })
+  const data = query.isError ? undefined : query.data
   const t = copy[locale]
   const exportMutation = useExportAccountantTrustPack(locale, {
+    clientOrganizationId,
     periodId: data?.scope.periodId,
     startDate: data?.scope.startDate,
     endDate: data?.scope.endDate,
@@ -279,12 +285,12 @@ export function AccountantPortal({
 
   if (!data) {
     return (
-      <Panel title={t.errorTitle} description={initialError || (query.error as Error | null)?.message || t.errorTitle}>
+      <Panel title={t.errorTitle} description={portalEvidenceText(initialError || (query.error as Error | null)?.message || t.errorTitle, locale)}>
         <div className="flex min-h-[18rem] items-center justify-center p-8 text-center">
           <div className="max-w-md">
             <ShieldAlert className="mx-auto h-9 w-9 text-[var(--dash-danger)]" />
             <p className="mt-3 text-sm leading-6 text-[var(--dash-text-soft)]">
-              {initialError || (query.error as Error | null)?.message || t.errorTitle}
+              {portalEvidenceText(initialError || (query.error as Error | null)?.message || t.errorTitle, locale)}
             </p>
             <Button type="button" onClick={() => query.refetch()} className="dashboard-button-primary mt-5 h-10 rounded-lg">
               <RefreshCw className="h-4 w-4" />
@@ -315,21 +321,21 @@ export function AccountantPortal({
         <MetricTile
           label={t.postedEntries}
           value={data.summary.postedJournalEntries.toString()}
-          detail={`${data.summary.journalLines} ledger lines from posted/reversed journals`}
+          detail={locale === "fr" ? `${data.summary.journalLines} lignes du grand livre issues d’écritures comptabilisées ou extournées` : `${data.summary.journalLines} ledger lines from posted/reversed journals`}
           icon={BookOpenCheck}
           tone={data.summary.postedJournalEntries > 0 ? "brand" : "warning"}
         />
         <MetricTile
           label={t.sourceCoverage}
-          value={data.summary.sourceLinkCoveragePct === null ? "n/a" : `${data.summary.sourceLinkCoveragePct}%`}
-          detail={`${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} entries linked`}
+          value={data.summary.sourceLinkCoveragePct === null ? t.unavailable : portalEvidenceText(`${data.summary.sourceLinkCoveragePct}%`, locale)}
+          detail={locale === "fr" ? `${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} écritures liées` : `${data.summary.linkedPostedEntries}/${data.summary.postedJournalEntries} entries linked`}
           icon={Link2}
           tone={data.summary.sourceLinkCoveragePct === 100 ? "success" : "warning"}
         />
         <MetricTile
           label={t.blockers}
           value={data.summary.blockerCount.toString()}
-          detail={`${data.summary.criticalBlockers} critical / ${data.summary.highBlockers} high`}
+          detail={locale === "fr" ? `${data.summary.criticalBlockers} critiques / ${data.summary.highBlockers} élevés` : `${data.summary.criticalBlockers} critical / ${data.summary.highBlockers} high`}
           icon={data.summary.blockerCount ? AlertTriangle : BadgeCheck}
           tone={data.summary.criticalBlockers ? "danger" : data.summary.highBlockers ? "warning" : "success"}
         />
@@ -348,8 +354,8 @@ export function AccountantPortal({
             {data.exportReadiness.canExportCertifiedPack ? t.certified : t.disabledExport}
           </p>
           <p className="mt-1 text-sm leading-5 text-[var(--dash-text-soft)]">
-            {data.exportReadiness.disabledReason ||
-              `${t.period}: ${data.scope.periodName || data.scope.periodId || "current"} (${data.scope.periodStatus})`}
+            {data.exportReadiness.disabledReason ? portalEvidenceText(data.exportReadiness.disabledReason, locale) :
+              `${t.period}: ${data.scope.periodName || data.scope.periodId || portalEvidenceText("current", locale)} (${portalEvidenceText(data.scope.periodStatus, locale)})`}
           </p>
         </div>
         <Button
@@ -381,18 +387,18 @@ export function AccountantPortal({
               <div key={module.module} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="font-semibold text-[var(--dash-text)]">{module.label}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{module.detail}</p>
+                    <p className="font-semibold text-[var(--dash-text)]">{portalEvidenceText(module.label, locale)}</p>
+                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{portalEvidenceText(module.detail, locale)}</p>
                   </div>
                   <Badge variant="outline" className={cn("rounded-md", statusClass(module.status))}>
-                    {module.status}
+                    {portalEvidenceText(module.status, locale)}
                   </Badge>
                 </div>
                 <div className="mt-3 grid gap-2">
                   {module.facts.map((fact) => (
                     <div key={fact.label} className="flex min-w-0 items-center justify-between gap-3 text-xs">
-                      <span className="truncate text-[var(--dash-text-faint)]">{fact.label}</span>
-                      <span className="font-medium text-[var(--dash-text)]">{fact.value}</span>
+                      <span className="min-w-0 break-words text-[var(--dash-text-faint)]">{portalEvidenceText(fact.label, locale)}</span>
+                      <span className="shrink-0 font-medium text-[var(--dash-text)]">{typeof fact.value === "string" ? portalEvidenceText(fact.value, locale) : fact.value}</span>
                     </div>
                   ))}
                 </div>
@@ -439,10 +445,10 @@ function FigureTile({
       </div>
       <div className="mt-3 space-y-1 text-xs leading-5 text-[var(--dash-text-soft)]">
         <p>
-          {t.provenance}: {figure.provenance}
+          {t.provenance}: {portalEvidenceText(figure.provenance, locale)}
         </p>
         <p>{formatDate(figure.asOf, locale)}</p>
-        {!figure.available ? <p className="text-[var(--dash-warning)]">{figure.reason}</p> : null}
+        {!figure.available ? <p className="text-[var(--dash-warning)]">{portalEvidenceText(figure.reason, locale)}</p> : null}
       </div>
     </div>
   )
@@ -450,34 +456,40 @@ function FigureTile({
 
 function BlockersTable({ data, locale }: { data: AccountantPortalData; locale: Locale }) {
   const t = copy[locale]
+  // The shared search bar searches row data, not rendered column accessors.
+  const rows = useMemo(() => data.blockers.map((blocker) => ({
+    ...blocker,
+    localizedSearchText: [blocker.severity, blocker.title, blocker.detail]
+      .map((value) => portalEvidenceText(value, locale)).join(" "),
+  })), [data.blockers, locale])
   const columns = useMemo<ColumnDef<AccountantPortalData["blockers"][number]>[]>(() => [
     {
       id: t.status,
-      accessorKey: "severity",
+      accessorFn: (blocker) => `${portalEvidenceText(blocker.severity, locale)} ${blocker.severity}`,
       header: t.status,
       cell: ({ row: { original: blocker } }) => (
         <Badge variant="outline" className={cn("rounded-md", severityClass(blocker.severity))}>
-          {blocker.severity}
+          {portalEvidenceText(blocker.severity, locale)}
         </Badge>
       ),
     },
     {
       id: t.gate,
-      accessorKey: "title",
+      accessorFn: (blocker) => `${portalEvidenceText(blocker.title, locale)} ${blocker.title} ${blocker.gate}`,
       header: t.gate,
       cell: ({ row: { original: blocker } }) => (
         <div className="min-w-48 whitespace-normal">
-          <p className="font-medium text-[var(--dash-text)]">{blocker.title}</p>
-          <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{blocker.gate}</p>
+          <p className="font-medium text-[var(--dash-text)]">{portalEvidenceText(blocker.title, locale)}</p>
+          <details className="mt-1 text-xs text-[var(--dash-text-faint)]"><summary className="cursor-pointer">{locale === "fr" ? "Référence du contrôle" : "Control reference"}</summary><span className="break-all">{blocker.gate}</span></details>
         </div>
       ),
     },
     {
       id: t.detail,
-      accessorKey: "detail",
+      accessorFn: (blocker) => `${portalEvidenceText(blocker.detail, locale)} ${blocker.detail}`,
       header: t.detail,
       cell: ({ row: { original: blocker } }) => (
-        <p className="min-w-64 whitespace-normal text-[var(--dash-text-soft)]">{blocker.detail}</p>
+        <p className="min-w-64 whitespace-normal text-[var(--dash-text-soft)]">{portalEvidenceText(blocker.detail, locale)}</p>
       ),
     },
     {
@@ -490,14 +502,14 @@ function BlockersTable({ data, locale }: { data: AccountantPortalData; locale: L
         </p>
       ),
     },
-  ], [t])
+  ], [locale, t])
 
   return (
     <Panel title={t.blockersTitle}>
       <div className="min-w-0 p-4">
         <DataTable
           columns={columns}
-          data={data.blockers}
+          data={rows}
           caption={t.blockersTitle}
           scrollRegionLabel={t.blockersTitle}
           locale={locale}
@@ -548,7 +560,7 @@ function SourceLinksTable({ data, locale }: { data: AccountantPortalData; locale
       header: t.status,
       cell: ({ row: { original: link } }) => (
         <Badge variant="outline" className={cn("rounded-md", statusClass(link.postingStatus === "POSTED" ? "ready" : "blocked"))}>
-          {link.postingStatus}
+          {portalEvidenceText(link.postingStatus, locale)}
         </Badge>
       ),
     },
@@ -602,7 +614,7 @@ function AuditEventsTable({ data, locale }: { data: AccountantPortalData; locale
               : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
           )}
         >
-          {event.source}
+          {portalEvidenceText(event.source, locale)}
         </Badge>
       ),
     },
@@ -641,7 +653,7 @@ function AuditEventsTable({ data, locale }: { data: AccountantPortalData; locale
       header: t.status,
       cell: ({ row: { original: event } }) => (
         <Badge variant="outline" className={cn("rounded-md", statusClass(event.status))}>
-          {event.status}
+          {portalEvidenceText(event.status, locale)}
         </Badge>
       ),
     },

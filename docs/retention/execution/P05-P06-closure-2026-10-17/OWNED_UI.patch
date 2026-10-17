@@ -1,0 +1,18 @@
+diff --git "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P05-P06-closure-2026-10-17\\ProfessionalPOSSystem.before.tsx.txt" "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\ProfessionalPOSSystem.tsx"
+index c71dad95..ed4ffc7c 100644
+--- "a/E:\\ohada saas\\Focused projects\\stoquify\\docs\\retention\\execution\\P05-P06-closure-2026-10-17\\ProfessionalPOSSystem.before.tsx.txt"	
++++ "b/E:\\ohada saas\\Focused projects\\stoquify\\components\\pos\\ProfessionalPOSSystem.tsx"	
+@@ -1219,9 +1219,10 @@ function POSWorkspace() {
+       }
+     } catch (error) {
+       notifications.removeNotification(pendingId)
+-      notifications.error(
+-        t("notifications.saleErrorTitle"),
+-        toErrorMessage(error, t("notifications.genericError")),
++      // A lost response cannot establish whether the retained sale committed.
++      notifications.warning(
++        t("recovery.title"),
++        t("recovery.failed"),
+         { category: "sales", priority: "high" },
+       )
+     } finally {

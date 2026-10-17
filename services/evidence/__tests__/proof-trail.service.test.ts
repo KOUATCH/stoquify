@@ -15,10 +15,17 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     journalEntry: { findFirst: jest.fn() },
-    businessEvent: { findMany: jest.fn() },
+    businessEvent: { findMany: jest.fn(), count: jest.fn() },
+    paymentException: { groupBy: jest.fn() },
+    suspenseItem: { groupBy: jest.fn() },
+    closeAssuranceFinding: { groupBy: jest.fn() },
+    closeChecklistItem: { groupBy: jest.fn() },
+    closeEvidenceItem: { count: jest.fn() },
+    closePackExport: { findMany: jest.fn() },
     reconciliationRun: { findFirst: jest.fn() },
     paymentTransaction: { findFirst: jest.fn() },
-    closeRun: { findFirst: jest.fn() },
+    matchRecord: { groupBy: jest.fn() },
+    $transaction: jest.fn(), closeRun: { findFirst: jest.fn(), findMany: jest.fn() },
     auditLog: { create: jest.fn() },
   },
 }))
@@ -29,10 +36,17 @@ import { getProofTrail } from "../proof-trail.service"
 
 const mockDb = db as unknown as {
   journalEntry: { findFirst: jest.Mock }
-  businessEvent: { findMany: jest.Mock }
+  businessEvent: { findMany: jest.Mock; count: jest.Mock }
+  paymentException: { groupBy: jest.Mock }
+  suspenseItem: { groupBy: jest.Mock }
+  closeAssuranceFinding: { groupBy: jest.Mock }
+  closeChecklistItem: { groupBy: jest.Mock }
+  closeEvidenceItem: { count: jest.Mock }
+  closePackExport: { findMany: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock }
   paymentTransaction: { findFirst: jest.Mock }
-  closeRun: { findFirst: jest.Mock }
+  matchRecord: { groupBy: jest.Mock }
+  $transaction: jest.Mock; closeRun: { findFirst: jest.Mock; findMany: jest.Mock }
   auditLog: { create: jest.Mock }
 }
 
@@ -160,6 +174,8 @@ function certifiedCloseRun(overrides: Record<string, unknown> = {}) {
   return {
     id: "close-1",
     periodId: "period-1",
+    createdAt: new Date("2026-06-15T10:00:00.000Z"),
+    voidedAt: null,
     status: CloseRunStatus.CERTIFIED,
     readinessScore: 98,
     criticalBlockerCount: 0,
@@ -214,6 +230,16 @@ describe("proof trail service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockDb.businessEvent.findMany.mockResolvedValue([])
+    mockDb.businessEvent.count.mockResolvedValue(0)
+    mockDb.matchRecord.groupBy.mockResolvedValue([{ currencyCode: "XAF", _sum: { amountMatched: amount(150000) }, _min: { amountMatched: amount(150000) }, _count: { _all: 1, amountMatched: 1 } }])
+    mockDb.paymentException.groupBy.mockResolvedValue([])
+    mockDb.suspenseItem.groupBy.mockResolvedValue([])
+    mockDb.closeAssuranceFinding.groupBy.mockResolvedValue([])
+    mockDb.closeChecklistItem.groupBy.mockResolvedValue([])
+    mockDb.closeEvidenceItem.count.mockResolvedValue(0)
+    mockDb.closePackExport.findMany.mockResolvedValue([{ metadata: null }])
+    mockDb.$transaction.mockImplementation(async callback => callback(db))
+    mockDb.closeRun.findMany.mockResolvedValue([certifiedCloseRun()])
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
   })
 
@@ -315,6 +341,8 @@ describe("proof trail service", () => {
   })
 
   it("blocks reconciliation proof when open exceptions or suspense remain", async () => {
+    mockDb.paymentException.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 1 } }])
+    mockDb.suspenseItem.groupBy.mockResolvedValue([{ severity: "MEDIUM", _count: { _all: 1 } }])
     mockDb.reconciliationRun.findFirst.mockResolvedValue(
       signedReconciliationRun({
         certificateHash: null,
@@ -389,6 +417,8 @@ describe("proof trail service", () => {
   })
 
   it("blocks payment transaction proof when open suspense or exceptions remain", async () => {
+    mockDb.paymentException.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 1 } }])
+    mockDb.suspenseItem.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 1 } }])
     mockDb.paymentTransaction.findFirst.mockResolvedValue(
       reconciledPaymentTransaction({
         state: PaymentTransactionState.SUSPENSE,
@@ -451,6 +481,7 @@ describe("proof trail service", () => {
   })
 
   it("blocks close proof when unresolved findings remain", async () => {
+    mockDb.closeAssuranceFinding.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 1 } }])
     mockDb.closeRun.findFirst.mockResolvedValue(
       certifiedCloseRun({
         status: CloseRunStatus.READY,
@@ -480,6 +511,77 @@ describe("proof trail service", () => {
         expect.objectContaining({ id: "close-open-findings" }),
       ]),
     )
+  })
+
+  it.each(["reconciliation.run", "payment.transaction"] as const)("grades %s from complete counts rather than displayed records", async (subjectType) => {
+    mockDb.reconciliationRun.findFirst.mockResolvedValue(signedReconciliationRun())
+    mockDb.paymentTransaction.findFirst.mockResolvedValue(reconciledPaymentTransaction())
+    mockDb.paymentException.groupBy.mockResolvedValue([
+      { severity: "LOW", _count: { _all: 14 } }, { severity: "CRITICAL", _count: { _all: 1 } },
+    ])
+    mockDb.suspenseItem.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 12 } }])
+    const subjectId = subjectType === "reconciliation.run" ? "recon-1" : "pt-1"
+    const result = await getProofTrail({ organizationId: "org-1", subjectType, subjectId })
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers.some(b => b.detail.startsWith("15 ") && b.severity === "high")).toBe(true)
+    expect(result.blockers.some(b => b.detail.startsWith("12 ") && b.severity === "high")).toBe(true)
+    const relation = subjectType === "reconciliation.run" ? { reconciliationRunId: subjectId } : { paymentTransactionId: subjectId }
+    for (const query of [mockDb.paymentException.groupBy, mockDb.suspenseItem.groupBy]) {
+      expect(query).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", ...relation, status: { in: expect.arrayContaining(["OPEN", "REOPENED"]) } }) }))
+      expect(query.mock.calls[0][0]).not.toHaveProperty("take")
+    }
+  })
+
+  it("uses complete close counts while preserving the bounded node list", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(certifiedCloseRun({ status: CloseRunStatus.READY, packExports: [] }))
+    mockDb.closeAssuranceFinding.groupBy.mockResolvedValue([{ severity: "HIGH", _count: { _all: 23 } }])
+    mockDb.closeChecklistItem.groupBy.mockResolvedValue([{ severity: "CRITICAL", _count: { _all: 21 } }])
+    mockDb.closeEvidenceItem.count.mockResolvedValue(24)
+    const result = await getProofTrail({ organizationId: "org-1", subjectType: "close.run", subjectId: "close-1" })
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers.map(b => b.detail)).toEqual(expect.arrayContaining([
+      "23 close assurance finding remains unresolved.", "21 checklist item failed or is unavailable.", "24 close evidence item is unavailable.",
+    ]))
+    for (const query of [mockDb.closeAssuranceFinding.groupBy, mockDb.closeChecklistItem.groupBy, mockDb.closeEvidenceItem.count, mockDb.closePackExport.findMany]) {
+      expect(query).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", closeRunId: "close-1" }) }))
+    }
+    expect(mockDb.closeRun.findFirst.mock.calls[0][0].include.checklistItems.take).toBe(20)
+  })
+
+  it("recognizes a certified export outside the displayed sample", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(certifiedCloseRun({ status: CloseRunStatus.EXPORTED, packExports: [] }))
+    const result = await getProofTrail({ organizationId: "org-1", subjectType: "close.run", subjectId: "close-1" })
+    expect(result.evidenceGrade).toBe("certified")
+    expect(mockDb.closePackExport.findMany).toHaveBeenCalledWith({ where: { organizationId: "org-1", closeRunId: "close-1", isCertified: true }, select: { metadata: true } })
+  })
+
+  it.each(["journal.entry", "payment.transaction"] as const)("blocks %s for failed events outside the displayed sample", async (subjectType) => {
+    mockDb.journalEntry.findFirst.mockResolvedValue(postedJournalEntry())
+    mockDb.paymentTransaction.findFirst.mockResolvedValue(reconciledPaymentTransaction({ sourceType: "PAYMENT_RECONCILIATION" }))
+    mockDb.businessEvent.count.mockResolvedValue(2)
+    mockDb.businessEvent.findMany.mockResolvedValue([{ id: "recent", status: BusinessEventStatus.APPLIED, eventType: "owned.event", failureMessage: null }])
+    const result = await getProofTrail({ organizationId: "org-1", subjectType, subjectId: subjectType === "journal.entry" ? "je-1" : "pt-1" })
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers).toEqual(expect.arrayContaining([expect.objectContaining({ id: "business-events-outside-display", detail: "2 failed or rejected business event(s) are outside the displayed evidence sample." })]))
+    expect(mockDb.businessEvent.count).toHaveBeenCalledWith({ where: {
+      organizationId: "org-1", sourceType: subjectType === "journal.entry" ? "POS_SALE" : "PAYMENT_RECONCILIATION",
+      sourceId: subjectType === "journal.entry" ? "sale-1" : "statement-line-1",
+      status: { in: ["FAILED", "REJECTED"] }, id: { notIn: ["recent"] },
+    } })
+  })
+
+  it("does not query related evidence for a missing or foreign subject", async () => {
+    mockDb.closeRun.findFirst.mockResolvedValue(null)
+    await expect(getProofTrail({ organizationId: "foreign", subjectType: "close.run", subjectId: "close-1" })).rejects.toThrow("not found")
+    expect(mockDb.closeAssuranceFinding.groupBy).not.toHaveBeenCalled()
+    expect(mockDb.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("propagates aggregate failures instead of reporting zero blockers", async () => {
+    mockDb.reconciliationRun.findFirst.mockResolvedValue(signedReconciliationRun())
+    mockDb.paymentException.groupBy.mockRejectedValueOnce(new Error("evidence database unavailable"))
+    await expect(getProofTrail({ organizationId: "org-1", subjectType: "reconciliation.run", subjectId: "recon-1" })).rejects.toThrow("evidence database unavailable")
+    expect(mockDb.auditLog.create).not.toHaveBeenCalled()
   })
 })
 

@@ -1,0 +1,160 @@
+{
+  "capturedAt": "2026-09-30T20:50:45.898Z",
+  "status": "READ_ONLY_SCAN_COMPLETE",
+  "scope": "Aggregate diagnostics on the configured loopback database only; no record identifiers, mutations, repair or production inference.",
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "repositoryMigrationCount": 87,
+  "repositoryMigrationSetSha256": "b3b1ee08e6be1b76702bc027b3dd24bbe9cb62779689c9d9c8e5561a68f2f77d",
+  "assumptions": [
+    "Posted population includes POSTED and REVERSED journal entries.",
+    "Stored amounts are Decimal(18,2); conversion candidates use ROUND(amount * stored exchangeRate, 2).",
+    "Current settings cannot reconstruct the settings effective when historical journals were posted.",
+    "Foreign denomination with unit rate is a review candidate, not proof of an incorrect rate.",
+    "Absence of candidates on a local fixture does not close implementation or production-data risk."
+  ],
+  "checks": [
+    {
+      "name": "postedPopulation",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS all_journal_entries,\n    COUNT(*) FILTER (WHERE status::text IN ('POSTED','REVERSED'))::text AS posted_or_reversed_entries,\n    COUNT(*) FILTER (WHERE status::text = 'DRAFT')::text AS draft_entries,\n    COUNT(*) FILTER (WHERE status::text = 'VOIDED')::text AS voided_entries FROM public.journal_entries",
+      "rows": [
+        {
+          "all_journal_entries": "141",
+          "posted_or_reversed_entries": "137",
+          "draft_entries": "2",
+          "voided_entries": "2"
+        }
+      ]
+    },
+    {
+      "name": "postedLineBaseAndDenomination",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS posted_or_reversed_lines,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)::text AS missing_either_base_amount,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NULL)::text AS missing_base_debit,\n    COUNT(*) FILTER (WHERE l.\"baseCredit\" IS NULL)::text AS missing_base_credit,\n    COUNT(*) FILTER (WHERE s.id IS NULL)::text AS missing_current_accounting_settings,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL)::text AS current_settings_comparison_denominator,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL AND (s.\"roundingScale\" <> 2 OR s.\"roundingMode\" <> 'HALF_UP'))::text AS lines_with_other_current_rounding_policy,\n    COUNT(*) FILTER (WHERE l.\"exchangeRate\" <= 0)::text AS nonpositive_stored_rate,\n    COUNT(*) FILTER (WHERE l.\"exchangeRate\" <> 1)::text AS nonunit_stored_rate,\n    COUNT(*) FILTER (WHERE UPPER(TRIM(l.currency)) <> UPPER(TRIM(j.currency)))::text AS line_header_currency_mismatch,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL AND UPPER(TRIM(l.currency)) = UPPER(TRIM(s.\"baseCurrency\")))::text AS current_base_denomination_lines,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL AND UPPER(TRIM(l.currency)) = UPPER(TRIM(s.\"baseCurrency\")) AND l.\"exchangeRate\" <> 1)::text AS current_base_denomination_nonunit_rate_candidates,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL AND UPPER(TRIM(l.currency)) <> UPPER(TRIM(s.\"baseCurrency\")))::text AS current_foreign_denomination_lines,\n    COUNT(*) FILTER (WHERE s.id IS NOT NULL AND UPPER(TRIM(l.currency)) <> UPPER(TRIM(s.\"baseCurrency\")) AND l.\"exchangeRate\" = 1)::text AS current_foreign_denomination_unit_rate_review_candidates,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NOT NULL AND l.\"baseCredit\" IS NOT NULL)::text AS complete_base_conversion_denominator,\n    COUNT(*) FILTER (WHERE l.\"baseDebit\" IS NOT NULL AND l.\"baseCredit\" IS NOT NULL AND\n      (l.\"baseDebit\" <> ROUND(l.debit * l.\"exchangeRate\", 2) OR l.\"baseCredit\" <> ROUND(l.credit * l.\"exchangeRate\", 2)))::text AS stored_rate_conversion_candidates,\n    COUNT(*) FILTER (WHERE l.\"organizationId\" <> j.\"organizationId\")::text AS line_header_organization_mismatch\n    FROM public.journal_entry_lines l JOIN public.journal_entries j ON j.id = l.\"journalEntryId\"\n    LEFT JOIN public.organization_accounting_settings s ON s.\"organizationId\" = j.\"organizationId\"\n    WHERE j.status::text IN ('POSTED','REVERSED')",
+      "rows": [
+        {
+          "posted_or_reversed_lines": "364",
+          "missing_either_base_amount": "120",
+          "missing_base_debit": "120",
+          "missing_base_credit": "120",
+          "missing_current_accounting_settings": "0",
+          "current_settings_comparison_denominator": "364",
+          "lines_with_other_current_rounding_policy": "0",
+          "nonpositive_stored_rate": "0",
+          "nonunit_stored_rate": "8",
+          "line_header_currency_mismatch": "0",
+          "current_base_denomination_lines": "356",
+          "current_base_denomination_nonunit_rate_candidates": "0",
+          "current_foreign_denomination_lines": "8",
+          "current_foreign_denomination_unit_rate_review_candidates": "0",
+          "complete_base_conversion_denominator": "244",
+          "stored_rate_conversion_candidates": "0",
+          "line_header_organization_mismatch": "0"
+        }
+      ]
+    },
+    {
+      "name": "suspiciousManualReversals",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS posted_or_reversed_entries_with_explicit_reversal_link,\n    COUNT(*) FILTER (WHERE o.id IS NULL)::text AS unresolved_original_links,\n    COUNT(*) FILTER (WHERE r.\"sourceType\"::text = 'MANUAL')::text AS manual_reversal_denominator,\n    COUNT(*) FILTER (WHERE r.\"sourceType\"::text = 'MANUAL' AND o.\"sourceType\" IS NOT NULL AND o.\"sourceType\"::text <> 'MANUAL')::text AS source_owned_to_manual_reversal_candidates,\n    COUNT(*) FILTER (WHERE r.\"sourceType\"::text = 'MANUAL' AND o.\"sourceType\" IS NULL)::text AS manual_reversals_with_unknown_original_source,\n    COUNT(*) FILTER (WHERE o.id IS NOT NULL AND o.\"organizationId\" <> r.\"organizationId\")::text AS reversal_original_organization_mismatch\n    FROM public.journal_entries r LEFT JOIN public.journal_entries o ON o.id = r.\"reversalOfEntryId\"\n    WHERE r.status::text IN ('POSTED','REVERSED') AND r.\"reversalOfEntryId\" IS NOT NULL",
+      "rows": [
+        {
+          "posted_or_reversed_entries_with_explicit_reversal_link": "2",
+          "unresolved_original_links": "0",
+          "manual_reversal_denominator": "0",
+          "source_owned_to_manual_reversal_candidates": "0",
+          "manual_reversals_with_unknown_original_source": "0",
+          "reversal_original_organization_mismatch": "0"
+        }
+      ]
+    },
+    {
+      "name": "manualReversalSourceLinks",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS posted_or_reversed_manual_reversal_entries,\n    COUNT(*) FILTER (WHERE r.\"sourceId\" IS NOT NULL)::text AS source_id_link_denominator,\n    COUNT(*) FILTER (WHERE o.id IS NOT NULL)::text AS source_id_resolves_to_journal_entry,\n    COUNT(*) FILTER (WHERE o.\"sourceType\" IS NOT NULL AND o.\"sourceType\"::text <> 'MANUAL')::text AS source_id_resolves_to_source_owned_original,\n    COUNT(*) FILTER (WHERE o.id IS NOT NULL AND r.\"reversalOfEntryId\" IS DISTINCT FROM o.id)::text AS source_id_and_explicit_reversal_disagree\n    FROM public.journal_entries r LEFT JOIN public.journal_entries o ON o.id = r.\"sourceId\"\n    WHERE r.status::text IN ('POSTED','REVERSED') AND r.\"sourceType\"::text = 'MANUAL' AND r.\"postingPurpose\"::text = 'REVERSAL'",
+      "rows": [
+        {
+          "posted_or_reversed_manual_reversal_entries": "0",
+          "source_id_link_denominator": "0",
+          "source_id_resolves_to_journal_entry": "0",
+          "source_id_resolves_to_source_owned_original": "0",
+          "source_id_and_explicit_reversal_disagree": "0"
+        }
+      ]
+    },
+    {
+      "name": "fiscalPeriodBounds",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS accounting_periods,\n    COUNT(*) FILTER (WHERE f.id IS NOT NULL)::text AS fiscal_year_bound_comparison_denominator,\n    COUNT(*) FILTER (WHERE f.id IS NULL)::text AS missing_fiscal_year,\n    COUNT(*) FILTER (WHERE p.\"startDate\" < f.\"startDate\" OR p.\"endDate\" > f.\"endDate\")::text AS periods_outside_fiscal_year,\n    COUNT(*) FILTER (WHERE p.\"startDate\" > p.\"endDate\")::text AS reversed_period_bounds,\n    COUNT(*) FILTER (WHERE f.\"startDate\" > f.\"endDate\")::text AS periods_linked_to_reversed_fiscal_year_bounds,\n    COUNT(*) FILTER (WHERE p.\"organizationId\" <> f.\"organizationId\")::text AS period_year_organization_mismatch\n    FROM public.accounting_periods p LEFT JOIN public.fiscal_years f ON f.id = p.\"fiscalYearId\"",
+      "rows": [
+        {
+          "accounting_periods": "24",
+          "fiscal_year_bound_comparison_denominator": "24",
+          "missing_fiscal_year": "0",
+          "periods_outside_fiscal_year": "0",
+          "reversed_period_bounds": "0",
+          "periods_linked_to_reversed_fiscal_year_bounds": "0",
+          "period_year_organization_mismatch": "0"
+        }
+      ]
+    },
+    {
+      "name": "postedEntryPeriodBounds",
+      "status": "EXECUTED",
+      "sql": "SELECT COUNT(*)::text AS posted_or_reversed_entries,\n    COUNT(*) FILTER (WHERE p.id IS NOT NULL)::text AS period_bound_comparison_denominator,\n    COUNT(*) FILTER (WHERE p.id IS NULL)::text AS missing_period,\n    COUNT(*) FILTER (WHERE j.\"entryDate\" < p.\"startDate\" OR j.\"entryDate\" > p.\"endDate\")::text AS entries_outside_assigned_period,\n    COUNT(*) FILTER (WHERE j.\"organizationId\" <> p.\"organizationId\")::text AS entry_period_organization_mismatch\n    FROM public.journal_entries j LEFT JOIN public.accounting_periods p ON p.id = j.\"periodId\"\n    WHERE j.status::text IN ('POSTED','REVERSED')",
+      "rows": [
+        {
+          "posted_or_reversed_entries": "137",
+          "period_bound_comparison_denominator": "137",
+          "missing_period": "0",
+          "entries_outside_assigned_period": "22",
+          "entry_period_organization_mismatch": "0"
+        }
+      ]
+    },
+    {
+      "name": "journalBalances",
+      "status": "EXECUTED",
+      "sql": "WITH posted AS (SELECT id FROM public.journal_entries WHERE status::text IN ('POSTED','REVERSED')),\n    totals AS (SELECT j.id, COUNT(l.id) AS line_count,\n      COUNT(*) FILTER (WHERE l.id IS NOT NULL AND (l.\"baseDebit\" IS NULL OR l.\"baseCredit\" IS NULL)) AS null_base_lines,\n      SUM(l.\"baseDebit\") AS base_debit, SUM(l.\"baseCredit\") AS base_credit\n      FROM posted j LEFT JOIN public.journal_entry_lines l ON l.\"journalEntryId\" = j.id GROUP BY j.id),\n    nominal AS (SELECT l.\"journalEntryId\", l.currency, SUM(l.debit) AS debit, SUM(l.credit) AS credit\n      FROM public.journal_entry_lines l JOIN posted j ON j.id = l.\"journalEntryId\" GROUP BY l.\"journalEntryId\", l.currency)\n    SELECT (SELECT COUNT(*)::text FROM posted) AS posted_or_reversed_entries,\n      (SELECT COUNT(*)::text FROM totals WHERE line_count = 0) AS entries_without_lines,\n      (SELECT COUNT(*)::text FROM nominal) AS nominal_currency_group_denominator,\n      (SELECT COUNT(*)::text FROM nominal WHERE debit <> credit) AS unbalanced_nominal_currency_groups,\n      (SELECT COUNT(DISTINCT \"journalEntryId\")::text FROM nominal WHERE debit <> credit) AS entries_with_unbalanced_nominal_group,\n      (SELECT COUNT(*)::text FROM totals WHERE line_count > 0 AND null_base_lines = 0) AS complete_base_entry_denominator,\n      (SELECT COUNT(*)::text FROM totals WHERE line_count > 0 AND null_base_lines = 0 AND base_debit <> base_credit) AS unbalanced_complete_base_entries,\n      (SELECT COUNT(*)::text FROM totals WHERE null_base_lines > 0) AS entries_not_base_testable",
+      "rows": [
+        {
+          "posted_or_reversed_entries": "137",
+          "entries_without_lines": "0",
+          "nominal_currency_group_denominator": "137",
+          "unbalanced_nominal_currency_groups": "0",
+          "entries_with_unbalanced_nominal_group": "0",
+          "complete_base_entry_denominator": "113",
+          "unbalanced_complete_base_entries": "0",
+          "entries_not_base_testable": "24"
+        }
+      ]
+    },
+    {
+      "name": "migrationComparison",
+      "status": "EXECUTED",
+      "sql": "WITH expected AS (SELECT * FROM jsonb_to_recordset($1::jsonb) AS e(migration_name text, checksum text)),\n    applied AS (SELECT migration_name, checksum FROM public._prisma_migrations WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL)\n    SELECT (SELECT COUNT(*)::text FROM expected) AS repository_migrations,\n      (SELECT COUNT(*)::text FROM applied) AS successful_unrolled_back_migration_rows,\n      (SELECT COUNT(DISTINCT migration_name)::text FROM applied) AS successful_distinct_migrations,\n      (SELECT COUNT(*)::text FROM expected e WHERE NOT EXISTS (SELECT 1 FROM applied a WHERE a.migration_name = e.migration_name)) AS repository_migrations_not_applied,\n      (SELECT COUNT(*)::text FROM applied a WHERE NOT EXISTS (SELECT 1 FROM expected e WHERE e.migration_name = a.migration_name)) AS applied_migrations_absent_from_repository,\n      (SELECT COUNT(*)::text FROM applied a JOIN expected e USING (migration_name) WHERE a.checksum <> e.checksum) AS checksum_mismatch_rows,\n      (SELECT COUNT(*)::text FROM public._prisma_migrations WHERE finished_at IS NULL AND rolled_back_at IS NULL) AS unfinished_unrolled_back_rows",
+      "rows": [
+        {
+          "repository_migrations": "87",
+          "successful_unrolled_back_migration_rows": "87",
+          "successful_distinct_migrations": "87",
+          "repository_migrations_not_applied": "0",
+          "applied_migrations_absent_from_repository": "0",
+          "checksum_mismatch_rows": "0",
+          "unfinished_unrolled_back_rows": "0"
+        }
+      ]
+    }
+  ],
+  "targetKind": "configured_loopback",
+  "targetFingerprint": "ef40937645117a57260e1740228ca54ca2070066e158394da9f23d93b79658d9",
+  "snapshot": {
+    "as_of": "2026-09-30T20:50:46.507Z",
+    "read_only": "on",
+    "isolation": "repeatable read",
+    "statement_timeout": "15s",
+    "lock_timeout": "2s"
+  },
+  "rollbackConfirmed": true,
+  "completedAt": "2026-09-30T20:50:46.786Z",
+  "schemaUnchangedDuringScan": true
+}

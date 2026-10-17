@@ -1,5 +1,7 @@
 "use client";
 
+import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -65,19 +67,19 @@ function statusTone(value: string | null | undefined) {
   return "border-slate-400/30 bg-slate-400/10 text-slate-100";
 }
 
-function Badge({ value }: { value: string | null | undefined }) {
+function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
   return (
     <span
       className={`inline-flex min-h-7 max-w-full items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${statusTone(value)}`}
     >
-      <span className="truncate">{value ?? "Pending"}</span>
+      <span className="truncate">{payrollStatusText(value, locale)}</span>
     </span>
   );
 }
 
-function dateLabel(value: string | null | undefined) {
-  if (!value) return "Open";
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(
+function dateLabel(value: string | null | undefined, locale: Locale = "en") {
+  if (!value) return payrollUiText("Open", locale);
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
     new Date(value),
   );
 }
@@ -114,15 +116,14 @@ function Metric({
   );
 }
 
-function ErrorPanel({ message }: { message: string }) {
+function ErrorPanel({ locale = "en", message }: { message: string } & { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-rose-400/30 bg-rose-950/30 p-5 text-rose-50">
       <div className="flex items-start gap-3">
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
         <div className="min-w-0">
           <h1 className="text-base font-semibold">
-            Payroll declarations unavailable
-          </h1>
+             {payrollUiText("Payroll declarations unavailable", locale)} </h1>
           <p className="mt-1 break-words text-sm text-rose-100">{message}</p>
         </div>
       </div>
@@ -130,20 +131,18 @@ function ErrorPanel({ message }: { message: string }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ locale = "en" }: { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05] p-5 text-slate-200">
       <h1 className="text-base font-semibold text-white">
-        Payroll declarations
-      </h1>
+         {payrollUiText("Payroll declarations", locale)} </h1>
       <p className="mt-1 text-sm text-slate-400">
-        No payroll declarations are available for the selected scope.
-      </p>
+         {payrollUiText("No payroll declarations are available for the selected scope.", locale)} </p>
     </section>
   );
 }
 
-function ProofList({ declaration }: { declaration: DeclarationRow }) {
+function ProofList({ locale = "en", declaration }: { declaration: DeclarationRow } & { locale?: Locale }) {
   const rows = [
     ["Payload", declaration.proof.payloadHash],
     ["Country pack", declaration.proof.countryPackResolutionHash],
@@ -164,7 +163,7 @@ function ProofList({ declaration }: { declaration: DeclarationRow }) {
             {label}
           </span>
           <span className="min-w-0 break-all text-xs text-slate-200">
-            {value || "Pending"}
+            {value || payrollUiText("Pending", locale)}
           </span>
         </div>
       ))}
@@ -172,7 +171,7 @@ function ProofList({ declaration }: { declaration: DeclarationRow }) {
         <div className="rounded-md border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs text-cyan-100">
           {declaration.proof.latestTransition} /{" "}
           {declaration.proof.latestAuthorityStatus ?? "status pending"} /{" "}
-          {dateLabel(declaration.proof.latestEvidenceCapturedAt)}
+          {dateLabel(declaration.proof.latestEvidenceCapturedAt, locale)}
         </div>
       ) : null}
     </div>
@@ -236,88 +235,88 @@ function declarationProofSubject(
         : []),
     ],
     rows: [
-      { label: "Authority", value: declaration.authority },
-      { label: "Declaration type", value: declaration.declarationType },
+      { label: payrollUiText("Authority", locale), value: declaration.authority },
+      { label: payrollUiText("Declaration type", locale), value: declaration.declarationType },
       {
-        label: "Amount",
+        label: payrollUiText("Amount", locale),
         value: `${declaration.amount} ${declaration.currency}`,
       },
-      { label: "Period start", value: declaration.periodStart },
-      { label: "Period end", value: declaration.periodEnd },
-      { label: "Due date", value: declaration.dueDate },
-      { label: "Run", value: declaration.payrollRun.runNumber },
-      { label: "Run status", value: declaration.payrollRun.status },
-      { label: "Run evidence", value: declaration.payrollRun.evidenceHash },
-      { label: "Run document", value: declaration.payrollRun.documentHash },
+      { label: payrollUiText("Period start", locale), value: declaration.periodStart },
+      { label: payrollUiText("Period end", locale), value: declaration.periodEnd },
+      { label: payrollUiText("Due date", locale), value: declaration.dueDate },
+      { label: payrollUiText("Run", locale), value: declaration.payrollRun.runNumber },
+      { label: payrollUiText("Run status", locale), value: declaration.payrollRun.status },
+      { label: payrollUiText("Run evidence", locale), value: declaration.payrollRun.evidenceHash },
+      { label: payrollUiText("Run document", locale), value: declaration.payrollRun.documentHash },
       {
-        label: "Ledger batch",
+        label: payrollUiText("Ledger batch", locale),
         value: declaration.payrollRun.ledgerPostingBatchId,
       },
-      { label: "Journal", value: declaration.payrollRun.journalEntryId },
+      { label: payrollUiText("Journal", locale), value: declaration.payrollRun.journalEntryId },
       {
-        label: "Source link",
+        label: payrollUiText("Source link", locale),
         value: declaration.payrollRun.accountingSourceLinkId,
       },
-      { label: "Country", value: declaration.country.countryCode },
-      { label: "Country pack", value: declaration.country.countryPackVersion },
+      { label: payrollUiText("Country", locale), value: declaration.country.countryCode },
+      { label: payrollUiText("Country pack", locale), value: declaration.country.countryPackVersion },
       {
-        label: "Country pack hash",
+        label: payrollUiText("Country pack hash", locale),
         value: declaration.country.countryPackResolutionHash,
       },
-      { label: "Payload hash", value: declaration.proof.payloadHash },
+      { label: payrollUiText("Payload hash", locale), value: declaration.proof.payloadHash },
       {
-        label: "Submitted payload",
+        label: payrollUiText("Submitted payload", locale),
         value: declaration.proof.submittedPayloadHash,
       },
-      { label: "Latest evidence", value: declaration.proof.latestEvidenceHash },
-      { label: "Source register", value: declaration.proof.sourceRegisterHash },
+      { label: payrollUiText("Latest evidence", locale), value: declaration.proof.latestEvidenceHash },
+      { label: payrollUiText("Source register", locale), value: declaration.proof.sourceRegisterHash },
       {
-        label: "Register proof present",
+        label: payrollUiText("Register proof present", locale),
         value: declaration.proof.sourceRegisterProofPresent,
       },
-      { label: "Receipt", value: declaration.proof.portalReceiptHash },
+      { label: payrollUiText("Receipt", locale), value: declaration.proof.portalReceiptHash },
       {
-        label: "Authority response",
+        label: payrollUiText("Authority response", locale),
         value: declaration.proof.authorityResponseHash,
       },
       {
-        label: "Authority reference",
+        label: payrollUiText("Authority reference", locale),
         value: declaration.proof.latestAuthorityReference,
       },
       {
-        label: "Authority channel",
+        label: payrollUiText("Authority channel", locale),
         value: declaration.proof.latestAuthorityChannel,
       },
       {
-        label: "Authority environment",
+        label: payrollUiText("Authority environment", locale),
         value: declaration.proof.latestAuthorityEnvironment,
       },
       {
-        label: "Automation status",
+        label: payrollUiText("Automation status", locale),
         value: declaration.automation.automationCapabilityStatus,
       },
       {
-        label: "Production adapter",
+        label: payrollUiText("Production adapter", locale),
         value: declaration.automation.productionSubmissionSupported,
       },
       {
-        label: "Manual workflow",
+        label: payrollUiText("Manual workflow", locale),
         value: declaration.automation.manualAuthorityWorkflowOnly,
       },
       {
-        label: "Adapter enqueue gate",
+        label: payrollUiText("Adapter enqueue gate", locale),
         value: declaration.adapterExecution.canEnqueue ? "READY" : "BLOCKED",
       },
       {
-        label: "Adapter enqueue status",
+        label: payrollUiText("Adapter enqueue status", locale),
         value: declaration.adapterExecution.status,
       },
       {
-        label: "Adapter enqueue evidence",
+        label: payrollUiText("Adapter enqueue evidence", locale),
         value: declaration.adapterExecution.queuedEvidenceId,
       },
       {
-        label: "Adapter enqueue correlation",
+        label: payrollUiText("Adapter enqueue correlation", locale),
         value: declaration.adapterExecution.correlationId,
       },
       ...historyRows,
@@ -325,12 +324,11 @@ function declarationProofSubject(
     ],
   };
 }
-function Blockers({ declaration }: { declaration: DeclarationRow }) {
+function Blockers({ locale = "en", declaration }: { declaration: DeclarationRow } & { locale?: Locale }) {
   if (!declaration.blockers.length) {
     return (
       <p className="text-xs text-emerald-100">
-        No declaration blocker is visible.
-      </p>
+         {payrollUiText("No declaration blocker is visible.", locale)} </p>
     );
   }
 
@@ -342,7 +340,7 @@ function Blockers({ declaration }: { declaration: DeclarationRow }) {
           className="rounded-md border border-amber-400/20 bg-amber-400/10 p-3 text-xs text-amber-50"
         >
           <div className="flex flex-wrap items-center gap-2">
-            <Badge value={blocker.severity} />
+            <Badge locale={locale} value={blocker.severity} />
             <p className="font-semibold text-white">{blocker.title}</p>
           </div>
           <p className="mt-2 text-amber-100">{blocker.detail}</p>
@@ -353,7 +351,7 @@ function Blockers({ declaration }: { declaration: DeclarationRow }) {
   );
 }
 
-function NextActions({ declaration }: { declaration: DeclarationRow }) {
+function NextActions({ locale = "en", declaration }: { declaration: DeclarationRow } & { locale?: Locale }) {
   const manualActions = declaration.nextActions.length ? (
     <div className="flex flex-col gap-2">
       {declaration.nextActions.map((action) => (
@@ -366,23 +364,23 @@ function NextActions({ declaration }: { declaration: DeclarationRow }) {
             {action.requiredPermission}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {action.requiresFreshAuth ? <Badge value="Fresh auth" /> : null}
+            {action.requiresFreshAuth ? <Badge locale={locale} value="Fresh auth" /> : null}
             {action.requiresSeparateApprover ? (
-              <Badge value="Maker-checker" />
+              <Badge locale={locale} value="Maker-checker" />
             ) : null}
-            {action.nextStatus ? <Badge value={action.nextStatus} /> : null}
+            {action.nextStatus ? <Badge locale={locale} value={action.nextStatus} /> : null}
           </div>
         </div>
       ))}
     </div>
   ) : (
-    <Badge value="No manual action" />
+    <Badge locale={locale} value="No manual action" />
   );
 
   return (
     <div className="flex flex-col gap-2">
       {manualActions}
-      <PayrollDeclarationAuthorityExecutionPanel declaration={declaration} />
+      <PayrollDeclarationAuthorityExecutionPanel locale={locale} declaration={declaration} />
     </div>
   );
 }
@@ -397,39 +395,36 @@ export default function PayrollDeclarationWorkbench({
     searchText: (declaration) => JSON.stringify(declaration),
     dateValue: (declaration) => declaration.dueDate,
     sortOptions: [
-      { key: "declaration", label: "Declaration", value: (declaration) => declaration.authority },
-      { key: "due-date", label: "Due date", value: (declaration) => declaration.dueDate },
-      { key: "run", label: "Payroll run", value: (declaration) => declaration.payrollRun.runNumber },
-      { key: "amount", label: "Amount", value: (declaration) => Number(declaration.amount) },
-      { key: "status", label: "Status", value: (declaration) => declaration.status },
+      { key: "declaration", label: payrollUiText("Declaration", locale), value: (declaration) => declaration.authority },
+      { key: "due-date", label: payrollUiText("Due date", locale), value: (declaration) => declaration.dueDate },
+      { key: "run", label: payrollUiText("Payroll run", locale), value: (declaration) => declaration.payrollRun.runNumber },
+      { key: "amount", label: payrollUiText("Amount", locale), value: (declaration) => Number(declaration.amount) },
+      { key: "status", label: payrollUiText("Status", locale), value: (declaration) => declaration.status },
     ],
   });
 
-  if (error) return <ErrorPanel message={error} />;
-  if (!data) return <EmptyState />;
+  if (error) return <ErrorPanel locale={locale} message={error} />;
+  if (!data) return <EmptyState locale={locale} />;
 
   return (
     <main className="flex min-w-0 flex-col gap-4 text-slate-100">
       <section className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">
-            Payroll declarations
-          </p>
+             {payrollUiText("Payroll declarations", locale)} </p>
           <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-            Declaration evidence workbench
-          </h1>
+             {payrollUiText("Declaration evidence workbench", locale)} </h1>
           <p className="mt-2 max-w-4xl text-sm text-slate-300">
-            Manual authority lifecycle, source register proof, adapter
-            readiness, and close-impact blockers as of {dateLabel(data.asOf)}.
+             {payrollUiText("Manual authority lifecycle, source register proof, adapter readiness, and close-impact blockers as of", locale)} {dateLabel(data.asOf, locale)}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge
+          <Badge locale={locale}
             value={
               data.summary.blockedDeclarations > 0 ? "ACTION_REQUIRED" : "READY"
             }
           />
-          <Badge
+          <Badge locale={locale}
             value={
               data.summary.productionSupportedEvidenceCount > 0
                 ? "ADAPTER_SUPPORTED"
@@ -440,50 +435,48 @@ export default function PayrollDeclarationWorkbench({
             href={localizePath("/dashboard/payroll/register", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Register
-          </Link>
+             {payrollUiText("Register", locale)} </Link>
           <Link
             href={localizePath("/dashboard/payroll/payments", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Payments
-          </Link>
+             {payrollUiText("Payments", locale)} </Link>
         </div>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <Metric
-          label="Declarations"
+          label={payrollUiText("Declarations", locale)}
           value={data.summary.totalDeclarations}
           icon={FileText}
           tone="bg-cyan-400/12 text-cyan-200"
         />
         <Metric
-          label="Active"
+          label={payrollUiText("Active", locale)}
           value={data.summary.activeDeclarations}
           icon={ReceiptText}
           tone="bg-amber-400/12 text-amber-200"
         />
         <Metric
-          label="Rejected"
+          label={payrollUiText("Rejected", locale)}
           value={data.summary.rejectedDeclarations}
           icon={AlertTriangle}
           tone="bg-rose-400/12 text-rose-200"
         />
         <Metric
-          label="Missing register"
+          label={payrollUiText("Missing register", locale)}
           value={data.summary.missingRegisterProofCount}
           icon={Fingerprint}
           tone="bg-violet-400/12 text-violet-200"
         />
         <Metric
-          label="Evidence"
+          label={payrollUiText("Evidence", locale)}
           value={data.summary.evidenceCount}
           icon={ShieldCheck}
           tone="bg-emerald-400/12 text-emerald-200"
         />
         <Metric
-          label="Amount"
+          label={payrollUiText("Amount", locale)}
           value={data.summary.amountInScope}
           icon={Landmark}
           tone="bg-sky-400/12 text-sky-200"
@@ -494,24 +487,21 @@ export default function PayrollDeclarationWorkbench({
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">
-            Declaration lifecycle
-          </h2>
+             {payrollUiText("Declaration lifecycle", locale)} </h2>
         </div>
-        <HrPayrollTableControls table={declarationTable} locale={locale} tableLabel="payroll declarations" />
+        <HrPayrollTableControls table={declarationTable} locale={locale} tableLabel={payrollUiText("payroll declarations", locale)} />
         <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1440px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
                 <th className="w-[230px] px-4 py-3 font-semibold">
-                  Declaration
-                </th>
-                <th className="w-[210px] px-4 py-3 font-semibold">Run</th>
-                <th className="w-[160px] px-4 py-3 font-semibold">Status</th>
-                <th className="w-[300px] px-4 py-3 font-semibold">Proof</th>
-                <th className="w-[260px] px-4 py-3 font-semibold">Blockers</th>
+                   {payrollUiText("Declaration", locale)} </th>
+                <th className="w-[210px] px-4 py-3 font-semibold">{payrollUiText("Run", locale)}</th>
+                <th className="w-[160px] px-4 py-3 font-semibold">{payrollUiText("Status", locale)}</th>
+                <th className="w-[300px] px-4 py-3 font-semibold">{payrollUiText("Proof", locale)}</th>
+                <th className="w-[260px] px-4 py-3 font-semibold">{payrollUiText("Blockers", locale)}</th>
                 <th className="w-[260px] px-4 py-3 font-semibold">
-                  Next action
-                </th>
+                   {payrollUiText("Next action", locale)} </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -529,7 +519,7 @@ export default function PayrollDeclarationWorkbench({
                         {declaration.amount} {declaration.currency}
                       </p>
                       <p className="mt-2 text-xs text-slate-500">
-                        Due {dateLabel(declaration.dueDate)}
+                         {payrollUiText("Due", locale)} {dateLabel(declaration.dueDate, locale)}
                       </p>
                     </td>
                     <td className="px-4 py-3">
@@ -540,12 +530,12 @@ export default function PayrollDeclarationWorkbench({
                         {declaration.payrollRun.period.name}
                       </p>
                       <p className="mt-1 text-xs text-slate-500">
-                        {dateLabel(declaration.payrollRun.period.periodStart)}{" "}
-                        to {dateLabel(declaration.payrollRun.period.periodEnd)}
+                        {dateLabel(declaration.payrollRun.period.periodStart, locale)}{" "}
+                         {payrollUiText("to", locale)} {dateLabel(declaration.payrollRun.period.periodEnd, locale)}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <Badge value={declaration.payrollRun.status} />
-                        <Badge
+                        <Badge locale={locale} value={declaration.payrollRun.status} />
+                        <Badge locale={locale}
                           value={
                             declaration.payrollRun.ledgerPostingBatchId
                               ? "LEDGER_PROOF"
@@ -556,13 +546,13 @@ export default function PayrollDeclarationWorkbench({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-2">
-                        <Badge value={declaration.status} />
-                        <Badge
+                        <Badge locale={locale} value={declaration.status} />
+                        <Badge locale={locale}
                           value={
                             declaration.automation.automationCapabilityStatus
                           }
                         />
-                        <Badge
+                        <Badge locale={locale}
                           value={
                             declaration.automation.productionSubmissionSupported
                               ? "PRODUCTION_ADAPTER"
@@ -572,9 +562,9 @@ export default function PayrollDeclarationWorkbench({
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <ProofList declaration={declaration} />
+                      <ProofList locale={locale} declaration={declaration} />
                       <div className="mt-3">
-                        <PayrollProofDrawerButton
+                        <PayrollProofDrawerButton locale={locale}
                           subject={declarationProofSubject(
                             declaration,
                             locale,
@@ -584,18 +574,17 @@ export default function PayrollDeclarationWorkbench({
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <Blockers declaration={declaration} />
+                      <Blockers locale={locale} declaration={declaration} />
                     </td>
                     <td className="px-4 py-3">
-                      <NextActions declaration={declaration} />
+                      <NextActions locale={locale} declaration={declaration} />
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td className="px-4 py-6 text-sm text-slate-400" colSpan={6}>
-                    No payroll declarations match this scope.
-                  </td>
+                     {payrollUiText("No payroll declarations match this scope.", locale)} </td>
                 </tr>
               )}
             </tbody>
@@ -607,29 +596,26 @@ export default function PayrollDeclarationWorkbench({
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">
         <div className="flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-white">Source scope</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Source scope", locale)}</h2>
         </div>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Limit
-            </p>
+               {payrollUiText("Limit", locale)} </p>
             <p className="mt-1 text-sm text-slate-100">
               {data.sourceScope.limit}
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Returned
-            </p>
+               {payrollUiText("Returned", locale)} </p>
             <p className="mt-1 text-sm text-slate-100">
               {data.sourceScope.returned}
             </p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
             <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
-              Service
-            </p>
+               {payrollUiText("Service", locale)} </p>
             <p className="mt-1 break-all text-sm text-slate-100">
               {data.sourceScope.sourceService}
             </p>

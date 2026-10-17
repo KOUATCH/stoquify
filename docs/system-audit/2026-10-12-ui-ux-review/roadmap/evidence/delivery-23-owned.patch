@@ -1,0 +1,21 @@
+--- a/prisma/comprehensive-seed.ts
++++ b/prisma/comprehensive-seed.ts
+@@ -645,6 +645,7 @@
+       "JOURNAL",
+       "BUDGET",
+       "PROFIT",
++      PERMISSIONS.VIEW_CHART_OF_ACCOUNTS,
+     ),
+     email: "accountant@stockflow.test",
+     firstName: "Nadia",
+--- a/prisma/compliance-hris-role-seed.ts
++++ b/prisma/compliance-hris-role-seed.ts
+@@ -67,7 +67,7 @@
+   { code: "sales_manager", nameEn: "Sales Manager", nameFr: "Responsable ventes", description: "Sales, POS and revenue oversight.", emailLocalPart: "sales.manager", firstName: "Sophie", lastName: "Kamdem", department: "OPERATIONS", permissionTerms: ["SALES", "CUSTOMER", "POS", "PAYMENT", "REFUND", "CASH", "REVENUE", "ANALYTICS"] },
+   { code: "cashier_pos_user", nameEn: "Cashier/POS User", nameFr: "Caissier POS", description: "Daily POS, receipt, payment and cash-drawer operation.", emailLocalPart: "cashier", firstName: "Grace", lastName: "Etame", department: "OPERATIONS", permissionTerms: ["POS", "CASH", "PAYMENT", "RECEIPT", "READ_ITEMS", "READ_CUSTOMERS"] },
+   { code: "purchaser", nameEn: "Purchaser", nameFr: "Acheteur", description: "Supplier, purchase-order and goods-receipt operation.", emailLocalPart: "purchaser", firstName: "Patrick", lastName: "Fouda", department: "OPERATIONS", permissionTerms: ["PURCHASE", "SUPPLIER", "GOODS", "RECEIVE", "INVENTORY_COST"] },
+-  { code: "accountant", nameEn: "Accountant", nameFr: "Comptable", description: "Ledger, finance, reconciliation, tax and close operation.", emailLocalPart: "accountant", firstName: "Nadia", lastName: "Essomba", department: "FINANCE", permissionTerms: ["FINANCE", "FINANCIAL", "PAYABLE", "RECEIVABLE", "PAYMENT", "TAX", "CASH", "LEDGER", "JOURNAL", "BUDGET", "PROFIT"] },
++  { code: "accountant", nameEn: "Accountant", nameFr: "Comptable", description: "Ledger, finance, reconciliation, tax and close operation.", emailLocalPart: "accountant", firstName: "Nadia", lastName: "Essomba", department: "FINANCE", permissionTerms: ["FINANCE", "FINANCIAL", "PAYABLE", "RECEIVABLE", "PAYMENT", "TAX", "CASH", "LEDGER", "JOURNAL", "BUDGET", "PROFIT", PERMISSIONS.VIEW_CHART_OF_ACCOUNTS] },
+   {
+     code: "external_accountant",
+     nameEn: "External Accountant",

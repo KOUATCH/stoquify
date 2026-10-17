@@ -6,6 +6,8 @@ import {
   TransactionType,
 } from "@prisma/client";
 
+import { createHash } from "node:crypto";
+
 import { db } from "@/prisma/db";
 import {
   BusinessRuleError,
@@ -56,6 +58,8 @@ export type InventoryClass3ReconciliationResult = {
     ledgerRollForwardVariance: string;
   };
   reportHash: string;
+  evidenceHash: string;
+  evidenceHashVersion: 1;
   sourceCounts: {
     inventoryLevelCount: number;
     inventoryTransactionCount: number;
@@ -101,6 +105,7 @@ const postedStatuses = [
 
 const inboundValueTypes = [
   TransactionType.PURCHASE_RECEIPT,
+  TransactionType.PURCHASE_RETURN_REVERSAL,
   TransactionType.SALES_RETURN,
   TransactionType.TRANSFER_IN,
   TransactionType.ADJUSTMENT_IN,
@@ -127,6 +132,7 @@ const outboundValueTypes = [
 const inventoryAccountingSourceTypes = [
   AccountingSourceType.OPENING_BALANCE,
   AccountingSourceType.GOODS_RECEIPT,
+  AccountingSourceType.PURCHASE_RETURN,
   AccountingSourceType.STOCK_ADJUSTMENT,
   AccountingSourceType.STOCK_COUNT,
   AccountingSourceType.STOCK_TRANSFER,
@@ -180,13 +186,17 @@ async function aggregateInventoryValue(
   client: DbClient,
   where: Prisma.InventoryTransactionWhereInput,
 ): Promise<ValueWindow> {
-  const [inbound, outbound, count] = await Promise.all([
+  const [inbound, outbound, legacySignedOutbound, count] = await Promise.all([
     client.inventoryTransaction.aggregate({
       where: { ...where, type: { in: [...inboundValueTypes] } },
       _sum: { totalCost: true },
     }),
     client.inventoryTransaction.aggregate({
-      where: { ...where, type: { in: [...outboundValueTypes] } },
+      where: { ...where, type: { in: [...outboundValueTypes] }, totalCost: { gte: 0 } },
+      _sum: { totalCost: true },
+    }),
+    client.inventoryTransaction.aggregate({
+      where: { ...where, type: { in: [...outboundValueTypes] }, totalCost: { lt: 0 } },
       _sum: { totalCost: true },
     }),
     client.inventoryTransaction.count({ where }),
@@ -195,6 +205,9 @@ async function aggregateInventoryValue(
   return {
     value: decimal(inbound._sum.totalCost)
       .minus(decimal(outbound._sum.totalCost))
+      // Legacy outbound movements stored a signed cost; current producers
+      // store its absolute value. Both represent a reduction in stock value.
+      .plus(decimal(legacySignedOutbound._sum.totalCost))
       .toDecimalPlaces(2),
     count,
   };
@@ -244,6 +257,8 @@ function expectedBusinessSource(
         return AccountingSourceType.POS_REFUND;
       return null;
     case TransactionReferenceType.RETURN:
+      if (movement.type === TransactionType.PURCHASE_RETURN || movement.type === TransactionType.PURCHASE_RETURN_REVERSAL)
+        return AccountingSourceType.PURCHASE_RETURN;
       return movement.type === TransactionType.SALES_RETURN
         ? AccountingSourceType.POS_REFUND
         : null;
@@ -338,6 +353,25 @@ async function inspectMovementEventContinuity(
   }
 
   return { missingCount, missingSamples };
+}
+
+// Stream complete, ordered source populations. Page boundaries and the time of
+// observation are not source revisions; record identities and values are.
+async function sourceFingerprint(loadPage: (cursor?: string) => Promise<Array<{ id: string }>>) {
+  const digest = createHash("sha256");
+  let cursor: string | undefined;
+  for (;;) {
+    const rows = await loadPage(cursor);
+    for (const row of rows) digest.update(hashBusinessPayload(JSON.parse(JSON.stringify(row)))).update("\n");
+    if (rows.length < sourcePageSize) break;
+    cursor = rows[rows.length - 1].id;
+  }
+  return digest.digest("hex");
+}
+
+function fingerprintPage(cursor?: string) {
+  return { orderBy: { id: "asc" as const }, take: sourcePageSize,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}) };
 }
 
 export async function reconcileInventoryClass3(
@@ -693,8 +727,45 @@ export async function reconcileInventoryClass3(
     failureCount: failures.length,
   };
 
+  // Keep reportHash as the exact observation receipt. Freshness compares a
+  // separate versioned fingerprint, including rows whose changes can offset
+  // each other in aggregate totals and counts.
+  const sourceFingerprints = await Promise.all([
+    sourceFingerprint(cursor => client.inventoryTransaction.findMany({
+      where: closingInventoryWhere, ...fingerprintPage(cursor),
+    })),
+    sourceFingerprint(cursor => client.journalEntryLine.findMany({
+      where: closingClass3Where, ...fingerprintPage(cursor),
+      include: {
+        account: { select: { id: true, code: true, syscohadaClass: true, isActive: true } },
+        journalEntry: { select: { id: true, entryNumber: true, entryDate: true, postedAt: true, status: true, sourceType: true, sourceId: true, periodId: true } },
+      },
+    })),
+    sourceFingerprint(cursor => client.businessEvent.findMany({
+      where: { organizationId: parsed.organizationId, sourceType: { in: [...inventoryAccountingSourceTypes] }, recordedAt: { lte: recordedThrough }, ...closingEventDateFilter },
+      select: { id: true, eventType: true, schemaVersion: true, status: true, payloadHash: true, documentHash: true, sourceType: true, sourceId: true, occurredAt: true, recordedAt: true, postingBatchId: true },
+      ...fingerprintPage(cursor),
+    })),
+    sourceFingerprint(cursor => client.stockAdjustment.findMany({
+      where: { organizationId: parsed.organizationId, status: "COMPLETED", createdAt: { lte: recordedThrough }, ...adjustmentDateFilter }, ...fingerprintPage(cursor),
+    })),
+    sourceFingerprint(cursor => client.stockCountSession.findMany({
+      where: { organizationId: parsed.organizationId, status: "POSTED", createdAt: { lte: recordedThrough }, ...countDateFilter }, ...fingerprintPage(cursor),
+    })),
+    sourceFingerprint(cursor => client.inventoryLevel.findMany({
+      where: { item: { organizationId: parsed.organizationId }, location: { organizationId: parsed.organizationId, ...(parsed.locationId ? { id: parsed.locationId } : {}) } },
+      // Only membership enters the period report; today's mutable balance does not.
+      select: { id: true, itemId: true, locationId: true }, ...fingerprintPage(cursor),
+    })),
+  ]);
+  const { recordedThrough: observationCutoff, ...businessReport } = report;
+  const evidenceHash = `sha256:${hashBusinessPayload({ version: 1, ...businessReport, locationId: parsed.locationId ?? null, toleranceValue: toleranceValue.toString(), sourceFingerprints })}`;
+
   return {
     ...report,
+    recordedThrough: observationCutoff,
+    evidenceHash,
+    evidenceHashVersion: 1,
     status: failures.length === 0 ? "PASSED" : "BLOCKED",
     reportHash: `sha256:${hashBusinessPayload(report)}`,
     failures,

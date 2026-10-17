@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-30T19:35:25.248Z",
+  "sourceBefore": {
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f",
+    "components/accounting/AccountingControlCenter.tsx": "0fc07f84a40c9b4526520594fd69eb3bc3eaf4caf25af4cf9c3578336b29b25b"
+  },
+  "cases": [],
+  "passed": false,
+  "error": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#accounting-rules').getByRole('textbox')\u001b[22m\n",
+  "failureScreenshot": "inventory-direction-browser-59f08760-f638-4954-9d2a-e5b6c74a1569-failed.png",
+  "sourceAfter": {
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/control-center.service.ts": "f5521703d88b47f15be41e0c540a22398ce791cd142723cc6473d45140c99f6f",
+    "components/accounting/AccountingControlCenter.tsx": "0fc07f84a40c9b4526520594fd69eb3bc3eaf4caf25af4cf9c3578336b29b25b"
+  },
+  "sourceStable": true
+}

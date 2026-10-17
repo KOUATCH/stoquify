@@ -1,0 +1,75 @@
+{
+  "at": "2026-09-27T16:21:22.828Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "d3b63d2c65ed846cbb61e8d51309ea42c7bfec08e4a0fd03b524514c9a478cc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+  },
+  "cases": [
+    {
+      "name": "write authority withdrawn after admitted action",
+      "readAllowed": true,
+      "writeAllowed": false,
+      "previewCanSign": false,
+      "previewBlocker": "MODULE_WRITE_REQUIRED",
+      "signatureCreated": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Reconciliation module write access is unavailable."
+      }
+    },
+    {
+      "name": "read-only flag",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "suspended",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "expired status",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "expired interval",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "future interval",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "suspended finance dependency",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "read-only accounting dependency",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "explicit empty grants",
+      "deniedBeforeSignature": true
+    },
+    {
+      "name": "signed replay after write withdrawal",
+      "denied": true
+    },
+    {
+      "name": "restored write authority and exact replay",
+      "oneSignature": true,
+      "noJournal": true
+    }
+  ],
+  "reproduction": false,
+  "organizationId": "cmuk1000p0000mazclxn08h9z",
+  "runId": "cmuk1006o001amazcp71kkrp1",
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "d3b63d2c65ed846cbb61e8d51309ea42c7bfec08e4a0fd03b524514c9a478cc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf"
+  },
+  "sourceStable": true
+}

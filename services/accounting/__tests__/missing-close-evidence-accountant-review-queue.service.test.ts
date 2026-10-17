@@ -2,6 +2,7 @@ jest.mock("server-only", () => ({}))
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    ledgerAuditEvent: { findMany: jest.fn().mockResolvedValue([]) },
     $transaction: jest.fn(),
     user: { findFirst: jest.fn() },
     closeAssuranceFinding: { findMany: jest.fn() },
@@ -185,6 +186,55 @@ describe("accountant missing-close-evidence review queue service", () => {
 
   afterEach(() => {
     jest.useRealTimers()
+  })
+
+  it("pages period-scoped reviews instead of refusing all work at 101 findings", async () => {
+    const rows = Array.from({ length: 101 }, (_, i) => {
+      const id = `finding-${String(i).padStart(3, "0")}`
+      return { ...findingFixture({ id }), comments: [{ ...requestFixture({ findingId: id }), visibility: "CLIENT_ACTION_REQUIRED" }, { ...responseFixture({ findingId: id }), visibility: "CLIENT_RESPONSE_SUBMITTED" }] }
+    })
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValueOnce(rows).mockResolvedValueOnce([rows[100]])
+    const first = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: { periodId: "period" } })
+    expect(first.items).toHaveLength(100); expect(first.nextCursor).toBeTruthy(); expect(first.blockers).toEqual([]); expect(first.summary.truncated).toBe(false)
+    const next = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: { periodId: "period", cursor: first.nextCursor! } })
+    expect(next.items.map(row => row.findingId)).toEqual(["finding-100"]); expect(next.nextCursor).toBeNull()
+    expect(mockDb.closeAssuranceFinding.findMany).toHaveBeenLastCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "client-org", periodId: "period", OR: expect.any(Array) }) }))
+    expect(mockDb.accountantComment.findMany).not.toHaveBeenCalled()
+  })
+
+  it("bounds ambiguity per finding without suppressing valid neighboring reviews", async () => {
+    const comments = [{ ...requestFixture(), visibility: "CLIENT_ACTION_REQUIRED" }, { ...responseFixture(), visibility: "CLIENT_RESPONSE_SUBMITTED" }]
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([{ ...findingFixture(), comments }, { ...findingFixture({ id: "bad" }), comments: Array.from({ length: 3 }, () => ({ ...requestFixture({ findingId: "bad" }), visibility: "CLIENT_ACTION_REQUIRED" })) }])
+    const result = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: { periodId: "period" } })
+    expect(result.items.map(row => row.findingId)).toEqual(["finding-1"]); expect(result.blockers).toHaveLength(1)
+  })
+
+  it("direct review lookup narrows the scoped finding but checks all its request evidence", async () => {
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([findingFixture()])
+    setCommentReads([requestFixture()], [responseFixture()])
+    const result = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, requestId: "request-finding-1" })
+    expect(result.items).toHaveLength(1)
+    expect(mockDb.closeAssuranceFinding.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "client-org", comments: { some: expect.objectContaining({ organizationId: "client-org", id: "request-finding-1" }) } }) }))
+    expect(mockDb.accountantComment.findMany.mock.calls[0][0].where.id).toBeUndefined()
+  })
+
+  it("refuses review when an acceptance record remains beside an in-review request and response", async () => {
+    const comments = [{ ...requestFixture(), visibility: "CLIENT_ACTION_REQUIRED" }, { ...responseFixture(), visibility: "CLIENT_RESPONSE_SUBMITTED" }, { ...responseFixture(), id: "retained-acceptance", visibility: "ACCOUNTANT_RESPONSE_ACCEPTED" }]
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([{ ...findingFixture(), comments }])
+    const result = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: { periodId: "period" } })
+    expect(result.items).toEqual([])
+    expect(result.blockers).toHaveLength(1)
+    const query = mockDb.closeAssuranceFinding.findMany.mock.calls[0][0]
+    expect(query.select.comments.where.OR).toEqual([{ organizationId: "client-org", visibility: "CLIENT_ACTION_REQUIRED" }, { organizationId: "client-org", visibility: { in: ["CLIENT_RESPONSE_SUBMITTED", "ACCOUNTANT_RESPONSE_ACCEPTED"] } }])
+  })
+
+  it("supports authorized cross-period pages while keeping tenant and cursor scope", async () => {
+    mockDb.closeAssuranceFinding.findMany.mockResolvedValue([])
+    const result = await getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: {} })
+    expect(result.nextCursor).toBeNull()
+    const query = mockDb.closeAssuranceFinding.findMany.mock.calls[0][0]
+    expect(query.where.organizationId).toBe("client-org"); expect(query.where).not.toHaveProperty("periodId")
+    await expect(getAccountantMissingCloseEvidenceReviewQueue({ ...INPUT, page: { periodId: " " } })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
   })
 
   it("fails closed on RBAC before opening a database transaction", async () => {
@@ -512,10 +562,6 @@ describe("accountant missing-close-evidence review queue service", () => {
             some: {
               organizationId: INPUT.clientOrganizationId,
               visibility: "CLIENT_ACTION_REQUIRED",
-              metadata: {
-                path: ["requestType"],
-                equals: "MISSING_CLOSE_EVIDENCE",
-              },
             },
           },
         },
@@ -538,7 +584,7 @@ describe("accountant missing-close-evidence review queue service", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: INPUT.clientOrganizationId,
-          visibility: "CLIENT_RESPONSE_SUBMITTED",
+          visibility: { in: ["CLIENT_RESPONSE_SUBMITTED", "ACCOUNTANT_RESPONSE_ACCEPTED"] },
           findingId: { in: ["finding-1"] },
         }),
         take: 201,

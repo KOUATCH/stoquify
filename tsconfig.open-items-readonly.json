@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.open-items-dashboard.json",
+  "include": [
+    "next-env.d.ts",
+    "tests/postgres/finance/open-items-readonly.test.ts",
+    "actions/finance/__tests__/open-items-dashboard.actions.test.ts",
+    "hooks/finance/__tests__/useFinanceDashboardSupplements.test.tsx"
+  ]
+}

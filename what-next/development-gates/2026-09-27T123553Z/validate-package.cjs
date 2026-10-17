@@ -1,0 +1,44 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const {Prisma}=require('@prisma/client');
+const OUT=__dirname,ROOT=path.resolve(OUT,'../../..');
+const read=n=>JSON.parse(fs.readFileSync(path.join(OUT,n),'utf8'));
+const checks=[];
+const check=(id,pass,detail)=>checks.push({id,pass:Boolean(pass),detail});
+const files=[];
+function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())walk(file);else files.push(file);}}
+walk(OUT);
+for(const file of files.filter(f=>f.endsWith('.json')))try{JSON.parse(fs.readFileSync(file,'utf8'));}catch(e){check('parse:'+path.relative(OUT,file),false,e.message);}
+check('all_json_files_parse',!checks.some(c=>!c.pass),files.filter(f=>f.endsWith('.json')).length+' JSON files');
+const people=read('people.json'),roles=read('roles.json'),names=read('named-candidates.json'),fields=read('field-register.json'),contracts=read('capability-contracts.json').contracts,eligibility=read('capability-eligibility.json'),gateReport=read('gate-register.json');
+const userIds=new Set(people.map(p=>p.id)),roleIds=new Set(roles.map(r=>r.id)),fieldIds=new Set(fields.map(f=>f.id));
+check('role_membership_ids_and_tenants',read('memberships.json').every(m=>userIds.has(m.userId)&&roleIds.has(m.roleId)&&people.find(p=>p.id===m.userId).organizationId===roles.find(r=>r.id===m.roleId).organizationId),'180 actual intermediary memberships');
+check('named_candidates_trace_to_current_records',names.every(n=>people.some(p=>p.id===n.userId&&p.displayName===n.name&&p.organizationId===n.organizationId)),names.length+' candidate assignments');
+check('capability_candidates_trace_to_same_tenant',eligibility.every(e=>e.accounts.every(a=>people.some(p=>p.id===a.userId&&p.organizationId===e.organizationId))),eligibility.length+' tenant capability rows');
+const missingFields=contracts.flatMap(c=>c.requiredDataFields.filter(f=>!fieldIds.has(f.model+'.'+f.field)).map(f=>({capability:c.id,model:f.model,field:f.field})));
+check('every_capability_db_field_extracted',missingFields.length===0,missingFields);
+check('field_definitions_match_prisma',fields.every(f=>Prisma.dmmf.datamodel.models.find(m=>m.name===f.model)?.fields.some(x=>x.name===f.field&&x.kind!=='object'&&x.type===f.type)),fields.length+' exact field definitions');
+check('no_invalid_selected_fks_or_enums',!fields.some(f=>f.status==='invalid'),fields.filter(f=>f.status==='invalid').map(f=>f.id));
+check('every_gate_has_required_report_sections',gateReport.gates.every(g=>g.id&&g.status&&g.stage&&g.ownerStatus&&g.requiredRoleCodes?.length&&g.candidatePeople&&g.verifiedEligibleHumanIds&&g.dependencies&&g.requiredFields&&g.enforcingSources?.length&&g.nextActions?.length),gateReport.gates.filter(g=>!g.stage||!g.enforcingSources?.length||!g.nextActions?.length).map(g=>g.id));
+check('all_g1_roles_have_existing_nominations',read('g1-approval-roster.json').every(d=>d.requiredRoles.every(r=>r.candidates.length)), '11 decisions,33 role obligations,17 distinct roles; nominations only');
+const sourceRefs=contracts.flatMap(c=>c.sources).concat(read('runtime/tax-classification-assessment.json').consumerContracts.map(c=>({path:c.file,line:c.line})));
+check('source_anchors_exist',sourceRefs.every(s=>fs.existsSync(path.join(ROOT,s.path))&&s.line>0&&s.line<=fs.readFileSync(path.join(ROOT,s.path),'utf8').split('\n').length),sourceRefs.filter(s=>!fs.existsSync(path.join(ROOT,s.path))));
+const pureEvidence=read('pure-evaluation-evidence.json');
+check('permission_module_sources_unchanged_during_analysis',pureEvidence.every(e=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,e.path))).digest('hex')===e.sha256),pureEvidence.map(e=>e.path));
+check('initial_extraction_readonly',read('extraction-audit.json').readOnlyVerified&&read('extraction-audit.json').mutationStatementsExecuted===0,'Database and transaction read-only; rollback');
+check('supplementary_extraction_readonly',read('workflow-extraction-audit.json').readOnlyVerified&&read('workflow-extraction-audit.json').mutationStatementsExecuted===0,'Database and transaction read-only; rollback');
+check('runtime_and_catalog_extraction_readonly',read('runtime/runtime-issues.json').readOnly&&read('runtime/tax-classification-assessment.json').readOnly,'Both source reports identify enforced read-only transactions');
+check('migration_checks_pass',read('commands/results.json').every(x=>x.exitCode===0),'status/history/catalog');
+const markdown=files.filter(f=>f.endsWith('.md')).map(f=>({file:f,text:fs.readFileSync(f,'utf8')}));
+check('no_object_placeholders_in_markdown',markdown.every(m=>!m.text.includes('[object Object]')),markdown.filter(m=>m.text.includes('[object Object]')).map(m=>path.relative(OUT,m.file)));
+const forbiddenKeys=new Set(['password','passwordHash','token','sessionToken','accessToken','refreshToken','secretKey','privateKey','bankAccountNumber','iban','baseSalary','salary']);
+const sensitive=[];
+function visit(x,file,trail=''){if(Array.isArray(x))x.forEach((v,i)=>visit(v,file,trail+'['+i+']'));else if(x&&typeof x==='object')for(const[k,v]of Object.entries(x)){if(forbiddenKeys.has(k)&&v!=null)sensitive.push({file,path:trail+'.'+k});visit(v,file,trail+'.'+k);}}
+for(const file of ['database-extract.json','workflow-extract.json','people.json','roles.json','runtime/tax-classification-current-data.json'])visit(read(file),file);
+check('no_secret_value_fields_in_selected_data',!sensitive.length,sensitive);
+const result={generatedAt:new Date().toISOString(),status:checks.every(c=>c.pass)?'PASS':'NEEDS_REPORT_REPAIR',checks,limitations:['Audit artifact consistency validation only; not application tests, human qualification verification or production certification.','Multiple read-only snapshots have separate timestamps. No mutating workflow or login checks were run.']};
+fs.writeFileSync(path.join(OUT,'package-validation.json'),JSON.stringify(result,null,2)+'\n');
+fs.writeFileSync(path.join(OUT,'PACKAGE_VALIDATION.md'),'# Report package validation\n\nStatus: **'+result.status+'**\n\n'+checks.map(c=>'- '+(c.pass?'PASS':'FAIL')+' '+c.id).join('\n')+'\n\nArtifact validation does not convert missing runtime evidence or human approvals into passing gates.\n');
+const manifest=files.filter(f=>!['package-manifest.json','package-validation.json','PACKAGE_VALIDATION.md'].includes(path.basename(f))).map(f=>({path:path.relative(OUT,f).replaceAll('\\','/'),bytes:fs.statSync(f).size,sha256:crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex')}));
+fs.writeFileSync(path.join(OUT,'package-manifest.json'),JSON.stringify({generatedAt:new Date().toISOString(),files:manifest},null,2)+'\n');
+console.log(JSON.stringify({status:result.status,checks:checks.length,failures:checks.filter(c=>!c.pass),files:manifest.length}));
+if(result.status!=='PASS')process.exitCode=1;

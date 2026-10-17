@@ -1,0 +1,64 @@
+{
+  "at": "2026-09-28T09:19:59.959Z",
+  "sourceBefore": {
+    "components/evidence/ProofTrailDrawer.tsx": "9939f1367fe9ce48174c41c7b0ee1b2b7e9fef862a2a6c206f776134ec5bffcc",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b19b4fd0a6e251b8d508abb04207e8ec4c05de0beac984fcf01d6ab64cbc1fb9",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "components/ui/sheet.tsx": "70dd8f7b659383ae1015830f05955286d971a4f38afe41cdabd9e8da0f48d5e0",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx",
+        "components/bi/__tests__/bi-command-primitives.test.tsx",
+        "components/evidence/__tests__/EvidenceGradeBadge.test.tsx",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL components/evidence/__tests__/ProofTrailDrawer.test.tsx\n  ● Test suite failed to run\n\n    Jest encountered an unexpected token\n\n    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.\n\n    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.\n\n    By default \"node_modules\" folder is ignored by transformers.\n\n    Here's what you can do:\n     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.\n     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript\n     • To have some of your \"node_modules\" files transformed, you can specify a custom \"transformIgnorePatterns\" in your config.\n     • If you need a custom transformation, specify a \"transform\" option in your config.\n     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the \"moduleNameMapper\" config option.\n\n    You'll find more details and examples of these config options in the docs:\n    https://jestjs.io/docs/configuration\n    For information about custom transformations, see:\n    https://jestjs.io/docs/code-transformation\n\n    Details:\n\n    E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\lucide-react@0.471.2_react@19.2.8\\node_modules\\lucide-react\\dist\\esm\\lucide-react.js:8\n    import * as index from './icons/index.js';\n    ^^^^^^\n\n    SyntaxError: Cannot use import statement outside a module\n\n      11 |   SheetDescription,\n      12 |   SheetHeader,\n    > 13 |   SheetTitle,\n         |              ^\n      14 | } from \"@/components/ui/sheet\"\n      15 | import { cn } from \"@/lib/utils\"\n      16 | import type { ProofTrailResult } from \"@/services/evidence/evidence-contracts\"\n\n      at ModuleExecutor.compile (node_modules/.pnpm/jest-runtime@30.4.2_supports-color@8.1.1/node_modules/jest-runtime/build/index.js:2104:44)\n      at Object.<anonymous> (components/evidence/ProofTrailDrawer.tsx:13:22)\n      at Object.<anonymous> (components/evidence/__tests__/ProofTrailDrawer.test.tsx:7:27)\n\n\nTest Suites: 1 failed, 6 passed, 7 total\nTests:       64 passed, 64 total\nSnapshots:   0 total\nTime:        5.832 s, estimated 8 s\nRan all test suites within paths \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\", \"components/bi/__tests__/bi-command-primitives.test.tsx\", \"components/evidence/__tests__/EvidenceGradeBadge.test.tsx\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"services/cash-command/__tests__/cash-command.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "components/evidence/ProofTrailDrawer.tsx": "9939f1367fe9ce48174c41c7b0ee1b2b7e9fef862a2a6c206f776134ec5bffcc",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "components/cash-command/CashCommandDashboard.tsx": "499b55162fdce4d01af205ace52340c8273874bef32586a94f4546a84aafb659",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b19b4fd0a6e251b8d508abb04207e8ec4c05de0beac984fcf01d6ab64cbc1fb9",
+    "components/bi/__tests__/bi-command-primitives.test.tsx": "7eecbdd53a7f2104374fdb068da80f5c2f8260d914eead08f0f1798bad4d17c5",
+    "components/evidence/__tests__/EvidenceGradeBadge.test.tsx": "ec374b5defcc9f1a05b83b410a90c5514bcee05d64520cb27e2ff6b0380a2e6c",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "2400558090f4caaff5ece10911519afef0b330442881843177fe3baba2d17ffa",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "40bb1177fc3de4c2dc003f1ac22c4dc7c91d7aa3566bd861fa654d7434c86c66",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "components/ui/sheet.tsx": "70dd8f7b659383ae1015830f05955286d971a4f38afe41cdabd9e8da0f48d5e0",
+    "services/cash-command/cash-command-visibility.service.ts": "c51ba6fdff4c5abb8e7f8cff4fbf9cf09d000dc0d0596f00e0026ea00f626afc",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "1bdd6e2e253d031abe070d03e6bd0038fdb52d5fbb46f96d7fd6ec99b7f016a5",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": false
+}

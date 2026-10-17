@@ -1,3 +1,6 @@
+/** @jest-environment jsdom */
+import "@testing-library/jest-dom"
+jest.mock("@/components/finance/OpenItemsReturnLink", () => ({ OpenItemsReturnLink: () => null }))
 import { render, screen } from "@testing-library/react"
 
 import { useAPHistoryWorkbench } from "@/hooks/useAPHistoryWorkbench"
@@ -43,6 +46,13 @@ jest.mock("next-intl", () => ({
       "snapshot.timezone": "Timezone",
       "snapshot.recordedThrough": "Recorded through",
       "snapshot.generatedAt": "Generated",
+      "proof.draftNotPosted": "Draft — not posted",
+      "proof.needsReview": "Evidence needs review",
+      "proof.unavailableTitle": "Evidence hash not recorded",
+      "proof.scopeTitle": "Not certified",
+      "proof.accountingScope": "Accounting certification",
+      "proof.bankDetailsProtected": "Bank details protected",
+      "proof.notRecorded": "Not recorded",
     }
     const message = messages[key] ?? key
     return Object.entries(values ?? {}).reduce(
@@ -186,4 +196,91 @@ describe("APHistoryWorkbench presentation semantics", () => {
       "bg-[var(--dash-gold-soft)]",
     )
   })
+
+  it.each([
+    ["draft", "not_recognized", null, "Draft — not posted"],
+    ["draft", "unverified", null, "Evidence needs review"],
+    ["draft", "unverified", "sha256:stored", "Evidence needs review"],
+    ["posted", "unverified", "sha256:stored", "Evidence needs review"],
+    ["posted", "recorded", null, "Evidence hash not recorded"],
+    ["posted", "recorded", "sha256:stored", "sha256:stored"],
+    ["draft", "not_recognized", "sha256:stored", "sha256:stored"],
+    ["matched", "not_recognized", null, "Evidence hash not recorded"],
+  ])("labels %s / %s evidence without masking inconsistencies", (controlState, movementState, evidenceHash, expected) => {
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    const evidence = props.columns.find((column: { id: string }) => column.id === "evidence")
+    expect(evidence.cell({ ...row, controlState, movementState, accounting: { ...row.accounting, evidenceHash } })).toBe(expected)
+    const mobileCard = render(props.rowIdentity.value({ ...row, controlState, movementState, accounting: { ...row.accounting, evidenceHash } }))
+    expect(mobileCard.container).toHaveTextContent(expected)
+  })
+
+  it.each([
+    ["DRAFT", "draft", "not_recognized", null, "Draft — not posted"],
+    ["DRAFT", "draft", "unverified", null, "Evidence needs review"],
+    ["DRAFT", "draft", "unverified", "sha256:stored", "Evidence needs review"],
+    ["DRAFT", "draft", "not_recognized", "sha256:stored", "sha256:stored"],
+    ["APPROVED", "draft", "not_recognized", null, "Evidence hash not recorded"],
+    ["CANCELLED", "cancelled", "not_recognized", null, "Evidence hash not recorded"],
+    ["RELEASED", "released", "recorded", null, "Evidence hash not recorded"],
+    ["POSTED", "released", "unverified", null, "Evidence needs review"],
+  ])("keeps payment proof truthful for %s / %s / %s", (businessState, controlState, movementState, evidenceHash, expected) => {
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    const payment = { ...row, lane: "payment", sourceType: "SUPPLIER_PAYMENT", businessState, controlState, movementState, accounting: { ...row.accounting, evidenceHash } }
+    const evidence = props.columns.find((column: { id: string }) => column.id === "evidence")
+    expect(evidence.cell(payment)).toBe(expected)
+    const mobileCard = render(props.rowIdentity.value(payment))
+    expect(mobileCard.container).toHaveTextContent(expected)
+    const drawer = render(props.renderDrawer(payment))
+    expect(drawer.container).toHaveTextContent(expected)
+    if (evidenceHash) expect(drawer.container).toHaveTextContent(evidenceHash)
+  })
+
+  it("retains partial scope and its source when explaining accounting certification", () => {
+    const state = mockUseAPHistoryWorkbench.getMockImplementation()!()
+    mockUseAPHistoryWorkbench.mockReturnValue({ ...state, result: { ...state.result, completeness: { state: "partial", sources: [{ source: "supplier_ap_history_accounting_claim", state: "partial" }] } } })
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    expect(props.isPartial).toBe(true)
+    expect(props.partialSources).toEqual(["Accounting certification"])
+    expect(props.labels.proofUnavailableTitle).toBe("Not certified")
+  })
+
+  it("keeps the stored hash inspectable alongside the warning in inconsistent invoice details", () => {
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    render(props.renderDrawer({ ...row, movementState: "unverified", accounting: { ...row.accounting, evidenceHash: "sha256:stored" } }))
+    expect(screen.getByText(/sha256:stored/)).toBeInTheDocument()
+    expect(screen.getByText(/Evidence needs review/)).toBeInTheDocument()
+  })
+
+  it.each([
+    ["[REDACTED:BANK]", true, "Bank details protected"],
+    ["Example Bank ****1234", true, "Bank details protected"],
+    ["Example Bank ****1234", false, "Example Bank ****1234"],
+    [null, false, "Not recorded"],
+  ])("preserves bank-detail redaction while localizing its display (%s, redacted=%s)", (bankDestination, redacted, expected) => {
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    const drawer = render(props.renderDrawer({
+      ...row,
+      lane: "payment",
+      sourceType: "SUPPLIER_PAYMENT",
+      businessState: "DRAFT",
+      payment: {
+        ...row.payment,
+        bankDestination,
+        redactions: redacted ? [{ field: "supplierPayment:payment-1:bankDestination", category: "supplier_bank_detail", mode: "redact", reasonCode: "MISSING_PERMISSION", policy: "kontava-supplier-bank-redaction-policy" }] : [],
+      },
+    }))
+    expect(drawer.container).toHaveTextContent(expected)
+    expect(drawer.container).not.toHaveTextContent("[REDACTED:BANK]")
+    if (redacted) expect(drawer.container).not.toHaveTextContent("Example Bank ****1234")
+  })
+})
+
+it("hides export controls without the server-provided export permission", () => {
+  render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+  expect(mockShell.mock.calls.at(-1)[0].onExport).toBeUndefined()
 })

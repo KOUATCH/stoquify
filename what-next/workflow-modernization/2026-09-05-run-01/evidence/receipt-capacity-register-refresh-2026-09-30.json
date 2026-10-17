@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-30T21:50:19.768Z",
+  "passed": false,
+  "command": "node reconcile-current-progress.cjs",
+  "exitCode": 1,
+  "error": "Setup rule selection source changed: services/accounting/__tests__/close-assurance-pack.service.test.ts",
+  "firstSourceMismatch": {
+    "source": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+    "expected": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+    "actual": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441"
+  },
+  "limitation": "The reconciler stopped at this test-source mismatch before register writes. Other historical bindings have not all been refreshed. The receipt/invoice correction has its own current source and runtime evidence.",
+  "correctionReview": {
+    "file": "evidence/receipt-capacity-review-2026-09-30.json",
+    "sha256": "db7b3bfcd97f45712313ff5d5b0db53f7788683de3d5331da5583fb0a48fb847",
+    "sourceBindingsCurrent": true
+  },
+  "previousReconciliation": {
+    "file": "evidence/current-reconciliation.json",
+    "sha256": "6826bed9e00c402903171c56fbb3254b9598b4801aa984c8d21d3e6570879653",
+    "at": "2026-09-30T20:00:57.694Z",
+    "registerSha256": "6be9daddaed9b635654e5685205e1d2bea96c24cc8b2f8b8509b17250da9bd0b"
+  },
+  "nextAction": "Review the exact concurrent close-assurance test delta and affected verification before claiming a current full-register refresh. Preserve prior receipts and source hashes.",
+  "recordedStatusCounts": {
+    "Queued": 265,
+    "Complete—verified": 4,
+    "In progress": 1
+  },
+  "updatedRegisterSha256": "d2ea8ff6b95d1e09308c8ba3b91e797ddb8223be9f0ae934885c8d90a5e37232"
+}

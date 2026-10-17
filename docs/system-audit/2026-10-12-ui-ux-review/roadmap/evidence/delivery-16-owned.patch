@@ -1,0 +1,536 @@
+diff --git a/components/dashboard/Navbar.tsx b/components/dashboard/Navbar.tsx
+--- a/components/dashboard/Navbar.tsx
++++ b/components/dashboard/Navbar.tsx
+@@ -37,6 +37,7 @@
+ import { dashboardSharedCopy, localizeSidebarLinks, navigationLabel } from "@/lib/dashboard/presentation"
+ import { selfSignOutCopy } from "@/lib/security/self-sign-out-copy"
+ import { notificationCopy } from "@/lib/notifications/presentation"
++import { dashboardRoleLabel } from "@/lib/dashboard/role-label"
+ import { cn } from "@/lib/utils"
+ import Logo from "../global/Logo"
+ 
+@@ -91,9 +92,9 @@
+   const signOutLock = useRef(false)
+   const { hasPermission } = useShellPermissions(session)
+   const { soundEnabled, toggleSound } = useNotifications()
+-  const userRole = session?.user?.roles?.[0]?.name ?? "User"
+   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1]
+   const locale = localePrefix === "fr" ? "fr" : "en"
++  const userRole = dashboardRoleLabel(session?.user?.roles?.[0], locale)
+   const copy = dashboardSharedCopy[locale].shell
+   const label = (text: string) => navigationLabel(text, locale)
+   const signOutText = selfSignOutCopy[locale]
+@@ -299,7 +300,7 @@
+           email={session?.user?.email ?? ""}
+           avatarUrl={session?.user?.image ?? undefined}
+           organizationName={session?.user?.organizationName ?? undefined}
+-          roleNames={session?.user?.roles?.map((role: { name: string }) => role.name).filter(Boolean) ?? []}
++          roleNames={session?.user?.roles?.map((role: { name: string; nameEn?: string; nameFr?: string }) => dashboardRoleLabel(role, locale)) ?? []}
+         />
+       </div>
+     </header>
+diff --git a/components/dashboard/Sidebar.tsx b/components/dashboard/Sidebar.tsx
+--- a/components/dashboard/Sidebar.tsx
++++ b/components/dashboard/Sidebar.tsx
+@@ -33,6 +33,7 @@
+ import { NotificationMenu } from "../NotificationMenu"
+ import StoquifyLogo from "../global/kit-logo"
+ import { moduleVisibleInNavigation } from "@/lib/modules/navigation"
++import { dashboardRoleLabel } from "@/lib/dashboard/role-label"
+ 
+ interface SidebarProps {
+   session: any
+@@ -51,10 +52,10 @@
+   const [searchTerm, setSearchTerm] = useState("")
+   const pathname = usePathname()
+   const { hasPermission } = useShellPermissions(session)
+-  const userRole = session?.user?.roles?.[0]?.name ?? "User"
+   const organizationName = session?.user?.organizationName ?? "Stoquify"
+   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1]
+   const locale = localePrefix === "fr" ? "fr" : "en"
++  const userRole = dashboardRoleLabel(session?.user?.roles?.[0], locale)
+   const copy = dashboardSharedCopy[locale].shell
+   const label = (text: string) => navigationLabel(text, locale)
+   const signOutText = selfSignOutCopy[locale]
+diff --git a/components/dashboard/DashboardLoadingState.tsx b/components/dashboard/DashboardLoadingState.tsx
+--- a/components/dashboard/DashboardLoadingState.tsx
++++ b/components/dashboard/DashboardLoadingState.tsx
+@@ -1,29 +1,36 @@
+ import { Skeleton } from "@/components/ui/skeleton"
+ import { cn } from "@/lib/utils"
++import type { Locale } from "@/types/bilingual"
+ 
+ export function DashboardLoadingState({
+-  title = "Preparing command surface",
+-  subtitle = "Trusted dashboard data is loading.",
+-  loadingLabel = "Loading",
++  title,
++  subtitle,
++  loadingLabel,
++  locale = "en",
++  embedded = false,
+   className,
+ }: {
+   title?: string
+   subtitle?: string
+   loadingLabel?: string
++  locale?: Locale
++  embedded?: boolean
+   className?: string
+ }) {
++  const french = locale === "fr"
++  const Root = embedded ? "div" : "main"
+   return (
+-    <main className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden bg-[var(--dash-canvas)]", className)}>
++    <Root className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden bg-[var(--dash-canvas)] motion-reduce:[&_.animate-pulse]:animate-none", className)}>
+       <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] min-w-0 space-y-5 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
+-        <section className="dashboard-glass-panel rounded-lg p-4 md:p-5" role="status" aria-busy="true">
++        <section className="dashboard-glass-panel rounded-lg p-4 md:p-5" role="status" aria-live="polite">
+           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+             <div className="min-w-0 max-w-5xl space-y-3">
+               <div className="dashboard-eyebrow w-fit">
+                 <span className="dashboard-live-dot" />
+-                <span>{loadingLabel}</span>
++                <span>{loadingLabel ?? (french ? "Chargement" : "Loading")}</span>
+               </div>
+-              <h1 className="text-2xl font-semibold tracking-normal text-[var(--dash-text)] md:text-3xl">{title}</h1>
+-              <p className="max-w-3xl text-sm leading-6 text-[var(--dash-text-soft)]">{subtitle}</p>
++              <h1 className="text-2xl font-semibold tracking-normal text-[var(--dash-text)] md:text-3xl">{title ?? (french ? "Préparation de votre espace de travail" : "Preparing your workspace")}</h1>
++              <p className="max-w-3xl text-sm leading-6 text-[var(--dash-text-soft)]">{subtitle ?? (french ? "Les données du tableau de bord sont en cours de chargement." : "Dashboard data is loading.")}</p>
+               <Skeleton className="h-4 w-full max-w-3xl rounded-md bg-[var(--dash-border-subtle)]" />
+               <Skeleton className="h-4 w-2/3 rounded-md bg-[var(--dash-border-subtle)]" />
+             </div>
+@@ -48,6 +55,6 @@
+           ))}
+         </div>
+       </div>
+-    </main>
++    </Root>
+   )
+ }
+diff --git a/app/[locale]/(dashboard)/loading.tsx b/app/[locale]/(dashboard)/loading.tsx
+--- a/app/[locale]/(dashboard)/loading.tsx
++++ b/app/[locale]/(dashboard)/loading.tsx
+@@ -1,5 +1,9 @@
++"use client"
++
++import { useLocale } from "next-intl"
+ import { DashboardLoadingState } from "@/components/dashboard/DashboardLoadingState"
+ 
+ export default function DashboardLoader() {
+-  return <DashboardLoadingState title="Preparing dashboard command center" />
+-}
+\ No newline at end of file
++  const locale = useLocale() === "fr" ? "fr" : "en"
++  return <DashboardLoadingState locale={locale} title={locale === "fr" ? "Préparation du tableau de bord" : "Preparing dashboard command center"} />
++}
+diff --git a/app/[locale]/(dashboard)/dashboard/inventory/loading.tsx b/app/[locale]/(dashboard)/dashboard/inventory/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/inventory/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/inventory/loading.tsx
+@@ -1,5 +1,9 @@
++"use client"
++
++import { useLocale } from "next-intl"
+ import { DashboardLoadingState } from "@/components/dashboard/DashboardLoadingState"
+ 
+ export default function InventoryLoading() {
+-  return <DashboardLoadingState title="Preparing inventory command surface" />
+-}
+\ No newline at end of file
++  const locale = useLocale() === "fr" ? "fr" : "en"
++  return <DashboardLoadingState embedded locale={locale} title={locale === "fr" ? "Préparation de l’espace de stock" : "Preparing inventory workspace"} />
++}
+diff --git a/app/[locale]/(dashboard)/dashboard/finance/loading.tsx b/app/[locale]/(dashboard)/dashboard/finance/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/finance/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/finance/loading.tsx
+@@ -1,9 +1,14 @@
++"use client"
++
++import { useLocale } from "next-intl"
+ import { Skeleton } from "@/components/ui/skeleton"
+ 
+ export default function FinanceLoading() {
++  const french = useLocale() === "fr"
+   return (
+-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden bg-[var(--dash-canvas)]">
++    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden motion-reduce:[&_.animate-pulse]:animate-none bg-[var(--dash-canvas)]">
+       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
++        <p role="status" aria-live="polite">{french ? "Chargement des données financières…" : "Loading financial data…"}</p>
+         <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
+         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+           {Array.from({ length: 5 }).map((_, index) => (
+@@ -15,6 +20,6 @@
+           <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
+         </div>
+       </div>
+-    </main>
++    </div>
+   )
+ }
+diff --git a/app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx b/app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx
+@@ -1,12 +1,17 @@
++"use client"
++
++import { useLocale } from "next-intl"
++
+ export default function OwnerWarRoomLoading() {
+-  return <CommandSurfaceLoading title="Preparing Owner Morning Brief" />
++  const french = useLocale() === "fr"
++  return <CommandSurfaceLoading title={french ? "Préparation du point quotidien du dirigeant" : "Preparing Owner Morning Brief"} />
+ }
+ 
+ function CommandSurfaceLoading({ title }: { title: string }) {
+   return (
+-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
++    <div className="dashboard-landing-theme dark min-h-screen motion-reduce:[&_.animate-pulse]:animate-none bg-[var(--dash-canvas)]">
+       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+-        <section className="dashboard-glass-panel rounded-lg p-4 md:p-5">
++        <section role="status" aria-live="polite" className="dashboard-glass-panel rounded-lg p-4 md:p-5">
+           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+             <div className="min-w-0 max-w-5xl space-y-3">
+               <div className="h-7 w-40 animate-pulse rounded-md bg-[var(--dash-border-subtle)]" />
+@@ -22,6 +27,6 @@
+           <div className="h-64 animate-pulse rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.32)]" />
+         </section>
+       </div>
+-    </main>
++    </div>
+   )
+ }
+\ No newline at end of file
+diff --git a/app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx b/app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx
+@@ -1,12 +1,17 @@
++"use client"
++
++import { useLocale } from "next-intl"
++
+ export default function ManagerActionCenterLoading() {
+-  return <CommandSurfaceLoading title="Preparing Manager Daily Run Sheet" />
++  const french = useLocale() === "fr"
++  return <CommandSurfaceLoading title={french ? "Préparation du programme quotidien du responsable" : "Preparing Manager Daily Run Sheet"} />
+ }
+ 
+ function CommandSurfaceLoading({ title }: { title: string }) {
+   return (
+-    <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
++    <div className="dashboard-landing-theme dark min-h-screen motion-reduce:[&_.animate-pulse]:animate-none bg-[var(--dash-canvas)]">
+       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+-        <section className="dashboard-glass-panel rounded-lg p-4 md:p-5">
++        <section role="status" aria-live="polite" className="dashboard-glass-panel rounded-lg p-4 md:p-5">
+           <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+             <div className="min-w-0 max-w-5xl space-y-3">
+               <div className="h-7 w-40 animate-pulse rounded-md bg-[var(--dash-border-subtle)]" />
+@@ -22,6 +27,6 @@
+           <div className="h-64 animate-pulse rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.32)]" />
+         </section>
+       </div>
+-    </main>
++    </div>
+   )
+ }
+\ No newline at end of file
+diff --git a/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading.tsx b/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading.tsx
+@@ -1,10 +1,11 @@
+ "use client"
+ 
+-import { useTranslations } from "next-intl"
++import { useLocale, useTranslations } from "next-intl"
+ 
+ import { DashboardLoadingState } from "@/components/dashboard/DashboardLoadingState"
+ 
+ export default function MasterDataOnboardingLoading() {
++  const locale = useLocale() === "fr" ? "fr" : "en"
+   const t = useTranslations("masterDataOnboarding.states.loading")
+-  return <DashboardLoadingState title={t("title")} subtitle={t("message")} />
++  return <DashboardLoadingState embedded locale={locale} title={t("title")} subtitle={t("message")} />
+ }
+diff --git a/app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx b/app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx
+@@ -5,7 +5,7 @@
+ 
+ export default function PurchaseOrdersLoading() {
+   const french = useLocale() === "fr"
+-  return <DashboardLoadingState
++  return <DashboardLoadingState embedded locale={french ? "fr" : "en"}
+     loadingLabel={french ? "Chargement" : "Loading"}
+     title={french ? "Chargement des bons de commande" : "Loading purchase orders"}
+     subtitle={french ? "Le registre et les engagements fournisseurs sont en cours de chargement." : "The register and supplier commitments are loading."}
+diff --git a/app/[locale]/(dashboard)/dashboard/sales/loading.tsx b/app/[locale]/(dashboard)/dashboard/sales/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/sales/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/sales/loading.tsx
+@@ -1,8 +1,13 @@
++"use client"
++
++import { useLocale } from "next-intl"
+ import { Skeleton } from "@/components/ui/skeleton"
+ 
+ export default function SalesLoading() {
++  const french = useLocale() === "fr"
+   return (
+-    <div className="space-y-4 p-6">
++    <div className="space-y-4 p-6 motion-reduce:[&_.animate-pulse]:animate-none">
++      <p role="status" aria-live="polite">{french ? "Chargement des ventes…" : "Loading sales…"}</p>
+       <Skeleton className="h-8 w-36" />
+       <Skeleton className="h-12 w-full" />
+       <Skeleton className="h-80 rounded-xl" />
+diff --git a/app/[locale]/(dashboard)/dashboard/customers/loading.tsx b/app/[locale]/(dashboard)/dashboard/customers/loading.tsx
+--- a/app/[locale]/(dashboard)/dashboard/customers/loading.tsx
++++ b/app/[locale]/(dashboard)/dashboard/customers/loading.tsx
+@@ -1,8 +1,13 @@
++"use client"
++
++import { useLocale } from "next-intl"
+ import { Skeleton } from "@/components/ui/skeleton"
+ 
+ export default function CustomersLoading() {
++  const french = useLocale() === "fr"
+   return (
+-    <div className="space-y-4 p-6">
++    <div className="space-y-4 p-6 motion-reduce:[&_.animate-pulse]:animate-none">
++      <p role="status" aria-live="polite">{french ? "Chargement des clients…" : "Loading customers…"}</p>
+       <Skeleton className="h-8 w-40" />
+       <Skeleton className="h-12 w-full" />
+       <Skeleton className="h-80 rounded-xl" />
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -124,6 +124,8 @@
+ 
+ ### First five changes, in execution order
+ 
++**16 October — Delivery 16:** shared role badges/account-menu role names now use the supplied locale-specific role name. Remaining scoped loading narratives are bilingual, nested fallbacks retain one shell main, and silent finance/sales/customer skeletons have status text. All 18 mocked tests, scoped TypeScript and production lint passed. Edge recovered after the user opened the portal. Fresh Super Administrator checks passed for French desktop/tablet/phone containment, account/mobile menu keyboard focus return, blocker-table keyboard scrolling, control disclosure and actual EN/FR outer loading transitions. Screenshots recorded; normal viewport restored. Actual restricted roles, other route-specific pending renders and broader theme/assistive-technology acceptance remain open. See [Delivery 16](EXECUTION-16.md).
++
+ **15 October — Delivery 15:** French Accountant Access and portal presentation are implemented, including consent/expiry labels, trust/blocker narratives, recorded statuses, percentage formatting and translated blocker search. Authorization, raw evidence and certification controls are preserved. All 16 mocked tests, scoped TypeScript and production lint passed. Actual Accountant FR desktop reads, phone/tablet containment, form keyboard focus and EN→FR portal switching were verified. Desktop viewport restoration is now confirmed. Owner/Cashier sessions, full responsive visual review, light-theme/screen-reader checks and shared loading/role-badge cleanup remain open. See [Delivery 15](EXECUTION-15.md).
+ 
+ **15 October — Delivery 14:** populated reconciliation is now verified in the actual Accountant session in EN/FR. Local fixes remove duplicate main landmarks, wrap risk labels, name filters and translate recorded status/payment-method codes. Trial-balance account types and debit/credit labels are localized while filtering preserves report totals. All 73 mocked tests, both scoped TypeScript checks and production-file lint passed. French phone containment, table keyboard scrolling and mobile-menu focus return were verified; tablet evidence predates the final label cleanup. Browser inspection recovered but screenshot timeouts persist. Owner/Cashier sessions, French Accountant Access/portal copy, final viewport restoration confirmation and broader theme/accessibility acceptance remain open. See [Delivery 14](EXECUTION-14.md).
+diff --git a/components/dashboard/__tests__/Sidebar-current.test.tsx b/components/dashboard/__tests__/Sidebar-current.test.tsx
+--- a/components/dashboard/__tests__/Sidebar-current.test.tsx
++++ b/components/dashboard/__tests__/Sidebar-current.test.tsx
+@@ -19,6 +19,14 @@
+ 
+ describe("Sidebar current destination and disclosure", () => {
+   beforeEach(() => { mockPathname = "/en/dashboard/purchases/payables/prepare" })
++
++  it("uses the localized role label without granting navigation permissions", () => {
++    mockPathname = "/fr/dashboard"
++    render(<Sidebar session={{ user: { name: "Owned test", permissions: [], roles: [{ name: "Accountant", nameEn: "Accountant", nameFr: "Comptable", code: "ACCOUNTANT" }] } }} />)
++    expect(screen.getByText("Comptable")).toBeVisible()
++    expect(screen.queryByText("Accountant")).not.toBeInTheDocument()
++    expect(screen.queryByRole("link", { name: "AP Workbench" })).not.toBeInTheDocument()
++  })
+ 
+   it("marks the nearest authorized destination once without marking its overview ancestor", () => {
+     render(<Sidebar session={session} />)
+diff --git a/lib/dashboard/role-label.ts b/lib/dashboard/role-label.ts
+new file mode 100644
+--- /dev/null
++++ b/lib/dashboard/role-label.ts
+@@ -0,0 +1,9 @@
++import type { Locale } from "@/types/bilingual"
++
++type DisplayRole = { name?: string | null; nameEn?: string | null; nameFr?: string | null; code?: string | null }
++
++// Display only. Never use a translated label to decide access or role identity.
++export function dashboardRoleLabel(role: DisplayRole | undefined, locale: Locale): string {
++  const localized = locale === "fr" ? role?.nameFr : role?.nameEn
++  return localized?.trim() || role?.name?.trim() || role?.code?.trim() || (locale === "fr" ? "Utilisateur" : "User")
++}
+diff --git a/components/dashboard/__tests__/Delivery16-loading.test.tsx b/components/dashboard/__tests__/Delivery16-loading.test.tsx
+new file mode 100644
+--- /dev/null
++++ b/components/dashboard/__tests__/Delivery16-loading.test.tsx
+@@ -0,0 +1,58 @@
++import { render, screen, cleanup } from "@testing-library/react"
++import { DashboardLoadingState } from "../DashboardLoadingState"
++import DashboardLoader from "@/app/[locale]/(dashboard)/loading"
++import InventoryLoading from "@/app/[locale]/(dashboard)/dashboard/inventory/loading"
++import FinanceLoading from "@/app/[locale]/(dashboard)/dashboard/finance/loading"
++import OwnerLoading from "@/app/[locale]/(dashboard)/dashboard/owner-war-room/loading"
++import ManagerLoading from "@/app/[locale]/(dashboard)/dashboard/manager-action-center/loading"
++import PurchaseLoading from "@/app/[locale]/(dashboard)/dashboard/purchase-orders/loading"
++import OnboardingLoading from "@/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading"
++import SalesLoading from "@/app/[locale]/(dashboard)/dashboard/sales/loading"
++import CustomersLoading from "@/app/[locale]/(dashboard)/dashboard/customers/loading"
++import { dashboardRoleLabel } from "@/lib/dashboard/role-label"
++
++let mockLocale = "fr"
++jest.mock("next-intl", () => ({ useLocale: () => mockLocale, useTranslations: () => (key: string) => key }))
++
++describe("Delivery 16 loading boundaries", () => {
++  afterEach(cleanup)
++  it.each([
++    [InventoryLoading, "Préparation de l’espace de stock"],
++    [FinanceLoading, "Chargement des données financières…"],
++    [OwnerLoading, "Préparation du point quotidien du dirigeant"],
++    [ManagerLoading, "Préparation du programme quotidien du responsable"],
++    [PurchaseLoading, "Chargement des bons de commande"],
++    [OnboardingLoading, "Chargement"],
++    [SalesLoading, "Chargement des ventes…"],
++    [CustomersLoading, "Chargement des clients…"],
++  ])("announces a French pending state inside one shell main", (Loading, title) => {
++    mockLocale = "fr"
++    render(<main><Loading /></main>)
++    expect(screen.getAllByRole("main")).toHaveLength(1)
++    expect(screen.getByRole("status")).toHaveTextContent(title)
++    expect(screen.getByRole("status")).not.toHaveAttribute("aria-busy", "true")
++    expect(screen.queryByText("Trusted dashboard data is loading.")).not.toBeInTheDocument()
++  })
++
++  it.each(["en", "fr"])("keeps a standalone landmark for the outer %s boundary", (locale) => {
++    mockLocale = locale
++    render(<DashboardLoader />)
++    expect(screen.getAllByRole("main")).toHaveLength(1)
++    expect(screen.getByRole("status")).toHaveTextContent(locale === "fr" ? "Préparation du tableau de bord" : "Preparing dashboard command center")
++  })
++
++  it("preserves explicit copy overrides", () => {
++    render(<DashboardLoadingState locale="fr" loadingLabel="Synchronisation" title="Étape spécifique" subtitle="Attente du registre" />)
++    expect(screen.getByRole("status")).toHaveTextContent("SynchronisationÉtape spécifiqueAttente du registre")
++  })
++
++  it("selects supplied role translations without changing role identity", () => {
++    const role = Object.freeze({ code: "ACCOUNTANT", name: "Accountant", nameEn: "Accountant", nameFr: "Comptable" })
++    expect(dashboardRoleLabel(role, "fr")).toBe("Comptable")
++    expect(dashboardRoleLabel(role, "en")).toBe("Accountant")
++    expect(role.code).toBe("ACCOUNTANT")
++    expect(dashboardRoleLabel({ name: "Custom reviewer", nameFr: " " }, "fr")).toBe("Custom reviewer")
++    expect(dashboardRoleLabel({ code: "SPECIAL_ROLE" }, "fr")).toBe("SPECIAL_ROLE")
++    expect(dashboardRoleLabel(undefined, "fr")).toBe("Utilisateur")
++  })
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery16.config.cjs b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery16.config.cjs
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery16.config.cjs
+@@ -0,0 +1,11 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Isolated mocked UI lane: no app config, environment loading or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root, testEnvironment: 'jsdom',
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1', '^lucide-react$': require.resolve('lucide-react', { paths: [root] }) },
++  roots: ['<rootDir>/components/dashboard/__tests__'],
++  testMatch: ['**/Delivery16-loading.test.tsx', '**/Sidebar-current.test.tsx'],
++  collectCoverage: false,
++})
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery16.json b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery16.json
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery16.json
+@@ -0,0 +1,25 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": {
++    "incremental": false,
++    "noEmit": true,
++    "plugins": []
++  },
++  "files": [
++    "../../../../next-env.d.ts",
++    "../../../../components/dashboard/Navbar.tsx",
++    "../../../../components/dashboard/Sidebar.tsx",
++    "../../../../components/dashboard/DashboardLoadingState.tsx",
++    "../../../../app/[locale]/(dashboard)/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/inventory/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/finance/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/owner-war-room/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/manager-action-center/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/settings/data-onboarding/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/purchase-orders/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/sales/loading.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/customers/loading.tsx"
++  ],
++  "include": [],
++  "exclude": []
++}
+diff --git a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-16.md b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-16.md
+new file mode 100644
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-16.md
+@@ -0,0 +1,78 @@
++# Delivery 16 — Shared role labels and loading states
++
++Date: 16 October 2026. Status: implementation, scoped automated checks and available Super Administrator responsive/keyboard checks complete. Restricted-role and broader accessibility acceptance remain open. Not deployed or accepted as a release.
++
++## Implemented
++
++The sidebar, organization banner and account-menu role list use the existing server-supplied `nameFr` or `nameEn` for the active locale. The fresh RBAC context already supplies these fields. Missing translations fall back to the supplied name or code; a missing role displays Utilisateur/User. Custom role names are not guessed or rewritten. The helper is presentation-only: role IDs, codes, session authority and permission/module filtering are unchanged.
++
++French loading copy now covers the outer dashboard, inventory, finance, owner morning brief and manager daily run sheet. Sales and customer skeletons now include a visible EN/FR loading announcement. Data-onboarding passes its locale to the shared loading label; purchase orders retain their existing bilingual narrative.
++
++The shared loading component preserves explicit copy overrides and supports an embedded mode. All four of its nested callers use that mode. The outer dashboard boundary retains its standalone main landmark; finance, owner and manager fallbacks use the main already owned by the dashboard layout. Pending figures remain skeletons, not zero or success. Shared default copy no longer calls data “trusted” before the read has completed.
++
++Affected loading states expose a polite status message. The shared status is no longer marked permanently busy, which could defer its announcement until the component disappears. Actual assistive-technology announcement behavior remains unverified. Scoped reduced-motion classes suppress skeleton pulses without changing global animation behavior. No focus movement, interactive controls, permission, accounting or data-fetch behavior was added.
++
++## Scope and inspection
++
++Reviewed current ECC workflow/routing/command registry, design master, UI constitution and component registry, applicable inventory/AP/sales/receivables contracts, current locale provider, dashboard layout, RBAC role mapping and shell permission filtering. Existing component graph Community 77 was a discovery reference for Navbar; behavioral claims use current source.
++
++Project UI/UX Pro Max focused query `loading status keyboard focus` returned focus-indicator and obscured-focus guidance. It informed the rendered checks; no visual compliance is inferred from the dataset. Existing tokens and loading layouts were retained. No generated design system or new dependency was introduced.
++
++Source review found already-localized loaders for analytics, daily digest, profile, module settings, suppliers and payables; these were left unchanged. This is a bounded loading-boundary cleanup, not a claim that every inline asynchronous message across the application has been translated.
++
++## Verification by layer
++
++| Layer | Result | Scope / limitation |
++|---|---|---|
++| Workflow contract | Passed, exit 0 | 196 package commands remain unclassified; no application commands executed by this check |
++| Mocked component tests | **18 passed, 2 suites** | French role display with empty permissions; existing sidebar selection/disclosure/filtering regression checks; eight embedded French loaders; standalone EN/FR boundary; custom copy and unknown-role fallback |
++| Scoped TypeScript | Passed, exit 0 | `noEmit`, incremental disabled; current shell and changed loaders with their imported dependencies |
++| Production-file ESLint | Passed, exit 0 | Twelve changed TSX files and new role-label helper |
++| Browser / rendered | **Available Super Administrator checks passed** | French portal at 1440×900, 1024×768 and 391×844; keyboard interactions and EN/FR role/loading copy observed. Detailed scope below |
++| Real database tests | Not run | No transactions, invites, role/permission changes, exports, migration, seed or build |
++
++Jest uses the installed isolated Next/Jest transformer without application config/env/database setup, jsdom and mocked locale/navigation/auth dependencies. Existing sidebar permission logic is exercised, but these tests do not certify server authorization. Test output: [delivery-16-tests.json](evidence/delivery-16-tests.json).
++
++Commands reviewed and executed:
++
++```text
++npm run agent:workflow:check
++node node_modules/jest/bin/jest.js --config docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.delivery16.config.cjs --runInBand --no-cache --json --outputFile=docs/system-audit/2026-10-12-ui-ux-review/roadmap/evidence/delivery-16-tests.json
++node node_modules/typescript/bin/tsc --project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.delivery16.json --pretty false
++```
++
++ESLint invoked `node node_modules/eslint/bin/eslint.js` with the twelve production TSX paths from the pre-edit baseline plus `lib/dashboard/role-label.ts`. No full build, full-project test run, deployment or commit was performed. Ordinary attempted application reads may create audit records; zero database writes is not asserted.
++
++## Current browser evidence and remaining matrix
++
++Initial Edge/Chrome navigation and observation attempts timed out. After the user opened the French portal in Edge, page control recovered and the following checks completed. The current session is **SUPER_ADMIN**, displayed as **Super administrateur** in French and **Super Admin** in English. Delivery 15's Accountant session is historical evidence; it is not today's role. This recovery does not establish permanent extension reliability. No profile/cache deletion, extension reinstall, security-setting change or server restart was needed.
++
++Route: `http://localhost:3000/fr/dashboard/accounting/accountant-portal`, dark theme, populated state. Recorded CSS dimensions account for the browser's existing zoom; zoom itself was not changed. The portal has one main landmark and its blocked export remains disabled.
++
++| Viewport | Document client / scroll width | Rendered result | Screenshot |
++|---|---|---|---|
++| 1440×900 | 1420 / 1420 | No page-wide horizontal overflow; translated sidebar role wraps | [Desktop](evidence/delivery-16-fr-desktop.png) |
++| 1024×768 | 1004 / 1004 | Content wraps within the available width | [Tablet](evidence/delivery-16-fr-tablet.png) |
++| 391×844 | 371 / 371 | Cards stack; wide tables remain in local scroll regions | [Phone](evidence/delivery-16-fr-phone.png) |
++
++Keyboard checks on the phone viewport:
++
++- Account menu opens with Enter, displays the localized role, closes with Escape and restores focus to its trigger. English menu bounds fit within the viewport: x 50.67–354.67, y 64.32–684.46.
++- Mobile navigation opens with Enter and focuses its close button. Escape closes the dialog and returns focus to “Ouvrir le menu de navigation”.
++- The three named table regions are keyboard-focusable. ArrowRight on “Blocages de clôture” moves its horizontal scroll offset to 53.33 CSS pixels; its 1040-pixel content stays inside a 305-pixel region. The other two regions' scrolling was not individually exercised.
++- “Référence du contrôle” opens with Enter and closes with Space. Focus remains on its summary, within the visible viewport, with a computed browser outline. This is not a comprehensive contrast or focus-appearance certification.
++
++Switching to English and back to French exposed the actual outer loading boundary: “Preparing dashboard command center” and “Préparation du tableau de bord”, with French description “Les données du tableau de bord sont en cours de chargement.” The French pending state retained one main and no page-wide overflow. The portal then settled in French. No artificial delay or business mutation was introduced.
++
++The temporary viewport override was reset and verified: normal browser viewport 1645×792, document client and scroll width both 1625. Evidence: [recorded browser observations](evidence/delivery-16-browser-observations.json), [French loading transition](evidence/delivery-16-fr-transition.json). These are live observations, not an automated end-to-end test suite.
++
++| Remaining acceptance | Limitation |
++|---|---|
++| Actual Owner, Accountant and Cashier sessions | Not available as the active role for this delivery; Super Administrator does not certify their permissions or journeys |
++| Finance and other route-specific pending states | Source and mocked tests passed; actual pending rendering was not captured on every route |
++| Light theme, screen-reader announcements, reduced-motion rendering and comprehensive contrast | Not verified; scoped source improvements do not certify these behaviors |
++| Full keyboard traversal and touch ergonomics across every module | Only the interactions and route explicitly recorded above were exercised |
++
++## Ownership and rollback
++
++The already-dirty pre-edit bytes are preserved in `evidence/delivery-16-baseline.json`. `evidence/delivery-16-owned.patch` is relative to that baseline, not HEAD; final owned-file hashes are in `evidence/delivery-16-files.json`. Preserve unrelated prior changes, including existing Navbar/account-menu work. Reverse only owned hunks after checking later overlap. No entire-file reset to HEAD is appropriate.

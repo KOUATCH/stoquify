@@ -3,8 +3,12 @@
 import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
 
 import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+import { CloseReadinessJourneyPanel } from "@/components/accounting/CloseReadinessJourneyPanel"
+import { CloseEvidenceWorkflowPanel } from "@/components/accounting/CloseEvidenceWorkflowPanel"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+import { Input } from "@/components/ui/input"
 import {
   AlertTriangle,
   BadgeCheck,
@@ -39,6 +43,7 @@ import {
   useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
 import { cn } from "@/lib/utils"
+import { presentSnapshotBlocker } from "@/lib/dashboard/snapshot-blocker-presentation"
 import { usePermissions } from "@/hooks/usePermissions"
 import type { Locale } from "@/types/bilingual"
 import { Badge } from "@/components/ui/badge"
@@ -75,6 +80,23 @@ const copy = {
     period: "Period",
     noPeriod: "No accounting period",
     status: "Status",
+    currentProof: "Current close evidence",
+    recordedStatus: "Recorded status",
+    recordedReadiness: "Recorded readiness",
+    recordedControls: "Recorded critical blockers",
+    recordedTrust: "Recorded trust level",
+    proofReview: "Review required",
+    proofCertified: "Current certification evidence",
+    proofOperational: "Operational evidence",
+    proofUnverified: "Current certification is unverified",
+    proofUnavailable: "Current evidence could not be refreshed. The retained assessment is shown below. Refresh to retry.",
+    proofHistory: "The recorded status and score describe the saved assessment; current proof is checked separately.",
+    noFindingRows: "No finding records are listed. Review current evidence conditions above.",
+    currentProofReviewReason: "Current close evidence requires review.",
+    certificationReady: "Ready for authorized certification",
+    certificationRecorded: "Certification recorded",
+    certificationRecordedReason: "Certification is already recorded for this assessment.",
+    refreshAssessment: "Open latest assessment",
     readiness: "Readiness",
     evidenceCoverage: "Evidence coverage",
     criticalBlockers: "Critical blockers",
@@ -139,6 +161,13 @@ const copy = {
     partialDataDescription: "Some close evidence domains are unavailable. Certification remains gated until required evidence is posted, resolved, or waived through controls.",
     unavailableGates: "unavailable checklist gates",
     actionErrorTitle: "Close action needs attention",
+    confirmIdentity: "Confirm your identity",
+    identityReason: "Enter your password, then retry the action you selected. Verification does not certify or approve anything.",
+    password: "Current password",
+    verifyIdentity: "Verify identity",
+    identityVerified: "Identity verified. Retry your selected action.",
+    identityFailed: "Identity could not be verified. Check your password and try again.",
+    identityRateLimited: "Too many attempts. Wait before trying again.",
     accountantReview: "Accountant review",
     accountantReviewDescription: "Record an accountant decision against this close run without changing source evidence or posted ledger entries.",
     reviewStatus: "Review status",
@@ -152,6 +181,23 @@ const copy = {
     reviewUnavailable: "Run close readiness before recording an accountant review.",
   },
   fr: {
+    currentProof: "Preuves actuelles de clôture",
+    recordedStatus: "Statut enregistré",
+    recordedReadiness: "Préparation enregistrée",
+    recordedControls: "Blocages critiques enregistrés",
+    recordedTrust: "Confiance enregistrée",
+    proofReview: "Examen requis",
+    proofCertified: "Preuves de certification à jour",
+    proofOperational: "Preuves opérationnelles",
+    proofUnverified: "La certification actuelle n’est pas vérifiée",
+    proofUnavailable: "Les preuves actuelles n’ont pas pu être actualisées. L’évaluation conservée est affichée ci-dessous. Actualisez pour réessayer.",
+    proofHistory: "Le statut et le score enregistrés décrivent l’évaluation sauvegardée ; les preuves actuelles sont vérifiées séparément.",
+    noFindingRows: "Aucun constat n’est répertorié. Examinez les conditions actuelles de preuve ci-dessus.",
+    currentProofReviewReason: "Les preuves actuelles de clôture nécessitent un examen.",
+    certificationReady: "Prête pour une certification autorisée",
+    certificationRecorded: "Certification enregistrée",
+    certificationRecordedReason: "La certification est déjà enregistrée pour cette évaluation.",
+    refreshAssessment: "Ouvrir la dernière évaluation",
     loadingTitle: "Chargement de l'assurance de cloture",
     loadingBody: "Verification de la periode, du ledger, du suspense paiement et des preuves de confiance.",
     errorTitle: "Assurance de cloture indisponible",
@@ -225,6 +271,13 @@ const copy = {
     partialDataDescription: "Certains domaines de preuve de cloture sont indisponibles. La certification reste controlee jusqu'a publication, resolution ou derogation controlee.",
     unavailableGates: "portes de checklist indisponibles",
     actionErrorTitle: "Action de cloture a verifier",
+    confirmIdentity: "Confirmez votre identité",
+    identityReason: "Saisissez votre mot de passe, puis réessayez l’action choisie. Cette vérification ne certifie ni n’approuve aucun dossier.",
+    password: "Mot de passe actuel",
+    verifyIdentity: "Vérifier l’identité",
+    identityVerified: "Identité vérifiée. Réessayez l’action choisie.",
+    identityFailed: "Votre identité n’a pas pu être vérifiée. Vérifiez votre mot de passe et réessayez.",
+    identityRateLimited: "Trop de tentatives. Patientez avant de réessayer.",
     accountantReview: "Revue comptable",
     accountantReviewDescription: "Enregistrer une decision comptable sur cette evaluation sans modifier les preuves sources ni les ecritures postees.",
     reviewStatus: "Statut de revue",
@@ -247,13 +300,15 @@ function formatDate(value: string | null | undefined, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value))
+    timeZone: "UTC",
+  }).format(new Date(value)) + " UTC"
 }
 
 function formatDateOnly(value: string | null | undefined, locale: Locale) {
   if (!value) return copy[locale].notSet
   return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
     dateStyle: "medium",
+    timeZone: "UTC",
   }).format(new Date(value))
 }
 
@@ -337,7 +392,7 @@ function MetricTile({
     <div className="min-h-[7.5rem] rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.46)] p-4">
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
+          <p className="break-words text-[0.68rem] font-semibold uppercase leading-4 text-[var(--dash-text-faint)]">{label}</p>
           <p className="mt-2 break-words text-2xl font-semibold leading-tight text-[var(--dash-text)]">{value}</p>
         </div>
         <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", toneClass(tone))}>
@@ -398,8 +453,33 @@ export function CloseAssuranceCenter({
   const [reviewStatus, setReviewStatus] = useState<PortalReviewStatus>("READY_TO_CLOSE")
   const [reviewNotes, setReviewNotes] = useState("")
   const [actionError, setActionError] = useState<string | null>(initialError)
+  const [needsFreshAuth, setNeedsFreshAuth] = useState(false)
+  const [password, setPassword] = useState("")
+  const [authPending, setAuthPending] = useState(false)
+  const [authNotice, setAuthNotice] = useState<string | null>(null)
+  const passwordInput = useRef<HTMLInputElement>(null)
+  const actionTrigger = useRef<HTMLElement | null>(null)
+  const returnActionFocus = useRef(false)
   const [isClientReady, setIsClientReady] = useState(false)
   const t = copy[locale]
+
+  useEffect(() => {
+    if (needsFreshAuth && !authPending) passwordInput.current?.focus()
+  }, [needsFreshAuth, authPending])
+
+  // Authentication can finish before permissions or mutation state re-enable
+  // the initiating control. Retry after each commit, then consume this intent.
+  useEffect(() => {
+    if (!returnActionFocus.current || needsFreshAuth || authPending) return
+    const trigger = actionTrigger.current
+    if (!trigger?.isConnected || (document.activeElement !== document.body && document.activeElement !== trigger)) {
+      returnActionFocus.current = false
+      return
+    }
+    if (trigger.matches(":disabled, [aria-disabled='true']")) return
+    trigger.focus()
+    if (document.activeElement === trigger) returnActionFocus.current = false
+  })
 
   useEffect(() => {
     setIsClientReady(true)
@@ -411,7 +491,10 @@ export function CloseAssuranceCenter({
     initialData: initialQueryData,
     locale,
   })
-  const data = query.data
+  const data = query.error && query.data ? {
+    ...query.data, currentProof: null,
+    controls: { ...query.data.controls, certificationAvailable: false, certificationDisabledReason: "Current close evidence requires review." },
+  } : query.data
   const runMutation = useRunCloseAssurance(locale)
   const assignMutation = useAssignCloseFinding(locale)
   const commentMutation = useCommentOnCloseFinding(locale)
@@ -443,15 +526,39 @@ export function CloseAssuranceCenter({
   const canComment = access.comment && Boolean(selectedFinding?.id && data?.run.id && commentBody.trim().length >= 3 && !commentMutation.isPending)
   const canRequestWaiver = access.waiver && Boolean(selectedFinding?.id && waiverReason.trim().length >= 10 && !waiverMutation.request.isPending)
   const canExportDraft = access.draftExport && Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
-  const canExportCertified = access.certifiedExport && Boolean(data?.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
+  const canExportCertified = access.certifiedExport && !query.error && Boolean(data?.currentProof && data.currentProof.grade !== "blocked" && data.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
   const canUpdateReview = access.review && Boolean(data?.run.id && !reviewMutation.isPending)
 
   async function withActionError(work: () => Promise<void>) {
+    returnActionFocus.current = false
+    actionTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setActionError(null)
+    setAuthNotice(null)
     try {
       await work()
     } catch (error) {
-      setActionError(actionErrorMessage(error, t.errorTitle))
+      if (error && typeof error === "object" && "code" in error && error.code === "FRESH_AUTH_REQUIRED") {
+        setPassword("")
+        setNeedsFreshAuth(true)
+      } else setActionError(actionErrorMessage(error, t.errorTitle))
+    }
+  }
+
+  async function confirmIdentity() {
+    if (authPending || !password) return
+    const enteredPassword = password
+    setPassword("")
+    setAuthPending(true)
+    setAuthNotice(null)
+    try {
+      const result = await stepUpWithPasswordAction({ password: enteredPassword })
+      returnActionFocus.current = result.success
+      setNeedsFreshAuth(!result.success)
+      setAuthNotice(result.success ? t.identityVerified : result.code === "RATE_LIMITED" ? t.identityRateLimited : t.identityFailed)
+    } catch {
+      setAuthNotice(t.identityFailed)
+    } finally {
+      setAuthPending(false)
     }
   }
 
@@ -562,32 +669,49 @@ export function CloseAssuranceCenter({
     )
   }
 
-  const isBlocked = data.run.status === "BLOCKED"
+  const currentProof = query.error ? null : data.currentProof
+  const isBlocked = currentProof?.grade === "blocked" || data.run.status === "BLOCKED"
+  const isCertified = currentProof?.grade === "certified" && !currentProof.blockers.length
+  const currentLabel = query.error ? t.unavailable : isBlocked ? t.proofReview : currentProof?.grade === "certified" ? t.proofCertified
+    : currentProof?.grade === "operational" ? t.proofOperational : t.proofUnverified
+  const currentBlockers = currentProof?.blockers.map(item => presentSnapshotBlocker(item, locale)) ?? []
   const periodOptions = data.periods.recentPeriods
   const graph = graphQuery.data
 
   return (
     <div className="min-w-0 space-y-6">
+      <CloseReadinessJourneyPanel data={data} locale={locale} />
       <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
         { id: "close-readiness", label: t.checklist },
         { id: "close-findings", label: t.blockers },
         { id: "close-certification", label: t.controls },
         { id: "close-evidence", label: t.evidence },
       ]} />
+      <section aria-label={t.currentProof} className={cn("min-w-0 rounded-lg border p-4 [overflow-wrap:anywhere]", isBlocked ? "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]" : "border-[var(--dash-border-subtle)]")}>
+        <h2 className="text-base font-semibold">{t.currentProof}</h2>
+        <p className="mt-2 font-semibold">{currentLabel}</p>
+        <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{query.error ? t.proofUnavailable : t.proofHistory}</p>
+        {currentProof ? <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{t.asOf}: {formatDate(currentProof.checkedAt, locale)}</p> : null}
+        {currentBlockers.length ? <ul className="mt-3 space-y-3 text-sm">
+          {currentBlockers.map(item => <li key={item.id}><p className="font-semibold">{item.title}</p><p>{item.detail}</p>{item.nextAction ? <p className="mt-1">{item.nextAction}</p> : null}</li>)}
+        </ul> : null}
+        {query.error ? <Button type="button" className="mt-3" onClick={() => query.refetch()}>{t.retry}</Button> : null}
+        {!query.error && currentProof?.assessmentState === "HISTORICAL" ? <Button type="button" className="mt-3" disabled={query.isFetching} onClick={() => query.refetch()}>{t.refreshAssessment}</Button> : null}
+      </section>
       <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <MetricTile
           label={t.status}
-          value={data.run.status}
-          detail={data.source.persisted ? t.persisted : t.livePreview}
+          value={currentLabel}
+          detail={`${t.recordedStatus}${locale === "fr" ? " :" : ":"} ${data.run.status}`}
           icon={isBlocked ? ShieldAlert : ShieldCheck}
-          tone={isBlocked ? "danger" : "success"}
+          tone={isBlocked ? "danger" : isCertified ? "success" : "warning"}
         />
         <MetricTile
-          label={t.readiness}
+          label={t.recordedReadiness}
           value={`${data.run.readinessScore}%`}
           detail={`${data.summary.passedCount}/${data.summary.checklistCount} gates passed`}
           icon={ClipboardCheck}
-          tone={data.run.readinessScore >= 90 ? "success" : data.run.readinessScore >= 60 ? "warning" : "danger"}
+          tone="info"
         />
         <MetricTile
           label={t.evidenceCoverage}
@@ -597,11 +721,11 @@ export function CloseAssuranceCenter({
           tone={data.run.evidenceCoveragePct === null ? "warning" : data.run.evidenceCoveragePct >= 90 ? "success" : "warning"}
         />
         <MetricTile
-          label={t.criticalBlockers}
+          label={t.recordedControls}
           value={data.run.criticalBlockerCount.toString()}
           detail={`${data.run.highBlockerCount} high severity`}
           icon={data.run.criticalBlockerCount ? XCircle : CheckCircle2}
-          tone={data.run.criticalBlockerCount ? "danger" : data.run.highBlockerCount ? "warning" : "success"}
+          tone={data.run.criticalBlockerCount ? "danger" : data.run.highBlockerCount ? "warning" : "info"}
         />
         <MetricTile
           label={t.openFindings}
@@ -611,32 +735,32 @@ export function CloseAssuranceCenter({
           tone={data.summary.openFindingCount ? "warning" : "success"}
         />
         <MetricTile
-          label={t.trustLevel}
+          label={t.recordedTrust}
           value={data.source.trustLevel}
           detail={`${t.asOf}: ${formatDate(data.source.asOf, locale)}`}
           icon={BookOpenCheck}
-          tone={data.source.trustLevel === "T4" ? "success" : data.source.trustLevel === "T0" ? "danger" : "warning"}
+          tone="info"
         />
       </div>
 
       <section
         className={cn(
           "flex min-w-0 flex-col gap-3 rounded-lg border px-4 py-3 lg:flex-row lg:items-center lg:justify-between",
-          isBlocked ? "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]" : "border-[var(--dash-success)] bg-[var(--dash-success-soft)]",
+          isBlocked ? "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]" : isCertified ? "border-[var(--dash-success)] bg-[var(--dash-success-soft)]" : "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)]",
         )}
       >
         <div className="flex min-w-0 items-start gap-3">
           <span
             className={cn(
               "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-              isBlocked ? "bg-[rgba(239,106,106,0.18)] text-[var(--dash-danger)]" : "bg-[rgba(46,201,138,0.18)] text-[var(--dash-success)]",
+              isBlocked ? "text-[var(--dash-danger)]" : isCertified ? "text-[var(--dash-success)]" : "text-[var(--dash-warning)]",
             )}
           >
             {isBlocked ? <ShieldAlert className="h-4 w-4" /> : <BadgeCheck className="h-4 w-4" />}
           </span>
           <div className="min-w-0">
-            <p className={cn("font-semibold", isBlocked ? "text-[var(--dash-danger)]" : "text-[var(--dash-success)]")}>
-              {isBlocked ? t.closeBlocked : t.closeReady}
+            <p className={cn("font-semibold", isBlocked ? "text-[var(--dash-danger)]" : isCertified ? "text-[var(--dash-success)]" : "text-[var(--dash-warning)]")}>
+              {currentLabel}
             </p>
             <p className="mt-1 text-sm leading-5 text-[var(--dash-text-soft)]">
               {data.period
@@ -698,6 +822,16 @@ export function CloseAssuranceCenter({
       ) : null}
 
       {actionError ? <ActionErrorBanner message={actionError} locale={locale} /> : null}
+      {needsFreshAuth ? (
+        <form aria-label={t.confirmIdentity} aria-busy={authPending} className="rounded-xl border border-[var(--dash-border)] p-4 space-y-3" onSubmit={(event) => { event.preventDefault(); void confirmIdentity() }}>
+          <h2 className="font-semibold">{t.confirmIdentity}</h2>
+          <p className="text-sm text-[var(--dash-text-soft)]">{t.identityReason}</p>
+          <label htmlFor="close-identity-password" className="block text-sm">{t.password}</label>
+          <Input id="close-identity-password" ref={passwordInput} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={authPending} />
+          <Button type="submit" disabled={authPending || !password}>{authPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" /> : null}{t.verifyIdentity}</Button>
+        </form>
+      ) : null}
+      {authNotice ? <p role="status" aria-live="polite" className="text-sm text-[var(--dash-text-soft)]">{authNotice}</p> : null}
 
       {hasPartialData(data) ? <PartialDataBanner data={data} locale={locale} /> : null}
 
@@ -731,6 +865,8 @@ export function CloseAssuranceCenter({
           onRequestWaiver={handleWaiverRequest}
         />
       </section>
+
+      {data.period && <CloseEvidenceWorkflowPanel key={data.period.id} periodId={data.period.id} locale={locale} />}
 
       <div id="close-certification" data-testid="close-certification-row" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-3">
         <ControlsPanel data={data} locale={locale} />
@@ -770,7 +906,7 @@ function ActionErrorBanner({ message, locale }: { message: string; locale: Local
   const t = copy[locale]
 
   return (
-    <section className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-[var(--dash-text)]">
+    <section role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-[var(--dash-text)]">
       <div className="flex min-w-0 items-start gap-3">
         <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[var(--dash-danger)]" aria-hidden="true" />
         <div className="min-w-0">
@@ -896,7 +1032,7 @@ function FindingsPanel({
       <AccountingDataTable
         caption={t.blockers}
         locale={locale === "fr" ? "fr" : "en"}
-        emptyMessage={t.noBlockers}
+        emptyMessage={data.currentProof?.blockers.length || !data.currentProof ? t.noFindingRows : t.noBlockers}
         contract={accountingCloseFindingsTableContract}
         scopeFilters={data.period?.id ? { periodId: [data.period.id] } : {}}
         columns={[
@@ -995,7 +1131,7 @@ function FindingsPanel({
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="font-semibold text-[var(--dash-text)]">{t.comments}</p>
-              <p className="mt-1 truncate text-xs text-[var(--dash-text-faint)]">{selectedFinding?.title || t.noBlockers}</p>
+              <p className="mt-1 break-words text-xs text-[var(--dash-text-faint)]">{selectedFinding?.title || t.noFindingRows}</p>
             </div>
             <Badge variant="outline" className={cn("rounded-md", data.run.id ? statusClass("OPEN") : statusClass("UNAVAILABLE"))}>
               {data.run.id ? t.persisted : t.livePreview}
@@ -1024,7 +1160,7 @@ function FindingsPanel({
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="font-semibold text-[var(--dash-text)]">{t.requestWaiver}</p>
-              <p className="mt-1 truncate text-xs text-[var(--dash-text-faint)]">{selectedFinding?.title || t.noBlockers}</p>
+              <p className="mt-1 break-words text-xs text-[var(--dash-text-faint)]">{selectedFinding?.title || t.noFindingRows}</p>
             </div>
             <Badge variant="outline" className={cn("rounded-md", statusClass("IN_REVIEW"))}>
               SoD
@@ -1316,9 +1452,13 @@ function ClosePackExportPanel({
   onCertifiedExport: () => Promise<void>
 }) {
   const t = copy[locale]
-  const disabledReason = data.run.id
+  const rawDisabledReason = data.run.id
     ? data.controls.certificationDisabledReason ?? data.controls.packExportDisabledReason
     : t.runRequired
+  const certificationRecorded = data.currentProof?.assessmentState === "CURRENT"
+    && data.currentProof.grade === "certified" && !data.currentProof.blockers.length
+  const disabledReason = certificationRecorded ? t.certificationRecordedReason
+    : rawDisabledReason === "Current close evidence requires review." ? t.currentProofReviewReason : rawDisabledReason
 
   return (
     <Panel title={t.packExport} description={t.packExportDescription}>
@@ -1333,8 +1473,8 @@ function ClosePackExportPanel({
               <Badge variant="outline" className={cn("rounded-md", statusClass(data.controls.packExportAvailable ? "READY" : "UNAVAILABLE"))}>
                 {data.controls.packExportAvailable ? t.available : t.unavailable}
               </Badge>
-              <Badge variant="outline" className={cn("rounded-md", statusClass(data.controls.certificationAvailable ? "READY" : "UNAVAILABLE"))}>
-                {data.controls.certificationAvailable ? "CERTIFIED" : t.certifiedBlocked}
+              <Badge variant="outline" className={cn("rounded-md", statusClass(certificationRecorded || data.controls.certificationAvailable ? "READY" : "UNAVAILABLE"))}>
+                {certificationRecorded ? t.certificationRecorded : data.controls.certificationAvailable ? t.certificationReady : t.certifiedBlocked}
               </Badge>
             </div>
           </div>

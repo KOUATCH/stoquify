@@ -257,12 +257,12 @@ function buildPayrollTrustSpineReadiness(root = process.cwd(), options = {}) {
           (index, position) => position === 0 || index > persistenceOrder[position - 1],
         ) &&
         service.includes("Prisma.TransactionIsolationLevel.Serializable") &&
+        /retries a (?:%s )?serializable transaction conflict and applies the transition once/.test(transitionTests) &&
         includesAll(transitionTests, [
           "rolls the review transition back when compare-and-set loses",
           "does not apply the emission event when compare-and-set loses",
           "does not update the period, invalidate close, or apply the event when CAS loses",
           "rolls back with a concurrency conflict when compare-and-set loses",
-          "retries a serializable transaction conflict and applies the transition once",
           "returns the prior result for a same-payload idempotent replay",
           "rejects an idempotency key reused with a different approval document",
         ]),

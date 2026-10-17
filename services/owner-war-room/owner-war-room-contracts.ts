@@ -128,7 +128,7 @@ export type OwnerMorningBriefData = BIDailyDigest & {
   acknowledgement: OwnerMorningBriefAcknowledgement
   headlineMetrics: {
     cashAtRisk: number | null
-    payrollForecastTotal: number
+    payrollForecastTotal: number | null
     blockedCloseItems: number
     staleEvidenceItems: number
     proofLinkedActionCount: number
@@ -161,8 +161,11 @@ export type OwnerWarRoomSnapshotBundle = {
 }
 
 export type ComposeOwnerWarRoomInput = {
+  locale?: "en" | "fr"
   organizationId: string
   organizationName: string | null
+  /** Server-resolved permissions; omitted context cannot enable stock navigation. */
+  actorPermissions?: readonly string[]
   generatedAt: string
   snapshots: OwnerWarRoomSnapshotBundle
   actionQueue: ActionQueueResult

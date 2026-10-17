@@ -1,0 +1,108 @@
+{
+  "at": "2026-09-30T23:36:17.804Z",
+  "organizationId": "workflow_supplier_ack_en_receipt-handoff-58116dda-8c34-4c19-9471-fd006719e60d-operational-771a612b-2202-4da6-8eb6-b1626a89813f-frac-three-returns",
+  "scope": "SELECT-only normal transaction permits required FOR SHARE row lock; no data writes",
+  "prior": "fractional-receipt-valuation-6b6902f6-bb55-4ebc-a02e-e2b2a7516b48.json",
+  "sourceHash": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd",
+  "periods": [
+    {
+      "id": "cmuoqr9ve000imaysj67xgq4o",
+      "status": "OPEN",
+      "startDate": "2026-01-01T00:00:00.000Z",
+      "endDate": "2026-01-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000jmaysm8x8tci3",
+      "status": "OPEN",
+      "startDate": "2026-02-01T00:00:00.000Z",
+      "endDate": "2026-02-28T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000kmaysq3j9ubq7",
+      "status": "OPEN",
+      "startDate": "2026-03-01T00:00:00.000Z",
+      "endDate": "2026-03-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000lmays7bkw2xmp",
+      "status": "OPEN",
+      "startDate": "2026-04-01T00:00:00.000Z",
+      "endDate": "2026-04-30T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000mmaysqipusqzm",
+      "status": "OPEN",
+      "startDate": "2026-05-01T00:00:00.000Z",
+      "endDate": "2026-05-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000nmaysx7tkdfrs",
+      "status": "OPEN",
+      "startDate": "2026-06-01T00:00:00.000Z",
+      "endDate": "2026-06-30T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000omays7vr6pv2i",
+      "status": "OPEN",
+      "startDate": "2026-07-01T00:00:00.000Z",
+      "endDate": "2026-07-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000pmays6znak5or",
+      "status": "OPEN",
+      "startDate": "2026-08-01T00:00:00.000Z",
+      "endDate": "2026-08-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000qmaysm8wy74fd",
+      "status": "OPEN",
+      "startDate": "2026-09-01T00:00:00.000Z",
+      "endDate": "2026-09-30T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000rmaysvrst3te1",
+      "status": "OPEN",
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "endDate": "2026-10-31T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000smays07fnyj81",
+      "status": "OPEN",
+      "startDate": "2026-11-01T00:00:00.000Z",
+      "endDate": "2026-11-30T23:59:59.999Z"
+    },
+    {
+      "id": "cmuoqr9ve000tmaysoe42l4bh",
+      "status": "OPEN",
+      "startDate": "2026-12-01T00:00:00.000Z",
+      "endDate": "2026-12-31T23:59:59.999Z"
+    }
+  ],
+  "instant": "2026-09-30T23:33:26.124Z",
+  "rootClient": {
+    "success": true,
+    "value": {
+      "id": "cmuoqr9ve000qmaysm8wy74fd",
+      "status": "OPEN",
+      "startDate": "2026-09-01T00:00:00.000Z",
+      "endDate": "2026-09-30T23:59:59.999Z"
+    }
+  },
+  "transaction": {
+    "success": false,
+    "error": {
+      "name": "BusinessRuleError",
+      "message": "Entry date is outside accounting period October 2026",
+      "code": "BUSINESS_RULE_VIOLATION"
+    }
+  },
+  "utcDayTransaction": {
+    "success": true,
+    "value": {
+      "id": "cmuoqr9ve000qmaysm8wy74fd",
+      "status": "OPEN",
+      "startDate": "2026-09-01T00:00:00.000Z",
+      "endDate": "2026-09-30T23:59:59.999Z"
+    }
+  }
+}

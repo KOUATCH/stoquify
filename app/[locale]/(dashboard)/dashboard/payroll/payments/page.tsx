@@ -5,9 +5,15 @@ import PayrollPaymentReconciliationWorkbench from "@/components/payroll/PayrollP
 import { pickLocale } from "@/i18n/routing"
 import { routeByKey, withPayrollSurfaceAccess } from "../payroll-route-access"
 
-export const metadata = {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  return locale === "fr" ? {
+    title: "Paiements de paie | Stoquify",
+    description: "Rapprochement des paiements de paie, preuves de règlement et recouvrement salarié.",
+  } : {
   title: "Payroll Payments | Stoquify",
   description: "Payroll payment reconciliation, settlement proof, employee recovery, and close readiness.",
+}
 }
 
 export default async function PayrollPaymentsPage({

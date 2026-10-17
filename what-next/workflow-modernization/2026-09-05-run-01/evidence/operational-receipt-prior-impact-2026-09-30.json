@@ -1,0 +1,826 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-09-30T22:37:42.005Z",
+  "evidenceDate": "2026-09-30",
+  "workflow": "FA-CASH-COMMAND",
+  "scope": "Source-only impact review for this operational receipt recognition implementation. Exact predecessor bytes are verified; this artifact performs no tests and grants no workflow closure, release or professional certification.",
+  "predecessorPolicy": "Earliest retained baseline within this operational implementation. The previously delivered replay/capacity correction remains a separate review; its earlier hashes are not operational aliases.",
+  "priorImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "before": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+      "baseline": {
+        "file": "evidence/receipt-kernel-before-2026-09-30.json",
+        "sha256": "f9ffbf93bf2f43e2baa2c93b2f34659c0b971a7789f9ab33d5aaac0342048a8d",
+        "recordPointer": "/0",
+        "recordPathField": "file",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+      "changeImpact": "Extends journal references with APGR. GOODS_RECEIPT rules must resolve to exact positive INVENTORY debit and GRNI credit; PURCHASE_RETURN rules must match verified inventory, claim and accrual release amounts. Unproven return recognition retains a source-review blocker before rule evaluation. Other source types keep their existing dispatch.",
+      "lineChangeSummary": {
+        "added": 82,
+        "removed": 3
+      }
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "before": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+      "baseline": {
+        "file": "evidence/receipt-kernel-before-2026-09-30.json",
+        "sha256": "f9ffbf93bf2f43e2baa2c93b2f34659c0b971a7789f9ab33d5aaac0342048a8d",
+        "recordPointer": "/1",
+        "recordPathField": "file",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06",
+      "changeImpact": "Adds source-review and actual resolved-account/amount guard cases for receipt and return posting, including explicit wrong accounts. Existing test bodies remain in the retained predecessor comparison.",
+      "lineChangeSummary": {
+        "added": 99,
+        "removed": 0
+      }
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "before": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/0",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-order.service.ts",
+        "sha256": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497"
+      },
+      "predecessorContentVerified": true,
+      "after": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+      "changeImpact": "Receiving and held acceptance take supplier before order locks, persist all receipt lines before one immutable recognition manifest, apply stock only to its frozen tracked partition with shared hash and acceptance date, and invoke one whole-receipt accounting post. Held rejection and exact receiving replay do not manufacture recognition.",
+      "lineChangeSummary": {
+        "added": 25,
+        "removed": 12
+      }
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "before": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/1",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__inventory__inventory-stock-event.service.ts",
+        "sha256": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7"
+      },
+      "predecessorContentVerified": true,
+      "after": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+      "changeImpact": "Adds optional canonical receipt document hash and a zero-value recognition exemption. The exemption is accepted only after matching the server-owned manifest, exact line quantities/cost/tracking, actor, location and effective date. Existing replay repair was already present in the chosen operational predecessor and is not attributed to this turn.",
+      "lineChangeSummary": {
+        "added": 15,
+        "removed": 2
+      }
+    },
+    {
+      "file": "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+      "before": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/2",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-receipt-accounting-evidence.ts",
+        "sha256": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000"
+      },
+      "predecessorContentVerified": true,
+      "after": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+      "changeImpact": "Adds an opt-in exact GRNI credit/account-effect check for marked receipt recognition. Legacy callers retain the existing default evidence contract and selector shape.",
+      "lineChangeSummary": {
+        "added": 5,
+        "removed": 0
+      }
+    },
+    {
+      "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "before": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/3",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-receiving-workbench.service.ts",
+        "sha256": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+      },
+      "predecessorContentVerified": true,
+      "after": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+      "changeImpact": "Reads marked source, stock and journal proof through canonical readers, distinguishes NOT_REQUIRED and blocked/unverified states, propagates database failures, and derives accounting review authority. Preview revision now binds trackInventory; confirmation locks supplier before order. History currency comes from verified manifest or retained verified decision, otherwise remains unknown.",
+      "lineChangeSummary": {
+        "added": 22,
+        "removed": 8
+      }
+    },
+    {
+      "file": "services/purchasing/invoice-receipt-recognition.ts",
+      "before": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/4",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchasing__invoice-receipt-recognition.ts",
+        "sha256": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4"
+      },
+      "predecessorContentVerified": true,
+      "after": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+      "changeImpact": "Marked pending/unverified receipts cannot fall back to legacy invoice recognition. Positive tracked lines consume verified receipt accrual once; mixed nonstock lines retain invoice recognition. Verified return allocations reduce remaining quantity and GRNI cost, bind preview evidence, and preserve approved allocation history. Unmarked legacy proof generation is retained.",
+      "lineChangeSummary": {
+        "added": 32,
+        "removed": 7
+      }
+    },
+    {
+      "file": "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+      "before": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/6",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-receipt-accounting-evidence.test.ts",
+        "sha256": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8"
+      },
+      "predecessorContentVerified": true,
+      "after": "0c33c9cce40c1c688c50a856799ae440cb895c2fa02e43b1df2fa5c44684d4a9",
+      "changeImpact": "Adds a discriminating marked-receipt case requiring the full GRNI credit and rejecting substitution with AP.",
+      "lineChangeSummary": {
+        "added": 6,
+        "removed": 0
+      }
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "before": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/7",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__inventory____tests____inventory-stock-event.service.test.ts",
+        "sha256": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f"
+      },
+      "predecessorContentVerified": true,
+      "after": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad",
+      "changeImpact": "Adds source-bound zero-value receipt success and positive-cost substitution denial cases. Earlier replay cases are preserved from the operational baseline.",
+      "lineChangeSummary": {
+        "added": 17,
+        "removed": 0
+      }
+    },
+    {
+      "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+      "before": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/8",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchasing____tests____invoice-receipt-recognition.test.ts",
+        "sha256": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277"
+      },
+      "predecessorContentVerified": true,
+      "after": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d",
+      "changeImpact": "Adds marked failed-receipt legacy-fallback denial, mixed stock/nonstock handling and return-three/invoice-seven capacity cases; legacy tests use a null marked source by default.",
+      "lineChangeSummary": {
+        "added": 36,
+        "removed": 0
+      }
+    },
+    {
+      "file": "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+      "before": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-order-receive-batch.service.test.ts",
+        "sha256": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+      },
+      "predecessorContentVerified": true,
+      "after": "b41b51b8d8720c61469caf651be56d91fb19723a8c3ce2d8fb3de02b8f09dce2",
+      "changeImpact": "Supplies canonical source/posting mocks to isolate receipt orchestration and verifies all lines precede manifest capture, shared source hash/date reach stock, and one receipt accounting call follows stock. Existing receiving and held-inspection cases remain.",
+      "lineChangeSummary": {
+        "added": 13,
+        "removed": 0
+      }
+    },
+    {
+      "file": "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+      "before": "1d319ec2c1e0c536bf1e9b141a8f4e69c8aabd0fc6a0db11e45ff7bc5499a97f",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/0",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd",
+      "changeImpact": "Adds receipt accounting preview/submit actions with server-derived tenant/session identity and both order-read and invoice-post permissions. Revalidation follows the committed durable decision; cache refresh failure does not erase success.",
+      "lineChangeSummary": {
+        "added": 28,
+        "removed": 0
+      }
+    },
+    {
+      "file": "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+      "before": "9317bcaa4d81e24962e2de5d16f39c725d8302a50206d69f932fa6d863b32080",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/1",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1",
+      "changeImpact": "Exposes the authorized source-bound accounting recovery dialog on recorded receipt rows. Each history amount now uses its retained row currency; missing currency is not replaced with current organization currency.",
+      "lineChangeSummary": {
+        "added": 4,
+        "removed": 2
+      }
+    },
+    {
+      "file": "services/purchase-order/purchase-receiving-contracts.ts",
+      "before": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/2",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185",
+      "changeImpact": "Adds not_required accounting state, role-appropriate canReviewAccounting, and nullable retained history-row currency. Durable decision schema otherwise keeps the existing shape.",
+      "lineChangeSummary": {
+        "added": 3,
+        "removed": 3
+      }
+    },
+    {
+      "file": "services/purchase-order/purchase-receiving-authority.ts",
+      "before": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/3",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686",
+      "changeImpact": "Adds canReviewAccounting from the existing purchasing.ap.invoice.post permission after unchanged tenant/module/user/session validation. Receipt-recovery submission independently enforces its full authority contract.",
+      "lineChangeSummary": {
+        "added": 1,
+        "removed": 1
+      }
+    },
+    {
+      "file": "messages/en.json",
+      "before": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/4",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65",
+      "changeImpact": "Adds English receipt accounting recovery controls, source/rule/period blockers, return recovery details and honest not-required/verified-posted status text within purchaseReceiving.",
+      "lineChangeSummary": {
+        "added": 63,
+        "removed": 2
+      },
+      "changedJsonPaths": [
+        "purchaseReceiving.accounting.not_required",
+        "purchaseReceiving.accounting.posted",
+        "purchaseReceiving.accountingNext",
+        "purchaseReceiving.accountingRecovery"
+      ]
+    },
+    {
+      "file": "messages/fr.json",
+      "before": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+      "baseline": {
+        "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+        "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4",
+        "recordPointer": "/5",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc",
+      "changeImpact": "Adds the matching French receipt accounting recovery controls, blockers, return details and honest accounting states within purchaseReceiving.",
+      "lineChangeSummary": {
+        "added": 63,
+        "removed": 2
+      },
+      "changedJsonPaths": [
+        "purchaseReceiving.accounting.not_required",
+        "purchaseReceiving.accounting.posted",
+        "purchaseReceiving.accountingNext",
+        "purchaseReceiving.accountingRecovery"
+      ]
+    },
+    {
+      "file": "services/purchasing/purchase-return-credit.service.ts",
+      "before": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+      "baseline": {
+        "file": "evidence/receipt-return-recognition-before-f9332797-759d-4761-9aed-9e7b76f91047.json",
+        "sha256": "500d3c6fce7aa7b02947b6e090393f1956c96d0f2a13622391effeb362116837",
+        "recordPointer": "/files/0",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+      "changeImpact": "Binds physical return/reversal to verified source allocation and supplier-first locking, tenant currency and source-date chronology. Persists immutable return proof and supports accounting-only recovery without replaying stock or rewriting original headers. Supplier credits require verified funded claim evidence; reversals use the actual retained receipt location and verified current journal.",
+      "lineChangeSummary": {
+        "added": 68,
+        "removed": 11
+      }
+    },
+    {
+      "file": "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+      "before": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+      "baseline": {
+        "file": "evidence/receipt-return-recognition-before-f9332797-759d-4761-9aed-9e7b76f91047.json",
+        "sha256": "500d3c6fce7aa7b02947b6e090393f1956c96d0f2a13622391effeb362116837",
+        "recordPointer": "/files/1",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7",
+      "changeImpact": "Extends return fixtures and assertions for tenant currency/source proof and adds accounting-only recovery, original date, no-stock replay and exact reversal behavior.",
+      "lineChangeSummary": {
+        "added": 67,
+        "removed": 0
+      }
+    },
+    {
+      "file": "components/purchasing/InvoicePreparationWorkbench.tsx",
+      "before": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+      "baseline": {
+        "file": "evidence/invoice-dialog-reflow-before-72eb831f-68b3-4df9-aaa2-1ca33b944b64.json",
+        "sha256": "91ef064ccd66c43e1325167b1e9cf97d73c9264babbf11cad1255a10622f837a",
+        "recordPointer": "/files/0",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4",
+      "changeImpact": "Adds min-width and overflow wrapping constraints to the existing themed review dialog so long references and narrow French content can reflow. No action, state, posting or permission behavior changes.",
+      "lineChangeSummary": {
+        "added": 1,
+        "removed": 1
+      }
+    },
+    {
+      "file": "components/purchasing/InvoiceCorrectionWorkbench.tsx",
+      "before": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+      "baseline": {
+        "file": "evidence/invoice-dialog-reflow-before-72eb831f-68b3-4df9-aaa2-1ca33b944b64.json",
+        "sha256": "91ef064ccd66c43e1325167b1e9cf97d73c9264babbf11cad1255a10622f837a",
+        "recordPointer": "/files/1",
+        "recordPathField": "path",
+        "contentField": "content",
+        "declaredHashField": "sha256"
+      },
+      "predecessorContentVerified": true,
+      "after": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635",
+      "changeImpact": "Adds the same bounded dialog reflow constraints while preserving reduced-motion, focus-return and pending-command behavior. No accounting mutation changes.",
+      "lineChangeSummary": {
+        "added": 1,
+        "removed": 1
+      }
+    }
+  ],
+  "newSources": [
+    {
+      "file": "services/purchase-order/receipt-recognition-source.ts",
+      "sha256": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+      "purpose": "Immutable whole-receipt manifest capture and retained source/stock/journal verification.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/receipt-recognition.service.ts",
+      "sha256": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+      "purpose": "Single canonical receipt posting or honest blocked/not-required result; accounting-only recovery guard.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/__tests__/receipt-recognition-source.test.ts",
+      "sha256": "ff954b9cbe5c00108f88bd24f8c157ec1781528338e23e55c01a5e5e5d225ec8",
+      "purpose": "Manifest tamper, date/currency/partition, zero-value, retained posting and database-failure cases.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/__tests__/receipt-recognition.service.test.ts",
+      "sha256": "d8d885b86119fabc4e1afe2b7acf69d5b715647669af5be525e26466fcd53a8b",
+      "purpose": "Posting, retry, blockers, physical-return validation, original-date and not-required cases.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchasing/receipt-return-recognition.ts",
+      "sha256": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+      "purpose": "Versioned receipt return allocations, physical/accounting evidence, resolution/reversal and supplier-claim funding.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchasing/__tests__/receipt-return-recognition.test.ts",
+      "sha256": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b",
+      "purpose": "Frozen allocation, partial return, replay/reversal, malformed evidence and residual-valuation denial cases.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+      "sha256": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6",
+      "purpose": "Strict preview, command and durable receipt/return recovery decision contracts.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/receipt-ledger-recovery-authority.ts",
+      "sha256": "6ba14fb18edf9a3cd637a2e58864c236e6d45be07e3fef41a45ca0da9aeac75d",
+      "purpose": "Current tenant, module, user, permissions, session and fresh password authority.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/receipt-ledger-recovery.service.ts",
+      "sha256": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+      "purpose": "Source/date/rule/account/period-bound preview and idempotent accounting-only receipt/return recovery.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+      "sha256": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7",
+      "purpose": "EN/FR review, actionable blockers, password step-up, retained request retry and recovery result UI.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+      "sha256": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4",
+      "purpose": "Recovery preview, stale/concurrent/evidence constraints and durable exact replay.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts",
+      "sha256": "6060aedaa8c0065f4adab75992ea6a6d1cd0933edb1295424efa393f054f56c8",
+      "purpose": "Authority, tenant/session and fresh-auth denials.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts",
+      "sha256": "4f536b6264e7bc0c45322b086f2163090c1a9d496325794fc41a49b891f7e8ec",
+      "purpose": "Server identity, permission and action response/cache boundaries.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+      "sha256": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6",
+      "purpose": "EN/FR recovery, blockers, password, response loss and scope-change behavior.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+      "sha256": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c",
+      "purpose": "Tracking/currency stale preview, lock order and retained history currency cases.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    },
+    {
+      "file": "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx",
+      "sha256": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5",
+      "purpose": "EN/FR retained USD history under current EUR and unknown legacy currency presentation.",
+      "classification": "New in this operational implementation; no historical before-hash alias."
+    }
+  ],
+  "unchangedBaselines": [
+    {
+      "file": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "before": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89",
+      "baseline": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+        "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112",
+        "recordPointer": "/5",
+        "recordPathField": "path",
+        "declaredHashField": "sha256"
+      },
+      "snapshot": {
+        "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-order.service.test.ts",
+        "sha256": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89"
+      },
+      "predecessorContentVerified": true,
+      "after": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89",
+      "reason": "Exact predecessor bytes unchanged; not a new operational priorImpact alias."
+    }
+  ],
+  "intermediateSnapshots": [
+    {
+      "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "before": "27396c35149b45136072e1afc5ec012d2fb614fd2bcc68e6cbef2667cee04b2c",
+      "snapshot": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order__purchase-receiving-workbench.service.ts",
+        "sha256": "27396c35149b45136072e1afc5ec012d2fb614fd2bcc68e6cbef2667cee04b2c"
+      },
+      "captureReceipt": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/receipt.json",
+        "sha256": "19babb9da03450d0c8d2d40aca9589a235a702e14bdade7675515e154c60e8a3"
+      },
+      "after": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+      "role": "Intermediate pre-regression snapshot, not a replacement for the earlier operational predecessor."
+    },
+    {
+      "file": "services/purchase-order/purchase-receiving-contracts.ts",
+      "before": "72f6bcd9dc2d0644042559e5e5d1ae68995d8c7afbb7c1018f87cdf45dfb5f46",
+      "snapshot": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order__purchase-receiving-contracts.ts",
+        "sha256": "72f6bcd9dc2d0644042559e5e5d1ae68995d8c7afbb7c1018f87cdf45dfb5f46"
+      },
+      "captureReceipt": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/receipt.json",
+        "sha256": "19babb9da03450d0c8d2d40aca9589a235a702e14bdade7675515e154c60e8a3"
+      },
+      "after": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185",
+      "role": "Intermediate pre-regression snapshot, not a replacement for the earlier operational predecessor."
+    },
+    {
+      "file": "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+      "before": "935b5b82b62fb81ee6b162d505c565471f000958bf53499e2037aa5ec7c474ae",
+      "snapshot": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/components__purchase-orders__PurchaseReceivingWorkbench.tsx",
+        "sha256": "935b5b82b62fb81ee6b162d505c565471f000958bf53499e2037aa5ec7c474ae"
+      },
+      "captureReceipt": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/receipt.json",
+        "sha256": "19babb9da03450d0c8d2d40aca9589a235a702e14bdade7675515e154c60e8a3"
+      },
+      "after": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1",
+      "role": "Intermediate pre-regression snapshot, not a replacement for the earlier operational predecessor."
+    },
+    {
+      "file": "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+      "before": "204b9360f5e3fed892fb4ac22f1d36deebff5e583bbd1a3cefec204de3f29ec1",
+      "snapshot": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order____tests____purchase-receiving-revision.test.ts",
+        "sha256": "204b9360f5e3fed892fb4ac22f1d36deebff5e583bbd1a3cefec204de3f29ec1"
+      },
+      "captureReceipt": {
+        "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/receipt.json",
+        "sha256": "19babb9da03450d0c8d2d40aca9589a235a702e14bdade7675515e154c60e8a3"
+      },
+      "after": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c",
+      "role": "Intermediate pre-regression snapshot, not a replacement for the earlier operational predecessor."
+    }
+  ],
+  "previousReceiptCapacityReview": {
+    "file": "evidence/receipt-capacity-review-2026-09-30.json",
+    "sha256": "db7b3bfcd97f45712313ff5d5b0db53f7788683de3d5331da5583fb0a48fb847",
+    "predecessorReferences": [
+      {
+        "file": "services/inventory/inventory-stock-event.service.ts",
+        "before": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+        "baseline": {
+          "file": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json",
+          "sha256": "87be09269ebe4b2babd246008a509dacecfab3bfc3112345197701ed8d7f0660",
+          "recordPointer": "/0",
+          "recordPathField": "path",
+          "contentField": "content",
+          "declaredHashField": "sha256"
+        },
+        "predecessorContentVerified": true,
+        "role": "Earlier delivered replay correction predecessor; intentionally excluded from operational priorImpact."
+      },
+      {
+        "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+        "before": "d0a69a7b17dc7e07f68f85dfcb3ab34a5b0a433234134e4c844b9410e10a867a",
+        "baseline": {
+          "file": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json",
+          "sha256": "87be09269ebe4b2babd246008a509dacecfab3bfc3112345197701ed8d7f0660",
+          "recordPointer": "/1",
+          "recordPathField": "path",
+          "contentField": "content",
+          "declaredHashField": "sha256"
+        },
+        "predecessorContentVerified": true,
+        "role": "Earlier delivered replay correction predecessor; intentionally excluded from operational priorImpact."
+      }
+    ],
+    "preserveSeparateReview": true
+  },
+  "closeBridge": {
+    "file": "evidence/close-assurance-test-bridge-review-620ad18c-3249-43ba-b601-5c93e2b45be7.json",
+    "sha256": "1d44df273d7859c34a62332dbcac54de334399357f757efb389b91672c6f7d69",
+    "priorImpact": [
+      {
+        "file": "services/accounting/close-assurance-pack.service.ts",
+        "before": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+        "after": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+        "priorReview": "evidence/accounting-setup-trust-review-2026-09-30.json"
+      },
+      {
+        "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+        "before": "9f4b10e0d26782af7cb3ab3f9aa148415162b4323cd24cfdb52712fdc90709a8",
+        "after": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441",
+        "priorReview": "evidence/setup-rule-selection-review-2026-09-30.json"
+      }
+    ],
+    "currentAfterHashesVerified": true,
+    "ownership": "Separate exact two-file reviewed bridge; copied references are not folded into the operational priorImpact list."
+  },
+  "inputs": [
+    {
+      "file": "evidence/receipt-kernel-before-2026-09-30.json",
+      "sha256": "f9ffbf93bf2f43e2baa2c93b2f34659c0b971a7789f9ab33d5aaac0342048a8d"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/manifest.json",
+      "sha256": "195025bda081d3a9544760a86b0b409bf4514b3bbdcb99ee26f9d097856a1112"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-order.service.ts",
+      "sha256": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__inventory__inventory-stock-event.service.ts",
+      "sha256": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-receipt-accounting-evidence.ts",
+      "sha256": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order__purchase-receiving-workbench.service.ts",
+      "sha256": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchasing__invoice-receipt-recognition.ts",
+      "sha256": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-order.service.test.ts",
+      "sha256": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-receipt-accounting-evidence.test.ts",
+      "sha256": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__inventory____tests____inventory-stock-event.service.test.ts",
+      "sha256": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchasing____tests____invoice-receipt-recognition.test.ts",
+      "sha256": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277"
+    },
+    {
+      "file": "evidence/receipt-recognition-before-2026-09-30/services__purchase-order____tests____purchase-order-receive-batch.service.test.ts",
+      "sha256": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+    },
+    {
+      "file": "evidence/receipt-ledger-recovery-before-fd431956-9d6d-41ec-803f-bc8ee4b1fc3a.json",
+      "sha256": "3345f62d0d15d97d7abb2c37bd2da501b7ccb08d4bc90bf445205ed4a46273b4"
+    },
+    {
+      "file": "evidence/receipt-return-recognition-before-f9332797-759d-4761-9aed-9e7b76f91047.json",
+      "sha256": "500d3c6fce7aa7b02947b6e090393f1956c96d0f2a13622391effeb362116837"
+    },
+    {
+      "file": "evidence/invoice-dialog-reflow-before-72eb831f-68b3-4df9-aaa2-1ca33b944b64.json",
+      "sha256": "91ef064ccd66c43e1325167b1e9cf97d73c9264babbf11cad1255a10622f837a"
+    },
+    {
+      "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/receipt.json",
+      "sha256": "19babb9da03450d0c8d2d40aca9589a235a702e14bdade7675515e154c60e8a3"
+    },
+    {
+      "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order__purchase-receiving-workbench.service.ts",
+      "sha256": "27396c35149b45136072e1afc5ec012d2fb614fd2bcc68e6cbef2667cee04b2c"
+    },
+    {
+      "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order__purchase-receiving-contracts.ts",
+      "sha256": "72f6bcd9dc2d0644042559e5e5d1ae68995d8c7afbb7c1018f87cdf45dfb5f46"
+    },
+    {
+      "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/components__purchase-orders__PurchaseReceivingWorkbench.tsx",
+      "sha256": "935b5b82b62fb81ee6b162d505c565471f000958bf53499e2037aa5ec7c474ae"
+    },
+    {
+      "file": "evidence/receiving-revision-before-170d78fb-c29f-429d-a531-bd45f36bef1c/services__purchase-order____tests____purchase-receiving-revision.test.ts",
+      "sha256": "204b9360f5e3fed892fb4ac22f1d36deebff5e583bbd1a3cefec204de3f29ec1"
+    },
+    {
+      "file": "evidence/receipt-replay-before-f16c9e77-9ceb-493b-8405-0778e1649dc9.json",
+      "sha256": "87be09269ebe4b2babd246008a509dacecfab3bfc3112345197701ed8d7f0660"
+    },
+    {
+      "file": "evidence/receipt-capacity-review-2026-09-30.json",
+      "sha256": "db7b3bfcd97f45712313ff5d5b0db53f7788683de3d5331da5583fb0a48fb847"
+    },
+    {
+      "file": "evidence/close-assurance-test-bridge-review-620ad18c-3249-43ba-b601-5c93e2b45be7.json",
+      "sha256": "1d44df273d7859c34a62332dbcac54de334399357f757efb389b91672c6f7d69"
+    }
+  ],
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06",
+    "services/purchase-order/purchase-order.service.ts": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+    "services/inventory/inventory-stock-event.service.ts": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+    "services/purchasing/invoice-receipt-recognition.ts": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+    "services/purchase-order/__tests__/purchase-order.service.test.ts": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "0c33c9cce40c1c688c50a856799ae440cb895c2fa02e43b1df2fa5c44684d4a9",
+    "services/inventory/__tests__/inventory-stock-event.service.test.ts": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "b41b51b8d8720c61469caf651be56d91fb19723a8c3ce2d8fb3de02b8f09dce2",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd",
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1",
+    "services/purchase-order/purchase-receiving-contracts.ts": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185",
+    "services/purchase-order/purchase-receiving-authority.ts": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686",
+    "messages/en.json": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65",
+    "messages/fr.json": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc",
+    "services/purchasing/purchase-return-credit.service.ts": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchase-order/receipt-recognition.service.ts": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+    "services/purchase-order/__tests__/receipt-recognition-source.test.ts": "ff954b9cbe5c00108f88bd24f8c157ec1781528338e23e55c01a5e5e5d225ec8",
+    "services/purchase-order/__tests__/receipt-recognition.service.test.ts": "d8d885b86119fabc4e1afe2b7acf69d5b715647669af5be525e26466fcd53a8b",
+    "services/purchasing/receipt-return-recognition.ts": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+    "services/purchasing/__tests__/receipt-return-recognition.test.ts": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b",
+    "services/purchase-order/receipt-ledger-recovery-contracts.ts": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6",
+    "services/purchase-order/receipt-ledger-recovery-authority.ts": "6ba14fb18edf9a3cd637a2e58864c236e6d45be07e3fef41a45ca0da9aeac75d",
+    "services/purchase-order/receipt-ledger-recovery.service.ts": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+    "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7",
+    "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4",
+    "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts": "6060aedaa8c0065f4adab75992ea6a6d1cd0933edb1295424efa393f054f56c8",
+    "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts": "4f536b6264e7bc0c45322b086f2163090c1a9d496325794fc41a49b891f7e8ec",
+    "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6",
+    "services/purchase-order/__tests__/purchase-receiving-revision.test.ts": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c",
+    "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5"
+  },
+  "sourceStableDuringReview": true,
+  "verificationPerformed": [
+    "Read and hashed exact embedded/raw predecessor bytes.",
+    "Compared current source to each selected predecessor and recorded per-file change impacts.",
+    "Verified locale changes stay within purchaseReceiving.",
+    "Verified all source and evidence input hashes again before writing."
+  ],
+  "verificationNotPerformed": [
+    "No tests, lint, build, database, browser or reconciler executed by this artifact.",
+    "No production, statutory, security or accounting certification; root owns final combined behavioral evidence."
+  ],
+  "limitations": [
+    "A source diff and matching hash do not establish behavior; final review must bind the current combined, actual database and browser results.",
+    "Fractional per-return stock valuation may retain an explicit source-review blocker when independently rounded costs cannot discharge the original receipt accrual; no invented residual posting is authorized.",
+    "New-source classification follows this task ownership and retained before captures, not repository Git status in the shared dirty worktree."
+  ],
+  "builder": {
+    "file": "evidence/build-operational-receipt-prior-impact-2026-09-30.cjs",
+    "sha256": "38e832008fe8e730350d79c7d008fbf64b2f215f956f19db63b87d59d2fb5929"
+  }
+}

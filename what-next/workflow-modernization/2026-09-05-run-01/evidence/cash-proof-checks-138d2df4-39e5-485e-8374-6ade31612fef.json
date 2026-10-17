@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-27T19:14:49.908Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "6d90a5c1612e8c8409cb0523da1e68e8076f7fbb97d5e21e83126fe0209d6cc0",
+    "services/cash-command/cash-command-contracts.ts": "3453faee9881c81d332adbd8d908053db5987ceef0c06b1b0171c67e29817c96",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "df903b1c97103dadeb3b7f38cef5cdd19da54e8ec90e5277b95b2bab30159d03",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "f18d0df383a6c8a4265b811d4c963436ddf90fb7cacbcd7e4f4101069162f5ef",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "bbef7a8c6095c74dd02529953e520257cf9fd1cc477d2902be3570589ff5943b",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\n  ● Test suite failed to run\n\n    Jest encountered an unexpected token\n\n    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.\n\n    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.\n\n    By default \"node_modules\" folder is ignored by transformers.\n\n    Here's what you can do:\n     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.\n     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript\n     • To have some of your \"node_modules\" files transformed, you can specify a custom \"transformIgnorePatterns\" in your config.\n     • If you need a custom transformation, specify a \"transform\" option in your config.\n     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the \"moduleNameMapper\" config option.\n\n    You'll find more details and examples of these config options in the docs:\n    https://jestjs.io/docs/configuration\n    For information about custom transformations, see:\n    https://jestjs.io/docs/code-transformation\n\n    Details:\n\n    E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\better-auth@1.6.26_@prisma+_d24fae1797ed323d5d6672531c718152\\node_modules\\better-auth\\dist\\index.mjs:1\n    import { getBaseURL, getHost, getHostFromSource, getOrigin, getProtocol, getProtocolFromSource, isDynamicBaseURLConfig, isRequestLike, matchesHostPattern, resolveBaseURL, resolveDynamicBaseURL, trimTrailingSlashes } from \"./utils/url.mjs\";\n    ^^^^^^\n\n    SyntaxError: Cannot use import statement outside a module\n\n       9 |\n      10 | const baseURL = process.env.NEXTAUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? \"http://localhost:3000\"\n    > 11 | const configuredTrustedOrigins = buildTrustedOrigins([\n         |                     ^\n      12 |   baseURL,\n      13 |   process.env.NEXTAUTH_URL,\n      14 |   process.env.NEXT_PUBLIC_BASE_URL,\n\n      at ModuleExecutor.compile (node_modules/.pnpm/jest-runtime@30.4.2_supports-color@8.1.1/node_modules/jest-runtime/build/index.js:2104:44)\n      at Object.<anonymous> (lib/auth.ts:11:21)\n      at Object.<anonymous> (lib/security/auth-session.ts:29:15)\n      at Object.<anonymous> (services/_shared/protect.ts:12:22)\n      at Object.<anonymous> (actions/modules/module-control.actions.ts:25:18)\n      at Object.<anonymous> (components/modules/TenantModuleActivationButton.tsx:15:31)\n      at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)../../../dashboard/finance/finance-route-access.tsx:21:39)\n      at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)../../../dashboard/finance/cash-command/page.tsx:22:29)\n      at Object.<anonymous> (E:\\ohada saas\\Focused projects\\stoquify\\app\\[locale]\\(dashboard)../../../dashboard/finance/cash-command/__tests__/page.test.tsx:35:54)\n\n\nTest Suites: 1 failed, 3 passed, 4 total\nTests:       25 passed, 25 total\nSnapshots:   0 total\nTime:        15.353 s, estimated 18 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "6d90a5c1612e8c8409cb0523da1e68e8076f7fbb97d5e21e83126fe0209d6cc0",
+    "services/cash-command/cash-command-contracts.ts": "3453faee9881c81d332adbd8d908053db5987ceef0c06b1b0171c67e29817c96",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "df903b1c97103dadeb3b7f38cef5cdd19da54e8ec90e5277b95b2bab30159d03",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "f18d0df383a6c8a4265b811d4c963436ddf90fb7cacbcd7e4f4101069162f5ef",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "bbef7a8c6095c74dd02529953e520257cf9fd1cc477d2902be3570589ff5943b",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": false
+}

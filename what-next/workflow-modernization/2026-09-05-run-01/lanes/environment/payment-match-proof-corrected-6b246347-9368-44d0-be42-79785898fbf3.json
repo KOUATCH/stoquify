@@ -1,0 +1,85 @@
+{
+  "at": "2026-09-30T16:41:35.658Z",
+  "baseline": false,
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "d061b8a63af784ec6cb8a247032fd9ce2159b9877d1511deac96ad4b1099256f",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "5cd3c92c8ca93074dbb8139a69d6bb6e48ef8d99383ce1c8f531a052f6f17ebc",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+  },
+  "stages": [
+    {
+      "stage": "confirmed-without-match",
+      "expected": "operational",
+      "actual": "operational",
+      "reason": "Payment transaction is confirmed but not yet reconciled.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "proposal-awaiting-independent-approval",
+      "expected": "operational",
+      "actual": "operational",
+      "reason": "Payment transaction is confirmed but not yet reconciled.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "approved-partial-60-of-100",
+      "expected": "operational",
+      "actual": "operational",
+      "reason": "Payment transaction is confirmed but not yet reconciled.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "remaining-proposal-not-yet-approved",
+      "expected": "operational",
+      "actual": "operational",
+      "reason": "Payment transaction is confirmed but not yet reconciled.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "independently-approved-full-coverage",
+      "expected": "reconciled",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    },
+    {
+      "stage": "accepted-coverage-outside-ten-display-rows",
+      "expected": "reconciled",
+      "actual": "reconciled",
+      "reason": "Payment transaction is matched against provider or statement evidence.",
+      "unchangedBusinessRecords": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuoc1k4q0000ma8s4dc84ysk",
+    "paymentId": "cmuoc1k6n000ama8sz7feqc2y",
+    "makerId": "cmuoc1k580002ma8ss26l8lh0",
+    "checkerId": "cmuoc1k5p0004ma8s8imqsbtv"
+  },
+  "reconciliation": {
+    "organizationId": "cmuoc1mpw0022ma8shysbv2j0",
+    "runId": "cmuoc1n4f003cma8sgdco6m6e",
+    "before": "reconciled",
+    "after": "certified",
+    "certificateHash": "886987913b99b11d31b0da3da34100df127bae586407a56d11fc50335d49728f",
+    "signingReplayWithoutDuplicate": true,
+    "syntheticSetupAndAuthenticationPreconditions": true
+  },
+  "passed": true,
+  "reproducedIncorrectStages": [],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "d061b8a63af784ec6cb8a247032fd9ce2159b9877d1511deac96ad4b1099256f",
+    "services/evidence/evidence-grade.service.ts": "758a0819c8cbcd922f1c79e70836bad251ac7e3544b658dfd8216791a5e259e4",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "5cd3c92c8ca93074dbb8139a69d6bb6e48ef8d99383ce1c8f531a052f6f17ebc",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+  },
+  "sourceStable": true
+}

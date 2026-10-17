@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-01T07:33:45.298Z",
+  "kind": "PURE_ISOLATED_CANDIDATE_CONTRACT",
+  "passed": true,
+  "checks": [
+    "refuses-repeatable read",
+    "refuses-serializable",
+    "refuses-unknown",
+    "existing-shared-catalog-contract",
+    "tenant-filtered-complete-deduplicated-sorted-scope",
+    "required-period-and-invalid-date-refusal-before-locks"
+  ],
+  "activeSourceBefore": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+  "activeSourceAfter": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+  "candidateSha256": "82f7be861b1c131340ba0773e0db3229c98eb6c095424ece1fe999a081cfe8ac",
+  "sourceStable": true,
+  "limitations": [
+    "Mocked contract only; no PostgreSQL contention/performance claim.",
+    "Candidate is not applied by this script."
+  ]
+}

@@ -1,0 +1,11 @@
+.workspace :global(.dashboard-button-primary) {
+  background: var(--product-brand-action);
+}
+
+.workspace :global(.dashboard-button-primary:hover) {
+  background: var(--product-brand-action-hover);
+}
+
+.workspace :global(.dashboard-filter-chip) > span[aria-hidden="true"] {
+  color: var(--dash-text-soft);
+}

@@ -1,0 +1,170 @@
+{
+  "at": "2026-09-30T23:03:02.112Z",
+  "startedAt": "2026-09-30T23:02:49.243Z",
+  "runId": "0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af",
+  "workflow": "FA-CASH-COMMAND",
+  "passed": true,
+  "sourceStable": true,
+  "scope": "Only the exact posting.service.ts predecessor transition and its current focused mocked service suite; no workflow closure or deployment.",
+  "sourceHashesBefore": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "package-lock.json": "797525d6a694c8e31ca078acd9fecaa0784f47e3a422c2c37b3c62ce4f99484f",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/posting.service.test.ts": "4bc696f0168f4bbf70e80d02c5b5db9b6a7004e1cd4f32f6b2c9a750c9884a41",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/accounting/periods.service.ts": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-posting-service-drift-2026-10-01.cjs": "65a9f3f19701322dc6c57a8fa08a1ea3f3ab68e4783ab46204b0ac4aec8b3b1a"
+  },
+  "sourceHashes": {
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "package-lock.json": "797525d6a694c8e31ca078acd9fecaa0784f47e3a422c2c37b3c62ce4f99484f",
+    "package.json": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/accounting/__tests__/posting.service.test.ts": "4bc696f0168f4bbf70e80d02c5b5db9b6a7004e1cd4f32f6b2c9a750c9884a41",
+    "services/accounting/close-assurance-pack.service.ts": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/accounting/periods.service.ts": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd",
+    "services/accounting/posting.service.ts": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/verify-posting-service-drift-2026-10-01.cjs": "65a9f3f19701322dc6c57a8fa08a1ea3f3ab68e4783ab46204b0ac4aec8b3b1a"
+  },
+  "priorImpact": [
+    {
+      "file": "services/accounting/posting.service.ts",
+      "before": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94",
+      "after": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+      "priorReview": "evidence/cash-release-readiness-review-2026-09-30.json",
+      "snapshot": {
+        "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-predecessor.ts.txt",
+        "sha256": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94"
+      }
+    }
+  ],
+  "predecessor": {
+    "gitCommit": "62a56036a5ac9b37236a20c9b148052199069479",
+    "gitPath": "services/accounting/posting.service.ts",
+    "gitBlobSha256": "75e4a08825fa7ecb04e7f643b62db7366b79a36cf61e5c8aa579128fd573964d",
+    "manifest": {
+      "file": "evidence/source-baseline-v160.json",
+      "sha256": "fb95ac71b5bf58cff941b332d05f2cf8c751a62e3a47cc5baae4bb78d521af5d"
+    },
+    "recordPointer": "/sources/1992",
+    "method": "Retained Git text with unchanged current line endings and the original CRLF on assertBalancedJournalEntry(original.lines). Exact whole historical SHA256 and byte count match; LF-normalized reconstruction is identical to retained Git text.",
+    "bytes": 19328,
+    "sha256": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94"
+  },
+  "changedDeclarations": [
+    "postJournalEntry",
+    "reverseJournalEntry"
+  ],
+  "reviewFindings": [
+    "Generic posting now accepts only explicitly MANUAL sources. Domain-owned and unattributed drafts cannot be relabelled by the manual command.",
+    "Posting revalidates finite positive per-line FX rates, exact HALF_UP two-decimal recorded base amounts and functional balance before any financial posting effects. Invalid historical drafts require correction rather than silent relabelling.",
+    "Generic reversal now rejects every non-MANUAL source, including null provenance, after current authority evaluation. It records a source-owned denial without financial effects and throws after the transaction so the denial audit can persist.",
+    "Manual reversal refuses missing recorded base amounts and swaps the retained nominal and functional amounts without falling back to nominal values. Existing tenant scoping, source-recovery guards, period locking, batch identity and close invalidation declarations are unchanged.",
+    "The focused suite covers all current non-MANUAL enum sources and null, missing base debit/credit, retained foreign base decimals, cross-tenant absence, source-owned drafts, invalid copied FX bases, existing period/authority/separation-of-duties rules, successful manual posting and reversal."
+  ],
+  "limitations": [
+    "Prisma transactions are mocked. This review does not establish PostgreSQL concurrency, rollback, source-workflow completeness or the runtime persistence of denial audits.",
+    "Manual reversal preserves recorded functional amounts; it does not certify historical amounts, reconstruct missing legacy proof or validate an external exchange-rate source.",
+    "The existing PAYMENT_SUSPENSE denial text still says its linked correction workflow is not yet available. Dedicated source workflows exist in this repository; that explanatory text remains a reporting limitation, not a bypass of the manual-command boundary.",
+    "Only this one production predecessor is eligible for a bridge. Any other drift requires a separate review, and the active fractional receipt work remains outside this evidence."
+  ],
+  "commands": [
+    {
+      "name": "jest",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/accounting/__tests__/posting.service.test.ts",
+        "--json",
+        "--outputFile=E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-jest.json"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "lint",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/accounting/posting.service.ts",
+        "services/accounting/__tests__/posting.service.test.ts",
+        "--format",
+        "json",
+        "--output-file",
+        "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-lint.json"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    }
+  ],
+  "results": {
+    "suites": 1,
+    "passedTests": 53,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "lintFiles": 2,
+    "lintErrors": 0,
+    "lintWarnings": 0
+  },
+  "receipts": [
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-jest.log",
+      "sha256": "7fee6c02cf83a059bff30b67fcffdeefa6809fc1e54066634b20a9086d86f955"
+    },
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-jest.json",
+      "sha256": "e8480e832d8a6e9ee29f1516bdd852bb90676910e3c6a045b9e7099e77cc92aa"
+    },
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-lint.json",
+      "sha256": "c87da2c4859e6f0f4ed1efba03d5f2550ae535daba5bccaa4883b7b7a2fc653e"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af-predecessor.ts.txt",
+      "sha256": "b75fb9e85657b6ee009be86055b96d53b1eb24f17fa6c6b7923167d26baa2f94"
+    },
+    {
+      "file": "evidence/posting-service-drift-0294c1c2-cc4d-4b9f-a3e3-ec27395ea8af.diff",
+      "sha256": "e7e745e7161aeff3ef0e9587738b679a38147be4b5339343ccd2414ce676b9ad"
+    },
+    {
+      "file": "evidence/cash-release-readiness-review-2026-09-30.json",
+      "sha256": "910e5bc554f7899923ca38dbe78422379db139f30bd55f412698064d52c4a304"
+    },
+    {
+      "file": "evidence/source-baseline-v160.json",
+      "sha256": "fb95ac71b5bf58cff941b332d05f2cf8c751a62e3a47cc5baae4bb78d521af5d"
+    },
+    {
+      "file": "evidence/verify-posting-service-drift-2026-10-01.cjs",
+      "sha256": "65a9f3f19701322dc6c57a8fa08a1ea3f3ab68e4783ab46204b0ac4aec8b3b1a"
+    }
+  ],
+  "conclusion": "This exact production transition is supported for a separately pinned reconciliation bridge with the listed mocked-verification limits."
+}

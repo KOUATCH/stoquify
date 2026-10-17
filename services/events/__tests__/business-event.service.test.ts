@@ -38,6 +38,29 @@ function createEvidenceClient() {
 }
 
 describe("business event gateway", () => {
+  it.each([
+    { code: "P2034" },
+    { code: "P2010", meta: { code: "40001" } },
+    { code: "P2010", meta: { code: "40P01" } },
+  ])("preserves transaction retry signals for the owning transaction: %j", async details => {
+    const tx = createTx(), failure = { name: "PrismaClientKnownRequestError", clientVersion: "6.19.3", ...details }
+    tx.businessEvent.findUnique.mockResolvedValue(null)
+    tx.businessEvent.create.mockRejectedValue(failure)
+    await expect(recordBusinessEventInTx(tx, { organizationId: "org-1", eventType: "RETRY", idempotencyKey: "retry-1", payload: {} })).rejects.toBe(failure)
+    expect(tx.businessEvent.create).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps the standalone transaction boundary sanitized when a retry signal escapes it", async () => {
+    const tx = createTx()
+    const failure = { name: "PrismaClientKnownRequestError", code: "P2034", clientVersion: "6.19.3", message: "private database detail" }
+    tx.businessEvent.findUnique.mockResolvedValue(null)
+    tx.businessEvent.create.mockRejectedValue(failure)
+    const client = { ...tx, $transaction: jest.fn(async callback => callback(tx)) }
+    const error = await recordBusinessEvent({ organizationId: "org-1", eventType: "RETRY", idempotencyKey: "retry-1", payload: {} }, client).catch(error => error)
+    expect(error).toMatchObject({ code: "INTERNAL_ERROR", expose: false, message: "Business event transaction failed." })
+    expect(JSON.stringify(error)).not.toContain("private database detail")
+  })
+
   it("preserves a domain reference and existing metadata without classifying it as accounting", async () => {
     const tx = createTx()
     tx.businessEvent.findUnique.mockResolvedValue(null)

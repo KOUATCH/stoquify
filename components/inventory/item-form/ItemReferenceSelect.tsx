@@ -77,7 +77,7 @@ export function ItemReferenceSelect({
       <SelectTrigger id={id} className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="enterprise-floating-surface">
         <SelectItem value={NONE_VALUE}>{noneLabel}</SelectItem>
         {options.map((option) => (
           <SelectItem key={option.id} value={option.id}>

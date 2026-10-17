@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-30T10:39:29.556Z",
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/evidence/__tests__/proof-trail.service.test.ts",
+        "services/evidence/__tests__/evidence-grade.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "actions/evidence/__tests__/proof-trail.module-boundary.test.ts",
+        "components/evidence/__tests__/ProofTrailDrawer.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 5 passed, 5 total\nTests:       40 passed, 40 total\nSnapshots:   0 total\nTime:        5.942 s, estimated 16 s\nRan all test suites within paths \"services/evidence/__tests__/proof-trail.service.test.ts\", \"services/evidence/__tests__/evidence-grade.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"actions/evidence/__tests__/proof-trail.module-boundary.test.ts\", \"components/evidence/__tests__/ProofTrailDrawer.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/evidence/proof-trail.service.ts",
+        "services/evidence/__tests__/proof-trail.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "a540d035e8cb7267404eaa88e5e276f1ed5b833a68f6dec12b5bcf61bb6fe2ce",
+    "services/evidence/__tests__/proof-trail.service.test.ts": "cfa37562f5e8fabd26f3dd4f5ff90df2e32eeacc7464f33353258fec2ba5a882",
+    "services/evidence/__tests__/evidence-grade.service.test.ts": "9ba7033ac8e01947c81a0a1db09cb8b2ebcf4a935203f548f2d0fb2662e6f3a3",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "actions/evidence/__tests__/proof-trail.module-boundary.test.ts": "cf08494e0c67613ee102592b8ed65571da51974abbd17c8f9bbd7d2390012927",
+    "components/evidence/__tests__/ProofTrailDrawer.test.tsx": "b7255240f6065bc9b4e538fb24b549c0f42941bc1659449268e1b06a4853e1cb",
+    "services/evidence/evidence-grade.service.ts": "e113233aa681fd75ba2946ad9ba257605ef5b6c61fa0f588dda272f6feb0a746",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "actions/evidence/proof-trail.actions.ts": "1ea56bb1fd7f9dbb85e3bf8b877ae29597717b984ea72ab09cc5b4d58d5014fd",
+    "components/evidence/ProofTrailDrawer.tsx": "6e14055cfe369783e70fd71a0c20928ff48cb7ebb2d0c349d2d2db4ad7302c43"
+  },
+  "sourceStable": true,
+  "passed": true
+}

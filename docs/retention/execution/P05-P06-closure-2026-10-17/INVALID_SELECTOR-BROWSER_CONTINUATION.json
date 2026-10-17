@@ -1,0 +1,76 @@
+{
+  "utc": "2026-10-17T09:59:43.542Z",
+  "browser": "149.0.7827.55",
+  "steps": [
+    {
+      "locale": "en",
+      "result": "PASS",
+      "claim": "Original sale reference rendered after reconnect; financial snapshot unchanged"
+    },
+    {
+      "locale": "fr",
+      "result": "PASS",
+      "claim": "Original sale reference rendered after reconnect; financial snapshot unchanged"
+    }
+  ],
+  "limitation": "Fresh browser reconnect to original server-retained operation; not same-tab sessionStorage durability proof",
+  "enText": "Skip to main content\nq\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nSynthetic full POS transaction test\n\nSYNTHETIC CASHIER\nSession\nMODULES\n3\nOPERATIONS\n2\nInventory\nItems, loss control, stock movements, transfers, and units\n3\nSales\nCustomers, sales, and POS entry points\n3\nOverview\nCustomers\nPOS\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n3\nTC\n\nTest Cashier\n\nactor-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7@retention.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nTC\n\nLOADING\n\nChecking the current checkout workspace\n\nLoading your current access, shift, stock and cart. Please wait before changing the sale.\n\nBack to dashboard",
+  "enSnapshot": {
+    "sale": {
+      "id": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "orderNumber": "63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "status": "COMPLETED",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "4",
+      "totalValue": "16"
+    },
+    "customer": {
+      "currentBalance": "4"
+    },
+    "records": [
+      {
+        "clientCommitId": "pos:7d1923a1-9e2f-46bf-8892-4ddb41c7e9db",
+        "salesOrderId": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+        "status": "COMPLETED"
+      }
+    ],
+    "payments": 2,
+    "movements": 1,
+    "journals": 2,
+    "postings": 2,
+    "ledger": 1
+  },
+  "frText": "Aller au contenu principal\nq\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nSynthetic full POS transaction test\n\nCAISSIER DE TEST\nSession\nMODULES\n3\nOPÉRATIONS\n2\nStocks\nArticles, pertes, mouvements de stock, transferts et unités\n3\nVentes\nClients, ventes et point de vente\n3\nVue d’ensemble\nClients\nPoint de vente\nGOUVERNANCE\n1\nParamètres\nEntreprise, rôles, emplacements, modules et sécurité\n3\nTC\n\nTest Cashier\n\nactor-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7@retention.invalid\n\nPoint de vente\n\nOpérations / Ventes / Point de vente\n\nEN\nTC\n\nCHARGEMENT\n\nVérification de l’espace de caisse actuel\n\nChargement de vos droits actuels, de votre session, du stock et du panier. Patientez avant de modifier la vente.\n\nRetour au tableau de bord",
+  "frSnapshot": {
+    "sale": {
+      "id": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "orderNumber": "63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "status": "COMPLETED",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "4",
+      "totalValue": "16"
+    },
+    "customer": {
+      "currentBalance": "4"
+    },
+    "records": [
+      {
+        "clientCommitId": "pos:7d1923a1-9e2f-46bf-8892-4ddb41c7e9db",
+        "salesOrderId": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+        "status": "COMPLETED"
+      }
+    ],
+    "payments": 2,
+    "movements": 1,
+    "journals": 2,
+    "postings": 2,
+    "ledger": 1
+  },
+  "status": "PASS",
+  "url": "http://127.0.0.1:3187/fr/dashboard/pos",
+  "finalText": "Aller au contenu principal\nq\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nSynthetic full POS transaction test\n\nCAISSIER DE TEST\nSession\nMODULES\n3\nOPÉRATIONS\n2\nStocks\nArticles, pertes, mouvements de stock, transferts et unités\n3\nVentes\nClients, ventes et point de vente\n3\nVue d’ensemble\nClients\nPoint de vente\nGOUVERNANCE\n1\nParamètres\nEntreprise, rôles, emplacements, modules et sécurité\n3\nTC\n\nTest Cashier\n\nactor-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7@retention.invalid\n\nPoint de vente\n\nOpérations / Ventes / Point de vente\n\nEN\nTC\n\nCHARGEMENT\n\nVérification de l’espace de caisse actuel\n\nChargement de vos droits actuels, de votre session, du stock et du panier. Patientez avant de modifier la vente.\n\nRetour au tableau de bord"
+}

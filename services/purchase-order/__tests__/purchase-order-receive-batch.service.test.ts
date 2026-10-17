@@ -3,6 +3,10 @@ import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-even
 import { Prisma } from "@prisma/client"
 import { receiveItems as receiveWithScope, resolveGoodsReceiptInspection as resolveWithScope } from "../purchase-order.service"
 import { purchaseReceivingAuthority } from "../purchase-receiving-authority"
+import { createReceiptRecognitionSourceInTx } from "../receipt-recognition-source"
+import { postReceiptRecognitionInTx } from "../receipt-recognition.service"
+jest.mock("../receipt-recognition-source", () => ({ createReceiptRecognitionSourceInTx: jest.fn() }))
+jest.mock("../receipt-recognition.service", () => ({ postReceiptRecognitionInTx: jest.fn() }))
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -171,6 +175,8 @@ describe("purchase-order receiving batch defaults", () => {
     mockDb.goodsReceipt.findFirst.mockResolvedValue(null)
     mockDb.goodsReceiptInspectionResolution.findFirst.mockResolvedValue(null)
     mockPostGoodsReceiptStock.mockResolvedValue(undefined)
+    ;(createReceiptRecognitionSourceInTx as jest.Mock).mockResolvedValue({ sourceHash: "a".repeat(64), inventoryValue: new Prisma.Decimal(300), manifest: { effectiveAt: now.toISOString(), lines: ["receipt-line-1", "receipt-line-2", "receipt-line-held"].map(receiptLineId => ({ receiptLineId, stockTracked: true })) } })
+    ;(postReceiptRecognitionInTx as jest.Mock).mockResolvedValue({ ledgerStatus: "BLOCKED_PENDING_RULES", ledgerBatch: { id: "batch" } })
   })
 
   it("auto-generates a receipt batch number for batch-tracked items when none is entered", async () => {
@@ -222,6 +228,13 @@ describe("purchase-order receiving batch defaults", () => {
       inspectionOutcome: "PASSED",
       items: [{ lineId: "line-1", receivedQuantity: 3 }],
     })
+
+    expect(createReceiptRecognitionSourceInTx).toHaveBeenCalledTimes(1)
+    expect(postReceiptRecognitionInTx).toHaveBeenCalledTimes(1)
+    expect((createReceiptRecognitionSourceInTx as jest.Mock).mock.invocationCallOrder[0]).toBeGreaterThan(tx.goodsReceiptLine.create.mock.invocationCallOrder[0])
+    expect(mockPostGoodsReceiptStock.mock.invocationCallOrder[0]).toBeGreaterThan((createReceiptRecognitionSourceInTx as jest.Mock).mock.invocationCallOrder[0])
+    expect((postReceiptRecognitionInTx as jest.Mock).mock.invocationCallOrder[0]).toBeGreaterThan(mockPostGoodsReceiptStock.mock.invocationCallOrder[0])
+    expect(mockPostGoodsReceiptStock).toHaveBeenCalledWith(expect.objectContaining({ documentHash: "a".repeat(64), occurredAt: now }), expect.anything())
 
     expect(tx.goodsReceiptLine.create).toHaveBeenCalledWith(
       expect.objectContaining({

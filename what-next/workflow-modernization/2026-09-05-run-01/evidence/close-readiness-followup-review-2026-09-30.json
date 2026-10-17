@@ -1,0 +1,168 @@
+{
+  "at": "2026-09-30T18:56:33.373Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "CLOSE_READINESS_FOLLOWUP_2026-09-30.md",
+  "sourceHashes": {
+    "hooks/accounting/useCloseAssurance.ts": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "4d54eab88a713238c7dd68cc9ecd6513892cc928c2bd81cf7ecb672d832910f3",
+    "services/accounting/accounting-settings.service.ts": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+    "services/accounting/__tests__/accounting-settings.service.test.ts": "d94db043140383949dc6f791e726f0852538bf3486973e8746808497a357cd9d",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "f329e58e7ca55e9b2539b1a2d6e096a5070d17b27e0c9cc557512d330df3be5c",
+    "services/accounting/__tests__/control-center.service.test.ts": "3adfb398d1e5fc8404c770084428edbf7b9c35d68f59d878996a1fd4fec2f9df",
+    "lib/providers/query-provider.tsx": "0631abda1d390721d047f673a0d83115338ba7aab6e35467b903f150f10620d6",
+    "lib/error-handling/crud-notifications.ts": "6228dde317ccebb8c9def2cbefc9680cd65e9ee904cfc73075e0a169a9aced82",
+    "services/accounting/control-center.service.ts": "3a1d7173d2736a3f708e67c672222ae3efaf5a7b1a43736535069ce432a62227",
+    "components/accounting/CloseAssuranceCenter.tsx": "e02002aafbdbee47763c9be11ae691aba92f76cc54a53a2a175b459e7cfc07ad",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847",
+    "services/accounting/close-assurance-pack.service.ts": "c38a2267dc5e97dfd1df2877b95a8fbc834cef3bb99ff39af11750f130e3cc61",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "priorImpact": [
+    {
+      "file": "hooks/accounting/useCloseAssurance.ts",
+      "before": "c9eb09af0f446f1f7286330c50f533692276020c9d55798db831b04e66a779a6",
+      "after": "7f4c2e2843e310e9a1761eeda3a8d361f4b7aa43338316cc147aacec4fc9fd49",
+      "priorReview": "evidence/close-notifications-before-30af8b94-62fb-4862-94c6-941d78ea535a.json"
+    },
+    {
+      "file": "hooks/__tests__/useCloseAssurance.export.test.tsx",
+      "before": "48ddea38797f16252e762a39dfd56e268fdd2d74c25c272be590803309e76077",
+      "after": "4d54eab88a713238c7dd68cc9ecd6513892cc928c2bd81cf7ecb672d832910f3",
+      "priorReview": "evidence/close-notifications-before-30af8b94-62fb-4862-94c6-941d78ea535a.json"
+    },
+    {
+      "file": "services/accounting/__tests__/accounting-settings.service.test.ts",
+      "before": "a569c440b74405c33c2bd3bc52b75e774be0119789374adcc940b16123d409e6",
+      "after": "d94db043140383949dc6f791e726f0852538bf3486973e8746808497a357cd9d",
+      "priorReview": "evidence/setup-side-before-752f00e6-27ca-4f55-843d-82926dab6013.json"
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "before": "1be92b5855539232f9ddcc971d6e8c1449500d340b964d87535012173771650f",
+      "after": "efeb9aff52e0d667c13a5f045dfba5012612ccd7d56fede7ef764b16cf7ef354",
+      "priorReview": "evidence/setup-side-before-752f00e6-27ca-4f55-843d-82926dab6013.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "hooks/accounting/useCloseAssurance.ts",
+      "changed": [
+        "useAssignCloseFinding",
+        "useCloseWaiver",
+        "useCommentOnCloseFinding",
+        "useExportClosePack",
+        "useRunCloseAssurance",
+        "useUpdateAccountantReview"
+      ],
+      "added": [
+        "needsIdentityVerification"
+      ],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/accounting-settings.service.ts",
+      "changed": [
+        "collectAccountingSetupReadinessIssues",
+        "import:@prisma/client"
+      ],
+      "added": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Close identity recovery, notification ownership and localized setup denial are verified in EN/FR with keyboard and pointer operation. The setup server now rejects debit-only/credit-only rule scaffolds. Resolve selected-rule source/priority and current account-resolution discrepancies, then supported purpose applicability/defaults (four required purposes lack templates); verify eligible certification, invalidation/recovery, current-configuration concurrency, native accessibility and production latency.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "close_notification_single_owner",
+    "close_inline_fresh_auth_no_popup_overlap",
+    "close_pointer_recovery_en_fr",
+    "setup_scaffold_requires_debit_and_credit",
+    "setup_persisted_side_gate_tenant_scope"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/close-readiness-followup-checks-c15bf320-6c46-478b-bbb0-a766eedcfb46.json",
+      "sha256": "1f4c35d04511d579c01b33736b3ff3521712e80819ddc76342e7761d50cd203b"
+    },
+    {
+      "file": "lanes/environment/close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937.json",
+      "sha256": "54aeb56b3816579018f475c6be0b2ae98c7b4d9ff9c496dbb804f8afb9734577"
+    },
+    {
+      "file": "lanes/environment/setup-side-contract-corrected-809ae2e3-3119-444a-8d86-b268352acf29.json",
+      "sha256": "869fbf656bbe7f17cc64356532897d0d7cf93db08b0d31ba38298df3dd53c638"
+    },
+    {
+      "file": "lanes/environment/setup-side-persistence-ad826e67-e4da-4561-a116-6513bd6989ff.json",
+      "sha256": "5343c896ffe021f114f77c112ac5eaa7a9177f772c28b5a543fdafce9bcb15c2"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CLOSE_READINESS_FOLLOWUP_2026-09-30.md",
+      "sha256": "a65d5fea62f8a23242ea590d4960713728570e24b3900938613622941da140fc"
+    },
+    {
+      "file": "evidence/close-auth-recovery-review-2026-09-30.json",
+      "sha256": "06a75b8af09884758dfc05bdfa96cb9298fe506e43c2e8b48d9cab5535ae1d78"
+    },
+    {
+      "file": "evidence/close-notifications-before-30af8b94-62fb-4862-94c6-941d78ea535a.json",
+      "sha256": "74859c8360388c934f5cf0c64802d777963fe7b9ba544d8a256fc537850c3d7e"
+    },
+    {
+      "file": "evidence/setup-side-before-752f00e6-27ca-4f55-843d-82926dab6013.json",
+      "sha256": "3605dbe1accdda6b6a9496269a84637a202eccd1c87d7640649b9767efa96208"
+    },
+    {
+      "file": "lanes/environment/setup-side-contract-reproduced-a7d2978b-d641-4272-97e4-e99e2a32b861.json",
+      "sha256": "9c9df05eb844c0d8eb0fcb7faf0b90d58d11a99e67a56bb7c67e262fb5100854"
+    },
+    {
+      "file": "run-close-readiness-followup-checks.cjs",
+      "sha256": "160d15031d67aa85eb1e8e66c6ca0f9c3fbf50bbfe8404459adbb4567c033da2"
+    },
+    {
+      "file": "run-close-notification-checks.cjs",
+      "sha256": "edaec63329f65407753033d488dbd3d9a3b61485d9631e5daf5847d01c88e1ec"
+    },
+    {
+      "file": "lanes/environment/verify-close-notification-browser.cjs",
+      "sha256": "b88ab908971f90048d3231cc4da94ea54bf9d0c2bb781d749b4d6af143cca4f5"
+    },
+    {
+      "file": "lanes/environment/verify-setup-side-contract.cjs",
+      "sha256": "49e94e0e68b14b43919d2291f6e544209fe63c1bbebcfe61f87afbcec268d5e9"
+    },
+    {
+      "file": "lanes/environment/verify-setup-side-persistence.cjs",
+      "sha256": "03bee9258327b4f780d74692bc4c4b9cd30ba98110b9a4f9963264dadc74c9ae"
+    },
+    {
+      "file": "evidence/close-notification-checks-560380d4-7e66-499b-80a1-31f84464c7b6.json",
+      "sha256": "5940b70b32c9dbc958bcdc8f5612baf8a7f5e19d9da52950139e7719dca5a3e0"
+    },
+    {
+      "file": "lanes/environment/close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-en1440.png",
+      "sha256": "247557682e1fc1ac8919a9209c2f1b386b8925c7c6ab8595bad630be431cb68e"
+    },
+    {
+      "file": "lanes/environment/close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-en1440-recovery.png",
+      "sha256": "535c00faf6be8019b0b4e422ef2b35a8c5829a4984ab4304041c57029beb4093"
+    },
+    {
+      "file": "lanes/environment/close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-fr320.png",
+      "sha256": "44710e21b2fa091ed601a47eb0ece3ea6cb3000c2d7d6382236750394d77b41e"
+    },
+    {
+      "file": "lanes/environment/close-notification-browser-f70b23dc-c304-4a31-bc5a-e14ddfc10937-fr320-recovery.png",
+      "sha256": "e78f2c3b85fa37ae88d73e959e301dcc1c4679357c3b3eb686317b7d93fa0656"
+    }
+  ]
+}

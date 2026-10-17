@@ -167,6 +167,7 @@ export type InventoryLossMetrics = {
 export type CloseReadinessMetrics = {
   accountingPeriodCount: number;
   openPeriodCount: number;
+  /** Latest assessment per overlapping period, including failed or voided assessments. */
   recentCloseRunCount: number;
   certifiedCloseRunCount: number;
   blockedCloseRunCount: number;
@@ -212,9 +213,11 @@ export type PayrollFinanceForecastMetrics = {
   message: string;
   horizonStart: string;
   horizonEnd: string;
-  upcomingNetPayAmount: number;
-  upcomingStatutoryLiabilityAmount: number;
-  totalUpcomingAmount: number;
+  upcomingNetPayAmount: number | null;
+  upcomingStatutoryLiabilityAmount: number | null;
+  totalUpcomingAmount: number | null;
+  currencyCode?: string;
+  sourceCurrencies?: string[];
   payrollPeriodCount: number;
   payrollRunCount: number;
   paymentBatchCount: number;
@@ -242,9 +245,13 @@ export type TenantOperatingMetrics = {
   activeEmployeeBalanceCaseCount: number;
   openEmployeeBalanceCaseCount: number;
   partiallySettledEmployeeBalanceCaseCount: number;
-  employeeBalanceOutstandingAmount: number;
+  /** Organization-currency total; unavailable without conversion evidence for foreign currencies. */
+  employeeBalanceOutstandingAmount: number | null;
+  employeeBalanceCurrencyCode?: string;
+  employeeBalanceOutstandingByCurrency?: { currencyCode: string; amount: number; count: number }[];
   periodEmployeeBalanceSettlementCount: number;
-  periodEmployeeBalanceSettlementAmount: number;
+  periodEmployeeBalanceSettlementAmount: number | null;
+  periodEmployeeBalanceSettlementByCurrency?: { currencyCode: string; amount: number; count: number }[];
   postedJournalEntryCount: number;
   sourceLinkCount: number;
   payrollFinanceForecast: PayrollFinanceForecastMetrics;

@@ -9,7 +9,7 @@ import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-acc
 
 type AccountantPortalPageProps = {
   params: Promise<{ locale?: Locale }>
-  searchParams?: Promise<{ clientOrganizationId?: string }>
+  searchParams?: Promise<{ clientOrganizationId?: string; periodId?: string }>
 }
 
 async function AccountantPortalPageImpl({ params, searchParams }: AccountantPortalPageProps) {
@@ -19,18 +19,20 @@ async function AccountantPortalPageImpl({ params, searchParams }: AccountantPort
   const portalResponse = await getAccountantPortalAction({
     limit: 12,
     clientOrganizationId: query?.clientOrganizationId,
+    periodId: query?.periodId,
   })
   const portal = portalResponse.success ? portalResponse.data : null
   const { locale = "en" } = await params
+  const fr = locale === "fr"
 
   return (
     <AccountingPageShell
-      eyebrow="Data trust"
-      title="Accountant Portal"
-      description="Ledger-backed reporting, source-link evidence, audit trail, and certified trust-pack export controls."
+      eyebrow={fr ? "Fiabilité des données" : "Data trust"}
+      title={fr ? "Portail comptable" : "Accountant Portal"}
+      description={fr ? "Rapports fondés sur le grand livre, justificatifs sources, piste d’audit et contrôles d’export du pack de confiance certifié." : "Ledger-backed reporting, source-link evidence, audit trail, and certified trust-pack export controls."}
       icon={FileSearch}
     >
-      <AccountantPortal initialData={portal} initialError={portalResponse.error} locale={locale} />
+      <AccountantPortal initialData={portal} initialError={portalResponse.error} locale={locale} clientOrganizationId={query?.clientOrganizationId} periodId={query?.periodId} />
     </AccountingPageShell>
   )
 }

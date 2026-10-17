@@ -310,6 +310,7 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "utility",
     dropdownMenu: [
       { title: "Appearance", href: "/dashboard/settings/appearance", permission: PERMISSIONS.DASHBOARD_READ },
+      { title: "Audit explorer", href: "/dashboard/settings/audit", permission: "controls.audit.read" },
       { title: "Change Password", href: "/dashboard/change-password", permission: "profile.password.update" },
       { title: "Company", href: "/dashboard/settings/company", permission: PERMISSIONS.COMPANY_READ },
       {
@@ -321,6 +322,7 @@ export const sidebarLinks: ISidebarLink[] = [
         moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,
         description: "Governed customer, supplier, and item imports",
       },
+      { title: "Delivery issues", href: "/dashboard/settings/delivery-issues", permission: "users.read", permissions: ["accounting.exports.create", "users.read"], permissionMode: "any" },
       { title: "Locations", href: "/dashboard/settings/locations", permission: PERMISSIONS.READ_LOCATIONS },
       { title: "Modules", href: "/dashboard/settings/modules", permission: PERMISSIONS.MANAGE_SYSTEM_SETTINGS },
       { title: "Notifications", href: "/dashboard/settings/notifications", permission: "communication.notifications.read" },

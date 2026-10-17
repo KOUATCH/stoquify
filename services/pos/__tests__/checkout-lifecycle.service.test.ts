@@ -6,7 +6,7 @@ jest.mock("../pos.service", () => ({
   recalculateCartTotals: jest.fn(), lineMath: jest.fn(() => ({ taxAmount: new Prisma.Decimal(0), lineTotal: new Prisma.Decimal(100) })),
 }))
 import { db } from "@/prisma/db"
-import { acquirePOSCheckout, changePOSCheckoutCart, preparePOSCheckout, retainLegacyPOSCheckout } from "../checkout.service"
+import { acquirePOSCheckout, changePOSCheckoutCart, preparePOSCheckout, renewPOSCheckout, retainLegacyPOSCheckout } from "../checkout.service"
 import { assertCheckoutLeaseInTx, retireShiftDraftsInTx } from "../checkout-state"
 import { getOrCreateDraftCart, readPOSSaleCommitStatusInTx } from "../pos.service"
 
@@ -14,6 +14,7 @@ const input = { organizationId: "org", userId: "cashier", locationId: "location"
 const request = { clientCommitId: "pos:interrupted", salesOrderId: "cart", locationId: "location", terminalId: "terminal", sessionId: "session", expectedCartRevision: "a".repeat(64), tenders: [{ method: "CASH" as const, amount: 100 }] }
 const scope = { sessionId: "session", organizationId: "org", actorId: "cashier" }
 const tx = {
+  $queryRaw: jest.fn(),
   pOSSession: { findFirst: jest.fn() },
   pOSOfflineSyncCertificate: { count: jest.fn() },
   pOSCheckoutWorkspace: { upsert: jest.fn(), findFirst: jest.fn(), findFirstOrThrow: jest.fn(), findMany: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
@@ -28,6 +29,7 @@ beforeEach(() => {
   jest.resetAllMocks()
   ;(db.$transaction as jest.Mock).mockImplementation(fn => fn(tx))
   tx.pOSSession.findFirst.mockResolvedValue({ id: "session" })
+  tx.$queryRaw.mockResolvedValue([{ id: "session" }])
   const workspace = { ...scope, leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(Date.now() + 60_000), pendingRequest: null }
   tx.pOSCheckoutWorkspace.upsert.mockResolvedValue(workspace)
   tx.pOSCheckoutWorkspace.findFirst.mockResolvedValue(workspace)
@@ -42,6 +44,34 @@ beforeEach(() => {
   outcome.mockResolvedValue({ kind: "NOT_FOUND" })
 })
 
+it("renews only the current unexpired owner without enumerating history or clearing intent", async () => {
+  await renewPOSCheckout(input)
+  expect(tx.pOSCheckoutWorkspace.updateMany).toHaveBeenCalledWith({ where: { ...scope, leaseId: input.checkoutLeaseId, leaseExpiresAt: { gt: expect.any(Date) } }, data: { leaseExpiresAt: expect.any(Date) } })
+  expect(tx.pOSCheckoutWorkspace.findMany).not.toHaveBeenCalled()
+  expect(tx.pOSCheckoutWorkspace.update).not.toHaveBeenCalled()
+  expect(tx.salesOrder.findMany).not.toHaveBeenCalled()
+  tx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 0 })
+  await expect(renewPOSCheckout(input)).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
+})
+
+it("bounds historical reconciliation, always checks current intent and advances past unknown history", async () => {
+  const history = Array.from({ length: 21 }, (_, n) => ({ ...scope, sessionId: `old-${String(n).padStart(2, '0')}`, pendingRequest: { ...request, salesOrderId: `old-cart-${n}` } }))
+  tx.pOSCheckoutWorkspace.findFirstOrThrow.mockResolvedValue({ ...scope, pendingRequest: request })
+  tx.pOSCheckoutWorkspace.findMany.mockResolvedValueOnce(history).mockResolvedValueOnce(history)
+  outcome.mockResolvedValue({ kind: "PENDING" })
+  const first = await acquirePOSCheckout(input)
+  expect(first.recoveryAfter).toBe("old-19")
+  expect(outcome).toHaveBeenCalledTimes(21)
+  expect(outcome.mock.calls[0][1].salesOrderId).toBe("cart")
+  expect(first.historicalRequests).toHaveLength(21)
+  expect(tx.pOSCheckoutWorkspace.update).not.toHaveBeenCalled()
+  tx.pOSCheckoutWorkspace.findMany.mockResolvedValueOnce([history[20]]).mockResolvedValueOnce(history)
+  const second = await acquirePOSCheckout({ ...input, recoveryAfter: first.recoveryAfter! })
+  expect(second.recoveryAfter).toBeNull()
+  expect(tx.pOSCheckoutWorkspace.findMany).toHaveBeenNthCalledWith(3, expect.objectContaining({ take: 21, where: expect.objectContaining({ sessionId: { not: "session", gt: "old-19" } }) }))
+  expect(outcome.mock.calls.at(-1)![1].salesOrderId).toBe("old-cart-20")
+})
+
 it("rejects another tab and expired leases before any cart write", async () => {
   await expect(assertCheckoutLeaseInTx(transactionClient, input, "another-tab")).rejects.toThrow("POS_CHECKOUT_OWNERSHIP_REQUIRED")
   tx.pOSCheckoutWorkspace.findFirst.mockResolvedValue({ ...scope, leaseId: input.checkoutLeaseId, leaseExpiresAt: new Date(0) })
@@ -53,6 +83,27 @@ it("keeps a second owner read-only when the compare-and-set loses", async () => 
   tx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({ count: 0 })
   await expect(acquirePOSCheckout(input)).rejects.toThrow("POS_CHECKOUT_OWNED_ELSEWHERE")
   expect(tx.pOSCheckoutWorkspace.updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining(scope) }))
+})
+it("recovers a startup serialization burst without changing the lease or retained intent", async () => {
+  const run = db.$transaction as jest.Mock
+  for (let n = 0; n < 4; n++) run.mockRejectedValueOnce({ code: "P2034" })
+  tx.pOSCheckoutWorkspace.findFirstOrThrow.mockResolvedValue({ ...scope, pendingRequest: request })
+  outcome.mockResolvedValue({ kind: "PENDING" })
+  const snapshot = await acquirePOSCheckout(input)
+  expect(snapshot.pendingRequest).toEqual(request)
+  expect(tx.pOSCheckoutWorkspace.update).not.toHaveBeenCalled()
+  expect(tx.pOSCheckoutWorkspace.updateMany).toHaveBeenCalledWith(expect.objectContaining({data:expect.objectContaining({leaseId:input.checkoutLeaseId})}))
+})
+
+it("bounds startup retries and never retries a domain ownership denial", async () => {
+  const run = db.$transaction as jest.Mock
+  run.mockRejectedValue({ code: "P2034" })
+  await expect(acquirePOSCheckout(input)).rejects.toEqual({code:"P2034"})
+  expect(run).toHaveBeenCalledTimes(6)
+  run.mockClear().mockImplementation(fn => fn(tx))
+  tx.pOSCheckoutWorkspace.updateMany.mockResolvedValue({count:0})
+  await expect(acquirePOSCheckout(input)).rejects.toThrow("POS_CHECKOUT_OWNED_ELSEWHERE")
+  expect(run).toHaveBeenCalledTimes(1)
 })
 
 it("persists the exact request before submission so a new tab can recover it", async () => {

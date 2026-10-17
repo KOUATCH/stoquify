@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-27T19:34:54.899Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command-visibility.service.ts": "a1bb8741faf924ee563cee3afd989807d7d5cfaf521743aa25e9ebb2c068ea49",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "5a33cc90253052a860f02d9e13dc2b70f75517df270a56f2c7c18dddd828c55f",
+    "components/cash-command/CashCommandDashboard.tsx": "221ac286197a47e3b115e9407cf1d93d0b7b87b5046c388f569c1e84d5078ede",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "cb7baeac8d9597326696dfe8ee642ae235a7a6d0d7d2bfa7e6365a446e843fd3",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL services/cash-command/__tests__/cash-command.service.test.ts (7.115 s)\n  ● getCashCommandData tenant authority › does not let changes in denied sources alter the disclosed response\n\n    expect(received).toEqual(expected) // deep equality\n\n    - Expected  - 4\n    + Received  + 2\n\n    @@ -25,17 +25,15 @@\n              \"requiredPermission\": \"finance.read\",\n            },\n            \"blockers\": Array [],\n            \"detail\": \"Collected payment value in the selected period. Cross-domain evidence is restricted.\",\n            \"drillThrough\": Object {\n    -         \"available\": true,\n    -         \"href\": \"/dashboard/finance/payments\",\n    +         \"available\": false,\n              \"label\": \"Open cash collection proof\",\n              \"requiredPermission\": \"finance.read\",\n    -         \"subjectId\": undefined,\n    -         \"subjectType\": undefined,\n              \"type\": \"route\",\n    +         \"unavailableReason\": \"The source snapshot is blocked; clear blockers before drill-through can be trusted.\",\n            },\n            \"evidenceGrade\": \"operational\",\n            \"format\": \"currency\",\n            \"freshness\": Object {\n              \"generatedAt\": \"2026-06-24T08:00:00.000Z\",\n\n      565 |     const queue = actionQueue(); queue.summary.total = 54321; queue.filteredOutCount = 87654\n      566 |     mockBuildActionQueue.mockReturnValue(queue)\n    > 567 |     expect(await getCashCommandData(input)).toEqual(before)\n          |                                             ^\n      568 |   })\n      569 |\n      570 |   it(\"preserves explicitly permitted full-domain values and source evidence\", async () => {\n\n      at Object.toEqual (services/cash-command/__tests__/cash-command.service.test.ts:567:45)\n\n\nTest Suites: 1 failed, 3 passed, 4 total\nTests:       1 failed, 34 passed, 35 total\nSnapshots:   0 total\nTime:        24.771 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command-visibility.service.ts": "a1bb8741faf924ee563cee3afd989807d7d5cfaf521743aa25e9ebb2c068ea49",
+    "services/cash-command/cash-command.service.ts": "89678491da9bfc0f14ca55b1e02e65947947710a0e12a4811b76faa6cb1d4795",
+    "services/cash-command/cash-command-contracts.ts": "5a33cc90253052a860f02d9e13dc2b70f75517df270a56f2c7c18dddd828c55f",
+    "components/cash-command/CashCommandDashboard.tsx": "221ac286197a47e3b115e9407cf1d93d0b7b87b5046c388f569c1e84d5078ede",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "cb7baeac8d9597326696dfe8ee642ae235a7a6d0d7d2bfa7e6365a446e843fd3",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "03a503c221eefaf21794fefd0a5492b4eb64fab3fcba60cbe2d05da4e52103f5",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": false
+}

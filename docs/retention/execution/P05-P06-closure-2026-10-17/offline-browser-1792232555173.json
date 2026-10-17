@@ -1,0 +1,309 @@
+{
+  "browser": "149.0.7827.55",
+  "timing": [
+    {
+      "operation": "ingest",
+      "utc": "2026-10-17T10:22:30.872Z",
+      "batchId": "cmvc8zikb0112ma98muzb32rq",
+      "duplicateCount": 0,
+      "responseDropped": true
+    },
+    {
+      "operation": "ingest",
+      "utc": "2026-10-17T10:22:31.024Z",
+      "batchId": "cmvc8ziu9011hma98c4r9jm7c",
+      "duplicateCount": 1,
+      "responseDropped": true
+    },
+    {
+      "operation": "ingest",
+      "utc": "2026-10-17T10:22:31.600Z",
+      "batchId": "cmvc8zj9k011nma98e4szd5pn",
+      "duplicateCount": 1,
+      "responseDropped": false
+    },
+    {
+      "operation": "replay",
+      "utc": "2026-10-17T10:22:34.085Z",
+      "saleId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "responseDropped": true
+    },
+    {
+      "operation": "replay",
+      "utc": "2026-10-17T10:22:34.164Z",
+      "saleId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "responseDropped": true
+    },
+    {
+      "operation": "replay",
+      "utc": "2026-10-17T10:22:34.963Z",
+      "saleId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "responseDropped": false
+    }
+  ],
+  "original": {
+    "queueId": "cmvc8zfk4010qma98b4bavu7k:1:4c5c1942fb35924a",
+    "event": {
+      "eventType": "OFFLINE_SALE_CAPTURED",
+      "schemaVersion": 1,
+      "deviceSeq": 1,
+      "idempotencyKey": "2eb40dbd-1067-4a66-9c76-4ce96b88ebe8",
+      "payloadHash": "75b9d038ad4899029a92f2d193594d57c416b8d7ce248124c9e272dbb0cb4e05",
+      "prevHash": null,
+      "entryHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+      "signature": "PjE+oer5qmGnVTNtAmvMnbQUQ70jwi0Dq/hVuK2ton2i0dUf/Dq9/QivjoinnHJQc8i1P1cYFA64DMO/HG9Pbc2H6G1JBoQ65Op3tpSwYxo00kMwfiuU4lGgPuvdI8faNM+eg7rx6joXb38WrcC/0bKy//yBbrWKBtanFmk29svBuhjMngON9XTMsjnnSKTeMnNjKR28YQat6wOYv/7hfyf1x5iWOZd2I2uHjPRzuadg4wiHSo3+zH3QHu/ii2KVmO2k7ssBIiRLBsOwHs69IdE61hNNYqhiV4D7Q5lKnPZVWP8EbqefPVtVcj7L70hV5bgU8c+uX2IOGzuws8QRVg==",
+      "capturedAtDevice": "2026-10-17T10:22:30.422Z",
+      "payload": {
+        "commitSale": {
+          "checkoutLeaseId": "6a4c6fe3-b508-4fc1-85b2-ff4bd2f4c53d",
+          "clientCommitId": "pos:18c4a40f-274f-4982-a33e-3cfeb1dd312c",
+          "expectedCartRevision": "720fa59e0b62bacb597e9509e44e9648b366574b98e93258c05fd9c46cd4780e",
+          "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+          "organizationId": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+          "salesOrderId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+          "sessionId": "shift-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+          "tenders": [
+            {
+              "amount": 6,
+              "method": "CASH"
+            },
+            {
+              "amount": 4,
+              "method": "ON_ACCOUNT"
+            }
+          ],
+          "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+          "userId": "actor-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42"
+        }
+      },
+      "metadata": {
+        "offlineReceiptPolicy": {
+          "finalFiscalNumberingPermitted": false,
+          "receiptStatus": "PROVISIONAL_ONLY"
+        }
+      }
+    },
+    "status": "QUEUED",
+    "queuedAt": "2026-10-17T10:22:30.422Z",
+    "updatedAt": "2026-10-17T10:22:30.422Z",
+    "syncAttempts": 0
+  },
+  "lost": {
+    "state": {
+      "queueVersion": 1,
+      "organizationKey": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "deviceId": "cmvc8zfk4010qma98b4bavu7k",
+      "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "sessionId": "shift-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "nextSequence": 2,
+      "highWaterHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+      "createdAt": "2026-10-17T10:22:30.415Z",
+      "updatedAt": "2026-10-17T10:22:31.034Z",
+      "entries": [
+        {
+          "queueId": "cmvc8zfk4010qma98b4bavu7k:1:4c5c1942fb35924a",
+          "event": {
+            "eventType": "OFFLINE_SALE_CAPTURED",
+            "schemaVersion": 1,
+            "deviceSeq": 1,
+            "idempotencyKey": "2eb40dbd-1067-4a66-9c76-4ce96b88ebe8",
+            "payloadHash": "75b9d038ad4899029a92f2d193594d57c416b8d7ce248124c9e272dbb0cb4e05",
+            "prevHash": null,
+            "entryHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+            "signature": "PjE+oer5qmGnVTNtAmvMnbQUQ70jwi0Dq/hVuK2ton2i0dUf/Dq9/QivjoinnHJQc8i1P1cYFA64DMO/HG9Pbc2H6G1JBoQ65Op3tpSwYxo00kMwfiuU4lGgPuvdI8faNM+eg7rx6joXb38WrcC/0bKy//yBbrWKBtanFmk29svBuhjMngON9XTMsjnnSKTeMnNjKR28YQat6wOYv/7hfyf1x5iWOZd2I2uHjPRzuadg4wiHSo3+zH3QHu/ii2KVmO2k7ssBIiRLBsOwHs69IdE61hNNYqhiV4D7Q5lKnPZVWP8EbqefPVtVcj7L70hV5bgU8c+uX2IOGzuws8QRVg==",
+            "capturedAtDevice": "2026-10-17T10:22:30.422Z",
+            "payload": {
+              "commitSale": {
+                "checkoutLeaseId": "6a4c6fe3-b508-4fc1-85b2-ff4bd2f4c53d",
+                "clientCommitId": "pos:18c4a40f-274f-4982-a33e-3cfeb1dd312c",
+                "expectedCartRevision": "720fa59e0b62bacb597e9509e44e9648b366574b98e93258c05fd9c46cd4780e",
+                "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "organizationId": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "salesOrderId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "sessionId": "shift-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "tenders": [
+                  {
+                    "amount": 6,
+                    "method": "CASH"
+                  },
+                  {
+                    "amount": 4,
+                    "method": "ON_ACCOUNT"
+                  }
+                ],
+                "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "userId": "actor-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42"
+              }
+            },
+            "metadata": {
+              "offlineReceiptPolicy": {
+                "finalFiscalNumberingPermitted": false,
+                "receiptStatus": "PROVISIONAL_ONLY"
+              }
+            }
+          },
+          "status": "UNCERTAIN",
+          "queuedAt": "2026-10-17T10:22:30.422Z",
+          "updatedAt": "2026-10-17T10:22:31.034Z",
+          "syncAttempts": 1,
+          "syncAttemptId": "859b4b60-d36b-4387-ab04-d9b8dc57334a",
+          "lastSyncError": "SERVER_OUTCOME_UNCONFIRMED"
+        }
+      ]
+    }
+  },
+  "acknowledged": {
+    "batch": {
+      "batchId": "cmvc8zj9k011nma98e4szd5pn",
+      "status": "ACCEPTED",
+      "acceptedCount": 0,
+      "duplicateCount": 1,
+      "conflictCount": 0,
+      "firstSequence": 1,
+      "lastSequence": 1,
+      "device": {
+        "id": "cmvc8zfk4010qma98b4bavu7k",
+        "organizationId": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+        "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+        "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+        "deviceLabel": "Browser integration fixture",
+        "deviceFingerprintHash": "cab474a6-7a70-47f7-8ac5-35b864f60eba",
+        "publicKeyFingerprint": "57886d3f84344f8bcad38a0bf1ef4ffe3958ea168317bd7975c7bf77b28e1f79",
+        "signatureVerification": "ENFORCED",
+        "policySnapshotHash": null,
+        "sourceSnapshotHash": null,
+        "policyExpiresAt": null,
+        "policyStatus": "UNCONFIGURED",
+        "status": "ACTIVE",
+        "lastSequence": 1,
+        "highWaterHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+        "lastSeenAt": "2026-10-17T10:22:31.527Z",
+        "enrolledAt": "2026-10-17T10:22:26.692Z"
+      },
+      "conflicts": [],
+      "certificate": {
+        "id": "cmvc8zfkj010sma98nrxwfd7m",
+        "deviceId": "cmvc8zfk4010qma98b4bavu7k",
+        "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+        "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+        "status": "BLOCKED",
+        "lastCertifiedSequence": 0,
+        "eventCount": 1,
+        "acceptedCount": 1,
+        "conflictCount": 0,
+        "pendingReplayCount": 1,
+        "closeBlocker": true,
+        "blockerCode": "UNPOSTED_ACCEPTED_EVENT",
+        "blockerMessage": "Accepted offline events are pending POS replay and certification.",
+        "certificateHash": "b35612cf5948b8f7dc6bd8573c4ff491be14a7139da409ae745525bebfb8b539",
+        "updatedAt": "2026-10-17T10:22:31.558Z"
+      },
+      "notifications": []
+    },
+    "state": {
+      "queueVersion": 1,
+      "organizationKey": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "deviceId": "cmvc8zfk4010qma98b4bavu7k",
+      "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "sessionId": "shift-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+      "nextSequence": 2,
+      "highWaterHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+      "createdAt": "2026-10-17T10:22:30.415Z",
+      "updatedAt": "2026-10-17T10:22:31.605Z",
+      "entries": [
+        {
+          "queueId": "cmvc8zfk4010qma98b4bavu7k:1:4c5c1942fb35924a",
+          "event": {
+            "eventType": "OFFLINE_SALE_CAPTURED",
+            "schemaVersion": 1,
+            "deviceSeq": 1,
+            "idempotencyKey": "2eb40dbd-1067-4a66-9c76-4ce96b88ebe8",
+            "payloadHash": "75b9d038ad4899029a92f2d193594d57c416b8d7ce248124c9e272dbb0cb4e05",
+            "prevHash": null,
+            "entryHash": "4c5c1942fb35924a2cb2aed3d4c0487ac0f46a22b706297c50bb8eff3fcae6b8",
+            "signature": "PjE+oer5qmGnVTNtAmvMnbQUQ70jwi0Dq/hVuK2ton2i0dUf/Dq9/QivjoinnHJQc8i1P1cYFA64DMO/HG9Pbc2H6G1JBoQ65Op3tpSwYxo00kMwfiuU4lGgPuvdI8faNM+eg7rx6joXb38WrcC/0bKy//yBbrWKBtanFmk29svBuhjMngON9XTMsjnnSKTeMnNjKR28YQat6wOYv/7hfyf1x5iWOZd2I2uHjPRzuadg4wiHSo3+zH3QHu/ii2KVmO2k7ssBIiRLBsOwHs69IdE61hNNYqhiV4D7Q5lKnPZVWP8EbqefPVtVcj7L70hV5bgU8c+uX2IOGzuws8QRVg==",
+            "capturedAtDevice": "2026-10-17T10:22:30.422Z",
+            "payload": {
+              "commitSale": {
+                "checkoutLeaseId": "6a4c6fe3-b508-4fc1-85b2-ff4bd2f4c53d",
+                "clientCommitId": "pos:18c4a40f-274f-4982-a33e-3cfeb1dd312c",
+                "expectedCartRevision": "720fa59e0b62bacb597e9509e44e9648b366574b98e93258c05fd9c46cd4780e",
+                "locationId": "location-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "organizationId": "org-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "salesOrderId": "sale-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "sessionId": "shift-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "tenders": [
+                  {
+                    "amount": 6,
+                    "method": "CASH"
+                  },
+                  {
+                    "amount": 4,
+                    "method": "ON_ACCOUNT"
+                  }
+                ],
+                "terminalId": "terminal-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42",
+                "userId": "actor-full-pos-e22e5483-b471-4f1f-b9af-7ecdba073a42"
+              }
+            },
+            "metadata": {
+              "offlineReceiptPolicy": {
+                "finalFiscalNumberingPermitted": false,
+                "receiptStatus": "PROVISIONAL_ONLY"
+              }
+            }
+          },
+          "status": "SYNCED",
+          "queuedAt": "2026-10-17T10:22:30.422Z",
+          "updatedAt": "2026-10-17T10:22:31.605Z",
+          "syncAttempts": 2,
+          "syncAttemptId": "a169e06c-44a6-4e9e-b132-bcf7c7015b4b",
+          "lastServerBatchId": "cmvc8zj9k011nma98e4szd5pn"
+        }
+      ]
+    }
+  },
+  "financial": {
+    "status": "COMPLETED",
+    "paymentStatus": "PARTIAL",
+    "customerBalance": "4",
+    "stockQuantity": "4",
+    "stockAvailable": "4",
+    "stockValue": "16",
+    "stockVersion": 1,
+    "sessionExpected": "106",
+    "cashTotal": "6",
+    "creditTotal": "4",
+    "transactionCount": 1,
+    "drawerCurrent": "106",
+    "drawerExpected": "106",
+    "payments": [
+      {
+        "method": "CASH",
+        "amount": "6",
+        "status": "PAID"
+      },
+      {
+        "method": "CREDIT",
+        "amount": "4",
+        "status": "PENDING"
+      }
+    ],
+    "drawerTransactionCount": 2,
+    "registryCount": 1,
+    "movementCount": 1,
+    "journalCount": 2,
+    "batchCount": 2,
+    "ledgerCount": 1,
+    "receivableCount": 1,
+    "stateCount": 1,
+    "eventCount": 6,
+    "outboxCount": 7,
+    "auditCount": 9,
+    "ledgerAuditCount": 4,
+    "sourceLinkCount": 2
+  },
+  "limitation": "Real browser + PostgreSQL via test-only HTTP adapter; not authenticated application UI or unsent-local close visibility"
+}

@@ -5,15 +5,13 @@ import { BusinessOutboxStatus, PostingRuleLineSide } from "@prisma/client"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import {
-  collectAccountingSetupReadinessIssues,
+  getAccountingSetupReadiness,
   getAccountingSettings,
   REQUIRED_ACCOUNTING_MAPPINGS,
   REQUIRED_DEFAULT_JOURNAL_TYPES,
-  REQUIRED_READY_POSTING_PURPOSES,
 } from "./accounting-settings.service"
 import { getDefaultPostingRuleTemplates } from "./default-posting-rules.service"
 import { listAccountingPeriods } from "./periods.service"
-import { listPostingRules } from "./posting-rules.service"
 import { getSensitiveActionPolicy } from "@/services/controls/sensitive-action.service"
 
 export type AccountingBlockerCategory = "operational" | "accounting" | "regulatory" | "permission"
@@ -220,13 +218,6 @@ function statusFromBlockers(blockers: AccountingControlCenterBlocker[]): Account
   return "ok"
 }
 
-function isEffective(
-  rule: { effectiveFrom: Date | null; effectiveTo: Date | null },
-  now: Date,
-) {
-  return (!rule.effectiveFrom || rule.effectiveFrom <= now) && (!rule.effectiveTo || rule.effectiveTo >= now)
-}
-
 function asJsonObject(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {}
   return value as Record<string, unknown>
@@ -238,6 +229,11 @@ function stringValue(value: unknown) {
 
 function classifySetupIssue(issue: string, index: number): AccountingControlCenterBlocker {
   const lower = issue.toLowerCase()
+  const invalidRule = /^Posting rule (.+) for ([A-Z_]+) is not ready:/.exec(issue)
+  if (invalidRule) return blocker(
+    `readiness-accounting-${index}`, "accounting", issue,
+    `La règle ${invalidRule[1]} pour ${invalidRule[2]} ne peut pas être utilisée. Vérifiez les comptes actifs, les mappages et les lignes de cette règle.`,
+  )
 
   if (lower.includes("syscohada")) {
     return blocker(
@@ -320,9 +316,8 @@ export async function getAccountingControlCenterData(
     settings,
     mappedAccounts,
     defaultJournals,
-    postingRules,
     periods,
-    setupIssues,
+    setupReadiness,
     latestLedgerEvents,
     latestControlEvents,
     outboxStatusGroups,
@@ -367,9 +362,8 @@ export async function getAccountingControlCenterData(
       },
       orderBy: [{ type: "asc" }, { code: "asc" }],
     }),
-    listPostingRules(organizationId, { includeInactive: true }),
     listAccountingPeriods(organizationId),
-    collectAccountingSetupReadinessIssues(organizationId, db, now),
+    getAccountingSetupReadiness(organizationId, db, now),
     db.ledgerAuditEvent.findMany({
       where: { organizationId },
       select: {
@@ -578,11 +572,7 @@ export async function getAccountingControlCenterData(
     }
   })
 
-  const postingRuleRows: PostingRuleStatus[] = REQUIRED_READY_POSTING_PURPOSES.map((purpose) => {
-    const activeRules = postingRules
-      .filter((rule) => rule.postingPurpose === purpose && rule.isActive && isEffective(rule, now))
-      .sort((left, right) => left.priority - right.priority || left.code.localeCompare(right.code))
-    const rule = activeRules[0]
+  const postingRuleRows: PostingRuleStatus[] = setupReadiness.postingRules.map(({ postingPurpose: purpose, sourceType: expectedSourceType, rule, validationError }) => {
     const template = defaultTemplateByPurpose.get(purpose)
     const blockers: AccountingControlCenterBlocker[] = []
     const debitLineCount = rule?.lines.filter((line) => line.side === PostingRuleLineSide.DEBIT).length ?? 0
@@ -633,9 +623,18 @@ export async function getAccountingControlCenterData(
       }
     }
 
+    if (rule && validationError && blockers.length === 0) {
+      blockers.push(blocker(
+        `posting-rule-${purpose}-validation`,
+        "accounting",
+        `Selected posting rule ${rule.code} is not usable: ${validationError}`,
+        `La règle sélectionnée ${rule.code} ne peut pas être utilisée. Vérifiez les comptes actifs, les mappages et les lignes de cette règle.`,
+      ))
+    }
+
     return {
       postingPurpose: purpose,
-      expectedSourceType: template?.sourceType ?? null,
+      expectedSourceType,
       defaultCode: template?.code ?? null,
       ruleId: rule?.id ?? null,
       code: rule?.code ?? null,
@@ -735,7 +734,7 @@ export async function getAccountingControlCenterData(
     )
   }
 
-  const readinessBlockers = setupIssues.map(classifySetupIssue)
+  const readinessBlockers = setupReadiness.issues.map(classifySetupIssue)
   const allBlockersById = new Map<string, AccountingControlCenterBlocker>()
   for (const item of [
     ...settingsBlockers,

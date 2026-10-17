@@ -1,7 +1,10 @@
 import { CloseFindingStatus, Prisma } from "@prisma/client"
+import { readResolvedCloseEvidence } from "./close-evidence-resolution-records"
+import { readCloseEvidenceRecipient } from "./close-evidence-recipient.service"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
+import { closeEvidenceAfter, closeEvidenceNextCursor, readCloseEvidenceCursor } from "./close-evidence-pagination"
 import {
   BusinessRuleError,
   ForbiddenError,
@@ -30,6 +33,8 @@ export type GetAccountantMissingCloseEvidenceReviewQueueInput = Readonly<{
   clientOrganizationId?: string | null
   actorId: string
   actorPermissions: readonly string[]
+  page?: { periodId?: string; cursor?: string }
+  requestId?: string
 }>
 
 type ReviewCommentRecord = {
@@ -107,6 +112,7 @@ function queueResult(input: {
   items: AccountantMissingCloseEvidenceReviewItem[]
   blockers: AccountantMissingCloseEvidenceReviewQueueBlocker[]
   truncated: boolean
+  nextCursor?: string | null
 }): AccountantMissingCloseEvidenceReviewQueue {
   const invalidRequestEvidence = input.blockers.filter(
     (blocker) => blocker.reason === "INVALID_REQUEST_EVIDENCE",
@@ -125,6 +131,7 @@ function queueResult(input: {
     organizationId: input.organizationId,
     actorId: input.actorId,
     generatedAt: input.generatedAt.toISOString(),
+    ...(input.nextCursor !== undefined ? { nextCursor: input.nextCursor } : {}),
     source: {
       organizationScoped: true,
       accessMode: input.accessMode,
@@ -219,27 +226,24 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
         client: tx,
       })
       const organizationId = access.organizationId
+      if (input.page?.periodId !== undefined && !input.page.periodId.trim()) throw new BusinessRuleError("Accounting period must not be blank.")
+      if (input.requestId !== undefined && !input.requestId.trim()) throw new BusinessRuleError("Request is required.")
+      const pageScope = { organizationId, actorId, periodId: input.page?.periodId ?? "", kind: "reviews" as const }
+      const cursor = readCloseEvidenceCursor(pageScope, input.page?.cursor)
       const requestMatcher: Prisma.AccountantCommentWhereInput = {
         organizationId,
         visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
-        metadata: {
-          path: ["requestType"],
-          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
-        },
       }
       const responseMatcher: Prisma.AccountantCommentWhereInput = {
         organizationId,
-        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
-        metadata: {
-          path: ["responseType"],
-          equals: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
-        },
+        visibility: { in: [MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY, "ACCOUNTANT_RESPONSE_ACCEPTED"] },
       }
       const findings = await tx.closeAssuranceFinding.findMany({
         where: {
           organizationId,
           status: CloseFindingStatus.IN_REVIEW,
-          comments: { some: requestMatcher },
+          ...(input.page ? { ...(input.page.periodId ? { periodId: input.page.periodId } : {}), ...closeEvidenceAfter(cursor) } : {}),
+          comments: { some: { ...requestMatcher, ...(input.requestId ? { id: input.requestId } : {}) } },
         },
         select: {
           id: true,
@@ -251,6 +255,15 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
           title: true,
           detail: true,
           createdAt: true,
+          comments: input.page ? {
+            where: { OR: [requestMatcher, responseMatcher] },
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+            // Two valid records are expected. A third proves ambiguity for this
+            // finding without allowing one corrupt finding to exhaust the page.
+            take: 3,
+            select: { id: true, organizationId: true, periodId: true, closeRunId: true, findingId: true,
+              authorId: true, body: true, correlationId: true, metadata: true, createdAt: true, visibility: true },
+          } : false,
           period: {
             select: {
               id: true,
@@ -270,7 +283,8 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
         0,
         ACCOUNTANT_MISSING_CLOSE_EVIDENCE_REVIEW_QUEUE.maxItems,
       )
-      if (findingsTruncated) {
+      const nextCursor = input.page ? closeEvidenceNextCursor(pageScope, findingsTruncated ? visibleFindings.at(-1) : undefined) : undefined
+      if (findingsTruncated && !input.page) {
         return queueResult({
           homeOrganizationId,
           organizationId,
@@ -285,7 +299,7 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
 
       const findingIds = visibleFindings.map((finding) => finding.id)
       const requestCandidates: ReviewCommentRecord[] =
-        findingIds.length === 0
+        input.page ? visibleFindings.flatMap(finding => finding.comments.filter(comment => comment.visibility === MISSING_CLOSE_EVIDENCE_VISIBILITY)) : findingIds.length === 0
           ? []
           : await tx.accountantComment.findMany({
               where: {
@@ -312,7 +326,7 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
               take: MAX_COMMENT_CANDIDATES + 1,
             })
       const responseCandidates: ReviewCommentRecord[] =
-        findingIds.length === 0
+        input.page ? visibleFindings.flatMap(finding => finding.comments.filter(comment => comment.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY)) : findingIds.length === 0
           ? []
           : await tx.accountantComment.findMany({
               where: {
@@ -339,8 +353,8 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
               take: MAX_COMMENT_CANDIDATES + 1,
             })
       const commentsTruncated =
-        requestCandidates.length > MAX_COMMENT_CANDIDATES ||
-        responseCandidates.length > MAX_COMMENT_CANDIDATES
+        !input.page && (requestCandidates.length > MAX_COMMENT_CANDIDATES ||
+        responseCandidates.length > MAX_COMMENT_CANDIDATES)
       if (commentsTruncated) {
         return queueResult({
           homeOrganizationId,
@@ -351,6 +365,7 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
           items: [],
           blockers: [truncatedEvidenceBlocker()],
           truncated: true,
+          nextCursor,
         })
       }
 
@@ -360,7 +375,10 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
       const blockers: AccountantMissingCloseEvidenceReviewQueueBlocker[] = []
 
       for (const finding of visibleFindings) {
-        const requests = requestsByFinding.get(finding.id) ?? []
+        let resolved: Awaited<ReturnType<typeof readResolvedCloseEvidence>> = null
+        try { resolved = await readResolvedCloseEvidence(tx, organizationId, finding.id) }
+        catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push(invalidRequestBlocker(finding.id, null)); continue }
+        const requests = resolved ? resolved.records.filter(row => row.visibility === MISSING_CLOSE_EVIDENCE_VISIBILITY) : requestsByFinding.get(finding.id) ?? []
         const request = requests[0] ?? null
         if (requests.length !== 1 || !request) {
           blockers.push(invalidRequestBlocker(finding.id, request?.id ?? null))
@@ -372,10 +390,14 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
           request.metadata,
           "requestedById",
         )
-        const requestedFromId = metadataString(
+        let requestedFromId = metadataString(
           request.metadata,
           "requestedFromId",
         )
+        if (requestedFromId) {
+          try { requestedFromId = (await readCloseEvidenceRecipient(tx, request)).recipientId }
+          catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push(invalidRequestBlocker(finding.id, request.id)); continue }
+        }
         const requestCorrelationId = metadataString(
           request.metadata,
           "correlationId",
@@ -402,7 +424,7 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
           continue
         }
 
-        const responses = responsesByFinding.get(finding.id) ?? []
+        const responses = resolved ? resolved.records.filter(row => row.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY) : responsesByFinding.get(finding.id) ?? []
         const response = responses[0] ?? null
         if (responses.length !== 1 || !response) {
           blockers.push(
@@ -515,7 +537,9 @@ export async function getAccountantMissingCloseEvidenceReviewQueue(
         accessMode: access.mode,
         items,
         blockers,
-        truncated: false,
+        // A complete bounded page has continuation, not truncated evidence.
+        truncated: !input.page && findingsTruncated,
+        nextCursor,
       })
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },

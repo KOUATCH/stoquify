@@ -260,6 +260,9 @@ export async function recordBusinessEventInTx(
     return { event, created: true }
   } catch (error) {
     const prismaError = getPrismaKnownRequest(error)
+    // The caller owns the complete transaction and must retry all financial
+    // writes together. Wrapping this signal prevents its retry policy running.
+    if (prismaError?.code === "P2034" || (prismaError?.code === "P2010" && ["40001", "40P01"].includes(String(prismaError.meta?.code)))) throw error
     if (prismaError?.code === "P2002") {
       throw new DuplicateKeyConflictError(
         "A concurrent business-event or outbox record already uses this unique key.",

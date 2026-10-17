@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-30T18:22:49.273Z",
+  "sourceBefore": {
+    "hooks/accounting/useCloseAssurance.ts": "365ecb7345a0cadb52e830552660ab150943a527a0983c009e8ffcb21553a4d3",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "c48aa522b6b51180d67ccd34fa318f98a8b2376dd155a60d2061319086feade5",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "1f25003eb09230cd76a8945ec53b160a0c7c85ec600215170ad1dc28b80a6054"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx",
+        "components/accounting/__tests__/CloseAssuranceCenter.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 2 passed, 2 total\nTests:       20 passed, 20 total\nSnapshots:   0 total\nTime:        25.38 s\nRan all test suites within paths \"hooks/__tests__/useCloseAssurance.export.test.tsx\", \"components/accounting/__tests__/CloseAssuranceCenter.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "hooks/accounting/useCloseAssurance.ts",
+        "hooks/__tests__/useCloseAssurance.export.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "hooks/accounting/useCloseAssurance.ts": "365ecb7345a0cadb52e830552660ab150943a527a0983c009e8ffcb21553a4d3",
+    "hooks/__tests__/useCloseAssurance.export.test.tsx": "c48aa522b6b51180d67ccd34fa318f98a8b2376dd155a60d2061319086feade5",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx": "1f25003eb09230cd76a8945ec53b160a0c7c85ec600215170ad1dc28b80a6054"
+  },
+  "sourceStable": true,
+  "passed": true
+}

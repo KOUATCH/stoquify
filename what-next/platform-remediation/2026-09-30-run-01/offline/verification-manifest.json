@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-09-30T20:45:09.427Z",
+  "head": "62a56036a5ac9b37236a20c9b148052199069479",
+  "nodeVersion": "v22.17.0",
+  "playwrightVersion": "1.61.1",
+  "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath lib/pos/__tests__/offline-local-queue.test.ts hooks/posHooks/__tests__/offline-flush-recovery.test.ts hooks/posHooks/__tests__/offline-dashboard-scope.test.ts services/pos/__tests__/offline-sync.service.test.ts --json --outputFile=what-next/platform-remediation/2026-09-30-run-01/offline/final-focused-jest.json",
+  "result": {
+    "startedAt": "2026-09-30T20:42:27.852Z",
+    "success": true,
+    "suitesPassed": 4,
+    "testsPassed": 69,
+    "testsFailed": 0
+  },
+  "focusedTypecheck": {
+    "exitCode": 0,
+    "command": "node node_modules/typescript/bin/tsc --noEmit --strict --skipLibCheck --target es2022 --moduleResolution bundler --module esnext --lib es2022,dom --types node,jest lib/pos/offline-local-queue.ts lib/pos/__tests__/offline-local-queue.test.ts",
+    "log": "focused-typecheck.log",
+    "scope": "Queue module and browser test only; not repository-wide typecheck."
+  },
+  "staticReplayGate": {
+    "generatedAt": "2026-09-30T20:42:45.189Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 16,
+    "readyCount": 16,
+    "blockerCount": 0
+  },
+  "sourceHashes": [
+    {
+      "path": "lib/pos/offline-local-queue.ts",
+      "sha256": "5200721e2214693cc7adcc05aef41e189235b01d6ad7085059c638183ce2bfe4",
+      "lastModifiedAt": "2026-09-30T20:39:16.022Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "lib/pos/__tests__/offline-local-queue.test.ts",
+      "sha256": "19c80c3d56478cb092872975e90924d99ea71e88a578f296aadbf324cbead6a9",
+      "lastModifiedAt": "2026-09-30T20:40:18.891Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "hooks/posHooks/useOfflineSync.ts",
+      "sha256": "e7a2f808fecd109a96ac83ebf92cd079f3e75c3cb4363f110f59a31a145e7ae7",
+      "lastModifiedAt": "2026-09-30T20:31:14.261Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-flush-recovery.test.ts",
+      "sha256": "8c78ad4024413ef18093e7affac1bf1441af1a3af7656d924740f736cff1430a",
+      "lastModifiedAt": "2026-09-30T20:35:03.028Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "hooks/posHooks/__tests__/offline-dashboard-scope.test.ts",
+      "sha256": "dc96e66b70c6706a0cb12153c14bfbf7c08ab2fb413fa30cefc29a24e2e05f1d",
+      "lastModifiedAt": "2026-09-13T15:47:16.078Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "sha256": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "lastModifiedAt": "2026-09-13T16:10:54.568Z",
+      "unchangedSinceRunStart": true
+    },
+    {
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "sha256": "6be2c1d190b766600183ae06d0ed8b46a9fa16d9ff68c9c3ddb7ca7b895bf3f6",
+      "lastModifiedAt": "2026-09-13T16:08:36.667Z",
+      "unchangedSinceRunStart": true
+    }
+  ],
+  "limits": [
+    "Actual desktop Chromium storage and restart; injected quota/abort, not physical device failure.",
+    "Server service tests use fixtures. No combined browser/database economic-effect or live-provider proof.",
+    "R04/R05 remain partial pending device admission, recovery workflow and pilot qualification."
+  ]
+}

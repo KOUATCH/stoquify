@@ -9,6 +9,9 @@ import { getAuthenticatedUser } from "@/config/useAuth"
 import { createPurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
 import { localizedRedirect } from "@/i18n/server-routing"
 let mockFormAction: (formData: FormData) => Promise<unknown>
+jest.mock("@/components/purchase-orders/DurableCreatePurchaseOrderForm", () => ({
+  DurableCreatePurchaseOrderForm: ({ actorId, organizationId, locale, canReadOrders }: { actorId: string; organizationId: string; locale: string; canReadOrders: boolean }) => <div data-testid="durable" data-actor={actorId} data-org={organizationId} data-locale={locale} data-read={String(canReadOrders)}>Durable authoring</div>,
+}))
 
 jest.mock("next-intl/server", () => ({
   getLocale: jest.fn(),
@@ -111,6 +114,15 @@ const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockGetPurchaseOrderFormOptions = getPurchaseOrderFormOptions as jest.Mock
 
 describe("CreatePurchaseOrderPage", () => {
+  afterEach(() => { delete process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED })
+  it("opts into durable authoring only with the explicit rollout flag and server identity", async () => {
+    process.env.PURCHASE_ORDER_AUTHORING_UI_ENABLED = "true"
+    render(await CreatePurchaseOrderPage())
+    expect(screen.getByTestId("durable")).toHaveAttribute("data-actor", "user-1")
+    expect(screen.getByTestId("durable")).toHaveAttribute("data-org", "org-1")
+    expect(screen.getByTestId("durable")).toHaveAttribute("data-read", "false")
+    expect(screen.queryByText("Purchase order create form rendered")).not.toBeInTheDocument()
+  })
   it("returns a stopped-work failure to the form instead of throwing or redirecting", async () => {
     ;(getAuthenticatedUser as jest.Mock).mockResolvedValue({ organizationId: "org-1" })
     ;(createPurchaseOrder as jest.Mock).mockResolvedValue({ success: false, data: null, code: "FORBIDDEN", reason: "MODULE_NEW_WORK_STOPPED", error: "New work is stopped" })
@@ -173,7 +185,7 @@ describe("CreatePurchaseOrderPage", () => {
 
     render(await CreatePurchaseOrderPage())
 
-    expect(screen.getByRole("heading", { name: "Create purchase order is not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Accès aux commandes fournisseurs refusé" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
     expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()

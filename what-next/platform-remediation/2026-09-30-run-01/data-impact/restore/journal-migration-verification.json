@@ -1,0 +1,87 @@
+{
+  "startedAt": "2026-09-30T21:15:44.384Z",
+  "databaseName": "stoquify_restore_local_remediation_20260930_run01",
+  "migration": "20260930211500_journal_posted_line_tenant_guards",
+  "sourceDatabaseTouched": false,
+  "stages": [
+    {
+      "command": "prisma migrate deploy",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:16:41.280Z"
+    },
+    {
+      "command": "prisma migrate status",
+      "exitCode": 0,
+      "completedAt": "2026-09-30T21:16:51.422Z"
+    }
+  ],
+  "checks": [
+    {
+      "name": "draft_line_update_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "draft_line_delete_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "draft_to_posted_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_to_reversed_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "source_posted_parent_with_nested_lines_allowed",
+      "passed": true,
+      "sqlState": null,
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "foreign_tenant_draft_line_insert_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "foreign_tenant_draft_line_update_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    },
+    {
+      "name": "draft_line_move_into_posted_rejected",
+      "passed": true,
+      "sqlState": "23514",
+      "affectedRows": null,
+      "rolledBack": true
+    }
+  ],
+  "migrationSha256": "b967518e17b8d8dfe82a27be32ed387171eccf361ade577d63ea4fedaf665cde",
+  "migrationsBefore": 87,
+  "migrationsAfter": 88,
+  "status": "NARROW_GUARDS_VERIFIED_ON_RESTORED_COPY",
+  "limitations": [
+    "Does not prevent additional INSERTs into an already committed POSTED entry.",
+    "Does not certify all posted-header mutation, parent-cascade retention, draft-edit/post concurrency, least-privilege role or source-owned correction rules.",
+    "Production/source database remains at its previous migration count; no historical rows were repaired."
+  ],
+  "fixtureRollbackConfirmed": true,
+  "completedAt": "2026-09-30T21:16:51.659Z"
+}

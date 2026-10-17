@@ -1,0 +1,35 @@
+{
+  "receipts": [
+    "evidence/journal-reversal-jest-572bf0d9-77a3-42aa-aa09-587263c5350a.json",
+    "evidence/journal-reversal-typecheck-94c89608-a054-4c9e-b40b-622c0db545dc.json",
+    "evidence/journal-reversal-lint-6293e929-1cb6-4746-98f2-52cba7eca4ab.json",
+    "lanes/environment/journal-manual-runtime-7088da9a-aa17-44f4-a533-8692b6e9ef3d.json",
+    "lanes/environment/journal-settlement-runtime-3b3a9ed1-4d32-4784-b1d8-a24f98246fa9.json",
+    "lanes/environment/journal-class3-runtime-6ad42a8a-5c6a-4627-b0e8-f847da5b1b78.json"
+  ],
+  "artifacts": [
+    "JOURNAL_REVERSAL_ORDER_2026-10-01.md",
+    "evidence/journal-reversal-independent-review.md",
+    "evidence/journal-reversal-before-3b5c0d5c-43a7-4b51-aeef-0f18aae3cec1.json",
+    "evidence/journal-reversal-jest-1a0e3c63-0b1f-455f-9de2-f5153784a7b5.json",
+    "evidence/journal-reversal-typecheck-0ed3dd27-d730-43b6-8d30-89debfe4a999.json",
+    "lanes/environment/journal-class3-runtime-8e99cabf-fe99-48d7-99a6-9626d2d94c07.json"
+  ],
+  "verifiedCriteria": [
+    "Manual and customer-settlement reversals resolve tenant-owned original/reversal date overlaps and class-3 cumulative periods, then acquire sorted assessment locks before financial writes.",
+    "Coordinated reversals use one deduplicated globally ordered invalidation set; four legacy callers preserve their API without an ordering claim.",
+    "Manual Read Committed and retained settlement Serializable semantics pass focused tests; actual stale catalog and new-publication snapshots roll back before compensation and retry with a new snapshot.",
+    "Real manual and customer-settlement corrections produce exact nonzero compensation, retained original evidence, actual Cash/Close adverse truth and recovery by new assessment/certification.",
+    "Actual PostgreSQL publication races, opposite-period reversals, injected post-insert rollback/independent retry, exact settlement replay and manual repeat refusal pass.",
+    "Saved predecessor reproduces missing later class-3 invalidation; current cumulative/no-run/date-overlap scope and foreign-period refusal pass without fabricated readiness."
+  ],
+  "verificationSummary": "493 focused tests in 17 suites, full no-emit TypeScript and ten-file lint passed. Twelve actual PostgreSQL scenarios verified financial mirrors, both publication orders, opposite-period contention, Serializable snapshot retries, rollback/retry, retained history and Cash/Close recovery. Source bindings and observed outside-fixture records remained stable.",
+  "remaining": "Manual/customer-settlement reversal ordering is verified. Inventory-adjustment reversal, purchase correction, both suspense reversal paths and ordinary/other producers still need coordinated publication review. Broad operating/forecast hash freshness, interrupted processing and outbox delivery remain open; this is not universal evidence freshness or whole Cash/Close closure.",
+  "limitations": [
+    "Four legacy reversal callers retain their old contract and are outside the new ordering guarantee.",
+    "Organization-wide operating snapshot timestamps are coupled to retained payroll forecast proof; certification does not recompute that forecast snapshot hash.",
+    "Fresh committed reads require separate connection capacity; local observation timeouts and timings are not production performance certification.",
+    "Actual synthetic class-3 orphan evidence remains BLOCKED; source posting itself is not covered by reversal ordering proof.",
+    "No new browser, EN/FR, native accessibility, external delivery, deployment or professional approval proof. Full original workflow scope and discovery remain unfinished."
+  ]
+}

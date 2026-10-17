@@ -1,0 +1,1 @@
+const base=require('./jest-direct.config.cjs'); module.exports={...base, roots:['<rootDir>/services','<rootDir>/lib','<rootDir>/actions','<rootDir>/hooks','<rootDir>/components']};

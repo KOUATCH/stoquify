@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "noEmit": true },
+  "files": [
+    "next-env.d.ts",
+    "components/pos/ProfessionalPOSSystem.tsx",
+    "components/purchasing/PaymentExecutionWorkbench.tsx",
+    "services/pos/pos.service.ts",
+    "services/pos/commit-result.ts",
+    "tests/s08-s09/commit-result.test.ts",
+    "tests/s08-s09/browser/adapters.tsx",
+    "tests/s08-s09/browser/journey.tsx"
+  ],
+  "include": [],
+  "exclude": []
+}

@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-30T17:43:16.965Z",
+  "passed": true,
+  "workflow": "PR-19",
+  "parent": "evidence/signoff-closure-2026-09-27.json",
+  "source": {
+    "file": "services/accounting/close-assurance-pack.service.ts",
+    "before": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "after": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d"
+  },
+  "sourceHashes": {
+    "services/accounting/close-assurance-pack.service.ts": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "8a34d4153ce2f031b2beda0a04dedd64148c8c82152e673a718842f3606b7682",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5"
+  },
+  "report": "CLOSE_INVENTORY_SIGNING_IMPACT_2026-09-30.md",
+  "declarationImpact": {
+    "baselineFile": "evidence/inventory-freshness-source-before-acaa82bf-8889-4d00-b86e-1e0c8879d47a.json",
+    "before": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "after": "3177efb4c7a5660adb34cb074d4e307e62b12a1b623b95607360029fdeae701d",
+    "changed": [
+      "inventoryAnnexFromResult",
+      "evaluateInventoryAnnexFreshness",
+      "certificationBlockers"
+    ],
+    "allOtherTopLevelDeclarationsExactlyPreserved": true
+  },
+  "runtime": {
+    "signingAndReplay": true,
+    "certificateExportAndReplay": true,
+    "closeInvalidation": true,
+    "retainedHistoricalPackUnchanged": true,
+    "noDuplicateSignatureOrFinancialEffects": true
+  },
+  "evidence": [
+    {
+      "file": "lanes/environment/freshness-signing-impact-ec52cc83-ab29-4697-8db8-df32750042cf.json",
+      "sha256": "aed88482b52120afce2da1211b750f924f6f86e363957ded13e3077af5110b0c"
+    },
+    {
+      "file": "evidence/signoff-closure-2026-09-27.json",
+      "sha256": "5fd10960708a31aceece8b5a9ebc504f4ad4c93c7255ef65bff19caad6802ac0"
+    },
+    {
+      "file": "CLOSE_INVENTORY_SIGNING_IMPACT_2026-09-30.md",
+      "sha256": "bb5c79b0c43eff2423d535698f58aada51169588aca8e3365a47195ff6d6c960"
+    },
+    {
+      "file": "lanes/environment/verify-freshness-signing-impact.cjs",
+      "sha256": "49eba7acf22750e80ef4b77645b4d208482dbb472a185117d43ad5380b2bc9ba"
+    },
+    {
+      "file": "evidence/inventory-freshness-source-before-acaa82bf-8889-4d00-b86e-1e0c8879d47a.json",
+      "sha256": "30a29a500a2a1068bc3f269154808a0848789b0e737aaa206ccd7ac419f19ee9"
+    },
+    {
+      "file": "lanes/environment/freshness-signing-impact-86ce1ac3-7f76-440c-b1d5-5ee10909a046.json",
+      "sha256": "b129fea6f818ae68182d674a745512e71e7897edfe9e6a81bb9780b1b03a2710"
+    },
+    {
+      "file": "lanes/environment/freshness-signing-impact-7df09a53-7ce4-4790-a7d1-0202dfdec13a.json",
+      "sha256": "f242e44bc92e316a783364db3bb33cec522df8080bfda5f9964b90411f92803d"
+    }
+  ]
+}

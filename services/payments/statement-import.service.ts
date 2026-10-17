@@ -16,6 +16,7 @@ import { db } from "@/prisma/db"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+import { lockReconciliationCloseCatalogInTx, lockReconciliationClosePeriodsInTx } from "@/services/reconciliation/reconciliation-close-order.service"
 
 import type { ParsedStatementLine, PaymentProviderAdapter } from "./payment-ingestion.types"
 import { PaymentIngestionError } from "./payment-ingestion.types"
@@ -116,6 +117,16 @@ export async function importProviderStatement(
   const duplicateInFile = duplicateFingerprints(preparedLines)
 
   return db.$transaction(async (tx) => {
+    // Resolve retained work before admission, then acquire admission ahead of
+    // catalog/assessment/source locks. Recheck duplicates under the provider
+    // lock below; Read Committed observes a competing import's committed result.
+    const retainedFile = await tx.statementFile.findFirst({ where: { organizationId: input.organizationId, providerAccountId: input.providerAccountId, fileHash }, select: { id: true } })
+    const retainedDuplicate = await tx.paymentException.findFirst({ where: { organizationId: input.organizationId, providerAccountId: input.providerAccountId,
+      type: PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE, sourceType: { in: ["StatementFile", "StatementLine"] }, evidence: { path: ["fileHash"], equals: fileHash } }, select: { id: true } })
+    const newWorkAdmitted = !retainedFile && !retainedDuplicate
+    if (newWorkAdmitted) await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "payment_reconciliation", operation: "payment.statement.import" })
+    await lockReconciliationCloseCatalogInTx(tx, input.organizationId)
+    const affectedPeriodIds = await lockReconciliationClosePeriodsInTx(tx, input.organizationId)
     // Read provider status after acquiring the lock, including when another import held it.
     await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "provider_accounts" WHERE "id" = ${input.providerAccountId} AND "organizationId" = ${input.organizationId} FOR UPDATE`)
     const providerAccount = await tx.providerAccount.findFirst({
@@ -210,7 +221,7 @@ export async function importProviderStatement(
       }
     }
 
-    await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "payment_reconciliation", operation: "payment.statement.import" })
+    if (!newWorkAdmitted) throw new PaymentIngestionError("INVALID_PAYLOAD", "Retained statement evidence changed while waiting; refresh and retry.")
     if (duplicateInFile.size > 0) {
       const exception = await tx.paymentException.create({
         data: {
@@ -402,8 +413,7 @@ export async function importProviderStatement(
     await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
       sourceCode: "PAYMENT_STATEMENT_IMPORT",
       sourceId: statementFile.id,
-      periodStart: parsed.periodStart ?? parsed.lines[0].occurredAt,
-      periodEnd: parsed.periodEnd ?? parsed.lines[parsed.lines.length - 1].occurredAt,
+      periodIds: affectedPeriodIds,
       staleReason: "Provider statement import changed payment evidence after close certification.",
       newEvidenceHash: fileHash,
       correlationId,
@@ -420,5 +430,5 @@ export async function importProviderStatement(
       inboxItemId: inbox.id,
       correlationId,
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 }

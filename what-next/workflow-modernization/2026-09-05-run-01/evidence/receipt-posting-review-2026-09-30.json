@@ -1,0 +1,97 @@
+{
+  "at": "2026-09-30T20:00:20.856Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "RECEIPT_POSTING_TRUTH_2026-09-30.md",
+  "sourceHashes": {
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "services/purchase-order/__tests__/purchase-receiving-contracts.test.ts": "ae95cd99205f759440bd3754f08bacb4d5404dbdf381066790f183cb1103dcc1",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "9317bcaa4d81e24962e2de5d16f39c725d8302a50206d69f932fa6d863b32080"
+  },
+  "priorImpact": [
+    {
+      "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "before": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+      "after": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+      "priorReview": "evidence/receipt-posting-before-2026-09-30.json"
+    }
+  ],
+  "declarationImpact": {
+    "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+    "changed": [
+      "confirmPurchaseReceiving",
+      "getPurchaseReceivingWorkbench",
+      "loadOutcomes",
+      "outcomes"
+    ],
+    "added": [
+      "import:./purchase-receipt-accounting-evidence"
+    ],
+    "deleted": [],
+    "allOtherDeclarationsExactlyPreserved": true
+  },
+  "remaining": [
+    "Goods receipt accounting status now requires corroborated stock, journal, value, currency and source-link evidence; unsupported POSTED flags remain unverified. Complete the receipt-to-invoice recognition/clearing contract before adding a receipt default: the current supplier-invoice default already debits INVENTORY. Resolve CASH_DRAWER_CLOSE and EXPENSE_APPROVAL applicability, blocked-ledger recovery, eligible close certification and current-configuration concurrency. Native accessibility, remaining order-page localization and representative latency remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "receipt_posted_flag_not_accounting_proof",
+    "receipt_source_currency_value_and_reversal_checks",
+    "receipt_single_and_multi_line_kernel_evidence",
+    "receipt_en_fr_read_only_status_truth"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/receipt-posting-checks-c1697a9e-9eff-4314-8614-f2029b9b096f.json",
+      "sha256": "be211d142d7520723f4905d8700fab43c40babdfdea92c99569a76736cea5502"
+    },
+    {
+      "file": "lanes/environment/receipt-posting-truth-after-7f870ec9-baa4-4950-9b8a-269d83257fde.json",
+      "sha256": "92c74e2d0d0b866b27ddd4e70dde2d4986a2838ce9164cf59c29243b948885b2"
+    },
+    {
+      "file": "lanes/environment/receipt-posting-truth-after-7ca9e958-01b1-4f19-8542-5a2a14c3f367.json",
+      "sha256": "43e1c7643432b9eb809b2a6865b7f8cc190705affb0b8280992a822ae2ea3986"
+    },
+    {
+      "file": "lanes/environment/receipt-truth-browser-ee59aca2-9899-488f-934d-4a2e6a364d9c.json",
+      "sha256": "6beae367818e89f02c62e2e0aa823568731233f94621ccf07fb120d6a2043737"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "RECEIPT_POSTING_TRUTH_2026-09-30.md",
+      "sha256": "4967fe9b3775ef0fdc5a8915e1a2f567279b6f389073dcc9a26e699c132f4b88"
+    },
+    {
+      "file": "evidence/receipt-posting-before-2026-09-30.json",
+      "sha256": "219ed385b27d39917f8b9a570a3c41019c96bd1d88f8bc2e4bcc334a6408f455"
+    },
+    {
+      "file": "lanes/environment/verify-receipt-posting-truth.cjs",
+      "sha256": "353416f69e37e5d7d3278c898452a9aad771e01a20dde8bc2890bbfa292f9de9"
+    },
+    {
+      "file": "lanes/environment/verify-receipt-truth-browser.cjs",
+      "sha256": "c578c1dfc059be77cb757f3278951220fe93b2f0242e2db7b25ba3e8d30d2daa"
+    },
+    {
+      "file": "run-receipt-posting-checks.cjs",
+      "sha256": "9dceff683906472711883c57526ca23ae4e7a4322e6049130fd0fa2eaf8ec258"
+    },
+    {
+      "file": "lanes/environment/receipt-truth-browser-ee59aca2-9899-488f-934d-4a2e6a364d9c-en1440.png",
+      "sha256": "baec0a95ca1a9fcc124f83b0e2d266ac3cb9d694036791eb84e7b24db6e89e9a"
+    },
+    {
+      "file": "lanes/environment/receipt-truth-browser-ee59aca2-9899-488f-934d-4a2e6a364d9c-fr320.png",
+      "sha256": "61fd83c8f54e6a3adda42734081f49f88a5c54944f547984f7750edfd8b1afde"
+    }
+  ]
+}

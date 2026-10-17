@@ -1,5 +1,6 @@
 import { Prisma, SupplierInvoiceStatus } from "@prisma/client"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { readSupplierCreditAllocationProof, type CreditEvidenceReader } from "./supplier-credit-allocation"
 
 type InvoiceBalance = { id: string; organizationId: string; supplierId: string; currency: string; total: Prisma.Decimal | string; amountPaid: Prisma.Decimal | string }
 
@@ -10,7 +11,7 @@ export function supplierInvoiceBalanceStatus(outstanding: Prisma.Decimal, amount
 }
 
 /** Caller holds the invoice lock and has completed the credit or reversal in this transaction. */
-export async function refreshSupplierInvoiceBalanceStatus(tx: Pick<Prisma.TransactionClient, "supplierInvoice" | "supplierCreditNote">, organizationId: string, invoice: InvoiceBalance) {
+export async function refreshSupplierInvoiceBalanceStatus(tx: Pick<Prisma.TransactionClient, "supplierInvoice" | "supplierCreditNote"> & CreditEvidenceReader, organizationId: string, invoice: InvoiceBalance) {
   const balances = await readSupplierPaymentBalances(tx, organizationId, [invoice], invoice.currency)
   const outstanding = balances.get(invoice.id)!
   const status = supplierInvoiceBalanceStatus(outstanding, new Prisma.Decimal(invoice.amountPaid))
@@ -25,7 +26,7 @@ export async function lockSupplierPaymentSources(tx: Pick<Prisma.TransactionClie
 }
 
 /** Credit records are immutable posting facts; release must reread them after locking its invoices. */
-export async function readSupplierPaymentBalances(tx: Pick<Prisma.TransactionClient, "supplierCreditNote">, organizationId: string, invoices: InvoiceBalance[], currency: string) {
+export async function readSupplierPaymentBalances(tx: Pick<Prisma.TransactionClient, "supplierCreditNote"> & CreditEvidenceReader, organizationId: string, invoices: InvoiceBalance[], currency: string) {
   const credits = await tx.supplierCreditNote.findMany({
     where: { organizationId, supplierInvoiceId: { in: invoices.map(invoice => invoice.id) } },
     select: { id: true, organizationId: true, supplierId: true, supplierInvoiceId: true, currency: true, total: true, direction: true, reversalOfSupplierCreditNoteId: true, postedBusinessEventId: true },
@@ -36,7 +37,11 @@ export async function readSupplierPaymentBalances(tx: Pick<Prisma.TransactionCli
     let netCredit = new Prisma.Decimal(0)
     const notes = credits.filter(note => note.supplierInvoiceId === invoice.id), reversed = new Set<string>()
     for (const note of notes) {
-      if (note.organizationId !== organizationId || note.supplierId !== invoice.supplierId || note.currency !== currency || !note.postedBusinessEventId || note.total.lte(0)) throw new BusinessRuleError("Supplier credit evidence must be reconciled before payment.")
+      if (note.organizationId !== organizationId || note.supplierId !== invoice.supplierId || note.currency !== currency || !note.postedBusinessEventId || note.total.lt(0)) throw new BusinessRuleError("Supplier credit evidence must be reconciled before payment.")
+      if (note.total.eq(0)) {
+        const retained = await tx.supplierCreditNote.findFirst({ where: { id: note.id, organizationId }, include: { lines: true } })
+        if (!retained || retained.postedBusinessEventId !== note.postedBusinessEventId || retained.supplierInvoiceId !== invoice.id || retained.supplierId !== invoice.supplierId || retained.currency !== currency || !retained.total.eq(0) || retained.direction !== note.direction || retained.reversalOfSupplierCreditNoteId !== note.reversalOfSupplierCreditNoteId || !await readSupplierCreditAllocationProof(tx, retained)) throw new BusinessRuleError("Zero-value supplier credit evidence must be reconciled before payment.")
+      }
       if (note.direction === "REVERSAL") {
         const original = notes.find(value => value.id === note.reversalOfSupplierCreditNoteId && value.direction === "CORRECTION")
         if (!original || !original.total.eq(note.total) || reversed.has(original.id)) throw new BusinessRuleError("Supplier credit reversal evidence must be reconciled before payment.")

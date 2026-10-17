@@ -4,6 +4,7 @@ import { FreshAuthRequiredError, SESSION_ASSURANCE_LEVEL } from "@/lib/security/
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import { reconciliationPreparationReadSchema, reconciliationPreparationSchema, reconciliationPreparationQuerySchema } from "@/services/reconciliation/reconciliation-run-preparation.contracts"
 import { previewReconciliationPreparation, prepareReconciliationRun, readReconciliationPreparation } from "@/services/reconciliation/reconciliation-run-preparation.service"
+import { previewAdditionalReconciliationSources, incorporateAdditionalReconciliationSources } from "@/services/reconciliation/reconciliation-additional-sources.service"
 
 const moduleRead = { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation-preparation.actions.ts", surfaceType: "action", accessIntent: "read", mode: "enforce", audit: false } as const
 function control(ctx: ProtectedActionContext, write = false) {
@@ -25,3 +26,12 @@ const read = protect({ permission: "payments.reconciliation.read", auditResource
   ...await readReconciliationPreparation(reconciliationPreparationQuerySchema.parse(input), control(ctx)), scope: { organizationId: ctx.orgId, actorId: ctx.userId },
 }))
 export async function readReconciliationPreparationAction(input: unknown) { return read(input) }
+const additionsPreview = protect({ permission: "payments.reconciliation.run", auditResource: "ReconciliationAdditionalSources", module: moduleRead }, async (input: unknown, ctx) => ({
+  ...await previewAdditionalReconciliationSources(reconciliationPreparationReadSchema.parse(input), control(ctx)), scope: { organizationId: ctx.orgId, actorId: ctx.userId },
+}))
+const incorporate = protect({ permission: "payments.reconciliation.run", auditResource: "ReconciliationAdditionalSources", auditAllowed: true,
+  module: { ...moduleRead, accessIntent: "write", audit: true }, freshAuth: { maxAgeSeconds: 300 } }, async (input: unknown, ctx) => ({
+  ...await incorporateAdditionalReconciliationSources(reconciliationPreparationSchema.parse(input), control(ctx, true)), scope: { organizationId: ctx.orgId, actorId: ctx.userId },
+}))
+export async function previewAdditionalReconciliationSourcesAction(input: unknown) { return additionsPreview(input) }
+export async function incorporateAdditionalReconciliationSourcesAction(input: unknown) { return incorporate(input) }

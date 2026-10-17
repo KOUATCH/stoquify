@@ -1,0 +1,221 @@
+{
+  "at": "2026-09-30T20:55:59.421Z",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "report": "INVOICE_RECEIPT_HANDOFF_2026-09-30.md",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad",
+    "services/purchasing/invoice-approval.service.ts": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+    "services/purchasing/invoice-receipt-recognition.ts": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/purchasing/__tests__/invoice-receipt-recognition.test.ts": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "11b8fa982a826031028d76dbcf563ebedff6846c78bb8cc59950a30fea8009fe",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "7d39c8ae8a9301885fbda09f01d91b6e1b727e35a172247fd9e3f1fa208489ae",
+    "services/accounting/__tests__/default-posting-rules.service.test.ts": "ff855bb8efa0dcf1e0940c6638de9ad91a2dc2cf4b0ab028c5de69ca45abfb59",
+    "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts": "0ecdee3cedd072ab8a24538b6a0879defb6095fa645b9ec0bdf6d5e5dfec6e7c",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts": "61bf661107e5dd8274bd25d9e6e91aaeb835f46cd1fc95f93f9072893f50cde8",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx": "d87dbc40cde21b644f60ae625b605459fe6e457102b52a766e5b12199d9e9247",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950",
+    "messages/en.json": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+    "messages/fr.json": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff-browser.cjs": "9fd4ed8ad103790d5027989fe896632bc725fa55cb3837db61f8fd03dacd86f8"
+  },
+  "priorImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "before": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "after": "401cc5fbf3230ff9ed0ceecef8d19f53021c314c42c8a77889f54da6483e6cad",
+      "baseline": "evidence/invoice-receipt-handoff-before-2026-09-30.json"
+    },
+    {
+      "file": "services/purchasing/invoice-approval.service.ts",
+      "before": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+      "after": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73",
+      "baseline": "evidence/invoice-receipt-handoff-before-2026-09-30.json"
+    },
+    {
+      "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+      "before": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+      "after": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022",
+      "baseline": "evidence/invoice-receipt-handoff-before-2026-09-30.json"
+    },
+    {
+      "file": "services/accounting/default-posting-rules.ts",
+      "before": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+      "after": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+      "baseline": "evidence/invoice-receipt-handoff-before-2026-09-30.json"
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "before": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+      "after": "11b8fa982a826031028d76dbcf563ebedff6846c78bb8cc59950a30fea8009fe",
+      "baseline": "evidence/receipt-handoff-tests-before-d35ff9e6-2681-43d2-bbe5-d7f1e0230d7a.json"
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-ledger-retry.test.ts",
+      "before": "8eebbccd8a6a62a0abcd5c068d345ca262b18d605c536b57bfab52690f86eef0",
+      "after": "7d39c8ae8a9301885fbda09f01d91b6e1b727e35a172247fd9e3f1fa208489ae",
+      "baseline": "evidence/receipt-handoff-tests-before-d35ff9e6-2681-43d2-bbe5-d7f1e0230d7a.json"
+    }
+  ],
+  "declarationImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "changed": [
+        "approveSupplierInvoice",
+        "conditionMatches",
+        "postSupplierInvoice",
+        "writeAPLedgerPosting"
+      ],
+      "added": [
+        "import:./invoice-receipt-recognition"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/purchasing/invoice-approval.service.ts",
+      "changed": [
+        "plan"
+      ],
+      "added": [
+        "import:./invoice-receipt-recognition"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+      "changed": [
+        "confirmInvoiceLedgerRecovery",
+        "plan",
+        "source"
+      ],
+      "added": [
+        "import:./invoice-receipt-recognition"
+      ],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    },
+    {
+      "file": "services/accounting/default-posting-rules.ts",
+      "changed": [
+        "DEFAULT_AP_POSTING_RULES"
+      ],
+      "added": [],
+      "deleted": [],
+      "allOtherDeclarationsExactlyPreserved": true
+    }
+  ],
+  "remaining": [
+    "Invoice approval and frozen ledger recovery now consume verified receipt accruals without duplicate inventory, including partial/mixed invoices and explicit variance. Complete the production receipt recognition date/source/replay contract and return/reversal allocation before enabling a receipt default; late legacy cutover remains a reconciliation case. Resolve CASH_DRAWER_CLOSE and EXPENSE_APPROVAL applicability, eligible close certification and current-configuration concurrency. Native accessibility, remaining order-page localization and representative latency remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "verifiedSubcriteria": [
+    "invoice_receipt_accrual_partial_and_mixed_recognition",
+    "invoice_receipt_frozen_allocation_recovery",
+    "invoice_receipt_actual_account_rule_enforcement",
+    "invoice_receipt_en_fr_browser_accounting_handoff",
+    "immediate_invoice_derived_audit_recovery"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/invoice-receipt-handoff-checks-5584987b-61fe-4de2-b426-b5f11077cbdc.json",
+      "sha256": "16291492e9dbd006c8ef39fd69432a0c8f97527296ef90961fb6872a5ac0abda"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-9df4b1ae-88db-4201-81f7-b66aa80493b9.json",
+      "sha256": "ba7ca39e21882dc323b0c3663a451cf83fdb1e78fb3a5d37064a16911eaa48eb"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3.json",
+      "sha256": "ff4ddebf45a43fa13ed7747202a026bae621dc79ab36727590b6e2e05ec397f7"
+    },
+    {
+      "file": "lanes/environment/direct-invoice-lifecycle-915987a4-06aa-4b80-b86a-3fcdc3a481a0.json",
+      "sha256": "d6360108a75774b758b34366fb49eb2236e676f97d56c6de3d4e25033ba9bf94"
+    },
+    {
+      "file": "evidence/invoice-receipt-handoff-checks-85be4edc-1abd-4b00-b721-feea2142e3a8.json",
+      "sha256": "fbca235866c8707cfdeb729cf7b56f803a8ef084d742842b5b6a133a1f681f2d"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "INVOICE_RECEIPT_HANDOFF_2026-09-30.md",
+      "sha256": "275f5e3269fabb5868162e16931e9189323ed33713a3769943b9c5ea74c04aac"
+    },
+    {
+      "file": "evidence/invoice-receipt-handoff-before-2026-09-30.json",
+      "sha256": "938764ae1938b884962114346ea37123811339985eeee5267119f1f82f9b8106"
+    },
+    {
+      "file": "evidence/receipt-handoff-tests-before-d35ff9e6-2681-43d2-bbe5-d7f1e0230d7a.json",
+      "sha256": "f4a5f7624bd9c1953633d0a30e03c2646aacdaac0904639dd58f3a5555775b7a"
+    },
+    {
+      "file": "run-invoice-receipt-handoff-checks.cjs",
+      "sha256": "80ff78f36b80229a5f653f935dc173f061b92a62c84d2b23663c872509e94636"
+    },
+    {
+      "file": "lanes/environment/verify-invoice-receipt-handoff.cjs",
+      "sha256": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556"
+    },
+    {
+      "file": "lanes/environment/verify-invoice-receipt-handoff-browser.cjs",
+      "sha256": "9fd4ed8ad103790d5027989fe896632bc725fa55cb3837db61f8fd03dacd86f8"
+    },
+    {
+      "file": "lanes/environment/verify-direct-invoice-lifecycle.cjs",
+      "sha256": "badea94b8621282ecfacf8aaf4ecd4605c520292d3610d5963c6d1f810f1759d"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-en1440-selected.png",
+      "sha256": "d826b56a2032100a22e54d908c6aaa529bfa9dd776dc22ea42cd6ac88f91b9fb"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-en1440-review.png",
+      "sha256": "601ec951b3021593a64357132593a0580a97a59f9d1c70e00dfae4ddd5c30055"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-en1440-posted.png",
+      "sha256": "044d8352ebacac8f3072b838bf0be6c45c2cb5b8ae0ba64ec0ec1268990caf05"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-en1440-history.png",
+      "sha256": "abed8885cc5e8c3d4929424910ef6a463ada6146e15df47a6207e188e2b33c1f"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-fr320-selected.png",
+      "sha256": "8983371f1688fc16c9980d370778949dd245fc655010cfc4ce381c97521c2e4b"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-fr320-review.png",
+      "sha256": "451ef87ba7ae7b414050880b6bf0cddca58c0f355abbea16293d3e1b4b0588e0"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-fr320-posted.png",
+      "sha256": "0c78c54e33f240df1c609380346dc3f00ef47616f6b708f649181c52afa30ded"
+    },
+    {
+      "file": "lanes/environment/invoice-receipt-handoff-browser-95f2a0df-ffbc-41d4-ab17-8e327f1207c3-fr320-history.png",
+      "sha256": "90ed80cb42bc51b141e0bdda998b9ba57cd665ee21d3338debfec128fda2cbfe"
+    }
+  ]
+}

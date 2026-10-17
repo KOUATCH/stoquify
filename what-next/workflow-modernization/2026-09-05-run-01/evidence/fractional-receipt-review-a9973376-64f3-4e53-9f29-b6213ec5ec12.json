@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-30T23:46:47.077Z",
+  "status": "verified_correction_workflow_open",
+  "passed": true,
+  "workflow": "FA-CASH-COMMAND",
+  "sourceImpact": {
+    "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-impact-db08f486-8a17-4283-89e5-080b6a1e1f4c.json",
+    "sha256": "e1662480a3581ab3557756bbb4ddae4f09162e0241192122d8c064145cef99d6"
+  },
+  "runtimeIndex": {
+    "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-runtime-index-a9973376-64f3-4e53-9f29-b6213ec5ec12.json",
+    "sha256": "0b3bd4695175a57c58cb9295b262ea6880696542f6ce4bd76073203bf5676db3"
+  },
+  "checks": {
+    "focusedTests": 402,
+    "suites": 18,
+    "lint": "passed",
+    "typecheck": "passed",
+    "databaseScenarios": 12,
+    "databaseExecution": "Eleven passing scenarios in the full run plus one corrected-driver focused rerun; no failed or skipped case silently promoted.",
+    "browserJourneys": 2,
+    "localMigration": "applied_and_registered"
+  },
+  "databaseDriverReview": {
+    "earlierHash": "45f8a432105c44c7ff75970795909935010e991cbdec1762cc0d32580c78adb3",
+    "currentHash": "9485ef336cb58ca298aeb4d279acf18723ad61c94a9cbb11ddf9008d610285b4",
+    "effect": "Fixes the original-zero reversal response assumption by verifying retained evidence and adds explicit single-case selection. Product and inherited driver dependencies are unchanged between accepted runs; their current hashes were checked."
+  },
+  "visualReview": {
+    "scope": "Root visually inspected actual EN desktop and FR320 recovery screenshots; automated checks verify local reflow, keyboard focus and accessible control names. No native screen-reader or comprehensive accessibility certification."
+  },
+  "boundaries": [
+    "Owned local database only",
+    "Synthetic roles, tax arithmetic and rules are not statutory approval",
+    "No production, live payments, external messages or X1 clearance",
+    "Legacy allocations are not backfilled or relabeled",
+    "Complete workflow and full-register reconciliation remain open"
+  ],
+  "failedAttempts": [
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/fractional-receipt-valuation-6b6902f6-bb55-4ebc-a02e-e2b2a7516b48.json",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/fractional-receipt-valuation-de1bc432-f3cc-4e76-bc0d-f773b45679bc.json",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-typecheck-225c0937-4704-456b-86c6-8737dc9661f8.json"
+  ],
+  "report": "what-next/workflow-modernization/2026-09-05-run-01/FRACTIONAL_RECEIPT_VALUATION_2026-10-01.md"
+}

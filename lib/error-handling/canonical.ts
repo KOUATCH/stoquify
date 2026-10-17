@@ -14,6 +14,7 @@ export type CanonicalErrorStatus = 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429
 
 export type CanonicalErrorCode =
   | "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED"
+  | "REVIEW_REQUIRED"
   | "VALIDATION_ERROR"
   | "AUTH_REQUIRED"
   | "FORBIDDEN"
@@ -175,6 +176,7 @@ function categoryForCode(code: CanonicalErrorCode) {
     case "TENANT_SCOPE_VIOLATION":
       return ErrorCategory.AUTHORIZATION
     case "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED":
+    case "REVIEW_REQUIRED":
     case "BUSINESS_RULE_VIOLATION":
     case "INVALID_TRANSITION":
     case "PAYROLL_TRANSITION_EVIDENCE_MISSING":
@@ -439,6 +441,7 @@ function canonicalCodeFromString(
 ): CanonicalErrorCode {
   switch (code) {
     case "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED":
+    case "REVIEW_REQUIRED":
     case "VALIDATION_ERROR":
     case "AUTH_REQUIRED":
     case "FORBIDDEN":

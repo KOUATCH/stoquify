@@ -1,0 +1,43 @@
+{
+  "at": "2026-09-27T12:51:03.076Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sourceArrival": true,
+      "preview": {
+        "runId": "cmujthivt001amag0uugo1c27",
+        "status": "READY_FOR_SIGNOFF",
+        "asOf": "2026-09-27T12:51:04.349Z",
+        "provider": "Owned request ordering",
+        "currencyCode": "XAF",
+        "businessDate": "2026-09-27T00:00:00.000Z",
+        "totals": {
+          "internal": "100.25",
+          "external": "100.25",
+          "matched": "100.25",
+          "suspense": "0.00"
+        },
+        "canSign": false,
+        "blocker": "UNRECONCILED_SOURCES",
+        "expectedSourceVersionHash": null,
+        "expectedEvidenceRevision": null,
+        "counts": null
+      },
+      "directSigningDeniedWithoutEffects": true,
+      "rerunRecoveryUnavailableWithoutDiscardingExistingRun": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "f7689552fb671059b955b28219a2e053c989499d052acdde36216ce1ee72e67e",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8b72301a039ece682a1dc360593b0d52dc0096f6a2b98a0d8421e27132a641ff",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

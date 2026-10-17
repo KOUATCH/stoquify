@@ -137,9 +137,9 @@ export type PayrollForecastCashPlanningEvidence = {
   locationAllocated: false
   horizonStart: string | null
   horizonEnd: string | null
-  upcomingNetPayAmount: number
-  upcomingStatutoryLiabilityAmount: number
-  totalUpcomingAmount: number
+  upcomingNetPayAmount: number | null
+  upcomingStatutoryLiabilityAmount: number | null
+  totalUpcomingAmount: number | null
   payrollPeriodCount: number
   payrollRunCount: number
   paymentBatchCount: number
@@ -352,9 +352,9 @@ function emptyPayrollForecastEvidence(input: {
     locationAllocated: false,
     horizonStart: null,
     horizonEnd: null,
-    upcomingNetPayAmount: 0,
-    upcomingStatutoryLiabilityAmount: 0,
-    totalUpcomingAmount: 0,
+    upcomingNetPayAmount: null,
+    upcomingStatutoryLiabilityAmount: null,
+    totalUpcomingAmount: null,
     payrollPeriodCount: 0,
     payrollRunCount: 0,
     paymentBatchCount: 0,

@@ -1,0 +1,213 @@
+*** Begin Patch
+*** Update File: E:/ohada saas/Focused projects/stoquify/what-next/workflow-modernization/2026-09-05-run-01/WORKFLOW_REGISTER.json
+@@
+ {
+-  "updatedAt": "2026-10-01T01:16:58.125Z",
++  "updatedAt": "2026-10-01T01:58:17.196Z",
+   "objective": "All existing workflows, including incomplete, secondary, exceptional and background paths.",
+   "discoveryComplete": false,
+   "coverage": {
+@@
+       "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+       "implementationStatus": "current_proof_read_model_and_shared_live_journey_presentation",
+       "reviewStatus": "provisional_source_trace",
+-      "runtimeStatus": "scoped_current_proof_database_race_tenant_retry_and_actual_en_fr_cash_handoff_verified",
++      "runtimeStatus": "actual_denial_refresh_and_selected_reassessment_current_proof_en_fr_verified",
+       "evidence": [
+         {
+           "kind": "source",
+@@
+         "evidence/cash-queue-review-2026-09-30.json",
+         "CASH_CLOSE_EVIDENCE_2026-10-01.md",
+         "CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md",
+-        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json"
++        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json",
++        "CLOSE_DENIAL_RETENTION_2026-10-01.md",
++        "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json"
+       ],
+       "remaining": [
+         "Selected persisted current-proof freshness, coherent reads and query retry verified; full live collector, evidence-graph, history and accessibility lifecycle remain.",
+@@
+         "draft or certification request -> freshness/control blockers -> artifact hash/watermark and retained export"
+       ],
+       "sideEffects": "Read or mutate the listed records according to transition; exact effects are source-traced, not runtime-verified.",
+-      "implementationStatus": "existing_run_certification_and_invalidation_serialized",
++      "implementationStatus": "certification_denial_invalidation_commits_and_manual_recovery_integrated",
+       "reviewStatus": "provisional_source_trace",
+-      "runtimeStatus": "actual_ready_t4_setup_both_writer_orderings_and_predecessor_race_verified",
++      "runtimeStatus": "actual_stale_denial_retry_reassessment_and_en_fr_certifier_recovery_verified",
+       "evidence": [
+         {
+           "kind": "source",
+@@
+         },
+         "CASH_CLOSE_EVIDENCE_2026-10-01.md",
+         "CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md",
+-        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json"
++        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json",
++        "CLOSE_DENIAL_RETENTION_2026-10-01.md",
++        "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json"
+       ],
+       "remaining": [
+-        "No professional certification claim. Investigate invalidation evidence written then thrown inside same transaction; it may roll back with denied export.",
+-        "Existing-run lost update is corrected. Complete new-run discovery/assessment races, multi-period lock ordering, nonempty inventory/payroll prerequisites, full producer invocation, interrupted processing and transport lifecycle. Isolated synthetic system certification is not expert/statutory approval. See CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md."
++        "Existing-run lost update is corrected. Complete new-run discovery/assessment races, multi-period lock ordering, nonempty inventory/payroll prerequisites, full producer invocation, interrupted processing and transport lifecycle. Isolated synthetic system certification is not expert/statutory approval. See CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md.",
++        "Authorized stale denial now retains evidence and selected-run recovery is verified; aggregate supersession, immediate zero-count invalidation, full delivery and complete workflow lifecycle remain. See CLOSE_DENIAL_RETENTION_2026-10-01.md.",
++        "Existing downloaded document UUID differs from database export ID. Current watermark/hash/run/audit binding is verified; make the two-identifier contract explicit without rewriting retained artifacts. See CLOSE_DENIAL_RETENTION_2026-10-01.md."
+       ],
+       "status": "In progress",
+       "closureReview": {
+         "complete": false,
+-        "latestScopedReview": "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json",
++        "latestScopedReview": "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json",
+         "verifiedCriteria": [
+           "existing_close_run_certification_invalidation_both_lock_orderings",
+           "predecessor_close_certification_lost_update_database_reproduction",
+-          "waiting_source_invalidation_binds_new_certified_export_and_retains_hash"
++          "waiting_source_invalidation_binds_new_certified_export_and_retains_hash",
++          "actual_stale_export_predecessor_rollback_reproduced",
++          "authorized_certification_denial_commits_invalidation_without_export",
++          "denial_retry_preserves_original_event_audit_and_outbox",
++          "actual_new_assessment_and_independent_selected_run_certification_recovery",
++          "en_fr_actual_denial_refresh_note_preservation_and_manual_recovery_download",
++          "certified_error_awaits_refresh_without_automatic_export_retry"
+         ],
+         "remaining": [
+-          "New-run discovery/assessment races, global multi-period lock ordering, interrupted processing and complete producer integration",
+-          "Denied-export invalidation evidence may roll back with the denial; investigate existing transaction contract",
+-          "Whole Cash source/authority consistency and original complete workflow acceptance checklist",
+-          "Native assistive technology, true browser zoom, full page localization/contrast/hydration and production latency",
+-          "Full-register reconciliation and all original workflow families"
++          "Cash aggregate remains blocked by retained older invalidated run after a new selected run is certified; supersession versus unresolved-obligation contract needs implementation and verification",
++          "Actual zero-variance count changes evidence fingerprint without immediate producer invalidation",
++          "New-run discovery/assessment races, global multi-period lock ordering, interrupted processing, full producer and outbox delivery lifecycle",
++          "Whole Cash source/authority consistency and original full workflow checklist; nonempty inventory/payroll and authentic expert prerequisites",
++          "Native assistive technology, true browser zoom, full inherited localization/contrast/hydration and representative production latency",
++          "Full-register reconciliation and every original workflow family"
+         ]
+       }
+     },
+@@
+         "read -> freshness/risk -> authorized source links"
+       ],
+       "sideEffects": "Read-only reporting; downstream links retain their own authorization.",
+-      "implementationStatus": "close_write_serialization_and_current_proof_handoff_integrated",
++      "implementationStatus": "close_denial_retention_and_selected_run_recovery_integrated",
+       "reviewStatus": "provisional_source_trace",
+-      "runtimeStatus": "247_focused_tests_7_read_cases_2_write_orderings_predecessor_reproduction_2_en_fr_browser_journeys_verified",
++      "runtimeStatus": "283_regression_baseline_47_refreshed_ui_tests_5_database_cases_en_fr_selected_recovery_aggregate_gap_reproduced",
+       "evidence": [
+         {
+           "kind": "source",
+@@
+         "CASH_CLOSE_EVIDENCE_2026-10-01.md",
+         "evidence/cash-close-review-35470396-517f-4da2-861b-41703b1c9dd3.json",
+         "CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md",
+-        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json"
++        "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json",
++        "CLOSE_DENIAL_RETENTION_2026-10-01.md",
++        "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json"
+       ],
+       "remaining": [
+         "Fresh mixed/non-stock invoices and originally-zero receipts now have source-bound treatment, actual account/currency/control checks, exact approved-price credit/reversal and owned runtime evidence. Authentic legacy reconstruction, mixed unverified source treatment, weighted-average carrying-value versus receipt-claim conflicts, tenant-specific statutory account decisions, CASH_DRAWER_CLOSE/EXPENSE_APPROVAL setup and complete downstream lifecycles remain open.",
+@@
+         "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows.",
+         "Full-register source reconciliation remains incomplete after source-treatment and Cash denial changes. Earlier receipt milestones remain retained historical evidence; current focused corrections do not recertify every older lifecycle claim. Real close-assessment races, interrupted-process recovery and complete lifecycle evidence remain open. See the latest scoped review and unchanged original closure checklist.",
+         "Existing-run certification/invalidation lost update is reproduced and corrected with both real database lock orderings. Retained exports survive. New-run discovery/assessment races, global multi-period ordering, complete producer invocation, and whole Cash source/authority consistency remain. See CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md.",
+-        "Cash-to-Close current proof versus recorded history is verified in actual EN/FR desktop/mobile journeys. Journey and detail panels share live state. Complete destination lifecycle, native accessibility, broader inherited localization, and representative latency remain. See CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md."
++        "Cash-to-Close current proof versus recorded history is verified in actual EN/FR desktop/mobile journeys. Journey and detail panels share live state. Complete destination lifecycle, native accessibility, broader inherited localization, and representative latency remain. See CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md.",
++        "Cash aggregate remains blocked by retained older invalidated run after a new selected run is certified; supersession versus unresolved-obligation contract needs implementation and verification. See CLOSE_DENIAL_RETENTION_2026-10-01.md.",
++        "Actual zero-variance count changes evidence fingerprint without immediate producer invalidation. See CLOSE_DENIAL_RETENTION_2026-10-01.md."
+       ],
+       "status": "In progress",
+       "closureReview": {
+@@
+           "current_close_dashboard_real_read_invalidation_race",
+           "current_close_dashboard_cross_tenant_relations_and_query_retry",
+           "cash_to_close_en_fr_current_proof_recorded_history_reflow",
+-          "close_journey_and_details_share_refreshed_period_and_error_state"
++          "close_journey_and_details_share_refreshed_period_and_error_state",
++          "actual_stale_export_predecessor_rollback_reproduced",
++          "authorized_certification_denial_commits_invalidation_without_export",
++          "denial_retry_preserves_original_event_audit_and_outbox",
++          "actual_new_assessment_and_independent_selected_run_certification_recovery",
++          "en_fr_actual_denial_refresh_note_preservation_and_manual_recovery_download",
++          "certified_error_awaits_refresh_without_automatic_export_retry"
+         ],
+         "note": "Inventory freshness and currency defects corrected; actual assessment/export/recovery and EN/FR downloaded hash integrity verified. Genuine certified-close, payroll-pilot applicability/evidence, concurrency, full financial lifecycles and complete accessibility/production performance remain open.",
+         "proofSourceBindingCurrent": false,
+@@
+         "fractionalReceiptBindingCurrent": false,
+         "sourceTreatmentBindingCurrent": true,
+         "cashDenialBindingCurrent": false,
+-        "latestScopedReview": "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json",
+-        "closeEvidenceReadBindingCurrent": true,
+-        "closeWriteSerializationBindingCurrent": true,
+-        "closeDestinationProofBindingCurrent": true
++        "latestScopedReview": "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json",
++        "closeEvidenceReadBindingCurrent": false,
++        "closeWriteSerializationBindingCurrent": false,
++        "closeDestinationProofBindingCurrent": false,
++        "closeDenialRecoveryBindingCurrent": true,
++        "closeAggregateRecoveryVerified": false,
++        "priorCloseEvidenceNote": "Prior writer/read race and Cash handoff receipts remain historical after pack/Center source changed. Current focused regressions pass; this checkpoint re-verifies denial/recovery, not every earlier runtime ordering."
+       }
+     },
+     {
+@@
+   "executionPolicy": {
+     "version": "closure-queue-1",
+     "primaryWorkflow": "FA-CASH-COMMAND",
+-    "supportingDependency": "FA-CLOSE-PACK: current close evidence, certification serialization and retained history",
++    "supportingDependency": "FA-CLOSE-PACK: truthful close denial, retained history and recovery",
+     "nextPriorities": [
+       "PR-17",
+       "ID-04",
+       "MC-11"
+     ],
+     "closureChecklist": "CASH_COMMAND_CLOSURE_2026-09-27.md",
+-    "note": "Cash remains primary. Close proof became the supporting dependency after reproduced false-certification and handoff defects. Receipt/invoice corrections and unresolved legacy/carrying-value requirements remain retained in the backlog. This checkpoint closes bounded criteria, not complete workflows."
++    "note": "Cash remains primary and Close Pack supporting. This checkpoint closes bounded denial/recovery criteria and reproduces aggregate supersession and zero-count producer gaps. Original families and prior receipt/invoice requirements remain retained; no workflow is closed or split."
+   },
+   "sourceReconciliation": {
+     "current": false,
+     "evidence": "evidence/fractional-receipt-review-a9973376-64f3-4e53-9f29-b6213ec5ec12.json",
+     "lastSuccessfulAt": "2026-09-30T20:00:57.694Z",
+     "interpretation": "The fractional receipt correction has current source-bound runtime evidence; exact posting-service drift was reviewed. Full-register reconciliation has not been rerun for all changed dependencies, so historical closures are not freshly recertified.",
+-    "latestScopedReview": "evidence/close-write-current-review-8c572e6f-b712-4926-bffd-f47011de8775.json"
++    "latestScopedReview": "evidence/close-denial-recovery-review-aa6493a2-976d-4135-926d-784a488f46f4.json"
+   }
+ }
+*** Update File: E:/ohada saas/Focused projects/stoquify/what-next/workflow-modernization/2026-09-05-run-01/CURRENT_PROGRESS.md
+@@
+ # Current progress
+ 
+-Updated 2026-10-01T01:16:58.125Z; HEAD 62a56036a5ac9b37236a20c9b148052199069479 on codex/migration-control-plane-release-2026-08-29. Shared changes preserved. Register SHA256: e6c2966789bed4f38234e87d8dfcc7a35a8f20af28e26389280c188df5b578e4. Latest scoped receipts match current source; full-register reconciliation remains incomplete.
++Updated 2026-10-01T01:58:17.196Z; HEAD 62a56036a5ac9b37236a20c9b148052199069479 on codex/migration-control-plane-release-2026-08-29. Shared changes preserved. Register SHA256: 00707bb0ea36b734f79ec41f712b517be845695afdef7e1a5543a07466f3f28b. Latest scoped evidence matches current source; full-register reconciliation remains incomplete.
+ 
+-**Position:** 270 discovered workflows; discovery incomplete; 191 unmapped source entries. Recorded statuses: Queued 264, In progress 2, Complete—verified 4; others zero. Historical closures remain subject to reconciliation. No workflow closed this turn; the supporting Close Pack workflow is now explicitly In progress.
++**Position:** 270 discovered workflows; discovery incomplete; 191 unmapped source entries. Recorded statuses: Queued 264, In progress 2, Complete—verified 4; others zero. Historical closures have not all been revalidated. No workflow closed this turn.
+ 
+ | Priority | Workflow and outcome | Status | Delivered and verified | Remaining criteria | Owner | Next action |
+ |---|---|---|---|---|---|---|
+-| Primary | FA-CASH-COMMAND: truthful finance actions | In progress | Current close proof and EN/FR destination handoff | Whole-source/authority races, complete lifecycle, accessibility and representative latency | Engineering | Reconcile direct Cash closure checklist against current evidence |
+-| Supporting | FA-CLOSE-PACK: controlled certification | In progress | Both writer lock orderings, retained artifacts, real READY/T4 fixture | Denied-export audit rollback, new-run/assessment races, producer and recovery lifecycle | Accounting engineering | Trace and resolve denied-export invalidation persistence |
+-| Next 1 | PR-17: reconciliation exceptions | Queued | Prior source/correction handoffs | Financial/legacy treatment and recovery | Engineering | Reconcile original closure scope |
++| Primary | FA-CASH-COMMAND: truthful finance actions | In progress | Close evidence, denial retention and selected-run recovery | Aggregate history/supersession, whole-source/authority races, full lifecycle | Engineering | Resolve old blocked assessment versus current recovered proof without hiding obligations |
++| Supporting | FA-CLOSE-PACK: controlled certification | In progress | Durable denial, duplicate suppression, real reassessment and independent export | Immediate zero-count invalidation, assessment races, producer/delivery lifecycle | Accounting engineering | Bind zero-variance source completion to current close invalidation |
++| Next 1 | PR-17: reconciliation exceptions | Queued | Prior correction handoffs | Financial/legacy treatment and recovery | Engineering | Reconcile original closure scope |
+ | Next 2 | ID-04: invitation redemption | Queued | Prior authority/recipient evidence | Accessibility, onboarding, transport | Identity owner | Verify transport boundary |
+ | Next 3 | MC-11: permitted workspace | Queued | Selected route/action boundaries | Cross-domain transport and scanner gaps | Engineering | Preserve guards and improve diagnostics |
+ 
+-**Since the previous report:** Fixed certification overwriting committed invalidation. Both writers lock the tenant's run; waiting invalidation targets the newly retained export. Close now separates current proof from recorded status/readiness. Journey and detail panels share refreshed state. Missing/stale proof and failed refresh no longer support current certification claims.
++**Since the previous report:** Refused certification now commits its detected invalidation before returning the error. Repeated refusal retains the first event/audit/outbox; no new export is created. The client refreshes current evidence, preserves editable notes, announces EN/FR guidance and requires deliberate retries. Fresh assessment and a separate certifier recover the selected run while older records remain intact.
+ 
+-**Verified:** 247 tests/10 suites, lint, TypeScript and two source-contract gates; seven owned database read cases, two writer orderings, exact predecessor race reproduction, and two actual EN/FR browser journeys. PostgreSQL confirmed waiting connections; retained artifacts, financial records during operations, and outside-fixture records stayed intact. Read tests covered current proof, tenant-filtered relations, concurrent invalidation and failure/retry. [Detailed evidence and operating guidance](CLOSE_WRITE_AND_CURRENT_PROOF_2026-10-01.md).
++**Verified:** 283 tests/12 suites initially passed. The browser exposed overlong French guidance; after shortening it, 47 tests in the two affected UI suites, UI lint and TypeScript passed again. Unchanged service/static evidence is retained with explicit source bindings. Five database cases verified denial and recovery. Actual EN1440/FR320 journeys verified refusal, refreshed proof, retained review notes, explicit identity/retry and downloaded hash integrity. Operation financial and outside-fixture fingerprints stayed unchanged. [Detailed evidence and operating guidance](CLOSE_DENIAL_RETENTION_2026-10-01.md).
+ 
+-**Discovered and corrected:** The journey header previously retained initial proof after the details refreshed. Initial aggregate failed one test because two details still said no blockers; both are corrected and the failed receipt is retained. No workflow renamed or split to increase completion counts.
++**New evidence:** A real zero-variance stock count changes the source fingerprint without immediate Close invalidation. A separate read-only check confirms the recovered selected run is certified while Cash remains blocked by retained older invalidation. These are concrete engineering gaps; selected recovery is not complete Cash recovery. Outbox enqueue is durable; delivery remains unverified.
+ 
+-**Remaining:** Existing-run serialization does not establish new-run discovery, all producer calls, global multi-period ordering or interrupted recovery. Cash aggregate obligations may differ from one selected Close period. Native screen reader, true browser zoom, full localization/contrast/hydration and production latency remain open. Synthetic setup/approvals prove local system behavior only; nonempty payroll/inventory and expert country evidence remain separate. Receipt/invoice legacy reconstruction and weighted-average carrying-value conflicts remain retained. Full source reconciliation and all 17 workflow families remain in the [register](WORKFLOW_REGISTER.json). No migration, live approval, external message, payment, deployment or X1 clearance occurred. ETA remains unreliable while discovery and full validation are incomplete.
++**Remaining:** New-run discovery/assessment races, global multi-period ordering, all producers and interrupted recovery; complete Cash source/authority and lifecycle reconciliation; nonempty inventory/payroll and authentic expert country evidence; native screen reader, actual zoom, full inherited localization/contrast/hydration and production latency. Receipt/invoice legacy reconstruction and weighted-average carrying-value conflicts remain retained. All 17 original families remain in the [register](WORKFLOW_REGISTER.json). No migration, live approval, external message, payment, deployment or X1 clearance occurred. No user action blocks the next local implementation. ETA remains unreliable while discovery and full validation are incomplete.
+*** End Patch

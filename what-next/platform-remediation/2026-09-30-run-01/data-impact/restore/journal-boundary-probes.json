@@ -1,0 +1,39 @@
+{
+  "startedAt": "2026-09-30T21:08:16.573Z",
+  "scope": "ROLLED_BACK_PROBES_ON_THIS_RUN_RESTORED_COPY",
+  "databaseName": "stoquify_restore_local_remediation_20260930_run01",
+  "sourceMutationAttempted": false,
+  "committedMutation": false,
+  "recordIdentifiersEmitted": false,
+  "probes": [
+    {
+      "name": "posted_line_economic_amount_update",
+      "invariant": "Posted amounts require a compensating correction, not in-place editing.",
+      "outcome": "DATABASE_ACCEPTED_IN_ROLLED_BACK_TRANSACTION",
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "posted_entry_return_to_draft",
+      "invariant": "A posted journal cannot become an editable draft.",
+      "outcome": "DATABASE_ACCEPTED_IN_ROLLED_BACK_TRANSACTION",
+      "affectedRows": 1,
+      "rolledBack": true
+    },
+    {
+      "name": "line_header_tenant_mismatch",
+      "invariant": "Journal lines and their parent journal must belong to the same tenant.",
+      "outcome": "DATABASE_ACCEPTED_IN_ROLLED_BACK_TRANSACTION",
+      "affectedRows": 1,
+      "rolledBack": true
+    }
+  ],
+  "status": "DATABASE_BOUNDARY_GAPS_REPRODUCED",
+  "limitations": [
+    "No commit was attempted; deferred constraints were forced before each rollback.",
+    "The configured database role is not proven to match a deployed least-privilege application role.",
+    "These tests measure database enforcement, not whether the application exposes an authorized path to these writes."
+  ],
+  "rollbackConfirmed": true,
+  "completedAt": "2026-09-30T21:08:17.033Z"
+}

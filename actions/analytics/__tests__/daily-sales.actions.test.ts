@@ -5,12 +5,12 @@ jest.mock("@/lib/security/rbac", () => {
 jest.mock("@/lib/security/auth-session", () => ({ FreshAuthRequiredError: class extends Error {}, requireFreshAuth: jest.fn() }))
 jest.mock("@/lib/logger", () => ({ logger: { error: jest.fn() } }))
 jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
-jest.mock("@/services/analytics/daily-sales-read.service", () => ({ getDailySalesReadModel: jest.fn() }))
+jest.mock("@/services/analytics/daily-sales-read.service", () => ({ getDailySalesReadModel: jest.fn(), getLatestDailySalesDay: jest.fn() }))
 jest.mock("@/services/analytics/financial-analytics.service", () => ({ getDailyReportDataReadModel: jest.fn(), getFinancialMetricsReadModel: jest.fn() }))
 import { assertCanUseOrganization, requirePermission, RbacError } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
-import { getDailySalesReadModel } from "@/services/analytics/daily-sales-read.service"
-import { getDailySalesReportAction } from "../daily-sales.actions"
+import { getDailySalesReadModel, getLatestDailySalesDay } from "@/services/analytics/daily-sales-read.service"
+import { getDailySalesReportAction, getLatestDailySalesDayAction } from "../daily-sales.actions"
 import { getDailyReportData, getFinancialMetrics } from "../financial-analytics"
 import { getDailyReportDataReadModel, getFinancialMetricsReadModel } from "@/services/analytics/financial-analytics.service"
 
@@ -27,6 +27,25 @@ it("requires both existing authorities and derives the reporting tenant from the
   expect(requirePermission).toHaveBeenCalledWith("sales.read", expect.objectContaining({ resource: "DailySalesReport" }))
   expect(getDailySalesReadModel).toHaveBeenCalledWith({ organizationId: "org-session", date: "2026-09-06" })
   expect(observeModuleAccess).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-session", moduleSlug: "sales", accessIntent: "read", mode: "observe" }))
+})
+
+it("guards latest activity with the same tenant and both permissions", async () => {
+  await getLatestDailySalesDayAction({ locationId: "location-1" })
+  expect(getLatestDailySalesDay).toHaveBeenCalledWith({ organizationId: "org-session", locationId: "location-1" })
+  expect(requirePermission).toHaveBeenCalledWith("sales.read", { resource: "DailySalesReport" })
+  expect(requirePermission).toHaveBeenCalledWith("reports.read", expect.objectContaining({ resource: "DailySalesReport" }))
+})
+it.each(["reports.read", "sales.read"])("denies latest activity without %s", async missing => {
+  ;(requirePermission as jest.Mock).mockImplementation(async permission => { if (permission === missing) throw new RbacError("Denied", "FORBIDDEN", 403); return { orgId: "org-session", permissions: [], isSuperUser: false } })
+  expect(await getLatestDailySalesDayAction({ locationId: "location-1" })).toMatchObject({ success: false, code: "FORBIDDEN" })
+  expect(getLatestDailySalesDay).not.toHaveBeenCalled()
+})
+it("rejects foreign tenant and client authority on latest lookup", async () => {
+  ;(assertCanUseOrganization as jest.Mock).mockRejectedValueOnce(new RbacError("Foreign", "FORBIDDEN", 403))
+  expect(await getLatestDailySalesDayAction({ organizationId: "foreign", locationId: "location-1" })).toMatchObject({ success: false })
+  expect(await getLatestDailySalesDayAction({ locationId: "" })).toMatchObject({ success: false })
+  expect(await getLatestDailySalesDayAction({ locationId: "location-1", permissions: ["*"] } as never)).toMatchObject({ success: false })
+  expect(getLatestDailySalesDay).not.toHaveBeenCalled()
 })
 it.each(["reports.read", "sales.read"])("refuses missing %s without loading report data", async missing => {
   ;(requirePermission as jest.Mock).mockImplementation(async permission => { if (permission === missing) throw new RbacError("Permission denied", "FORBIDDEN", 403); return { orgId: "org-session", userId: "user-session", permissions: [], isSuperUser: false } })

@@ -2920,11 +2920,15 @@ function hasCustomerSettlementCompensatingReversalFoundation(
     "?moneyText(money(entry.debit).negated())",
   ]
   const postingMarkers = [
-    "original.sourceType===AccountingSourceType.CUSTOMER_SETTLEMENT",
     'action:"JOURNAL_ENTRY_SOURCE_OWNED_REVERSAL_BLOCKED"',
-    "return{sourceOwnedBlocked:trueasconst}",
-    "if(\"sourceOwnedBlocked\"inresult&&result.sourceOwnedBlocked)",
   ]
+  const sourceOwnedReversalGuard =
+    (postingService.includes("original.sourceType===AccountingSourceType.CUSTOMER_SETTLEMENT") &&
+      postingService.includes("return{sourceOwnedBlocked:trueasconst}") &&
+      postingService.includes("if(\"sourceOwnedBlocked\"inresult&&result.sourceOwnedBlocked)")) ||
+    (postingService.includes("if(original.sourceType!==AccountingSourceType.MANUAL){") &&
+      postingService.includes("return{sourceOwnedBlocked:original.sourceType}") &&
+      postingService.includes("if(\"sourceOwnedBlocked\"inresult){"))
   const sensitiveActionMarkers = [
     'permission:\"finance.receivables.reverse\"',
     'riskTier:\"critical\"',
@@ -2956,6 +2960,7 @@ function hasCustomerSettlementCompensatingReversalFoundation(
     ledgerMarkers.every((marker) => customerLedger.includes(marker)) &&
     arMarkers.every((marker) => arOpenItem.includes(marker)) &&
     postingMarkers.every((marker) => postingService.includes(marker)) &&
+    sourceOwnedReversalGuard &&
     permissions.includes('\"finance.receivables.reverse\"') &&
     rbac.includes('\"finance.receivables.reverse\":\"crit\"') &&
     !rbac.includes(
@@ -3254,6 +3259,8 @@ function hasSignedCustomerStatementExternalAccessFoundation(
   viewRouteSource,
   actionRouteSource,
   testSource,
+  responseHelperSource = "",
+  recipientSchemaSource = "",
 ) {
   const schema = schemaSource.replace(/\s+/g, "")
   const tokenService = tokenServiceSource.replace(/\s+/g, "")
@@ -3262,6 +3269,32 @@ function hasSignedCustomerStatementExternalAccessFoundation(
   const recipientActionService = recipientActionServiceSource.replace(/\s+/g, "")
   const viewRoute = viewRouteSource.replace(/\s+/g, "")
   const actionRoute = actionRouteSource.replace(/\s+/g, "")
+  const responseHelper = responseHelperSource.replace(/\s+/g, "")
+  const recipientSchema = recipientSchemaSource.replace(/\s+/g, "")
+  function hasPrivateResponses(routeSource) {
+    if (!responseHelper.includes('response.headers.set("Cache-Control","private,no-store,max-age=0")') ||
+        !routeSource.includes('from "@/services/accounting/customer-statement-http"')) return false
+    const source = ts.createSourceFile("route.ts", routeSource, ts.ScriptTarget.Latest, true)
+    const route = source.statements.find(node => ts.isFunctionDeclaration(node) &&
+      ["GET", "POST"].includes(node.name?.text) && node.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword))
+    const returns = []
+    function visit(node) {
+      if (node !== route && ts.isFunctionLike(node)) return
+      if (ts.isReturnStatement(node)) returns.push(node)
+      ts.forEachChild(node, visit)
+    }
+    if (route) visit(route)
+    return returns.length >= 2 && returns.every(node => namedCall(node.expression, "privateStatementResponse"))
+  }
+  const parseIndex = actionRoute.indexOf("constparsed=statementRecipientCommandSchema.safeParse(body)")
+  const rejectIndex = actionRoute.indexOf("if(!parsed.success)thrownewBusinessRuleError(")
+  const submitIndex = actionRoute.indexOf("awaitsubmitCustomerStatementRecipientAction({")
+  const validatedRecipientCommand =
+    actionRoute.includes('from"@/services/accounting/customer-statement.schemas"') &&
+    recipientSchema.includes('conststatementRecipientCommandSchema=z.object({actionType:z.enum(["DISPUTE","PROMISE_TO_PAY"]),') &&
+    recipientSchema.slice(recipientSchema.indexOf("conststatementRecipientCommandSchema=")).includes("}).strict().superRefine(") &&
+    parseIndex >= 0 && rejectIndex > parseIndex && submitIndex > rejectIndex &&
+    actionRoute.slice(submitIndex).includes("...parsed.data,")
   const schemaMarkers = [
     "modelCustomerStatementAccessToken{",
     "tokenHashString",
@@ -3350,11 +3383,11 @@ function hasSignedCustomerStatementExternalAccessFoundation(
     accessMarkers.every((marker) => accessService.includes(marker)) &&
     actionMarkers.every((marker) => recipientActionService.includes(marker)) &&
     viewRoute.includes('if(!token)thrownewNotFoundError("Statementnotfound")') &&
-    viewRoute.includes('"Cache-Control","private,no-store,max-age=0"') &&
+    (viewRoute.includes('"Cache-Control","private,no-store,max-age=0"') || hasPrivateResponses(viewRouteSource)) &&
     actionRoute.includes('if(!token)thrownewNotFoundError("Statementnotfound")') &&
-    actionRoute.includes('actionType!=="DISPUTE"&&actionType!=="PROMISE_TO_PAY"') &&
+    (actionRoute.includes('actionType!=="DISPUTE"&&actionType!=="PROMISE_TO_PAY"') || validatedRecipientCommand) &&
     actionRoute.includes('status:result.replayed?200:201') &&
-    actionRoute.includes('"Cache-Control","private,no-store,max-age=0"') &&
+    (actionRoute.includes('"Cache-Control","private,no-store,max-age=0"') || hasPrivateResponses(actionRouteSource)) &&
     testSource.includes("rejects expired tokens and unsafe secret") &&
     testSource.includes("returns a redacted view and appends only hashed request/access evidence") &&
     testSource.includes("rejects revoked access before counters or view logs are written") &&
@@ -3459,7 +3492,6 @@ function hasConsentedCustomerReferralLaunchFoundation(
     "delivery.statementContentHash!==payload.statementContentHash",
     "destinationHash(delivery.channel,envelope.destination)!==payload.destinationHash",
     'delivery.token.status!=="ACTIVE"',
-    "delivery.token.expiresAt.getTime()<=now.getTime()",
     "dependencies.sendCustomerStatementDelivery({",
   ]
   const inviteEnvelopeMarkers = [
@@ -3508,6 +3540,16 @@ function hasConsentedCustomerReferralLaunchFoundation(
   const statementProviderIndex = statementWorker.indexOf(
     "dependencies.sendCustomerStatementDelivery({",
   )
+  const expiryIndex = statementWorker.indexOf("delivery.token.expiresAt<=clock())returnsettle(\"CANCELLED\",\"STATEMENT_ACCESS_UNAVAILABLE\")")
+  const reservationExpiryIndex = statementWorker.indexOf('status:"ACTIVE",revokedAt:null,expiresAt:{gt:clock()}')
+  const expiresBeforeDispatch = statementWorker.includes("delivery.token.expiresAt.getTime()<=now.getTime()") ||
+    (expiryIndex >= 0 && expiryIndex < statementProviderIndex &&
+      reservationExpiryIndex > expiryIndex && reservationExpiryIndex < statementProviderIndex)
+  const deliveryPersistIndex = internalWorkflow.indexOf("persist({...requestsRef.current,delivery:command})")
+  const deliverySubmitIndex = internalWorkflow.indexOf("queueCustomerStatementDeliveryAction(command)")
+  const persistedDeliveryCommand = internalWorkflow.includes("letcommand=requestsRef.current.delivery") &&
+    internalWorkflow.includes('command={statementSnapshotId:snapshot.statementId,channel,destination,consentBasis:"EXPLICIT",consentEvidenceHash,consentCapturedAt,') &&
+    deliveryPersistIndex >= 0 && deliverySubmitIndex > deliveryPersistIndex
   const inviteWorkerIntegrityIndex = inviteWorker.indexOf(
     "hashBusinessPayload(inviteToken)!==invite.inviteTokenHash",
   )
@@ -3537,6 +3579,7 @@ function hasConsentedCustomerReferralLaunchFoundation(
       statementDelivery.includes(marker)
     ) &&
     statementWorkerMarkers.every((marker) => statementWorker.includes(marker)) &&
+    expiresBeforeDispatch &&
     inviteEnvelopeMarkers.every((marker) => inviteEnvelope.includes(marker)) &&
     inviteServiceMarkers.every((marker) => inviteService.includes(marker)) &&
     inviteWorkerMarkers.every((marker) => inviteWorker.includes(marker)) &&
@@ -3574,7 +3617,7 @@ function hasConsentedCustomerReferralLaunchFoundation(
     ) &&
     internalWorkflow.includes('globalThis.crypto.subtle.digest("SHA-256"') &&
     internalWorkflow.includes('consentBasis:"EXPLICIT"') &&
-    internalWorkflow.includes("queueCustomerStatementDeliveryAction({") &&
+    (internalWorkflow.includes("queueCustomerStatementDeliveryAction({") || persistedDeliveryCommand) &&
     publicPortal.includes('cache:"no-store"') &&
     publicPortal.includes('credentials:"omit"') &&
     publicPortal.includes('referrerPolicy:"no-referrer"') &&
@@ -3814,6 +3857,8 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
     "services/analytics/financial-reports.service.ts",
   )
   const trustBanner = read(root, "components/reports/report-trust-banner.tsx")
+  const analyticsScope = read(root, "services/analytics/completed-sales-evidence.ts").replace(/\s+/g, "")
+  const normalizedAnalytics = analyticsService.replace(/\s+/g, "")
   const reportComponents = [
     "components/reports/financial-summary-report.tsx",
     "components/reports/cash-flow-report.tsx",
@@ -4104,8 +4149,11 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
       ready:
         accountingService.includes("await Promise.all") &&
         accountingService.includes("getTrialBalance({") &&
-        accountingService.includes("getGeneralLedger({") &&
-        accountingService.includes("data: report"),
+        ((accountingService.includes("getGeneralLedger({") &&
+          accountingService.includes("data: report")) ||
+          (accountingService.includes("getGeneralLedgerReport({") &&
+            accountingService.replace(/\s+/g, "").includes('data:"summary"inreport?report.rows:report,') &&
+            accountingService.replace(/\s+/g, "").includes('...("summary"inreport?{summary:{...report.summary,currency}}:{})'))),
     },
     {
       id: "versioned_self_describing_export_manifest",
@@ -4162,9 +4210,16 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
       id: "analytics_currency_is_service_owned",
       ready:
         analyticsService.includes("currency: string") &&
-        analyticsService.includes("getReportCurrency") &&
         analyticsService.includes("currency: input.currency") &&
-        analyticsService.includes("select: { currency: true }"),
+        ((analyticsService.includes("getReportCurrency") &&
+          analyticsService.includes("select: { currency: true }")) ||
+          (normalizedAnalytics.includes('from"./completed-sales-evidence"') &&
+            normalizedAnalytics.includes("constscope=awaitcompletedReportScope(tx,input)") &&
+            normalizedAnalytics.includes("buildReportProvenance({...scope,") &&
+            analyticsScope.includes("tx.organization.findFirst({where:{id:input.organizationId,") &&
+            analyticsScope.includes("select:{id:true,currency:true,timezone:true}") &&
+            analyticsScope.includes("constcurrency=organization.currency.trim().toUpperCase()") &&
+            analyticsScope.includes("return{organizationId:organization.id,locationId,currency,"))),
     },
     {
       id: "report_ui_has_no_hardcoded_usd",
@@ -4176,7 +4231,8 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
     {
       id: "trust_banner_and_policy_wiring",
       ready:
-        trustBanner.includes("Currency: {provenance.currency}") &&
+        (trustBanner.includes("Currency: {provenance.currency}") ||
+          trustBanner.replace(/\s+/g, "").includes('t("trustDetail",{currency:provenance.currency,')) &&
         trustBanner.includes("provenance.sourceTables") &&
         trustBanner.includes("provenance.knownBlockers") &&
         packageJson.includes('"report:trust:export:gate"') &&
@@ -4390,6 +4446,8 @@ function buildReportTrustExportReadiness(root = process.cwd(), options = {}) {
         customerStatementViewRoute,
         customerStatementActionRoute,
         customerStatementExternalAccessTests,
+        read(root, "services/accounting/customer-statement-http.ts"),
+        read(root, "services/accounting/customer-statement.schemas.ts"),
       ),
     },
     {

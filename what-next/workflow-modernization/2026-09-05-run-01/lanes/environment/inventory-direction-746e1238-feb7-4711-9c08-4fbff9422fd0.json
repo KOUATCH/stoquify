@@ -1,0 +1,73 @@
+{
+  "at": "2026-09-30T19:29:06.180Z",
+  "sourceBefore": {
+    "services/inventory/inventory-adjustment.service.ts": "3ccb417a04945cf705489ad9494d5c0a7b7255f1601f28f9245f6e9572facd42",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031"
+  },
+  "syntheticFixtures": true,
+  "cases": [
+    {
+      "name": "gain",
+      "organizationId": "cmuoi0z760000mamo6vqw9wwt",
+      "adjustmentId": "cmuoi0zet000vmamo6o3pmjad",
+      "status": "POSTED",
+      "elapsedMs": 291,
+      "journalCount": 1,
+      "makerDenied": true,
+      "duplicateEffectsAbsent": true,
+      "replayLedgerStatus": "BLOCKED"
+    },
+    {
+      "name": "loss",
+      "organizationId": "cmuoi0zsj001lmamo6fjyfyhk",
+      "adjustmentId": "cmuoi0zv9002gmamopylz45v9",
+      "status": "POSTED",
+      "elapsedMs": 145,
+      "journalCount": 1,
+      "makerDenied": true,
+      "duplicateEffectsAbsent": true,
+      "replayLedgerStatus": "BLOCKED"
+    },
+    {
+      "name": "mixed",
+      "organizationId": "cmuoi101i0036mamoaqvyshr5",
+      "adjustmentId": "cmuoi10470045mamolfugbd3v",
+      "status": "POSTED",
+      "elapsedMs": 170,
+      "journalCount": 1,
+      "makerDenied": true,
+      "duplicateEffectsAbsent": true,
+      "replayLedgerStatus": "BLOCKED"
+    },
+    {
+      "name": "net_zero",
+      "organizationId": "cmuoi10b20050mamokvpijx3x",
+      "adjustmentId": "cmuoi10do005zmamo5auoxdkl",
+      "status": "POSTED",
+      "elapsedMs": 170,
+      "journalCount": 1,
+      "makerDenied": true,
+      "duplicateEffectsAbsent": true,
+      "replayLedgerStatus": "BLOCKED"
+    },
+    {
+      "name": "reversed",
+      "organizationId": "cmuoi10kh006umamocshvtoht",
+      "adjustmentId": "cmuoi10n1007tmamo6z8x7hkd",
+      "status": "BLOCKED",
+      "elapsedMs": 149,
+      "journalCount": 0,
+      "makerDenied": true,
+      "duplicateEffectsAbsent": true,
+      "replayLedgerStatus": "BLOCKED"
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/inventory/inventory-adjustment.service.ts": "3ccb417a04945cf705489ad9494d5c0a7b7255f1601f28f9245f6e9572facd42",
+    "services/accounting/default-posting-rules.ts": "e4238ae6d0008ab21fd80fdfafa64c18b6f2d825ba7aacb7291ee141b7debfa3",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031"
+  },
+  "sourceStable": true
+}

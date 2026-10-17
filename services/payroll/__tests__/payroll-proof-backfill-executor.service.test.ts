@@ -180,6 +180,9 @@ function payrollPostingRules() {
 
 function buildClient() {
   return {
+    tenantModuleConfiguration: { findUnique: jest.fn().mockResolvedValue(null) },
+    tenantModuleGrant: { findMany: jest.fn().mockResolvedValue([]) },
+    tenantModuleConfigurationCommand: { count: jest.fn().mockResolvedValue(0) },
     organization: {
       findFirst: jest.fn().mockResolvedValue({
         id: "org-1",

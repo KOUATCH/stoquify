@@ -1,0 +1,50 @@
+{
+  "at": "2026-09-30T11:42:47.383Z",
+  "sourceBefore": {
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "a1e2d29a46d83969a79b3704ff3cef9763b5bc22af4d27378e09684388e029af",
+    "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts": "5fdb86dd02d3d5799f120ae83814fdfc67014330cfc84d7ef5024465b646c962",
+    "services/payroll/payment-reconciliation.service.ts": "f17c270301f38c1b6901bccf43dc0f8ecc3d20f7b6ad706d432b337fee48f024",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx": "acb563af1ed83b9d73535a3345a4d2059282ddd6c09520acce25d749fd5d02e8",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "43859a6c55724fa68d4d987fe4007ede9a4f9809d0b763d45a55c6612fa289d4",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "1b61e86a0a2d5ef65846bac6244a820f5730d21ffa3827184bc126952310d499",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts",
+        "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx",
+        "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payment-settlement-balance.test.ts",
+        "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts"
+      ],
+      "status": 1,
+      "error": null,
+      "stdout": "",
+      "stderr": "FAIL actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts\n  ● payroll payment reconciliation actions › replaces a client module decision with the current read-only entitlement\n\n    expect(jest.fn()).toHaveBeenCalledWith(...expected)\n\n    Expected: ObjectContaining {\"moduleDecision\": {\"accessIntent\": \"read\", \"allowed\": true, \"entitlement\": {\"readOnly\": true}, \"evaluatedAt\": \"2026-06-26T00:00:00.000Z\", \"hardEnforcementEnabled\": true, \"missingDependencies\": [], \"mode\": \"enforce\", \"moduleSlug\": \"payroll\", \"organizationId\": \"org-1\", \"rbacWildcardBypassedEntitlement\": false, \"rbacWildcardPresent\": false, \"reason\": \"Tenant module entitlement is available.\", \"result\": \"allow\", \"surface\": \"payroll.payments.reconciliation.read\", \"surfaceType\": \"action\", \"userId\": \"controller-1\", \"wouldBlock\": false}}\n    Received: {\"actorId\": \"controller-1\", \"actorPermissions\": [\"payments.reconciliation.read\"], \"limit\": 25, \"moduleDecision\": {\"allowed\": true, \"entitlement\": {\"readOnly\": false}}, \"organizationId\": \"org-1\"}\n\n    Number of calls: 1\n\n      245 |     mockObserveModuleAccess.mockResolvedValue(decision);\n      246 |     await getPayrollPaymentReconciliationAction({ moduleDecision: { allowed: true, entitlement: { readOnly: false } } });\n    > 247 |     expect(mockGetPayrollPaymentReconciliation).toHaveBeenCalledWith(expect.objectContaining({ moduleDecision: decision }));\n          |                                                 ^\n      248 |   });\n      249 | })\n      250 |\n\n      at Object.toHaveBeenCalledWith (actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts:247:49)\n\n\nTest Suites: 1 failed, 4 passed, 5 total\nTests:       1 failed, 62 passed, 63 total\nSnapshots:   0 total\nTime:        10.676 s\nRan all test suites within paths \"actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts\", \"components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx\", \"services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts\", \"services/payroll/__tests__/payment-settlement-balance.test.ts\", \"services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts\".\n"
+    }
+  ],
+  "sourceAfter": {
+    "actions/payroll/payroll-payment-reconciliation.actions.ts": "a1e2d29a46d83969a79b3704ff3cef9763b5bc22af4d27378e09684388e029af",
+    "actions/payroll/__tests__/payroll-payment-reconciliation.actions.test.ts": "5fdb86dd02d3d5799f120ae83814fdfc67014330cfc84d7ef5024465b646c962",
+    "services/payroll/payment-reconciliation.service.ts": "f17c270301f38c1b6901bccf43dc0f8ecc3d20f7b6ad706d432b337fee48f024",
+    "components/payroll/PayrollPaymentReconciliationWorkbench.tsx": "cf2aa0508bae2db20363b6c7d84b8fcfdd364d2db478f820b55c9c900e572b8e",
+    "components/payroll/PayrollPaymentSettlementForm.tsx": "56891eb2178232c7bf79294c7bcc5b5e430cf957e0c8f3991f655be9660d4b69",
+    "components/payroll/payroll-settlement-copy.ts": "8802e4ae12387732695b55806046b53400855c8b4a2864a76f12a64e110f1f9c",
+    "components/payroll/__tests__/PayrollPaymentReconciliationWorkbench.test.tsx": "acb563af1ed83b9d73535a3345a4d2059282ddd6c09520acce25d749fd5d02e8",
+    "services/payroll/__tests__/payroll-payment-reconciliation.service.test.ts": "43859a6c55724fa68d4d987fe4007ede9a4f9809d0b763d45a55c6612fa289d4",
+    "services/payroll/__tests__/payment-settlement-balance.test.ts": "e5bc3bb8beb193e54cac8f65f92645651e1e871a6e50e444b660af93aa391928",
+    "services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts": "1b61e86a0a2d5ef65846bac6244a820f5730d21ffa3827184bc126952310d499",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc"
+  },
+  "sourceStable": true,
+  "passed": false
+}

@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "noEmit": true, "incremental": false, "paths": { "@/*": ["./*"], "@prisma/client": ["./.test-artifacts/close-coverage/client"] } },
+  "include": [
+    "actions/accounting/settings.actions.ts",
+    "actions/accounting/balance-sheet-evidence.actions.ts",
+    "actions/payments/no-activity-evidence.actions.ts",
+    "actions/payments/bank-balance-evidence.actions.ts",
+    "services/accounting/close-control-scope.ts",
+    "services/accounting/close-data-trust-scope.ts",
+    "services/accounting/close-assurance.service.ts",
+    "services/accounting/data-trust.service.ts",
+    "services/accounting/reconciliations.service.ts",
+    "services/reconciliation/payment-close-scope.ts",
+    "services/reconciliation/payment-close-evidence.service.ts",
+    "services/purchasing/payment-reconciliation-proof-summary.ts"
+  ]
+}

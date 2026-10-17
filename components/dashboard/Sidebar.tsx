@@ -33,6 +33,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { NotificationMenu } from "../NotificationMenu"
 import StoquifyLogo from "../global/kit-logo"
 import { moduleVisibleInNavigation } from "@/lib/modules/navigation"
+import { dashboardRoleLabel } from "@/lib/dashboard/role-label"
 
 interface SidebarProps {
   session: any
@@ -51,10 +52,10 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("")
   const pathname = usePathname()
   const { hasPermission } = useShellPermissions(session)
-  const userRole = session?.user?.roles?.[0]?.name ?? "User"
   const organizationName = session?.user?.organizationName ?? "Stoquify"
   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1]
   const locale = localePrefix === "fr" ? "fr" : "en"
+  const userRole = dashboardRoleLabel(session?.user?.roles?.[0], locale)
   const copy = dashboardSharedCopy[locale].shell
   const label = (text: string) => navigationLabel(text, locale)
   const signOutText = selfSignOutCopy[locale]
@@ -148,7 +149,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.055] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <div className="mt-3 border-t border-[var(--dash-border-subtle)] pt-3">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[rgba(47,125,246,0.16)] text-[#8fb7ff]">
                 <Crown className="h-4 w-4" aria-hidden="true" />
@@ -169,7 +170,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           </div>
         </div>
 
-        <div className="px-4 py-4 lg:px-5">
+        <div className="px-4 py-3 lg:px-5">
           <label className="relative block">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7f969f]"
@@ -191,7 +192,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
               {isSearching ? copy.search : copy.modules}
             </span>
             <span
-              className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[0.66rem] font-semibold text-[#a9b8b2]"
+              className="text-xs tabular-nums text-[var(--dash-text-soft)]"
               aria-label={`${isSearching ? visibleLinks.length : filteredLinks.length} ${copy.modules}`}
             >
               {isSearching ? visibleLinks.length : filteredLinks.length}
@@ -199,7 +200,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
           </div>
 
           <nav
-            aria-label="Primary dashboard modules"
+            aria-label={locale === "fr" ? "Modules du tableau de bord" : "Primary dashboard modules"}
             className="dashboard-sidebar-scroll grid min-h-0 min-w-0 max-w-full flex-1 items-start gap-4 overflow-y-auto overflow-x-hidden pr-1 text-sm font-medium"
           >
             {visibleSections.map((section) => (
@@ -247,7 +248,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
                             <span className="min-w-0 flex-1" title={item.title}>
                               <span className="block truncate">{item.title}</span>
                               {item.description ? (
-                                <span className="dashboard-sidebar-module-description hidden truncate text-[0.66rem] font-medium lg:block">
+                                <span className="sr-only">
                                   {item.description}
                                 </span>
                               ) : null}
@@ -327,7 +328,7 @@ const Sidebar = ({ session, notifications = [] }: SidebarProps) => {
                           <span className="min-w-0 flex-1">
                             <span className="block truncate">{item.title}</span>
                             {item.description ? (
-                              <span className="hidden truncate text-[0.66rem] font-medium text-[#7f969f] lg:block">
+                              <span className="sr-only">
                                 {item.description}
                               </span>
                             ) : null}

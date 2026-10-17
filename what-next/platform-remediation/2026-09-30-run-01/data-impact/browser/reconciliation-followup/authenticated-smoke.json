@@ -1,0 +1,226 @@
+{
+  "startedAt": "2026-09-30T21:56:46.161Z",
+  "status": "AUTHENTICATED_ROUTES_RENDERED",
+  "target": "stoquify_restore_local_remediation_20260930_run01",
+  "scope": "Parent-authorized reconciliation follow-up; one additional ordinary login, original evidence preserved",
+  "schemaSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+  "authAttempts": [
+    {
+      "method": "one_ordinary_local_fixture_login",
+      "status": 200,
+      "additionalAuthenticationRequired": false
+    }
+  ],
+  "routes": [
+    {
+      "key": "reconciliation",
+      "route": "/en/dashboard/finance/reconciliation",
+      "status": "AUTHENTICATED_RENDER",
+      "hydrationSamples": [
+        {
+          "elapsedMs": 27,
+          "expectedHeading": true,
+          "explicitError": false,
+          "loadingSkeletonCount": 0,
+          "documentReady": "complete",
+          "activeRequests": 0
+        }
+      ],
+      "hydrationWaitMs": 31,
+      "httpStatus": 200,
+      "sameRoute": true,
+      "loginRedirect": false,
+      "expectedHeading": true,
+      "permissionDenied": false,
+      "moduleLocked": false,
+      "scopeDenied": false,
+      "errorBoundary": false,
+      "notFound": false,
+      "screenshot": "reconciliation-redacted.png",
+      "pageErrorCount": 0
+    }
+  ],
+  "serverOutputBytes": 146,
+  "serverDiagnosticMarkers": [],
+  "browserExternalRequestsBlocked": 0,
+  "schedulerRequestsBlocked": 0,
+  "expectedWrites": [
+    "ordinary authentication/session lifecycle",
+    "read-access RBAC/module audit records"
+  ],
+  "prohibitedActionsAttempted": false,
+  "rawIdentifiersOrSecretsEmitted": false,
+  "limitations": [
+    "One existing local fixture identity; denial is not functional feature acceptance.",
+    "Read-only route render proof; no business mutation, cross-tenant matrix, accessibility or production qualification.",
+    "All non-allowlisted screenshot text and media are redacted; screenshots are local only."
+  ],
+  "sourceMutationAttempted": false,
+  "cloneMigrationSnapshot": {
+    "capturedAt": "2026-09-30T21:56:46.360Z",
+    "completedRows": 89,
+    "nameChecksumSha256": "3274e00f37fb1098ffd996824a2bd8db328cc2d1dc665d2d502f50177a590f7c",
+    "originalRestoreCompletedMigrations": 87
+  },
+  "fixtureCandidates": [
+    {
+      "matches": 0,
+      "eligible": false,
+      "credential_available": false,
+      "emailFingerprint": "e2543aee54a389e1e8869bda08e31484c951de941ccfcb8938eb12e6045a31ba",
+      "source": "existing_payroll_test_default"
+    },
+    {
+      "matches": 1,
+      "eligible": true,
+      "credential_available": true,
+      "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+      "source": "documented_local_development_fixture"
+    }
+  ],
+  "fixture": {
+    "matches": 1,
+    "eligible": true,
+    "credential_available": true,
+    "emailFingerprint": "a3c29ee2362c4615bfee752e7087e0e0828fc057737f2b60b84fbb93d8e45372",
+    "source": "documented_local_development_fixture"
+  },
+  "actualDatabaseVerified": true,
+  "cookieInventory": {
+    "parsedStates": 6,
+    "expiredCookies": 12,
+    "candidates": 0,
+    "valuesRetainedInReport": false
+  },
+  "bundle": {
+    "directory": ".next-remediation-r01-20260930",
+    "buildIdSha256": "2abda580df94356363d652a823ac1d691f12b2de235f10890a765625e415f4fb",
+    "configSha256": "f37e603c4217dce2a621e26f9ec7c0474d0d55f61b5c9cdbf26f14e638399693",
+    "qualification": "Workspace-backed compiled runtime only. Compilation, lint/types and static generation passed; standalone packaging exited 1 on Windows EPERM and is not certified by this smoke.",
+    "runnerConfirmedSourceDrift": "none across 6042 build-window files and 52 baseline supplemental files"
+  },
+  "server": {
+    "pid": 32576,
+    "origin": "http://127.0.0.1:60307",
+    "compilerStarted": false,
+    "externalSocketsBlocked": true,
+    "rawLogsRetained": false
+  },
+  "authentication": {
+    "status": 200,
+    "authenticated": true,
+    "databasePairVerified": true,
+    "userFingerprint": "5afb6a1c7d6f77eae6c4cbf4174fc6e8d82a873142de121e579553991b6adc6c",
+    "organizationFingerprint": "2220f0d6b1ae5fcced133ea64cf6be9bc76909e01923b4f00898ea48da1d5f8f",
+    "permissionCount": 431,
+    "roleCount": 1
+  },
+  "businessCountsBefore": {
+    "users": "180",
+    "sessions": "67",
+    "journal_entries": "141",
+    "journal_entry_lines": "368",
+    "payroll_runs": "26"
+  },
+  "businessCountsAfter": {
+    "users": "180",
+    "sessions": "67",
+    "journal_entries": "141",
+    "journal_entry_lines": "368",
+    "payroll_runs": "26"
+  },
+  "businessAggregateCountsUnchanged": true,
+  "finalAuthentication": {
+    "status": 200,
+    "authenticated": true,
+    "databasePairVerified": true,
+    "userFingerprint": "5afb6a1c7d6f77eae6c4cbf4174fc6e8d82a873142de121e579553991b6adc6c",
+    "organizationFingerprint": "2220f0d6b1ae5fcced133ea64cf6be9bc76909e01923b4f00898ea48da1d5f8f",
+    "permissionCount": 431,
+    "roleCount": 1
+  },
+  "safeRequestSummary": [
+    {
+      "endpoint": "GET /api/me/permissions",
+      "started": 4,
+      "completed": 4,
+      "failed": 0,
+      "statuses": {
+        "200": 3,
+        "401": 1
+      },
+      "failureCodes": []
+    },
+    {
+      "endpoint": "POST /api/auth/sign-in/email",
+      "started": 1,
+      "completed": 1,
+      "failed": 0,
+      "statuses": {
+        "200": 1
+      },
+      "failureCodes": []
+    },
+    {
+      "endpoint": "GET /en/dashboard/finance/reconciliation",
+      "started": 1,
+      "completed": 1,
+      "failed": 0,
+      "statuses": {
+        "200": 1
+      },
+      "failureCodes": []
+    },
+    {
+      "endpoint": "GET /_next/static/*",
+      "started": 49,
+      "completed": 49,
+      "failed": 0,
+      "statuses": {
+        "200": 49
+      },
+      "failureCodes": []
+    },
+    {
+      "endpoint": "GET /api/auth/get-session",
+      "started": 1,
+      "completed": 1,
+      "failed": 0,
+      "statuses": {
+        "200": 1
+      },
+      "failureCodes": []
+    },
+    {
+      "endpoint": "GET /[redacted]",
+      "started": 7,
+      "completed": 2,
+      "failed": 5,
+      "statuses": {
+        "200": 7
+      },
+      "failureCodes": [
+        "net::ERR_ABORTED"
+      ]
+    },
+    {
+      "endpoint": "POST /en/dashboard/finance/reconciliation",
+      "started": 2,
+      "completed": 0,
+      "failed": 2,
+      "statuses": {
+        "200": 2
+      },
+      "failureCodes": [
+        "net::ERR_ABORTED"
+      ]
+    }
+  ],
+  "identityStable": true,
+  "serverExit": {
+    "code": null,
+    "signal": "SIGTERM"
+  },
+  "ownedServerStopped": true,
+  "completedAt": "2026-09-30T21:57:28.964Z"
+}

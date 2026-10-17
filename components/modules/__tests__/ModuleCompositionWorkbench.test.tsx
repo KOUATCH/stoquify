@@ -70,6 +70,12 @@ function preview(): ModuleCompositionPreview {
   }
 }
 
+async function choosePreset(name: string) {
+  const summary = screen.getByText("Start with how you work", { selector: "summary" })
+  if (!summary.closest("details")?.open) await userEvent.click(summary)
+  await userEvent.click(screen.getByRole("button", { name: new RegExp(name) }))
+}
+
 function success<T>(data: T) { return { success: true, data, error: null, status: 200 } }
 function failure(code = "INTERNAL_ERROR") { return { success: false, code, data: null, error: "Details deliberately not exposed by the component" } }
 
@@ -96,10 +102,10 @@ it("keeps server-rendered commands disabled until the client can accept input", 
 it("uses contrasting retailer and service recipes without changing application state", async () => {
   const user = userEvent
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  await user.click(screen.getByRole("button", { name: /Retailer/ }))
+  await choosePreset("Retailer")
   expect(screen.getByRole("checkbox", { name: "Inventory" })).toBeChecked()
   expect(screen.getByRole("checkbox", { name: "Point of sale" })).toBeChecked()
-  await user.click(screen.getByRole("button", { name: /Service business/ }))
+  await choosePreset("Service business")
   expect(screen.getByRole("checkbox", { name: "Inventory" })).not.toBeChecked()
   expect(screen.getByRole("checkbox", { name: "Reports" })).toBeChecked()
   expect(mockApply).not.toHaveBeenCalled()
@@ -131,7 +137,7 @@ it("applies only a server-reviewed revision and preserves the idempotency key th
   mockApply.mockResolvedValueOnce(failure("FRESH_AUTH_REQUIRED")).mockResolvedValueOnce(success({ commandId: "command-1", state: "ACTIVE", revision: 4, alreadyApplied: false, issue: null, data: next }))
   mockStepUp.mockResolvedValue(success({}))
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  await user.click(screen.getByRole("button", { name: /Service business/ }))
+  await choosePreset("Service business")
   await user.click(screen.getByRole("button", { name: "Review configuration" }))
   const dialog = await screen.findByRole("dialog", { name: "Review your configuration" })
   expect(within(dialog).getByText(/does not revoke access/)).toBeVisible()
@@ -171,7 +177,7 @@ it("keeps the draft when validation fails and does not expose raw server details
   mockPreview.mockResolvedValue(failure())
   const user = userEvent
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  await user.click(screen.getByRole("button", { name: /Retailer/ }))
+  await choosePreset("Retailer")
   await user.click(screen.getByRole("button", { name: "Review configuration" }))
   expect(await screen.findByRole("alert")).toHaveTextContent("Your draft is preserved")
   expect(screen.getByRole("checkbox", { name: "Inventory" })).toBeChecked()
@@ -184,7 +190,7 @@ it("refreshes a stale snapshot without replacing an edited draft", async () => {
   mockGet.mockResolvedValue(success({ ...fixture(), revision: 7 }))
   const user = userEvent
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  await user.click(screen.getByRole("button", { name: /Retailer/ }))
+  await choosePreset("Retailer")
   await user.click(screen.getByRole("button", { name: "Review configuration" }))
   await screen.findByText(/configuration or its evidence changed/)
   await user.click(screen.getAllByRole("button", { name: "Refresh current state" })[0]!)
@@ -233,7 +239,7 @@ it.each(["en", "fr"])("keeps the draft and earlier records through history retry
   expect(document.getElementById("module-history-current")).toBeInTheDocument()
   await userEvent.click(screen.getByRole("button", { name: copy.historyRetry }))
   await waitFor(() => expect(document.getElementById("module-history-earlier")).toHaveFocus())
-  expect(screen.getByRole("status")).toHaveTextContent(copy.historyLoaded.replace("{count}", "1"))
+  expect(within(screen.getByRole("tabpanel")).getByRole("status")).toHaveTextContent(copy.historyLoaded.replace("{count}", "1"))
   expect(screen.queryByTestId("module-history-older")).not.toBeInTheDocument()
   expect(mockHistory).toHaveBeenNthCalledWith(2, { beforeId: "current" })
   await userEvent.click(screen.getByRole("tab", { name: locale === "fr" ? "Configurer" : "Configure" }))
@@ -245,7 +251,7 @@ it("localizes labels and the dialog close control in French", async () => {
   mockLocale = "fr"
   const user = userEvent
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  expect(screen.getByRole("heading", { name: "Composez votre espace de travail" })).toBeVisible()
+  expect(screen.getByRole("heading", { name: "Modules et espace de travail" })).toBeVisible()
   await user.click(screen.getByRole("button", { name: /Entreprise de services/ }))
   expect(screen.getByRole("checkbox", { name: "Stock" })).not.toBeChecked()
   await user.click(screen.getByRole("button", { name: "Examiner la configuration" }))
@@ -280,7 +286,7 @@ it("shows a recorded request and the previous active workspace without announcin
   expect(within(panel).getByText(/Requested revision 4 · Active workspace revision 3/)).toBeVisible()
   expect(within(panel).getByText("Input needed")).toBeVisible()
   expect(within(panel).getByRole("link", { name: "Open setup" })).toHaveAttribute("href", "/en/dashboard/finance/reconciliation")
-  expect(screen.getByText("Prepare").closest("li")).toHaveAttribute("aria-current", "step")
+  expect(within(panel).getByRole("button", { name: "Check inputs and resume preparation" })).toBeEnabled()
   await userEvent.click(screen.getByRole("tab", { name: "My workspace" }))
   expect(screen.getByRole("link", { name: "Open Sales" })).toBeVisible()
   expect(screen.queryByRole("link", { name: "Open Accounting" })).not.toBeInTheDocument()
@@ -332,14 +338,19 @@ it("reopens stopped work only as a reactivation draft and localizes its lifecycl
   expect(mockPreview).toHaveBeenCalledWith({ selectedModules: ["sales"], stopNewWorkModules: [], setupInputs: {}, expectedRevision: 3 })
 })
 
-it("announces the actual draft and review steps instead of fixing Configure as current", async () => {
+it("distinguishes unsaved choices from the current workspace without a simulated wizard", async () => {
   render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
-  expect(screen.getByText("Choose outcomes").closest("li")).toHaveAttribute("aria-current", "step")
-  await userEvent.click(screen.getByRole("button", { name: /Retailer/ }))
-  expect(screen.getByText("Configure", { selector: "li" })).toHaveAttribute("aria-current", "step")
-  await userEvent.click(screen.getByRole("button", { name: "Review configuration" }))
-  await screen.findByRole("dialog")
-  expect(screen.getByText("Review impact").closest("li")).toHaveAttribute("aria-current", "step")
+  expect(screen.getByText("Draft matches the saved configuration")).toBeVisible()
+  expect(screen.getByText("Capabilities in current workspace: 1")).toBeVisible()
+  expect(screen.queryByRole("list", { name: "Configuration journey" })).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole("checkbox", { name: "Inventory" }))
+  expect(screen.getByText("Draft changes to review")).toBeVisible()
+  expect(within(screen.getByTestId("module-draft-changes")).getByText("1 added · 0 removed from your choices")).toBeVisible()
+  expect(screen.getByText("Capabilities in current workspace: 1")).toBeVisible()
+  await userEvent.click(screen.getByRole("checkbox", { name: "Inventory" }))
+  expect(screen.getByText("Draft matches the saved configuration")).toBeVisible()
+  expect(screen.queryByTestId("module-draft-changes")).not.toBeInTheDocument()
+  expect(mockApply).not.toHaveBeenCalled()
 })
 
 it("explains a disabled offline stop and preserves the ability to remove a saved unsupported stop", async () => {
@@ -375,6 +386,7 @@ it("submits an existing tenant payroll period as reviewed scope and preserves it
   mockPreview.mockResolvedValue(success({ ...preview(), setupInputs: { payrollPeriodId: "period-one" }, setupScope: { payrollPeriod: { ...data.availablePayrollPeriods[0], name: "September payroll — current source" }, complianceAdapter: null } }))
   render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
   await userEvent.click(screen.getByRole("checkbox", { name: "Payroll" }))
+  await userEvent.click(screen.getByText(/Choose the setup scope/, { selector: "summary" }))
   await userEvent.selectOptions(screen.getByLabelText("Payroll period to verify"), "period-one")
   await userEvent.click(screen.getByRole("button", { name: "Review configuration" }))
   expect(mockPreview).toHaveBeenCalledWith(expect.objectContaining({ selectedModules: ["sales", "payroll"], setupInputs: { payrollPeriodId: "period-one" } }))
@@ -391,6 +403,7 @@ it("shows sandbox scope as a test environment and keeps its verified limitation 
   expect(within(screen.getByTestId("module-lifecycle")).getByText(/This is a test environment; production submission is not established/)).toBeVisible()
   expect(within(screen.getByTestId("module-card-compliance")).getByText(/This is a test environment; production submission is not established/)).toBeVisible()
   await userEvent.click(screen.getByRole("checkbox", { name: "Compliance" }))
+  await userEvent.click(screen.getByText(/Choose the setup scope/, { selector: "summary" }))
   expect(screen.getByRole("option", { name: "CM · DGI · Sandbox — test environment" })).toBeInTheDocument()
   await userEvent.selectOptions(screen.getByLabelText("Authority connection to verify"), "adapter-sandbox")
   await userEvent.click(screen.getByRole("button", { name: "Review configuration" }))
@@ -494,7 +507,7 @@ it("ignores a history page arriving after its access scope changed", async () =>
   rerender(<ModuleCompositionWorkbench initialData={{ ...data, historyAccessKey: "revoked-scope" }} userId="user-one" />)
   await act(async () => { finish(success({ entries: [{ id: "late-private", state: "ACTIVE" }], nextCursor: null })) })
   expect(document.getElementById("module-history-late-private")).not.toBeInTheDocument()
-  expect(screen.queryByRole("status")).not.toBeInTheDocument()
+  expect(within(screen.getByRole("tabpanel")).queryByRole("status")).not.toBeInTheDocument()
 })
 
 it("does not announce an older command's success as completion of a newer pending request", async () => {
@@ -506,4 +519,178 @@ it("does not announce an older command's success as completion of a newer pendin
   expect(await screen.findByText(/A newer configuration request is now current/)).toBeVisible()
   expect(screen.queryByText(/Configuration applied. Your workspace now reflects/)).not.toBeInTheDocument()
   expect(within(screen.getByTestId("module-lifecycle")).getByText(/Requested revision 5 · Active workspace revision 4/)).toBeVisible()
+})
+
+it("keeps explicit choices and automatic connections through combined catalogue filters", async () => {
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  await userEvent.click(screen.getByRole("checkbox", { name: "Payment reconciliation" }))
+  const draft = within(screen.getByRole("complementary", { name: "Your draft" }))
+  expect(draft.getByText("Explicit choices: 2")).toBeVisible()
+  expect(draft.getAllByText("Required connections: 2")[0]).toBeVisible()
+  await userEvent.click(draft.getByText("Shared foundations"))
+  expect(draft.getByText("Administration")).toBeVisible()
+  await userEvent.click(screen.getByRole("button", { name: "Selected", exact: true }))
+  expect(screen.queryByRole("checkbox", { name: "Inventory" })).not.toBeInTheDocument()
+  expect(screen.getByRole("checkbox", { name: "Finance" })).toBeChecked()
+  expect(screen.getByRole("checkbox", { name: "Finance" })).toBeDisabled()
+  await userEvent.selectOptions(screen.getByRole("combobox", { name: "Show capabilities" }), "finance")
+  await userEvent.type(screen.getByRole("textbox", { name: "Find a capability" }), "evidence")
+  expect(within(screen.getByRole("region", { name: en.moduleComposition.catalogTitle })).getAllByRole("checkbox")).toHaveLength(1)
+  expect(draft.getByText("Explicit choices: 2")).toBeVisible()
+  await userEvent.click(screen.getByRole("button", { name: "Clear filters" }))
+  expect(screen.getByRole("textbox", { name: "Find a capability" })).toHaveFocus()
+  expect(screen.getByRole("checkbox", { name: "Sales" })).toBeChecked()
+  expect(screen.getByRole("checkbox", { name: "Payment reconciliation" })).toBeChecked()
+  await userEvent.click(screen.getByRole("button", { name: "Review configuration" }))
+  expect(mockPreview).toHaveBeenCalledWith(expect.objectContaining({ selectedModules: ["sales", "payment_reconciliation"] }))
+})
+
+it("returns focus to the Selected filter when deselection removes the focused row", async () => {
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  const filter = screen.getByRole("button", { name: "Selected", exact: true })
+  await userEvent.click(filter)
+  const sales = screen.getByRole("checkbox", { name: "Sales" })
+  sales.focus()
+  await userEvent.keyboard(" ")
+  expect(filter).toHaveFocus()
+  expect(screen.queryByRole("checkbox", { name: "Sales" })).not.toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "No matching capabilities" })).toBeVisible()
+  expect(screen.getByText("Explicit choices: 0")).toBeVisible()
+  await userEvent.click(screen.getByRole("button", { name: "Clear filters" }))
+  expect(screen.getByRole("checkbox", { name: "Sales" })).not.toBeChecked()
+})
+
+it("converts an explicit dependency to an automatic connection until its parent is removed", async () => {
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  await userEvent.click(screen.getByRole("checkbox", { name: "Finance" }))
+  await userEvent.click(screen.getByRole("checkbox", { name: "Payment reconciliation" }))
+  await userEvent.click(screen.getByRole("checkbox", { name: "Finance" }))
+  expect(screen.getByRole("checkbox", { name: "Finance" })).toBeChecked()
+  expect(screen.getByRole("checkbox", { name: "Finance" })).toBeDisabled()
+  await userEvent.click(screen.getByRole("checkbox", { name: "Payment reconciliation" }))
+  expect(screen.getByRole("checkbox", { name: "Finance" })).not.toBeChecked()
+  expect(screen.getByRole("checkbox", { name: "Finance" })).toBeEnabled()
+  expect(screen.getByRole("checkbox", { name: "Accounting" })).not.toBeChecked()
+})
+
+it("opens setup details independently of selection and localizes their links", async () => {
+  const data = fixture()
+  const accounting = data.catalog.find(item => item.slug === "accounting")!
+  accounting.setup = { status: "required", code: "ACCOUNTING_SETUP_REQUIRED", href: "/dashboard/accounting/settings" }
+  render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
+  const row = screen.getByTestId("module-card-accounting")
+  const disclosure = within(row).getByText("Details").closest("summary")!
+  expect(disclosure.parentElement).not.toHaveAttribute("open")
+  expect(within(row).getByText("Setup required")).toBeVisible()
+  await userEvent.click(disclosure)
+  expect(disclosure.parentElement).toHaveAttribute("open")
+  expect(within(row).getByRole("link", { name: "Open setup" })).toHaveAttribute("href", "/en/dashboard/accounting/settings")
+  expect(screen.getByRole("checkbox", { name: "Accounting" })).not.toBeChecked()
+  await userEvent.click(disclosure)
+  expect(disclosure.parentElement).not.toHaveAttribute("open")
+  expect(mockPreview).not.toHaveBeenCalled()
+})
+
+it("explains unavailable selection and permits removing a previously selected unavailable item", async () => {
+  const data = fixture()
+  data.catalog.find(item => item.slug === "sales")!.available = false
+  data.catalog.find(item => item.slug === "presence")!.status = "internal"
+  render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
+  const presence = screen.getByTestId("module-card-presence")
+  expect(within(presence).getByRole("checkbox")).toBeDisabled()
+  expect(within(presence).getByText(en.moduleComposition.issues.CATALOG_UNAVAILABLE)).toBeVisible()
+  expect(screen.getByRole("checkbox", { name: "Sales" })).toBeEnabled()
+  expect(screen.getByRole("heading", { name: "Known restrictions (1)" })).toBeVisible()
+  await userEvent.click(screen.getByRole("checkbox", { name: "Sales" }))
+  expect(screen.getByRole("checkbox", { name: "Sales" })).toBeDisabled()
+  expect(screen.getByRole("checkbox", { name: "Sales" })).not.toBeChecked()
+})
+
+it.each(["trial", "read_only", "suspended", "expired", null] as const)("keeps %s access distinct from selected and current workspace states", grantStatus => {
+  const data = fixture()
+  const sales = data.catalog.find(item => item.slug === "sales")!
+  sales.grantStatus = grantStatus
+  sales.eligible = grantStatus === "trial" || grantStatus === "read_only"
+  render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
+  const row = within(screen.getByTestId("module-card-sales"))
+  expect(row.getByRole("checkbox")).toBeChecked()
+  expect(row.getByText("Selected in draft")).toBeVisible()
+  expect(row.getByText("In current workspace")).toBeVisible()
+  expect(row.getByText(en.moduleComposition.status[grantStatus ?? "none"])).toBeVisible()
+  if (grantStatus !== "trial") expect(screen.getByRole("heading", { name: "Known restrictions (1)" })).toBeVisible()
+})
+
+it("keeps sandbox limits visible before opening details and in the draft", () => {
+  const data = fixture()
+  data.selectedModules = ["compliance"]
+  data.catalog.find(item => item.slug === "compliance")!.requirements = [{ moduleSlug: "compliance", stepKey: "scope", status: "SUCCEEDED", code: "COMPLIANCE_SANDBOX_VERIFIED", href: "/dashboard/compliance", checkedAt: null, evidenceHash: null, attempts: 1 }]
+  render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
+  const row = within(screen.getByTestId("module-card-compliance"))
+  expect(row.getByText(en.moduleComposition.catalog.setupSandbox)).toBeVisible()
+  expect(within(screen.getByRole("complementary", { name: "Your draft" })).getByText(en.moduleComposition.catalog.setupSandbox)).toBeVisible()
+})
+
+it("supports the same selected catalogue workflow in French", async () => {
+  mockLocale = "fr"
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  const selected = screen.getByRole("button", { name: fr.moduleComposition.catalog.selectedFilter, exact: true })
+  await userEvent.click(selected)
+  expect(selected).toHaveAttribute("aria-pressed", "true")
+  expect(screen.getByText("Sélections explicites : 1")).toBeVisible()
+  expect(within(screen.getByRole("region", { name: fr.moduleComposition.catalogTitle })).getAllByRole("checkbox")).toHaveLength(1)
+  const row = screen.getByTestId("module-card-sales")
+  expect(within(row).getByText(fr.moduleComposition.current)).toBeVisible()
+  await userEvent.click(within(row).getByText("Détails").closest("summary")!)
+  expect(within(row).getByText(fr.moduleComposition.catalog.setupHint)).toBeVisible()
+})
+
+it("takes keyboard users directly to the separate operation controls without editing the draft", async () => {
+  const scroll = jest.fn()
+  const original = Element.prototype.scrollIntoView
+  Element.prototype.scrollIntoView = scroll
+  try {
+    render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+    await userEvent.click(screen.getByRole("button", { name: "Control new business operations" }))
+    const summary = screen.getByText("Control new business operations", { selector: "summary" })
+    expect(summary).toHaveFocus()
+    expect(summary.closest("details")).toHaveAttribute("open")
+    expect(scroll).toHaveBeenCalledWith({ block: "start" })
+    expect(screen.getByText("Draft matches the saved configuration")).toBeVisible()
+    expect(mockPreview).not.toHaveBeenCalled()
+  } finally { Element.prototype.scrollIntoView = original }
+})
+
+it("keeps operational restrictions visible on a selected capability and summarizes stop edits", async () => {
+  const data = { ...fixture(), newWorkStoppedModules: ["sales" as const] }
+  render(<ModuleCompositionWorkbench initialData={data} userId="user-one" />)
+  const row = within(screen.getByTestId("module-card-sales"))
+  expect(row.getByRole("checkbox", { name: "Sales" })).toBeChecked()
+  expect(row.getByText("New work is currently stopped")).toBeVisible()
+  await userEvent.click(screen.getByText("Control new business operations", { selector: "summary" }))
+  await userEvent.click(screen.getByRole("checkbox", { name: "Stop new work in Sales" }))
+  expect(screen.getByTestId("module-draft-changes")).toHaveTextContent("New-work controls changed: 1")
+  expect(row.getByText("New work is currently stopped")).toBeVisible()
+  expect(mockApply).not.toHaveBeenCalled()
+})
+
+it("discloses configuration evidence without changing the draft", async () => {
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  await userEvent.click(screen.getByText("Configuration details", { selector: "summary" }))
+  expect(screen.getByText("Requested revision")).toBeVisible()
+  expect(screen.getByText("Active workspace revision")).toBeVisible()
+  expect(screen.getByText("Current state checked")).toBeVisible()
+  expect(mockGet).not.toHaveBeenCalled()
+  expect(screen.getByText("Draft matches the saved configuration")).toBeVisible()
+})
+
+it("opens review at its heading and restores keyboard focus when cancelled", async () => {
+  render(<ModuleCompositionWorkbench initialData={fixture()} userId="user-one" />)
+  const review = screen.getByRole("button", { name: "Review configuration" })
+  await userEvent.click(review)
+  const dialog = await screen.findByRole("dialog", { name: "Review your configuration" })
+  expect(within(dialog).getByRole("heading", { name: "Review your configuration" })).toHaveFocus()
+  await userEvent.keyboard("{Escape}")
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  expect(review).toHaveFocus()
+  expect(mockApply).not.toHaveBeenCalled()
 })

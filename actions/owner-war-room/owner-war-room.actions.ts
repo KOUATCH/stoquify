@@ -11,6 +11,7 @@ import type { OwnerWarRoomData } from "@/services/owner-war-room/owner-war-room-
 export type { OwnerWarRoomData }
 
 const ownerWarRoomInputSchema = z.object({
+  locale: z.enum(["en", "fr"]).optional(),
   periodStart: z.coerce.date().nullable().optional(),
   periodEnd: z.coerce.date().nullable().optional(),
   maxAgeMinutes: z.number().int().positive().max(60 * 24 * 31).nullable().optional(),
@@ -19,6 +20,7 @@ const ownerWarRoomInputSchema = z.object({
 function asOwnerWarRoomInput(input: unknown) {
   const parsed = ownerWarRoomInputSchema.parse(input && typeof input === "object" ? input : {})
   return {
+    locale: parsed.locale ?? "en",
     periodStart: parsed.periodStart ?? null,
     periodEnd: parsed.periodEnd ?? null,
     maxAgeMinutes: parsed.maxAgeMinutes ?? null,

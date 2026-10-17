@@ -3,9 +3,15 @@ import PayrollDeclarationWorkbench from "@/components/payroll/PayrollDeclaration
 import { pickLocale } from "@/i18n/routing"
 import { routeByKey, withPayrollSurfaceAccess } from "../payroll-route-access"
 
-export const metadata = {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  return locale === "fr" ? {
+    title: "Déclarations de paie | Stoquify",
+    description: "Suivi des déclarations, preuves des organismes et registre de paie.",
+  } : {
   title: "Payroll Declarations | Stoquify",
   description: "Payroll declaration lifecycle, authority evidence, and register proof.",
+}
 }
 
 export default async function PayrollDeclarationsPage({

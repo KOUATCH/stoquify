@@ -43,12 +43,20 @@ const copy = {
     runSuccessTitle: "Close assessment complete",
     runErrorTitle: "Close assessment failed",
     assignSuccessTitle: "Finding assigned",
+    assignRequestConflict: "This finding has an evidence request. Continue it in the evidence workbench. Ordinary assignment cannot change the response owner or restart review.",
     commentSuccessTitle: "Comment added",
     waiverRequestedTitle: "Waiver requested",
     waiverApprovedTitle: "Waiver approved",
     reviewUpdatedTitle: "Review updated",
     exportDraftTitle: "Draft close pack exported",
     exportCertifiedTitle: "Certified close pack exported",
+    setupIncomplete: "Complete accounting setup, then run a new assessment before certifying this close pack.",
+    certificationBlocked: "Certification was refused. Review current close evidence and resolve the reported conditions. If evidence is missing, changed or unavailable, run a new assessment. Then a different authorized person can certify it.",
+    freshAuthRequired: "Confirm your identity on this page, then retry certification.",
+    assessmentChanged: "A newer assessment exists. Refresh the latest assessment and review its evidence before trying certification again.",
+    assessmentAmbiguous: "The latest assessments have the same creation time. Run a new assessment, then review its evidence before certification.",
+    assessmentVoided: "This assessment has been voided. Run a new assessment before certification.",
+    assessmentClock: "The assessment could not be published with a reliable time. Wait briefly and retry. Contact support if this continues.",
     mutationErrorTitle: "Close action failed",
   },
   fr: {
@@ -58,21 +66,48 @@ const copy = {
     runSuccessTitle: "Evaluation terminee",
     runErrorTitle: "Evaluation impossible",
     assignSuccessTitle: "Blocage assigne",
+    assignRequestConflict: "Ce blocage comporte une demande de justificatifs. Poursuivez-la dans l’espace de traitement des justificatifs. L’attribution ordinaire ne peut pas changer le responsable de la réponse ni relancer la revue.",
     commentSuccessTitle: "Commentaire ajoute",
     waiverRequestedTitle: "Derogation demandee",
     waiverApprovedTitle: "Derogation approuvee",
     reviewUpdatedTitle: "Revue mise a jour",
     exportDraftTitle: "Pack de cloture brouillon exporte",
     exportCertifiedTitle: "Pack de cloture certifie exporte",
+    setupIncomplete: "Terminez la configuration comptable, puis lancez une nouvelle évaluation avant de certifier ce dossier de clôture.",
+    certificationBlocked: "Certification refusée. Examinez les preuves et corrigez les causes signalées. Si des preuves manquent, ont changé ou sont indisponibles, lancez une nouvelle évaluation. Une autre personne autorisée pourra certifier.",
+    freshAuthRequired: "Confirmez votre identité sur cette page, puis réessayez la certification.",
+    assessmentChanged: "Une évaluation plus récente existe. Actualisez la dernière évaluation et examinez ses preuves avant de réessayer la certification.",
+    assessmentAmbiguous: "Les dernières évaluations ont la même date de création. Lancez une nouvelle évaluation, puis examinez ses preuves avant la certification.",
+    assessmentVoided: "Cette évaluation a été annulée. Lancez une nouvelle évaluation avant la certification.",
+    assessmentClock: "L’évaluation n’a pas pu être publiée avec une date fiable. Patientez un instant et réessayez. Contactez l’assistance si le problème persiste.",
     mutationErrorTitle: "Action de cloture impossible",
   },
 } as const
 
-function unwrap<T>(result: { success: boolean; data: T | null; error: string | null }): T {
+function unwrap<T>(result: { success: boolean; data: T | null; error: string | null; code?: string | null }): T {
   if (!result.success || !result.data) {
-    throw new Error(result.error || copy.en.fetchError)
+    throw Object.assign(new Error(result.error || copy.en.fetchError), { code: result.code })
   }
   return result.data
+}
+
+function needsIdentityVerification(error: Error) {
+  return "code" in error && error.code === "FRESH_AUTH_REQUIRED"
+}
+
+function unwrapAssessment<T>(result: { success: boolean; data: T | null; error: string | null; code?: string | null }, locale: Locale): T {
+  if (!result.success) {
+    const messages: Record<string, string> = {
+      "This close assessment is no longer current. Open the latest assessment before certification.": copy[locale].assessmentChanged,
+      "The latest close assessments have the same creation time. Run a new assessment before certification.": copy[locale].assessmentAmbiguous,
+      "This close assessment has been voided. Run a new assessment before certification.": copy[locale].assessmentVoided,
+      "The database clock has not advanced beyond the latest assessment. Wait briefly and retry; contact support if this persists.": copy[locale].assessmentClock,
+      "The assessment publication time is unavailable. Retry after the database clock is available.": copy[locale].assessmentClock,
+    }
+    const message = result.error && messages[result.error]
+    if (message) throw Object.assign(new Error(message), { code: result.code })
+  }
+  return unwrap(result)
 }
 
 function organizationKey(options?: UseCloseAssuranceOptions) {
@@ -126,9 +161,11 @@ export function useRunCloseAssurance(locale: Locale = "en", organizationId = "cu
   const t = copy[locale]
 
   return useMutation({
+    retry: false,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { periodId: string; correlationId?: string }) => {
       notifications.info(t.runStartedTitle, t.runStartedBody)
-      return unwrap(await runCloseAssuranceAction(input))
+      return unwrapAssessment(await runCloseAssuranceAction(input), locale)
     },
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -140,7 +177,7 @@ export function useRunCloseAssurance(locale: Locale = "en", organizationId = "cu
       notifications.success(t.runSuccessTitle, `${data.run.status} - ${data.run.readinessScore}%`)
     },
     onError: (error: Error) => {
-      notifications.error(t.runErrorTitle, error.message)
+      if (!needsIdentityVerification(error)) notifications.error(t.runErrorTitle, error.message)
     },
   })
 }
@@ -151,13 +188,19 @@ export function useAssignCloseFinding(locale: Locale = "en") {
   const t = copy[locale]
 
   return useMutation({
-    mutationFn: async (input: { findingId: string; assignedToId?: string; correlationId?: string }) =>
-      unwrap(await assignCloseFindingAction(input)),
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
+    mutationFn: async (input: { findingId: string; assignedToId?: string; correlationId?: string }) => {
+      const result = await assignCloseFindingAction(input)
+      if (!result.success && result.code === "CONFLICT") {
+        throw Object.assign(new Error(t.assignRequestConflict), { code: result.code })
+      }
+      return unwrap(result)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.assignSuccessTitle, "")
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
@@ -167,6 +210,7 @@ export function useCommentOnCloseFinding(locale: Locale = "en") {
   const t = copy[locale]
 
   return useMutation({
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: {
       closeRunId?: string
       findingId?: string
@@ -179,7 +223,7 @@ export function useCommentOnCloseFinding(locale: Locale = "en") {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.commentSuccessTitle, "")
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
@@ -189,23 +233,25 @@ export function useCloseWaiver(locale: Locale = "en") {
   const t = copy[locale]
 
   const request = useMutation({
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { findingId: string; reason: string; correlationId?: string }) =>
       unwrap(await requestCloseWaiverAction(input)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.waiverRequestedTitle, "")
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   const approve = useMutation({
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { findingId: string; correlationId?: string }) =>
       unwrap(await approveCloseWaiverAction(input)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.waiverApprovedTitle, "")
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   return { request, approve }
@@ -217,6 +263,7 @@ export function useUpdateAccountantReview(locale: Locale = "en") {
   const t = copy[locale]
 
   return useMutation({
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: {
       closeRunId: string
       status: "OPEN" | "CHANGES_REQUESTED" | "READY_TO_CLOSE" | "APPROVED_FOR_CLOSE" | "REJECTED" | "CANCELLED"
@@ -227,7 +274,7 @@ export function useUpdateAccountantReview(locale: Locale = "en") {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.reviewUpdatedTitle, "")
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 }
 
@@ -237,23 +284,42 @@ export function useExportClosePack(locale: Locale = "en") {
   const t = copy[locale]
 
   const draft = useMutation({
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     mutationFn: async (input: { closeRunId: string; correlationId?: string }) =>
       unwrap(await exportDraftClosePackAction({ ...input, mode: "DRAFT_NOT_CERTIFIED" })),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.exportDraftTitle, data.contentHash)
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: (error: Error) => { if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message) },
   })
 
   const certified = useMutation({
-    mutationFn: async (input: { closeRunId: string; correlationId?: string }) =>
-      unwrap(await exportCertifiedClosePackAction({ ...input, mode: "CERTIFIED" })),
+    retry: false,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
+    mutationFn: async (input: { closeRunId: string; correlationId?: string }) => {
+      const result = await exportCertifiedClosePackAction({ ...input, mode: "CERTIFIED" })
+      if (!result.success && result.code === "FRESH_AUTH_REQUIRED") {
+        throw Object.assign(new Error(t.freshAuthRequired), { code: result.code })
+      }
+      if (!result.success && result.error === "Certified close pack requires enabled accounting with READY or LOCKED setup. Complete accounting setup and run a new assessment.") {
+        throw new Error(t.setupIncomplete)
+      }
+      if (!result.success && result.error?.startsWith("Certified close pack is blocked:")) {
+        throw Object.assign(new Error(t.certificationBlocked), { code: result.code })
+      }
+      return unwrapAssessment(result, locale)
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
       notifications.success(t.exportCertifiedTitle, data.contentHash)
     },
-    onError: (error: Error) => notifications.error(t.mutationErrorTitle, error.message),
+    onError: async (error: Error) => {
+      // A refused certification can persist evidence invalidation. Reload the
+      // read models before allowing another deliberate certification attempt.
+      await queryClient.invalidateQueries({ queryKey: closeAssuranceKeys.all })
+      if (!needsIdentityVerification(error)) notifications.error(t.mutationErrorTitle, error.message)
+    },
   })
 
   return { draft, certified }

@@ -1,0 +1,62 @@
+{
+  "at": "2026-09-30T15:28:02.514Z",
+  "sourceBefore": {
+    "components/cash-command/CashCommandDashboard.tsx": "facaedbf047a9c3226ee5ea0927945348254595969a0c0bcf5abda07540220ed",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 3 passed, 3 total\nTests:       77 passed, 77 total\nSnapshots:   0 total\nTime:        80.245 s\nRan all test suites within paths \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\", \"services/cash-command/__tests__/cash-command.service.test.ts\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "components/cash-command/CashCommandDashboard.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "\nE:\\ohada saas\\Focused projects\\stoquify\\components\\cash-command\\CashCommandDashboard.tsx\n  314:53  warning  The ref value 'request.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'request.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps\n\n✖ 1 problem (0 errors, 1 warning)\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "components/cash-command/CashCommandDashboard.tsx": "3c7130bc83ada53cc17bd81c0e53ca57858e412167492303a0d2d52fe6ed7f23",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8"
+  },
+  "sourceStable": false,
+  "passed": false
+}

@@ -1,6 +1,7 @@
 import "server-only"
 import { Prisma, type BusinessEvent } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { resolveInvoiceReceiptRecognition } from "./invoice-receipt-recognition"
 import { BusinessRuleError, ConflictError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
 import { hashBusinessPayload, markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
@@ -37,6 +38,14 @@ async function plan(tx: Prisma.TransactionClient, draft: InvoiceApprovalDraft, s
   let source: Awaited<ReturnType<typeof validateInvoiceApprovalSource>> | null = null
   try { source = await validateInvoiceApprovalSource(tx, invoice, scope.organizationId) }
   catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push("SOURCE_REVIEW") }
+  let receiptRecognition: Awaited<ReturnType<typeof resolveInvoiceReceiptRecognition>> | null = null
+  try {
+    receiptRecognition = await resolveInvoiceReceiptRecognition(tx, {
+      organizationId: scope.organizationId, supplierId: invoice.supplierId, invoiceId: invoice.id,
+      currency: invoice.currency, subtotal: invoice.subtotal, total: invoice.total,
+      taxAmount: invoice.taxAmount, lines: invoice.lines,
+    })
+  } catch (error) { if (!(error instanceof BusinessRuleError)) throw error; blockers.push("SOURCE_REVIEW") }
   if (!invoice.supplier.isActive || invoice.supplier.deletedAt) blockers.push("SOURCE_REVIEW")
 
   const { event: preparation, prepared, valid: preparationValid } = await readInvoicePreparationEvidence(tx, invoice, scope.organizationId)
@@ -67,7 +76,7 @@ async function plan(tx: Prisma.TransactionClient, draft: InvoiceApprovalDraft, s
   if (journals.length > 1) blockers.push("JOURNAL_AMBIGUOUS")
   const accounts = rule ? await tx.chartOfAccount.findMany({ where: { organizationId: scope.organizationId, OR: [{ id: { in: rule.lines.map(line => line.accountId).filter((id): id is string => !!id) } }, { mappingKey: { in: rule.lines.map(line => line.mappingKey).filter((key): key is string => !!key) } }] }, include: { _count: { select: { children: true } } }, orderBy: { id: "asc" } }) : []
   const receipts = await tx.goodsReceiptLine.findMany({ where: { id: { in: invoice.lines.map(line => line.goodsReceiptLineId).filter((id): id is string => !!id) }, goodsReceipt: { organizationId: scope.organizationId } }, include: { goodsReceipt: true, purchaseOrderLine: { include: { purchaseOrder: true } } }, orderBy: { id: "asc" } })
-  const revision = hashBusinessPayload({ version: 1, invoice, preparation, exceptions, exceptionEvents, receipts, organization, periods, country, rule, journals, accounts, blockers, postingWarnings })
+  const revision = hashBusinessPayload({ version: 1, invoice, preparation, exceptions, exceptionEvents, receipts, receiptRecognition, organization, periods, country, rule, journals, accounts, blockers, postingWarnings })
   const preview: InvoiceApprovalPreview = {
     organizationId: scope.organizationId, actorId: scope.actorId, invoiceId: invoice.id, invoiceNumber: invoice.invoiceNumber,
     supplierName: invoice.supplier.name, makerId: invoice.createdById, invoiceDate: invoice.invoiceDate.toISOString(), dueDate: invoice.dueDate?.toISOString() ?? null,

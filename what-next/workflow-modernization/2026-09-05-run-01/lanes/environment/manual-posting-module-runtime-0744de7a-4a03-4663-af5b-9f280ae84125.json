@@ -1,0 +1,1861 @@
+{
+  "run": "0744de7a-4a03-4663-af5b-9f280ae84125",
+  "at": "2026-10-01T07:59:41.401Z",
+  "checks": [
+    {
+      "id": "active-and-stopped-new-work-retained-draft-allowed",
+      "status": "passed",
+      "elapsedMs": 3824,
+      "organizationId": "workflow_close_write_manual-post-module-allow_d57253c2-40fe-4057-9595-6050d3be2685",
+      "active": {
+        "journalId": "cmup8urnt0094mab8vecygx3i",
+        "postingBatchId": "cmup8urty00a3mab81w9jwwxc",
+        "sourceLinkId": "cmup8uruh00a5mab84o7w5qd1",
+        "debit": "100.00",
+        "credit": "100.00",
+        "beforeHash": "8708ba57b5719830c3ca98b762792e758ab9fce8579a0e7ed753dcd2f8874685",
+        "afterHash": "672adf67db99bbdbc86da0d03d9b682b33d138213b2925f090068a44aac0d522",
+        "onlyExpectedFinancialDelta": true
+      },
+      "stoppedNewWorkRetainedDraft": {
+        "journalId": "cmup8urp9009bmab85fk4ew9k",
+        "postingBatchId": "cmup8us1d00ajmab8ivetoe80",
+        "sourceLinkId": "cmup8us1z00almab84w4nff4z",
+        "debit": "100.00",
+        "credit": "100.00",
+        "beforeHash": "672adf67db99bbdbc86da0d03d9b682b33d138213b2925f090068a44aac0d522",
+        "afterHash": "5ba9f13733091a74bc2e5815d1ea990369d484330f93c869dcebdb95b9d79ba1",
+        "onlyExpectedFinancialDelta": true
+      },
+      "cutoff": "2026-10-01T08:00:07.435Z",
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841607481
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841607482
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841607482
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841607484
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841607484
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841607485
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841607491
+        },
+        {
+          "event": "catalog-attempt",
+          "at": 1790841607492
+        },
+        {
+          "event": "catalog-acquired",
+          "at": 1790841607493
+        },
+        {
+          "event": "journal-attempt",
+          "at": 1790841607494
+        },
+        {
+          "event": "journal-acquired",
+          "at": 1790841607495
+        },
+        {
+          "event": "period-attempt",
+          "at": 1790841607514
+        },
+        {
+          "event": "period-acquired",
+          "at": 1790841607515
+        },
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841607516
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841607518
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841607518
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841607519
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841607520
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841607522
+        },
+        {
+          "event": "grant-read",
+          "number": 2,
+          "at": 1790841607527
+        },
+        {
+          "event": "financial-write",
+          "at": 1790841607536
+        }
+      ],
+      "retained": {
+        "exportId": "cmup8urjm0090mab8x6nhk2wy",
+        "immutableExportHash": "3372f2aa1e815b52f121d983b58193fb8aa8b05b1aecb7470e7ca3db40dbcd5e",
+        "retainedHistoryHash": "3a104aea445f7d382019a3e56418fd5f296943e624b8a4f91945fb126560e70d"
+      },
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-allow_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "missing-empty-expired-future-suspended-read-only-denied",
+      "status": "passed",
+      "elapsedMs": 5640,
+      "organizationId": "workflow_close_write_manual-post-module-denials_d57253c2-40fe-4057-9595-6050d3be2685",
+      "cases": [
+        {
+          "label": "missing-accounting-grant",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uuqd00lsmab8y5lmyg28"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "explicit-empty-grants",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uuyw00mwmab8yc4zwrpu"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "expired-interval",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uva000o0mab8veciva7q"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "future-interval",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uvg000p4mab8utr75awz"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "suspended",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uvl300q8mab8tnqnuhgp"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "expired-status",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uvss00rcmab8i0raqung"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "read-only-status",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uvy600sgmab8rb7zx8ij"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        },
+        {
+          "label": "read-only-flag-with-wildcard",
+          "refusal": {
+            "success": false,
+            "code": "FORBIDDEN",
+            "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "fe90d391799e26eeb3a7cb7db145aba4f739974ee327870b515a1dbef45eea19",
+            "denialAuditIds": [
+              "cmup8uw4700tkmab89zksvp71"
+            ],
+            "retained": {
+              "exportId": "cmup8uui500jwmab860f56hms",
+              "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+              "retainedHistoryHash": "4317dc75cddaebaa047191224ac79a189819a11eee46386567702c3acfb203ca"
+            }
+          },
+          "initialReadBeforeAccountingLocks": true
+        }
+      ],
+      "sameDraftAfterGrantRestoration": {
+        "journalId": "cmup8uukz00k0mab8r3ie4fb8",
+        "postingBatchId": "cmup8uwbx00uqmab8kftkkfmu",
+        "sourceLinkId": "cmup8uwcl00usmab8b96dmscw",
+        "debit": "100.00",
+        "credit": "100.00",
+        "beforeHash": "f35cdd5dfca5eea7aec7bbd371ed2d5f3d15036ab26a9a42684ec61e6062d9fe",
+        "afterHash": "2df0400c6a24a23fc0d6c1c2649b856c4e91080b40fe69b99b7ebf2411d71486",
+        "onlyExpectedFinancialDelta": true
+      },
+      "retained": {
+        "exportId": "cmup8uui500jwmab860f56hms",
+        "immutableExportHash": "1f3a23b0e018321a52c9b1b48016eed4aad96ff9543f9404e298f5c0f8d079e1",
+        "retainedHistoryHash": "e025b548ff53da7e2ea55efc482a403616326fc6204d5043cb44e9411877fc35"
+      },
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-denials_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "initial-and-final-authority-read-failure-no-effects",
+      "status": "passed",
+      "elapsedMs": 2428,
+      "organizationId": "workflow_close_write_manual-post-module-read-failure_d57253c2-40fe-4057-9595-6050d3be2685",
+      "cases": [
+        {
+          "failedRead": 1,
+          "refusal": {
+            "success": false,
+            "error": "OWNED_MODULE_READ_FAILURE_1"
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "da5dd2dfd6886efde80039849379db710100e4ccc3df01953a43a3301d953c4b",
+            "denialAuditIds": [],
+            "retained": {
+              "exportId": "cmup8uxyy0143mab8ma5pf11a",
+              "immutableExportHash": "0011b7b5a5084269cf266cdf57c1d8a0efa1c2af006aad1cf47d682d268a4ec6",
+              "retainedHistoryHash": "3d7352c195468f05c98706941d78bcd90384420328c2745a3c01865ace8762fd"
+            }
+          }
+        },
+        {
+          "failedRead": 2,
+          "refusal": {
+            "success": false,
+            "error": "OWNED_MODULE_READ_FAILURE_2"
+          },
+          "proof": {
+            "noFinancialOrCloseEffects": true,
+            "protectedHash": "da5dd2dfd6886efde80039849379db710100e4ccc3df01953a43a3301d953c4b",
+            "denialAuditIds": [],
+            "retained": {
+              "exportId": "cmup8uxyy0143mab8ma5pf11a",
+              "immutableExportHash": "0011b7b5a5084269cf266cdf57c1d8a0efa1c2af006aad1cf47d682d268a4ec6",
+              "retainedHistoryHash": "3d7352c195468f05c98706941d78bcd90384420328c2745a3c01865ace8762fd"
+            }
+          }
+        }
+      ],
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-read-failure_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "module-writer-first-posting-sees-committed-withdrawal",
+      "status": "passed",
+      "elapsedMs": 3542,
+      "organizationId": "workflow_close_write_manual-post-module-writer-first_d57253c2-40fe-4057-9595-6050d3be2685",
+      "wait": {
+        "waiterPid": 30444,
+        "holderPid": 31716,
+        "blockers": [
+          31716
+        ],
+        "observed": true
+      },
+      "transition": "active-to-read-only",
+      "refusal": {
+        "success": false,
+        "code": "FORBIDDEN",
+        "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+      },
+      "proof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "7df2b2d7d2671037d9560c686c221c10f51e9766c4dd51874053b38ac9c1c951",
+        "denialAuditIds": [
+          "cmup8v11c01eqmab8shwvi4i2"
+        ],
+        "retained": {
+          "exportId": "cmup8v02c01dwmab8q71hgxj0",
+          "immutableExportHash": "81db94d4671fd788bd5a2ebc42430055ba74a4432208950312dab6baa2538af7",
+          "retainedHistoryHash": "234db38bf34c96229cf4d2001a4bef7158d13d603b00669882a09d56cdff21e8"
+        }
+      },
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841618957
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841619183
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841619183
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841619188
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841619188
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841619194
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841619199
+        }
+      ],
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-writer-first_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "posting-first-module-writer-waits-for-commit",
+      "status": "passed",
+      "elapsedMs": 3845,
+      "organizationId": "workflow_close_write_manual-post-module-posting-first_d57253c2-40fe-4057-9595-6050d3be2685",
+      "wait": {
+        "waiterPid": 12804,
+        "holderPid": 22440,
+        "blockers": [
+          22440
+        ],
+        "observed": true
+      },
+      "postingDelta": {
+        "journalId": "cmup8v2zb01nvmab8arqfwzw4",
+        "postingBatchId": "cmup8v3q301oumab8rshb1br1",
+        "sourceLinkId": "cmup8v3qz01owmab8jel9e679",
+        "debit": "100.00",
+        "credit": "100.00",
+        "beforeHash": "e31dc5322d36fe1913a7c8bbf92cf70bb9f21eb4b90b8b0e975dd287c3285518",
+        "afterHash": "342e3a979cdf1aa40a0da173b5ae92c5b99fa3297a3ab870b05c70c69f5a963d",
+        "onlyExpectedFinancialDelta": true
+      },
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841622430
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841622441
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841622441
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841622445
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841622445
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841622452
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841622458
+        },
+        {
+          "event": "catalog-attempt",
+          "at": 1790841622460
+        },
+        {
+          "event": "catalog-acquired",
+          "at": 1790841622462
+        },
+        {
+          "event": "journal-attempt",
+          "at": 1790841622462
+        },
+        {
+          "event": "journal-acquired",
+          "at": 1790841622471
+        },
+        {
+          "event": "period-attempt",
+          "at": 1790841622513
+        },
+        {
+          "event": "period-acquired",
+          "at": 1790841622515
+        },
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841622515
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841622516
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841622516
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841622518
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841622518
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841622519
+        },
+        {
+          "event": "grant-read",
+          "number": 2,
+          "at": 1790841622523
+        },
+        {
+          "event": "financial-write",
+          "at": 1790841622682
+        }
+      ],
+      "laterRefusal": {
+        "success": false,
+        "code": "FORBIDDEN",
+        "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+      },
+      "laterProof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "21fff48267d802bdd5dc281d47ca9a094e89eb106e30dfb8e35b2082a815559e",
+        "denialAuditIds": [
+          "cmup8v3zv01p8mab86911as2u"
+        ],
+        "retained": {
+          "exportId": "cmup8v2xh01nrmab8vj0n90o1",
+          "immutableExportHash": "5a334ed315097b0cba1f7b852016919f5802e86f43c307a81d2c9da2bdfd26c6",
+          "retainedHistoryHash": "d18e23bb7bc6c51c722b88cfe8830695d962b8aa6237cc82cec9847a2e5c6c67"
+        }
+      },
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-posting-first_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "finite-grant-expiry-during-real-period-wait",
+      "status": "passed",
+      "elapsedMs": 9527,
+      "organizationId": "workflow_close_write_manual-post-module-expiry-wait_d57253c2-40fe-4057-9595-6050d3be2685",
+      "wait": {
+        "waiterPid": 32616,
+        "holderPid": 28804,
+        "blockers": [
+          28804
+        ],
+        "observed": true
+      },
+      "endsAt": "2026-10-01T08:00:32.489Z",
+      "refusal": {
+        "success": false,
+        "code": "FORBIDDEN",
+        "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+      },
+      "proof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "9feb452db657feedb955e48ce5743d7801294a53a02c50a09adad95399d28767",
+        "denialAuditIds": [
+          "cmup8vbcd01z3mab8nz34uhbo"
+        ],
+        "retained": {
+          "exportId": "cmup8v5s601y9mab8rom6doz5",
+          "immutableExportHash": "a34b0a27a5aa9410c48d8a7fed44fb87418a852e4e872b1c89d5b5072ebd2cd1",
+          "retainedHistoryHash": "be5f6d84c59651d569f6b747a42d6a43348403e637193450c1a510c1228e5c0f"
+        }
+      },
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841626514
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841626527
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841626527
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841626534
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841626534
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841626544
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841626552
+        },
+        {
+          "event": "catalog-attempt",
+          "at": 1790841626557
+        },
+        {
+          "event": "catalog-acquired",
+          "at": 1790841626560
+        },
+        {
+          "event": "journal-attempt",
+          "at": 1790841626560
+        },
+        {
+          "event": "journal-acquired",
+          "at": 1790841626577
+        },
+        {
+          "event": "period-attempt",
+          "at": 1790841626636
+        },
+        {
+          "event": "period-acquired",
+          "at": 1790841632547
+        },
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841632548
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841632549
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841632549
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841632550
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841632550
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841632552
+        },
+        {
+          "event": "grant-read",
+          "number": 2,
+          "at": 1790841632556
+        }
+      ],
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-expiry-wait_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "finite-grant-expiry-during-authority-callback",
+      "status": "passed",
+      "elapsedMs": 7787,
+      "organizationId": "workflow_close_write_manual-post-module-expiry-callback_d57253c2-40fe-4057-9595-6050d3be2685",
+      "endsAt": "2026-10-01T08:00:40.293Z",
+      "callback": {
+        "enteredAt": "2026-10-01T08:00:35.357Z",
+        "returnedAt": "2026-10-01T08:00:40.351Z"
+      },
+      "refusal": {
+        "success": false,
+        "code": "FORBIDDEN",
+        "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+      },
+      "proof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "2ca9321840652ddeba1d28bb096523194c55feec48a0d4aac83bdc48d203975b",
+        "denialAuditIds": [
+          "cmup8vhd7028ymab88ly0o28k"
+        ],
+        "retained": {
+          "exportId": "cmup8vdam0284mab8u5yh25rt",
+          "immutableExportHash": "c841155aa49fb2d1e687f37517abd3952875bcb68ef345cc170be9d62c103702",
+          "retainedHistoryHash": "3f92b8b11ed474634fbb870406e204cfa9dcd9d9b5f91064b1b6afa602b12dcb"
+        }
+      },
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841635304
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841635306
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841635307
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841635310
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841635310
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841635313
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841635320
+        },
+        {
+          "event": "catalog-attempt",
+          "at": 1790841635324
+        },
+        {
+          "event": "catalog-acquired",
+          "at": 1790841635326
+        },
+        {
+          "event": "journal-attempt",
+          "at": 1790841635326
+        },
+        {
+          "event": "journal-acquired",
+          "at": 1790841635329
+        },
+        {
+          "event": "period-attempt",
+          "at": 1790841635355
+        },
+        {
+          "event": "period-acquired",
+          "at": 1790841635357
+        },
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841640351
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841640352
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841640353
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841640354
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841640354
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841640356
+        },
+        {
+          "event": "grant-read",
+          "number": 2,
+          "at": 1790841640361
+        }
+      ],
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-expiry-callback_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "legacy-to-managed-empty-publication-before-posting",
+      "status": "passed",
+      "elapsedMs": 2601,
+      "organizationId": "workflow_close_write_manual-post-module-legacy-transition_d57253c2-40fe-4057-9595-6050d3be2685",
+      "wait": {
+        "waiterPid": 26908,
+        "holderPid": 14900,
+        "blockers": [
+          14900
+        ],
+        "observed": true
+      },
+      "transition": "legacy-to-managed-empty",
+      "refusal": {
+        "success": false,
+        "code": "FORBIDDEN",
+        "error": "Accounting write access is unavailable. Ask your module administrator to review the current grants."
+      },
+      "proof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "d19fdf94b009edeb9fee55a3a0f755e434073957ade3fd78cd09484a34317112",
+        "denialAuditIds": [
+          "cmup8vjcr02iamab875sx5q4w"
+        ],
+        "retained": {
+          "exportId": "cmup8vinc02hzmab88u47q10h",
+          "immutableExportHash": "ca807b51ef58b567ce2946e418bfe36457f8a4216367b2dd941937785cbf3b9d",
+          "retainedHistoryHash": "8327ad58fae1fa7cbeb94836100145f8c9a20f5f49a6fb9876f409643593c33e"
+        }
+      },
+      "order": [
+        {
+          "event": "authority-organization-attempt",
+          "at": 1790841642746
+        },
+        {
+          "event": "authority-organization-acquired",
+          "at": 1790841642919
+        },
+        {
+          "event": "authority-configuration-attempt",
+          "at": 1790841642920
+        },
+        {
+          "event": "authority-configuration-acquired",
+          "at": 1790841642925
+        },
+        {
+          "event": "authority-grants-attempt",
+          "at": 1790841642925
+        },
+        {
+          "event": "authority-grants-acquired",
+          "at": 1790841642932
+        },
+        {
+          "event": "grant-read",
+          "number": 1,
+          "at": 1790841642937
+        }
+      ],
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-legacy-transition_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    },
+    {
+      "id": "foreign-tenant-authority-writer-does-not-block-posting",
+      "status": "passed",
+      "elapsedMs": 6578,
+      "organizationId": "workflow_close_write_manual-post-module-tenant-a_d57253c2-40fe-4057-9595-6050d3be2685",
+      "foreignOrganizationId": "workflow_close_write_manual-post-module-tenant-b_d57253c2-40fe-4057-9595-6050d3be2685",
+      "holderPid": 32616,
+      "posterPid": 15884,
+      "blockersDuringCallback": [],
+      "completedBeforeForeignRelease": true,
+      "postingDelta": {
+        "journalId": "cmup8vljz02rfmab8ydtjlaq8",
+        "postingBatchId": "cmup8vo770320mab8vc0gevdc",
+        "sourceLinkId": "cmup8vo870322mab8qijct9vb",
+        "debit": "100.00",
+        "credit": "100.00",
+        "beforeHash": "473740b9bc4ec6780fa88a46bd1dbc87c88ba9f4c8ae0b5bbfcc44deeaa91b38",
+        "afterHash": "0f260710fd005803668272f37da6f5f8180550671577c531c7e8fc559157fc8e",
+        "onlyExpectedFinancialDelta": true
+      },
+      "foreignProof": {
+        "noFinancialOrCloseEffects": true,
+        "protectedHash": "b99e843b290aafe3502fb5c45dc9067bf2c1c1d1a2cd07402a87aac2a049397d",
+        "denialAuditIds": [],
+        "retained": {
+          "exportId": "cmup8vn6v030lmab8c18dvv0t",
+          "immutableExportHash": "013cc0056c9993a314a87ed04dad36cd81483668a69dc788d6c1ce316bcdba55",
+          "retainedHistoryHash": "2ee2221a805efb0877c4af26396155089fd978da49744d7a96bb887a44e260e3"
+        }
+      },
+      "retained": {
+        "exportId": "cmup8vlhu02rbmab84f2rq1qd",
+        "immutableExportHash": "5da38c63ff36194471a3882f84714d5b71ac8120ca4cf806804e52edde197121",
+        "retainedHistoryHash": "dee2ceb039e3c3e571cefde0e77236af9d5c735bc54c217303506e808bfa0dd1"
+      },
+      "ownedFixtureOrganizations": [
+        "workflow_close_write_manual-post-module-tenant-a_d57253c2-40fe-4057-9595-6050d3be2685",
+        "workflow_close_write_manual-post-module-tenant-b_d57253c2-40fe-4057-9595-6050d3be2685"
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "label": "allow",
+      "organizationId": "workflow_close_write_manual-post-module-allow_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8upi7000amab82vh2l7rj",
+      "initialRunId": "cmup8uqs6007amab8i0iphwvi",
+      "exportId": "cmup8urjm0090mab8x6nhk2wy",
+      "draftIds": [
+        "cmup8urnt0094mab8vecygx3i",
+        "cmup8urp9009bmab85fk4ew9k"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8uqi5006vmab88l5o4205",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8upqt0030mab854zf5xb4",
+          "cmup8ups9003amab8ulm71hxa",
+          "cmup8upt4003mmab8hb5a4kpc",
+          "cmup8uptx0041mab83d55dc4m",
+          "cmup8upuf004hmab86rnl0d04",
+          "cmup8upuu004omab8i9o22eza",
+          "cmup8upva004vmab86dtrz9fc",
+          "cmup8upw70057mab8lexkfg46",
+          "cmup8upwm005imab8zzr4vuba",
+          "cmup8upx0005qmab86y94enpa",
+          "cmup8upxm005ymab8z1v46xyt",
+          "cmup8upy60069mab8tqj0ahc8",
+          "cmup8upyq006gmab8m325gdia"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "denials",
+      "organizationId": "workflow_close_write_manual-post-module-denials_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8usf600b6mab872etitls",
+      "initialRunId": "cmup8uttt00i6mab8f0dnos4g",
+      "exportId": "cmup8uui500jwmab860f56hms",
+      "draftIds": [
+        "cmup8uukz00k0mab8r3ie4fb8"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8utld00hrmab8bg49emry",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8usjh00dwmab817q68gnj",
+          "cmup8uskb00e6mab8ew49n5kz",
+          "cmup8usl000eimab8znbhfwih",
+          "cmup8uslt00exmab8undqm3xs",
+          "cmup8usmg00fdmab8d5rfzi9y",
+          "cmup8usn400fkmab8tuljhxdx",
+          "cmup8uso400frmab8fwfyzju2",
+          "cmup8usp800g3mab82nrmwnsl",
+          "cmup8usqa00gemab8zoxu8a1q",
+          "cmup8usr200gmmab8ygtjwgsb",
+          "cmup8usry00gumab8dcsg1htv",
+          "cmup8ut1i00h5mab8kxf7lzad",
+          "cmup8ut2900hcmab85lly1pjg"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "read-failure",
+      "organizationId": "workflow_close_write_manual-post-module-read-failure_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8uwpf00vdmab82fuwfa2o",
+      "initialRunId": "cmup8uxgy012dmab86m3f0er6",
+      "exportId": "cmup8uxyy0143mab8ma5pf11a",
+      "draftIds": [
+        "cmup8uy1g0147mab8p8vr9zfz"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8uxbr011ymab8ykoizqwa",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8uwvw00y3mab8mew8wbuq",
+          "cmup8uwxc00ydmab8exk19alm",
+          "cmup8uwyn00ypmab8s31g7y1m",
+          "cmup8uwzv00z4mab8mpshxj58",
+          "cmup8ux0i00zkmab8ot4zl020",
+          "cmup8ux1000zrmab8opmwgac9",
+          "cmup8ux1i00zymab8cv6vegrt",
+          "cmup8ux23010amab8g641bdjd",
+          "cmup8ux2l010lmab8wjjux8ms",
+          "cmup8ux34010tmab8ygp8o30j",
+          "cmup8ux3q0111mab83xtv3659",
+          "cmup8ux4a011cmab8tknj29zj",
+          "cmup8ux4r011jmab8d19vegw5"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "writer-first",
+      "organizationId": "workflow_close_write_manual-post-module-writer-first_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8uymt0156mab86nhaildh",
+      "initialRunId": "cmup8uzgr01c6mab8bexpbnmt",
+      "exportId": "cmup8v02c01dwmab8q71hgxj0",
+      "draftIds": [
+        "cmup8v05l01e0mab8k9o30mkg"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8uz7s01brmab861krj67g",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8uyqm017wmab8iojjcl8s",
+          "cmup8uyrk0186mab8tlr6sp8g",
+          "cmup8uys8018imab8qqg3mqip",
+          "cmup8uyt9018xmab8zhvhw3r5",
+          "cmup8uyu2019dmab8tcny1klt",
+          "cmup8uyuj019kmab8osnsn8q5",
+          "cmup8uyv8019rmab8sakw6k5u",
+          "cmup8uyw801a3mab8jn6moxcc",
+          "cmup8uywt01aemab8735rc4u8",
+          "cmup8uyxe01ammab8ujjhl285",
+          "cmup8uyy301aumab8vl54lzwd",
+          "cmup8uyyp01b5mab8b0g9evr8",
+          "cmup8uyz701bcmab8rr4squj2"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "posting-first",
+      "organizationId": "workflow_close_write_manual-post-module-posting-first_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8v1gg01f1mab857xa431m",
+      "initialRunId": "cmup8v2h201m1mab8qnqx9yzy",
+      "exportId": "cmup8v2xh01nrmab8vj0n90o1",
+      "draftIds": [
+        "cmup8v2zb01nvmab8arqfwzw4",
+        "cmup8v30a01o2mab8avekul7x"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8v2b101lmmab8eyhkw3vp",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8v1ot01hrmab8wmdwlu91",
+          "cmup8v1pr01i1mab8bnbgtrwc",
+          "cmup8v1t101idmab8k2mmjw1t",
+          "cmup8v1u801ismab8pdx12z0k",
+          "cmup8v1ux01j8mab8ul74aijl",
+          "cmup8v1vh01jfmab8la3ldhoy",
+          "cmup8v1wa01jmmab84q36memb",
+          "cmup8v1xj01jymab8b4oolnl4",
+          "cmup8v1yc01k9mab82vkv4bhh",
+          "cmup8v1z701khmab8qrswe7t2",
+          "cmup8v20301kpmab8r93y951o",
+          "cmup8v20s01l0mab8y9iaw6dc",
+          "cmup8v21f01l7mab86tjxdy3v"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "expiry-wait",
+      "organizationId": "workflow_close_write_manual-post-module-expiry-wait_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8v4c601pjmab81k6t4sjl",
+      "initialRunId": "cmup8v52301wjmab8ipmmi2wi",
+      "exportId": "cmup8v5s601y9mab8rom6doz5",
+      "draftIds": [
+        "cmup8v5vq01ydmab8gefu0x93"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8v4xg01w4mab8916fspkn",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8v4jv01s9mab83itzlwgy",
+          "cmup8v4kj01sjmab8r7ggupmv",
+          "cmup8v4l901svmab81ay6flg6",
+          "cmup8v4m301tamab872c3fo3a",
+          "cmup8v4mk01tqmab8ysg2up5m",
+          "cmup8v4my01txmab8gyu75bus",
+          "cmup8v4nd01u4mab8eu3sfhek",
+          "cmup8v4nv01ugmab81hprzbih",
+          "cmup8v4of01urmab8ut8jwvfn",
+          "cmup8v4ov01uzmab8gwhwfttg",
+          "cmup8v4pd01v7mab83usb202n",
+          "cmup8v4pt01vimab884ozgdg3",
+          "cmup8v4q501vpmab8z6iv8ofe"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "expiry-callback",
+      "organizationId": "workflow_close_write_manual-post-module-expiry-callback_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8vbp901zemab8o3rm70zt",
+      "initialRunId": "cmup8vcpn026emab86c66t6ea",
+      "exportId": "cmup8vdam0284mab8u5yh25rt",
+      "draftIds": [
+        "cmup8vdd30288mab8kbo5fost"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8vck3025zmab8op5vpvi4",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8vbv80224mab8xjkm4kgj",
+          "cmup8vbw8022emab8g7euzuwz",
+          "cmup8vbxb022qmab84r2ltpa4",
+          "cmup8vbyv0235mab8vt8v81w8",
+          "cmup8vbzu023lmab83u8vbtt5",
+          "cmup8vc0t023smab8uslk33ny",
+          "cmup8vc1r023zmab83gz3wxjr",
+          "cmup8vc2v024bmab8iox2uf9v",
+          "cmup8vc3s024mmab8u67yels3",
+          "cmup8vc4j024umab8oomzg2rk",
+          "cmup8vc5g0252mab89b2p0cuz",
+          "cmup8vc68025dmab8x0a5zsts",
+          "cmup8vc6w025kmab8d493vrwt"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "legacy-transition",
+      "organizationId": "workflow_close_write_manual-post-module-legacy-transition_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8vhmc0299mab8mym3i2jk",
+      "initialRunId": "cmup8vib502g9mab8hnokxxw0",
+      "exportId": "cmup8vinc02hzmab88u47q10h",
+      "draftIds": [
+        "cmup8vip102i3mab8d6qiltxl"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8vi6q02fumab8h88btuuh",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8vhro02bzmab8844qhjut",
+          "cmup8vhsq02c9mab8aqbjovn5",
+          "cmup8vhtj02clmab8lph8kmtg",
+          "cmup8vhul02d0mab85bxpbery",
+          "cmup8vhv702dgmab8ecklwtvb",
+          "cmup8vhvn02dnmab8wr60offt",
+          "cmup8vhw402dumab8ud7hb3be",
+          "cmup8vhwn02e6mab8wy8b3o9q",
+          "cmup8vhx402ehmab8j4omp508",
+          "cmup8vhxj02epmab8kyx3rl9e",
+          "cmup8vhy902exmab8lkr14xuf",
+          "cmup8vhys02f8mab84phczvzq",
+          "cmup8vhz702ffmab8zv6q89pv"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "tenant-a",
+      "organizationId": "workflow_close_write_manual-post-module-tenant-a_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8vjv002ilmab8ge08p5x6",
+      "initialRunId": "cmup8vkwh02plmab8kx3mdhiz",
+      "exportId": "cmup8vlhu02rbmab84f2rq1qd",
+      "draftIds": [
+        "cmup8vljz02rfmab8ydtjlaq8"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8vkql02p6mab8jfke973b",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8vk4t02lbmab8eu1pr3o6",
+          "cmup8vk8v02llmab8mfgexevr",
+          "cmup8vkad02lxmab8p1p21wf2",
+          "cmup8vkc602mcmab8w622aclu",
+          "cmup8vkd702msmab8pgu4pj8o",
+          "cmup8vkdx02mzmab8vme017lx",
+          "cmup8vkev02n6mab8ziq50j2u",
+          "cmup8vkft02nimab83r7fd2qr",
+          "cmup8vkgj02ntmab8fgqyua6l",
+          "cmup8vkh902o1mab8i818riox",
+          "cmup8vki402o9mab8kzcn6oxf",
+          "cmup8vkiq02okmab89618bbmn",
+          "cmup8vkj802ormab83520fjjn"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    },
+    {
+      "label": "tenant-b",
+      "organizationId": "workflow_close_write_manual-post-module-tenant-b_d57253c2-40fe-4057-9595-6050d3be2685",
+      "periodId": "cmup8vluf02rvmab8l2np5g5o",
+      "initialRunId": "cmup8vmlu02yvmab8rhqsd17z",
+      "exportId": "cmup8vn6v030lmab8c18dvv0t",
+      "draftIds": [
+        "cmup8vn9u030pmab8rv52z87v"
+      ],
+      "actualSetup": {
+        "readinessIssues": [],
+        "journalEntryId": "cmup8vmh102ygmab89tbmkag2",
+        "fixtureJournalCount": 1,
+        "debit": "100",
+        "credit": "100",
+        "currency": "XAF",
+        "ruleIds": [
+          "cmup8vm0002ulmab874cfewue",
+          "cmup8vm1302uvmab8robxofey",
+          "cmup8vm2e02v7mab8u0fv3m76",
+          "cmup8vm3v02vmmab83w4ijnmz",
+          "cmup8vm4m02w2mab84o3wfgn5",
+          "cmup8vm5502w9mab82ya7ezp9",
+          "cmup8vm5m02wgmab8icmym8ka",
+          "cmup8vm6802wsmab84egm44pu",
+          "cmup8vm6q02x3mab8t7kv94wz",
+          "cmup8vm7702xbmab8ci94dbs4",
+          "cmup8vm7q02xjmab8en9uew3s",
+          "cmup8vm8702xumab8eov23hra",
+          "cmup8vm8m02y1mab8rtwwu23z"
+        ],
+        "note": "Setup effects only; no financial writes permitted after this fixture returns."
+      }
+    }
+  ],
+  "scope": "Actual postJournalEntry and persisted module authority on exact owned loopback PostgreSQL. No source/candidate injection, migrations, external effects or manufactured Close readiness.",
+  "limitations": [
+    "Synthetic actors, permissions and grant fixtures test the internal service contract; they do not establish authenticated transport, subscription eligibility or commercial approval.",
+    "Grant writers use the real module admission organization lock and persisted rows; this does not test a commercial provisioning workflow.",
+    "This verifier covers module authority only. The separately retained earlier-period Close invalidation scope defect and rejected all-period candidate remain unresolved.",
+    "Initial system-certified exports predate draft creation. Their immutable content is retained; no claim is made that draft creation currently invalidates all dependent Close evidence.",
+    "The inherited fixture setup creates an actual balanced journal and READY/T4 assessment. Only subsequent documented synthetic manual postings are expected financial effects."
+  ],
+  "sourcesBefore": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-current-proof.ts": "6ab6451b47385269fcf468a4a8c25a5f807ee938501950319998a6d2fe609c8d",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/close-assurance.schemas.ts": "b0f2f9dbf79eb361b98f0407aaa4877ac8a2d2bf673a803632af877581337d95",
+    "services/accounting/close-assurance.service.ts": "7e85e6465d76d2416a1a4a1f1fa2482e44a0428d74b08162f3050eb8e38f6f2d",
+    "services/accounting/close-evidence-acceptance-authority.service.ts": "9e886e71f668ce30553898d4784d230da445d74978a20d2bcb8369eb42db81d9",
+    "services/accounting/close-evidence-collection.ts": "116b28cc33d45d3faf2d36c8fd194b46293b231ab79d43d2ee3c024375b667b5",
+    "services/accounting/close-evidence-replacement.service.ts": "ae7498c25ce4b406404c53ef438023fb2084d461ebe9d014cf115795e367dbaa",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "a6c752692dec778d9450ed44c63a5f7e859266581671dbc10e5e2263f6532d02",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "18a014629124e58989e76dbf8c20b5a111058d97df466b0c86a4c8f1e95ce40e",
+    "services/accounting/reconciliations.service.ts": "47586a4957bd6850a2fae7a0b58c46996fc061b15f9af1fd5c4ad6a75d8f56de",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/evidence/evidence-blockers.service.ts": "ae863f51e227868ed77b89ef087767f111326617e765db463fab70bd1fb6c660",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/payroll-transition-evidence.ts": "19066ecb84c4cb88e676edb0216715e3b5058b507da328ad512e44d87bb2b370",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "services/reconciliation/payment-reconciliation-manual-candidates.service.ts": "992b23f8fa26666fc95bf6b0246268a97ea06a9ca315236a342f2cf0583cdbe4",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "8b0531b55303406bf0ebc0709ae4c59b1ee58d928f17ee9b5fd447bcea812592",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-summary.service.ts": "71377f47afda496cd4dd4c2c8da74f87e21ef4b091e29b748d3a349121de56eb",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "services/snapshots/close-readiness-snapshot.service.ts": "b92e909738a6f5a9a6d61b49e0ae8907619684ccc1a4afb22bc5bbef0fafb84e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/snapshot-contracts.ts": "900e52d664440a46988ed085019c0aadc1ea9af272213086a831d28b8f4036f6",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-current-recovery-runtime.cjs": "7652c985f51fb304649d5cf41fb713b05551a963e1c6fef270bb417ab4fd9e1a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-denial-recovery-runtime.cjs": "9a0004e63ef61014bca46a379d1ea621e5735228f515cf76cb64d5d3cd76b425",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-pack-write-race-runtime.cjs": "2844c3dc99cb4f52b2aed3911dea496bf5ae13c610dbd6601dc4a2f858938b14",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-posting-runtime.cjs": "91a7ddbfa4f0c7c0ce51835a661d410c39e190f0c591f6961346f7b2883b3556",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-posting-module-runtime.cjs": "d7f83c09db6d53aee2fbd064cd9cffc46b4b37b329de441cbd827ed69ff8a496",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/close-denied-invalidation-before-a6929183-07e3-465c-80b1-a29cf89d7b72.json": "ecf08cabb37215d2eb01195b4304d9ea10e743f445c9ff3a4c17585aa4b89a43",
+    "i18n/routing.ts": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "lib/security/credential-sign-in-outcome.ts": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/trusted-origins.ts": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command.service.ts": "58b57b6452e4cc0bc39b9770755b8c69237494c8eef015cc037e47faa07983d8",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/evidence/evidence-redaction.service.ts": "8bd2e220e283d1334c7d2b7f1e009f8ade69c06d6044c046ec5d6c2d839a6981",
+    "services/evidence/proof-trail.service.ts": "b7a0fa1237a43be76517232a01d0bcea0da034905b3c799f555db2cf3f39e161",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/pos/drawer-dashboard.schemas.ts": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2",
+    "services/pos/drawer-dashboard.service.ts": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132",
+    "services/pos/money.ts": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1",
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "services/signals/action-queue.service.ts": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/signals/business-signal.service.ts": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "types/bilingual.ts": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/cash-close-recovery-readonly-4e711acb-b190-418a-826a-f6e8400bf410.json": "9d7248b0be77489a849f4eb71a86711b319a55646f2bef42e219717a88661bd0"
+  },
+  "outsideBefore": {
+    "hash": "9f8674e37f5ba747c373b5677e733973284825a32daa7573f6c67072b23d30a0",
+    "base": {
+      "hash": "2483e81c6c285f832bc5981e441557c8a0f2d19c5e0578720765d58d5008e803",
+      "existing": {
+        "hash": "d45ecf57da100f0d4d5ad0bdfd8fdfe256c65f8a594353e10fddca24e91cab08",
+        "children": {
+          "hash": "df6efe29a4e7c5a177783839a80e8d1c8060d9d0b9998035d9d385efd636af56",
+          "models": {
+            "payment": {
+              "count": 142,
+              "hash": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9"
+            },
+            "journalEntry": {
+              "count": 1007,
+              "hash": "4dde09a6b81c2bdc028044c7d37b14fb67eee7acbf57bb9a87bbdab5a6d6ba15"
+            },
+            "journalEntryLine": {
+              "count": 2044,
+              "hash": "24ae067fba09459f4fa63b3e968e40f396070fb7179959452ec0df4c37c68212"
+            },
+            "ledgerPostingBatch": {
+              "count": 2285,
+              "hash": "3a4a030ffff78a92fabca69d737ae8643b37a979b2ebd7944d25ddae6347de69"
+            },
+            "accountingSourceLink": {
+              "count": 1003,
+              "hash": "d4d3ee3550f437fde7b080595d1fcdd305e39d0a48bb6d3b21c46c24e7864763"
+            },
+            "supplierInvoice": {
+              "count": 1586,
+              "hash": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f"
+            },
+            "supplierPayment": {
+              "count": 71,
+              "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+            },
+            "inventoryTransaction": {
+              "count": 1301,
+              "hash": "5db84272a93644e934dea946b287cf4225bfd5a420e93f20292ea9b6128e1e19"
+            },
+            "organizationAccountingSettings": {
+              "count": 191,
+              "hash": "d5323a48c085d526eddbff7cd411c5cf0876c0077917085b55be090ee7c31e41"
+            },
+            "chartOfAccount": {
+              "count": 4248,
+              "hash": "f8b58a6f92493389c672617a952904041e4dda5c025707d24a08dc5bf2fb17ca"
+            },
+            "journal": {
+              "count": 1904,
+              "hash": "98ec0fb15d42d88c914cb0bfa2e7039e468242ee18a9e1007418cc6414b9f21c"
+            },
+            "postingRule": {
+              "count": 2676,
+              "hash": "465a35ff5ed933eb3d15f32fe3523d09f686d72e0db3743e9eecb92a58d1b37f"
+            },
+            "postingRuleLine": {
+              "count": 10452,
+              "hash": "b6e8103c4c542606012dc7806ad34517a0cefb62356fc0f0c31ac94dbc0f6563"
+            },
+            "fiscalYear": {
+              "count": 1631,
+              "hash": "ffa9c15ab3cf49c924057c69c65b86b3c7e80accddbbba91d3caf7f342ee2c69"
+            },
+            "accountingPeriod": {
+              "count": 16646,
+              "hash": "8577d3ed43c6419f8413d7c62233dbc202a15faa6e598f01d8fa4b96c01ca94c"
+            },
+            "closeRun": {
+              "count": 433,
+              "hash": "3024f59858f53e764fd73ff859b59986672edab4b43d9b04a7dbec2e483b86ee"
+            },
+            "closeChecklistItem": {
+              "count": 2966,
+              "hash": "e1c8921124d7b083c62dda8726478a149ea4940d98358c74c99ee0c87f33d31d"
+            },
+            "closeAssuranceFinding": {
+              "count": 142,
+              "hash": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14"
+            },
+            "closeEvidenceItem": {
+              "count": 5396,
+              "hash": "94dd4bc7a79d733f64ff007c3032358795d06322c24f0ef1a8506d9687e46830"
+            },
+            "closePackExport": {
+              "count": 136,
+              "hash": "807a8c0abb51ed6694c04505c3c6f6c6bc741b8ce0ecc1363f76e7af88afd0dd"
+            },
+            "user": {
+              "count": 4737,
+              "hash": "6e138ab1354835d2f32934eee86020866906f321382fe73fc32bcc749423354f"
+            },
+            "role": {
+              "count": 3578,
+              "hash": "8b2117c58a2b3eb7f0e39560cd0c0e3a5888804a256d22f217794e4e8a6f00ce"
+            },
+            "tenantModuleConfiguration": {
+              "count": 393,
+              "hash": "e1cc7baf2bb22f39bf7ba12bdf5454e19ff103ac029d68a4ffb7134cfb35e7c8"
+            },
+            "tenantModuleGrant": {
+              "count": 2822,
+              "hash": "29d867015473a724a675922ee8c2b166d43f0c01c1a54641a997c4ffc7606978"
+            },
+            "ledgerAuditEvent": {
+              "count": 10580,
+              "hash": "0d836312a4b5d045f568e731015589c5bea241d6df5707296e2729e0512edb16"
+            },
+            "businessEvent": {
+              "count": 8183,
+              "hash": "8b132225e08e1659c66cd161a6a6382bbb7bdd98bc5a4c695a8c41c933e407d4"
+            },
+            "businessEventOutbox": {
+              "count": 5432,
+              "hash": "740f1d3bc36497593299aad042cc2ca4572ddcc46d452a5fd0e7f496963fa3d2"
+            },
+            "businessEventAudit": {
+              "count": 14282,
+              "hash": "952d6cdb29f56dbd6357a983d74582558ff3d5aa09a4b994f63fad27e595fa54"
+            }
+          }
+        },
+        "organizationCount": 2782
+      },
+      "extra": {
+        "item": "c4f328569cae18b0914ced16230f039d6ff1421bad901aa8e710d25d1089bc33",
+        "location": "40e0641e051335b21f1f8570d345502c4dffce567e13a5216aaf89cf7a3f0e38",
+        "stockCountSession": "0552f8354f87bf0f3d4809c5aaa36f5b2442b3211dde1c81ba385115b18acff9",
+        "auditLog": "f149d1b7f190537899394b13f85c03ec731f6d9742e152be0ae52179ecf5a376",
+        "stockCountLine": "41fa1bee38b7059f5b4c74d7a521cb8dd277b6c034debe0903b5d1cf9207e373",
+        "inventoryLevel": "e30fc2cc96be7b4f2534608185ddd14ae4bb0bd5a9a52b8eedb1e1cdc1547944"
+      }
+    },
+    "extra": {
+      "journalEntry": "4dde09a6b81c2bdc028044c7d37b14fb67eee7acbf57bb9a87bbdab5a6d6ba15",
+      "journalEntryLine": "24ae067fba09459f4fa63b3e968e40f396070fb7179959452ec0df4c37c68212",
+      "ledgerPostingBatch": "3a4a030ffff78a92fabca69d737ae8643b37a979b2ebd7944d25ddae6347de69",
+      "accountingSourceLink": "d4d3ee3550f437fde7b080595d1fcdd305e39d0a48bb6d3b21c46c24e7864763",
+      "inventoryTransaction": "5db84272a93644e934dea946b287cf4225bfd5a420e93f20292ea9b6128e1e19",
+      "payment": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9",
+      "supplierInvoice": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f",
+      "supplierPayment": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394",
+      "customerLedgerEntry": "c3a965575075c5f813f402436b1fd169730c9e6ab76c99e380365c0e54dd1d79",
+      "customerSettlement": "d620e6d8286147d73c4778d68521efe68a858deb089cf86a724bfedef0cb9ad3",
+      "ledgerAuditEvent": "0d836312a4b5d045f568e731015589c5bea241d6df5707296e2729e0512edb16",
+      "businessEvent": "8b132225e08e1659c66cd161a6a6382bbb7bdd98bc5a4c695a8c41c933e407d4",
+      "businessEventAudit": "952d6cdb29f56dbd6357a983d74582558ff3d5aa09a4b994f63fad27e595fa54",
+      "businessEventOutbox": "740f1d3bc36497593299aad042cc2ca4572ddcc46d452a5fd0e7f496963fa3d2",
+      "closeRun": "3024f59858f53e764fd73ff859b59986672edab4b43d9b04a7dbec2e483b86ee",
+      "closeChecklistItem": "e1c8921124d7b083c62dda8726478a149ea4940d98358c74c99ee0c87f33d31d",
+      "closeEvidenceItem": "94dd4bc7a79d733f64ff007c3032358795d06322c24f0ef1a8506d9687e46830",
+      "closeAssuranceFinding": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14",
+      "closePackExport": "807a8c0abb51ed6694c04505c3c6f6c6bc741b8ce0ecc1363f76e7af88afd0dd",
+      "auditLog": "f149d1b7f190537899394b13f85c03ec731f6d9742e152be0ae52179ecf5a376",
+      "tenantModuleConfigurationCommand": "890506f95bcf0b8ba1715f7ace6e0b7890b3bf088344f76c719ceee2fb4c9cf6"
+    }
+  },
+  "dependencyDenial": {
+    "status": "not-applicable",
+    "reason": "The actual accounting catalogue has no required module dependencies. No synthetic dependency was added."
+  },
+  "sourcesAfter": {
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/error-handling/canonical.ts": "06ad2525f510527f64c30181e5920633c82980af823369cf6ca7e0825b86d883",
+    "lib/error-handling/categories.ts": "61d656a1ac4fd1c0d9df75c70f45aa9bddd8cc9d99dd675fa95f0f9a378fd64f",
+    "lib/error-handling/error-handler.ts": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+    "lib/error-handling/types.ts": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b",
+    "lib/logger.ts": "44c6cf1f75ccbc6d6fdebbc6f6f3ba731d90fe3076cc66cb8eee0f4ec85f9c57",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "prisma/schema.prisma": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+    "scripts/disposable-fixture-guard.js": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377",
+    "scripts/modern-modules-local-verification.js": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+    "scripts/prisma-local-fresh-bootstrap.js": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797",
+    "scripts/run-modern-modules-postgres-smoke.js": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+    "services/accounting/accounting-period-catalog.service.ts": "1e106ed0efb017b5d1e5a712e723ccf3fdf3ea2ade4c6344163247dce78c3217",
+    "services/accounting/accounting-settings.service.ts": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04",
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/accounting/close-assessment-order.service.ts": "2fbd7de7f959cce907d9538596f22ebf29ace4af4e24c90c695ccb00771abdb9",
+    "services/accounting/close-assurance-current-proof.ts": "6ab6451b47385269fcf468a4a8c25a5f807ee938501950319998a6d2fe609c8d",
+    "services/accounting/close-assurance-pack.service.ts": "7f8dc465c49cf2a9a6fda7bae7a40fce4146084a324b7547d8e7c8e951f4bdd5",
+    "services/accounting/close-assurance.schemas.ts": "b0f2f9dbf79eb361b98f0407aaa4877ac8a2d2bf673a803632af877581337d95",
+    "services/accounting/close-assurance.service.ts": "7e85e6465d76d2416a1a4a1f1fa2482e44a0428d74b08162f3050eb8e38f6f2d",
+    "services/accounting/close-evidence-acceptance-authority.service.ts": "9e886e71f668ce30553898d4784d230da445d74978a20d2bcb8369eb42db81d9",
+    "services/accounting/close-evidence-collection.ts": "116b28cc33d45d3faf2d36c8fd194b46293b231ab79d43d2ee3c024375b667b5",
+    "services/accounting/close-evidence-replacement.service.ts": "ae7498c25ce4b406404c53ef438023fb2084d461ebe9d014cf115795e367dbaa",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/data-trust.service.ts": "8a87425b1077b06a83340f124e7d4947bcb881ba7a53f0a0ff84fa8e3ce7a8fa",
+    "services/accounting/default-posting-rules.ts": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/journal-close-invalidation.service.ts": "9e7c53dc84dc7488b5e9059e9b6b8c00cadd8c4a8ccecdcbdc5e2706517201ff",
+    "services/accounting/journal-posting-order.service.ts": "f74cd6d9e9e62fa74ec8fec7c0dfc5fe4f69f17f3132eb576fd0384461f78ddc",
+    "services/accounting/journal-reversal-order.service.ts": "f6b6a6765094e726614c4b9c0be004c6265e50657ad3f319c0317e9ed4442e09",
+    "services/accounting/journals.service.ts": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+    "services/accounting/missing-close-evidence-request-queue-contracts.ts": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad",
+    "services/accounting/missing-close-evidence-response-acceptance-contracts.ts": "a6c752692dec778d9450ed44c63a5f7e859266581671dbc10e5e2263f6532d02",
+    "services/accounting/periods.service.ts": "6c8229096ad2fb9b4e86bc84a6fdd6800f226ae3456526a107d0ecd1925e2669",
+    "services/accounting/posting-rules.service.ts": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031",
+    "services/accounting/posting.service.ts": "18a014629124e58989e76dbf8c20b5a111058d97df466b0c86a4c8f1e95ce40e",
+    "services/accounting/reconciliations.service.ts": "47586a4957bd6850a2fae7a0b58c46996fc061b15f9af1fd5c4ad6a75d8f56de",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/events/business-event-anomaly.service.ts": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "services/evidence/evidence-blockers.service.ts": "ae863f51e227868ed77b89ef087767f111326617e765db463fab70bd1fb6c660",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "services/inventory/inventory-adjustment.service.ts": "010ad1be32fb8fb41c28946af033377aa65ad3b13d029235eaa7dc699eb0ffa7",
+    "services/inventory/inventory-close-invalidation.service.ts": "7c570820469718daf607d0213288f3b1bc37eecfec3dbd88c2fe188bf6b107bf",
+    "services/inventory/inventory-count.service.ts": "c717783bb32f5f85955321a400ed2a36573682fc27b97c14d5d936c37ad75579",
+    "services/inventory/inventory-errors.ts": "1c4c4ef868171381e04528b33fcccdff787c0bb5a15478f2ff1880ab3ffd3727",
+    "services/inventory/inventory-event.schemas.ts": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+    "services/inventory/inventory-projection-rebuild.service.ts": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+    "services/inventory/inventory-reconciliation.service.ts": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+    "services/inventory/inventory-transfer.service.ts": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+    "services/inventory/inventory-valuation.service.ts": "b8b1d781603f84e0c114d64b3b1657360928e118cd0dd353ccddc9f21244b9c2",
+    "services/inventory/receipt-cost-allocation.ts": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-inventory-continuation.service.ts": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820",
+    "services/modules/module-operational-dependencies.ts": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677",
+    "services/payroll/certified-input-proof.ts": "e9beb6d0ee28871c1f778041460c2d248dcc026a0ac7385f7605d0d9980c7afb",
+    "services/payroll/payment-settlement-balance.ts": "ae1aad708b54aae63e8f8f73960f995e5136c07d2395c12e72410932466411dc",
+    "services/payroll/payroll-finance-forecast.service.ts": "3098cd15af379dee9affb77c61dccc3b14e8322d63f605afc75345dac8df031d",
+    "services/payroll/payroll-transition-evidence.ts": "19066ecb84c4cb88e676edb0216715e3b5058b507da328ad512e44d87bb2b370",
+    "services/purchase-order/purchase-receipt-accounting-evidence.ts": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+    "services/purchase-order/receipt-recognition-source.ts": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+    "services/purchasing/invoice-receipt-recognition.ts": "41edad85c30e30f66f709d5bc94f7dcff49a20c6be03c79ce06ba600569f9986",
+    "services/purchasing/receipt-return-recognition.ts": "94ff4ec4c9ef7636aba3892b1879a514ca790a39dfbefd52c7421ce055238d2c",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "services/reconciliation/payment-reconciliation-manual-candidates.service.ts": "992b23f8fa26666fc95bf6b0246268a97ea06a9ca315236a342f2cf0583cdbe4",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "8b0531b55303406bf0ebc0709ae4c59b1ee58d928f17ee9b5fd447bcea812592",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "173ac9f35d074462f20d683ab05c9c1aaa49cb4556bb5e56b37b8401c4baa946",
+    "services/reconciliation/payment-reconciliation-summary.service.ts": "71377f47afda496cd4dd4c2c8da74f87e21ef4b091e29b748d3a349121de56eb",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "services/snapshots/close-readiness-snapshot.service.ts": "b92e909738a6f5a9a6d61b49e0ae8907619684ccc1a4afb22bc5bbef0fafb84e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/snapshot-contracts.ts": "900e52d664440a46988ed085019c0aadc1ea9af272213086a831d28b8f4036f6",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "5748cff1466d1336f250407e366453e1829b7c75eddfeb9dbb5ee0adf7e2c883",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-current-recovery-runtime.cjs": "7652c985f51fb304649d5cf41fb713b05551a963e1c6fef270bb417ab4fd9e1a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-denial-recovery-runtime.cjs": "9a0004e63ef61014bca46a379d1ea621e5735228f515cf76cb64d5d3cd76b425",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/close-pack-write-race-runtime.cjs": "2844c3dc99cb4f52b2aed3911dea496bf5ae13c610dbd6601dc4a2f858938b14",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-journal-posting-runtime.cjs": "91a7ddbfa4f0c7c0ce51835a661d410c39e190f0c591f6961346f7b2883b3556",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/manual-posting-module-runtime.cjs": "d7f83c09db6d53aee2fbd064cd9cffc46b4b37b329de441cbd827ed69ff8a496",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461",
+    "what-next/workflow-modernization/2026-09-05-run-01/evidence/close-denied-invalidation-before-a6929183-07e3-465c-80b1-a29cf89d7b72.json": "ecf08cabb37215d2eb01195b4304d9ea10e743f445c9ff3a4c17585aa4b89a43",
+    "i18n/routing.ts": "48782c1ec405c53623812c80a1d4a7301d869b3c07ea36625374d2c056757421",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "lib/security/credential-sign-in-outcome.ts": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/trusted-origins.ts": "750e110aa5dca30df102d0600981543cd33f89f0a669b17782737e411ea6d87b",
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "1dabc008e9d8fba0216c34a8c742b18f7a03bc70139c6c7d36fc3e3822d01122",
+    "services/cash-command/cash-command-navigation.ts": "064fd4870e984a6b4464cc6d3542c97b622a11e9183d5792c9ce6986656fa018",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "services/cash-command/cash-command-visibility.service.ts": "71a05059b5723d8649261ac838e41faa4c51b8a882133d9d6bf3f04b6392b741",
+    "services/cash-command/cash-command.service.ts": "58b57b6452e4cc0bc39b9770755b8c69237494c8eef015cc037e47faa07983d8",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/evidence/evidence-redaction.service.ts": "8bd2e220e283d1334c7d2b7f1e009f8ade69c06d6044c046ec5d6c2d839a6981",
+    "services/evidence/proof-trail.service.ts": "b7a0fa1237a43be76517232a01d0bcea0da034905b3c799f555db2cf3f39e161",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/pos/drawer-dashboard.schemas.ts": "2668e731481650e0b282a210a0353659419edcc952947cf5067903839d3be5d2",
+    "services/pos/drawer-dashboard.service.ts": "2b5fd44cc75d0c42376649520f6b281fa321442e4e73d63903511789d90d7132",
+    "services/pos/money.ts": "8869b6e1fe84e1e832cdcbb43656bbcf7ad79da80494592c051468d4601dffc1",
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "services/signals/action-queue.service.ts": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002",
+    "services/signals/business-signal-rules.service.ts": "a358bd7c796eabb69aba53687877d88434aa993f48c38bf6a8b1861ea78aa48d",
+    "services/signals/business-signal.service.ts": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "types/bilingual.ts": "31fa7407cd8826655c29800ea6b508752100fb250d987736f9eac35afbfdc3ed",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/cash-close-recovery-readonly-4e711acb-b190-418a-826a-f6e8400bf410.json": "9d7248b0be77489a849f4eb71a86711b319a55646f2bef42e219717a88661bd0"
+  },
+  "sourceStable": true,
+  "outsideAfter": {
+    "hash": "9f8674e37f5ba747c373b5677e733973284825a32daa7573f6c67072b23d30a0",
+    "base": {
+      "hash": "2483e81c6c285f832bc5981e441557c8a0f2d19c5e0578720765d58d5008e803",
+      "existing": {
+        "hash": "d45ecf57da100f0d4d5ad0bdfd8fdfe256c65f8a594353e10fddca24e91cab08",
+        "children": {
+          "hash": "df6efe29a4e7c5a177783839a80e8d1c8060d9d0b9998035d9d385efd636af56",
+          "models": {
+            "payment": {
+              "count": 142,
+              "hash": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9"
+            },
+            "journalEntry": {
+              "count": 1007,
+              "hash": "4dde09a6b81c2bdc028044c7d37b14fb67eee7acbf57bb9a87bbdab5a6d6ba15"
+            },
+            "journalEntryLine": {
+              "count": 2044,
+              "hash": "24ae067fba09459f4fa63b3e968e40f396070fb7179959452ec0df4c37c68212"
+            },
+            "ledgerPostingBatch": {
+              "count": 2285,
+              "hash": "3a4a030ffff78a92fabca69d737ae8643b37a979b2ebd7944d25ddae6347de69"
+            },
+            "accountingSourceLink": {
+              "count": 1003,
+              "hash": "d4d3ee3550f437fde7b080595d1fcdd305e39d0a48bb6d3b21c46c24e7864763"
+            },
+            "supplierInvoice": {
+              "count": 1586,
+              "hash": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f"
+            },
+            "supplierPayment": {
+              "count": 71,
+              "hash": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394"
+            },
+            "inventoryTransaction": {
+              "count": 1301,
+              "hash": "5db84272a93644e934dea946b287cf4225bfd5a420e93f20292ea9b6128e1e19"
+            },
+            "organizationAccountingSettings": {
+              "count": 191,
+              "hash": "d5323a48c085d526eddbff7cd411c5cf0876c0077917085b55be090ee7c31e41"
+            },
+            "chartOfAccount": {
+              "count": 4248,
+              "hash": "f8b58a6f92493389c672617a952904041e4dda5c025707d24a08dc5bf2fb17ca"
+            },
+            "journal": {
+              "count": 1904,
+              "hash": "98ec0fb15d42d88c914cb0bfa2e7039e468242ee18a9e1007418cc6414b9f21c"
+            },
+            "postingRule": {
+              "count": 2676,
+              "hash": "465a35ff5ed933eb3d15f32fe3523d09f686d72e0db3743e9eecb92a58d1b37f"
+            },
+            "postingRuleLine": {
+              "count": 10452,
+              "hash": "b6e8103c4c542606012dc7806ad34517a0cefb62356fc0f0c31ac94dbc0f6563"
+            },
+            "fiscalYear": {
+              "count": 1631,
+              "hash": "ffa9c15ab3cf49c924057c69c65b86b3c7e80accddbbba91d3caf7f342ee2c69"
+            },
+            "accountingPeriod": {
+              "count": 16646,
+              "hash": "8577d3ed43c6419f8413d7c62233dbc202a15faa6e598f01d8fa4b96c01ca94c"
+            },
+            "closeRun": {
+              "count": 433,
+              "hash": "3024f59858f53e764fd73ff859b59986672edab4b43d9b04a7dbec2e483b86ee"
+            },
+            "closeChecklistItem": {
+              "count": 2966,
+              "hash": "e1c8921124d7b083c62dda8726478a149ea4940d98358c74c99ee0c87f33d31d"
+            },
+            "closeAssuranceFinding": {
+              "count": 142,
+              "hash": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14"
+            },
+            "closeEvidenceItem": {
+              "count": 5396,
+              "hash": "94dd4bc7a79d733f64ff007c3032358795d06322c24f0ef1a8506d9687e46830"
+            },
+            "closePackExport": {
+              "count": 136,
+              "hash": "807a8c0abb51ed6694c04505c3c6f6c6bc741b8ce0ecc1363f76e7af88afd0dd"
+            },
+            "user": {
+              "count": 4737,
+              "hash": "6e138ab1354835d2f32934eee86020866906f321382fe73fc32bcc749423354f"
+            },
+            "role": {
+              "count": 3578,
+              "hash": "8b2117c58a2b3eb7f0e39560cd0c0e3a5888804a256d22f217794e4e8a6f00ce"
+            },
+            "tenantModuleConfiguration": {
+              "count": 393,
+              "hash": "e1cc7baf2bb22f39bf7ba12bdf5454e19ff103ac029d68a4ffb7134cfb35e7c8"
+            },
+            "tenantModuleGrant": {
+              "count": 2822,
+              "hash": "29d867015473a724a675922ee8c2b166d43f0c01c1a54641a997c4ffc7606978"
+            },
+            "ledgerAuditEvent": {
+              "count": 10580,
+              "hash": "0d836312a4b5d045f568e731015589c5bea241d6df5707296e2729e0512edb16"
+            },
+            "businessEvent": {
+              "count": 8183,
+              "hash": "8b132225e08e1659c66cd161a6a6382bbb7bdd98bc5a4c695a8c41c933e407d4"
+            },
+            "businessEventOutbox": {
+              "count": 5432,
+              "hash": "740f1d3bc36497593299aad042cc2ca4572ddcc46d452a5fd0e7f496963fa3d2"
+            },
+            "businessEventAudit": {
+              "count": 14282,
+              "hash": "952d6cdb29f56dbd6357a983d74582558ff3d5aa09a4b994f63fad27e595fa54"
+            }
+          }
+        },
+        "organizationCount": 2782
+      },
+      "extra": {
+        "item": "c4f328569cae18b0914ced16230f039d6ff1421bad901aa8e710d25d1089bc33",
+        "location": "40e0641e051335b21f1f8570d345502c4dffce567e13a5216aaf89cf7a3f0e38",
+        "stockCountSession": "0552f8354f87bf0f3d4809c5aaa36f5b2442b3211dde1c81ba385115b18acff9",
+        "auditLog": "f149d1b7f190537899394b13f85c03ec731f6d9742e152be0ae52179ecf5a376",
+        "stockCountLine": "41fa1bee38b7059f5b4c74d7a521cb8dd277b6c034debe0903b5d1cf9207e373",
+        "inventoryLevel": "e30fc2cc96be7b4f2534608185ddd14ae4bb0bd5a9a52b8eedb1e1cdc1547944"
+      }
+    },
+    "extra": {
+      "journalEntry": "4dde09a6b81c2bdc028044c7d37b14fb67eee7acbf57bb9a87bbdab5a6d6ba15",
+      "journalEntryLine": "24ae067fba09459f4fa63b3e968e40f396070fb7179959452ec0df4c37c68212",
+      "ledgerPostingBatch": "3a4a030ffff78a92fabca69d737ae8643b37a979b2ebd7944d25ddae6347de69",
+      "accountingSourceLink": "d4d3ee3550f437fde7b080595d1fcdd305e39d0a48bb6d3b21c46c24e7864763",
+      "inventoryTransaction": "5db84272a93644e934dea946b287cf4225bfd5a420e93f20292ea9b6128e1e19",
+      "payment": "c5b687c1cec284d2b30b3f640d7b87519667a8b86267d160bae89b56ea4f61b9",
+      "supplierInvoice": "33dbe23cc3034eda25e0e3be7817c93a6471a20f492c4cf2b0432ebf2a1c8e0f",
+      "supplierPayment": "bd6290a57dc406f85167683bdd855b5b2703450869f635e9375daa8eeece0394",
+      "customerLedgerEntry": "c3a965575075c5f813f402436b1fd169730c9e6ab76c99e380365c0e54dd1d79",
+      "customerSettlement": "d620e6d8286147d73c4778d68521efe68a858deb089cf86a724bfedef0cb9ad3",
+      "ledgerAuditEvent": "0d836312a4b5d045f568e731015589c5bea241d6df5707296e2729e0512edb16",
+      "businessEvent": "8b132225e08e1659c66cd161a6a6382bbb7bdd98bc5a4c695a8c41c933e407d4",
+      "businessEventAudit": "952d6cdb29f56dbd6357a983d74582558ff3d5aa09a4b994f63fad27e595fa54",
+      "businessEventOutbox": "740f1d3bc36497593299aad042cc2ca4572ddcc46d452a5fd0e7f496963fa3d2",
+      "closeRun": "3024f59858f53e764fd73ff859b59986672edab4b43d9b04a7dbec2e483b86ee",
+      "closeChecklistItem": "e1c8921124d7b083c62dda8726478a149ea4940d98358c74c99ee0c87f33d31d",
+      "closeEvidenceItem": "94dd4bc7a79d733f64ff007c3032358795d06322c24f0ef1a8506d9687e46830",
+      "closeAssuranceFinding": "3f75ecd772c702aca2432c6d9d54d3fc11014f200b93b34659be9ebd5893fb14",
+      "closePackExport": "807a8c0abb51ed6694c04505c3c6f6c6bc741b8ce0ecc1363f76e7af88afd0dd",
+      "auditLog": "f149d1b7f190537899394b13f85c03ec731f6d9742e152be0ae52179ecf5a376",
+      "tenantModuleConfigurationCommand": "890506f95bcf0b8ba1715f7ace6e0b7890b3bf088344f76c719ceee2fb4c9cf6"
+    }
+  },
+  "outsideUnchanged": true,
+  "fixtureOrganizations": [
+    "workflow_close_write_manual-post-module-allow_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-denials_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-read-failure_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-writer-first_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-posting-first_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-expiry-wait_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-expiry-callback_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-legacy-transition_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-tenant-a_d57253c2-40fe-4057-9595-6050d3be2685",
+    "workflow_close_write_manual-post-module-tenant-b_d57253c2-40fe-4057-9595-6050d3be2685"
+  ],
+  "passed": true
+}

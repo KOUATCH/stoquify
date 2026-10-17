@@ -1,0 +1,33 @@
+{
+  "receipts": [
+    "evidence/count-publication-jest-94336885-a287-4026-aee8-b182106018de.json",
+    "evidence/count-publication-typecheck-589c4b48-4c08-4123-8b5a-d6f0d67460b7.json",
+    "evidence/count-publication-lint-f785fb87-0141-4956-abc5-739f5e07e2e1.json",
+    "lanes/environment/count-publication-runtime-53fe88b5-682a-45ad-a581-abebcc254eb7.json"
+  ],
+  "artifacts": [
+    "COUNT_PUBLICATION_ORDER_2026-10-01.md",
+    "evidence/count-publication-before-95fa0a2e-ff74-4daa-9aa0-c36306088bdf.json",
+    "evidence/capture-count-publication-before.cjs",
+    "lanes/environment/verify-count-publication.cjs",
+    "lanes/environment/count-publication-runtime.cjs",
+    "lanes/environment/count-publication-53fe88b5-682a-45ad-a581-abebcc254eb7-rollback-current-certified.json",
+    "lanes/environment/count-publication-53fe88b5-682a-45ad-a581-abebcc254eb7-rollback-current-draft.json"
+  ],
+  "verificationSummary": "298 focused tests across eight suites, full existing no-emit TypeScript and six-file lint passed. Five actual PostgreSQL scenarios passed: saved predecessor reproduction, both publication orders, inherited-isolation refusal, and post-write rollback with independent-connection retry. Source, retained export contents, outside-fixture records and operation financial fingerprints were verified; exact replay added no effects.",
+  "verifiedCriteria": [
+    "Zero-variance physical counts acquire deduplicated sorted assessment locks for every resolved existing affected tenant period, including later periods with no run, before source mutation or run discovery.",
+    "Owned count transactions explicitly use Read Committed; incompatible inherited isolation refuses before source mutation.",
+    "The exact captured predecessor reproduces stale READY inventory evidence; current producer-first and creator-first database races show actual backend blocking and correct committed-source visibility or invalidation.",
+    "Delayed assessment collectors cannot restore a count-invalidated RUNNING assessment to READY; a fresh real assessment recovers current evidence.",
+    "Injected discovery failure after actual POSTED/APPLIED writes rolls back all observed effects; independent-connection retry and exact replay preserve single effects and retained export contents.",
+    "Focused inventory, Close and readiness regressions, existing typecheck and changed-file lint pass against recorded current source. No operation financial or outside-fixture fingerprint changed."
+  ],
+  "limitations": [
+    "Only the resolved existing accounting-period set and participating zero-variance count producer are coordinated. Concurrent new-period creation remains the next engineering boundary.",
+    "Other source producers, nonzero financial variance, global multi-period and journal reversal ordering, interrupted processing and outbox delivery remain open.",
+    "No changed UI, fresh browser screenshot, production latency proof, full accessibility validation or separate finalizer-versus-invalidator row-lock rerun is claimed.",
+    "Full-register discovery/source reconciliation, genuine country/payroll evidence and the complete Cash/Close lifecycle remain incomplete; both workflows stay In progress.",
+    "No migration, seed, production deployment, live activation, real payment, external message or X1 clearance was performed."
+  ]
+}

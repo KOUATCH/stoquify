@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-04",
+  "scope": "Item overview with scoped pagination; search aligned to approved existing record-read permissions; read-only alert processing diagnostics",
+  "tests": {
+    "itemOverview": { "suites": 3, "passed": 21, "report": "item-overview-jest.json" },
+    "searchAndRouteCatalog": { "suites": 4, "passed": 17, "report": "search-jest.json" },
+    "alertProcessingAndWorkbench": { "suites": 3, "passed": 48, "report": "alert-processing-jest.json" },
+    "totalPassed": 86
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false",
+    "session": 17473,
+    "exitCode": 0,
+    "diagnostics": []
+  },
+  "scopedEslintExitCode": 0,
+  "trackedDiffWhitespaceExitCode": 0,
+  "browserEvidence": "browser-verification.json",
+  "roadmapComplete": false,
+  "deployed": false
+}

@@ -27,7 +27,7 @@ it("uses actual item and POS entry permissions and preserves French destination 
   expect(report.searchParams.get("reportFrom")).toBe(result.periodStart)
   expect(report.searchParams.get("reportTo")).toBe(result.periodEnd)
   expect(report.searchParams.get("locationId")).toBe("loc")
-  expect(resolveBusinessPulseLinks(data(), ["inventory.read"]).cards[3].actionLink?.disabled).toBe(false)
+  expect(resolveBusinessPulseLinks(data(), ["inventory.read"]).cards[3].actionLink?.disabled).toBe(true)
   const permitted = resolveBusinessPulseLinks(data(), ["inventory.items.read", "OPERATE_POS"])
   expect(permitted.cards[2].actionLink?.disabled).toBe(false)
   expect(permitted.cards[3].actionLink).toMatchObject({ disabled: false, href: "/en/dashboard/inventory/items" })

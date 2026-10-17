@@ -1,0 +1,71 @@
+{
+  "at": "2026-09-27T19:16:55.601Z",
+  "sourceBefore": {
+    "services/cash-command/cash-command.service.ts": "6d90a5c1612e8c8409cb0523da1e68e8076f7fbb97d5e21e83126fe0209d6cc0",
+    "services/cash-command/cash-command-contracts.ts": "3453faee9881c81d332adbd8d908053db5987ceef0c06b1b0171c67e29817c96",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "df903b1c97103dadeb3b7f38cef5cdd19da54e8ec90e5277b95b2bab30159d03",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "f18d0df383a6c8a4265b811d4c963436ddf90fb7cacbcd7e4f4101069162f5ef",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "steps": [
+    {
+      "name": "jest",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/cash-command/__tests__/cash-command.service.test.ts",
+        "actions/evidence/__tests__/proof-trail.actions.test.ts",
+        "components/cash-command/__tests__/CashCommandDashboard.test.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "\nTest Suites: 4 passed, 4 total\nTests:       27 passed, 27 total\nSnapshots:   0 total\nTime:        14.664 s\nRan all test suites within paths \"services/cash-command/__tests__/cash-command.service.test.ts\", \"actions/evidence/__tests__/proof-trail.actions.test.ts\", \"components/cash-command/__tests__/CashCommandDashboard.test.tsx\", \"app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx\".\n"
+    },
+    {
+      "name": "lint",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "services/cash-command/__tests__/cash-command.service.test.ts"
+      ],
+      "status": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "status": 2,
+      "error": null,
+      "stdout": "services/accounting/accountant-work-desk.service.ts(4,35): error TS2307: Cannot find module '@/lib/security/permission-aliases' or its corresponding type declarations.\r\nservices/accounting/accountant-work-desk.service.ts(71,32): error TS2322: Type '\"CERTIFIER\"' is not assignable to type 'AccountantAccessRole'.\r\nservices/accounting/accountant-work-desk.service.ts(102,27): error TS2551: Property 'organization' does not exist on type '{ id: string; organizationId: string; status: AccountantAccessStatus; createdAt: Date; updatedAt: Date; role: AccountantAccessRole; ... 13 more ...; metadata: JsonValue; }'. Did you mean 'organizationId'?\r\n",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/cash-command/cash-command.service.ts": "6d90a5c1612e8c8409cb0523da1e68e8076f7fbb97d5e21e83126fe0209d6cc0",
+    "services/cash-command/cash-command-contracts.ts": "3453faee9881c81d332adbd8d908053db5987ceef0c06b1b0171c67e29817c96",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "df903b1c97103dadeb3b7f38cef5cdd19da54e8ec90e5277b95b2bab30159d03",
+    "actions/evidence/__tests__/proof-trail.actions.test.ts": "b6132ec144db982f0f7a096cf73fa942ab3a2383bfef3eab96aef4ea3a5746a6",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "f18d0df383a6c8a4265b811d4c963436ddf90fb7cacbcd7e4f4101069162f5ef",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "62a130fcc71e5e105e9ebc531e4e2b68a2f4a819f07f18ee90adca5ea3e692d7",
+    "services/evidence/evidence-contracts.ts": "19fb3a974e6530132aa576a5d7a8d01c3d66c5aa370675360008ab6560d35a37",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+  },
+  "sourceStable": true,
+  "passed": false
+}

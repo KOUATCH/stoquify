@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: complete synthetic package passes structure without executing throwing entry modules
+ok 1 - complete synthetic package passes structure without executing throwing entry modules
+  ---
+  duration_ms: 398.9189
+  type: 'test'
+  ...
+# Subtest: missing copied server blocks
+ok 2 - missing copied server blocks
+  ---
+  duration_ms: 302.5455
+  type: 'test'
+  ...
+# Subtest: different generated server blocks
+ok 3 - different generated server blocks
+  ---
+  duration_ms: 312.8289
+  type: 'test'
+  ...
+# Subtest: copied configuration mismatch blocks
+ok 4 - copied configuration mismatch blocks
+  ---
+  duration_ms: 210.8707
+  type: 'test'
+  ...
+# Subtest: unsafe config dist cannot escape candidate
+ok 5 - unsafe config dist cannot escape candidate
+  ---
+  duration_ms: 169.8381
+  type: 'test'
+  ...
+# Subtest: copied build id mismatch blocks
+ok 6 - copied build id mismatch blocks
+  ---
+  duration_ms: 229.7676
+  type: 'test'
+  ...
+# Subtest: required-files traversal fails closed
+ok 7 - required-files traversal fails closed
+  ---
+  duration_ms: 223.5449
+  type: 'test'
+  ...
+# Subtest: changed and extra static assets block exact inventory match
+ok 8 - changed and extra static assets block exact inventory match
+  ---
+  duration_ms: 341.2843
+  type: 'test'
+  ...
+# Subtest: missing public asset blocks
+ok 9 - missing public asset blocks
+  ---
+  duration_ms: 242.9263
+  type: 'test'
+  ...
+# Subtest: required normal-server trace dependency missing from copied package blocks
+ok 10 - required normal-server trace dependency missing from copied package blocks
+  ---
+  duration_ms: 264.5331
+  type: 'test'
+  ...
+# Subtest: unique unconsumed minimal-server dependency is not required in normal standalone output
+ok 11 - unique unconsumed minimal-server dependency is not required in normal standalone output
+  ---
+  duration_ms: 267.5954
+  type: 'test'
+  ...
+# Subtest: dependency shared by minimal and normal-server traces remains required
+ok 12 - dependency shared by minimal and normal-server traces remains required
+  ---
+  duration_ms: 265.2639
+  type: 'test'
+  ...
+# Subtest: trace traversal beyond candidate blocks before reading external input
+ok 13 - trace traversal beyond candidate blocks before reading external input
+  ---
+  duration_ms: 244.9645
+  type: 'test'
+  ...
+# Subtest: missing required module cannot use ancestor dependencies
+ok 14 - missing required module cannot use ancestor dependencies
+  ---
+  duration_ms: 249.2699
+  type: 'test'
+  ...
+# Subtest: unresolved required dependency fails even when package metadata exists
+ok 15 - unresolved required dependency fails even when package metadata exists
+  ---
+  duration_ms: 282.2859
+  type: 'test'
+  ...
+# Subtest: unreviewed Next version cannot reuse the reviewed trace policy
+ok 16 - unreviewed Next version cannot reuse the reviewed trace policy
+  ---
+  duration_ms: 271.405
+  type: 'test'
+  ...
+# Subtest: unavailable optional module is recorded separately
+ok 17 - unavailable optional module is recorded separately
+  ---
+  duration_ms: 268.5809
+  type: 'test'
+  ...
+# Subtest: optional dependency resolving to an ancestor still fails containment
+ok 18 - optional dependency resolving to an ancestor still fails containment
+  ---
+  duration_ms: 210.0855
+  type: 'test'
+  ...
+# Subtest: environment files are rejected without reading or retaining content
+ok 19 - environment files are rejected without reading or retaining content
+  ---
+  duration_ms: 77.5865
+  type: 'test'
+  ...
+# Subtest: environment aliases and private-directory case variants are rejected before read
+ok 20 - environment aliases and private-directory case variants are rejected before read
+  ---
+  duration_ms: 440.6437
+  type: 'test'
+  ...
+# Subtest: candidate trace alias cannot read a physically sensitive directory
+ok 21 - candidate trace alias cannot read a physically sensitive directory
+  ---
+  duration_ms: 297.0975
+  type: 'test'
+  ...
+# Subtest: escaping directory junction/symlink blocks before contents are traversed
+ok 22 - escaping directory junction/symlink blocks before contents are traversed
+  ---
+  duration_ms: 91.4984
+  type: 'test'
+  ...
+# Subtest: contained directory junction/symlink preserves structural acceptance
+ok 23 - contained directory junction/symlink preserves structural acceptance
+  ---
+  duration_ms: 295.8855
+  type: 'test'
+  ...
+# Subtest: cyclic directory junction/symlink terminates with failure
+ok 24 - cyclic directory junction/symlink terminates with failure
+  ---
+  duration_ms: 86.3435
+  type: 'test'
+  ...
+# Subtest: dangling directory junction/symlink blocks
+ok 25 - dangling directory junction/symlink blocks
+  ---
+  duration_ms: 146.0325
+  type: 'test'
+  ...
+# Subtest: candidate configuration changed after comparison invalidates pass
+ok 26 - candidate configuration changed after comparison invalidates pass
+  ---
+  duration_ms: 289.6265
+  type: 'test'
+  ...
+# Subtest: candidate public asset changed after comparison invalidates pass
+ok 27 - candidate public asset changed after comparison invalidates pass
+  ---
+  duration_ms: 241.8736
+  type: 'test'
+  ...
+# Subtest: new candidate NFT trace appearing during comparison invalidates pass
+ok 28 - new candidate NFT trace appearing during comparison invalidates pass
+  ---
+  duration_ms: 259.28
+  type: 'test'
+  ...
+# Subtest: CLI writes owned receipt and exits nonzero for missing input
+ok 29 - CLI writes owned receipt and exits nonzero for missing input
+  ---
+  duration_ms: 274.5363
+  type: 'test'
+  ...
+# Subtest: CLI structural success exits zero but explicitly keeps runtime pending
+ok 30 - CLI structural success exits zero but explicitly keeps runtime pending
+  ---
+  duration_ms: 466.8213
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8131.0203

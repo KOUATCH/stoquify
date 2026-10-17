@@ -66,6 +66,51 @@ it("preserves an unrelated database failure as a failure", async () => {
   await expect(getPOSSaleCommitStatus(input)).rejects.toBe(unavailable)
 })
 
+it.each([
+  ["tenant", { organizationId: "org-2" }],
+  ["cashier", { userId: "cashier-2" }],
+  ["location", { locationId: "loc-2" }],
+  ["terminal", { terminalId: "till-2" }],
+  ["session", { sessionId: "shift-2" }],
+  ["sale", { salesOrderId: "sale-2" }],
+  ["commit identity", { clientCommitId: "other-attempt" }],
+])("P05 does not disclose another %s's recorded outcome", async (_label, change) => {
+  const stored = record()
+  const tx = {
+    pOSCommitResult: { findFirst: jest.fn(async ({ where }) =>
+      Object.entries(where).every(([key, value]) => stored[key as keyof typeof stored] === value) ? stored : null,
+    ) },
+    salesOrder: { findFirst: jest.fn().mockResolvedValue(null) },
+  }
+  ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))
+  const attempted = { ...input, ...change }
+  await expect(getPOSSaleCommitStatus(attempted)).resolves.toEqual({ kind: "NOT_FOUND" })
+  expect(tx.pOSCommitResult.findFirst).toHaveBeenCalledWith({ where: {
+    organizationId: attempted.organizationId, actorId: attempted.userId,
+    locationId: attempted.locationId, terminalId: attempted.terminalId, sessionId: attempted.sessionId,
+    salesOrderId: attempted.salesOrderId, clientCommitId: attempted.clientCommitId,
+  } })
+})
+
+it("P05 recovers original identity and amount after response loss without rewriting current sale state", async () => {
+  const stored = record()
+  const tx = {
+    pOSCommitResult: { findFirst: jest.fn().mockResolvedValue(stored) },
+    salesOrder: { findFirst: jest.fn().mockResolvedValue({ status: "CANCELLED", paymentStatus: "CANCELLED" }) },
+  }
+  ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))
+  await expect(getPOSSaleCommitStatus(input)).resolves.toMatchObject({
+    kind: "RECORDED", clientCommitId: input.clientCommitId, saleId: input.salesOrderId,
+    orderNumber: "POS-1", total: 100, originalStatus: "COMPLETED", currentStatus: "CANCELLED",
+  })
+  // This transaction double has only reads; accidental completion/posting cannot succeed.
+  expect(tx.salesOrder.findFirst).toHaveBeenCalledWith({
+    where: { id: input.salesOrderId, organizationId: input.organizationId, createdById: input.userId,
+      locationId: input.locationId, terminalId: input.terminalId, sessionId: input.sessionId },
+    select: { status: true, paymentStatus: true },
+  })
+})
+
 it("requires explicit current review for an unrecorded legacy request without changing it", async () => {
   const tx = { pOSCommitResult: { findFirst: jest.fn().mockResolvedValue(null) }, salesOrder: { findFirst: jest.fn().mockResolvedValue({ id: input.salesOrderId, lines: [], session: { status: "ACTIVE", endTime: null } }) } }
   ;(db.$transaction as jest.Mock).mockImplementation(async callback => callback(tx))

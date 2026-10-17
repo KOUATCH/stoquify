@@ -1,0 +1,104 @@
+{
+  "recordedAt": "2026-09-30T23:14:15.040Z",
+  "scope": "Prepared source and catalog only; no database applied or connected",
+  "baseline": {
+    "path": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-zero-credit-migration-before-2026-10-01.json",
+    "sha256": "a4fcfed7f1dab8d3eec8cb8da550c3f9aa22aec1f7a3112ff1b8b978bdf2adf2"
+  },
+  "migration": {
+    "name": "20260930231500_supplier_credit_zero_value_evidence",
+    "timestamp": "20260930231500",
+    "path": "prisma/migrations/20260930231500_supplier_credit_zero_value_evidence/migration.sql",
+    "byteLength": 727,
+    "rawSha256": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+    "canonicalLfSha256": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+    "canonicalCrlfSha256": "763df63b620bb117e10b08063266176f435f7dcdf6aa2918d7051d3a3fcd8beb"
+  },
+  "manifest": {
+    "file": "prisma/migration-catalog-manifest.json",
+    "before": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc",
+    "after": "29726bdbe8b9d2c908e6a395c0b0300e23d4e84db030712498787ed308fe5cf5",
+    "previousEntriesPreserved": 89
+  },
+  "changes": [
+    {
+      "table": "supplier_credit_notes",
+      "constraint": "supplier_credit_nonnegative_amounts",
+      "before": "total > 0",
+      "after": "total >= 0",
+      "preserved": "subtotal >= 0 AND taxAmount >= 0 AND subtotal + taxAmount = total"
+    },
+    {
+      "table": "supplier_credit_note_lines",
+      "constraint": "supplier_credit_line_nonnegative_amounts",
+      "before": "lineTotal > 0",
+      "after": "lineTotal >= 0",
+      "preserved": "unitCost >= 0 AND taxRate >= 0 AND taxAmount >= 0; separate quantity > 0 check unchanged"
+    }
+  ],
+  "unchanged": [
+    "All prior migration SQL bytes",
+    "All 89 previous manifest entries",
+    "Migration exceptions and approval registry",
+    "Source and reversal validation triggers",
+    "Append-only UPDATE/DELETE triggers",
+    "Foreign keys, source uniqueness and tenant references",
+    "Prisma schema"
+  ],
+  "staticRiskScan": {
+    "migrationNames": [
+      "20260930231500_supplier_credit_zero_value_evidence"
+    ],
+    "findings": [],
+    "limitation": "The repository scanner has no DROP CONSTRAINT risk category; exact CHECK deltas were manually compared above. This is not deployment authorization."
+  },
+  "catalogValidation": {
+    "generatedAt": "2026-09-30T23:14:15.039Z",
+    "status": "ready",
+    "hashContract": {
+      "version": "stoquify-migration-sql-sha256-v1",
+      "approvalIdentity": "canonicalLfSha256",
+      "transportIdentity": "rawSha256",
+      "encoding": "UTF-8",
+      "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
+    },
+    "migrationCount": 90,
+    "manifestPresent": true,
+    "manifestSha256": "8fc9bea5ac994c75f4bf726d61ac3bf43277acced77d0b10f8777400c8e52edc",
+    "catalogSha256": "d01d59bf5807c8b4e6c5c3d937dc4d3e1eb582def80fc0ce1b37f87d2cb6d0c0",
+    "unmanifested": [],
+    "missingFromCatalog": [],
+    "changed": [],
+    "duplicateTimestamps": [
+      {
+        "timestamp": "20260818120000",
+        "migrations": [
+          "20260818120000_governed_delivery_order_to_cash",
+          "20260818120000_pos_electronic_tender_authority"
+        ],
+        "grandfathered": true,
+        "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+      }
+    ],
+    "errors": [],
+    "secretValuePrinted": false
+  },
+  "runtime": {
+    "databaseApplied": false,
+    "databaseTestsRun": false,
+    "lockTimeout": "5s",
+    "transaction": "BEGIN/COMMIT; both CHECK replacements succeed or neither does"
+  },
+  "rollback": {
+    "policy": "Prefer reviewed fix-forward. Keep the additive relaxation during application rollback if legitimate zero-value evidence exists. Never remove or modify retained records to make rollback pass.",
+    "prerequisite": "In a controlled window, begin a transaction and take ACCESS EXCLUSIVE locks on supplier_credit_notes then supplier_credit_note_lines. Abort if EXISTS(total = 0) OR EXISTS(lineTotal = 0). Keep locks through any reviewed future tightening migration so concurrent zero inserts cannot invalidate the check.",
+    "allowedOnlyWhen": "Both zero-row checks are false; review exact > 0 constraint SQL as a NEW migration. Preserve every other clause and all migration history. Any lock timeout or constraint failure rolls back."
+  },
+  "isolatedApplyControls": [
+    "Use the existing owned verification runtime and its exact host/database/organization guard before any DDL; do not use a live customer target or ordinary application build.",
+    "Read _prisma_migrations and pg_constraint. Verify predecessor checks and all exact pending migration hashes; if unrelated pending migrations exist, stop and review the pending set rather than letting migrate deploy apply them incidentally.",
+    "An isolated restored/scratch database is the only proposed rehearsal target. Parent/operator must explicitly authorize its mutation. Use the repository controlled migration process; do not edit history, use resolve to pretend SQL ran, reset, or seed.",
+    "After apply, record successful migration/checksum history and pg_get_constraintdef for both amount checks and the unchanged positive-quantity check. Verify source/append-only triggers remain.",
+    "Run source-owned fractional return and reversal fixtures including valid zero credits, negative amount and nonpositive quantity rejection, exact aggregate equality, replay, stock projection and class-3 tie-out. No general deployment or accounting certification follows from local results."
+  ]
+}

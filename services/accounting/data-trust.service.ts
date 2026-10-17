@@ -15,15 +15,22 @@ import {
   ProviderAccountStatus,
   ReconciliationRunStatus,
   StatementFileStatus,
-  SupplierInvoiceStatus,
   SupplierPaymentStatus,
 } from "@prisma/client";
 import { createHash, randomUUID } from "node:crypto";
 
 import { db } from "@/prisma/db";
+import { readBankBalanceClose } from "@/services/reconciliation/bank-balance-close.service";
+import { readBalanceSheetClose } from "./balance-sheet-close.service";
+import { readClosePayableBalances, closePayableReasonLabel, type ClosePayableBalances } from "./close-payable-balances.service";
+import { readAccountCloseCoverage } from "@/services/reconciliation/account-close-coverage.service";
+import { createCloseControlScope, closeEconomicDates, closeRecordedDates, type CloseControlScope } from "./close-control-scope";
+import { closePayrollRunWhere, closeDeclarationWhere } from "./close-data-trust-scope";
+import { closeStatementFileWhere, closeStatementLineWhere, closeRunWhere, closeExceptionWhere } from "@/services/reconciliation/payment-close-scope";
 import { recordBusinessEventInTx } from "@/services/events/business-event.service";
 import { summarizePayrollTransitionEvidence } from "@/services/payroll/payroll-transition-evidence";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
+import { readSupplierPaymentReconciliationProofsInTx, type SupplierPaymentReconciliationProof } from "@/services/purchasing/payment-reconciliation-proof-summary";
 import {
   assertSensitiveActionAllowed,
   evaluateAndAuditSensitiveAction,
@@ -60,6 +67,7 @@ export type AccountantFinancialFigure =
     };
 
 export type DataTrustBlocker = {
+  scope?: "PERIOD" | "ORGANIZATION" | "PERIOD_AND_UNASSIGNED";
   id: string;
   severity: BlockerSeverity;
   gate: string;
@@ -69,6 +77,11 @@ export type DataTrustBlocker = {
 };
 
 export type AccountantPortalData = {
+  balanceSheetReconciliation?: Awaited<ReturnType<typeof readBalanceSheetClose>>;
+  bankBalanceReconciliation?: Awaited<ReturnType<typeof readBankBalanceClose>>;
+  payableBalances?: ClosePayableBalances;
+  accountReconciliationCoverage?: Awaited<ReturnType<typeof readAccountCloseCoverage>>;
+  supplierPaymentReconciliationProofs?: SupplierPaymentReconciliationProof[];
   source: {
     mode: "LEDGER_BACKED_DATA_TRUST";
     asOf: string;
@@ -76,6 +89,7 @@ export type AccountantPortalData = {
     trustLevel: TrustLevel;
     certificationStatus: TrustVerdict;
     scopeHash: string;
+    closeScope?: CloseControlScope;
     sourceTables: string[];
   };
   scope: {
@@ -196,9 +210,17 @@ const DATA_TRUST_SOURCE_TABLES = [
   "statement_files",
   "statement_lines",
   "reconciliation_runs",
+  "reconciliation_no_activity_evidence",
+  "bank_balance_evidence",
+  "balance_sheet_evidence",
+  "close_source_changes",
   "payment_exceptions",
   "payment_transactions",
   "supplier_invoices",
+  "supplier_ledger_entries",
+  "supplier_invoice_match_exceptions",
+  "supplier_payment_allocations",
+  "supplier_credit_notes",
   "supplier_payments",
   "payroll_runs",
   "payroll_run_transitions",
@@ -244,9 +266,9 @@ function money(value: Prisma.Decimal.Value | null | undefined) {
   return decimal(value).toDecimalPlaces(2).toFixed(2);
 }
 
-function normalizedScope(input: GetAccountantPortalDataInput, now: Date) {
-  const startDate = parseOptionalDate(input.startDate);
-  const endDate = parseOptionalDate(input.endDate);
+function normalizedScope(input: GetAccountantPortalDataInput, now: Date, closeScope?: CloseControlScope) {
+  const startDate = parseOptionalDate(closeScope?.startDate ?? input.startDate);
+  const endDate = parseOptionalDate(closeScope?.endDate ?? input.endDate);
 
   return {
     organizationId: input.organizationId,
@@ -255,6 +277,7 @@ function normalizedScope(input: GetAccountantPortalDataInput, now: Date) {
     endDate,
     limit: Math.min(Math.max(input.limit ?? 12, 1), 50),
     asOf: now.toISOString(),
+    closeScope,
   };
 }
 
@@ -270,6 +293,9 @@ function entryDateFilter(scope: ReturnType<typeof normalizedScope>) {
 }
 
 function createdAtFilter(scope: ReturnType<typeof normalizedScope>) {
+  // Record arrival is independent of the economic period. Model-specific filters
+  // below provide economic membership; unassigned controls are explicitly global.
+  if (scope.closeScope) return { createdAt: closeRecordedDates(scope.closeScope) };
   if (!scope.startDate && !scope.endDate) return {};
 
   return {
@@ -286,6 +312,7 @@ function journalEntryScope(scope: ReturnType<typeof normalizedScope>) {
     status: { in: [JournalEntryStatus.POSTED, JournalEntryStatus.REVERSED] },
     ...(scope.periodId ? { periodId: scope.periodId } : {}),
     ...entryDateFilter(scope),
+    ...(scope.closeScope ? { createdAt: closeRecordedDates(scope.closeScope), postedAt: closeRecordedDates(scope.closeScope) } : {}),
   } satisfies Prisma.JournalEntryWhereInput;
 }
 
@@ -301,10 +328,12 @@ function businessEventScope(scope: ReturnType<typeof normalizedScope>) {
   return {
     organizationId: scope.organizationId,
     ...createdAtFilter(scope),
+    ...(scope.closeScope ? { occurredAt: closeEconomicDates(scope.closeScope), recordedAt: closeRecordedDates(scope.closeScope) } : {}),
   } satisfies Prisma.BusinessEventWhereInput;
 }
 
 function statementFileScope(scope: ReturnType<typeof normalizedScope>) {
+  if (scope.closeScope) return closeStatementFileWhere(scope.closeScope);
   const periodOverlap: Prisma.StatementFileWhereInput = {};
   if (scope.startDate) periodOverlap.periodEnd = { gte: scope.startDate };
   if (scope.endDate) periodOverlap.periodStart = { lte: scope.endDate };
@@ -320,6 +349,7 @@ function statementFileScope(scope: ReturnType<typeof normalizedScope>) {
 }
 
 function statementLineScope(scope: ReturnType<typeof normalizedScope>) {
+  if (scope.closeScope) return closeStatementLineWhere(scope.closeScope);
   const occurredAt: Prisma.StatementLineWhereInput = {};
   if (scope.startDate || scope.endDate) {
     occurredAt.occurredAt = {
@@ -338,6 +368,7 @@ function statementLineScope(scope: ReturnType<typeof normalizedScope>) {
 function signedReconciliationRunScope(
   scope: ReturnType<typeof normalizedScope>,
 ) {
+  if (scope.closeScope) return { ...closeRunWhere(scope.closeScope), businessDate: closeEconomicDates(scope.closeScope), status: ReconciliationRunStatus.SIGNED, signedAt: closeRecordedDates(scope.closeScope) } satisfies Prisma.ReconciliationRunWhereInput;
   const businessDate: Prisma.ReconciliationRunWhereInput = {};
   if (scope.startDate || scope.endDate) {
     businessDate.businessDate = {
@@ -683,14 +714,23 @@ export async function getAccountantPortalData(
   client: DbClient = db,
   now = new Date(),
 ): Promise<AccountantPortalData> {
-  const scope = normalizedScope(input, now);
+  const initialScope = normalizedScope(input, now);
+  const resolvedPeriod = await resolveScopePeriod(client, initialScope, now);
+  if (input.periodId && !resolvedPeriod) throw new BusinessRuleError("Accounting period not found for this organization.");
+  const closeScope = input.periodId && resolvedPeriod
+    ? createCloseControlScope(input.organizationId, resolvedPeriod, now, input) : undefined;
+  const scope = normalizedScope(closeScope ? { ...input, startDate: closeScope.startDate, endDate: closeScope.endDate } : input, now, closeScope);
+  const supplierPaymentReconciliationProofs = await readSupplierPaymentReconciliationProofsInTx(client, scope.organizationId, closeScope);
+  const accountCoverage = closeScope ? await readAccountCloseCoverage(client, closeScope) : null;
+  const bankBalanceReconciliation = closeScope ? await readBankBalanceClose(client, closeScope) : undefined;
+  const balanceSheetReconciliation = closeScope ? await readBalanceSheetClose(client, closeScope) : undefined;
   const entryWhere = journalEntryScope(scope);
   const batchWhere = postingBatchScope(scope);
   const eventWhere = businessEventScope(scope);
   const statementFileWhere = statementFileScope(scope);
   const statementLineWhere = statementLineScope(scope);
   const signedReconciliationRunWhere = signedReconciliationRunScope(scope);
-  const scopeHash = sha256(
+  const scopeHash = closeScope?.scopeHash ?? sha256(
     stableStringify({
       organizationId: scope.organizationId,
       periodId: scope.periodId,
@@ -748,7 +788,7 @@ export async function getAccountantPortalData(
     payrollPaidRunMissingSettledPaymentCount,
     payrollPaymentMissingLedgerCount,
     payrollPostedLedgerMissingSourceLinkCount,
-    supplierInvoiceOpenCount,
+    payableBalances,
     supplierPaymentMissingLedgerCount,
     fiscalQueuedCount,
     fiscalRejectedCount,
@@ -769,7 +809,7 @@ export async function getAccountantPortalData(
         baseCurrency: true,
       },
     }),
-    resolveScopePeriod(client, scope, now),
+    Promise.resolve(resolvedPeriod),
     client.journalEntryLine.aggregate({
       where: {
         organizationId: scope.organizationId,
@@ -813,7 +853,7 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: { in: openPaymentExceptionStatuses() },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeExceptionWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.paymentException.count({
@@ -821,19 +861,19 @@ export async function getAccountantPortalData(
         organizationId: scope.organizationId,
         status: { in: openPaymentExceptionStatuses() },
         severity: { in: ["HIGH", "CRITICAL"] },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeExceptionWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.providerAccount.count({
       where: {
         organizationId: scope.organizationId,
-        status: ProviderAccountStatus.ACTIVE,
+        ...(scope.closeScope ? { createdAt: { lte: new Date(scope.closeScope.endDate < scope.closeScope.recordedThrough ? scope.closeScope.endDate : scope.closeScope.recordedThrough) } } : { status: ProviderAccountStatus.ACTIVE }),
       },
     }),
     client.providerAccount.findMany({
       where: {
         organizationId: scope.organizationId,
-        status: ProviderAccountStatus.ACTIVE,
+        ...(scope.closeScope ? { createdAt: { lte: new Date(scope.closeScope.endDate < scope.closeScope.recordedThrough ? scope.closeScope.endDate : scope.closeScope.recordedThrough) } } : { status: ProviderAccountStatus.ACTIVE }),
       },
       select: {
         id: true,
@@ -843,6 +883,7 @@ export async function getAccountantPortalData(
         metadata: true,
         statementFiles: {
           where: {
+            ...(scope.closeScope ? closeStatementFileWhere(scope.closeScope) : {}),
             status: {
               in: [StatementFileStatus.IMPORTED, StatementFileStatus.PROCESSED],
             },
@@ -863,14 +904,14 @@ export async function getAccountantPortalData(
       where: {
         organizationId: scope.organizationId,
         status: PayrollDeclarationStatus.PREPARED,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeDeclarationWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclaration.count({
       where: {
         organizationId: scope.organizationId,
         status: PayrollDeclarationStatus.REJECTED,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeDeclarationWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclaration.count({
@@ -884,7 +925,7 @@ export async function getAccountantPortalData(
             PayrollDeclarationStatus.PAID,
           ],
         },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeDeclarationWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclaration.count({
@@ -902,7 +943,7 @@ export async function getAccountantPortalData(
           ],
         },
         evidenceItems: { none: {} },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closeDeclarationWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclarationEvidence.count({
@@ -920,7 +961,7 @@ export async function getAccountantPortalData(
           ],
         },
         OR: [{ sourceRegisterHash: null }, { sourceRegisterHash: "" }],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), declaration: closeDeclarationWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclarationEvidence.count({
@@ -972,7 +1013,7 @@ export async function getAccountantPortalData(
             },
           },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), declaration: closeDeclarationWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclarationEvidence.count({
@@ -1006,7 +1047,7 @@ export async function getAccountantPortalData(
           },
           { metadata: { path: ["authorityAdapterContractHash"], equals: "" } },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), declaration: closeDeclarationWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclarationEvidence.count({
@@ -1057,14 +1098,14 @@ export async function getAccountantPortalData(
             },
           },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), declaration: closeDeclarationWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollDeclarationEvidence.count({
       where: {
         organizationId: scope.organizationId,
         transition: PayrollDeclarationEvidenceTransition.AMEND,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), declaration: closeDeclarationWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1091,7 +1132,7 @@ export async function getAccountantPortalData(
             },
           },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1130,7 +1171,7 @@ export async function getAccountantPortalData(
             },
           },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1165,7 +1206,7 @@ export async function getAccountantPortalData(
             },
           },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1177,7 +1218,7 @@ export async function getAccountantPortalData(
             PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
           ],
         },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1195,7 +1236,7 @@ export async function getAccountantPortalData(
           { paymentTransactionId: null },
           { reconciliationStatus: null },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollPaymentBatch.count({
@@ -1209,7 +1250,7 @@ export async function getAccountantPortalData(
           ],
         },
         allocations: { none: {} },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollRun.findMany({
@@ -1226,7 +1267,7 @@ export async function getAccountantPortalData(
           ],
         },
         deletedAt: null,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
       select: {
         status: true,
@@ -1251,7 +1292,7 @@ export async function getAccountantPortalData(
         status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
         ledgerPostingBatchId: null,
         deletedAt: null,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollRun.count({
@@ -1276,7 +1317,7 @@ export async function getAccountantPortalData(
           },
           { metadata: { path: ["componentRegisterProofStatus"], equals: "" } },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollRun.count({
@@ -1320,7 +1361,7 @@ export async function getAccountantPortalData(
           },
           { metadata: { path: ["payrollEngineInputHashes"], equals: [] } },
         ],
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
     client.payrollRunLine
@@ -1330,7 +1371,7 @@ export async function getAccountantPortalData(
           payrollRun: {
             status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
             deletedAt: null,
-            ...createdAtFilter(scope),
+            ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
           },
         },
         select: { calculationSnapshot: true },
@@ -1342,7 +1383,7 @@ export async function getAccountantPortalData(
         payrollRun: {
           status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
           deletedAt: null,
-          ...createdAtFilter(scope),
+          ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
         },
         payslip: { is: null },
       },
@@ -1352,7 +1393,7 @@ export async function getAccountantPortalData(
         organizationId: scope.organizationId,
         status: PayrollPayslipStatus.EMITTED,
         documentHash: "",
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.payrollRun.count({
@@ -1361,7 +1402,7 @@ export async function getAccountantPortalData(
         status: PayrollRunStatus.PAID,
         paymentBatches: { none: { status: PayrollPaymentBatchStatus.SETTLED } },
         deletedAt: null,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [closePayrollRunWhere(scope.closeScope)] } : createdAtFilter(scope)),
       },
     }),
 
@@ -1375,7 +1416,7 @@ export async function getAccountantPortalData(
           ],
         },
         ledgerPostingBatchId: null,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ organizationId: scope.organizationId, createdAt: closeRecordedDates(scope.closeScope), payrollRun: closePayrollRunWhere(scope.closeScope) }] } : createdAtFilter(scope)),
       },
     }),
     client.ledgerPostingBatch.count({
@@ -1391,18 +1432,11 @@ export async function getAccountantPortalData(
         sourceLinks: { none: {} },
       },
     }),
-    client.supplierInvoice.count({
-      where: {
-        organizationId: scope.organizationId,
-        status: {
-          in: [
-            SupplierInvoiceStatus.POSTED,
-            SupplierInvoiceStatus.PAYMENT_PENDING,
-            SupplierInvoiceStatus.DISPUTED,
-          ],
-        },
-        ...createdAtFilter(scope),
-      },
+    readClosePayableBalances(client, {
+      organizationId: scope.organizationId,
+      economicThrough: new Date(closeScope?.endDate ?? scope.endDate ?? scope.asOf),
+      recordedThrough: new Date(scope.asOf),
+      ...(!closeScope && scope.startDate ? { createdFrom: scope.startDate } : {}),
     }),
     client.supplierPayment.count({
       where: {
@@ -1415,7 +1449,7 @@ export async function getAccountantPortalData(
           ],
         },
         ledgerPostingBatchId: null,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ createdAt: closeRecordedDates(scope.closeScope), paymentDate: { lte: new Date(scope.closeScope.endDate) } }] } : createdAtFilter(scope)),
       },
     }),
     client.fiscalDocument.count({
@@ -1424,14 +1458,14 @@ export async function getAccountantPortalData(
         status: {
           in: [FiscalDocumentStatus.QUEUED, FiscalDocumentStatus.SUBMITTED],
         },
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ createdAt: closeRecordedDates(scope.closeScope), postingBatch: { organizationId: scope.organizationId, periodId: scope.closeScope.periodId } }] } : createdAtFilter(scope)),
       },
     }),
     client.fiscalDocument.count({
       where: {
         organizationId: scope.organizationId,
         status: FiscalDocumentStatus.REJECTED,
-        ...createdAtFilter(scope),
+        ...(scope.closeScope ? { AND: [{ createdAt: closeRecordedDates(scope.closeScope), postingBatch: { organizationId: scope.organizationId, periodId: scope.closeScope.periodId } }] } : createdAtFilter(scope)),
       },
     }),
     client.pOSOfflineEvent.count({
@@ -1532,8 +1566,8 @@ export async function getAccountantPortalData(
       ? null
       : Number(((linkedPostedEntryCount / postedEntryCount) * 100).toFixed(2));
   const providerStatementEvidenceMissing =
-    activeProviderAccountCount > 0 &&
-    (providerStatementFileCount === 0 || providerStatementLineCount === 0);
+    accountCoverage ? accountCoverage.accounts.some(row => row.reasons.some(reason => reason === "MISSING_STATEMENT" || reason === "PARTIAL_STATEMENT")) :
+      activeProviderAccountCount > 0 && (providerStatementFileCount === 0 || providerStatementLineCount === 0);
   const staleStatementAccounts = providerStatementEvidenceMissing
     ? []
     : staleProviderStatementAccounts(
@@ -1541,14 +1575,16 @@ export async function getAccountantPortalData(
         statementFreshnessAnchor(scope, period, now),
       );
   const providerStatementCadenceStale =
-    activeProviderAccountCount > 0 && staleStatementAccounts.length > 0;
+    !accountCoverage && activeProviderAccountCount > 0 && staleStatementAccounts.length > 0;
   const providerReconciliationSignoffMissing =
-    activeProviderAccountCount > 0 &&
+    accountCoverage ? accountCoverage.accounts.some(row => row.reasons.some(reason => reason === "MISSING_SIGNOFF" || reason === "PARTIAL_SIGNOFF")) : activeProviderAccountCount > 0 &&
     !providerStatementEvidenceMissing &&
     !providerStatementCadenceStale &&
     signedReconciliationRunCount === 0;
 
-  if (!settings?.accountingEnabled) {
+  const accountingSetupReady = settings?.accountingEnabled === true &&
+    (settings.setupStatus === "READY" || settings.setupStatus === "LOCKED");
+  if (!accountingSetupReady) {
     addBlocker(blockers, {
       id: "accounting-setup-not-locked",
       severity: "high",
@@ -1671,7 +1707,32 @@ export async function getAccountantPortalData(
     });
   }
 
-  if (providerStatementEvidenceMissing) {
+  for (const account of balanceSheetReconciliation?.accounts ?? []) {
+    if (account.status !== "BLOCKED") continue;
+    addBlocker(blockers, { id: `balance-sheet:${account.ledgerAccountId}:${account.currency}`, severity: "high", gate: "ledger.balance-sheet",
+      title: "Balance-sheet reconciliation is incomplete", detail: `${account.accountCode} ${account.accountName} (${account.currency}): ${account.reason}`,
+      sourceTables: ["balance_sheet_evidence", "chart_of_accounts", "journal_entries", "journal_entry_lines", "close_source_changes"],
+    });
+  }
+
+  for (const account of bankBalanceReconciliation?.accounts ?? []) {
+    if (account.status !== "BLOCKED") continue;
+    addBlocker(blockers, { id: `bank-balance:${account.providerAccountId}`, severity: "high", gate: "payments.bank-balance",
+      title: "Bank balance reconciliation is incomplete", detail: `${account.accountName} (${account.currency}): ${account.reason}`,
+      sourceTables: ["bank_balance_evidence", "provider_accounts", "statement_files", "statement_lines", "journal_entry_lines"],
+    });
+  }
+
+  for (const account of accountCoverage?.accounts ?? []) {
+    if (account.status !== "BLOCKED") continue;
+    addBlocker(blockers, {
+      id: `provider-account-coverage:${account.providerAccountId}`,
+      severity: "high", gate: "payments.account-close-coverage", title: "Provider account close coverage is incomplete",
+      detail: `${account.accountName} (${account.providerAccountId}, ${account.currencyCode}): ${account.reasons.join(", ")}. Required period ${account.startDate} through ${account.endDate}.`,
+      sourceTables: ["provider_accounts", "statement_files", "reconciliation_runs", "reconciliation_no_activity_evidence"],
+    });
+  }
+  if (!accountCoverage && providerStatementEvidenceMissing) {
     addBlocker(blockers, {
       id: "provider-statement-evidence-missing",
       severity: "high",
@@ -1680,7 +1741,7 @@ export async function getAccountantPortalData(
       detail: `${activeProviderAccountCount} active provider account is configured, but processed/imported statement file and line evidence is missing for the selected scope.`,
       sourceTables: ["provider_accounts", "statement_files", "statement_lines"],
     });
-  } else if (providerStatementCadenceStale) {
+  } else if (!accountCoverage && providerStatementCadenceStale) {
     addBlocker(blockers, {
       id: "provider-statement-cadence-stale",
       severity: "high",
@@ -1689,7 +1750,7 @@ export async function getAccountantPortalData(
       detail: `${staleStatementAccounts.length} active provider account has statement evidence, but its latest statement is older than the configured cadence for the selected scope.`,
       sourceTables: ["provider_accounts", "statement_files", "statement_lines"],
     });
-  } else if (providerReconciliationSignoffMissing) {
+  } else if (!accountCoverage && providerReconciliationSignoffMissing) {
     addBlocker(blockers, {
       id: "provider-reconciliation-signoff-missing",
       severity: "high",
@@ -1716,14 +1777,15 @@ export async function getAccountantPortalData(
     });
   }
 
-  if (supplierInvoiceOpenCount > 0) {
+  for (const balance of payableBalances.balances) {
+    if (balance.classification !== "EXCEPTION") continue;
     addBlocker(blockers, {
-      id: "supplier-invoices-open",
-      severity: "medium",
-      gate: "purchasing.ap.open-items",
-      title: "Supplier invoice open items need review",
-      detail: `${supplierInvoiceOpenCount} posted/payment-pending/disputed supplier invoice remains open.`,
-      sourceTables: ["supplier_invoices"],
+      id: `supplier-invoice-exception:${balance.invoiceId}`,
+      severity: "high",
+      gate: "purchasing.ap.reconciliation",
+      title: "Supplier invoice has an unresolved control exception",
+      detail: `${balance.invoiceId} (${balance.currency}): ${balance.reasons.map(closePayableReasonLabel).join("; ")}. An unpaid balance alone does not block close.`,
+      sourceTables: ["supplier_invoices", "supplier_ledger_entries", "supplier_payment_allocations", "supplier_credit_notes", "supplier_invoice_match_exceptions", "ledger_posting_batches"],
     });
   }
 
@@ -2128,7 +2190,7 @@ export async function getAccountantPortalData(
           orphanPostedEntryCount > 0 ||
           postedWithoutBatchCount > 0 ||
           postedBatchWithoutJournalCount > 0,
-        failedBatchCount > 0 || !settings?.accountingEnabled || !period,
+        failedBatchCount > 0 || !accountingSetupReady || !period || (balanceSheetReconciliation?.blockedAccountCount ?? 0) > 0,
         postedEntryCount === 0 ||
           period?.status === AccountingPeriodStatus.LOCKED,
       ),
@@ -2137,6 +2199,7 @@ export async function getAccountantPortalData(
         "Posted journal entries, journal lines, posting batches, and source links.",
       facts: [
         { label: "Posted entries", value: postedEntryCount },
+        { label: "Balance-sheet exceptions", value: balanceSheetReconciliation?.blockedAccountCount ?? 0 },
         { label: "Journal lines", value: ledgerAggregate._count._all },
         {
           label: "Source-link coverage",
@@ -2161,6 +2224,8 @@ export async function getAccountantPortalData(
       status: statusFor(
         criticalPaymentExceptionCount > 0,
         openPaymentExceptionCount > 0 ||
+          (accountCoverage?.blockedAccountCount ?? 0) > 0 ||
+          (bankBalanceReconciliation?.blockedAccountCount ?? 0) > 0 ||
           providerStatementEvidenceMissing ||
           providerStatementCadenceStale ||
           providerReconciliationSignoffMissing,
@@ -2168,12 +2233,13 @@ export async function getAccountantPortalData(
       ),
       label: "Payment reconciliation",
       detail:
-        "Open payment exceptions, provider statement cadence, and signed reconciliation runs gate certification.",
+        "Open payment exceptions, statement coverage, signed runs and independently approved bank balances gate certification.",
       facts: [
         {
           label: "Active provider accounts",
           value: activeProviderAccountCount,
         },
+        { label: "Bank balance exceptions", value: bankBalanceReconciliation?.blockedAccountCount ?? 0 },
         { label: "Statement files", value: providerStatementFileCount },
         { label: "Statement lines", value: providerStatementLineCount },
         {
@@ -2192,14 +2258,16 @@ export async function getAccountantPortalData(
       module: "purchasing",
       status: statusFor(
         supplierPaymentMissingLedgerCount > 0,
+        payableBalances.exceptionCount > 0,
         false,
-        supplierInvoiceOpenCount > 0,
       ),
       label: "Purchasing and AP",
       detail:
-        "Supplier invoices and payments must reconcile to ledger evidence.",
+        "Normal unpaid balances remain visible without blocking close. Disputes, inconsistent balances and missing posting evidence require resolution.",
       facts: [
-        { label: "Open AP invoices", value: supplierInvoiceOpenCount },
+        { label: "Normal unpaid invoices", value: payableBalances.normalUnpaidCount },
+        { label: "Settled invoices", value: payableBalances.settledCount },
+        { label: "AP control exceptions", value: payableBalances.exceptionCount },
         {
           label: "Payments without ledger",
           value: supplierPaymentMissingLedgerCount,
@@ -2409,8 +2477,14 @@ export async function getAccountantPortalData(
       trustLevel,
       certificationStatus: verdict,
       scopeHash,
+      ...(closeScope ? { closeScope } : {}),
       sourceTables: [...DATA_TRUST_SOURCE_TABLES],
     },
+    supplierPaymentReconciliationProofs,
+    bankBalanceReconciliation,
+    balanceSheetReconciliation,
+    payableBalances,
+    ...(accountCoverage ? { accountReconciliationCoverage: accountCoverage } : {}),
     scope: {
       organizationId: scope.organizationId,
       periodId: period?.id ?? scope.periodId,
@@ -2465,7 +2539,11 @@ export async function getAccountantPortalData(
       }),
     },
     moduleEvidence,
-    blockers,
+    blockers: blockers.map(blocker => ({ ...blocker,
+      scope: !closeScope || ["accounting-setup-not-locked", "offline-pos-sync-conflicts", "offline-pos-close-blockers", "offline-pos-events-pending-replay"].includes(blocker.id)
+        ? "ORGANIZATION" as const : ["critical-payment-exceptions", "open-payment-exceptions"].includes(blocker.id)
+          ? "PERIOD_AND_UNASSIGNED" as const : "PERIOD" as const,
+    })),
     latestSourceLinks: latestSourceLinks.map((link) => ({
       id: link.id,
       sourceType: link.sourceType,
@@ -2577,7 +2655,7 @@ export async function exportAccountantTrustPack(
     }
 
     const ledgerRows = input.includeLedgerRows
-      ? await loadOptionalLedgerRows(tx, normalizedScope(input, now))
+      ? await loadOptionalLedgerRows(tx, normalizedScope(input, now, portal.source.closeScope))
       : [];
     const payload = {
       kind: "AQSTOQFLOW_ACCOUNTANT_TRUST_PACK",
@@ -2599,6 +2677,10 @@ export async function exportAccountantTrustPack(
       figures: portal.figures,
       blockers: portal.blockers,
       moduleEvidence: portal.moduleEvidence,
+      payableBalances: portal.payableBalances ?? null,
+      bankBalanceReconciliation: portal.bankBalanceReconciliation ?? null,
+      balanceSheetReconciliation: portal.balanceSheetReconciliation ?? null,
+      accountReconciliationCoverage: portal.accountReconciliationCoverage ?? null,
       latestSourceLinks: portal.latestSourceLinks,
       latestAuditEvents: portal.latestAuditEvents,
       ledgerRows,

@@ -1,0 +1,8 @@
+{
+  "at": "2026-09-30T15:19:51.733Z",
+  "stage": "actual cash read",
+  "success": false,
+  "error": "Forbidden: Cash Command requires tenant-wide operating authority",
+  "code": "FORBIDDEN",
+  "stack": "RbacError: Forbidden: Cash Command requires tenant-wide operating authority\n    at requireCashCommandTenantAuthority (E:\\ohada saas\\Focused projects\\stoquify\\services\\cash-command\\cash-command.service.ts:233:9)\n    at async getCashCommandData (E:\\ohada saas\\Focused projects\\stoquify\\services\\cash-command\\cash-command.service.ts:96:3)\n    at async E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\diagnose-cash-accessibility-source.cjs:9:16"
+}

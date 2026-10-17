@@ -852,3 +852,13 @@ describe("PayrollCommandCenter", () => {
     expect(screen.getByText("corr-fresh-auth")).toBeInTheDocument()
   })
 })
+
+
+it("renders French destination headings without mutating source evidence", () => {
+  const data = commandData()
+  const original = JSON.stringify(data)
+  render(<PayrollCommandCenter data={data} locale="fr" />)
+  expect(screen.getByRole("heading", { name: "RH, paie, preuves et contrôle de clôture" })).toBeInTheDocument()
+  expect(screen.getByRole("heading", { name: "Contrôle de certification pilote" })).toBeInTheDocument()
+  expect(JSON.stringify(data)).toBe(original)
+})

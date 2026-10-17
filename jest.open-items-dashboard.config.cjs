@@ -1,0 +1,27 @@
+// Scoped mocked evidence only. Direct SWC transform: no Next config/env loading,
+// no database bootstrap, no application setup. Tests mock every persistence edge.
+module.exports = {
+  rootDir: '.',
+  roots: ['<rootDir>/components/purchasing/__tests__', '<rootDir>/services/accounting/__tests__', '<rootDir>/actions/purchasing/__tests__', '<rootDir>/services/finance/__tests__', '<rootDir>/actions/finance/__tests__', '<rootDir>/services/purchasing/__tests__', '<rootDir>/components/finance/__tests__', '<rootDir>/hooks/finance/__tests__'],
+  testEnvironment: 'node',
+  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1', '^server-only$': '<rootDir>/scripts/server-only-node-shim.js', '^lucide-react$': '<rootDir>/node_modules/lucide-react/dist/cjs/lucide-react.js' },
+  transform: { '^.+\\.(js|jsx|ts|tsx)$': 'next/dist/build/swc/jest-transformer' },
+  testMatch: [
+    '**/APHistoryWorkbench.test.tsx', '**/AROpenItemsHistoryWorkbench.test.tsx',
+    '**/open-items-navigation.test.ts', '**/ar-history.actions.test.ts', '**/ar-open-item-export.service.test.ts', '**/ap-history.service.test.ts', '**/ap-history-export.service.test.ts', '**/ap-history-export.actions.test.ts',
+    '**/open-items-dashboard.test.ts',
+    '**/open-items-dashboard.actions.test.ts',
+    '**/finance-dashboard.actions.test.ts',
+    '**/ap-history-financial.test.ts',
+    '**/ap-history-allocation-integrity.test.ts',
+    '**/OpenItemsDashboard.test.tsx',
+    '**/PayablesPaymentActivity.test.tsx',
+    '**/useOpenItemsDashboard.test.tsx',
+    '**/useARHistoryScope.test.tsx',
+    '**/open-items-collections.test.ts',
+    '**/payables-workflow-dashboard.test.ts',
+    '**/FinanceDashboardSupplements.test.tsx',
+    '**/useFinanceDashboardSupplements.test.tsx',
+  ],
+  collectCoverage: false,
+}

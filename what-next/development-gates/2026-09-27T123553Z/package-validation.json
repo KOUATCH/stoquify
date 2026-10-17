@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-09-27T13:04:25.072Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "all_json_files_parse",
+      "pass": true,
+      "detail": "56 JSON files"
+    },
+    {
+      "id": "role_membership_ids_and_tenants",
+      "pass": true,
+      "detail": "180 actual intermediary memberships"
+    },
+    {
+      "id": "named_candidates_trace_to_current_records",
+      "pass": true,
+      "detail": "23 candidate assignments"
+    },
+    {
+      "id": "capability_candidates_trace_to_same_tenant",
+      "pass": true,
+      "detail": "75 tenant capability rows"
+    },
+    {
+      "id": "every_capability_db_field_extracted",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "field_definitions_match_prisma",
+      "pass": true,
+      "detail": "485 exact field definitions"
+    },
+    {
+      "id": "no_invalid_selected_fks_or_enums",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "every_gate_has_required_report_sections",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "all_g1_roles_have_existing_nominations",
+      "pass": true,
+      "detail": "11 decisions,33 role obligations,17 distinct roles; nominations only"
+    },
+    {
+      "id": "source_anchors_exist",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "permission_module_sources_unchanged_during_analysis",
+      "pass": true,
+      "detail": [
+        "config/permissions.ts",
+        "lib/security/rbac-permissions.ts",
+        "services/modules/module-control-contracts.ts",
+        "services/modules/module-catalog.service.ts",
+        "services/modules/module-entitlement.service.ts",
+        "services/operating-access/operating-access-scope-contracts.ts"
+      ]
+    },
+    {
+      "id": "initial_extraction_readonly",
+      "pass": true,
+      "detail": "Database and transaction read-only; rollback"
+    },
+    {
+      "id": "supplementary_extraction_readonly",
+      "pass": true,
+      "detail": "Database and transaction read-only; rollback"
+    },
+    {
+      "id": "runtime_and_catalog_extraction_readonly",
+      "pass": true,
+      "detail": "Both source reports identify enforced read-only transactions"
+    },
+    {
+      "id": "migration_checks_pass",
+      "pass": true,
+      "detail": "status/history/catalog"
+    },
+    {
+      "id": "no_object_placeholders_in_markdown",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "id": "no_secret_value_fields_in_selected_data",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "limitations": [
+    "Audit artifact consistency validation only; not application tests, human qualification verification or production certification.",
+    "Multiple read-only snapshots have separate timestamps. No mutating workflow or login checks were run."
+  ]
+}

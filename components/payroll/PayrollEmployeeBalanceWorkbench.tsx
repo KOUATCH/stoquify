@@ -1,5 +1,7 @@
 "use client"
 
+import { payrollUiText, payrollStatusText } from "./payroll-ui-copy"
+
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -45,17 +47,17 @@ function statusTone(value: string | null | undefined) {
   return "border-slate-400/30 bg-slate-400/10 text-slate-100"
 }
 
-function Badge({ value }: { value: string | null | undefined }) {
+function Badge({ locale = "en", value }: { value: string | null | undefined } & { locale?: Locale }) {
   return (
     <span className={`inline-flex min-h-7 max-w-full items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${statusTone(value)}`}>
-      <span className="truncate">{value ?? "Pending"}</span>
+      <span className="truncate">{payrollStatusText(value, locale)}</span>
     </span>
   )
 }
 
-function dateLabel(value: string | null | undefined) {
-  if (!value) return "Open"
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(value))
+function dateLabel(value: string | null | undefined, locale: Locale = "en") {
+  if (!value) return payrollUiText("Open", locale)
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(value))
 }
 
 function Metric({
@@ -84,13 +86,13 @@ function Metric({
   )
 }
 
-function ErrorPanel({ message }: { message: string }) {
+function ErrorPanel({ locale = "en", message }: { message: string } & { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-rose-400/30 bg-rose-950/30 p-5 text-rose-50">
       <div className="flex items-start gap-3">
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
         <div className="min-w-0">
-          <h1 className="text-base font-semibold">Payroll employee balance workbench unavailable</h1>
+          <h1 className="text-base font-semibold">{payrollUiText("Payroll employee balance workbench unavailable", locale)}</h1>
           <p className="mt-1 break-words text-sm text-rose-100">{message}</p>
         </div>
       </div>
@@ -98,18 +100,18 @@ function ErrorPanel({ message }: { message: string }) {
   )
 }
 
-function EmptyState() {
+function EmptyState({ locale = "en" }: { locale?: Locale }) {
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.05] p-5 text-slate-200">
-      <h1 className="text-base font-semibold text-white">Payroll employee balance workbench</h1>
-      <p className="mt-1 text-sm text-slate-400">No employee recovery cases are available for the selected scope.</p>
+      <h1 className="text-base font-semibold text-white">{payrollUiText("Payroll employee balance workbench", locale)}</h1>
+      <p className="mt-1 text-sm text-slate-400">{payrollUiText("No employee recovery cases are available for the selected scope.", locale)}</p>
     </section>
   )
 }
 
-function ProofList({ balanceCase }: { balanceCase: BalanceCase }) {
+function ProofList({ locale = "en", balanceCase }: { balanceCase: BalanceCase } & { locale?: Locale }) {
   const latest = balanceCase.proof.latestEvent
-  const rows = [
+  const rows: Array<[string, string | null | undefined]> = [
     ["Case document", balanceCase.proof.documentHash],
     ["Case evidence", balanceCase.proof.evidenceHash],
     ["Ledger batch", balanceCase.proof.ledgerPostingBatchId],
@@ -123,13 +125,13 @@ function ProofList({ balanceCase }: { balanceCase: BalanceCase }) {
     <div className="grid gap-2">
       {rows.map(([label, value]) => (
         <div key={label} className="grid gap-1 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 sm:grid-cols-[120px_minmax(0,1fr)]">
-          <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">{label}</span>
-          <span className="min-w-0 break-all text-xs text-slate-200">{value || "Pending"}</span>
+          <span className="text-xs font-semibold uppercase tracking-normal text-slate-500">{payrollUiText(label, locale)}</span>
+          <span className="min-w-0 break-all text-xs text-slate-200">{value || payrollUiText("Pending", locale)}</span>
         </div>
       ))}
       {latest ? (
         <div className="rounded-md border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs text-cyan-100">
-          {latest.eventType} on {dateLabel(latest.eventDate)}
+          {latest.eventType}  {payrollUiText("on", locale)} {dateLabel(latest.eventDate, locale)}
         </div>
       ) : null}
     </div>
@@ -142,70 +144,68 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
     searchText: (balanceCase) => JSON.stringify(balanceCase),
     dateValue: (balanceCase) => balanceCase.timeline.openedAt,
     sortOptions: [
-      { key: "case", label: "Case", value: (balanceCase) => balanceCase.caseNumber },
-      { key: "employee", label: "Employee", value: (balanceCase) => balanceCase.employee.displayName ?? balanceCase.employee.employeeNumber },
-      { key: "opened", label: "Opened date", value: (balanceCase) => balanceCase.timeline.openedAt },
-      { key: "outstanding", label: "Outstanding amount", value: (balanceCase) => Number(balanceCase.amounts.outstandingAmount) },
-      { key: "status", label: "Status", value: (balanceCase) => balanceCase.status },
+      { key: "case", label: payrollUiText("Case", locale), value: (balanceCase) => balanceCase.caseNumber },
+      { key: "employee", label: payrollUiText("Employee", locale), value: (balanceCase) => balanceCase.employee.displayName ?? balanceCase.employee.employeeNumber },
+      { key: "opened", label: payrollUiText("Opened date", locale), value: (balanceCase) => balanceCase.timeline.openedAt },
+      { key: "outstanding", label: payrollUiText("Outstanding amount", locale), value: (balanceCase) => Number(balanceCase.amounts.outstandingAmount) },
+      { key: "status", label: payrollUiText("Status", locale), value: (balanceCase) => balanceCase.status },
     ],
   })
 
-  if (error) return <ErrorPanel message={error} />
-  if (!data) return <EmptyState />
+  if (error) return <ErrorPanel locale={locale} message={error} />
+  if (!data) return <EmptyState locale={locale} />
 
   return (
     <main className="flex min-w-0 flex-col gap-4 text-slate-100">
       <section className="flex flex-col gap-3 border-b border-white/10 pb-4 xl:flex-row xl:items-end xl:justify-between">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">Payroll payments</p>
-          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">Employee balance recovery</h1>
+          <p className="text-xs font-semibold uppercase tracking-normal text-cyan-200">{payrollUiText("Payroll payments", locale)}</p>
+          <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{payrollUiText("Employee balance recovery", locale)}</h1>
           <p className="mt-2 max-w-4xl text-sm text-slate-300">
-            Open employee receivable cases, settlement state, ledger proof, and recovery actions as of {dateLabel(data.asOf)}.
+             {payrollUiText("Open employee receivable cases, settlement state, ledger proof, and recovery actions as of", locale)} {dateLabel(data.asOf, locale)}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge value={data.summary.activeCases > 0 ? "ACTION_REQUIRED" : "READY"} />
-          <Badge value={data.redaction.payrollAmounts.mode} />
+          <Badge locale={locale} value={data.summary.activeCases > 0 ? "ACTION_REQUIRED" : "READY"} />
+          <Badge locale={locale} value={data.redaction.payrollAmounts.mode} />
           <Link
             href={localizePath("/dashboard/payroll/register", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Register
-          </Link>
+             {payrollUiText("Register", locale)} </Link>
           <Link
             href={localizePath("/dashboard/payroll/attendance", locale)}
             className="inline-flex min-h-9 items-center justify-center rounded-lg border border-white/12 bg-white/10 px-3 text-sm font-semibold text-white transition hover:bg-white/15"
           >
-            Attendance
-          </Link>
+             {payrollUiText("Attendance", locale)} </Link>
         </div>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-        <Metric label="Active cases" value={data.summary.activeCases} icon={WalletCards} tone="bg-amber-400/12 text-amber-200" />
-        <Metric label="Open cases" value={data.summary.openCases} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
-        <Metric label="Partial settlements" value={data.summary.partiallySettledCases} icon={BadgeCheck} tone="bg-cyan-400/12 text-cyan-200" />
-        <Metric label="Returned cases" value={data.summary.returnedCases} icon={ReceiptText} tone="bg-sky-400/12 text-sky-200" />
-        <Metric label="Outstanding" value={data.summary.activeOutstandingAmount} icon={Banknote} tone="bg-emerald-400/12 text-emerald-200" />
-        <Metric label="Coverage" value={data.summary.coverageComplete ? "complete" : "partial"} icon={ShieldCheck} tone="bg-violet-400/12 text-violet-200" />
+        <Metric label={payrollUiText("Active cases", locale)} value={data.summary.activeCases} icon={WalletCards} tone="bg-amber-400/12 text-amber-200" />
+        <Metric label={payrollUiText("Open cases", locale)} value={data.summary.openCases} icon={AlertTriangle} tone="bg-rose-400/12 text-rose-200" />
+        <Metric label={payrollUiText("Partial settlements", locale)} value={data.summary.partiallySettledCases} icon={BadgeCheck} tone="bg-cyan-400/12 text-cyan-200" />
+        <Metric label={payrollUiText("Returned cases", locale)} value={data.summary.returnedCases} icon={ReceiptText} tone="bg-sky-400/12 text-sky-200" />
+        <Metric label={payrollUiText("Outstanding", locale)} value={data.summary.activeOutstandingAmount} icon={Banknote} tone="bg-emerald-400/12 text-emerald-200" />
+        <Metric label={payrollUiText("Coverage", locale)} value={data.summary.coverageComplete ? payrollStatusText("complete", locale) : payrollStatusText("partial", locale)} icon={ShieldCheck} tone="bg-violet-400/12 text-violet-200" />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <FileText className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-white">Recovery cases</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Recovery cases", locale)}</h2>
         </div>
-        <HrPayrollTableControls table={balanceTable} locale={locale} tableLabel="employee recovery cases" />
+        <HrPayrollTableControls table={balanceTable} locale={locale} tableLabel={payrollUiText("employee recovery cases", locale)} />
         <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1280px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
-                <th className="w-[190px] px-4 py-3 font-semibold">Case</th>
-                <th className="w-[210px] px-4 py-3 font-semibold">Employee</th>
-                <th className="w-[240px] px-4 py-3 font-semibold">Run and payslip</th>
-                <th className="w-[220px] px-4 py-3 font-semibold">Amounts</th>
-                <th className="w-[300px] px-4 py-3 font-semibold">Proof</th>
-                <th className="w-[160px] px-4 py-3 font-semibold">Next action</th>
+                <th className="w-[190px] px-4 py-3 font-semibold">{payrollUiText("Case", locale)}</th>
+                <th className="w-[210px] px-4 py-3 font-semibold">{payrollUiText("Employee", locale)}</th>
+                <th className="w-[240px] px-4 py-3 font-semibold">{payrollUiText("Run and payslip", locale)}</th>
+                <th className="w-[220px] px-4 py-3 font-semibold">{payrollUiText("Amounts", locale)}</th>
+                <th className="w-[300px] px-4 py-3 font-semibold">{payrollUiText("Proof", locale)}</th>
+                <th className="w-[160px] px-4 py-3 font-semibold">{payrollUiText("Next action", locale)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -215,11 +215,11 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{balanceCase.caseNumber}</p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <Badge value={balanceCase.caseType} />
-                        <Badge value={balanceCase.status} />
+                        <Badge locale={locale} value={balanceCase.caseType} />
+                        <Badge locale={locale} value={balanceCase.status} />
                       </div>
-                      <p className="mt-2 text-xs text-slate-500">Opened {dateLabel(balanceCase.timeline.openedAt)}</p>
-                      <p className="text-xs text-slate-500">Age {balanceCase.timeline.ageDays} day(s)</p>
+                      <p className="mt-2 text-xs text-slate-500">{payrollUiText("Opened", locale)} {dateLabel(balanceCase.timeline.openedAt, locale)}</p>
+                      <p className="text-xs text-slate-500">{payrollUiText("Age", locale)} {balanceCase.timeline.ageDays}  {payrollUiText("day(s)", locale)}</p>
                     </td>
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{balanceCase.employee.employeeNumber ?? "Unnumbered"}</p>
@@ -229,32 +229,32 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
                       <p className="break-words font-semibold text-white">{balanceCase.payrollRun.runNumber}</p>
                       <p className="mt-1 text-xs text-slate-400">{balanceCase.payrollRun.periodName ?? "No period"}</p>
                       <p className="mt-1 break-words text-xs text-slate-500">
-                        {dateLabel(balanceCase.payrollRun.periodStart)} to {dateLabel(balanceCase.payrollRun.periodEnd)}
+                        {dateLabel(balanceCase.payrollRun.periodStart, locale)}  {payrollUiText("to", locale)} {dateLabel(balanceCase.payrollRun.periodEnd, locale)}
                       </p>
                       <div className="mt-2">
-                        <Badge value={balanceCase.payslip?.payslipNumber ?? "No payslip"} />
+                        <Badge locale={locale} value={balanceCase.payslip?.payslipNumber ?? "No payslip"} />
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-xs text-slate-500">Amount</p>
+                      <p className="text-xs text-slate-500">{payrollUiText("Amount", locale)}</p>
                       <p className="break-words font-semibold text-white">{balanceCase.amounts.amount} {balanceCase.amounts.currency}</p>
-                      <p className="mt-2 text-xs text-slate-500">Settled</p>
+                      <p className="mt-2 text-xs text-slate-500">{payrollUiText("Settled", locale)}</p>
                       <p className="break-words text-sm text-slate-200">{balanceCase.amounts.settledAmount}</p>
-                      <p className="mt-2 text-xs text-slate-500">Outstanding</p>
+                      <p className="mt-2 text-xs text-slate-500">{payrollUiText("Outstanding", locale)}</p>
                       <p className="break-words text-sm text-slate-200">{balanceCase.amounts.outstandingAmount}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <ProofList balanceCase={balanceCase} />
+                      <ProofList locale={locale} balanceCase={balanceCase} />
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-2">
-                        <Badge value={balanceCase.nextAction.id} />
+                        <Badge locale={locale} value={balanceCase.nextAction.id} />
                         <p className="break-words text-xs text-slate-300">{balanceCase.nextAction.label}</p>
                         <p className="break-words text-xs text-slate-500">
                           {balanceCase.nextAction.requiredPermission ?? "No permission required"}
                         </p>
                         {balanceCase.nextAction.id === "settle" ? (
-                          <PayrollEmployeeBalanceSettlementForm
+                          <PayrollEmployeeBalanceSettlementForm locale={locale}
                             balanceCaseId={balanceCase.id}
                             caseNumber={balanceCase.caseNumber}
                             employeeId={balanceCase.employee.id}
@@ -269,8 +269,7 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
               ) : (
                 <tr>
                   <td className="px-4 py-6 text-sm text-slate-400" colSpan={6}>
-                    No employee balance recovery cases match this scope.
-                  </td>
+                     {payrollUiText("No employee balance recovery cases match this scope.", locale)} </td>
                 </tr>
               )}
             </tbody>
@@ -282,19 +281,19 @@ export default function PayrollEmployeeBalanceWorkbench({ data, error, locale }:
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">
         <div className="flex items-center gap-2">
           <Fingerprint className="h-4 w-4 text-cyan-200" aria-hidden="true" />
-          <h2 className="text-sm font-semibold text-white">Source scope</h2>
+          <h2 className="text-sm font-semibold text-white">{payrollUiText("Source scope", locale)}</h2>
         </div>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
-            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">Limit</p>
+            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">{payrollUiText("Limit", locale)}</p>
             <p className="mt-1 text-sm text-slate-100">{data.sourceScope.limit}</p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
-            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">Returned</p>
+            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">{payrollUiText("Returned", locale)}</p>
             <p className="mt-1 text-sm text-slate-100">{data.sourceScope.returned}</p>
           </div>
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
-            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">Service</p>
+            <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">{payrollUiText("Service", locale)}</p>
             <p className="mt-1 break-all text-sm text-slate-100">{data.sourceScope.sourceService}</p>
           </div>
         </div>

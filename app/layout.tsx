@@ -7,6 +7,7 @@ import { isLocale } from "@/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/types/bilingual";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { extractRouterConfig } from "uploadthing/server";
+import { CSP_NONCE_HEADER } from "@/lib/security/csp-pilot";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"),
@@ -31,7 +32,7 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body className="font-sans" suppressHydrationWarning>
         <ErrorBoundary>
-          <Providers uploadThingRouterConfig={uploadThingRouterConfig}>
+          <Providers uploadThingRouterConfig={uploadThingRouterConfig} nonce={requestHeaders.get(CSP_NONCE_HEADER) ?? undefined}>
             {children}
           </Providers>
         </ErrorBoundary>

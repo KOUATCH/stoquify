@@ -1,8 +1,11 @@
 jest.mock("server-only", () => ({}));
+jest.mock("../payroll-production-admission", () => ({ assertPayrollProductionAdmissionInTx: jest.fn() }));
+import { assertPayrollProductionAdmissionInTx } from "../payroll-production-admission";
 
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    payrollDeclaration: { findFirst: jest.fn().mockResolvedValue({ payrollRunId: "run-1" }) },
   },
 }));
 
@@ -107,6 +110,22 @@ function lifecycleResult(id = "lifecycle-evidence-1") {
 describe("processPayrollAuthorityAdapterWorkerBatch", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockReset().mockResolvedValue(undefined);
+  });
+
+  it("never calls the external adapter when admission has been revoked after queueing", async () => {
+    const adapter = { submit: jest.fn() };
+    const execution = queuedExecution();
+    const leaseExecutions = jest.fn().mockResolvedValue({ executions: [execution] });
+    const processExecution = jest.fn().mockResolvedValue({ execution: { ...execution, status: "FAILED" } });
+    const recordDeclarationEvidence = jest.fn();
+    (assertPayrollProductionAdmissionInTx as jest.Mock).mockRejectedValue(new Error("PAYROLL_PRODUCTION_ADMISSION_BLOCKED"));
+    await processPayrollAuthorityAdapterWorkerBatch({ organizationId: "org-1", workerId: "worker-1" }, { adapter, leaseExecutions, processExecution, recordDeclarationEvidence });
+    expect(db.payrollDeclaration.findFirst).toHaveBeenCalledWith({ where: { id: execution.declarationId, organizationId: "org-1" }, select: { payrollRunId: true } });
+    expect(assertPayrollProductionAdmissionInTx).toHaveBeenCalledWith(db, "org-1", "run-1");
+    expect(adapter.submit).not.toHaveBeenCalled();
+    expect(processExecution).toHaveBeenCalledWith(expect.objectContaining({ outcome: expect.objectContaining({ status: "failed", errorCode: "PAYROLL_PRODUCTION_ADMISSION_BLOCKED" }) }), db);
+    expect(recordDeclarationEvidence).not.toHaveBeenCalled();
   });
 
   it("submits leased authority execution and records acceptance lifecycle evidence", async () => {

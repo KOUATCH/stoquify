@@ -366,6 +366,78 @@ describe("offline POS sync service", () => {
     mockTx.auditLog.create.mockResolvedValue({ id: "audit-1" })
   })
 
+  it("P06 keeps replay disabled without the explicit test authorization before reading evidence", async () => {
+    delete process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
+    try {
+      await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: "offline-event-1" }))
+        .rejects.toThrow(/capture and replay are disabled/i)
+      expect(mockDb.pOSOfflineEvent.findFirst).not.toHaveBeenCalled()
+      expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    } finally {
+      process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS = "1"
+    }
+  })
+
+  it.each([
+    { label: "expired policy", device: { policyExpiresAt: new Date("2020-01-01T00:00:00.000Z") }, code: "OFFLINE_POLICY_EXPIRED" },
+    { label: "changed policy hash", device: { policySnapshotHash: "current-policy-snapshot" }, code: "OFFLINE_POLICY_EXPIRED" },
+    { label: "changed reference hash", device: { sourceSnapshotHash: "current-source-snapshot" }, code: "STALE_REFERENCE_SNAPSHOT" },
+  ])("P06 retains $label evidence as quarantined without advancing the device sequence", async ({ device, code }) => {
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({ ...activeDevice, ...device })
+    const event = { ...buildEvent({ seq: 1 }), policySnapshotHash: "original-policy-snapshot", sourceSnapshotHash: "original-source-snapshot" }
+    const original = structuredClone(event)
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1", userId: "user-1", deviceId: "device-1", terminalId: "terminal-1",
+      locationId: "loc-1", sessionId: "session-1", events: [event],
+    })
+    expect(result).toMatchObject({ acceptedCount: 0, conflictCount: 1, certificate: { closeBlocker: true } })
+    expect(result.conflicts[0]).toMatchObject({ conflictType: code })
+    expect(mockTx.pOSOfflineEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      status: "QUARANTINED", blockerCode: code, payload: original.payload, payloadHash: original.payloadHash,
+      idempotencyKey: original.idempotencyKey, entryHash: original.entryHash, deviceSeq: 1,
+    }) }))
+    expect(mockTx.pOSOfflineDevice.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ lastSequence: 0, highWaterHash: null }) }))
+    expect(event).toEqual(original)
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+  })
+
+  it("P06 acknowledges previously ingested evidence after policy expiry without authorizing another sale", async () => {
+    const event = buildEvent({ seq: 1 })
+    const expiredDevice = { ...activeDevice, lastSequence: 1, highWaterHash: event.entryHash, policyExpiresAt: new Date("2020-01-01T00:00:00.000Z") }
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue(expiredDevice)
+    mockTx.pOSOfflineDevice.update.mockImplementation(async ({ data }) => ({ ...expiredDevice, ...data }))
+    mockTx.pOSOfflineEvent.findUnique.mockResolvedValue({ id: "original-event", payloadHash: event.payloadHash, entryHash: event.entryHash, deviceSeq: 1 })
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1", userId: "user-1", deviceId: "device-1", terminalId: "terminal-1",
+      locationId: "loc-1", sessionId: "session-1", events: [event],
+    })
+    expect(result).toMatchObject({ acceptedCount: 0, duplicateCount: 1, device: { policyStatus: "EXPIRED" }, certificate: { closeBlocker: true } })
+    expect(mockTx.pOSOfflineEvent.create).not.toHaveBeenCalled()
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+  })
+
+  it("P06 exposes legacy unsigned enrollment as unverified rather than certifying signed capture", async () => {
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1", userId: "user-1", deviceId: "device-1", terminalId: "terminal-1",
+      locationId: "loc-1", sessionId: "session-1", events: [{ ...buildEvent({ seq: 1 }), signature: undefined }],
+    })
+    expect(result).toMatchObject({ acceptedCount: 1, device: { signatureVerification: "LEGACY_UNVERIFIED", policyStatus: "UNCONFIGURED" }, certificate: { closeBlocker: true } })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+  })
+
+  it("P06 characterizes reference hash equality without claiming a maximum capture-age policy", async () => {
+    const sourceSnapshotHash = "matching-source-snapshot"
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({ ...activeDevice, sourceSnapshotHash })
+    const event = { ...buildEvent({ seq: 1 }), sourceSnapshotHash, capturedAtDevice: new Date("2000-01-01T00:00:00.000Z") }
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1", userId: "user-1", deviceId: "device-1", terminalId: "terminal-1",
+      locationId: "loc-1", sessionId: "session-1", events: [event],
+    })
+    expect(result.acceptedCount).toBe(1)
+    expect(mockTx.pOSOfflineEvent.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ capturedAtDevice: event.capturedAtDevice, status: "PENDING_REPLAY" }) }))
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+  })
+
   it("records an accepted offline event as pending replay without touching POS sale truth", async () => {
     const event = buildEvent({ seq: 1 })
 

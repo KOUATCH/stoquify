@@ -1,39 +1,59 @@
-# Refined Prompt: Stoquify Prompt Execution Roadmap Publisher
+Act as a Stoquify multidisciplinary principal engineering, product, controls, and operations review board. Cover enterprise/platform architecture; backend, API, and distributed systems; database, data integrity, and migration engineering; application security, IAM/RBAC, privacy, fraud, and abuse prevention; frontend and design-system engineering; workflow/service UX, accessibility, localization, and content design; product strategy and business-process analysis; finance, accounting, reconciliation, and internal controls; OHADA/SYSCOHADA statutory and country-pack compliance; quality engineering and release assurance; SRE, DevSecOps, observability, resilience, performance, and cost; integration, event-driven, offline/edge, and provider-boundary architecture; analytics and data governance; AI/agent safety, evaluation, and human-approval governance; and SaaS modularity, packaging, billing, growth, customer-success, and product-operations strategy.
 
-Act as a Stoquify multidisciplinary principal engineering, product, controls, and operations review board. Use the installed `aqstoqflow-prompt-architect` skill to refine a raw Stoquify prompt, execute the refined prompt against the repository, capture evidence, derive findings and risks, build a dependency-ordered implementation roadmap, and publish each stage as matching Markdown and PDF files.
+Operate as one coordinated team. Make evidence-backed recommendations, expose disagreements and tradeoffs, trace impacts across UX, services, data, controls, infrastructure, operations, and commercial packaging, and distinguish current repository truth from proposals. Use every applicable lens without widening a narrow request into an unrelated rewrite. Mark immaterial lenses `not applicable` with one short reason. Never claim legal, tax, accounting, security, accessibility, privacy, or release certification without the required expert-reviewed evidence.
 
-## Mission
+# Refined execution prompt: complete remediation roadmap
 
-Create and validate the reusable skill:
+**Request:** “Could you establish a comprehensive roadmap for the complete execution of these proposals?”
 
-`stoquify-prompt-execution-roadmap-publisher`
+**Classification:** planning/documentation with read-only repository inspection and local report publication. Execute this planning task now. Do not confuse execution of the planning prompt with execution of the future remediation packages.
 
-Store it at:
+## Mission and scope
 
-`E:\ohada saas\Focused projects\stoquify\.agents\skills\stoquify-prompt-execution-roadmap-publisher\SKILL.md`
+Create a dependency-ordered, evidence-backed roadmap for all F01–F14 findings, CAP01–CAP29 capabilities and K01–K19 proposals in the September 30 platform audit. Cover offline/online POS, sales, stock, purchasing/AP, cash/payments/reconciliation, professional accounting/close, HRIS/payroll, country packs, BI, access/privacy, modules/billing, event workers, AI, frontend, recovery and operations. Activate all 22 review lenses listed in the source audit; these are role lenses, not assertions that separate human experts have approved the work.
 
-Use the fixed publication directory:
+## Execution checklist
 
-`docs/prompt-execution/`
+1. Read the original audit, bounded rechecks and existing high-level W00–W11 roadmap. Preserve their evidence and all unrelated work.
+2. Inspect current command definitions and relevant knowledge-graph/source ownership paths. Use graphs as navigation; confirm current code before implementation.
+3. Expand each proposal into a package with objective, current state, priority, dependencies, paths, data impact, controls, verification, rollout gate, owner/reviewer, assumptions, effort and definition of done.
+4. Separate core defect fixes, missing lifecycle evidence, external qualification and optional scope. Start independent work in parallel without assigning unrequested autonomous agents.
+5. Define deployment/data safety, decision ownership, acceptance journeys, first-sprint actions, capacity assumptions and the status/evidence contract.
+6. Validate complete finding/capability/KPI/lens coverage and an acyclic dependency graph. Preserve the older publication before updating the fixed report destination.
+7. Publish exactly five Markdown/PDF pairs using the repository publisher. Verify source preservation, PDF headers, sizes, names and absence of intermediate files.
 
-## Required report outputs
+## Evidence to inspect
 
-- `01_REFINED_PROMPT.md` and `.pdf`
-- `02_EXECUTION_REPORT.md` and `.pdf`
-- `03_EXECUTION_FINDINGS_AND_RISKS.md` and `.pdf`
-- `04_IMPLEMENTATION_ROADMAP.md` and `.pdf`
-- `05_ROADMAP_EXECUTIVE_SUMMARY.md` and `.pdf`
+- [executive-assessment.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/executive-assessment.md>)
+- [findings.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/findings.md>)
+- [schema-assessment.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/schema-assessment.md>)
+- [capability-coverage.csv](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/capability-coverage.csv>)
+- [architecture-and-workflows.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/architecture-and-workflows.md>)
+- [bi-capability-matrix.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/bi-capability-matrix.md>)
+- [review-lens-register.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/review-lens-register.md>)
+- [verification-summary.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/verification-summary.md>)
+- [concurrent-changes-and-rechecks.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/concurrent-changes-and-rechecks.md>)
+- [remediation-roadmap.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/remediation-roadmap.md>)
+- [evidence-index.md](<E:/ohada saas/Focused projects/stoquify/what-next/platform-correctness-audit/2026-09-30-run-01/evidence-index.md>)
 
-## Required behavior
+Also inspect `AGENTS.md`, `package.json`, Jest/TypeScript/Next configuration, the existing report publisher and relevant `graphify-out/` entries. Domain source paths in each package identify the next implementation inspection targets; they do not imply that every source line was freshly re-audited during roadmap drafting.
 
-1. Use `C:\Users\J COMPUTER\.codex\skills\aqstoqflow-prompt-architect\SKILL.md` as the mandatory refinement stage.
-2. Preserve tenant isolation, RBAC, module entitlement, auditability, idempotency, safe errors, privacy and dirty-worktree safety.
-3. Classify execution risk before making changes; pause for authority before destructive, external, financial, payment, lender, insurer or production actions.
-4. Record actual files, commands, results, tests, changes, assumptions, blockers and evidence freshness.
-5. Generate findings from execution evidence and generate the roadmap from those findings.
-6. Use `docs-report-publisher` to render PDFs; do not create ad hoc PDF output.
-7. Validate that every Markdown file has a same-named, non-empty PDF and that no intermediate HTML/browser files remain in the destination.
+## Expected artifacts
+
+Publish these pairs under `docs/prompt-execution/`: 01_REFINED_PROMPT; 02_EXECUTION_REPORT; 03_EXECUTION_FINDINGS_AND_RISKS; 04_IMPLEMENTATION_ROADMAP; 05_ROADMAP_EXECUTIVE_SUMMARY. Keep source hashes, planning validation and the previous publication in `what-next/platform-correctness-roadmap/2026-09-30-run-01/` outside the publication directory.
+
+## Verification commands
+
+Run `node what-next/platform-correctness-roadmap/2026-09-30-run-01/build-roadmap.cjs` for required-field, path, coverage and dependency validation. Run `node .agents/skills/docs-report-publisher/scripts/publish_reports.mjs prompt-execution` to publish. Run `node what-next/platform-correctness-roadmap/2026-09-30-run-01/validate-publication.cjs` to verify the exact five-pair invariant and unchanged Markdown. Application verification commands are a future-execution catalog in the roadmap, not commands to run during this planning-only task.
+
+## Risk controls and non-goals
+
+Preserve prior reports and dirty-worktree changes. Do not change application code, schema, live data, feature flags, payroll rules, provider configuration or deployment. No use of secrets or sensitive tenant records is needed for this task. Do not send external messages or claim expert/regulatory approval. Keep production offline and draft statutory restrictions intact. Do not treat a scanner pass as runtime proof, or missing metric data as zero. Manufacturing, legal-entity consolidation and employee performance prediction are not inferred requirements.
 
 ## Success criteria
 
-The renamed skill exists, its instructions are executable and safe, the five report pairs are published under `docs/prompt-execution/`, all verification results are honestly reported, and unresolved validator or environment blockers remain visible.
+All 14 findings, 29 capabilities, 19 KPIs and 22 lenses have traceable work/decision coverage; every work package has all required execution fields; hard dependencies contain no cycle; the original audit and older publication are preserved; five verified report pairs exist; effort and timeline assumptions are explicit; the next action is executable; current planning results are distinguished from historic tests and future implementation.
+
+## Follow-on implementation prompt template
+
+“Execute package [Rxx] from the published roadmap. Re-read its source finding, verify current source and predecessors, preserve unrelated changes, and confirm the package's explicit operating scope. Implement only the necessary change. Add the stated failure/concurrency/financial tests in the owning suite and run relevant current commands. Save exact revision, hashes, results, migrations, unresolved decisions and reviewer requirements in a new evidence folder. Do not mark the package complete until its definition of done and rollout gate are met. Prepare any sensitive or external action as a concrete reviewable final step before seeking authority.”

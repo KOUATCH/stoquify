@@ -91,6 +91,7 @@ export type ClientMissingCloseEvidenceRequestQueue = Readonly<{
   organizationId: string;
   actorId: string;
   generatedAt: string;
+  nextCursor?: string | null;
   source: {
     organizationScoped: true;
     recipientScoped: true;

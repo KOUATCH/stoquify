@@ -1,0 +1,109 @@
+{
+  "at": "2026-09-30T17:02:45.090Z",
+  "baseline": false,
+  "syntheticOnly": true,
+  "sourceBefore": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "checks": [
+    {
+      "label": "status-without-any-certified-export",
+      "expected": "blocked",
+      "actual": "blocked",
+      "blockers": [
+        "close-certified-export-missing"
+      ],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "actual-invalidation-of-retained-export",
+      "expected": "blocked",
+      "actual": "blocked",
+      "packGrade": "blocked",
+      "packLabel": "Redacted evidence",
+      "blockers": [
+        "close-evidence-stale"
+      ],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "unavailable-high-risk-checklist",
+      "expected": "blocked",
+      "actual": "blocked",
+      "blockers": [
+        "close-checklist-failed"
+      ],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "actual-assessment-preserves-blockers",
+      "expected": "blocked",
+      "actual": "blocked",
+      "blockers": [
+        "close-run-blocked-or-voided",
+        "close-open-findings"
+      ],
+      "readPreservedBusinessRecords": true
+    },
+    {
+      "label": "draft-export-does-not-certify",
+      "expected": "blocked",
+      "actual": "blocked",
+      "packGrade": "operational",
+      "packLabel": "Redacted evidence",
+      "blockers": [
+        "close-run-blocked-or-voided",
+        "close-open-findings"
+      ],
+      "readPreservedBusinessRecords": true
+    }
+  ],
+  "fixture": {
+    "organizationId": "cmuocsrgj0000mab47s00ten3",
+    "runnerId": "cmuocsrh10002mab4f3g7cc8d",
+    "reviewerId": "cmuocsrhk0004mab48i65xu27",
+    "periodId": "cmuocsri20008mab4cwopwxg1",
+    "historicalRunId": "cmuocsrul000cmab4gznqo0hq",
+    "packId": "cmuocsrup000emab4b7xcyekj"
+  },
+  "assessment": {
+    "runId": "cmuocsssc000smab4zk9mnks8",
+    "status": "BLOCKED",
+    "criticalBlockerCount": 0,
+    "highBlockerCount": 1,
+    "trustLevel": "T2"
+  },
+  "review": {
+    "id": "cmuocst5z0020mab4vot3rw1e",
+    "status": "CHANGES_REQUESTED"
+  },
+  "draft": {
+    "exportId": "cmuocstfc002amab4vv8saizn",
+    "contentHash": "sha256:5b0b35df7a11d18f2ce4c319154d137df36d6e8afb1bd70a978969e07346f178",
+    "isCertified": false,
+    "blockers": [
+      "Close run status is BLOCKED, not READY.",
+      "Draft close pack requires at least T3 data trust; current close run trust level is T2.",
+      "1 high-severity blocker(s) remain open.",
+      "1 open high-risk finding(s) block certification.",
+      "Inventory valuation annex evidence is stale.",
+      "No payroll run belongs to this close period for pilot-cycle certification."
+    ]
+  },
+  "certificationDenial": "Certified close pack is blocked: Close run status is BLOCKED, not READY.",
+  "deniedExportHadNoBusinessEffects": true,
+  "reproduced": [],
+  "passed": true,
+  "sourceAfter": {
+    "services/evidence/proof-trail.service.ts": "c8b3b7602cda18bb4ff4687fec28af5f346391a214b0590245eab66302584507",
+    "services/evidence/evidence-grade.service.ts": "844d9283fca168901a5e3719405b4eeef40c72a727e8410b06f7cb91f45daf6a",
+    "components/evidence/proof-trail-presentation.ts": "49360e5bbd76852c72b60314bd3b683b549544c75d17a6a2301b069e46b63f8e",
+    "services/accounting/close-assurance.service.ts": "aade3f1f61ec126132d4e4cbb794e745e6370b6b7819c94e65591839b7399905",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "sourceStable": true
+}

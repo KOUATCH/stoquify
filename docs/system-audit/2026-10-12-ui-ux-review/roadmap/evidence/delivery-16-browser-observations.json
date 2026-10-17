@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-16",
+  "browser": "Edge",
+  "role": "SUPER_ADMIN",
+  "method": "Recorded live browser observations; not an automated end-to-end suite",
+  "route": "/fr/dashboard/accounting/accountant-portal",
+  "theme": "dark",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "clientWidth": 1420,
+      "scrollWidth": 1420,
+      "screenshot": "delivery-16-fr-desktop.png"
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "clientWidth": 1004,
+      "scrollWidth": 1004,
+      "screenshot": "delivery-16-fr-tablet.png"
+    },
+    {
+      "width": 391,
+      "height": 844,
+      "clientWidth": 371,
+      "scrollWidth": 371,
+      "screenshot": "delivery-16-fr-phone.png"
+    }
+  ],
+  "checks": {
+    "singleMain": true,
+    "frenchRole": "Super administrateur",
+    "englishRole": "Super Admin",
+    "accountMenuEnterEscapeFocusReturn": true,
+    "mobileNavigationEnterEscapeFocusReturn": true,
+    "controlReferenceEnterSpaceToggle": true,
+    "blockerTableArrowRight": {
+      "focused": true,
+      "scrollLeftAfter": 53.3333,
+      "clientWidth": 305,
+      "scrollWidth": 1040
+    },
+    "exportDisabled": true,
+    "englishPhoneMenuRect": {
+      "left": 50.67,
+      "right": 354.67,
+      "top": 64.32,
+      "bottom": 684.46
+    },
+    "outerLoadingObserved": [
+      "Preparing dashboard command center",
+      "Préparation du tableau de bord"
+    ],
+    "frenchLoadingDescription": "Les données du tableau de bord sont en cours de chargement."
+  },
+  "restoredViewport": {
+    "width": 1645,
+    "height": 792,
+    "clientWidth": 1625,
+    "scrollWidth": 1625
+  },
+  "limitations": [
+    "Actual owner/accountant/cashier roles not verified this delivery",
+    "Light theme, screen reader, reduced-motion rendering and comprehensive contrast not verified",
+    "Other route-specific pending states covered by source/mocked tests only",
+    "Initial extension timeouts recovered after user opened Edge; permanent connection reliability not established"
+  ],
+  "businessActions": "No business forms submitted, exports invoked, permissions changed or transactions executed"
+}

@@ -16,9 +16,18 @@ import {
   type CloseRun,
 } from "@prisma/client"
 import { randomUUID } from "node:crypto"
+import { buildCloseEvidenceCollectionReceipt, isCloseEvidenceCollectionEligible } from "./close-evidence-collection"
+import { closeEvidenceReplacementSelection, getCloseEvidenceReplacementInTx, parseCloseEvidenceReplacementBinding } from "./close-evidence-replacement.service"
+import { lockCloseEvidenceAcceptanceAuthorityInTx, lockCloseEvidenceWorkAuthorityInTx, lockCloseEvidenceRecipientInTx } from "./close-evidence-acceptance-authority.service"
+import { CLOSE_RECIPIENT_REPLACED, readCloseEvidenceRecipient } from "./close-evidence-recipient.service"
+import { replaceMissingCloseEvidenceRecipientInputSchema } from "./close-assurance.schemas"
 
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
+import { deriveCloseCurrentProof, type CloseCurrentProof } from "./close-assurance-current-proof"
+import { closeAssessmentSelectionBlocker, deriveCloseAssessmentSelection, lockCloseAssessmentOrderInTx, readCloseAssessmentOrderInTx, readCloseAssessmentPublicationTimeInTx } from "./close-assessment-order.service"
+import { lockCloseSourceRevisionInTx, guardCloseAssessmentPublicationInTx } from "./close-source-revision.service"
+import { readResolvedCloseEvidence } from "./close-evidence-resolution-records"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
   ApplicationError,
@@ -40,7 +49,8 @@ import {
   reconcileLedger,
   type LedgerReconciliationResult,
 } from "./reconciliations.service"
-import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
+import { getPaymentCloseEvidence } from "@/services/reconciliation/payment-close-evidence.service"
+import { createCloseControlScope } from "./close-control-scope"
 import {
   reconcileInventoryClass3,
   type InventoryClass3Failure,
@@ -90,6 +100,7 @@ type CloseControlContext = {
   actorId?: string | null
   actorPermissions?: readonly string[]
   now?: Date | number | string | null
+  session?: { id: string; token: string } | null
 }
 
 type CloseWaiverControlContext = Omit<CloseControlContext, "now"> & {
@@ -101,6 +112,8 @@ type MissingCloseEvidenceAcceptanceControlContext = Omit<
   "now"
 > & {
   freshAuth?: CloseFreshAuthControl | null
+  session?: { id: string; token: string } | null
+  requireWorkDeskAccess?: boolean
 }
 
 const CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS = 5 * 60 * 1000
@@ -172,9 +185,10 @@ function requireFreshMissingEvidenceAcceptanceControl(
     nowTime - lastAuthAt >
       MISSING_CLOSE_EVIDENCE_ACCEPTANCE_FRESH_AUTH_MAX_AGE_MS
   ) {
-    throw new BusinessRuleError(
-      "Fresh authentication is required to accept missing-proof evidence.",
+    throw new ApplicationError(
       "FRESH_AUTH_REQUIRED",
+      "Fresh authentication is required to accept missing-proof evidence.",
+      403,
     )
   }
 
@@ -320,6 +334,8 @@ export type CloseEvidenceGraphDto = {
 }
 
 export type CloseAssuranceDashboardData = {
+  // Absent on historical clients; null for an assessment preview without a retained run.
+  currentProof?: CloseCurrentProof | null
   source: {
     mode: "CLOSE_ASSURANCE_CENTER"
     asOf: string
@@ -386,6 +402,10 @@ type AssessmentDraft = Omit<
   "comments" | "reviews"
 > & {
   raw: {
+    balanceSheetReconciliation?: Awaited<ReturnType<typeof getAccountantPortalData>>["balanceSheetReconciliation"]
+    payableBalances?: Awaited<ReturnType<typeof getAccountantPortalData>>["payableBalances"]
+    bankBalanceReconciliation?: Awaited<ReturnType<typeof getAccountantPortalData>>["bankBalanceReconciliation"]
+    collectionSucceeded?: Record<string, boolean>
     period: Awaited<ReturnType<typeof resolveTargetPeriod>>
     checklist: Array<Omit<CloseAssuranceChecklistDto, "id">>
     findings: Array<
@@ -423,6 +443,9 @@ type InventoryValuationAnnexMetadata = {
   inventorySubledgerValueTotal: string | null
   mismatchAmount: string | null
   sourceHash: string | null
+  evidenceHashVersion: 1 | null
+  observationHash: string | null
+  recordedThrough: string | null
   blockerStatus:
     | "PASSED"
     | "INVENTORY_VALUATION_MISMATCH"
@@ -441,6 +464,18 @@ const CLOSE_SOURCE_TABLES = [
   "journal_entry_lines",
   "ledger_posting_batches",
   "accounting_source_links",
+  "bank_balance_evidence",
+  "balance_sheet_evidence",
+  "close_source_changes",
+  "provider_accounts",
+  "payment_rails",
+  "chart_of_accounts",
+  "settlement_accounts",
+  "match_records",
+  "payment_transactions",
+  "provider_events",
+  "statement_files",
+  "statement_lines",
   "reconciliation_runs",
   "suspense_items",
   "payment_exceptions",
@@ -901,7 +936,7 @@ function payrollForecastEvidence(
     sourceTable: "payroll_runs",
     sourceType: "PayrollFinanceForecastProof",
     sourceId: snapshot.sourceHash,
-    sourceLabel: `${forecast.authoritative ? "Authoritative" : "Blocked"} payroll forecast proof: total upcoming ${forecast.totalUpcomingAmount}`,
+    sourceLabel: `${forecast.authoritative ? "Authoritative" : "Blocked"} payroll forecast proof: total upcoming ${forecast.totalUpcomingAmount ?? "unavailable"}`,
     sourceDate: snapshot.generatedAt,
     sourceHash: snapshot.sourceHash,
     provenance: blocked ? "UNAVAILABLE" : "POSTED",
@@ -961,7 +996,7 @@ function coverageFromChecklist(
 }
 
 function periodSummary(
-  period: Awaited<ReturnType<typeof resolveTargetPeriod>>,
+  period: Pick<NonNullable<Awaited<ReturnType<typeof resolveTargetPeriod>>>, "id" | "name" | "status" | "startDate" | "endDate"> | null,
 ): ClosePeriodSummary | null {
   if (!period) return null
   return {
@@ -1021,6 +1056,7 @@ async function resolveTargetPeriod(
         status: true,
         startDate: true,
         endDate: true,
+        organization: { select: { currency: true } },
       },
     })
     if (!period) throw new NotFoundError("Accounting period not found")
@@ -1040,6 +1076,7 @@ async function resolveTargetPeriod(
       status: true,
       startDate: true,
       endDate: true,
+        organization: { select: { currency: true } },
     },
   })
 
@@ -1054,6 +1091,7 @@ async function resolveTargetPeriod(
       status: true,
       startDate: true,
       endDate: true,
+        organization: { select: { currency: true } },
     },
   })
 }
@@ -1313,6 +1351,9 @@ function buildInventoryValuationAnnex(params: {
       inventorySubledgerValueTotal: null,
       mismatchAmount: null,
       sourceHash: null,
+      evidenceHashVersion: null,
+      observationHash: null,
+      recordedThrough: null,
       blockerStatus: "EVIDENCE_UNAVAILABLE",
       failures: [
         {
@@ -1335,7 +1376,10 @@ function buildInventoryValuationAnnex(params: {
     class3LedgerBalanceTotal: params.result.ledgerClass3Value,
     inventorySubledgerValueTotal: params.result.inventoryValue,
     mismatchAmount: params.result.driftAmount,
-    sourceHash: params.result.reportHash,
+    sourceHash: params.result.evidenceHash,
+    evidenceHashVersion: params.result.evidenceHashVersion,
+    observationHash: params.result.reportHash,
+    recordedThrough: params.result.recordedThrough,
     blockerStatus:
       params.result.status === "PASSED"
         ? "PASSED"
@@ -1531,6 +1575,7 @@ async function buildAssessment(
     }
   }
 
+  const closeScope = createCloseControlScope(organizationId, period, now)
   const [
     preflightResult,
     ledger,
@@ -1540,16 +1585,16 @@ async function buildAssessment(
     payrollForecastSnapshot,
   ] = await Promise.all([
     getPreflightSafe(organizationId, period),
-    reconcileLedger(organizationId, { periodId: period.id }).catch((error) => ({ error })) as Promise<LedgerReconciliationResult | { error: unknown }>,
-    getPaymentReconciliationDashboardData(organizationId).catch((error) => ({
+    reconcileLedger(organizationId, { periodId: period.id, recordedThrough: now }).catch((error) => ({ error })) as Promise<LedgerReconciliationResult | { error: unknown }>,
+    getPaymentCloseEvidence(closeScope).catch((error) => ({
       error,
     })),
     getAccountantPortalData(
-      { organizationId, periodId: period.id, limit: 12 },
+      { organizationId, periodId: period.id, startDate: period.startDate, endDate: period.endDate, limit: 12 },
       db,
       now,
     ).catch((error) => ({ error })),
-    reconcileInventoryClass3({ organizationId, periodId: period.id }).catch(
+    reconcileInventoryClass3({ organizationId, periodId: period.id, recordedThrough: now, currency: period.organization?.currency ?? "XAF" }).catch(
       (error) => ({ error }),
     ),
     getTenantOperatingSnapshot({
@@ -1607,18 +1652,24 @@ async function buildAssessment(
   const dataTrustHigh = dataTrustBlockers.filter(
     (blocker) => blocker.severity === "high",
   ).length
+  const supplierPaymentProofs = dataTrustUnavailable ? [] : (dataTrust.supplierPaymentReconciliationProofs ?? [])
+  const reviewedCashPaymentCount = supplierPaymentProofs.filter(proof => proof.status === "CASH_REVIEWED").length
+  const accountCoverage = paymentUnavailable ? null : paymentDashboard.accountCoverage
+  const blockedPaymentAccounts = accountCoverage?.blockedAccountCount ?? 0
+  const blockedBankBalances = dataTrustUnavailable ? 0 : dataTrust.bankBalanceReconciliation?.blockedAccountCount ?? 0
   const paymentEvidenceCount = paymentUnavailable
     ? 0
     : Number(paymentDashboard.source.providerEvidenceAvailable) +
       Number(paymentDashboard.source.statementEvidenceAvailable) +
-      paymentDashboard.summary.signedRunCount
+      paymentDashboard.summary.signedRunCount + reviewedCashPaymentCount + (accountCoverage?.accounts.filter(row => row.status === "NO_ACTIVITY_APPROVED").length ?? 0)
   const paymentOpenSuspense = paymentUnavailable
     ? 0
     : paymentDashboard.summary.openSuspenseCount
+  const closeBlockingSuspense = Math.max(preflight?.openReconciliationSuspenseCount ?? 0, paymentOpenSuspense)
   const paymentCriticalExceptions = paymentUnavailable
     ? 0
     : paymentDashboard.summary.criticalExceptionCount
-  const paymentUnsignedRuns = preflight?.unsignedReconciliationRunCount ?? 0
+  const paymentUnsignedRuns = Math.max(preflight?.unsignedReconciliationRunCount ?? 0, paymentUnavailable ? 0 : paymentDashboard.summary.pendingRunCount)
 
   const checklist: Array<Omit<CloseAssuranceChecklistDto, "id">> = [
     {
@@ -1705,35 +1756,58 @@ async function buildAssessment(
       dueAt: null,
     },
     {
+      key: "balance-sheet-reconciliation",
+      domain: CloseFindingDomain.LEDGER,
+      status: dataTrustUnavailable ? CloseChecklistStatus.UNAVAILABLE
+        : (dataTrust.balanceSheetReconciliation?.blockedAccountCount ?? 0) > 0 ? CloseChecklistStatus.FAILED : CloseChecklistStatus.PASSED,
+      severity: CloseFindingSeverity.HIGH,
+      label: "Balance-sheet account reconciliations",
+      detail: dataTrustUnavailable ? "Balance-sheet evidence is unavailable."
+        : `${dataTrust.balanceSheetReconciliation?.reconciledAccountCount ?? 0} of ${dataTrust.balanceSheetReconciliation?.requiredAccountCount ?? 0} account/currency schedules have current independent approval.`,
+      sourceService: "services/accounting/balance-sheet-close.service.ts",
+      evidenceCount: dataTrustUnavailable ? 0 : dataTrust.balanceSheetReconciliation?.reconciledAccountCount ?? 0,
+      blockerReason: dataTrustUnavailable ? "Balance-sheet evidence could not be collected."
+        : (dataTrust.balanceSheetReconciliation?.blockedAccountCount ?? 0) > 0 ? "Reconcile and independently approve each required account/currency schedule." : null,
+      nextActionHref: "/dashboard/accounting/accountant-portal", ownerId: null, dueAt: null,
+    },
+    {
       key: "payment-reconciliation",
       domain: CloseFindingDomain.PAYMENT_RECONCILIATION,
       status: paymentUnavailable
         ? CloseChecklistStatus.UNAVAILABLE
-        : paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
+        : blockedBankBalances > 0 || blockedPaymentAccounts > 0 || paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
           ? CloseChecklistStatus.FAILED
           : paymentDashboard.summary.readyForSignoffCount > 0 ||
               paymentEvidenceCount === 0
             ? CloseChecklistStatus.WARNING
             : CloseChecklistStatus.PASSED,
       severity:
-        paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
+        blockedBankBalances > 0 || blockedPaymentAccounts > 0 || paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
           ? CloseFindingSeverity.CRITICAL
           : CloseFindingSeverity.MEDIUM,
       label: "Payment reconciliation sign-off",
       detail: paymentUnavailable
         ? (paymentUnavailableReason ?? "Payment reconciliation dashboard data is unavailable.")
+        : blockedBankBalances > 0
+          ? `${blockedBankBalances} bank account(s) require current independently approved balance reconciliation.`
+        : blockedPaymentAccounts > 0
+          ? `${blockedPaymentAccounts} provider account(s) lack complete reconciliation coverage or approved no-activity evidence.`
         : paymentUnsignedRuns > 0
           ? `${paymentUnsignedRuns} reconciliation run${paymentUnsignedRuns === 1 ? "" : "s"} must be signed or voided.`
           : paymentCriticalExceptions > 0
             ? `${paymentCriticalExceptions} critical payment exception${paymentCriticalExceptions === 1 ? "" : "s"} remain open.`
             : paymentDashboard.summary.readyForSignoffCount > 0
               ? `${paymentDashboard.summary.readyForSignoffCount} run${paymentDashboard.summary.readyForSignoffCount === 1 ? "" : "s"} await sign-off.`
-              : "Payment reconciliation evidence is available for close review.",
+              : reviewedCashPaymentCount > 0
+                ? `${reviewedCashPaymentCount} supplier cash receipt review(s) retained as internal evidence; provider settlement and recipient identity are not certified by these reviews.`
+                : paymentEvidenceCount > 0
+                  ? "Payment reconciliation evidence is available for close review."
+                  : "No payment reconciliation evidence is available for close review.",
       sourceService:
-        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/reconciliation/payment-close-evidence.service.ts",
       evidenceCount: paymentEvidenceCount,
       blockerReason:
-        paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
+        blockedBankBalances > 0 || blockedPaymentAccounts > 0 || paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
           ? "Payment reconciliation is not fully signed off."
           : null,
       nextActionHref: "/dashboard/finance/reconciliation",
@@ -1745,20 +1819,20 @@ async function buildAssessment(
       domain: CloseFindingDomain.SUSPENSE,
       status: paymentUnavailable
         ? CloseChecklistStatus.UNAVAILABLE
-        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) >
+        : closeBlockingSuspense >
             0
           ? CloseChecklistStatus.FAILED
           : CloseChecklistStatus.PASSED,
       severity:
-        (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+        closeBlockingSuspense > 0
           ? CloseFindingSeverity.CRITICAL
           : CloseFindingSeverity.INFO,
       label: "Suspense and payment exceptions",
       detail: paymentUnavailable
         ? "Suspense workflow data is unavailable."
-        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) >
+        : closeBlockingSuspense >
             0
-          ? `${preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense} open suspense item${(preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) === 1 ? "" : "s"} block close.`
+          ? `${closeBlockingSuspense} open suspense item${closeBlockingSuspense === 1 ? "" : "s"} block close.`
           : "No open close-blocking suspense items were detected.",
       sourceService:
         "services/reconciliation/payment-suspense-workflow.service.ts",
@@ -1766,7 +1840,7 @@ async function buildAssessment(
         ? 0
         : paymentDashboard.suspenseQueue.length,
       blockerReason:
-        (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+        closeBlockingSuspense > 0
           ? "Suspense must be resolved or approved through the suspense workflow."
           : null,
       nextActionHref: "/dashboard/finance/reconciliation",
@@ -1929,11 +2003,37 @@ async function buildAssessment(
       : []),
     ...buildInventoryValuationFindings(inventoryAnnex),
     ...payrollForecastFindings(payrollForecastSnapshot),
+    ...(accountCoverage?.accounts.filter(account => account.status === "BLOCKED").map(account => ({
+      checklistKey: "payment-reconciliation", domain: CloseFindingDomain.PAYMENT_RECONCILIATION,
+      severity: CloseFindingSeverity.HIGH, status: CloseFindingStatus.OPEN,
+      title: "Provider account close coverage is incomplete", detail: `${account.accountName} (${account.currencyCode}): ${account.reasons.join(", ")}.`,
+      sourceService: "services/reconciliation/account-close-coverage.service.ts", sourceType: "ProviderAccountCloseCoverage",
+      sourceId: account.providerAccountId, ownerId: null, assignedById: null, dueAt: null, correlationId: null,
+    })) ?? []),
+    ...(!dataTrustUnavailable ? (dataTrust.balanceSheetReconciliation?.accounts ?? [])
+      .filter(account => account.status === "BLOCKED").map(account => ({
+        checklistKey: "balance-sheet-reconciliation", domain: CloseFindingDomain.LEDGER,
+        severity: CloseFindingSeverity.HIGH, status: CloseFindingStatus.OPEN,
+        title: "Balance-sheet reconciliation is incomplete", detail: `${account.accountCode} ${account.accountName} (${account.currency}): ${account.reason}`,
+        sourceService: "services/accounting/balance-sheet-close.service.ts", sourceType: "BalanceSheetReconciliation",
+        sourceId: `${account.ledgerAccountId}:${account.currency}`, ownerId: null, assignedById: null, dueAt: null, correlationId: null,
+      })) : []),
+    ...(!dataTrustUnavailable ? (dataTrust.bankBalanceReconciliation?.accounts ?? [])
+      .filter(account => account.status === "BLOCKED").map(account => ({
+        checklistKey: "payment-reconciliation", domain: CloseFindingDomain.PAYMENT_RECONCILIATION,
+        severity: CloseFindingSeverity.HIGH, status: CloseFindingStatus.OPEN,
+        title: "Bank balance reconciliation is incomplete", detail: `${account.accountName} (${account.currency}): ${account.reason}`,
+        sourceService: "services/reconciliation/bank-balance-close.service.ts", sourceType: "BankBalanceReconciliation",
+        sourceId: account.providerAccountId, ownerId: null, assignedById: null, dueAt: null, correlationId: null,
+      })) : []),
     ...(!dataTrustUnavailable
       ? dataTrustBlockers
           .filter(
             (blocker) =>
-              blocker.severity === "critical" || blocker.severity === "high",
+              (blocker.severity === "critical" || blocker.severity === "high") &&
+              !(accountCoverage && blocker.id.startsWith("provider-account-coverage:")) &&
+              !(dataTrust.bankBalanceReconciliation && blocker.gate === "payments.bank-balance") &&
+              !(dataTrust.balanceSheetReconciliation && blocker.gate === "ledger.balance-sheet"),
           )
           .map((blocker) => ({
             checklistKey: blocker.gate.includes("payment")
@@ -1954,7 +2054,7 @@ async function buildAssessment(
                 : CloseFindingSeverity.HIGH,
             status: CloseFindingStatus.OPEN,
             title: blocker.title,
-            detail: blocker.detail,
+            detail: `${blocker.scope === "ORGANIZATION" ? "Organization-wide control: " : blocker.scope === "PERIOD_AND_UNASSIGNED" ? "Period and unassigned controls: " : ""}${blocker.detail}`,
             sourceService: "services/accounting/data-trust.service.ts",
             sourceType: blocker.gate,
             sourceId: blocker.id,
@@ -1971,6 +2071,43 @@ async function buildAssessment(
       checklistKey?: string
     }
   > = [
+    ...(!dataTrustUnavailable ? (dataTrust.balanceSheetReconciliation?.accounts ?? []).map(account => ({
+      checklistKey: "balance-sheet-reconciliation", evidenceType: CloseEvidenceType.AUDIT_LOG,
+      sourceTable: "balance_sheet_evidence", sourceType: "BalanceSheetReconciliation", sourceId: account.evidenceId ?? `${account.ledgerAccountId}:${account.currency}`,
+      sourceLabel: `Balance sheet ${account.accountCode} ${account.accountName} (${account.currency}): ${account.status}`,
+      sourceDate: account.approvedAt, sourceHash: account.evidenceHash, provenance: "OPERATIONAL" as const,
+      available: account.status === "RECONCILED", unavailableReason: account.reason, correlationId: null,
+    })) : []),
+    ...(!dataTrustUnavailable && dataTrust.payableBalances ? [{
+      checklistKey: "data-trust-provenance",
+      evidenceType: CloseEvidenceType.AUDIT_LOG,
+      sourceTable: "supplier_invoices", sourceType: "ClosePayableBalanceClassification",
+      sourceId: period.id,
+      sourceLabel: `${dataTrust.payableBalances.normalUnpaidCount} normal unpaid invoice(s); ${dataTrust.payableBalances.exceptionCount} AP control exception(s).`,
+      sourceDate: now.toISOString(), sourceHash: dataTrust.payableBalances.evidenceHash,
+      provenance: "OPERATIONAL" as const, available: true, unavailableReason: null, correlationId: null,
+    }] : []),
+    ...(!dataTrustUnavailable ? (dataTrust.bankBalanceReconciliation?.accounts ?? []).map(account => ({
+      checklistKey: "payment-reconciliation", evidenceType: CloseEvidenceType.AUDIT_LOG,
+      sourceTable: "bank_balance_evidence", sourceType: "BankBalanceReconciliation", sourceId: account.evidenceId ?? account.providerAccountId,
+      sourceLabel: `Bank balance ${account.accountName} (${account.currency}): ${account.status}`,
+      sourceDate: account.approvedAt, sourceHash: account.evidenceHash, provenance: "OPERATIONAL" as const,
+      available: account.status === "RECONCILED", unavailableReason: account.reason, correlationId: null,
+    })) : []),
+    ...supplierPaymentProofs.map(proof => ({
+      checklistKey: "payment-reconciliation",
+      evidenceType: CloseEvidenceType.AUDIT_LOG,
+      sourceTable: "business_events",
+      sourceType: proof.kind === "CASH_VOUCHER" ? "SupplierCashReceiptReview" : "SupplierPaymentReconciliationReview",
+      sourceId: proof.decisionId,
+      sourceLabel: proof.kind === "CASH_VOUCHER" ? "Independently reviewed supplier cash receipt (internal attestation)" : "Supplier payment statement reconciliation completion",
+      sourceDate: proof.recordedAt,
+      sourceHash: proof.decisionHash,
+      provenance: "OPERATIONAL",
+      available: true,
+      unavailableReason: null,
+      correlationId: proof.paymentRequestId,
+    })),
     ...(ledgerResult
       ? ledgerResult.totalsByCurrency.map((total) => ({
           checklistKey: "ledger-reconciliation",
@@ -2036,6 +2173,14 @@ async function buildAssessment(
             correlationId: null,
           },
         ]),
+    ...(accountCoverage?.accounts.map(account => ({
+      checklistKey: "payment-reconciliation", evidenceType: CloseEvidenceType.AUDIT_LOG,
+      sourceTable: "provider_accounts", sourceType: "ProviderAccountCloseCoverage", sourceId: account.providerAccountId,
+      sourceLabel: `${account.accountName} (${account.currencyCode}) - ${account.status}`, sourceDate: now.toISOString(),
+      sourceHash: account.noActivityEvidence?.hash ?? null, provenance: "OPERATIONAL",
+      available: account.status !== "BLOCKED", unavailableReason: account.reasons.length ? account.reasons.join(", ") : null,
+      correlationId: null, metadata: account,
+    })) ?? []),
     ...(!paymentUnavailable
       ? paymentDashboard.suspenseQueue.map((item) => ({
           checklistKey: "suspense-exceptions",
@@ -2225,10 +2370,13 @@ async function buildAssessment(
           "reconciliation_runs",
           "suspense_items",
           "payment_exceptions",
+          "provider_events",
+          "statement_files",
+          "statement_lines",
         ],
         reason: paymentUnavailable
           ? (paymentUnavailableReason ?? "Payment reconciliation dashboard failed to load.")
-          : undefined,
+          : `Period evidence through ${closeScope.recordedThrough}; unassigned organization-wide controls: ${paymentDashboard.organizationControls?.unassignedSuspense ?? 0} suspense, ${paymentDashboard.organizationControls?.unassignedExceptions ?? 0} exceptions.`,
       },
       {
         label: "Data trust",
@@ -2280,9 +2428,22 @@ async function buildAssessment(
     controls: closeControls(),
     raw: {
       period,
+      payableBalances: dataTrustUnavailable ? undefined : dataTrust.payableBalances,
+      bankBalanceReconciliation: dataTrustUnavailable ? undefined : dataTrust.bankBalanceReconciliation,
+      balanceSheetReconciliation: dataTrustUnavailable ? undefined : dataTrust.balanceSheetReconciliation,
       checklist: checklistWithEvidence,
       findings,
       evidenceItems,
+      collectionSucceeded: {
+        "period-close-preflight": !preflightResult.error,
+        "ledger-reconciliation": !ledgerUnavailable,
+        "payment-reconciliation": !paymentUnavailable,
+        "suspense-exceptions": !paymentUnavailable,
+        "data-trust-provenance": !dataTrustUnavailable,
+        "tax-payroll-ap-readiness": !dataTrustUnavailable,
+        "inventory-valuation": !inventoryUnavailable,
+        [PAYROLL_FORECAST_CHECKLIST_KEY]: !payrollForecastUnavailable(payrollForecastSnapshot),
+      },
     },
   }
 }
@@ -2391,18 +2552,44 @@ export async function runCloseAssurance(
 ): Promise<CloseAssuranceDashboardData> {
   const now = control.now ? new Date(control.now) : new Date()
   const correlationId = input.correlationId ?? randomUUID()
-  const draft = await buildAssessment(organizationId, input.periodId, now)
-
-  if (!draft.raw.period) {
+  const period = await resolveTargetPeriod(organizationId, input.periodId, db, now)
+  if (!period) {
     throw new CloseAssuranceError(
       "CloseBlocked",
       "An accounting period is required before close assurance can run.",
     )
   }
 
-  const persisted = await db.$transaction(async (tx) => {
-    const closeRun = await tx.closeRun.create({
+  // Publish the in-flight assessment before any evidence collectors run, so a
+  // concurrent source event has a persisted target to invalidate.
+  const started = await db.$transaction(async (tx) => {
+    await lockCloseAssessmentOrderInTx(tx, organizationId, period.id)
+    const sourceRevision = await lockCloseSourceRevisionInTx(tx, organizationId)
+    const currentPeriod = await tx.accountingPeriod.findFirst({ where: { id: period.id, organizationId }, select: { id: true } })
+    if (!currentPeriod) throw new NotFoundError("Accounting period not found")
+    const order = await readCloseAssessmentOrderInTx(tx, organizationId, period.id)
+    const createdAt = await readCloseAssessmentPublicationTimeInTx(tx)
+    if (order.latest && createdAt.getTime() <= order.latest.createdAt.getTime()) {
+      throw new ConflictError("The database clock has not advanced beyond the latest assessment. Wait briefly and retry; contact support if this persists.")
+    }
+    const run = await tx.closeRun.create({
       data: {
+        organizationId, periodId: period.id, status: CloseRunStatus.RUNNING,
+        asOf: now, startedAt: now, createdAt, runById: control.actorId ?? null, correlationId,
+        metadata: jsonObject({ sourceRevision }),
+      },
+    })
+    return { ...run, sourceRevision }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
+  try {
+  const draft = await buildAssessment(organizationId, period.id, now)
+  if (!draft.raw.period) throw new CloseAssuranceError("CloseBlocked", "The accounting period is no longer available.")
+
+  const persisted = await db.$transaction(async (tx) => {
+    if (!await guardCloseAssessmentPublicationInTx(tx, { organizationId, periodId: period.id, runId: started.id, sourceRevision: started.sourceRevision })) {
+      return { id: started.id, periodId: period.id }
+    }
+    const completedData = {
         organizationId,
         periodId: draft.raw.period!.id,
         status: draft.run.status,
@@ -2415,12 +2602,17 @@ export async function runCloseAssurance(
             : new Prisma.Decimal(draft.run.evidenceCoveragePct),
         asOf: now,
         startedAt: now,
-        completedAt: now,
+        completedAt: new Date(),
         runById: control.actorId ?? null,
         correlationId,
         summary: jsonObject(draft.summary),
         provenance: jsonObject({ items: draft.provenance }),
         metadata: jsonObject({
+          sourceRevision: started.sourceRevision,
+          payableBalances: draft.raw.payableBalances ?? null,
+          bankBalanceReconciliation: draft.raw.bankBalanceReconciliation ?? null,
+          balanceSheetReconciliation: draft.raw.balanceSheetReconciliation ?? null,
+          closeScope: createCloseControlScope(organizationId, draft.raw.period!, now),
           sourceTables: draft.source.sourceTables,
           trustLevel: draft.source.trustLevel,
           controlPermissions: control.actorPermissions ?? [],
@@ -2434,8 +2626,15 @@ export async function runCloseAssurance(
             )?.metadata ?? null,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
-      },
+      }
+    const finalized = await tx.closeRun.updateMany({
+      where: { id: started.id, organizationId, periodId: period.id, status: CloseRunStatus.RUNNING },
+      data: completedData,
     })
+    // Never overwrite an event's BLOCKED/stale decision with the collector's
+    // older snapshot. The dashboard below reads the retained current run.
+    if (finalized.count !== 1) return { id: started.id, periodId: period.id }
+    const closeRun = { ...started, ...completedData }
 
     const checklistByKey = new Map<string, CloseChecklistItem>()
     for (const item of draft.raw.checklist) {
@@ -2498,6 +2697,7 @@ export async function runCloseAssurance(
       if (checklist) findingsByChecklist.set(checklist.checklistKey, finding)
     }
 
+    const persistedEvidence: CloseEvidenceItem[] = []
     for (const evidence of draft.raw.evidenceItems) {
       const checklistItem = evidence.checklistKey
         ? checklistByKey.get(evidence.checklistKey)
@@ -2505,7 +2705,7 @@ export async function runCloseAssurance(
       const linkedFinding = evidence.checklistKey
         ? findingsByChecklist.get(evidence.checklistKey)
         : null
-      await tx.closeEvidenceItem.create({
+      persistedEvidence.push(await tx.closeEvidenceItem.create({
         data: {
           organizationId,
           periodId: closeRun.periodId,
@@ -2530,6 +2730,17 @@ export async function runCloseAssurance(
               ? undefined
               : (evidence.metadata as Prisma.InputJsonValue),
         },
+      }))
+    }
+
+    // Preserve the exact collector observation without adding a synthetic
+    // evidence row or changing source coverage. Failed queries never get a receipt.
+    for (const checklist of checklistByKey.values()) {
+      const rows = persistedEvidence.filter(row => row.checklistItemId === checklist.id)
+      if (draft.raw.collectionSucceeded?.[checklist.key] !== true || !isCloseEvidenceCollectionEligible(checklist, rows)) continue
+      await tx.closeChecklistItem.update({
+        where: { id: checklist.id },
+        data: { metadata: { collectionReceipt: buildCloseEvidenceCollectionReceipt(checklist, rows, true) } },
       })
     }
 
@@ -2624,36 +2835,50 @@ export async function runCloseAssurance(
     }
 
     return closeRun
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })
 
   return getCloseAssuranceDashboard(
     organizationId,
     persisted.periodId,
     persisted.id,
   )
+  } catch (error) {
+    // A failed collector or persistence attempt cannot leave a successful run.
+    // Preserve any prior source invalidation rather than replacing its reason.
+    await db.closeRun.updateMany({
+      where: { id: started.id, organizationId, status: CloseRunStatus.RUNNING },
+      data: { status: CloseRunStatus.BLOCKED, completedAt: new Date(), metadata: jsonObject({ assessmentFailure: "ASSESSMENT_FAILED", correlationId }) },
+    })
+    throw error
+  }
 }
 
 async function latestCloseRun(
   organizationId: string,
   periodId: string,
   closeRunId?: string | null,
+  client: DbClient = db,
 ) {
-  return db.closeRun.findFirst({
+  return client.closeRun.findFirst({
     where: {
       organizationId,
       periodId,
       ...(closeRunId ? { id: closeRunId } : {}),
     },
     include: {
-      checklistItems: { orderBy: [{ domain: "asc" }, { key: "asc" }] },
-      findings: { orderBy: [{ severity: "desc" }, { createdAt: "asc" }] },
+      checklistItems: { where: { organizationId }, orderBy: [{ domain: "asc" }, { key: "asc" }] },
+      findings: { where: { organizationId }, orderBy: [{ severity: "desc" }, { createdAt: "asc" }] },
       evidenceItems: {
+        where: { organizationId },
         orderBy: [{ evidenceType: "asc" }, { createdAt: "desc" }],
       },
+      packExports: { where: { organizationId, isCertified: true }, select: { metadata: true } },
       comments: { orderBy: { createdAt: "desc" }, take: 50 },
       reviews: { orderBy: { createdAt: "desc" }, take: 10 },
     },
-    orderBy: { createdAt: "desc" },
+    // Keep adverse/in-flight assessments current. The ID only stabilizes display
+    // for equal creation times; it does not prove which tied assessment is newer.
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   })
 }
 
@@ -2663,25 +2888,43 @@ export async function getCloseAssuranceDashboard(
   closeRunId?: string | null,
 ): Promise<CloseAssuranceDashboardData> {
   const now = new Date()
-  const period = await resolveTargetPeriod(organizationId, periodId, db, now)
+  const { period, run, periods, assessmentOrder } = await db.$transaction(async (tx) => {
+    const period = await resolveTargetPeriod(organizationId, periodId, tx, now)
+    const run = period ? await latestCloseRun(organizationId, period.id, closeRunId, tx) : null
+    const periods = run ? await listRecentPeriods(organizationId, tx, now) : null
+    const assessmentOrder = period && run ? await readCloseAssessmentOrderInTx(tx, organizationId, period.id) : null
+    return { period, run, periods, assessmentOrder }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 
   if (!period) {
     const draft = await buildAssessment(organizationId, null, now)
-    return { ...draft, comments: [], reviews: [] }
+    return { ...draft, currentProof: null, comments: [], reviews: [] }
   }
 
-  const run = await latestCloseRun(organizationId, period.id, closeRunId)
   if (!run) {
     const draft = await buildAssessment(organizationId, period.id, now)
-    return { ...draft, comments: [], reviews: [] }
+    return { ...draft, currentProof: null, comments: [], reviews: [] }
   }
 
-  const periods = await listRecentPeriods(organizationId, db, now)
   const checklist = run.checklistItems.map(mapChecklistItem)
   const findings = run.findings.map(mapFinding)
   const evidenceItems = run.evidenceItems.map(mapEvidenceItem)
+  const currentProof = deriveCloseCurrentProof(run, now)
+  const selection = deriveCloseAssessmentSelection(assessmentOrder!, run)
+  currentProof.assessmentState = selection.state
+  currentProof.latestAssessmentCreatedAt = selection.latestCreatedAt?.toISOString() ?? null
+  const selectionBlocker = closeAssessmentSelectionBlocker(selection)
+  if (selectionBlocker) {
+    currentProof.blockers.unshift(selectionBlocker)
+    currentProof.grade = "blocked"
+  }
+  const controls = closeControls({
+    persisted: true, status: run.status, criticalBlockerCount: run.criticalBlockerCount,
+    highBlockerCount: run.highBlockerCount, checklist, findings,
+  })
 
   return {
+    currentProof,
     source: {
       mode: "CLOSE_ASSURANCE_CENTER",
       asOf: run.asOf.toISOString(),
@@ -2692,7 +2935,7 @@ export async function getCloseAssuranceDashboard(
       sourceTables: [...CLOSE_SOURCE_TABLES],
     },
     period: periodSummary(period),
-    periods,
+    periods: periods!,
     run: {
       id: run.id,
       status: run.status,
@@ -2735,14 +2978,9 @@ export async function getCloseAssuranceDashboard(
       decisionNotes: review.decisionNotes,
       createdAt: review.createdAt.toISOString(),
     })),
-    controls: closeControls({
-      persisted: true,
-      status: run.status,
-      criticalBlockerCount: run.criticalBlockerCount,
-      highBlockerCount: run.highBlockerCount,
-      checklist,
-      findings,
-    }),
+    controls: currentProof.grade === "blocked" ? {
+      ...controls, certificationAvailable: false, certificationDisabledReason: "Current close evidence requires review.",
+    } : controls,
   }
 }
 
@@ -3049,7 +3287,7 @@ export async function assignCloseFinding(
     throw new BusinessRuleError("A finding assignee is required.")
   const correlationId = input.correlationId ?? randomUUID()
 
-  return db.$transaction(async (tx) => {
+  return runMissingCloseEvidenceTransaction(async (tx) => {
     const finding = await loadFindingForMutation(
       organizationId,
       input.findingId,
@@ -3062,6 +3300,17 @@ export async function assignCloseFinding(
       throw new BusinessRuleError(
         "Resolved or waived findings cannot be reassigned.",
       )
+    }
+
+    // A retained request owns its response assignment. Generic reassignment
+    // would strand its recipient or reset a submitted response out of review.
+    // The Serializable read/update also excludes a concurrently created request.
+    const request = await tx.accountantComment.findFirst({
+      where: { organizationId, findingId: finding.id, visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY },
+      select: { id: true },
+    })
+    if (request) {
+      throw new ConflictError("This finding has an evidence request. Continue the existing request in the evidence workbench; ordinary assignment cannot change its response owner.")
     }
 
     const updated = await tx.closeAssuranceFinding.update({
@@ -3257,7 +3506,7 @@ type MissingCloseEvidenceCommentRecord = {
   createdAt: Date
 }
 
-function mapMissingCloseEvidenceRequest(
+export function mapMissingCloseEvidenceRequest(
   comment: MissingCloseEvidenceCommentRecord,
 ): MissingCloseEvidenceRequestDto {
   const requestType = metadataString(comment.metadata, "requestType")
@@ -3322,7 +3571,7 @@ function assertMatchingMissingCloseEvidenceReplay(
   return request
 }
 
-function mapMissingCloseEvidenceResponse(
+export function mapMissingCloseEvidenceResponse(
   comment: MissingCloseEvidenceCommentRecord,
 ): MissingCloseEvidenceResponseDto {
   const responseType = metadataString(comment.metadata, "responseType")
@@ -3402,7 +3651,7 @@ function assertMatchingMissingCloseEvidenceResponseReplay(
   return response
 }
 
-function mapMissingCloseEvidenceResponseAcceptance(
+export function mapMissingCloseEvidenceResponseAcceptance(
   comment: MissingCloseEvidenceCommentRecord,
 ): MissingCloseEvidenceResponseAcceptanceDto {
   const acceptanceType = metadataString(comment.metadata, "acceptanceType")
@@ -3429,6 +3678,12 @@ function mapMissingCloseEvidenceResponseAcceptance(
     "correlationId",
   )
   const resolvedAtTime = resolvedAt ? new Date(resolvedAt).getTime() : Number.NaN
+  const storedBinding = comment.metadata && typeof comment.metadata === "object" && !Array.isArray(comment.metadata)
+    ? comment.metadata.replacementBinding : undefined
+  const replacementBinding = parseCloseEvidenceReplacementBinding(storedBinding)
+  if (storedBinding !== undefined && !replacementBinding) {
+    throw new BusinessRuleError("Stored missing-proof replacement evidence is incomplete.")
+  }
 
   if (
     comment.visibility !==
@@ -3476,6 +3731,7 @@ function mapMissingCloseEvidenceResponseAcceptance(
     findingStatus:
       ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
     resolutionNotes: comment.body,
+    replacement: replacementBinding ? closeEvidenceReplacementSelection(replacementBinding) : null,
     resolvedAt: new Date(resolvedAtTime).toISOString(),
     correlationId: comment.correlationId,
     createdAt: comment.createdAt.toISOString(),
@@ -3503,7 +3759,9 @@ function assertMatchingMissingCloseEvidenceAcceptanceReplay(
     acceptance.requestId !== input.requestId.trim() ||
     acceptance.responseId !== input.responseId.trim() ||
     acceptance.acceptedById !== actorId ||
-    acceptance.resolutionNotes !== input.resolutionNotes.trim()
+    acceptance.resolutionNotes !== input.resolutionNotes.trim() ||
+    acceptance.replacement?.checklistItemId !== input.replacement?.checklistItemId ||
+    acceptance.replacement?.bindingHash !== input.replacement?.bindingHash
   ) {
     throw new ConflictError(
       "Correlation ID already belongs to a different missing-proof response acceptance.",
@@ -3512,18 +3770,21 @@ function assertMatchingMissingCloseEvidenceAcceptanceReplay(
   return acceptance
 }
 
-async function runMissingCloseEvidenceTransaction<T>(
+export async function runMissingCloseEvidenceTransaction<T>(
   operation: (tx: Prisma.TransactionClient) => Promise<T>,
+  isolationLevel: Prisma.TransactionIsolationLevel = Prisma.TransactionIsolationLevel.Serializable,
 ): Promise<T> {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       return await db.$transaction(operation, {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        isolationLevel,
       })
     } catch (error) {
       if (error instanceof ApplicationError) throw error
-      const code = getPrismaKnownRequest(error)?.code
-      if (attempt === 2 || (code !== "P2034" && code !== "P2002")) {
+      const prismaError = getPrismaKnownRequest(error)
+      const retryable = prismaError?.code === "P2034" || prismaError?.code === "P2002" ||
+        (prismaError?.code === "P2010" && ["40001", "40P01"].includes(String(prismaError.meta?.code)))
+      if (attempt === 2 || !retryable) {
         throw new ApplicationError(
           "INTERNAL_ERROR",
           "Missing-proof workflow transaction failed.",
@@ -3551,7 +3812,7 @@ export async function requestMissingCloseEvidence(
 
   const now = new Date()
   const dueAt = new Date(input.dueAt.getTime())
-  if (!Number.isFinite(dueAt.getTime()) || dueAt.getTime() <= now.getTime()) {
+  if (!Number.isFinite(dueAt.getTime())) {
     throw new BusinessRuleError(
       "Missing-proof request due date must be in the future.",
     )
@@ -3559,6 +3820,10 @@ export async function requestMissingCloseEvidence(
   const correlationId = input.correlationId ?? randomUUID()
 
   return runMissingCloseEvidenceTransaction(async (tx) => {
+    const authority = await lockCloseEvidenceWorkAuthorityInTx(tx, {
+      homeOrganizationId, organizationId: input.clientOrganizationId || homeOrganizationId,
+      actorId, session: control.session, operation: "request",
+    })
     const access = await resolveAccountantClientAccess({
       homeOrganizationId,
       clientOrganizationId: input.clientOrganizationId,
@@ -3578,11 +3843,20 @@ export async function requestMissingCloseEvidence(
       },
     })
     if (existing) {
+      await authority.revalidate()
       return assertMatchingMissingCloseEvidenceReplay(
         existing,
         input,
         actorId,
         dueAt,
+      )
+    }
+
+    // A committed request remains replayable after its due date. Only new
+    // requests must still have a future deadline when this attempt executes.
+    if (dueAt.getTime() <= Date.now()) {
+      throw new BusinessRuleError(
+        "Missing-proof request due date must be in the future.",
       )
     }
 
@@ -3609,6 +3883,18 @@ export async function requestMissingCloseEvidence(
       )
     }
 
+    // Review evidence admits one retained request per finding. A new correlation
+    // key is not a replacement workflow. Keep exact replays above this guard.
+    // This predicate and the finding update share the Serializable transaction:
+    // concurrent creators retry against the winner's committed request.
+    const priorRequest = await tx.accountantComment.findFirst({
+      where: { organizationId, findingId: finding.id, visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY },
+      select: { id: true },
+    })
+    if (priorRequest) {
+      throw new ConflictError("This finding already has an evidence request. Refresh the workbench and continue the existing request; a new request cannot replace it.")
+    }
+
     const hasMissingEvidence =
       finding.evidenceItems.length > 0 ||
       finding.checklistItem?.status === CloseChecklistStatus.UNAVAILABLE ||
@@ -3632,6 +3918,7 @@ export async function requestMissingCloseEvidence(
         "Missing-proof recipient must be an active user of the client organization.",
       )
     }
+    const recipientAuthority = await lockCloseEvidenceRecipientInTx(tx, { organizationId, recipientId: recipient.id })
 
     await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
@@ -3705,8 +3992,91 @@ export async function requestMissingCloseEvidence(
       },
     })
 
+    await authority.revalidate()
+    recipientAuthority.revalidate()
     return mapMissingCloseEvidenceRequest(comment)
   })
+}
+
+export async function replaceMissingCloseEvidenceRecipient(
+  organizationId: string,
+  inputValue: unknown,
+  control: CloseControlContext = {},
+) {
+  const input = replaceMissingCloseEvidenceRecipientInputSchema.parse(inputValue)
+  const actorId = control.actorId?.trim()
+  if (!actorId) throw new ForbiddenError()
+  return runMissingCloseEvidenceTransaction(async tx => {
+    const authority = await lockCloseEvidenceWorkAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId, session: control.session,
+      operation: "request", requireFindingAssignment: true,
+    })
+    const storedRequest = await tx.accountantComment.findFirst({ where: {
+      id: input.requestId, organizationId, visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+    } })
+    if (!storedRequest) throw new NotFoundError("Missing-proof request not found")
+    const original = mapMissingCloseEvidenceRequest(storedRequest)
+    const replay = await tx.ledgerAuditEvent.findFirst({ where: {
+      organizationId, action: CLOSE_RECIPIENT_REPLACED, resourceType: "AccountantComment", resourceId: original.id,
+      metadata: { path: ["correlationId"], equals: input.correlationId },
+    } })
+    if (replay) {
+      const metadata = replay.metadata && typeof replay.metadata === "object" && !Array.isArray(replay.metadata) ? replay.metadata : {}
+      if (replay.actorId !== actorId || metadata.previousRevision !== input.expectedRevision || metadata.toId !== input.requestedFromId || metadata.reason !== input.reason ||
+        metadata.requestId !== original.id || metadata.findingId !== original.findingId || metadata.periodId !== original.periodId || metadata.closeRunId !== original.closeRunId || metadata.version !== 1) {
+        throw new ConflictError("This retry reference belongs to a different response-owner change.")
+      }
+      await authority.revalidate()
+      return { requestId: original.id, revision: replay.id, recipientId: input.requestedFromId, recordedAt: replay.createdAt.toISOString() }
+    }
+    const assignment = await readCloseEvidenceRecipient(tx, storedRequest)
+    if (assignment.revision !== input.expectedRevision || assignment.recipientId === input.requestedFromId) throw new ConflictError("The response-owner preview changed. Refresh and review the current assignment.")
+    const finding = await loadFindingForMutation(organizationId, original.findingId, tx)
+    if (finding.periodId !== original.periodId || finding.closeRunId !== original.closeRunId || finding.ownerId !== assignment.recipientId || !missingCloseEvidenceResponseStatuses.has(finding.status)) {
+      throw new ConflictError("Only an unanswered request with a matching current owner can be reassigned.")
+    }
+    const evidence = (await readResolvedCloseEvidence(tx, organizationId, finding.id))?.records ?? await tx.accountantComment.findMany({ where: { organizationId, findingId: finding.id,
+      visibility: { in: [MISSING_CLOSE_EVIDENCE_VISIBILITY, MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY, "ACCOUNTANT_RESPONSE_ACCEPTED"] } }, select: { id: true }, take: 2 })
+    if (evidence.length !== 1 || evidence[0].id !== original.id) throw new ConflictError("This request already has a response or ambiguous evidence. Preserve it for review.")
+    const recipient = await lockCloseEvidenceRecipientInTx(tx, { organizationId, recipientId: input.requestedFromId })
+    const recordedAt = await readCloseAssessmentPublicationTimeInTx(tx)
+    if (recordedAt <= storedRequest.createdAt || (assignment.changedAt && recordedAt <= new Date(assignment.changedAt))) throw new ConflictError("The assignment publication clock has not advanced. Wait briefly and retry.")
+    const updated = await tx.closeAssuranceFinding.update({ where: { id: finding.id }, data: {
+      ownerId: input.requestedFromId, assignedById: actorId, assignedAt: recordedAt, correlationId: input.correlationId,
+    } })
+    await authority.revalidate(recordedAt); recipient.revalidate(recordedAt)
+    const change = await tx.ledgerAuditEvent.create({ data: {
+      organizationId, actorId, action: CLOSE_RECIPIENT_REPLACED, resourceType: "AccountantComment", resourceId: original.id,
+      message: "Close evidence response owner replaced", createdAt: recordedAt,
+      metadata: jsonObject({ version: 1, requestId: original.id, findingId: finding.id, periodId: finding.periodId, closeRunId: finding.closeRunId,
+        originalRecipientId: assignment.originalRecipientId, fromId: assignment.recipientId, toId: input.requestedFromId,
+        previousRevision: assignment.revision, sequence: assignment.sequence + 1, reason: input.reason, correlationId: input.correlationId }),
+    } })
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId, actorId, eventType: "close.assurance.missing_evidence.requested",
+      idempotencyKey: `close-evidence-recipient:${original.id}:${input.correlationId}`, sourceType: "CloseAssuranceFinding", sourceId: finding.id,
+      closeRunId: finding.closeRunId, periodId: finding.periodId, findingId: finding.id, ownerId: input.requestedFromId, dueAt: updated.dueAt,
+      message: "Close evidence response owner replaced", severity: notificationSeverity(finding.severity), correlationId: input.correlationId,
+      payload: { requestId: original.id, recipientChangeId: change.id, requestedFromId: input.requestedFromId, previousRequestedFromId: assignment.recipientId, changeType: "RECIPIENT_REPLACED" },
+    })
+    await authority.revalidate(); recipient.revalidate()
+    return { requestId: original.id, revision: change.id, recipientId: input.requestedFromId, recordedAt: recordedAt.toISOString() }
+  })
+}
+
+/** Read all workflow visibilities, including malformed legacy rows. Metadata
+ * filters would hide precisely the evidence that requires investigation.
+ * Call only inside the mutation transaction; acceptance also holds the finding
+ * lock so its final ReadCommitted observation follows any prior writer.
+ */
+async function assertMissingCloseEvidenceSetInTx(tx: Prisma.TransactionClient, organizationId: string, findingId: string, expectedIds: string[]) {
+  const records = (await readResolvedCloseEvidence(tx, organizationId, findingId))?.records ?? await tx.accountantComment.findMany({
+    where: { organizationId, findingId, visibility: { in: [MISSING_CLOSE_EVIDENCE_VISIBILITY, MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY, MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY] } },
+    select: { id: true }, take: expectedIds.length + 1,
+  })
+  if (records.length !== expectedIds.length || records.some(record => !expectedIds.includes(record.id))) {
+    throw new BusinessRuleError("Stored evidence is missing or conflicting. Preserve the records for investigation before continuing.", "REVIEW_REQUIRED")
+  }
 }
 
 export async function respondToMissingCloseEvidence(
@@ -3723,6 +4093,9 @@ export async function respondToMissingCloseEvidence(
   const correlationId = input.correlationId ?? randomUUID()
 
   return runMissingCloseEvidenceTransaction(async (tx) => {
+    const authority = await lockCloseEvidenceWorkAuthorityInTx(tx, {
+      homeOrganizationId: organizationId, organizationId, actorId, session: control.session, operation: "respond",
+    })
     const activeActor = await tx.user.findFirst({
       where: {
         id: actorId,
@@ -3751,7 +4124,9 @@ export async function respondToMissingCloseEvidence(
     if (!storedRequest) {
       throw new NotFoundError("Missing-proof request not found")
     }
-    const request = mapMissingCloseEvidenceRequest(storedRequest)
+    const originalRequest = mapMissingCloseEvidenceRequest(storedRequest)
+    const assignment = await readCloseEvidenceRecipient(tx, storedRequest)
+    const request = { ...originalRequest, requestedFromId: assignment.recipientId }
     if (request.requestedFromId !== actorId) {
       throw new ForbiddenError(
         "Only the requested client recipient can submit this response.",
@@ -3766,6 +4141,7 @@ export async function respondToMissingCloseEvidence(
       },
     })
     if (existingResponse) {
+      await authority.revalidate()
       return assertMatchingMissingCloseEvidenceResponseReplay(
         existingResponse,
         input,
@@ -3804,6 +4180,8 @@ export async function respondToMissingCloseEvidence(
         "Only the assigned finding owner can submit this response.",
       )
     }
+
+    await assertMissingCloseEvidenceSetInTx(tx, organizationId, finding.id, [request.id])
 
     await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
@@ -3879,6 +4257,7 @@ export async function respondToMissingCloseEvidence(
       },
     })
 
+    await authority.revalidate()
     return mapMissingCloseEvidenceResponse(response)
   })
 }
@@ -3935,30 +4314,24 @@ export async function acceptMissingCloseEvidenceResponse(
   const correlationId = suppliedCorrelationId ?? randomUUID()
 
   return runMissingCloseEvidenceTransaction(async (tx) => {
-    const activeActor = await tx.user.findFirst({
-      where: {
-        id: actorId,
-        organizationId: homeOrganizationId,
-        isActive: true,
-      },
-      select: { id: true },
-    })
-    if (!activeActor) {
-      throw new ForbiddenError(
-        "Missing-proof response acceptance requires an active home-tenant accountant.",
-      )
-    }
-
-    const access = await resolveAccountantClientAccess({
+    const organizationId = clientOrganizationId ?? homeOrganizationId
+    const authority = await lockCloseEvidenceAcceptanceAuthorityInTx(tx, {
       homeOrganizationId,
-      clientOrganizationId,
-      accountantUserId: actorId,
-      capability: "REVIEW",
-      now,
-      client: tx,
+      organizationId,
+      actorId,
+      session: control.session ?? { id: "", token: "" },
+      requireWorkDeskAccess: control.requireWorkDeskAccess === true,
     })
-    const organizationId = access.organizationId
 
+    // Serialize exact retries before replay lookup; Read Committed then lets
+    // the later period/run locks observe publications committed while waiting.
+    const acceptanceKey = JSON.stringify(["close-evidence-acceptance", organizationId, correlationId])
+    await tx.$queryRaw(Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${acceptanceKey}, 0))::text`)
+    const revalidateAuthority = async (at: Date) => {
+      requireFreshMissingEvidenceAcceptanceControl(homeOrganizationId, control, at)
+      await authority.revalidate(at)
+    }
+    await revalidateAuthority(new Date())
     const existingAcceptance = await tx.accountantComment.findFirst({
       where: {
         organizationId,
@@ -3993,7 +4366,9 @@ export async function acceptMissingCloseEvidenceResponse(
     if (!storedRequest) {
       throw new NotFoundError("Missing-proof request not found")
     }
-    const request = mapMissingCloseEvidenceRequest(storedRequest)
+    const originalRequest = mapMissingCloseEvidenceRequest(storedRequest)
+    const assignment = await readCloseEvidenceRecipient(tx, storedRequest)
+    const request = { ...originalRequest, requestedFromId: assignment.recipientId }
 
     const storedResponse = await tx.accountantComment.findFirst({
       where: {
@@ -4063,6 +4438,26 @@ export async function acceptMissingCloseEvidenceResponse(
       )
     }
 
+    const replacement = await getCloseEvidenceReplacementInTx(tx, organizationId, finding.id, { lock: true })
+    if (replacement.status !== "AVAILABLE" || !input.replacement ||
+        replacement.selection.checklistItemId !== input.replacement.checklistItemId ||
+        replacement.selection.bindingHash !== input.replacement.bindingHash) {
+      throw new ConflictError("Source evidence is unavailable or changed. Refresh the replacement evidence and review it before accepting this response.")
+    }
+    // Finish any finding-row wait before the final authority/freshness decision.
+    const lockedFinding = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`SELECT "id" FROM "close_assurance_findings" WHERE "id" = ${finding.id} AND "organizationId" = ${organizationId} FOR UPDATE`)
+    if (lockedFinding.length !== 1) throw new ConflictError("The missing-proof finding changed before acceptance completed.")
+    const currentFinding = await tx.closeAssuranceFinding.findFirst({ where: { id: finding.id, organizationId }, select: { status: true, ownerId: true } })
+    if (currentFinding?.status !== CloseFindingStatus.IN_REVIEW || currentFinding.ownerId !== response.respondedById) {
+      throw new ConflictError("The missing-proof finding changed before acceptance completed.")
+    }
+    await assertMissingCloseEvidenceSetInTx(tx, organizationId, finding.id, [request.id, response.id])
+    const acceptedAt = await readCloseAssessmentPublicationTimeInTx(tx)
+    if (acceptedAt.getTime() < Date.parse(replacement.observedAt)) {
+      throw new ConflictError("The evidence observation is newer than the database clock. Retry after the clock is corrected.")
+    }
+    await revalidateAuthority(acceptedAt)
+
     const transition = await tx.closeAssuranceFinding.updateMany({
       where: {
         id: finding.id,
@@ -4073,7 +4468,7 @@ export async function acceptMissingCloseEvidenceResponse(
       data: {
         status: CloseFindingStatus.RESOLVED,
         resolutionNotes,
-        resolvedAt: now,
+        resolvedAt: acceptedAt,
         resolvedById: actorId,
         correlationId,
       },
@@ -4094,8 +4489,10 @@ export async function acceptMissingCloseEvidenceResponse(
         body: resolutionNotes,
         visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
         correlationId,
+        createdAt: acceptedAt,
         metadata: jsonObject({
           acceptanceType: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+          replacementBinding: replacement.binding,
           requestId: request.id,
           responseId: response.id,
           requestCorrelationId: request.correlationId,
@@ -4109,7 +4506,7 @@ export async function acceptMissingCloseEvidenceResponse(
             ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
           findingStatus:
             ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
-          resolvedAt: now.toISOString(),
+          resolvedAt: acceptedAt.toISOString(),
           correlationId,
         }),
       },
@@ -4124,6 +4521,7 @@ export async function acceptMissingCloseEvidenceResponse(
       resourceId: acceptance.id,
       message: "Close missing-evidence response accepted",
       metadata: jsonObject({
+        replacement: replacement.selection,
         requestId: request.id,
         responseId: response.id,
         findingId: request.findingId,
@@ -4152,6 +4550,7 @@ export async function acceptMissingCloseEvidenceResponse(
       correlationId,
       payload: {
         acceptanceId: acceptance.id,
+        replacement: replacement.selection,
         requestId: request.id,
         responseId: response.id,
         findingId: request.findingId,
@@ -4165,7 +4564,7 @@ export async function acceptMissingCloseEvidenceResponse(
     })
 
     return mapMissingCloseEvidenceResponseAcceptance(acceptance)
-  })
+  }, Prisma.TransactionIsolationLevel.ReadCommitted)
 }
 
 export async function requestCloseWaiver(

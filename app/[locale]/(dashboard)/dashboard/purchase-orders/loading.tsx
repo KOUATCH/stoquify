@@ -1,11 +1,13 @@
-import { Skeleton } from "@/components/ui/skeleton"
+"use client"
+
+import { useLocale } from "next-intl"
+import { DashboardLoadingState } from "@/components/dashboard/DashboardLoadingState"
 
 export default function PurchaseOrdersLoading() {
-  return (
-    <div className="space-y-4 p-6">
-      <Skeleton className="h-8 w-52" />
-      <Skeleton className="h-12 w-full" />
-      <Skeleton className="h-80 rounded-xl" />
-    </div>
-  )
+  const french = useLocale() === "fr"
+  return <DashboardLoadingState embedded locale={french ? "fr" : "en"}
+    loadingLabel={french ? "Chargement" : "Loading"}
+    title={french ? "Chargement des bons de commande" : "Loading purchase orders"}
+    subtitle={french ? "Le registre et les engagements fournisseurs sont en cours de chargement." : "The register and supplier commitments are loading."}
+  />
 }

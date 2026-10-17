@@ -1,0 +1,72 @@
+{
+  "utc": "2026-10-17T09:55:02.469Z",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "fixture": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+  "steps": [
+    {
+      "step": "original retained intent and exact retry available",
+      "status": "PASS"
+    }
+  ],
+  "errors": [
+    "Event"
+  ],
+  "before": {
+    "sale": {
+      "id": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "orderNumber": "63b2598d-2e56-406a-a6f6-a866fac34cb7",
+      "status": "DRAFT",
+      "total": "10"
+    },
+    "stock": {
+      "quantityOnHand": "5",
+      "totalValue": "20"
+    },
+    "customer": {
+      "currentBalance": "0"
+    },
+    "records": [],
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "ledger": 0
+  },
+  "committedBeforeResponseDrop": {
+    "utc": "2026-10-17T09:58:01.816Z",
+    "state": {
+      "sale": {
+        "id": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+        "orderNumber": "63b2598d-2e56-406a-a6f6-a866fac34cb7",
+        "status": "COMPLETED",
+        "total": "10"
+      },
+      "stock": {
+        "quantityOnHand": "4",
+        "totalValue": "16"
+      },
+      "customer": {
+        "currentBalance": "4"
+      },
+      "records": [
+        {
+          "clientCommitId": "pos:7d1923a1-9e2f-46bf-8892-4ddb41c7e9db",
+          "salesOrderId": "sale-full-pos-63b2598d-2e56-406a-a6f6-a866fac34cb7",
+          "status": "COMPLETED"
+        }
+      ],
+      "payments": 2,
+      "movements": 1,
+      "journals": 2,
+      "postings": 2,
+      "ledger": 1
+    }
+  },
+  "status": "FAIL",
+  "failure": "expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('pos-commit-recovery')\nExpected substring: \"pos:7d1923a1-9e2f-46bf-8892-4ddb41c7e9db\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByTestId('pos-commit-recovery')\n",
+  "url": "http://127.0.0.1:3187/en/dashboard/pos"
+}

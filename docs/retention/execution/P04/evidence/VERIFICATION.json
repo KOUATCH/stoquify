@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-13",
+  "head": "6f7f6741cabfdeff61989a40455d6f3ea37b33c9",
+  "commands": [
+    {
+      "command": "npm run agent:workflow:check",
+      "exit": 0,
+      "result": "Workflow contract passed; 198 scripts outside reviewed manifest"
+    },
+    {
+      "command": "node scripts/verify-agent-workflow-contract.js --command test:ecc:pilots",
+      "exit": 0,
+      "result": "auditAllowed true; workflow contract passed"
+    },
+    {
+      "command": "node node_modules/jest/bin/jest.js --config jest.ecc-pilots.config.cjs --runInBand --no-cache --selectProjects ecc-unit --runTestsByPath lib/security/__tests__/rbac.test.ts --json --outputFile docs/retention/execution/P04/evidence/RBAC_RESULTS.json",
+      "exit": 0,
+      "passed": 8,
+      "suites": 1
+    },
+    {
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-access.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P04/evidence/ACCESS_RESULTS.json",
+      "exit": 1,
+      "result": "First invocation interrupted before results; default repository roots too broad. No passing evidence claimed."
+    },
+    {
+      "command": "node node_modules/jest/bin/jest.js --config jest.retention-access.config.cjs --runInBand --no-cache --json --outputFile docs/retention/execution/P04/evidence/ACCESS_RESULTS.json",
+      "exit": 0,
+      "passed": 57,
+      "suites": 7,
+      "configuration": "Final bounded roots and seven exact suites",
+      "seconds": 13.513
+    }
+  ],
+  "tests": [
+    {
+      "file": "RBAC_RESULTS.json",
+      "success": true,
+      "passed": 8,
+      "suites": 1,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "file": "ACCESS_RESULTS.json",
+      "success": true,
+      "passed": 57,
+      "suites": 7,
+      "failed": 0,
+      "pending": 0
+    }
+  ],
+  "review": "Definitions/hooks/config/setup/imports reviewed. Mocked Prisma and injected in-memory adapters/secret/clock; no DB/provider/network. Next transformer without project dir. Registry unchanged.",
+  "not_run": [
+    "real database",
+    "browser/API rendering",
+    "provider",
+    "customer",
+    "expert review",
+    "restore/load",
+    "broad typecheck/lint/build"
+  ],
+  "owned_files": [
+    "services/accounting/__tests__/accountant-access-retention-boundary.test.ts",
+    "services/operating-access/__tests__/operating-access-retention-boundary.test.ts",
+    "services/modules/__tests__/module-retention-access.test.ts",
+    "services/inventory/__tests__/inventory-history-background-export.service.test.ts",
+    "jest.retention-access.config.cjs"
+  ],
+  "artifact_validation_attempts": [
+    "Initial validator failed on Windows default decoding before writing validation outputs. Original STATUS bytes recovered from baseline, independently matched prior SHA256, then only P04 row retained; UTF-8 now explicit. Final validator checks exact non-P04 byte preservation."
+  ]
+}

@@ -1,0 +1,1879 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-09-30T23:32:27.992Z",
+  "status": "draft",
+  "passed": false,
+  "workflow": "FA-CASH-COMMAND",
+  "scope": "Fractional receipt/invoice/return/credit monetary conservation and its inventory, recovery and zero-credit migration dependencies.",
+  "releaseDecision": "No closure promotion, migration authorization, production approval or current-runtime certification.",
+  "baselineArtifacts": [
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+      "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+      "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+      "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-balance-before.json",
+      "sha256": "bd1a562e5258deeadc9d0d6ff011a7138cd839c12c9f5ca9afcaaba49bd9b2f4"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-zero-credit-migration-before-2026-10-01.json",
+      "sha256": "a4fcfed7f1dab8d3eec8cb8da550c3f9aa22aec1f7a3112ff1b8b978bdf2adf2"
+    }
+  ],
+  "priorImpact": [
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "before": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+      "after": "7e7f880d7bf0360a51049c441e6d809f01da8807b4298c6737dfa1a196d3d4d2",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/0",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+        "contentSha256": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/36",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "7e7f880d7bf0360a51049c441e6d809f01da8807b4298c6737dfa1a196d3d4d2"
+      },
+      "impact": "Validates actual resolved supplier-credit AP, claim, VAT and rounding-variance effects; keeps the existing posting kernel and request identity.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "before": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06",
+      "after": "026f9eec6fa86dd67caa8e84e080514fddd3635453ca38dab7c2eae41a43804d",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/1",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06",
+        "contentSha256": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/31",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "026f9eec6fa86dd67caa8e84e080514fddd3635453ca38dab7c2eae41a43804d"
+      },
+      "impact": "Exercises both variance directions, zero-commercial-total/positive-claim, wrong accounts, duplicated amounts and inconsistent direction.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+      "before": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6",
+      "after": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/2",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6",
+        "contentSha256": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/27",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17"
+      },
+      "impact": "Adds a discriminated NOT_REQUIRED return result with strictly null journal/batch/source-link identifiers and accountingRequired preview state.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchase-order/receipt-ledger-recovery.service.ts",
+      "before": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+      "after": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/3",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+        "contentSha256": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/28",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7"
+      },
+      "impact": "Retains source-bound zero-value return recovery without requiring or claiming a journal; preview and confirmation distinguish it from posting.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+      "before": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4",
+      "after": "2a51e5f0407d245a57a4852af8f80452a1e0e87bf64b8258d7fd1ccf985c972d",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/4",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4",
+        "contentSha256": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/24",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "2a51e5f0407d245a57a4852af8f80452a1e0e87bf64b8258d7fd1ccf985c972d"
+      },
+      "impact": "Covers zero-value retained-return recovery results and rejects invented posting identifiers.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+      "before": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7",
+      "after": "9916a8a9a20d3c4373f464168ffdb189ef2f2a2f461e234cdfd2ab1941f2e17a",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/5",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7",
+        "contentSha256": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/0",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "9916a8a9a20d3c4373f464168ffdb189ef2f2a2f461e234cdfd2ab1941f2e17a"
+      },
+      "impact": "Displays a localized no-journal-required explanation for verified zero-value returns in preview and outcome.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+      "before": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6",
+      "after": "fa0e524018506a77656cefc5f85a695c7c6e94c57a448daadd8e1e371434650b",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/6",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6",
+        "contentSha256": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/1",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "fa0e524018506a77656cefc5f85a695c7c6e94c57a448daadd8e1e371434650b"
+      },
+      "impact": "Covers the no-journal-required recovery presentation.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "messages/en.json",
+      "before": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65",
+      "after": "7a3e5487d41f8f4ef7974b6a6dd683d6e0bca4c17c7781ea3a981a3f3df71032",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/7",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65",
+        "contentSha256": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/2",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "7a3e5487d41f8f4ef7974b6a6dd683d6e0bca4c17c7781ea3a981a3f3df71032"
+      },
+      "impact": "Adds English no-journal-required recovery wording within the existing receiving namespace; unrelated locale content must remain unchanged.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "messages/fr.json",
+      "before": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc",
+      "after": "920eb9a7578bfbcdffde77181f9baa9bb11cb31153e01afd3ed1fd2645822048",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-root-before-5bc65480-98b3-447c-883e-f5e80bc26e4a.json",
+        "sha256": "4d19528786ce09a80678711fdb5684a339b16c78dc19af5b6aea2e1c62f4aa6c",
+        "pointer": "/8",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc",
+        "contentSha256": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/3",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "920eb9a7578bfbcdffde77181f9baa9bb11cb31153e01afd3ed1fd2645822048"
+      },
+      "impact": "Adds French no-journal-required recovery wording within the existing receiving namespace; unrelated locale content must remain unchanged.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/receipt-return-recognition.ts",
+      "before": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+      "after": "f61773a8ad6643fa376e400cdf1bb0be26f393937527ccd3554b89e78b65a876",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/0",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+        "contentSha256": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/42",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "f61773a8ad6643fa376e400cdf1bb0be26f393937527ccd3554b89e78b65a876"
+      },
+      "impact": "Introduces v2 acquisition/claim remaining-pool proofs, exact reversal/recovery evidence and source-owned explicit stock-value validation; retains strict v1 amounts and source hashes.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/purchase-return-credit.service.ts",
+      "before": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+      "after": "d16bfd2f8c702c31e4c3d199de1e6d94b3704452de9c799548514e1884e06e31",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/1",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+        "contentSha256": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/40",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "d16bfd2f8c702c31e4c3d199de1e6d94b3704452de9c799548514e1884e06e31"
+      },
+      "impact": "Uses allocated return values end to end; retains verified zero-valued corrections/credits without fabricated journals; allocates invoice net/tax residuals and records exact credit/reversal proof.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/invoice-receipt-recognition.ts",
+      "before": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+      "after": "0a3bc34d114e223fc3d3152f99030bba75207c96360301a4ba9232352275d310",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/2",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+        "contentSha256": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/37",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "0a3bc34d114e223fc3d3152f99030bba75207c96360301a4ba9232352275d310"
+      },
+      "impact": "Allocates new marked receipt draws from the same remaining acquisition pool as uninvoiced returns; retains existing v1 invoice allocation values on recovery.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/__tests__/receipt-return-recognition.test.ts",
+      "before": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b",
+      "after": "7b8c3b0eee512115f5e56e13b1c973be9909030c9ce66dad2d0b79ebe760aa09",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/3",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b",
+        "contentSha256": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/34",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "7b8c3b0eee512115f5e56e13b1c973be9909030c9ce66dad2d0b79ebe760aa09"
+      },
+      "impact": "Covers v1 compatibility, v2 zero draws, physical proof, original-value reversals and pending/recovered recognition.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+      "before": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7",
+      "after": "9eb0ff28aa9f724d8e57c8757e345f044da7bebefa4d88fc659764bfd9c01597",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/4",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7",
+        "contentSha256": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/33",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "9eb0ff28aa9f724d8e57c8757e345f044da7bebefa4d88fc659764bfd9c01597"
+      },
+      "impact": "Covers source-funded credits and zero-valued credit/reversal behavior including applicable period controls.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+      "before": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d",
+      "after": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-before-bda85c15-0799-4d51-a49f-042829ca30d0.json",
+        "sha256": "90f505bcda26269fd3cb743a99827dc6124a0177335d5393179efd4f278f4320",
+        "pointer": "/files/5",
+        "pathField": "path",
+        "contentField": "bytesBase64",
+        "encoding": "base64",
+        "declaredSha256": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d",
+        "contentSha256": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/32",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4"
+      },
+      "impact": "Covers residual invoice allocations, legacy proofs, prior returned quantities/costs and immutable recovery.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "before": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+      "after": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/0",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+        "contentSha256": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/22",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17"
+      },
+      "impact": "Writes only server-validated explicit v2 allocated values, including zero; uses the same values for stock levels and immutable movements, preserves v1 payload shape and refuses residual-value loss.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/inventory-projection-rebuild.service.ts",
+      "before": "db8918d457bba669a5b7c4ab6c5db76688baf4f72ef6c673ad73d3aaba820832",
+      "after": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/1",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "db8918d457bba669a5b7c4ab6c5db76688baf4f72ef6c673ad73d3aaba820832",
+        "contentSha256": "db8918d457bba669a5b7c4ab6c5db76688baf4f72ef6c673ad73d3aaba820832"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/20",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "2e4551af0bd206c902817eb0d6c1f447dae97b0611a14aef7e85cc4f16742b42"
+      },
+      "impact": "Rebuilds v2 returns from verified frozen movement costs with zero distinct from absent proof; retains the unmarked legacy fallback.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/inventory-reconciliation.service.ts",
+      "before": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+      "after": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/2",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0",
+        "contentSha256": "1ec7ddc09202db1aa57b10a86915fedc7385fac37a922107a38e14f88fa736c0"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/21",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "888b85530c40348b974a4971942ee53fdc99c8439312d6f94b662620de4b22ef"
+      },
+      "impact": "Classifies purchase-return reversals as inbound value and maps both return directions to their purchase-return business evidence.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "before": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad",
+      "after": "4165aded0fc02d31ace697100f5953dc9532d432218a9c8a958fde5d82abedbf",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/3",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad",
+        "contentSha256": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/17",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "4165aded0fc02d31ace697100f5953dc9532d432218a9c8a958fde5d82abedbf"
+      },
+      "impact": "Covers cent exhaustion, explicit zero, exact reversal, inconsistent residual rejection, unsupported overrides and validator errors.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-projection-rebuild.service.test.ts",
+      "before": "63e29ac0b30dfa584cd0962e7b32b1e8dfaaf136f34b18f04607d2e23d5f5d95",
+      "after": "38c8f1e02df9454ab718f81d83401ab7931c5c36aeab2ca2fc67ade901a4807c",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/4",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "63e29ac0b30dfa584cd0962e7b32b1e8dfaaf136f34b18f04607d2e23d5f5d95",
+        "contentSha256": "63e29ac0b30dfa584cd0962e7b32b1e8dfaaf136f34b18f04607d2e23d5f5d95"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/15",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "38c8f1e02df9454ab718f81d83401ab7931c5c36aeab2ca2fc67ade901a4807c"
+      },
+      "impact": "Covers zero-cost non-tail reversal/reallocation, unchanged legacy fallback and source-proof failure propagation.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/inventory/__tests__/inventory-reconciliation.service.test.ts",
+      "before": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012",
+      "after": "b24c3c7768eb0116de98a7e223fee74f4ec328a0a6fa87474e0566c3a83e3a69",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-inventory-before-efd61ca7-f440-4ce5-b487-8575188f0bee.json",
+        "sha256": "b0eb5f5a328c9f9ffe93d8c5f0d6b60d2a3daad85785537f3bb63b9cd19c38de",
+        "pointer": "/files/5",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012",
+        "contentSha256": "2e0aa02f8092a1bb11c0e668986311177dfd2a5e6bea317a537ce3f99dca1012"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/16",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "b24c3c7768eb0116de98a7e223fee74f4ec328a0a6fa87474e0566c3a83e3a69"
+      },
+      "impact": "Covers both purchase-return source classifications and missing reversal evidence.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/supplier-payment-balance.ts",
+      "before": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+      "after": "534b989cf0698bc096435012f1d9cd6791f1fd9c632b72880ccc6714830619e5",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-balance-before.json",
+        "sha256": "bd1a562e5258deeadc9d0d6ff011a7138cd839c12c9f5ca9afcaaba49bd9b2f4",
+        "pointer": "/files/0",
+        "pathField": "path",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "declaredSha256": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+        "contentSha256": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/44",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "534b989cf0698bc096435012f1d9cd6791f1fd9c632b72880ccc6714830619e5"
+      },
+      "impact": "Allows zero credits only after reading their retained v2 allocation proof, keeping them distinct from cash and retaining exact reversal coverage checks.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "services/purchasing/__tests__/supplier-payment-balance.test.ts",
+      "before": "fb430356d716cf42b91a52cce9cdecb15d81ff1af1f8c2850850bc2035a303c3",
+      "after": "1c64cf8a071bce6488414411cfd95798ecda3c76523affd7089c8537d1b3a9d0",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-purchasing-balance-before.json",
+        "sha256": "bd1a562e5258deeadc9d0d6ff011a7138cd839c12c9f5ca9afcaaba49bd9b2f4",
+        "pointer": "/files/1",
+        "pathField": "path",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "declaredSha256": "fb430356d716cf42b91a52cce9cdecb15d81ff1af1f8c2850850bc2035a303c3",
+        "contentSha256": "fb430356d716cf42b91a52cce9cdecb15d81ff1af1f8c2850850bc2035a303c3"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/35",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "1c64cf8a071bce6488414411cfd95798ecda3c76523affd7089c8537d1b3a9d0"
+      },
+      "impact": "Covers retained zero-credit payment-balance reads and malformed/unproven zero evidence.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    },
+    {
+      "file": "prisma/migration-catalog-manifest.json",
+      "before": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc",
+      "after": "29726bdbe8b9d2c908e6a395c0b0300e23d4e84db030712498787ed308fe5cf5",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-zero-credit-migration-before-2026-10-01.json",
+        "sha256": "a4fcfed7f1dab8d3eec8cb8da550c3f9aa22aec1f7a3112ff1b8b978bdf2adf2",
+        "pointer": "/files/0",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc",
+        "contentSha256": "f8d4279c54b7ca65ec782932ab24e102dbf9e99a2f1faf148ad4114b566920cc"
+      },
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/5",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "29726bdbe8b9d2c908e6a395c0b0300e23d4e84db030712498787ed308fe5cf5"
+      },
+      "impact": "Adds exactly the reviewed zero-value supplier-credit migration entry; all predecessor records are preserved.",
+      "runtimeRevalidation": "Required; no prior execution is promoted by this draft."
+    }
+  ],
+  "newSources": [
+    {
+      "file": "services/inventory/receipt-cost-allocation.ts",
+      "sha256": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/23",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "784fc1100e85bf77b808b78ff89043361c1aaa8f1e4c385348e26bb3fefdfd5b"
+      },
+      "impact": "Pure RECEIPT_REMAINING_POOL_V2 allocator and strict recomputable quantity/value proof; a final draw consumes the exact residual."
+    },
+    {
+      "file": "services/inventory/__tests__/receipt-cost-allocation.test.ts",
+      "sha256": "277e909b6b7ec911f0efaa40f85fce580d13d574c4e276e0b6a65ea2184a2277",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/18",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "277e909b6b7ec911f0efaa40f85fce580d13d574c4e276e0b6a65ea2184a2277"
+      },
+      "impact": "Allocator boundary, residual conservation and invalid-proof cases."
+    },
+    {
+      "file": "services/purchasing/supplier-credit-allocation.ts",
+      "sha256": "110cdef4580011ccee884e3ee8f249259fb9b03c4aeec8aa1ff5e883b078fab6",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/43",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "110cdef4580011ccee884e3ee8f249259fb9b03c4aeec8aa1ff5e883b078fab6"
+      },
+      "impact": "Shared immutable credit allocation reader for credit commands and payable balances; validates exact event, line values, totals and honest no-journal evidence."
+    },
+    {
+      "file": "prisma/migrations/20260930231500_supplier_credit_zero_value_evidence/migration.sql",
+      "sha256": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/7",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "4e56dc79850e0937c8671500da573373f8d0aff8a4f45cf1527255684d464eec"
+      },
+      "impact": "Only total > 0 and lineTotal > 0 become >= 0; positive quantity, other amount clauses, source triggers and append-only protections stay intact."
+    }
+  ],
+  "unchangedBaseline": [
+    {
+      "file": "prisma/migrations/20260819120000_purchase_return_credit_evidence_boundary/migration.sql",
+      "sha256": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-zero-credit-migration-before-2026-10-01.json",
+        "sha256": "a4fcfed7f1dab8d3eec8cb8da550c3f9aa22aec1f7a3112ff1b8b978bdf2adf2",
+        "pointer": "/files/1",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c",
+        "contentSha256": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c"
+      }
+    },
+    {
+      "file": "prisma/migration-catalog-exceptions.json",
+      "sha256": "c3befe9a8529e01d5dd2da52f51e54f1eb72ac622f943a93ab53bfe6ad5fb486",
+      "baseline": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-zero-credit-migration-before-2026-10-01.json",
+        "sha256": "a4fcfed7f1dab8d3eec8cb8da550c3f9aa22aec1f7a3112ff1b8b978bdf2adf2",
+        "pointer": "/files/2",
+        "pathField": "file",
+        "contentField": "content",
+        "encoding": "utf8",
+        "declaredSha256": "c3befe9a8529e01d5dd2da52f51e54f1eb72ac622f943a93ab53bfe6ad5fb486",
+        "contentSha256": "c3befe9a8529e01d5dd2da52f51e54f1eb72ac622f943a93ab53bfe6ad5fb486"
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "file": "services/purchase-order/receipt-recognition-source.ts",
+      "sha256": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/29",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchase-order/receipt-recognition.service.ts",
+      "sha256": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/30",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/25",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+      "sha256": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/26",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchasing/purchase-correction-ledger.service.ts",
+      "sha256": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/38",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchasing/receipt-invoice-capacity.ts",
+      "sha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/41",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/purchasing/purchase-return-credit.schemas.ts",
+      "sha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/39",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/accounting/periods.service.ts",
+      "sha256": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/12",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "sha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/13",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/accounting/journals.service.ts",
+      "sha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/11",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/events/business-event.service.ts",
+      "sha256": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/14",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "services/inventory/inventory-event.schemas.ts",
+      "sha256": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/19",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "fd4bd85949486fe9308b9b2e45fe59c8e711ab04a05b23b7e56872a65b01391b"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/8",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "scripts/prisma-migration-catalog-gate.js",
+      "sha256": "e68b9643afe1d6f41420ee9cf2c65431a30739615ad4be6e9920b2a16065aeaa",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/9",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "e68b9643afe1d6f41420ee9cf2c65431a30739615ad4be6e9920b2a16065aeaa"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    },
+    {
+      "file": "scripts/prisma-production-migration-gate.js",
+      "sha256": "fa64e5d76581bf6c97c5a928ae3d87e96874d6557ae5d0e60196f09d9ad4c9c7",
+      "currentSnapshot": {
+        "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+        "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+        "pointer": "/files/10",
+        "pathField": "file",
+        "contentField": "contentBase64",
+        "encoding": "base64",
+        "contentSha256": "fa64e5d76581bf6c97c5a928ae3d87e96874d6557ae5d0e60196f09d9ad4c9c7"
+      },
+      "disposition": "Current direct dependency binding; source hash alone does not verify runtime behavior."
+    }
+  ],
+  "authoredVerificationDrivers": [
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/apply-fractional-zero-credit-schema.cjs",
+      "sha256": "ce419ae6f698d0cc9afbf533702168c0a99026e53da253e9009d021176f38438",
+      "disposition": "Authored driver source only; execution results will be supplied by root."
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-fractional-receipt-browser.cjs",
+      "sha256": "7b81b1e3f239c5d72795144a563665b20136c90d9cf17597778289114712d32b",
+      "disposition": "Authored driver source only; execution results will be supplied by root."
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-fractional-receipt-valuation.cjs",
+      "sha256": "300aaba8871930036854da66af9377b24472f441e530b06c5fb07504f06e1fc4",
+      "disposition": "Authored driver source only; execution results will be supplied by root."
+    }
+  ],
+  "oldEvidence": [
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/operational-receipt-review-2026-09-30.json",
+      "sha256": "cd6fee1cbade825384d39c33ed65765176b0538811de0259d9a35a9faf9996e0",
+      "disposition": "Preserved as immutable historical evidence. Changed bindings require current revalidation; this draft creates no alias or certification.",
+      "changedBindings": [
+        {
+          "file": "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+          "priorSha256": "fdae37f1c5401945b7252ce3e436ed518d04819e141e99935687aa26f05d9cd7",
+          "currentSha256": "9916a8a9a20d3c4373f464168ffdb189ef2f2a2f461e234cdfd2ab1941f2e17a",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+          "priorSha256": "3375fe91d483e32cedd2385ed746ce468d965e8fade58758c19e6e22001072c6",
+          "currentSha256": "fa0e524018506a77656cefc5f85a695c7c6e94c57a448daadd8e1e371434650b",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "messages/en.json",
+          "priorSha256": "c335943a65e72bd18cb5d1690427b53276c8a7b10e56418092450ad353f7ee65",
+          "currentSha256": "7a3e5487d41f8f4ef7974b6a6dd683d6e0bca4c17c7781ea3a981a3f3df71032",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "messages/fr.json",
+          "priorSha256": "3bb05a6dbb0e392e86416fe2c42bd67a8a856710f3736ff1cbf2782fda534fbc",
+          "currentSha256": "920eb9a7578bfbcdffde77181f9baa9bb11cb31153e01afd3ed1fd2645822048",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+          "priorSha256": "d826bf3e1aa5b60cb8f9f920c714183721fa8db73aa8db4c315a48f854da91ad",
+          "currentSha256": "4165aded0fc02d31ace697100f5953dc9532d432218a9c8a958fde5d82abedbf",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/inventory/inventory-stock-event.service.ts",
+          "priorSha256": "631983da7ea0065c1020c9d1242dcd6c41822a50f809480052829b27462c66df",
+          "currentSha256": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+          "priorSha256": "13287476a09d8d2de1933fc7c0c98d707cd4caf72eb0e0d1bc3377d87761eaf4",
+          "currentSha256": "2a51e5f0407d245a57a4852af8f80452a1e0e87bf64b8258d7fd1ccf985c972d",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+          "priorSha256": "c7075489d85456f80c4f3421d59985a7f26b1ef27d603c11cc947abea8f085f6",
+          "currentSha256": "11871c18fe4e848bf80f59663d4105027389b507d1bcfe5a96c4d5976909dc17",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchase-order/receipt-ledger-recovery.service.ts",
+          "priorSha256": "9a94630b3427483290cb0daecfab7077fdfa73b43621e869daf4ef1bf5192c43",
+          "currentSha256": "1ae6740e14c7a3a9f3f4e8c83be513f82416ae68739f207287fdc84772c5a5b7",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+          "priorSha256": "c13ad084ee215b95f21cb1d4b72f572fdc5e7379b3823e2987eac6ee4b8e1c06",
+          "currentSha256": "026f9eec6fa86dd67caa8e84e080514fddd3635453ca38dab7c2eae41a43804d",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+          "priorSha256": "02c8f57637e8289098658f0a85b05963b8e4a34a01984398553d4d40e530d74d",
+          "currentSha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+          "priorSha256": "3278ffc8af61c1b5331569312047eb2ee25dd412e7fcbd9ba7d8be06cc94e1d7",
+          "currentSha256": "9eb0ff28aa9f724d8e57c8757e345f044da7bebefa4d88fc659764bfd9c01597",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/__tests__/receipt-return-recognition.test.ts",
+          "priorSha256": "c1d16651a565fdae98269635b6d5885d741f094847772cc0ab582ddf3f43917b",
+          "currentSha256": "7b8c3b0eee512115f5e56e13b1c973be9909030c9ce66dad2d0b79ebe760aa09",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/ap-control.service.ts",
+          "priorSha256": "911ca10c11c8e943b51055619526e060a2f08163a089b9e5cd086f254c0411a3",
+          "currentSha256": "7e7f880d7bf0360a51049c441e6d809f01da8807b4298c6737dfa1a196d3d4d2",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/invoice-receipt-recognition.ts",
+          "priorSha256": "8b3d66cc100396c3404b3add7ed711c29a74964b1f2ddea0c5c7a99550d2be85",
+          "currentSha256": "0a3bc34d114e223fc3d3152f99030bba75207c96360301a4ba9232352275d310",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/purchase-return-credit.service.ts",
+          "priorSha256": "850bdbc0ca3975f908376536cfd8108b160bbe1bf53226d0196fff37c7868d12",
+          "currentSha256": "d16bfd2f8c702c31e4c3d199de1e6d94b3704452de9c799548514e1884e06e31",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        },
+        {
+          "file": "services/purchasing/receipt-return-recognition.ts",
+          "priorSha256": "fd595f5d8079f35696f7ef38432c70d01743fb7962897a91d46bef38f3b1ec45",
+          "currentSha256": "f61773a8ad6643fa376e400cdf1bb0be26f393937527ccd3554b89e78b65a876",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": true
+        }
+      ],
+      "unchangedBindingCount": 82,
+      "unchangedBindings": [
+        {
+          "file": ".eslintrc.json",
+          "sha256": "dffcb6cdf7113b59e2f6e9adb9fe6d090512002494b6adfef96655fee2d371a6"
+        },
+        {
+          "file": "actions/purchaseOrderWorkflow/__tests__/purchase-receiving.actions.test.ts",
+          "sha256": "fcf84a58ada88ac2aa756eb27a15b6f588a0fb2717e4b2904eca29e5f1753c7b"
+        },
+        {
+          "file": "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts",
+          "sha256": "4f536b6264e7bc0c45322b086f2163090c1a9d496325794fc41a49b891f7e8ec"
+        },
+        {
+          "file": "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+          "sha256": "bd48c6d636ce68c52568103d91bcfe55cd37b7dd0a9fd45d52a2c461f73ea4cd"
+        },
+        {
+          "file": "actions/security/step-up-auth.actions.ts",
+          "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+        },
+        {
+          "file": "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+          "sha256": "e982f6b46038abc9f6e80eb1690f9d3524ed55e05135ec15d582929428e56eb1"
+        },
+        {
+          "file": "components/purchase-orders/__tests__/PurchaseReceivingHistoryCurrency.test.tsx",
+          "sha256": "bed0e6976580065fd9014ad87bd6b95dc96add04bbe4c4b58877eb2a24a558e5"
+        },
+        {
+          "file": "components/purchasing/InvoiceCorrectionWorkbench.tsx",
+          "sha256": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635"
+        },
+        {
+          "file": "components/purchasing/InvoicePreparationWorkbench.tsx",
+          "sha256": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4"
+        },
+        {
+          "file": "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx",
+          "sha256": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf"
+        },
+        {
+          "file": "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx",
+          "sha256": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c"
+        },
+        {
+          "file": "components/ui/dialog.tsx",
+          "sha256": "fd78c279fbfbf3960d59a2a0b13c4eb5f2c6db3a076078e1cd493f30e3528463"
+        },
+        {
+          "file": "jest.config.ts",
+          "sha256": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59"
+        },
+        {
+          "file": "jest.setup.ts",
+          "sha256": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+        },
+        {
+          "file": "lib/security/auth-session.ts",
+          "sha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae"
+        },
+        {
+          "file": "lib/security/rbac-permissions.ts",
+          "sha256": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815"
+        },
+        {
+          "file": "lib/security/rbac.ts",
+          "sha256": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376"
+        },
+        {
+          "file": "next-env.d.ts",
+          "sha256": "4c9344e62bfcabbb29c4fc820a895546444aa5c2cc6cc60b870a3d6e547b70c3"
+        },
+        {
+          "file": "next.config.mjs",
+          "sha256": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+        },
+        {
+          "file": "package-lock.json",
+          "sha256": "797525d6a694c8e31ca078acd9fecaa0784f47e3a422c2c37b3c62ce4f99484f"
+        },
+        {
+          "file": "package.json",
+          "sha256": "ddbf28861faf607b472a1657c607d73852097b2c1b58919beb8a3bf372e3bc1f"
+        },
+        {
+          "file": "pnpm-lock.yaml",
+          "sha256": "fb9a4b168745f9ed8e702ed88b3a7283672233977a4b1aa502b27e96ef02b9fd"
+        },
+        {
+          "file": "prisma/schema.prisma",
+          "sha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+        },
+        {
+          "file": "services/_shared/action-errors.ts",
+          "sha256": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8"
+        },
+        {
+          "file": "services/accounting/__tests__/accounting-settings.service.test.ts",
+          "sha256": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de"
+        },
+        {
+          "file": "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+          "sha256": "e94b991ea5ddb056e87e5d723260095f415be391b7a97a9cbc8f2a7a4d2a4441"
+        },
+        {
+          "file": "services/accounting/__tests__/journal-close-invalidation.service.test.ts",
+          "sha256": "3d7eeac7ec0fd53b73b4eef4a9b472f7e1186490f28bed20485c8492229d39e5"
+        },
+        {
+          "file": "services/accounting/__tests__/journal-currency-regression.service.test.ts",
+          "sha256": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7"
+        },
+        {
+          "file": "services/accounting/accounting-settings.service.ts",
+          "sha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+        },
+        {
+          "file": "services/accounting/close-assurance-pack.service.ts",
+          "sha256": "394edd99c8ac8eace202d13a858bd04199861eaba0f619508af0d9a56b9c2f6e"
+        },
+        {
+          "file": "services/accounting/default-posting-rules.ts",
+          "sha256": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2"
+        },
+        {
+          "file": "services/accounting/journal-close-invalidation.service.ts",
+          "sha256": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8"
+        },
+        {
+          "file": "services/accounting/journals.service.ts",
+          "sha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+        },
+        {
+          "file": "services/accounting/periods.service.ts",
+          "sha256": "fb2a36a431be2dceb497f07466dbe1e56b4de7972405c44e425a23ace499c0fd"
+        },
+        {
+          "file": "services/accounting/posting-rules.service.ts",
+          "sha256": "63d5210cbd921e67b27563d55f0d97b10b8f40d14a41c902aa4d0b960d479031"
+        },
+        {
+          "file": "services/accounting/posting.service.ts",
+          "sha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2"
+        },
+        {
+          "file": "services/events/business-event-anomaly.service.ts",
+          "sha256": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09"
+        },
+        {
+          "file": "services/events/business-event.schemas.ts",
+          "sha256": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee"
+        },
+        {
+          "file": "services/events/business-event.service.ts",
+          "sha256": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14"
+        },
+        {
+          "file": "services/inventory/inventory-close-invalidation.service.ts",
+          "sha256": "5b7ec997eb6867a6272bd2b7feaa2c9d8d126ea7b6c5e09772641597a10413be"
+        },
+        {
+          "file": "services/modules/module-entitlement.service.ts",
+          "sha256": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+        },
+        {
+          "file": "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+          "sha256": "b41b51b8d8720c61469caf651be56d91fb19723a8c3ce2d8fb3de02b8f09dce2"
+        },
+        {
+          "file": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+          "sha256": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89"
+        },
+        {
+          "file": "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+          "sha256": "0c33c9cce40c1c688c50a856799ae440cb895c2fa02e43b1df2fa5c44684d4a9"
+        },
+        {
+          "file": "services/purchase-order/__tests__/purchase-receiving-revision.test.ts",
+          "sha256": "8f34404312d3c3045b941dbe3190c4d3d2d95d7cf31dffba2e8953ecd046216c"
+        },
+        {
+          "file": "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts",
+          "sha256": "6060aedaa8c0065f4adab75992ea6a6d1cd0933edb1295424efa393f054f56c8"
+        },
+        {
+          "file": "services/purchase-order/__tests__/receipt-recognition-source.test.ts",
+          "sha256": "ff954b9cbe5c00108f88bd24f8c157ec1781528338e23e55c01a5e5e5d225ec8"
+        },
+        {
+          "file": "services/purchase-order/__tests__/receipt-recognition.service.test.ts",
+          "sha256": "d8d885b86119fabc4e1afe2b7acf69d5b715647669af5be525e26466fcd53a8b"
+        },
+        {
+          "file": "services/purchase-order/purchase-order-approval.ts",
+          "sha256": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0"
+        },
+        {
+          "file": "services/purchase-order/purchase-order.schemas.ts",
+          "sha256": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9"
+        },
+        {
+          "file": "services/purchase-order/purchase-order.service.ts",
+          "sha256": "178fa7ed5598098da1389cca737d291d3fe901697857fc4e47cb5a1d073f2fb2"
+        },
+        {
+          "file": "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+          "sha256": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b"
+        },
+        {
+          "file": "services/purchase-order/purchase-receiving-authority.ts",
+          "sha256": "82df2062cd76b964bb579fdc3e31f27a9b5432cff732ecd1103c653e9bfd4686"
+        },
+        {
+          "file": "services/purchase-order/purchase-receiving-contracts.ts",
+          "sha256": "90aa0c3ce725cf0456f557574b60651f2d1ce661054a85ead7ad86466dd0a185"
+        },
+        {
+          "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+          "sha256": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35"
+        },
+        {
+          "file": "services/purchase-order/receipt-ledger-recovery-authority.ts",
+          "sha256": "6ba14fb18edf9a3cd637a2e58864c236e6d45be07e3fef41a45ca0da9aeac75d"
+        },
+        {
+          "file": "services/purchase-order/receipt-recognition-source.ts",
+          "sha256": "262a60d111491a9fbc2218553fda34198c863bf9beef9f391554b757a75c4c6a"
+        },
+        {
+          "file": "services/purchase-order/receipt-recognition.service.ts",
+          "sha256": "9529c7e9c277680a6df89ab7bfa79614be5735635a2c0397c5b1e50c029cfd72"
+        },
+        {
+          "file": "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+          "sha256": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde"
+        },
+        {
+          "file": "services/purchasing/invoice-approval.service.ts",
+          "sha256": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73"
+        },
+        {
+          "file": "services/purchasing/invoice-correction.service.ts",
+          "sha256": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5"
+        },
+        {
+          "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+          "sha256": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation.service.ts",
+          "sha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+        },
+        {
+          "file": "services/purchasing/purchase-correction-ledger.service.ts",
+          "sha256": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07"
+        },
+        {
+          "file": "services/purchasing/receipt-invoice-capacity.ts",
+          "sha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+        },
+        {
+          "file": "services/roles/role-custodian-policy.ts",
+          "sha256": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142"
+        },
+        {
+          "file": "tsconfig.json",
+          "sha256": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/run-operational-receipt-checks.cjs",
+          "sha256": "2b439cc845368fa078957c1361ff25f91de9e2de572dae02bf21be32fc0469c1"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs",
+          "sha256": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-recognition.cjs",
+          "sha256": "1f91dc98a9018b1c47b21bee8426505a278f84ea1e982e5ac89c0876ed5ea1a1"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-authority.ts",
+          "sha256": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-contracts.ts",
+          "sha256": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-evidence.ts",
+          "sha256": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+        },
+        {
+          "file": "services/purchasing/invoice-correction-authority.ts",
+          "sha256": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee"
+        },
+        {
+          "file": "services/purchasing/invoice-correction-contracts.ts",
+          "sha256": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da"
+        },
+        {
+          "file": "services/purchasing/invoice-source-evidence.ts",
+          "sha256": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+        },
+        {
+          "file": "services/purchasing/purchase-return-credit.schemas.ts",
+          "sha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912"
+        },
+        {
+          "file": "actions/purchasing/invoice-preparation.actions.ts",
+          "sha256": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842"
+        },
+        {
+          "file": "actions/purchasing/invoice-correction.actions.ts",
+          "sha256": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+        },
+        {
+          "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+          "sha256": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc"
+        },
+        {
+          "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+          "sha256": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operational-receipt-browser.cjs",
+          "sha256": "01a06c4b2711a4d1163ec0c5d7b3ac2a59e1e2644163230b1e0c9a3a9f2f046d"
+        }
+      ]
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/receipt-capacity-review-2026-09-30.json",
+      "sha256": "db7b3bfcd97f45712313ff5d5b0db53f7788683de3d5331da5583fb0a48fb847",
+      "disposition": "Preserved as immutable historical evidence. Changed bindings require current revalidation; this draft creates no alias or certification.",
+      "changedBindings": [
+        {
+          "file": "services/purchasing/ap-control.service.ts",
+          "priorSha256": "0ea98a275184cabed3fbe0056e75d17f2d83f89018f47565d557109af209b739",
+          "currentSha256": "7e7f880d7bf0360a51049c441e6d809f01da8807b4298c6737dfa1a196d3d4d2",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+          "priorSha256": "7aa0e823a3998fbdcccf3a5cf53a320619e7ececbd2c7bb7d4c88379149f2b6d",
+          "currentSha256": "026f9eec6fa86dd67caa8e84e080514fddd3635453ca38dab7c2eae41a43804d",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/inventory/inventory-stock-event.service.ts",
+          "priorSha256": "408354d2a78cc8665c37e3ae4b46b54d610b4df55324cb1db265aa63a54476e7",
+          "currentSha256": "5de9dc9a543352438f5402b153538411ef17c2f62b6d5363f8e4c97448359f17",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+          "priorSha256": "a437b759caa64e1268d45fce5313fda8084a98ad7970eb2e31641c8f0c9e9b4f",
+          "currentSha256": "4165aded0fc02d31ace697100f5953dc9532d432218a9c8a958fde5d82abedbf",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+          "priorSha256": "372df01572213c43b59216b7f7304f7af8dc75043f290ebb034db9589a8bd277",
+          "currentSha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+          "priorSha256": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+          "currentSha256": "9eb0ff28aa9f724d8e57c8757e345f044da7bebefa4d88fc659764bfd9c01597",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+          "priorSha256": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1",
+          "currentSha256": "b41b51b8d8720c61469caf651be56d91fb19723a8c3ce2d8fb3de02b8f09dce2",
+          "unchanged": false,
+          "directlyChangedInThisDraft": false,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchasing/invoice-receipt-recognition.ts",
+          "priorSha256": "ab6ba20d60525da5b2a86af445c9a6a3dd845ecdfa8c74b5b69d51dfd59660f4",
+          "currentSha256": "0a3bc34d114e223fc3d3152f99030bba75207c96360301a4ba9232352275d310",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchasing/purchase-return-credit.service.ts",
+          "priorSha256": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+          "currentSha256": "d16bfd2f8c702c31e4c3d199de1e6d94b3704452de9c799548514e1884e06e31",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+          "priorSha256": "30b4bce8b1cd33d5b01b3f65830398182a846354cd8d73b1723bc0ddbc210000",
+          "currentSha256": "f119984e6cb77b4e668835aa4573b850d500b2a55a4a6952c8477cfea0b7fc9b",
+          "unchanged": false,
+          "directlyChangedInThisDraft": false,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+          "priorSha256": "c6ad2e9f1f298e9cf1cf3651328dce526e810eba390d568e4ef8a0ec52a12302",
+          "currentSha256": "d75a1e34267d7eaa197417c51e12b3e549643983205b1076c38eac0805088c35",
+          "unchanged": false,
+          "directlyChangedInThisDraft": false,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "components/purchasing/InvoicePreparationWorkbench.tsx",
+          "priorSha256": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+          "currentSha256": "cf94cedc5aaf4bd2be94f07a9efb32f4ef5cc5cbb3709819d906e5e825dcedd4",
+          "unchanged": false,
+          "directlyChangedInThisDraft": false,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "components/purchasing/InvoiceCorrectionWorkbench.tsx",
+          "priorSha256": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+          "currentSha256": "a2bc944f7dbaf473ef80acfca6269a18884bc96f29144c71a0a867df85cfc635",
+          "unchanged": false,
+          "directlyChangedInThisDraft": false,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "messages/en.json",
+          "priorSha256": "6baa337850c92a9dc78123d4056e8ff2140fb5be53ebd4977eff8e3fdda55646",
+          "currentSha256": "7a3e5487d41f8f4ef7974b6a6dd683d6e0bca4c17c7781ea3a981a3f3df71032",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        },
+        {
+          "file": "messages/fr.json",
+          "priorSha256": "568d63aa88af280c8ecfacb97b8f98482482b7d3b0ac25f040066ee03ec76da3",
+          "currentSha256": "920eb9a7578bfbcdffde77181f9baa9bb11cb31153e01afd3ed1fd2645822048",
+          "unchanged": false,
+          "directlyChangedInThisDraft": true,
+          "matchesThisDraftPredecessor": false
+        }
+      ],
+      "unchangedBindingCount": 32,
+      "unchangedBindings": [
+        {
+          "file": "services/purchasing/invoice-preparation.service.ts",
+          "sha256": "ea0f063c72683c2fe4fcd45df8554cde20d711bd9d261543763be4c9ddf73fc1"
+        },
+        {
+          "file": "services/purchasing/invoice-correction.service.ts",
+          "sha256": "6b7503e14b8c2453ce75ce06e2e620ef3ebbaff114d10a8f9a588c8b6eeb9fc5"
+        },
+        {
+          "file": "services/purchasing/receipt-invoice-capacity.ts",
+          "sha256": "88bdfbe6ebb39cba924db8cd6479e4659a3805076fdfb5aad230d51ce08acc80"
+        },
+        {
+          "file": "services/purchasing/__tests__/receipt-invoice-capacity.test.ts",
+          "sha256": "0b531dfa220004892f57b2fc3d0949a031ce941dedd56447ec8811a960278bde"
+        },
+        {
+          "file": "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx",
+          "sha256": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c"
+        },
+        {
+          "file": "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx",
+          "sha256": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf"
+        },
+        {
+          "file": "services/accounting/__tests__/accounting-settings.service.test.ts",
+          "sha256": "ea5d41309844bb33d26f44b1e7fc78db0fc4486b5983b69279edaf29eedd93de"
+        },
+        {
+          "file": "services/accounting/__tests__/journal-currency-regression.service.test.ts",
+          "sha256": "933a693b51cc92ee090f42742aebfaa4521163f9b3724778e7f31eb3d9fa78a7"
+        },
+        {
+          "file": "services/accounting/accounting-settings.service.ts",
+          "sha256": "6c83166480f23945be1a54ddcd42b11314950b897cf3113b99a28e532824dc04"
+        },
+        {
+          "file": "services/accounting/journals.service.ts",
+          "sha256": "c8134774870509bf849d252eba9632abe55bb35e59fded9c4d5e01fc9c64535e"
+        },
+        {
+          "file": "services/purchasing/invoice-approval.service.ts",
+          "sha256": "b7b5a81693e8e758a643874ad9287fa40cbba086488b7999c23debe84d8bba73"
+        },
+        {
+          "file": "services/purchasing/purchase-correction-ledger.service.ts",
+          "sha256": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07"
+        },
+        {
+          "file": "services/accounting/default-posting-rules.ts",
+          "sha256": "9334bf625a79814715f7d151a9e6fd29b23254c18b0dfcd21db885862f1f44e2"
+        },
+        {
+          "file": "services/accounting/posting.service.ts",
+          "sha256": "458ba5848af4fde0f0fc2731261a54bf20f10302b44dc201a2b529f81e2014e2"
+        },
+        {
+          "file": "services/events/business-event.service.ts",
+          "sha256": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14"
+        },
+        {
+          "file": "services/events/business-event-anomaly.service.ts",
+          "sha256": "857e8ec557db7ee0d7c918ce6b1eb78d176331777e4943749bea349c41ffef09"
+        },
+        {
+          "file": "prisma/schema.prisma",
+          "sha256": "674ca427f673d57e1335786df18954a7a08e8797aa92424f230cb5fee37e0d34"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invoice-receipt-handoff.cjs",
+          "sha256": "431a35cc3461e850f8fe060f71d4057e0ea56d65ca54217df887017fe4c3d556"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-invoice-capacity.cjs",
+          "sha256": "0b7d54a6a7b9745564259dcf0c4afc73060ec7530a6a76f07609ebe0c5955eb0"
+        },
+        {
+          "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+          "sha256": "5b67bd475b0b1cb51fd7aac5d8e9a1ca9d75113f27bf5965a50cdd5ee8c4b022"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-authority.ts",
+          "sha256": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-contracts.ts",
+          "sha256": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21"
+        },
+        {
+          "file": "services/purchasing/invoice-preparation-evidence.ts",
+          "sha256": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+        },
+        {
+          "file": "services/purchasing/invoice-correction-authority.ts",
+          "sha256": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee"
+        },
+        {
+          "file": "services/purchasing/invoice-correction-contracts.ts",
+          "sha256": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da"
+        },
+        {
+          "file": "services/purchasing/invoice-source-evidence.ts",
+          "sha256": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+        },
+        {
+          "file": "services/purchasing/purchase-return-credit.schemas.ts",
+          "sha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912"
+        },
+        {
+          "file": "actions/purchasing/invoice-preparation.actions.ts",
+          "sha256": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842"
+        },
+        {
+          "file": "actions/purchasing/invoice-correction.actions.ts",
+          "sha256": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+        },
+        {
+          "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+          "sha256": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc"
+        },
+        {
+          "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+          "sha256": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-receipt-capacity-browser.cjs",
+          "sha256": "08278ab5a6c7737337867632af984446e4baad839f7f618e02b93f76c20c422c"
+        }
+      ]
+    }
+  ],
+  "v1CompatibilityReview": {
+    "status": "source_review_only_pending_current_execution",
+    "identityDeclarations": [
+      {
+        "file": "services/purchasing/receipt-return-recognition.ts",
+        "declaration": "returnSourceHash",
+        "comparison": "Exact declaration text after CRLF normalization; source-only check",
+        "beforeSha256": "d445227a3eaa0844e03ef0e06640d76df4136d112b5ac8c0a9d0e5d07c3f8ba0",
+        "afterSha256": "d445227a3eaa0844e03ef0e06640d76df4136d112b5ac8c0a9d0e5d07c3f8ba0",
+        "unchanged": true
+      },
+      {
+        "file": "services/purchasing/receipt-return-recognition.ts",
+        "declaration": "lineProof",
+        "comparison": "Exact declaration text after CRLF normalization; source-only check",
+        "beforeSha256": "458e38d09256700b418cc6a042646d32694325775e063b76482ed7f8f52a80f1",
+        "afterSha256": "458e38d09256700b418cc6a042646d32694325775e063b76482ed7f8f52a80f1",
+        "unchanged": true
+      },
+      {
+        "file": "services/purchasing/invoice-receipt-recognition.ts",
+        "declaration": "sourceHash",
+        "comparison": "Exact declaration text after CRLF normalization; source-only check",
+        "beforeSha256": "652a848068afb707597039d833bcc75d532192a66aa07e1a1364424dc55c5bc6",
+        "afterSha256": "652a848068afb707597039d833bcc75d532192a66aa07e1a1364424dc55c5bc6",
+        "unchanged": true
+      },
+      {
+        "file": "services/purchasing/ap-control.service.ts",
+        "declaration": "apPostingRequestHash",
+        "comparison": "Exact declaration text after CRLF normalization; source-only check",
+        "beforeSha256": "aa4169c0f58d91c9e485fd96aa79bce2ad02debf386271d6f83f46202e0249e0",
+        "afterSha256": "aa4169c0f58d91c9e485fd96aa79bce2ad02debf386271d6f83f46202e0249e0",
+        "unchanged": true
+      }
+    ],
+    "testPointers": [
+      {
+        "file": "services/purchasing/__tests__/receipt-return-recognition.test.ts",
+        "title": "continues reading the exact legacy v1 proof and unmarked stock payload",
+        "line": 193,
+        "sha256": "7b8c3b0eee512115f5e56e13b1c973be9909030c9ce66dad2d0b79ebe760aa09",
+        "executionStatus": "Pending root-bound current verification; pointer is not a pass claim"
+      },
+      {
+        "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "title": "preserves the exact legacy posting amount shape and omits context",
+        "line": 63,
+        "sha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+        "executionStatus": "Pending root-bound current verification; pointer is not a pass claim"
+      },
+      {
+        "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "title": "keeps a failed receipt without accounting effects on the legacy path",
+        "line": 69,
+        "sha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+        "executionStatus": "Pending root-bound current verification; pointer is not a pass claim"
+      },
+      {
+        "file": "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "title": "recovery retains reviewed allocation after subsequent invoices reserve more quantity",
+        "line": 144,
+        "sha256": "8b998bbb851dbebe86f41d41f8972cc9732181a273061acaa7e274cc33a9deb4",
+        "executionStatus": "Pending root-bound current verification; pointer is not a pass claim"
+      },
+      {
+        "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+        "title": "preserves the %s receipt batch and all stock on an exact applied replay",
+        "line": 298,
+        "sha256": "4165aded0fc02d31ace697100f5953dc9532d432218a9c8a958fde5d82abedbf",
+        "executionStatus": "Pending root-bound current verification; pointer is not a pass claim"
+      }
+    ],
+    "contracts": [
+      "New allocation fields are optional on retained v1 parses; old source/event objects are not rewritten or backfilled.",
+      "The v1 return amount branch still requires quantity times original unit cost and forbids v2 allocation fields.",
+      "Unmarked stock payloads keep WEIGHTED_AVERAGE and omit receiptValuation entirely. Explicit return overrides require the source validator and v2 marker.",
+      "Invoice recovery retains its supplied proof; new marked allocations use v2. Unmarked legacy invoices retain their prior amount context and posting hash.",
+      "Recovery accepts old journal-bearing resolution events without requiring a newly introduced ledgerStatus field; no-journal outcomes require an explicit verified v2 zero proof.",
+      "Positive legacy credit and payment-balance behavior remains separate; a zero credit without valid v2 proof is rejected."
+    ],
+    "limitation": "Declaration equality and branch inspection do not replace fixture replay/hash assertions across the complete legacy path."
+  },
+  "v2SemanticsAndResidualRisks": [
+    {
+      "kind": "intentional_policy",
+      "detail": "Each draw uses remainingValue * requestedQuantity / remainingQuantity, rounded to cents; the final draw receives the exact residual. Reordering may assign a cent to a different operation but must conserve the total."
+    },
+    {
+      "kind": "required_invariant",
+      "detail": "Invoice plus uninvoiced-return allocations share the acquisition pool; invoiced returns consume the retained invoice-funded claim pool. Exact reversals restore frozen values, not a recalculated value."
+    },
+    {
+      "kind": "required_invariant",
+      "detail": "Stock movement, inventory level, return accounting and historical rebuild use the same verified allocated value, with explicit zero distinct from absent evidence."
+    },
+    {
+      "kind": "bounded_blocker",
+      "detail": "A receipt-owned allocation that conflicts with current item/location value is rejected instead of clearing residual stock value. Mixed-source valuation reconciliation is not certified by these changes."
+    },
+    {
+      "kind": "legacy_limitation",
+      "detail": "Unknown historical allocations are not silently repaired or relabeled v2; exact legacy proof remains necessary."
+    },
+    {
+      "kind": "review_followup",
+      "detail": "The initial narrow review found zero-credit creation/reversal bypassed period validation. Purchasing subsequently added independent source-date checks and focused closed/missing-period cases. Current execution must bind this corrected source. Resolving an already-recorded source-pending zero return remains a proof-only recovery with no new stock, credit or journal effect."
+    },
+    {
+      "kind": "verification_requirement",
+      "detail": "Exercise zero-commercial-total with positive claim through debit variance/credit claim, no supplier-balance effect, and exact reversal."
+    },
+    {
+      "kind": "migration_requirement",
+      "detail": "Only two amount checks are relaxed. Valid zero records prevent automatic re-tightening; no row deletion or history rewriting is an acceptable rollback."
+    }
+  ],
+  "localeDiffs": [
+    {
+      "file": "messages/en.json",
+      "differences": [
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/returnsHelp",
+          "before": "These existing stock returns are included in the same recovery. Every listed return must post at its original date; if any posting fails, the entire recovery rolls back.",
+          "after": "These existing stock returns are included in the same recovery. Entries use their original dates; zero-value returns retain verified evidence without a journal. If any required posting fails, the entire recovery rolls back."
+        },
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/returnsRecorded",
+          "before": "Related return journals recorded",
+          "after": "Related return accounting verified"
+        },
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/noJournalRequired",
+          "before": null,
+          "after": "No journal is required for this return’s zero allocated value."
+        }
+      ]
+    },
+    {
+      "file": "messages/fr.json",
+      "differences": [
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/returnsHelp",
+          "before": "Ces retours de stock existants sont inclus dans la même reprise. Chaque retour doit être comptabilisé à sa date initiale ; si une écriture échoue, toute la reprise est annulée.",
+          "after": "Ces retours de stock existants sont inclus dans la même reprise. Les écritures conservent leur date initiale ; les retours de valeur nulle conservent une preuve vérifiée sans écriture. Si une écriture requise échoue, toute la reprise est annulée."
+        },
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/returnsRecorded",
+          "before": "Écritures des retours liés enregistrées",
+          "after": "Comptabilité des retours liés vérifiée"
+        },
+        {
+          "pointer": "/purchaseReceiving/accountingRecovery/noJournalRequired",
+          "before": null,
+          "after": "Aucune écriture n’est nécessaire pour ce retour dont la valeur affectée est nulle."
+        }
+      ]
+    }
+  ],
+  "runtimeVerification": {
+    "status": "pending_root_bound_unit_database_browser_receipts",
+    "receipts": [],
+    "claim": "No tests, browser journey or database mutation were executed by this evidence builder."
+  },
+  "sourceStableDuringReview": true,
+  "currentSnapshot": {
+    "file": "what-next/workflow-modernization/2026-09-05-run-01/evidence/fractional-source-after-draft-935c857c-6986-451d-a6b6-598ad7c72066.json",
+    "sha256": "136d1a4d509aa80461834617352c617c994d2be0c8d9b508599ab6485ef04d08",
+    "sourceCount": 48
+  },
+  "nextRequiredAction": "Root must bind final source-stable verification results, inspect this exact before/after impact, and author a separate final review/register follow-up. Preserve this draft and all prior evidence."
+}

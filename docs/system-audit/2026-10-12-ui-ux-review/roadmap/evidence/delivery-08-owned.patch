@@ -1,0 +1,359 @@
+--- a/services/signals/business-signal-rules.service.ts
++++ b/services/signals/business-signal-rules.service.ts
+@@ -57,7 +57,7 @@
+     moduleSlug: "cash_drawer",
+     requiredPermission: "pos.cash.drawer.open",
+     assignedRole: "manager",
+-    actionPath: "/dashboard/cash-drawer",
++    actionPath: "/dashboard/finance/cash-drawer",
+     suggestedAction: "Review drawer movements and attach variance evidence.",
+     businessImpact:
+       "Cash variance can hide leakage, posting drift, or process breakdown.",
+@@ -204,6 +204,8 @@
+   const actionPath = fact.actionPath ?? defaults.actionPath;
+   const opensPayroll = fact.signalType === "payroll_exposure" &&
+     (actionPath === "/dashboard/payroll" || actionPath.startsWith("/dashboard/payroll/"));
++  const opensCashDrawerReview = fact.signalType === "cash_drawer_variance" &&
++    actionPath === "/dashboard/finance/cash-drawer";
+   const severity =
+     fact.severity ??
+     severityFromScore(fact.severityScore ?? severityScoreForFact(fact));
+@@ -258,8 +260,8 @@
+     suggestedAction: fact.suggestedAction ?? defaults.suggestedAction,
+     actionPath,
+     requiredPermission: fact.requiredPermission ?? defaults.requiredPermission,
+-    ...(opensPayroll || fact.additionalRequiredPermissions?.length ? {
+-      additionalRequiredPermissions: [...new Set([...(opensPayroll ? ["payroll.command.read"] : []), ...(fact.additionalRequiredPermissions ?? [])])],
++    ...(opensPayroll || opensCashDrawerReview || fact.additionalRequiredPermissions?.length ? {
++      additionalRequiredPermissions: [...new Set([...(opensPayroll ? ["payroll.command.read"] : []), ...(opensCashDrawerReview ? ["finance.cash-drawer.read"] : []), ...(fact.additionalRequiredPermissions ?? [])])],
+     } : {}),
+     assignedRole: fact.assignedRole ?? defaults.assignedRole,
+     assigneeId: fact.assigneeId ?? null,
+--- a/services/owner-war-room/__tests__/owner-signal-copy.test.ts
++++ b/services/owner-war-room/__tests__/owner-signal-copy.test.ts
+@@ -6,7 +6,7 @@
+ import { join } from "node:path"
+ 
+ it.each([
+-  "finance/reconciliation", "inventory/items", "inventory/loss-control", "purchase-orders",
++  "finance/cash-drawer", "finance/reconciliation", "inventory/items", "inventory/loss-control", "purchase-orders",
+   "payroll", "payroll/payments", "payroll/register", "payroll/declarations",
+   "accounting/close", "settings/modules", "owner-war-room",
+ ])("has an implemented owner destination: %s", route => {
+@@ -59,3 +59,21 @@
+   expect(presentOwnerForecastMessage({ ...source, message: "Review custom evidence" }, "fr")).toBe("Review custom evidence")
+   expect(presentOwnerForecastMessage({ ...source, reasonCode: "CUSTOM" }, "fr")).toBe(source.message)
+ })
++
++const cashFact = { organizationId: "org-1", signalType: "cash_drawer_variance", moduleSlug: "cash_drawer", sourceModule: "pos", subjectType: "cash.drawer", subjectId: "drawer-1", generatedAt: now, sourceHash: "sha256:cash-source" } as const
++it.each([
++  [["pos.cash.drawer.open"], 0],
++  [["finance.cash-drawer.read"], 0],
++  [["pos.cash.drawer.open", "finance.cash-drawer.read"], 1],
++])("requires both existing signal access and destination read access (%s)", (actorPermissions, count) => {
++  const before = JSON.stringify(cashFact)
++  const signals = buildBusinessSignalsFromFacts([cashFact])
++  expect(signals[0]).toMatchObject({ actionPath: "/dashboard/finance/cash-drawer", requiredPermission: "pos.cash.drawer.open", additionalRequiredPermissions: ["finance.cash-drawer.read"], sourceHash: cashFact.sourceHash })
++  const result = buildActionQueue({organizationId:"org-1",signals,actorPermissions:actorPermissions as string[],now})
++  expect(result.actionItems).toHaveLength(count as number)
++  expect(JSON.stringify(cashFact)).toBe(before)
++})
++it("preserves an explicitly supplied cash action and its controls", () => {
++  const [signal] = buildBusinessSignalsFromFacts([{...cashFact,actionPath:"/dashboard/review/custom?drawer=one#evidence",requiredPermission:"custom.review",additionalRequiredPermissions:["custom.proof"]}])
++  expect(signal).toMatchObject({actionPath:"/dashboard/review/custom?drawer=one#evidence",requiredPermission:"custom.review",additionalRequiredPermissions:["custom.proof"]})
++})
+--- a/components/bi/BIProofDrawerHost.tsx
++++ b/components/bi/BIProofDrawerHost.tsx
+@@ -32,13 +32,15 @@
+   open,
+   onOpenChange,
+   onOpenSubject,
+-  triggerLabel = "View proof",
+-  loadingLabel = "Loading proof",
++  triggerLabel,
++  loadingLabel,
+   isLoading = false,
+   error = null,
+   className,
+   locale = "en",
+ }: BIProofDrawerHostProps) {
++  const resolvedTriggerLabel = triggerLabel ?? (locale === "fr" ? "Voir les preuves" : "View proof")
++  const resolvedLoadingLabel = loadingLabel ?? (locale === "fr" ? "Chargement des preuves" : "Loading proof")
+   const [internalOpen, setInternalOpen] = useState(false)
+   const resolvedOpen = open ?? internalOpen
+   const setOpen = onOpenChange ?? setInternalOpen
+@@ -50,11 +52,11 @@
+         size="sm"
+         variant="outline"
+         disabled
+-        title="No proof subject was supplied."
++        title={locale === "fr" ? "Aucune source de preuve n’a été fournie." : "No proof subject was supplied."}
+         className={cn("rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]", className)}
+       >
+         <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+-        {triggerLabel}
++        {resolvedTriggerLabel}
+       </Button>
+     )
+   }
+@@ -94,7 +96,7 @@
+         ) : (
+           <Eye className="h-4 w-4" aria-hidden="true" />
+         )}
+-        {isLoading ? loadingLabel : subject.label || triggerLabel}
++        {isLoading ? resolvedLoadingLabel : subject.label || resolvedTriggerLabel}
+       </Button>
+       <ProofTrailDrawer locale={locale} open={resolvedOpen} onOpenChange={setOpen} proofTrail={proofTrail} isLoading={isLoading} error={error} />
+     </>
+--- a/components/bi/__tests__/bi-command-primitives.test.tsx
++++ b/components/bi/__tests__/bi-command-primitives.test.tsx
+@@ -33,6 +33,7 @@
+     Loader2: createIcon("Loader2"),
+     LockKeyhole: createIcon("LockKeyhole"),
+     PackageOpen: createIcon("PackageOpen"),
++    RefreshCw: createIcon("RefreshCw"),
+     ShieldAlert: createIcon("ShieldAlert"),
+     ShieldCheck: createIcon("ShieldCheck"),
+     TimerReset: createIcon("TimerReset"),
+@@ -537,3 +538,19 @@
+     expect(screen.getAllByText("Module unavailable")).toHaveLength(2)
+   })
+ })
++
++it("localizes missing proof and loading defaults in French", () => {
++  const view = render(<BIProofDrawerHost locale="fr" subject={null} proofTrail={null} />)
++  const missing = screen.getByRole("button",{name:"Voir les preuves"})
++  expect(missing).toBeDisabled()
++  expect(missing).toHaveAttribute("title","Aucune source de preuve n’a été fournie.")
++  view.rerender(<BIProofDrawerHost locale="fr" subject={availableSubject} proofTrail={null} isLoading />)
++  expect(screen.getByRole("button",{name:"Chargement des preuves"})).toBeDisabled()
++  expect(screen.getByRole("button",{name:"Chargement des preuves"})).toHaveAttribute("aria-busy","true")
++})
++it("preserves custom proof labels and server denial reasons", () => {
++  const view = render(<BIProofDrawerHost locale="fr" subject={availableSubject} proofTrail={null} isLoading loadingLabel="Custom pending evidence" />)
++  expect(screen.getByRole("button",{name:"Custom pending evidence"})).toBeDisabled()
++  view.rerender(<BIProofDrawerHost locale="fr" subject={{...availableSubject,available:false,label:"Custom blocked label",unavailableReason:"Protected denial detail"}} proofTrail={null} />)
++  expect(screen.getByRole("button",{name:"Custom blocked label"})).toHaveAttribute("title","Protected denial detail")
++})
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
+@@ -6,9 +6,11 @@
+ import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
+ import { routeByKey, withOwnerWarRoomSurfaceAccess } from "./owner-war-room-route-access"
+ 
+-export const metadata: Metadata = {
+-  title: "Owner War Room | Stoquify",
+-  description: "Evidence-backed owner command center for cash, stock, close, module, and action risk.",
++export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
++  const { locale } = await params
++  return locale === "fr"
++    ? { title: "Tableau du dirigeant | Stoquify", description: "Pilotage fondé sur les preuves pour la trésorerie, les stocks, la clôture, les modules et les actions prioritaires." }
++    : { title: "Owner War Room | Stoquify", description: "Evidence-backed owner command center for cash, stock, close, module, and action risk." }
+ }
+ 
+ const copy = {
+--- a/app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx
++++ b/app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx
+@@ -41,7 +41,7 @@
+ 
+ import { RbacError, requirePermission } from "@/lib/security/rbac"
+ import { getOwnerWarRoomData } from "@/services/owner-war-room/owner-war-room.service"
+-import OwnerWarRoomPage from "../page"
++import OwnerWarRoomPage, { generateMetadata } from "../page"
+ 
+ const mockRequirePermission = requirePermission as jest.Mock
+ const mockGetOwnerWarRoomData = getOwnerWarRoomData as jest.Mock
+@@ -98,3 +98,7 @@
+     expect(screen.getByText("org-session:fr")).toBeInTheDocument()
+   })
+ })
++
++it.each([["fr","Tableau du dirigeant | Stoquify"],["en","Owner War Room | Stoquify"]])("localizes owner metadata for %s", async (locale,title) => {
++  expect(await generateMetadata({params:Promise.resolve({locale})})).toMatchObject({title})
++})
+--- a/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/ROADMAP.md
+@@ -119,6 +119,7 @@
+ | 2026-10-13 | UX02/UX03 | Owner-generated EN/FR narratives and canonical source copy localized; reconciliation/payroll/settings handoffs aligned; 57 tests passed; EN/FR owner views and 11 destination surfaces inspected under SUPER ADMIN, broader role/journey acceptance open | [Delivery 05](EXECUTION-05.md) |
+ | 2026-10-13 | UX02/UX03 destination follow-up | Owner recommendation and main action aligned; purchase-order pending/loading feedback added; French payroll and inventory interface copy expanded. 152 focused tests passed. French payroll command center rendered; remaining post-change browser/role checks open after repeated browser timeouts | [Delivery 06](EXECUTION-06.md) |
+ | 2026-10-13 | UX02/UX03 and inventory follow-up | French inventory table/formatting and payroll proof/outcome labels completed locally; 49 mocked tests and semantic check of 21 production roots passed. Live inventory gap reproduced, but post-change browser acceptance remains blocked by local server connectivity | [Delivery 07](EXECUTION-07.md) |
++| 2026-10-13 | UX02/UX03 rendered acceptance | Cash-variance default route repaired; owner metadata/proof defaults localized; payroll drawer close/focus fixed. 132 mocked tests, 23-root semantic check and scoped lint passed. Local browser recovered; owner/purchase-order handoff and French payroll/inventory destinations checked under SUPER ADMIN. Restricted-role and broader responsive/theme acceptance remain open | [Delivery 08](EXECUTION-08.md) |
+ 
+ ### First five changes, in execution order
+ 
+@@ -128,7 +129,7 @@
+ 4. **POS task workspace:** prioritize products, cart and tender while preserving recovery and shift controls.
+ 5. **Inventory/purchasing workbench:** normalize filters, review tables and controlled entry journeys.
+ 
+-Next acceptance slice: exercise the reviewed owner destinations and EN/FR modes in actual role sessions, then normalize remaining shared evidence units and technical labels. Delivery 05 localized owner-generated narratives and reviewed 11 implemented destination paths, repairing reconciliation, payroll-review and module-settings navigation metadata. The generic cash-drawer signal default remains a separate follow-up. UX01–UX03 acceptance still requires rendered desktop/tablet/mobile checks, actual restricted-role sessions, the alternate/light-theme matrix and usability feedback; SUPER_ADMIN and mocked permission tests do not replace these.
++Next acceptance slice: exercise the reviewed owner destinations and EN/FR modes in actual role sessions, then normalize remaining shared evidence units and technical labels. Delivery 08 repaired the generic cash-drawer signal default and restored local browser acceptance for the owner/purchase-order handoff and French payroll/inventory destinations. UX01–UX03 acceptance still requires remaining desktop/tablet/mobile checks, actual restricted-role sessions, the alternate/light-theme matrix and usability feedback; SUPER_ADMIN and mocked permission tests do not replace these. Reconciliation content and known presentation-only technical labels remain follow-ups; see Delivery 08's matrix.
+ 
+ **Role-check update:** Chrome now confirms an ACCOUNTANT shell with four modules. The dashboard displays a misleading missing-organization recovery message; current source maps every `FORBIDDEN` error to this diagnosis. Add P1 acceptance correction **UX01-A: distinguish denied access from stale/missing organization and provide an authorized entry path**, before accepting restricted-role navigation. Preserve all server guards; verify EN/FR denial, inactive organization, stale session, successful authorized read and unexpected error independently. Accounting destination verification was interrupted by browser connection timeouts. Firefox is not exposed to the browser tools, so cashier acceptance remains open. See [role-session evidence](ROLE-SESSION-RECHECK.md).
+ 
+--- a/components/payroll/PayrollProofDrawerButton.tsx
++++ b/components/payroll/PayrollProofDrawerButton.tsx
+@@ -4,7 +4,7 @@
+ import type { Locale } from "@/types/bilingual"
+ 
+ import Link from "next/link";
+-import { useState } from "react";
++import { useRef, useState } from "react";
+ import { ArrowRight, Eye, EyeOff } from "lucide-react";
+ 
+ import {
+@@ -91,12 +91,14 @@
+   subject: PayrollProofDrawerSubject;
+ } & { locale?: Locale }) {
+   const [open, setOpen] = useState(false);
++  const triggerRef = useRef<HTMLButtonElement>(null);
+   const blockers = subject.blockers ?? [];
+   const redactions = subject.redactions ?? [];
+ 
+   return (
+     <>
+       <button
++        ref={triggerRef}
+         type="button"
+         onClick={() => setOpen(true)}
+         className="inline-flex min-h-8 items-center justify-center gap-2 rounded-md border border-white/12 bg-white/10 px-2.5 text-xs font-semibold text-white transition hover:bg-white/15"
+@@ -105,7 +107,10 @@
+          {payrollUiText("Proof drawer", locale)} </button>
+ 
+       <Sheet open={open} onOpenChange={setOpen}>
+-        <SheetContent className="w-full overflow-y-auto border-white/10 bg-[#101820] text-slate-100 sm:max-w-2xl">
++        <SheetContent lang={locale} closeLabel={locale === "fr" ? "Fermer" : "Close"} onCloseAutoFocus={(event) => {
++          event.preventDefault();
++          triggerRef.current?.focus();
++        }} className="w-full overflow-y-auto border-white/10 bg-[#101820] text-slate-100 sm:max-w-2xl">
+           <SheetHeader className="pr-8">
+             <SheetTitle className="text-white">{subject.label}</SheetTitle>
+             <SheetDescription className="break-all text-slate-400">
+--- a/components/payroll/__tests__/followup-localization.test.tsx
++++ b/components/payroll/__tests__/followup-localization.test.tsx
+@@ -1,4 +1,4 @@
+-import { fireEvent, render, screen } from "@testing-library/react"
++import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+ import SettlementForm from "../PayrollEmployeeBalanceSettlementForm"
+ import AuthorityPanel from "../PayrollDeclarationAuthorityExecutionPanel"
+ import ProofDrawer from "../PayrollProofDrawerButton"
+@@ -61,5 +61,10 @@
+   expect(screen.getByRole("dialog")).toHaveTextContent("sha256:untranslated")
+   expect(screen.getByRole("dialog")).toHaveTextContent("custom source label")
+   expect(screen.getByRole("dialog")).toHaveTextContent("READY")
++  expect(screen.getByRole("button", {name:"Fermer"})).toBeInTheDocument()
++  expect(screen.getByRole("dialog")).toHaveAttribute("lang","fr")
++  fireEvent.keyDown(screen.getByRole("dialog"), {key:"Escape",code:"Escape"})
++  await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
++  expect(screen.getByRole("button", {name:"Consulter les preuves"})).toHaveFocus()
+   expect(JSON.stringify(subject)).toBe(before)
+ })
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-08.md
+@@ -0,0 +1,56 @@
++# Delivery 08 — owner handoffs and rendered destination acceptance
++
++Date: 2026-10-13. Local implementation and bounded browser acceptance; no deployment or whole-program certification.
++
++## Completed
++
++- Corrected the generic cash-variance signal destination from the nonexistent `/dashboard/cash-drawer` to `/dashboard/finance/cash-drawer`. Preserved its existing `pos.cash.drawer.open` requirement and added `finance.cash-drawer.read` for this destination. Existing custom paths, additional requirements, subject identity and source hashes remain intact. This is a conservative permission intersection: the destination itself also accepts the broader `finance.read` alternative; that alternative is not newly granted by the signal queue.
++- Localized the owner page metadata and BI proof host's default trigger, loading and missing-source labels. Caller-provided labels and protected denial reasons remain authoritative.
++- Fixed two issues found in the rendered payroll proof drawer: its close control now says `Fermer` in French, and closing with Escape restores focus to its own proof trigger. The drawer also declares its content language. No financial action or proof value changed.
++- Restored browser access through the installed Next development server on localhost:3001 and completed several acceptance checks left open by Deliveries 06–07.
++
++Used the existing UIUX orchestrator, project UI/UX Pro Max, design master, page contracts and ECC security guidance. Reviewed the signal queue, finance route access, cash-drawer hook/action and existing Sheet close-label API. No new theme, server authorization bypass or transaction behavior was introduced.
++
++## Verification
++
++| Evidence class | Result |
++|---|---|
++| Workflow contract | Passed; 198 scripts remain unclassified, not implicitly approved |
++| Mocked owner/service/page tests | 71 passed in 4 suites, including permission intersection, destination existence, custom path/provenance and locale metadata |
++| Mocked command-center components | 51 passed in 5 suites, including default proof labels and loading state |
++| Mocked payroll/inventory follow-up | 10 passed in 2 suites, including close label, content language, Escape/focus return and retained proof values |
++| Semantic TypeScript | Passed after the final proof-drawer change: 23 production roots and real imports, noEmit, incremental false |
++| Scoped ESLint | Four changed production files: passed, zero errors or warnings |
++| Real database tests | Not run |
++| Build, migrations, seeds, deployment | Not run |
++
++Exact commands: installed Jest CLI with `--runInBand --no-cache --json` and the existing `jest.owner-localization.config.cjs`, `jest.command-center.config.cjs`, and `jest.followup-localization.config.cjs`; installed TypeScript CLI with `--project docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.owner-handoff.json --pretty false`; installed ESLint CLI against the cash signal service, owner page, BI proof host and payroll proof button. Definitions/configuration and command registry were reviewed before execution. Jest does not load the application configuration/environment and mocks protected actions. Results are in `evidence/delivery-08-*-tests.json` and `delivery-08-typecheck-result.json`.
++
++The new BI loading test initially exposed a missing RefreshCw mock; the test mock was corrected and the final suite passed. This was not a production icon defect.
++
++## Browser evidence
++
++All rows: Edge, authenticated SUPER ADMIN, Wilkinson - Feeney 001, French, dark theme, localhost:3001. Desktop screenshots were 1523 × 793. Browser UI automation only; no transaction controls submitted. Normal server authorization/read audit logging can occur during navigation, so this is not a claim of zero database writes.
++
++| Route | Viewport / state | Observed result |
++|---|---|---|
++| `/fr/dashboard/owner-war-room` | Desktop, populated stale/blocked summary and Pilotage mode | French document title. Cash-risk recommendation's primary action says `Examiner les suspens de trésorerie` and links to finance reconciliation. Clicking reached that URL; reconciliation page content was not accepted in this slice |
++| Owner purchase-order action → `/fr/dashboard/purchase-orders` | Desktop, pending then populated register | Screenshot showed `Ouverture…` inside the selected action. Destination displayed `Bons de commande`, `Registre des bons de commande` and 12 orders. Closes the previous pending-feedback/arrival gap for this context |
++| `/fr/dashboard/payroll/payments` | Desktop, populated batches and empty employee-recovery section | French page/section headings and table controls. Proof drawer shows `Fermer`; Escape closes it, then DOM focus is back on `Consulter les preuves`. Checked after the final change |
++| `/fr/dashboard/payroll/register` | Desktop, populated blockers/register | French register, concordance, proof, blocker, payment-batch and declaration headings |
++| `/fr/dashboard/payroll/declarations` | Requested 390 × 844 override, populated blockers | French declaration headings and stacked metric cards. Actual DOM layout width and scrollWidth both measured 468px; therefore this is narrow-layout evidence, not certification of a 390 CSS-pixel viewport |
++| `/fr/dashboard/inventory/items` | Same narrow override, populated catalogue | French search label, stock filter, columns, headings and pagination; organization money formatting visible. Full row-menu/keyboard and horizontal table acceptance remain open |
++| `/fr/dashboard/inventory/loss-control` | Desktop, empty scoped result | French report period, trust coverage, title, explanation and `Aucune perte de stock enregistrée` empty state |
++| `/fr/dashboard/payroll` | Desktop, populated command center | French command heading, blockers, actions, cycle review, payment/declaration/close status and country-reference review headings |
++| `/fr/dashboard/finance/cash-drawer` | Desktop, populated review-required state | Implemented destination rendered `Contrôle des caisses`, filters, operational status, drawer metrics and review tabs. No cash operation performed. Generic cash signal click itself was not exercised because that signal fixture was not present |
++
++Several first navigations timed out while development routes compiled, then finished rendering. These waits do not establish production performance. Restored the viewport override after narrow checks. Started installed Next directly after reviewing dev/predev/Next configuration; this avoided npm predev's Prisma helper. Development server remains available on localhost:3001 for review. No authentication changes, role changes or module activation were performed.
++
++## Remaining work and next acceptance
++
++- Actual owner/accountant/cashier session checks remain open. This turn's working session was SUPER ADMIN; historical accountant observations are not current acceptance.
++- Complete tablet/true 390px, light-theme, screen-reader and denied/stale/error browser matrix. Mocked tests cover additional states but do not certify rendered behavior.
++- Normalize known presentation-only technical labels in a subsequent scoped slice: owner change units (`items`, `score`) and role labels; declarations' `MANUAL_EVIDENCE` label. Keep source identifiers, custom evidence narratives and permission diagnostics available and verbatim where needed.
++- Reconciliation destination content and remaining UX01–UX03 acceptance precede broad POS/workbench packages. The broader roadmap remains active; growth/network-effect hypotheses are not measured outcomes.
++
++Rollback only the reviewed `evidence/delivery-08-owned.patch` against the captured `delivery-08-baseline.json`. Never reset these dirty files to HEAD. `delivery-08-files.json` records final owned hashes. Raw dev-server logs are not publication artifacts.
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/tsconfig.owner-handoff.json
+@@ -0,0 +1,35 @@
++{
++  "extends": "../../../../tsconfig.json",
++  "compilerOptions": {
++    "incremental": false,
++    "noEmit": true,
++    "plugins": []
++  },
++  "files": [
++    "../../../../services/owner-war-room/owner-war-room.service.ts",
++    "../../../../components/bi/BIActionButton.tsx",
++    "../../../../components/dashboard/DashboardLoadingState.tsx",
++    "../../../../components/payroll/PayrollCommandCenter.tsx",
++    "../../../../components/payroll/PayrollPaymentReconciliationWorkbench.tsx",
++    "../../../../components/payroll/PayrollEmployeeBalanceWorkbench.tsx",
++    "../../../../components/payroll/PayrollRegisterTieOut.tsx",
++    "../../../../components/payroll/PayrollDeclarationWorkbench.tsx",
++    "../../../../components/payroll/PayrollPilotCertificationPanel.tsx",
++    "../../../../components/payroll/PayrollProofDrawerButton.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
++    "../../../../components/inventory/loss/inventoryLossWorkbenchCopy.ts",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx",
++    "../../../../components/payroll/PayrollEmployeeBalanceSettlementForm.tsx",
++    "../../../../components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx",
++    "../../../../components/ui/groups/inventory/ItemManagement.tsx",
++    "../../../../components/inventory/inventory-items-copy.ts",
++    "../../../../components/payroll/payroll-ui-copy.ts",
++    "../../../../components/bi/BIProofDrawerHost.tsx",
++    "../../../../app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx"
++  ],
++  "include": [],
++  "exclude": []
++}
+\ No newline at end of file
+--- /dev/null
++++ b/what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_03_OWNER_HANDOFF_ACCEPTANCE_REPORT_2026-10-13.md
+@@ -0,0 +1,9 @@
++# Phase 03 continuation — owner handoffs and destination acceptance
++
++Completed Delivery 08 locally: corrected the generic cash-drawer route with a conservative existing/open plus destination/read permission intersection; localized owner metadata and proof defaults; repaired payroll proof close copy and keyboard focus return.
++
++132 mocked tests, scoped semantic TypeScript and scoped ESLint passed. Browser acceptance now includes French owner action/purchase-order pending feedback and arrival, payroll command/payments/register/declarations, inventory catalogue/loss and the actual cash-drawer destination. Payroll proof Escape/focus return was verified after the edit. No financial actions, migrations, seeds, build or deployment were run. Navigation can generate ordinary authorization audit records.
++
++Full files, reviewed commands, role/locale/viewport/state smoke notes, rollback and limitations: [Delivery 08](../../docs/system-audit/2026-10-12-ui-ux-review/roadmap/EXECUTION-08.md). Source ownership: `delivery-08-files.json` beside the report's evidence. Four production files and their focused tests changed, plus roadmap/evidence documents.
++
++Phase status: partial acceptance, not whole-phase completion. Restricted roles, true target viewport/theme matrix, reconciliation content and actual screen-reader checks remain. Next safe slice: continue Phase 03 owner/shared evidence presentation and acceptance; do not claim later POS/workbench or growth packages are complete.

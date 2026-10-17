@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-27T18:40:16.665Z",
+  "run": "ae8b96b0-19e",
+  "sourcesBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d"
+  },
+  "checks": [
+    "Actual unresolved obligation blocked; tenant/actor/permission/freshness denial and late-audit rollback leave no transition.",
+    "Concurrent preparation and exact retry retain one receipt and leave financial records unchanged.",
+    "Maker refusal, changed setup refusal, explicit re-preparation, actual independent sign and certificate export; old preparation replay does not change signed status.",
+    "Actual clearing reversal reopens the signed run and exception, invalidates the current certificate, retains preparation history and prevents obsolete replay from restoring readiness.",
+    "Completed financial treatment and exception closure alone do not clear the missing external evidence prerequisite."
+  ],
+  "scope": "Owned PostgreSQL, real original mismatch run, posting, clearing, exception closure, preparation, signing and source recovery. Synthetic provider precondition; no provider authentication, browser-session or professional approval claim.",
+  "originalBefore": "f698a18bd3d723bf755adc96bb81118e73dc24c02b17eb367a110b094a1bca8e",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_link-repair-closure-ae8b96b0-19e",
+    "runId": "cmuk5yohn002umaogi2pfi608"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "b6d80cfc8e536f67e622bc0d04beaf674f3521569bdb2f643a9a3b5e8943a0f8",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "f9ec99c91abf8a617d4b87d7f7bcb915c58378d6b1a76e6c02cc81f0831b64a3",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "3ad4872d73ca5ec9ded70a37cc5c4db2384471facac027385b41c22d8c9d2d65",
+    "actions/payments/reconciliation-preparation.actions.ts": "6c70725478f4ae4ec2c16232c2910f2ebbb018cc7e8e714a1f193e33ba4601c8",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "d3f7c6ba084765d10b18e215f3fd2331a10c51ead743ede124ed95d7de26cda5",
+    "services/reconciliation/payment-exception-closure.service.ts": "d4e2c61a49bc8b7348869e57026a8ed1e4f1c57e1e5b41c9eebcf12a46c4a682",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d"
+  },
+  "sourceStable": true
+}

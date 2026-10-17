@@ -1,0 +1,605 @@
+--- a/components/bi/BIActionPriorityBoard.tsx
++++ b/components/bi/BIActionPriorityBoard.tsx
+@@ -1,11 +1,10 @@
+-import Link from "next/link"
+ import { biLocale } from "@/lib/dashboard/bi-presentation"
+-import { ArrowUpRight, CalendarClock, LockKeyhole, ShieldAlert } from "lucide-react"
++import { CalendarClock } from "lucide-react"
+ 
++import { BIActionButton } from "@/components/bi/BIActionButton"
+ import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
+ import { BISeverityBadge, BIStateBadge } from "@/components/bi/BIStateBadge"
+ import { BIStateSurface } from "@/components/bi/BIStateSurface"
+-import { Button } from "@/components/ui/button"
+ import {
+   dashboardMutedTextClass,
+   dashboardPanelClass,
+@@ -95,7 +94,7 @@
+                   <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">{item.title}</h3>
+                   <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{item.nextStep}</p>
+                 </div>
+-                <ActionButton action={item.actionLink} />
++                <BIActionButton action={item.actionLink} locale={locale} context={item.title} className="lg:max-w-[45%] lg:shrink-0" />
+               </div>
+ 
+               {item.evidenceGrade && item.trustState && item.freshness ? (
+@@ -141,43 +140,3 @@
+     </section>
+   )
+ }
+-
+-function ActionButton({ action }: { action: BIActionLink }) {
+-  if (action.disabled) {
+-    return (
+-      <Button
+-        size="sm"
+-        variant="outline"
+-        disabled
+-        title={action.disabledReason ?? undefined}
+-        className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+-      >
+-        <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+-        {action.label}
+-      </Button>
+-    )
+-  }
+-
+-  if (!action.href) {
+-    return (
+-      <Button
+-        size="sm"
+-        variant="outline"
+-        disabled
+-        className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+-      >
+-        <LockKeyhole className="h-4 w-4" aria-hidden="true" />
+-        {action.label}
+-      </Button>
+-    )
+-  }
+-
+-  return (
+-    <Button asChild size="sm" variant="outline" className="shrink-0 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+-      <Link href={action.href}>
+-        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+-        {action.label}
+-      </Link>
+-    </Button>
+-  )
+-}
+--- a/components/bi/BIRiskOpportunityRadar.tsx
++++ b/components/bi/BIRiskOpportunityRadar.tsx
+@@ -1,12 +1,11 @@
+ import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
+-import Link from "next/link"
+-import { ArrowUpRight, Banknote, EyeOff, ShieldAlert, TimerReset } from "lucide-react"
++import { Banknote, EyeOff, ShieldAlert, TimerReset } from "lucide-react"
+ 
++import { BIActionButton } from "@/components/bi/BIActionButton"
+ import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
+ import { BISeverityBadge, BIStateBadge } from "@/components/bi/BIStateBadge"
+ import { BIStateSurface } from "@/components/bi/BIStateSurface"
+ import { Badge } from "@/components/ui/badge"
+-import { Button } from "@/components/ui/button"
+ import {
+   dashboardMutedTextClass,
+   dashboardPanelClass,
+@@ -14,7 +13,7 @@
+   dashboardToneClass,
+ } from "@/components/finance/finance-dashboard-theme"
+ import { cn } from "@/lib/utils"
+-import type { BIActionLink, BIRiskRank, BIUnassessedObservation } from "@/services/bi/bi-contracts"
++import type { BIRiskRank, BIUnassessedObservation } from "@/services/bi/bi-contracts"
+ 
+ type BIRiskOpportunityRadarProps = {
+   risks: (BIRiskRank | BIUnassessedObservation)[]
+@@ -77,7 +76,7 @@
+                       {formatMoney(risk.moneyImpact, locale, currencyCode)}
+                     </span>
+                   ) : null}
+-                  {risk.actionLink ? <RiskActionButton action={risk.actionLink} /> : null}
++                  {risk.actionLink ? <BIActionButton action={risk.actionLink} locale={locale} context={risk.title} /> : null}
+                 </div>
+               </div>
+ 
+@@ -119,32 +118,6 @@
+   )
+ }
+ 
+-function RiskActionButton({ action }: { action: BIActionLink }) {
+-  if (action.disabled || !action.href) {
+-    return (
+-      <Button
+-        size="sm"
+-        variant="outline"
+-        disabled
+-        title={action.disabledReason ?? undefined}
+-        className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text-soft)]"
+-      >
+-        <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+-        {action.label}
+-      </Button>
+-    )
+-  }
+-
+-  return (
+-    <Button asChild size="sm" variant="outline" className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text)]">
+-      <Link href={action.href}>
+-        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+-        {action.label}
+-      </Link>
+-    </Button>
+-  )
+-}
+-
+ function formatMoney(value: number, locale: string, currencyCode: string) {
+   return new Intl.NumberFormat(locale, {
+     style: "currency",
+--- a/components/bi/BICommandBriefHeader.tsx
++++ b/components/bi/BICommandBriefHeader.tsx
+@@ -1,16 +1,15 @@
+ "use client"
+ 
+ import type { ReactNode } from "react"
+-import Link from "next/link"
+-import { ArrowUpRight, CalendarDays, Clock3, GitBranch, ShieldCheck } from "lucide-react"
++import { CalendarDays, Clock3, GitBranch, ShieldCheck } from "lucide-react"
+ 
++import { BIActionButton } from "@/components/bi/BIActionButton"
+ import { biLocale, biCopy, biGradeCopy } from "@/lib/dashboard/bi-presentation"
+ import { BIEvidenceBadgeRow, BIFreshnessNotice } from "@/components/bi/BIEvidenceBadgeRow"
+ import { BICommandModeTabs } from "@/components/bi/BICommandModeTabs"
+ import { BIStateBadge } from "@/components/bi/BIStateBadge"
+ import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
+ import { Badge } from "@/components/ui/badge"
+-import { Button } from "@/components/ui/button"
+ import {
+   dashboardMutedTextClass,
+   dashboardPanelClass,
+@@ -123,19 +122,7 @@
+               </MetaLine>
+             ) : null}
+           </div>
+-          {brief.primaryAction && !brief.primaryAction.disabled ? (
+-            <Button asChild size="sm" className="dashboard-button-primary h-auto min-h-10 max-w-full whitespace-normal break-words rounded-lg text-start">
+-              <Link href={brief.primaryAction.href}>
+-                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+-                {brief.primaryAction.label}
+-              </Link>
+-            </Button>
+-          ) : brief.primaryAction?.disabled ? (
+-            <div className="space-y-2">
+-              <Button disabled size="sm" className="h-auto min-h-10 w-full whitespace-normal break-words text-start">{brief.primaryAction.label}</Button>
+-              <p className="text-xs text-[var(--dash-text-soft)]">{brief.primaryAction.disabledReason}</p>
+-            </div>
+-          ) : null}
++          {brief.primaryAction ? <BIActionButton action={brief.primaryAction} locale={locale} context={brief.title} primary /> : null}
+         </aside>
+       </div>
+     </section>
+--- a/components/owner-war-room/OwnerWarRoomDashboard.tsx
++++ b/components/owner-war-room/OwnerWarRoomDashboard.tsx
+@@ -1,8 +1,9 @@
+ "use client"
+ 
+-import Link from "next/link"
+ import type { ReactNode } from "react"
+ import { useMemo, useState, useTransition } from "react"
++import { BIActionButton } from "@/components/bi/BIActionButton"
++import { BISeverityBadge } from "@/components/bi/BIStateBadge"
+ import {
+   AlertTriangle,
+   Boxes,
+@@ -81,6 +82,8 @@
+ const copy = {
+   en: {
+     briefView: "Daily priorities",
++    summary: "Attention summary",
++    acknowledgementHelp: "Mark this brief as read for this visit. This does not resolve any action.",
+     criticalActions: "Critical actions",
+     highPriorityActions: "High-priority actions",
+     staleIndicators: "Stale indicators",
+@@ -122,8 +125,8 @@
+     redactions: "Redactions",
+     freshness: "Freshness",
+     actionQueue: "Owner action queue",
+-    actionQueueDetail: "Permission-filtered actions generated from business signals. No mutation is executed here.",
+-    noActions: "No visible action item is open for this tenant and permission set.",
++    actionQueueDetail: "Open an action to review its evidence and next step.",
++    noActions: "No open actions are visible to you in this organization.",
+     filtered: "Some actions are hidden because the current user does not have their required permission.",
+     proofTrail: "Proof trail",
+     proofTrailDetail: "Open evidence chains from supported records without leaving the command center.",
+@@ -161,6 +164,8 @@
+   },
+   fr: {
+     briefView: "Priorités du jour",
++    summary: "Points d’attention",
++    acknowledgementHelp: "Marquez cette synthèse comme lue pour cette visite. Cela ne résout aucune action.",
+     criticalActions: "Actions critiques",
+     highPriorityActions: "Actions prioritaires",
+     staleIndicators: "Indicateurs périmés",
+@@ -175,63 +180,63 @@
+     trials: "Essais",
+     dependencyGaps: "Dépendances manquantes",
+     readOnly: "Lecture seule",
+-    evidenceBacked: "Appuye sur preuves",
++    evidenceBacked: "Appuyé sur des preuves",
+     observeMode: "Mode observation",
+     sinceYesterday: "Depuis hier",
+-    sinceYesterdayDetail: "Mouvements importants de tresorerie, cloture, preuves et actions liees aux preuves sur la derniere journee.",
+-    ownerRisks: "Risques proprietaire",
+-    ownerRisksDetail: "Tresorerie a risque, blocages de cloture, preuves anciennes et exposition stock-tresorerie classes pour aujourd hui.",
+-    proofLinkedActions: "Actions liees aux preuves",
+-    proofLinkedActionsDetail: "Actions visibles ouvertes depuis hier avec contexte de preuve deja autorise pour cet utilisateur.",
+-    truthZones: "Zones de verite metier",
+-    briefProof: "Preuve du brief",
+-    acknowledgeBrief: "Accuser reception",
+-    acknowledged: "Accuse",
+-    acknowledgedDetail: "Marque pour cette session.",
+-    generated: "Genere",
+-    period: "Periode",
++    sinceYesterdayDetail: "Évolutions de trésorerie, de clôture et de preuves au cours de la dernière journée.",
++    ownerRisks: "Risques à examiner",
++    ownerRisksDetail: "Trésorerie à risque, blocages de clôture, preuves périmées et exposition des stocks, classés pour aujourd’hui.",
++    proofLinkedActions: "Actions prioritaires et preuves",
++    proofLinkedActionsDetail: "Actions ouvertes depuis hier et preuves accessibles selon vos droits.",
++    truthZones: "Données métier et preuves",
++    briefProof: "Preuve de la synthèse",
++    acknowledgeBrief: "Marquer comme lu",
++    acknowledged: "Lu",
++    acknowledgedDetail: "Marqué comme lu pour cette visite uniquement.",
++    generated: "Généré",
++    period: "Période",
+     critical: "Critique",
+-    high: "Eleve",
+-    redacted: "Masque",
+-    stale: "Ancien",
+-    blocked: "Bloque",
++    high: "Élevé",
++    redacted: "Masqué",
++    stale: "Périmé",
++    blocked: "Bloqué",
+     upgrades: "Demandes de module",
+     sourceModules: "Modules sources",
+     requiredPermission: "Permission requise",
+     blockers: "Blocages",
+     redactions: "Masquages",
+-    freshness: "Fraicheur",
+-    actionQueue: "File d'actions proprietaire",
+-    actionQueueDetail: "Actions filtrees par permission et generees depuis les signaux metier. Aucune mutation ici.",
+-    noActions: "Aucune action visible n'est ouverte pour ce tenant et ces permissions.",
+-    filtered: "Certaines actions sont masquees car l'utilisateur n'a pas la permission requise.",
++    freshness: "Fraîcheur",
++    actionQueue: "Actions du propriétaire",
++    actionQueueDetail: "Ouvrez une action pour examiner ses preuves et la prochaine étape.",
++    noActions: "Aucune action ouverte n’est visible pour vous dans cette organisation.",
++    filtered: "Certaines actions sont masquées selon vos droits d’accès.",
+     proofTrail: "Piste de preuve",
+-    proofTrailDetail: "Ouvrir les chaines de preuve des enregistrements supportes sans quitter le centre.",
+-    openProof: "Ouvrir preuve",
++    proofTrailDetail: "Consultez les preuves des opérations disponibles sans quitter cette page.",
++    openProof: "Consulter les preuves",
+     unavailable: "Indisponible",
+-    loadingProof: "Chargement preuve",
+-    proofError: "La piste de preuve n'a pas pu etre chargee en securite.",
+-    riskStrips: "Bandes de controle",
+-    moduleState: "Etat des modules",
+-    moduleStateDetail: "Le mode observation garde les flux existants visibles tout en montrant l'effet futur.",
+-    unknownModules: "Modules demandes inconnus",
+-    noUnknownModules: "Aucun module demande inconnu.",
++    loadingProof: "Chargement des preuves",
++    proofError: "Les preuves n’ont pas pu être chargées. Réessayez depuis cette page.",
++    riskStrips: "Contrôles à examiner",
++    moduleState: "État des modules",
++    moduleStateDetail: "Le mode observation conserve les parcours actuels et indique les restrictions qui s’appliqueraient.",
++    unknownModules: "Modules demandés inconnus",
++    noUnknownModules: "Aucun module demandé inconnu.",
+     state: {
+       loading: "Chargement",
+       empty: "Vide",
+-      ready: "Pret",
++      ready: "Prêt",
+       partial: "Partiel",
+-      stale: "Ancien",
+-      blocked: "Bloque",
+-      redacted: "Masque",
+-      permission_denied: "Permission limitee",
++      stale: "Périmé",
++      blocked: "Bloqué",
++      redacted: "Masqué",
++      permission_denied: "Accès limité",
+       module_unavailable: "Module indisponible",
+       upgrade_request: "Demande de module",
+-      safe_error: "Erreur securisee",
++      safe_error: "Indisponible",
+     } satisfies Record<OwnerWarRoomCardState, string>,
+     unit: {
+       value: "valeur",
+-      items: "elements",
++      items: "éléments",
+       orders: "commandes",
+       runs: "paies",
+       score: "score",
+@@ -338,12 +343,12 @@
+           </div>
+         </div>
+ 
+-        <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
++        <dl aria-label={t.summary} className={cn(dashboardPanelClass, "grid grid-cols-2 gap-x-4 gap-y-3 p-3 xl:grid-cols-4")}>
+           <SummaryTile label={t.criticalActions} value={data.summary.criticalCount} tone="danger" />
+           <SummaryTile label={t.highPriorityActions} value={data.summary.highCount} tone="gold" />
+           <SummaryTile label={t.staleIndicators} value={data.summary.staleCount} tone="gold" />
+           <SummaryTile label={t.blockedIndicators} value={data.summary.blockedCount} tone="danger" />
+-        </section>
++        </dl>
+ 
+         {commandMode === "brief" ? (
+           <div className="space-y-4" aria-label={t.briefView}>
+@@ -381,7 +386,7 @@
+                       {briefAcknowledged ? t.acknowledged : t.acknowledgeBrief}
+                     </p>
+                     <p className={cn("mt-1 text-xs", dashboardMutedTextClass)}>
+-                      {briefAcknowledged ? t.acknowledgedDetail : data.morningBrief.acknowledgement.state.replace("_", " ")}
++                      {briefAcknowledged ? t.acknowledgedDetail : t.acknowledgementHelp}
+                     </p>
+                   </div>
+                 </div>
+@@ -433,7 +438,7 @@
+                             <div className="flex flex-wrap items-center gap-2">
+                               <h3 className="text-sm font-semibold text-[var(--dash-text)]">{strip.title}</h3>
+                               <StateBadge state={strip.state} label={t.state[strip.state]} />
+-                              <EvidenceGradeBadge grade={strip.evidenceGrade} />
++                              <EvidenceGradeBadge grade={strip.evidenceGrade} locale={locale} />
+                             </div>
+                             <p className={cn("mt-2 text-sm leading-6", dashboardMutedTextClass)}>{strip.detail}</p>
+                           </div>
+@@ -473,23 +478,21 @@
+                   {data.actionQueue.actionItems.length ? (
+                     data.actionQueue.actionItems.slice(0, 7).map((item) => (
+                       <div key={item.id} className={cn(dashboardRowClass, "p-3")}>
+-                        <div className="flex items-start justify-between gap-3">
++                        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row">
+                           <div className="min-w-0">
+                             <div className="flex flex-wrap items-center gap-2">
+-                              <Badge variant="outline" className={cn("border", dashboardSeverityClass(severityToDashboardSeverity(item.severity)))}>
+-                                {item.severity}
+-                              </Badge>
+-                              <EvidenceGradeBadge grade={item.evidenceGrade} />
++                              <BISeverityBadge severity={item.severity} locale={locale} />
++                              <EvidenceGradeBadge grade={item.evidenceGrade} locale={locale} />
+                             </div>
+                             <h3 className="mt-2 text-sm font-semibold text-[var(--dash-text)]">{item.title}</h3>
+                             <p className={cn("mt-1 text-xs leading-5", dashboardMutedTextClass)}>{item.nextStep}</p>
+                           </div>
+-                          <Link
+-                            href={item.actionPath}
+-                            className="shrink-0 rounded-lg border border-[var(--dash-border-subtle)] px-2.5 py-1.5 text-xs font-medium text-[var(--dash-text)] transition hover:border-[var(--dash-brand)] hover:text-[var(--dash-brand-strong)]"
+-                          >
+-                            {t.open}
+-                          </Link>
++                          <BIActionButton
++                            action={{ href: item.actionPath, label: t.open, disabled: false, disabledReason: null }}
++                            locale={locale}
++                            context={item.title}
++                            className="sm:max-w-[45%] sm:shrink-0"
++                          />
+                         </div>
+                         <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                           <Badge variant="outline" className="border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
+@@ -538,7 +541,7 @@
+                         {t.unit[card.unit as keyof typeof t.unit] ?? card.unit}
+                       </p>
+                     </div>
+-                    <EvidenceGradeBadge grade={card.evidenceGrade} />
++                    <EvidenceGradeBadge grade={card.evidenceGrade} locale={locale} />
+                   </div>
+                   <div className="mt-4 grid gap-2 text-xs">
+                     <InfoLine icon={<Clock className="h-3.5 w-3.5" />} label={t.freshness}>
+@@ -668,9 +671,9 @@
+ 
+ function SummaryTile({ label, value, tone }: { label: string; value: number; tone: OwnerWarRoomTone }) {
+   return (
+-    <div className={cn(dashboardPanelClass, "p-4")} style={dashboardStatStyle(tone)}>
+-      <p className={cn("text-xs font-medium uppercase tracking-normal", dashboardMutedTextClass)}>{label}</p>
+-      <p className="mt-2 text-2xl font-semibold tracking-normal text-[var(--dash-text)]">{value}</p>
++    <div className="flex min-w-0 items-center justify-between gap-3 rounded-md border-l-2 pl-3" style={{ borderColor: `var(--dash-${tone === "danger" ? "danger" : "gold"})` }}>
++      <dt className={cn("text-xs font-medium", dashboardMutedTextClass)}>{label}</dt>
++      <dd className="text-xl font-semibold tabular-nums text-[var(--dash-text)]">{value}</dd>
+     </div>
+   )
+ }
+--- a/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx
++++ b/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx
+@@ -1,4 +1,5 @@
+ import type { SVGProps } from "react"
++jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
+ import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+ 
+ jest.mock("lucide-react", () => {
+@@ -344,7 +345,7 @@
+     fireEvent.click(screen.getByRole("button", { name: "Command", exact: true }))
+     expect(screen.getByRole("heading", { name: "Owner action queue" })).toBeVisible()
+     expect(screen.queryByText("Resolve payment suspense")).not.toBeInTheDocument()
+-    expect(screen.getByText("No visible action item is open for this tenant and permission set.")).toBeVisible()
++    expect(screen.getByText("No open actions are visible to you in this organization.")).toBeVisible()
+ 
+     fireEvent.click(screen.getByRole("button", { name: "Investigate", exact: true }))
+     expect(screen.getByText("Cash truth")).toBeVisible()
+@@ -379,4 +380,19 @@
+   })
+ })
+ 
+-const copyFiltered = "Certaines actions sont masquees car l'utilisateur n'a pas la permission requise."
++const copyFiltered = "Certaines actions sont masquées selon vos droits d’accès."
++
++it("retains all four attention counts and uses localized, descriptive priority links", () => {
++  const data = buildData()
++  const { container } = render(<OwnerWarRoomDashboard data={data} locale="fr" title="Pilotage" subtitle="Vue propriétaire" />)
++  const summary = container.querySelector('dl[aria-label="Points d’attention"]')!
++  expect(Array.from(summary.querySelectorAll("dd")).map(node => node.textContent)).toEqual([
++    data.summary.criticalCount, data.summary.highCount, data.summary.staleCount, data.summary.blockedCount,
++  ].map(String))
++  expect(screen.getByRole("link", { name: "Ouvrir : Resolve payment suspense" })).toHaveAttribute("href", "/fr/dashboard/finance/payments")
++  expect(screen.queryByText("not started")).not.toBeInTheDocument()
++  expect(screen.getByText(/Cela ne résout aucune action/)).toBeVisible()
++  fireEvent.click(screen.getByRole("button", { name: "Marquer comme lu" }))
++  expect(screen.getByRole("button", { name: "Lu" })).toBeDisabled()
++  expect(screen.getByText("Marqué comme lu pour cette visite uniquement.")).toBeVisible()
++})
+--- a/components/bi/__tests__/bi-command-primitives.test.tsx
++++ b/components/bi/__tests__/bi-command-primitives.test.tsx
+@@ -1,4 +1,5 @@
+ import type { SVGProps } from "react"
++jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
+ import { fireEvent, render, screen } from "@testing-library/react"
+ import { renderToStaticMarkup } from "react-dom/server"
+ 
+--- a/components/bi/__tests__/BICommandBriefHeader.compact.test.tsx
++++ b/components/bi/__tests__/BICommandBriefHeader.compact.test.tsx
+@@ -1,4 +1,5 @@
+ import { fireEvent, render, screen } from "@testing-library/react"
++jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
+ import { BICommandBriefHeader } from "../BICommandBriefHeader"
+ import type { BICommandBrief } from "@/services/bi/bi-contracts"
+ 
+--- /dev/null
++++ b/components/bi/BIActionButton.tsx
+@@ -0,0 +1,55 @@
++"use client"
++
++import { useId } from "react"
++import Link from "next/link"
++import { ArrowUpRight, ShieldAlert } from "lucide-react"
++
++import { Button } from "@/components/ui/button"
++import { localizePath } from "@/i18n/routing"
++import { biLocale } from "@/lib/dashboard/bi-presentation"
++import { cn } from "@/lib/utils"
++import type { BIActionLink } from "@/services/bi/bi-contracts"
++
++type Props = {
++  action: Pick<BIActionLink, "label" | "href" | "disabled" | "disabledReason">
++  locale?: string
++  context?: string
++  primary?: boolean
++  className?: string
++}
++
++/** Presentation only: preserves the server's destination and disabled decision. */
++export function BIActionButton({ action, locale = "en", context, primary = false, className }: Props) {
++  const reasonId = useId()
++  const language = biLocale(locale)
++  const generic = /^(open|ouvrir)$/i.test(action.label.trim())
++  const verb = language === "fr" ? "Ouvrir" : "Open"
++  const label = generic ? context ? `${verb}${language === "fr" ? " : " : ": "}${context}` : verb : action.label
++  const unavailable = action.disabled || !action.href.trim()
++  const reason = action.disabledReason || (language === "fr" ? "Cette action est indisponible pour le moment." : "This action is currently unavailable.")
++  const buttonClass = cn(
++    "h-auto min-h-11 max-w-full whitespace-normal break-words rounded-lg py-2 text-start",
++    primary ? "dashboard-button-primary w-full" : "border-[var(--dash-border-subtle)] text-[var(--dash-text)]",
++  )
++
++  return (
++    <div className={cn("min-w-0 max-w-full space-y-2", className)}>
++      {unavailable ? (
++        <>
++          <Button type="button" size="sm" variant={primary ? "default" : "outline"} disabled aria-describedby={reasonId} className={buttonClass}>
++            <ShieldAlert className="h-4 w-4" aria-hidden="true" />
++            {label}
++          </Button>
++          <p id={reasonId} className="break-words text-xs leading-5 text-[var(--dash-text-soft)]">{reason}</p>
++        </>
++      ) : (
++        <Button asChild size="sm" variant={primary ? "default" : "outline"} className={buttonClass}>
++          <Link href={localizePath(action.href, language)}>
++            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
++            {label}
++          </Link>
++        </Button>
++      )}
++    </div>
++  )
++}
+--- /dev/null
++++ b/components/bi/__tests__/BIActionButton.test.tsx
+@@ -0,0 +1,59 @@
++import "@testing-library/jest-dom"
++import { render, screen } from "@testing-library/react"
++import { BIActionButton } from "../BIActionButton"
++import { BIActionPriorityBoard } from "../BIActionPriorityBoard"
++
++jest.mock("next-intl/routing", () => ({ defineRouting: (config: unknown) => config }))
++jest.mock("lucide-react", () => new Proxy({ __esModule: true }, {
++  get: (_target, key) => key === "__esModule" ? true : function Icon() { return <svg aria-hidden="true" /> },
++}))
++
++const action = { label: "Open", href: "/dashboard/finance/payments?location=west&status=open&status=pending#exceptions", disabled: false, disabledReason: null }
++
++it.each(["en", "fr"])("retains every query and anchor while localizing an unprefixed handoff (%s)", locale => {
++  render(<BIActionButton action={action} locale={locale} context="Payment suspense" />)
++  const link = screen.getByRole("link", { name: locale === "fr" ? "Ouvrir : Payment suspense" : "Open: Payment suspense" })
++  expect(link).toHaveAttribute("href", `/${locale}${action.href}`)
++  link.focus()
++  expect(link).toHaveFocus()
++})
++
++it.each(["/fr/dashboard/finance?period=2026-10#review", "https://example.test/help#review", "#evidence"])("preserves an explicit destination: %s", href => {
++  render(<BIActionButton action={{ ...action, href, label: "Review evidence" }} locale="en" context="Other heading" />)
++  expect(screen.getByRole("link", { name: "Review evidence" })).toHaveAttribute("href", href)
++})
++
++it.each([false, true])("explains a disabled action visibly and by accessible description (primary=%s)", primary => {
++  render(<BIActionButton primary={primary} action={{ ...action, disabled: true, disabledReason: "Approval access is required." }} />)
++  const button = screen.getByRole("button", { name: "Open" })
++  expect(button).toBeDisabled()
++  expect(button).toHaveAccessibleDescription("Approval access is required.")
++  expect(screen.getByText("Approval access is required.")).toBeVisible()
++  expect(screen.queryByRole("link")).not.toBeInTheDocument()
++})
++
++it.each(["", "   "])("does not navigate to the current page when the destination is missing (%j)", href => {
++  render(<BIActionButton action={{ ...action, href }} locale="fr" />)
++  expect(screen.getByRole("button", { name: "Ouvrir" })).toBeDisabled()
++  expect(screen.getByRole("button")).toHaveAccessibleDescription("Cette action est indisponible pour le moment.")
++  expect(screen.queryByRole("link")).not.toBeInTheDocument()
++})
++
++it("gives repeated generic actions distinct names and associates each disabled reason with its own control", () => {
++  render(<>
++    <BIActionButton action={{ ...action, disabled: true, disabledReason: "Cash review is locked." }} context="Cash review" />
++    <BIActionButton action={{ ...action, disabled: true, disabledReason: "Close review is locked." }} context="Close review" />
++  </>)
++  expect(screen.getByRole("button", { name: "Open: Cash review" })).toHaveAccessibleDescription("Cash review is locked.")
++  expect(screen.getByRole("button", { name: "Open: Close review" })).toHaveAccessibleDescription("Close review is locked.")
++})
++
++it("integrates with the action queue without turning disabled items into links or altering the ranking", () => {
++  render(<BIActionPriorityBoard locale="fr" items={[
++    { id: "cash", title: "Trésorerie à examiner", nextStep: "Consulter les preuves", severity: "critical", state: "blocked", actionLink: { ...action, id: "cash-link", requiredPermission: "finance.read", moduleSlug: "finance" } },
++    { id: "close", title: "Clôture", nextStep: "Demander un accès", severity: "high", state: "permission_denied", actionLink: { ...action, id: "close-link", requiredPermission: "finance.read", moduleSlug: "finance", disabled: true, disabledReason: "Accès requis" } },
++  ]} />)
++  expect(screen.getAllByRole("heading", { level: 3 }).map(node => node.textContent)).toEqual(["Trésorerie à examiner", "Clôture"])
++  expect(screen.getByRole("link", { name: "Ouvrir : Trésorerie à examiner" })).toHaveAttribute("href", `/fr${action.href}`)
++  expect(screen.getByRole("button", { name: "Ouvrir : Clôture" })).toHaveAccessibleDescription("Accès requis")
++})
+--- /dev/null
++++ b/docs/system-audit/2026-10-12-ui-ux-review/roadmap/jest.command-center.config.cjs
+@@ -0,0 +1,17 @@
++const path = require('node:path')
++const root = path.resolve(__dirname, '../../../..')
++// Bounded UI lane: no application Next config, environment loading or database setup.
++module.exports = require(path.join(root, 'node_modules/next/jest'))()({
++  rootDir: root,
++  testEnvironment: 'jsdom',
++  moduleNameMapper: { '^@/(.*)$': '<rootDir>/$1' },
++  setupFilesAfterEnv: ['@testing-library/jest-dom'],
++  roots: ['<rootDir>/components/bi/__tests__', '<rootDir>/components/owner-war-room/__tests__'],
++  testMatch: [
++    '<rootDir>/components/bi/__tests__/BIActionButton.test.tsx',
++    '<rootDir>/components/bi/__tests__/bi-command-primitives.test.tsx',
++    '<rootDir>/components/bi/__tests__/BICommandBriefHeader.compact.test.tsx',
++    '<rootDir>/components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx',
++  ],
++  collectCoverage: false,
++})

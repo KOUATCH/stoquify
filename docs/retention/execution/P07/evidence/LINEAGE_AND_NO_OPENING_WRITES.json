@@ -1,0 +1,89 @@
+{
+  "status": "PASS",
+  "scope": "Only customer/supplier lineage and absence of opening writes; item import remains blocked",
+  "at": "2026-10-17T13:39:11.246Z",
+  "organizationId": "p07-org-97ee2d2e0f76",
+  "customers": [
+    {
+      "id": "cmvcftqh8005ama1srtw2dmkw",
+      "code": "customer-a",
+      "currentBalance": "0"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "cmvcfulyf005wma1shyl41k0z",
+      "code": "supplier-a",
+      "currentBalance": "0"
+    }
+  ],
+  "items": [],
+  "stockLevels": 0,
+  "stockMovements": 0,
+  "journals": 0,
+  "postings": 0,
+  "batches": [
+    {
+      "id": "cmvcft7rl004jma1szomhxncb",
+      "target": "CUSTOMER",
+      "status": "BLOCKED",
+      "sourceRecordCount": 1,
+      "committedRecordCount": 0,
+      "contentHash": "sha256:ffe8726b5d78c472f2a193ad171c9f508569fea2dd13830e5dc8c5a6e0da92ff",
+      "uploadedById": "p07-maker-97ee2d2e0f76",
+      "approvedById": null,
+      "replayCount": 0,
+      "riskLevel": "STANDARD"
+    },
+    {
+      "id": "cmvcfthgn0050ma1sl68aj8vs",
+      "target": "CUSTOMER",
+      "status": "COMMITTED",
+      "sourceRecordCount": 1,
+      "committedRecordCount": 1,
+      "contentHash": "sha256:01e05e8986361f2370f3fbae77c6438829cdb7796365f2dfc95c59931e43b1a9",
+      "uploadedById": "p07-maker-97ee2d2e0f76",
+      "approvedById": "p07-maker-97ee2d2e0f76",
+      "replayCount": 1,
+      "riskLevel": "STANDARD"
+    },
+    {
+      "id": "cmvcfu1ew005ima1sa70fum9r",
+      "target": "SUPPLIER",
+      "status": "COMMITTED",
+      "sourceRecordCount": 1,
+      "committedRecordCount": 1,
+      "contentHash": "sha256:87f4f888e30b1ed1ae5c0f9747a619906c863b2c824e693c282a432f4fc465f2",
+      "uploadedById": "p07-maker-97ee2d2e0f76",
+      "approvedById": "p07-checker-97ee2d2e0f76",
+      "replayCount": 0,
+      "riskLevel": "HIGH"
+    },
+    {
+      "id": "cmvcfuuok0064ma1s09zfex2u",
+      "target": "ITEM",
+      "status": "APPROVED",
+      "sourceRecordCount": 2,
+      "committedRecordCount": 0,
+      "contentHash": "sha256:0da73948e02e82ec34282f8c1b0ec986d26de9458d25b3d56c4e633f58e3c85c",
+      "uploadedById": "p07-maker-97ee2d2e0f76",
+      "approvedById": "p07-checker-97ee2d2e0f76",
+      "replayCount": 0,
+      "riskLevel": "HIGH"
+    }
+  ],
+  "rows": [
+    {
+      "businessKey": "customer-a",
+      "committedRecordId": "cmvcftqh8005ama1srtw2dmkw",
+      "sourceRowHash": "sha256:37e86f7f0c8ce9cb8db4b2ab11fcca97a34367ea7810bbbc31e8e00f6e0151bb",
+      "batchId": "cmvcfthgn0050ma1sl68aj8vs"
+    },
+    {
+      "businessKey": "supplier-a",
+      "committedRecordId": "cmvcfulyf005wma1shyl41k0z",
+      "sourceRowHash": "sha256:ab3106226bdc63ec8451e6a2e76352daf5f7213bedaa634537ff33396de64671",
+      "batchId": "cmvcfu1ew005ima1sa70fum9r"
+    }
+  ]
+}

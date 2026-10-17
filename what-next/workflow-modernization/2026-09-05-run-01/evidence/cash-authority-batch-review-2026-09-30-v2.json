@@ -1,0 +1,165 @@
+{
+  "at": "2026-09-30T16:30:25.899Z",
+  "workflow": "FA-CASH-COMMAND",
+  "completeWorkflowVerified": false,
+  "report": "CASH_AUTHORITY_BATCH_2026-09-30.md",
+  "sourceHashes": {
+    "components/cash-command/CashCommandDashboard.tsx": "0c574859341fb6f3b63a88bb956a19638036e2fdbf047a7864eaced84693c837",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/dashboard/WorkspaceSectionNavigation.tsx": "d746a3a1b250c093e21a10969e3f19a786ddffb4d0c6770687e2e12cc29d593a",
+    "components/bi/BIProofDrawerHost.tsx": "405c2fbae9fadee49199c001a1386b883b1d2abd6a82d08f567f614c56092217",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx": "59e34e2d82f0a7a5d6627a6894fc03ba81af69eb3f59e3a4073c04074a466fa5",
+    "services/cash-command/cash-command.service.ts": "ef586e13523498084bed1b5ca2356421f3115ce084173dc291b3783b9994ce29",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/cash-command/__tests__/CashCommandDashboard.test.tsx": "78dd1f5fa2409b0c63e6779cad7a887bfe2a1650bbd9e71cd84f72199a821fe8",
+    "app/[locale]/(dashboard)/dashboard/finance/cash-command/__tests__/page.test.tsx": "e38069ec163b664b1e43e63e07cf2deb42e277d773809c514ec846eceb624b8f",
+    "services/cash-command/__tests__/cash-command.service.test.ts": "79cb70ac95530f38970b1d92fa93ff3725d2814bd464be8152ad297dfcc51645",
+    "services/cash-command/cash-command-sources.service.ts": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+    "components/finance/finance-dashboard-theme.ts": "2bfa00818a1520ec5683c1ca43152cc95da03edf7b11c44fb845504f5bc8208d",
+    "components/cash-command/cash-command.module.css": "d98dc31d5e95fab331464b1a1096fc2ab7ed126ae069bf59fe42628a7bdcf761",
+    "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc",
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "services/modules/module-navigation.service.ts": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf",
+    "prisma/db.ts": "3b89a67712a38ee80e083f3abb34fe8187ed5e971c79fbf68fcf6576323b266b",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/auth-server.ts": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/layout.tsx": "77033f5b5bebd94d1957fbdf7cfa669495bcfae8ef514ef445b79b788d018c98",
+    "app/layout.tsx": "6fffb1a4577aa8263c8c03bc2ee72b18afaf0c0f6dad96882a482185f5916fc0",
+    "services/modules/module-access-batch.service.ts": "c37cdabc0aa9acab22e7af67749aae60b65300ca6a53077c1520af4a1efbcc6c",
+    "services/modules/__tests__/module-access-batch.service.test.ts": "996c1aed93e61e6c45910e847ef8b139f58ee11a0a54f090d31c35e761604fb4",
+    "services/cash-command/__tests__/cash-command-sources.service.test.ts": "0e5ddfba4d99a4c7cd0516a1f0b3e5e5ddbc405cef32f743fead59e6a1bdf09b",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "actions/modules/__tests__/module-control.actions.test.ts": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf",
+    "services/modules/module-control-contracts.ts": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+  },
+  "priorImpact": [
+    {
+      "file": "services/cash-command/cash-command-sources.service.ts",
+      "before": "3b4649ef84896f9e1c1cfbce7abdd47d5c78b14f28c783f0eb9dc9e9c0245df0",
+      "after": "9108fa5dd14c34971498aef1db1a638332d45ae5e4d940627dca310467ca5238",
+      "priorReview": "evidence/cash-request-profile-review-2026-09-30.json"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command.service.test.ts",
+      "before": "948368f9aa9f16c1ab14a870056edd83d2e427fb8151fa5f7883a21ecacbf2d8",
+      "after": "79cb70ac95530f38970b1d92fa93ff3725d2814bd464be8152ad297dfcc51645",
+      "priorReview": "evidence/cash-request-profile-review-2026-09-30.json"
+    },
+    {
+      "file": "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+      "before": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+      "after": "0e5ddfba4d99a4c7cd0516a1f0b3e5e5ddbc405cef32f743fead59e6a1bdf09b",
+      "priorReview": "evidence/cash-release-readiness-review-2026-09-30.json"
+    }
+  ],
+  "verifiedSubcriteria": [
+    "cash_request_local_read_admission_batch_decision_and_audit_equivalence",
+    "cash_source_authority_reads_reduced_15_with_identical_owned_results",
+    "cash_en_fr_route_after_batch_and_exact_diagnostic_restoration"
+  ],
+  "receipts": [
+    {
+      "file": "evidence/cash-batch-checks-f4b96620-a543-4c50-8f10-de1b8a3843c1.json",
+      "sha256": "b5ba79c99af17af2cf0859700a1073e963b69b4ba83354f72de7e3967603d82c"
+    },
+    {
+      "file": "lanes/environment/cash-authority-reads-42fb447e-e04b-42b9-a5f7-a76da64c55f7.json",
+      "sha256": "c9adc6b09d2b881e3fadca4d507a6c7ca8031fb35cbaee9c3e195fa30b770ab9"
+    },
+    {
+      "file": "lanes/environment/cash-authority-reads-0af2a927-7973-49af-bff0-037112a63d97.json",
+      "sha256": "797b1795abe5319058a88e0b7c51f2f19a299069ac6f4b7075bf3e25d51e644a"
+    },
+    {
+      "file": "lanes/environment/cash-batch-navigation-profile-4b052f4a-ea19-490b-b57b-f57bd4be16d7.json",
+      "sha256": "f7a6835112009dd4a8d1d52e69755e5b9ec14432620df50a19a5fa00ad3942ce"
+    },
+    {
+      "file": "lanes/environment/cash-batch-profiler-restored-2026-09-30.json",
+      "sha256": "07f739ad14ffbf5316dff3f4ff5aa3d0bb6e43adcf35c7f95311f84029c6ed80"
+    },
+    {
+      "file": "evidence/cash-batch-checks-07bfe596-5033-44e1-86e8-ae96d763391e.json",
+      "sha256": "94097e89682c955f151bba5c55a0756f73718aac7367637d160f7d2817a407e0"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CASH_AUTHORITY_BATCH_2026-09-30.md",
+      "sha256": "d0bb7fb5a6f67fa75adb6b8f2a23183b0f733dbf5805c6cf662f3d18b5bfeeea"
+    },
+    {
+      "file": "run-cash-batch-checks.cjs",
+      "sha256": "6c1626bce95686a5ca521906df867a4629eb52efcf3c7743cc29736577f3b4e5"
+    },
+    {
+      "file": "lanes/environment/measure-cash-authority-reads.cjs",
+      "sha256": "4bb63ca2e2c1dd2eb777a53af46e5588375eaaa917b9dfd2d50bb57b9338832b"
+    },
+    {
+      "file": "lanes/environment/prepare-cash-batch-profile.cjs",
+      "sha256": "b7938ead48d9e818c19110b894abc8257029d7df0000d109e2094ae26dcba666"
+    },
+    {
+      "file": "lanes/environment/profile-cash-batch-navigation.cjs",
+      "sha256": "d2675ea0b2afcd94a4d7408d1c95076010a019f191bb1621b163d7f12457a4bc"
+    },
+    {
+      "file": "lanes/environment/manage-cash-batch-profiler.cjs",
+      "sha256": "c7d6f516fb2d3880e47d66e0a89d2217482e6ab728811dbcc2282ad3abb27d13"
+    },
+    {
+      "file": "lanes/environment/cash-batch-profiler.ts",
+      "sha256": "9cc28e36f28a67ff9d09186e47b2b0860422f26299372ae5f07887ae51875f80"
+    },
+    {
+      "file": "lanes/environment/cash-batch-spans-2026-09-30.jsonl",
+      "sha256": "eae1a3038f84c7fa7631d2bb9f9be620afeeb8886327a08a7331e2011099e796"
+    },
+    {
+      "file": "lanes/environment/cash-batch-4b052f4a-ea19-490b-b57b-f57bd4be16d7-en-0.png",
+      "sha256": "61ee9666ea80a825d99be427e2b27d60af1d3dd8638572efd3f16f174a725369"
+    },
+    {
+      "file": "lanes/environment/cash-batch-4b052f4a-ea19-490b-b57b-f57bd4be16d7-en-1.png",
+      "sha256": "61ee9666ea80a825d99be427e2b27d60af1d3dd8638572efd3f16f174a725369"
+    },
+    {
+      "file": "lanes/environment/cash-batch-4b052f4a-ea19-490b-b57b-f57bd4be16d7-fr-0.png",
+      "sha256": "6d160002043f061faddc936eb40b4cffdfa6a3047e3d49ebf2640c02cb51daf2"
+    },
+    {
+      "file": "lanes/environment/cash-batch-4b052f4a-ea19-490b-b57b-f57bd4be16d7-fr-1.png",
+      "sha256": "6d160002043f061faddc936eb40b4cffdfa6a3047e3d49ebf2640c02cb51daf2"
+    }
+  ],
+  "remaining": [
+    "Finish successful payment, reconciliation and certified-close proof lifecycles. Actual payroll journal posting and its EN/FR desktop/tablet/mobile proof drawer are now verified from synthetic calculated inputs; other successful proof states remain open.",
+    "Verify the complete HRIS calculation, real release/provider settlement, declaration and forecast-admission chain. Posting and settlement recovery use synthetic prerequisites, not statutory/provider approval. Implement controlled legacy partial-history reconstruction from authentic evidence. Verified form remainder, EN/FR errors, fresh authentication, stale revisions and lost-response replay now support canonical settlement balances; wider payroll table localization/layout and cross-session draft recovery remain open. Approved-match recovery of missing statement/provider exceptions and refusal of unrelated exceptions/open suspense are now verified. Register allocations are now distinct from settlement, with cancelled/failed allocations excluded and versioned export/hash contracts. Complete PAID/release semantics across the remaining payroll workspaces and verify the release lifecycle. Unique legacy source links now include dependent evidence without read-time backfill; ambiguous or contradictory links reject and require an evidence-backed correction path. Actual destination request/approval/application is verified on synthetic data. Full release remains unexecuted for the posted fixture because certified HRIS calculation proof is absent; actual HRIS producer services now supply a valid readiness export in an isolated fixture. Current period creation and calculation stop at unreviewed bundled CNPS provenance; authentic expert review, encoded country-pack proposal and resolver integration remain prerequisites. IRPP topic evidence is also missing. Do not insert proof strings or relabel the current pack to pass. The run workbench now explains and blocks this missing-proof boundary before payment/declaration submission.",
+    "Finish native screen-reader/browser zoom, non-text focus/graphic contrast and remaining payroll route/state/table accessibility. Authorized Cash EN desktop/FR mobile now has complete sampled rendered text contrast (305 nodes each), including primary hover/focus text. Prior six-width/locale normal/doubled-text geometry and keyboard evidence is retained through exact color-only delta review. Shared denied-state landmark remains open.",
+    "Cash source admission now removes 15 repeated authority model reads per all-permitted load with identical owned-fixture results, per-module decision/audit equivalence and actual EN/FR route verification. Development Cash spans remain variable (1.74–5.39s), so no end-to-end speedup or performance closure is claimed. Representative production/cache-enabled latency and remaining accessibility/hydration checks stay open.",
+    "Reconcile complete lifecycle/failure/recovery evidence against CASH_COMMAND_CLOSURE_2026-09-27.md. Named source/destination handoffs are verified; this does not close downstream purchasing, close, inventory-loss or payroll workflows."
+  ],
+  "limits": [
+    "No production performance pass or proven page speedup",
+    "No transactionally atomic multi-query authority snapshot or write authorization",
+    "No full financial workflow closure"
+  ],
+  "supersedes": {
+    "file": "evidence/cash-authority-batch-review-2026-09-30.json",
+    "sha256": "ce0f7437456462288d1d77881406d55668e9e2f6351c3664ecea91c9bff86ef9",
+    "reason": "Initial review chose the September 28 test binding; reconciliation correctly rejected it. Exact inverse of the current patch reconstructs the later September 30 test byte-for-byte."
+  },
+  "bindingCorrection": {
+    "file": "services/cash-command/__tests__/cash-command-sources.service.test.ts",
+    "reconstructedSha256": "e83a567a385b81e8423b98221dd97794ef45ed3fdfce820264de9cbbe8a33657",
+    "applicationSourceChanged": false
+  }
+}

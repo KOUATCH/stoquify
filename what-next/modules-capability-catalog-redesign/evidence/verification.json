@@ -1,0 +1,101 @@
+{
+  "date": "2026-09-27",
+  "status": "implemented; browser acceptance pending",
+  "defaultJest": {
+    "status": "interrupted",
+    "reason": "90-second timeout without test output; not counted as a pass"
+  },
+  "scopedJest": {
+    "fullRun": {
+      "passed": 45,
+      "failed": 1,
+      "total": 46
+    },
+    "correctedFrenchRecheck": {
+      "passed": 1,
+      "skipped": 45
+    },
+    "latestPerTest": {
+      "passed": 46,
+      "failed": 0
+    },
+    "note": "46 distinct tests passed across the full run and focused correction rerun; no single all-green full run claimed"
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "status": "passed",
+    "exitCode": 0
+  },
+  "lint": {
+    "command": "node ./node_modules/eslint/bin/eslint.js components/modules/ModuleCompositionWorkbench.tsx components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+    "status": "passed",
+    "exitCode": 0
+  },
+  "diffCheck": {
+    "status": "passed",
+    "scope": "five changed implementation files"
+  },
+  "localization": {
+    "newKeysPerLanguage": 21,
+    "existingEnglishAndFrenchValuesPreserved": true
+  },
+  "browser": {
+    "before": "captured at existing 1523x733 viewport",
+    "after": "blocked by browser-control timeouts and debugger detachment",
+    "responsive390": "not verified",
+    "responsive768": "not verified",
+    "responsive1440": "not verified",
+    "zoom200": "not verified",
+    "screenReader": "not verified",
+    "previewBuild": "compiled route; logged HTTP 200 responses after 72.4s and 172.4s; not visual acceptance",
+    "temporaryServer": "port 3126 stopped; generated tsconfig include removed; port 3000 not restarted"
+  },
+  "tests": {
+    "keeps server-rendered commands disabled until the client can accept input": "passed",
+    "uses contrasting retailer and service recipes without changing application state": "passed",
+    "explains automatic dependencies and makes their checkbox non-removable": "passed",
+    "searches localized outcomes and distinguishes empty search from a failed query": "passed",
+    "applies only a server-reviewed revision and preserves the idempotency key through fresh-auth": "passed",
+    "blocks apply when the authoritative preview has an unresolved condition": "passed",
+    "shows a terminal preparation issue and requires another review rather than replaying a failed command": "passed",
+    "keeps the draft when validation fails and does not expose raw server details": "passed",
+    "refreshes a stale snapshot without replacing an edited draft": "passed",
+    "saves a server-returned history record and reopens it as a draft, not an activation": "passed",
+    "renders only the server-authorized workspace destinations": "passed",
+    "keeps the draft and earlier records through history retry and focuses the loaded entry (en)": "passed",
+    "keeps the draft and earlier records through history retry and focuses the loaded entry (fr)": "passed",
+    "localizes labels and the dialog close control in French": "passed",
+    "does not restore another user's locally stored selection": "passed",
+    "shows a recorded request and the previous active workspace without announcing activation": "passed",
+    "resumes the recorded operation with the same command through identity verification": "passed",
+    "keeps explicit stopping separate from workspace selection and blocks an unsupported preview": "passed",
+    "reopens stopped work only as a reactivation draft and localizes its lifecycle in French": "passed",
+    "announces the actual draft and review steps instead of fixing Configure as current": "passed",
+    "explains a disabled offline stop and preserves the ability to remove a saved unsupported stop": "passed",
+    "shows only server-authorized historical links while the capability remains stopped": "passed",
+    "submits an existing tenant payroll period as reviewed scope and preserves it in the browser draft": "passed",
+    "shows sandbox scope as a test environment and keeps its verified limitation visible": "passed",
+    "confirms fresh identity before saving the exact draft request without applying it": "passed",
+    "confirms identity to reopen a recorded French draft without substituting a new command": "passed",
+    "preserves paged history through fresh server props and reopens the still-visible record": "passed",
+    "discards cached history when server authority changes": "passed",
+    "discards cached history when server organization changes": "passed",
+    "discards cached history when server revision changes": "passed",
+    "discards cached history when server lifecycle changes": "passed",
+    "resets paged history when a refreshed head is disjoint so newer records are not skipped": "passed",
+    "ignores a history page arriving after its access scope changed": "passed",
+    "does not announce an older command's success as completion of a newer pending request": "passed",
+    "keeps explicit choices and automatic connections through combined catalogue filters": "passed",
+    "returns focus to the Selected filter when deselection removes the focused row": "passed",
+    "converts an explicit dependency to an automatic connection until its parent is removed": "passed",
+    "opens setup details independently of selection and localizes their links": "passed",
+    "explains unavailable selection and permits removing a previously selected unavailable item": "passed",
+    "keeps trial access distinct from selected and current workspace states": "passed",
+    "keeps read_only access distinct from selected and current workspace states": "passed",
+    "keeps suspended access distinct from selected and current workspace states": "passed",
+    "keeps expired access distinct from selected and current workspace states": "passed",
+    "keeps null access distinct from selected and current workspace states": "passed",
+    "keeps sandbox limits visible before opening details and in the draft": "passed",
+    "supports the same selected catalogue workflow in French": "passed"
+  }
+}

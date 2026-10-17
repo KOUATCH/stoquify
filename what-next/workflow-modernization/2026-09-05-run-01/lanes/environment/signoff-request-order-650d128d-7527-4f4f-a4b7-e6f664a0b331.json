@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-27T12:34:14.816Z",
+  "sourceBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "cases": [
+    {
+      "sameSigner": true,
+      "earlyRequestAt": "2026-09-27T12:34:16.166Z",
+      "winner": {
+        "runId": "cmujsvx0a001ama9waqh1nr2n",
+        "status": "SIGNED",
+        "outcome": "SIGNED",
+        "replayed": false,
+        "completedByAnotherActor": false,
+        "certificateHash": "6244c09f2e1b9f9b8cdad3d28c93eb59990cf0aeb0899da20994842a524651c4",
+        "sourceVersionHash": "sha256:4f68a6b5e71c82193ef7c3f46c7c23251935d2e6e862d7891195bf948d35fc44",
+        "signedAt": "2026-09-27T12:34:16.167Z",
+        "correlationId": "e5028282-f86d-468c-80c0-cfd62c27fd3d"
+      },
+      "earlier": {
+        "error": "Payment reconciliation signed evidence is inconsistent."
+      }
+    }
+  ],
+  "passed": false,
+  "error": "Earlier request must recover valid later-start signature: Payment reconciliation signed evidence is inconsistent.",
+  "sourceAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656"
+  },
+  "sourceStable": true
+}

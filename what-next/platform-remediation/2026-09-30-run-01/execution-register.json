@@ -1,0 +1,2223 @@
+{
+  "schemaVersion": "stoquify-remediation-execution.v1",
+  "generatedAt": "2026-09-30T22:32:49.287Z",
+  "status": "IN_PROGRESS_NOT_RELEASE_APPROVED",
+  "baselineFile": "baseline.json",
+  "batchStatus": "IMPLEMENTED_VERIFICATION_RECORDED_RELEASE_BLOCKED",
+  "baselineSha256": "0eb514bfb0ed76bdf0797246db4ca070a58739738851d3246e5df3f41c40fd85",
+  "baselineHashContract": "SHA-256 of exact baseline.json file bytes",
+  "assumptions": [
+    "Core correctness work proceeds independently of the unconfirmed first customer cohort.",
+    "Role names are planning responsibilities, not accepted assignments.",
+    "A static gate or passing unit test is not provider, statutory, device or production certification."
+  ],
+  "candidateBoundary": {
+    "buildRecord": "runner/app-build-final.result.json",
+    "sourceManifest": "runner/app-build-final.sources-after.json",
+    "postBuildConcurrentDrift": "source-stability-after-smoke.json",
+    "taskOwnedStability": "task-owned-source-stability-final.json",
+    "qualification": "Verification applies to the recorded candidate. Unclaimed purchasing/inventory edits arrived after the build; no latest-checkout pass is asserted. Declared remediation source paths remain unchanged."
+  },
+  "packages": [
+    {
+      "id": "R00",
+      "title": "Establish the execution baseline and release scope",
+      "priority": "P0",
+      "dependencies": [],
+      "status": "PARTIAL",
+      "progress": "September 30 record: Execution baseline captured; original dirty work preserved. Named human owners and first-release cohort decisions remain unconfirmed. October 7 user scope recorded: Cameroon first, full phased implementation across sessions, pre-production/demo data. Existing work preserved; accountable external reviewers remain unassigned. October 7 R00 preparation: five versioned Word/PDF documents and structured D01–D08 records prepared as DRAFT/AWAITING HUMAN VALIDATION. All eight meanings and joint accountable roles match the roadmap. No human appointment, decision approval or release authorization was created.",
+      "evidence": [
+        "baseline.json",
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json",
+        "../../../docs/approval-register/R00-2026-10-07-v1.0/README.md",
+        "../../../docs/approval-register/R00-2026-10-07-v1.0/decision-data.json",
+        "../../../docs/approval-register/R00-2026-10-07-v1.0/VERIFICATION.json"
+      ],
+      "nextAction": "Complete the R00 decision workbook, verify named reviewer appointments and record scoped D01–D08 decisions or valid deferrals with evidence using the draft pack; obtain R00 acceptance review before any release decision.",
+      "acceptance": "Every in-scope capability has an owner, release boundary, acceptance scenario and evidence location; no critical finding is silently dropped.",
+      "releaseGate": "G0: scope, owners, baseline and decision register recorded.",
+      "ownerRole": "Delivery lead",
+      "reviewerRole": "Product owner and QA lead",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F13"
+      ],
+      "capabilities": [
+        "CAP28"
+      ]
+    },
+    {
+      "id": "R01",
+      "title": "Restore a reproducible test, typecheck and policy-gate baseline",
+      "priority": "P0",
+      "dependencies": [
+        "R00"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: Repaired 18 stale assertions; full-scope typecheck passes. Report/payroll gate pair passes 351 tests, with final changed-clause follow-ups passing. Frozen app build passes compilation, lint/types, static generation and tracing but exits1 on Windows standalone symlink EPERM. Packaging recovery fails: one missing trace file and dependencies resolving outside its output. Relocated runtime was not run. Workspace-backed authenticated smoke renders four dashboards and shows one truthful module denial; reconciliation retains an unclassified visible alert and no workflow-success claim. October 7: regenerated stale local Prisma client; repaired two close-evidence literal-inference errors without changing query values. Final full no-emit typecheck exit 0; targeted lint exit 0; 59 focused tests passed. Integrated build/package and browser remain unqualified.",
+      "evidence": [
+        "runner/README.md",
+        "stale-tests-normal-after.result.json",
+        "runner/readiness-gates-normal.result.json",
+        "runner/report-trust-frozen.json",
+        "payroll-gate-after.json",
+        "runner/app-build-final.result.json",
+        "runner/standalone-recovery.lifecycle.json",
+        "runner/standalone-resolution-preflight.json",
+        "data-impact/browser/relocated/relocated-readiness.json",
+        "data-impact/browser/authenticated-smoke.json",
+        "data-impact/browser/reconciliation-followup/authenticated-smoke.json",
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json"
+      ],
+      "nextAction": "Run a fresh integrated build/package and controlled authenticated browser; retain the passing October 7 compiler receipt separately from historical build evidence.",
+      "acceptance": "Every historical failure is reproduced, fixed or superseded with evidence; normal commands complete; unresolved domain gates remain visible and blocking for their scope.",
+      "releaseGate": "G0 verification gate: reproducible normal runner and completed typecheck/build; all remaining blockers assigned to their actual domain package.",
+      "ownerRole": "QA/platform engineer",
+      "reviewerRole": "Domain maintainers",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F13"
+      ],
+      "capabilities": [
+        "CAP28"
+      ]
+    },
+    {
+      "id": "R02",
+      "title": "Correct currency authority, FX conversion and locked settings",
+      "priority": "P0",
+      "dependencies": [
+        "R00",
+        "R01"
+      ],
+      "status": "PARTIAL",
+      "progress": "Manual FX creation/posting validates explicit rates and stored base amounts; functional-currency reporting rejects missing evidence; unsupported base-currency transitions are rejected.",
+      "evidence": [
+        "accounting/implementation-evidence.md",
+        "data-impact/aggregate-impact.json"
+      ],
+      "nextAction": "Review historical missing amounts and rate provenance policy; do not release affected reports before R09 disposition.",
+      "acceptance": "Posting, reversal and reporting agree with independent expected base amounts; historical currency cannot be silently relabeled.",
+      "releaseGate": "G1 finance: no mixed-currency professional statement until fixture and current-data impact review pass.",
+      "ownerRole": "Accounting engineer",
+      "reviewerRole": "Independent accountant and data architect",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F01",
+        "F07"
+      ],
+      "capabilities": [
+        "CAP12",
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R03",
+      "title": "Enforce source-owned corrections and compensating effects",
+      "priority": "P0",
+      "dependencies": [
+        "R02"
+      ],
+      "status": "PARTIAL",
+      "progress": "Generic posting/reversal admits MANUAL sources only; all source-owned enum cases are covered by denial tests.",
+      "evidence": [
+        "accounting/implementation-evidence.md"
+      ],
+      "nextAction": "Prove each supported source-owned compensating workflow and PostgreSQL duplicate/failure races.",
+      "acceptance": "Every journal source has an explicit tested correction policy; no supported correction strands inventory, cash or subledger balances.",
+      "releaseGate": "G1 corrections: source-owned reversal bypass denied and approved compensation lifecycle proved.",
+      "ownerRole": "Accounting/domain integration lead",
+      "reviewerRole": "POS, inventory, AP and payroll owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F02"
+      ],
+      "capabilities": [
+        "CAP04",
+        "CAP12"
+      ]
+    },
+    {
+      "id": "R04",
+      "title": "Make the offline queue durable and migrate existing records safely",
+      "priority": "P0",
+      "dependencies": [
+        "R00",
+        "R01"
+      ],
+      "status": "PARTIAL",
+      "progress": "Transactional IndexedDB queue, atomic sequence allocation, corruption quarantine and conservative legacy migration implemented; real-browser tests pass.",
+      "evidence": [
+        "offline/implementation-and-limits.md",
+        "offline/verification-manifest.json"
+      ],
+      "nextAction": "Qualify supported devices, eviction policy, older-client shutdown and operator recovery/export before pilot.",
+      "acceptance": "Concurrent capture, corrupt storage and interrupted migration cannot silently lose acknowledged events; recovery limitations are visible to operators.",
+      "releaseGate": "G1 offline durability; production replay stays disabled pending R32.",
+      "ownerRole": "Offline/browser-storage engineer",
+      "reviewerRole": "QA and data-integrity lead",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F03"
+      ],
+      "capabilities": [
+        "CAP01"
+      ]
+    },
+    {
+      "id": "R05",
+      "title": "Recover interrupted sync and reconcile uncertain outcomes",
+      "priority": "P0",
+      "dependencies": [
+        "R04"
+      ],
+      "status": "PARTIAL",
+      "progress": "Persisted leases, original-identity retries, uncertain outcome recovery, cross-tab exclusion and complete acknowledgement checks implemented.",
+      "evidence": [
+        "offline/implementation-and-limits.md",
+        "offline/verification-manifest.json"
+      ],
+      "nextAction": "Prove one sale/stock/journal effect jointly in a browser and disposable PostgreSQL after lost response; implement governed recovery UI.",
+      "acceptance": "No event remains permanently stranded solely because it was SYNCING at restart; duplicate/uncertain responses cannot multiply effects.",
+      "releaseGate": "G1 replay recovery and later G4 offline pilot.",
+      "ownerRole": "Offline/distributed-systems engineer",
+      "reviewerRole": "Payments and QA leads",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F04"
+      ],
+      "capabilities": [
+        "CAP01",
+        "CAP23"
+      ]
+    },
+    {
+      "id": "R06",
+      "title": "Correct fiscal boundaries and general-ledger balances",
+      "priority": "P1",
+      "dependencies": [
+        "R02"
+      ],
+      "status": "PARTIAL",
+      "progress": "First fiscal period clips to actual year start. General ledger uses opening balances and a repeatable-read snapshot; exports add a hashed summary including empty ranges and apply the selected period to actual query bounds.",
+      "evidence": [
+        "accounting/implementation-evidence.md",
+        "accounting/general-ledger-summary-contract.md"
+      ],
+      "nextAction": "Complete independent accountant/browser acceptance and disposition the 22 historical entry/period date candidates.",
+      "acceptance": "Period bounds are valid and opening/movement/closing tie to independently selected journal populations.",
+      "releaseGate": "G1 accounting reports and calendar invariants.",
+      "ownerRole": "Accounting engineer",
+      "reviewerRole": "Independent accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F08",
+        "F09"
+      ],
+      "capabilities": [
+        "CAP12"
+      ]
+    },
+    {
+      "id": "R07",
+      "title": "Unify period close, assurance, invalidation and certified exports",
+      "priority": "P0",
+      "dependencies": [
+        "R03",
+        "R06"
+      ],
+      "status": "PARTIAL",
+      "progress": "Period close requires a completed current non-blocked assessment, checks live blocking findings, records its run ID, and rejects incomplete/unbalanced functional amounts. Assessment invalidation and finalization fixes are separately verified.",
+      "evidence": [
+        "close-assurance-integration.result.json",
+        "close-functional-preflight.result.json",
+        "accounting/implementation-evidence.md"
+      ],
+      "nextAction": "Complete a shared writer/close locking contract and late-evidence policy, then prove all PostgreSQL interleavings and fresh source coverage.",
+      "acceptance": "Close, reopen, correction and export share documented semantics and pass concurrent/failure-path tests.",
+      "releaseGate": "G1 close truth; G2 requires all in-scope source lifecycles.",
+      "ownerRole": "Accounting/assurance lead",
+      "reviewerRole": "Controller and QA",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F06"
+      ],
+      "capabilities": [
+        "CAP13",
+        "CAP27"
+      ]
+    },
+    {
+      "id": "R08",
+      "title": "Strengthen database integrity and records retention",
+      "priority": "P1",
+      "dependencies": [
+        "R03"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: Added database guards for posted-line mutations, tenant consistency and posted status regression. Three original invalid-write probes now reject on the restored copy; eight compatibility checks and seventeen supplemental checks pass. Clean 89-migration replay and repeat deployment pass; populated-copy deploy/status also pass. Payroll SQL approval/duplicate/failure checks pass. October 7: HR time-request terminal decision is conditionally claimed before transactional effects. Four isolated PostgreSQL stale-read/rollback tests pass; broader database boundaries and shared leave-balance concurrency remain open.",
+      "evidence": [
+        "data-impact/restore/journal-boundary-probes-after.json",
+        "data-impact/restore/journal-migration-verification.json",
+        "accounting/journal-guard-supplement-results.json",
+        "data-impact/restore/fresh-replay-89-execution.json",
+        "data-impact/restore/payroll-trust-spine-postgres.json",
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json"
+      ],
+      "nextAction": "Complete posted-header/late-insert/parent-retention boundaries, reciprocal tenant guards, draft-post races and deployed least-privilege verification.",
+      "acceptance": "Illegal writes are rejected, legitimate workflows pass, tenancy and retention rules are documented and migration behavior is demonstrated.",
+      "releaseGate": "G2 database integrity; schema rollout only after upgrade and recovery evidence.",
+      "ownerRole": "Database engineer",
+      "reviewerRole": "AppSec, records owner and accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F10"
+      ],
+      "capabilities": [
+        "CAP12",
+        "CAP21",
+        "CAP28"
+      ]
+    },
+    {
+      "id": "R09",
+      "title": "Assess and correct historical data without rewriting evidence",
+      "priority": "P1",
+      "dependencies": [
+        "R02",
+        "R03",
+        "R06",
+        "R08"
+      ],
+      "status": "PARTIAL",
+      "progress": "Read-only scan found 120 missing-base lines across 24 journals and 22 out-of-period journals. All candidates carry four synthetic-seed markers; a capture-only reproduction matches the exact counts. The future seed producer now writes base amounts and chooses periods from actual dates. Existing records remain unchanged.",
+      "evidence": [
+        "data-impact/aggregate-impact.json",
+        "data-impact/seed-provenance.json",
+        "data-impact/seed-producer-disposition.md",
+        "data-impact/seed-producer-verification.json"
+      ],
+      "nextAction": "Review fixture regeneration on a separate disposable database; preserve original evidence. For any business/mixed-provenance population, prepare source-owned corrections with independently reviewed historical evidence.",
+      "acceptance": "Each suspected anomaly has an evidence-backed disposition; any approved correction is traceable and all affected reports are rebuilt with versions.",
+      "releaseGate": "G3 data-impact disposition: verified no impact, approved restriction, or completed reconciled repair for each release cohort.",
+      "ownerRole": "Data/accounting remediation lead",
+      "reviewerRole": "Independent accountant and release owner",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F01",
+        "F02",
+        "F07",
+        "F08",
+        "F09",
+        "F10"
+      ],
+      "capabilities": [
+        "CAP12",
+        "CAP13"
+      ]
+    },
+    {
+      "id": "R10",
+      "title": "Prove access, tenant isolation and privacy across entry points",
+      "priority": "P1",
+      "dependencies": [
+        "R00",
+        "R01"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance. October 7: HR approval UI truthfully handles denied/stale-auth action results; existing action/service guard regressions pass. This is not a complete role/tenant/surface matrix.",
+      "evidence": [
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json"
+      ],
+      "nextAction": "Build a role/tenant/module/action matrix for browser routes, actions, APIs, exports, uploads, workers and delegated accountant access.",
+      "acceptance": "Every public or delegated entry point has positive and negative authorization evidence and no unresolved critical tenant/privacy bypass.",
+      "releaseGate": "G2 access/privacy matrix complete for release scope; critical bypasses block all affected cohorts.",
+      "ownerRole": "Application security engineer",
+      "reviewerRole": "Privacy and domain owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F10"
+      ],
+      "capabilities": [
+        "CAP21",
+        "CAP15",
+        "CAP25"
+      ]
+    },
+    {
+      "id": "R11",
+      "title": "Validate master data, onboarding, imports and media lifecycle",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Validate setup completeness, unique external identities, versioned tax/unit references and location ownership before admitting transactions.",
+      "acceptance": "A new tenant can reach a valid operational configuration and reconcile every import row to accepted/rejected status.",
+      "releaseGate": "G2 onboarding and master-data readiness for the chosen cohort.",
+      "ownerRole": "Catalog/onboarding engineer",
+      "reviewerRole": "Operations and privacy owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [],
+      "capabilities": [
+        "CAP26"
+      ]
+    },
+    {
+      "id": "R12",
+      "title": "Prove online POS, inventory and end-of-day control",
+      "priority": "P1",
+      "dependencies": [
+        "R03",
+        "R07",
+        "R08",
+        "R11"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Run shift open, sale, stock issue, tender, return/disposition, refund status, drawer count and daily-close flows.",
+      "acceptance": "Every supported sale/stock/daily-close path has final-state tie-outs, exception ownership and tested recovery.",
+      "releaseGate": "G2 online operations: no unexplained stock/cash/GL mismatch or orphan transaction.",
+      "ownerRole": "POS/inventory lead",
+      "reviewerRole": "Operations controller and QA",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F02",
+        "F06"
+      ],
+      "capabilities": [
+        "CAP02",
+        "CAP05",
+        "CAP27"
+      ]
+    },
+    {
+      "id": "R13",
+      "title": "Complete order-to-cash, customer credit and returns evidence",
+      "priority": "P1",
+      "dependencies": [
+        "R03",
+        "R08",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Exercise order approval, partial fulfillment, delivery, invoice/credit, customer settlement allocation and overdue balance.",
+      "acceptance": "Delivered, returned, billed, settled and outstanding amounts reconcile with clear exception and correction histories.",
+      "releaseGate": "G2 receivables and returns ready; external statement access additionally needs R22.",
+      "ownerRole": "Order-to-cash engineer",
+      "reviewerRole": "Credit controller and QA",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F02",
+        "F13"
+      ],
+      "capabilities": [
+        "CAP03",
+        "CAP04"
+      ]
+    },
+    {
+      "id": "R14",
+      "title": "Complete purchasing, three-way match and AP finalization",
+      "priority": "P1",
+      "dependencies": [
+        "R03",
+        "R08",
+        "R11"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Run PO approval, supplier acknowledgement, partial/over receipt, invoice matching, approved exceptions, credit/return and payment allocation.",
+      "acceptance": "Every receipt, invoice, credit and payment allocation reconciles; no over-allocation, duplicate liability or unexplained valuation difference.",
+      "releaseGate": "G2 AP: complete posted and corrected lifecycle; live payment readiness additionally requires R19.",
+      "ownerRole": "Purchasing/AP engineer",
+      "reviewerRole": "Procurement and AP controller",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F02"
+      ],
+      "capabilities": [
+        "CAP07",
+        "CAP08"
+      ]
+    },
+    {
+      "id": "R15",
+      "title": "Prove payment finality, reconciliation and suspense clearance",
+      "priority": "P1",
+      "dependencies": [
+        "R03",
+        "R08",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Exercise cash/bank/mobile-money initiation, pending/failed/uncertain states, authenticated callbacks, imports, matching and explicit suspense.",
+      "acceptance": "Money states and reconciled balances are explainable by verified evidence; every unmatched or uncertain amount remains visible and owned.",
+      "releaseGate": "G2 local cash/reconciliation truth; real rail claims require R19 acceptance.",
+      "ownerRole": "Payments/reconciliation lead",
+      "reviewerRole": "Treasury controller and QA",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F01"
+      ],
+      "capabilities": [
+        "CAP10",
+        "CAP11"
+      ]
+    },
+    {
+      "id": "R16",
+      "title": "Prove HRIS source records, effective scope and employee service",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R08",
+        "R10"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance. October 7: approval failure drafts preserved; same-request time decisions guarded and atomic effects verified on isolated PostgreSQL. Joiner-to-leaver journeys, shared leave-balance concurrency and browser acceptance remain open.",
+      "evidence": [
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json"
+      ],
+      "nextAction": "Complete shared employee/policy leave-balance transactions and race tests, then verify EN/FR approval recovery and full employee lifecycle in the browser.",
+      "acceptance": "HR changes are effective-dated, approved where needed and traceable; payroll consumes an immutable, validated source snapshot.",
+      "releaseGate": "G2 HRIS source readiness and privacy; payroll-specific qualification is R17/R18.",
+      "ownerRole": "HRIS engineer",
+      "reviewerRole": "HR operations and privacy owner",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F10",
+        "F13"
+      ],
+      "capabilities": [
+        "CAP15",
+        "CAP16"
+      ]
+    },
+    {
+      "id": "R17",
+      "title": "Complete payroll calculation, payment, declaration and close proof",
+      "priority": "P1",
+      "dependencies": [
+        "R03",
+        "R07",
+        "R08",
+        "R15",
+        "R16"
+      ],
+      "status": "PARTIAL",
+      "progress": "Existing payroll approval SQL contract passed three real PostgreSQL concurrency/duplicate/rollback checks on a newly restored local copy. Calculation, country qualification and complete application workflow remain unproved in this batch.",
+      "evidence": [
+        "data-impact/restore/payroll-trust-spine-postgres.json"
+      ],
+      "nextAction": "Complete source-to-payroll, payment, declaration and GL application-level acceptance with independently qualified country rules.",
+      "acceptance": "Finalized synthetic payroll is internally reconciled and recoverable; enabled production scope is no broader than separately qualified country/provider support.",
+      "releaseGate": "G2 technical payroll proof; production payroll/declaration requires exact R18 capability and R19 rail/authority evidence.",
+      "ownerRole": "Payroll engineer",
+      "reviewerRole": "Payroll expert and accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F11",
+        "F13"
+      ],
+      "capabilities": [
+        "CAP17",
+        "CAP18"
+      ]
+    },
+    {
+      "id": "R18",
+      "title": "Qualify versioned country, payroll, tax and fiscal capabilities",
+      "priority": "P0",
+      "dependencies": [
+        "R00"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance. October 7: official Cameroon CGI 2026, Finance Law, OHADA, Labour Code and CNPS sources refreshed to documented limits; provisional CEMAC gaps recorded. No rate activation or legal qualification.",
+      "evidence": [
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json",
+        "CAMEROON_SOURCE_REFRESH_2026-10-07.md"
+      ],
+      "nextAction": "Archive/hash refreshed official sources, compare provision-level country parameters, and obtain qualified review and independent fixtures before capability activation.",
+      "acceptance": "Each claimed country capability has dated provenance, approved cases, explicit limits and an accountable support owner; others remain visibly restricted.",
+      "releaseGate": "G3 by country and capability: only explicitly reviewed statuses advance.",
+      "ownerRole": "Country-pack lead",
+      "reviewerRole": "Independent qualified accountant, payroll/tax expert",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F11"
+      ],
+      "capabilities": [
+        "CAP19"
+      ]
+    },
+    {
+      "id": "R19",
+      "title": "Qualify payment, billing and authority integrations",
+      "priority": "P1",
+      "dependencies": [
+        "R00"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Build an integration matrix of country, provider, account, capability, environment, limits, credentials owner and acceptance evidence.",
+      "acceptance": "Every enabled integration has supported-version evidence, failure recovery, a named operator and an honest sandbox/live status; unavailable ones stay disabled.",
+      "releaseGate": "G3 per integration. Contract preparation can start now; final acceptance depends on the corresponding R15/R17/R21 workflow.",
+      "ownerRole": "Integration lead",
+      "reviewerRole": "Treasury, compliance and security owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F11"
+      ],
+      "capabilities": [
+        "CAP10",
+        "CAP18",
+        "CAP19",
+        "CAP22"
+      ]
+    },
+    {
+      "id": "R20",
+      "title": "Complete expenses, accruals and year-end accounting workflow",
+      "priority": "P1",
+      "dependencies": [
+        "R02",
+        "R03",
+        "R06",
+        "R07"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Confirm supported expense approval, accrual/prepayment, periodic reversal, adjusting entry, closing and opening-balance workflows.",
+      "acceptance": "Every promised expense/year-end task has a supported, tested workflow and independently balanced output.",
+      "releaseGate": "G2 professional accounting scope explicitly accepted; unsupported automation is disclosed.",
+      "ownerRole": "Accounting product engineer",
+      "reviewerRole": "Independent accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F01",
+        "F08",
+        "F09",
+        "F12"
+      ],
+      "capabilities": [
+        "CAP14"
+      ]
+    },
+    {
+      "id": "R21",
+      "title": "Verify entitlement, deactivation, billing and package behavior",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Exercise activate, upgrade, downgrade, suspend, resume and deactivation across UI/action/API/worker entry points.",
+      "acceptance": "Every paid capability maps to enforced scope and disclosed availability; account changes cannot silently abandon financial obligations.",
+      "releaseGate": "G2 internal packaging proof; live billing gate is R19.",
+      "ownerRole": "SaaS platform engineer",
+      "reviewerRole": "Billing/product operations",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [],
+      "capabilities": [
+        "CAP22"
+      ]
+    },
+    {
+      "id": "R22",
+      "title": "Complete customer/accountant access, consent and delivery evidence",
+      "priority": "P1",
+      "dependencies": [
+        "R10",
+        "R13",
+        "R21"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Exercise statement generation, signed access, expiry/revocation, recipient scope and accountant grant changes.",
+      "acceptance": "Access cannot outlive its authority; every enabled referral/delivery action has consent and evidence or a clearly blocked state.",
+      "releaseGate": "G2 statement/delegation/referral scope; optional referral launch may remain restricted independently of financial reporting.",
+      "ownerRole": "Customer/network engineer",
+      "reviewerRole": "Privacy and accountant-access owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F13"
+      ],
+      "capabilities": [
+        "CAP25",
+        "CAP13"
+      ]
+    },
+    {
+      "id": "R23",
+      "title": "Prove event, outbox and worker recovery in deployment",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Inventory each worker/outbox producer, event version, schedule, authorization, ordering and idempotency contract.",
+      "acceptance": "Every deployed worker has demonstrated scheduling, idempotent recovery, bounded failure behavior and an operator-owned alert path.",
+      "releaseGate": "G2 async correctness and G3 deployed-operational evidence.",
+      "ownerRole": "Backend/SRE engineer",
+      "reviewerRole": "Domain owners and operations",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F14"
+      ],
+      "capabilities": [
+        "CAP23",
+        "CAP28"
+      ]
+    },
+    {
+      "id": "R24",
+      "title": "Validate complete EN/FR, accessible and mobile user journeys",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R10",
+        "R11"
+      ],
+      "status": "PARTIAL",
+      "progress": "September 30 record: No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance. October 7: safe EN/FR approval error messages, draft retention, pending and success behavior verified by component tests. Complete localization, accessibility and authenticated browser journeys remain open.",
+      "evidence": [
+        "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+        "CAMEROON_FIRST_VERIFICATION_2026-10-07.json"
+      ],
+      "nextAction": "Create a route/persona/locale/device matrix; verify loading, empty, error, denied, partial, stale, offline, uncertain and recovery states.",
+      "acceptance": "All release-critical personas can complete and recover their workflows in supported locales/devices, with accessibility issues triaged and critical barriers closed.",
+      "releaseGate": "G2 UI shell/state checks can start early; full acceptance waits for each relevant domain package and is consolidated in R31.",
+      "ownerRole": "Frontend/workflow engineer",
+      "reviewerRole": "Accessibility specialist and domain users",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F04",
+        "F06",
+        "F13"
+      ],
+      "capabilities": [
+        "CAP29"
+      ]
+    },
+    {
+      "id": "R25",
+      "title": "Create versioned BI metric contracts and source lineage",
+      "priority": "P1",
+      "dependencies": [
+        "R02",
+        "R03",
+        "R10"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Adopt the K01–K19 definitions from the audit and resolve owners, grain, source events, denomination, business timezone and as-of/known-at cutoffs.",
+      "acceptance": "Every released KPI has a versioned definition, source lineage, freshness policy, owner and independent reconciliation method.",
+      "releaseGate": "G2 semantic contract; each metric additionally waits for its own source qualification.",
+      "ownerRole": "BI/data engineer",
+      "reviewerRole": "Finance and product owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R26",
+      "title": "Complete operational commerce, cash and control BI",
+      "priority": "P1",
+      "dependencies": [
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R23",
+        "R25"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Deliver K01/K03/K04/K05/K07/K08/K10/K11/K17 with explicit activity/correction meaning, scoped drill-through and actionable exceptions.",
+      "acceptance": "Each enabled operational KPI ties to source facts and an authorized action; stale or incomplete evidence is visibly qualified.",
+      "releaseGate": "G2 operational BI; rail-specific K06 needs R19. Missing supplier/date sources block that metric alone.",
+      "ownerRole": "BI/product engineer",
+      "reviewerRole": "Operations, procurement and treasury",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP20",
+        "CAP27"
+      ]
+    },
+    {
+      "id": "R27",
+      "title": "Complete financial statements, margin, aging and cash-flow BI",
+      "priority": "P1",
+      "dependencies": [
+        "R07",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R20",
+        "R25"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Implement net realized sales, frozen COGS and margin including disposition-aware returns; connect AR/AP aging and working capital.",
+      "acceptance": "Financial reports reconcile independently across statements, subledgers and source documents; incomplete populations remain blocked or clearly qualified.",
+      "releaseGate": "G2 financial BI plus R09 population disposition and applicable country/close qualification for production claims.",
+      "ownerRole": "Financial reporting engineer",
+      "reviewerRole": "Independent accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F01",
+        "F09",
+        "F12"
+      ],
+      "capabilities": [
+        "CAP12",
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R28",
+      "title": "Complete privacy-scoped workforce and payroll BI",
+      "priority": "P1",
+      "dependencies": [
+        "R16",
+        "R17",
+        "R25"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Define headcount/FTE inclusion, approved payroll cost, employer charges, attendance/leave denominators and effective organization scope.",
+      "acceptance": "Workforce metrics are defined, permission-safe and tied to the correct effective population and payroll status.",
+      "releaseGate": "G2 workforce BI; production statutory payroll cost follows R18 support.",
+      "ownerRole": "HR analytics engineer",
+      "reviewerRole": "HR, payroll and privacy owners",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP16",
+        "CAP17",
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R29",
+      "title": "Validate AI assistance, security posture and cost controls",
+      "priority": "P1",
+      "dependencies": [
+        "R10",
+        "R21",
+        "R25"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Test prompt injection in business documents/tool output, stale authority, forged proposal evidence, denied tools and cross-tenant retrieval.",
+      "acceptance": "Enabled AI has no unresolved critical authorization/tool-use finding, measurable quality/cost limits and a tested suspension path.",
+      "releaseGate": "G2 AI safety; optional AI can stay disabled without blocking core commerce if its boundaries are isolated.",
+      "ownerRole": "AI/AppSec engineer",
+      "reviewerRole": "Model-risk and product owner",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [],
+      "capabilities": [
+        "CAP24",
+        "CAP21"
+      ]
+    },
+    {
+      "id": "R30",
+      "title": "Rehearse recovery, refresh runbooks and measure service limits",
+      "priority": "P1",
+      "dependencies": [
+        "R01",
+        "R08",
+        "R23"
+      ],
+      "status": "PARTIAL",
+      "progress": "Unsafe account deletion instructions removed. Local restore passed 87/87 migration history/status, preserved schema-diff fingerprint and nine-table auth/accounting count profiles; temporary dump removed. Later clone upgrade to89 is separately recorded. Ordinary login and three dashboard renders pass on the clone; reconciliation separately renders with an unclassified alert and close remains module-locked. Measured business counts are stable; full recovered workflows remain unproved.",
+      "evidence": [
+        "../../../docs/operations/runbooks/RUNBOOK.md",
+        "data-impact/restore/restore-rehearsal.md",
+        "data-impact/restore/execution.json",
+        "data-impact/browser/authenticated-smoke.json",
+        "data-impact/browser/reconciliation-followup/review-classification.json"
+      ],
+      "nextAction": "Complete recovered business/worker/offline workflows and agreed measured recovery objectives before production qualification.",
+      "acceptance": "Operators can execute current runbooks, recover the exact release/data version and demonstrate agreed operational objectives.",
+      "releaseGate": "G3 operational readiness; unknown or missed RPO/RTO/performance targets stay open.",
+      "ownerRole": "SRE/DevSecOps lead",
+      "reviewerRole": "Database, security and support leads",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F14"
+      ],
+      "capabilities": [
+        "CAP28"
+      ]
+    },
+    {
+      "id": "R31",
+      "title": "Assemble independent end-to-end release evidence",
+      "priority": "P1",
+      "dependencies": [
+        "R04",
+        "R05",
+        "R07",
+        "R08",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R26",
+        "R27",
+        "R28",
+        "R29",
+        "R30"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Freeze an exact release candidate and migration/toolchain manifest; rerun required commands without the audit-only adapter.",
+      "acceptance": "Every in-scope promise has fresh independent acceptance evidence tied to the same candidate; no unresolved critical correctness or privacy defect.",
+      "releaseGate": "G3 candidate evidence assembled; final qualification and pilot decisions remain R32/R33.",
+      "ownerRole": "Release assurance lead",
+      "reviewerRole": "Independent domain reviewers",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F13",
+        "F14"
+      ],
+      "capabilities": [
+        "CAP28",
+        "CAP29"
+      ]
+    },
+    {
+      "id": "R32",
+      "title": "Run a controlled offline POS pilot and validate recovery",
+      "priority": "P1",
+      "dependencies": [
+        "R04",
+        "R05",
+        "R12",
+        "R15",
+        "R24",
+        "R30",
+        "R31"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Specify explicit device enrollment, revocation, queue limits, tender policy, fiscal obligations, conflict review and support procedures.",
+      "acceptance": "Pilot results meet agreed coverage and objectives; all events are accounted for, operators can recover exceptions, and rollback preserves pending obligations.",
+      "releaseGate": "G4 offline: approved technical evidence plus applicable R18/R19 and agreed pilot duration/volume (D08).",
+      "ownerRole": "Offline/product rollout lead",
+      "reviewerRole": "Release owner and pilot operations",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F03",
+        "F04",
+        "F05"
+      ],
+      "capabilities": [
+        "CAP01"
+      ]
+    },
+    {
+      "id": "R33",
+      "title": "Release by qualified cohort and transfer ongoing ownership",
+      "priority": "P1",
+      "dependencies": [
+        "R09",
+        "R31"
+      ],
+      "status": "NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Approve a capability-by-country/provider/tenant matrix; require R32 for offline, R18 for regulated functions and R19 for real external integrations.",
+      "acceptance": "Each enabled capability is qualified for its actual cohort and handed to accountable operations; remaining restrictions have owners and review dates.",
+      "releaseGate": "G5 release: zero unaccepted critical defects, required qualified reviews, training and sustained cohort metrics.",
+      "ownerRole": "Release/delivery lead",
+      "reviewerRole": "Product, domain approvers and SRE",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F05",
+        "F11",
+        "F14"
+      ],
+      "capabilities": [
+        "CAP28",
+        "CAP29",
+        "CAP22"
+      ]
+    },
+    {
+      "id": "R34",
+      "title": "Qualify inventory extensions, landed cost and replenishment",
+      "priority": "P2 conditional",
+      "dependencies": [
+        "R12",
+        "R14",
+        "R25",
+        "R26"
+      ],
+      "status": "CONDITIONAL_NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Decide requirements independently for lot/serial/expiry, unit conversion, landed cost and replenishment; split accepted work into bounded tickets.",
+      "acceptance": "Each accepted extension has its own tested workflow and metric contract; rejected/deferred extensions remain explicit and unadvertised.",
+      "releaseGate": "D06 product need and source quality before engineering; becomes mandatory before release for any cohort promised these capabilities.",
+      "ownerRole": "Inventory/procurement product lead",
+      "reviewerRole": "Operations and accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP06",
+        "CAP09",
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R35",
+      "title": "Add a fixed-asset subledger when professional scope requires it",
+      "priority": "P2 conditional",
+      "dependencies": [
+        "R07",
+        "R20",
+        "R25",
+        "R27"
+      ],
+      "status": "CONDITIONAL_NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Decide material asset needs, accounting methods, categories, useful lives, opening assets and required reports.",
+      "acceptance": "Accepted asset scope is fully reconciled and maintainable, or formally deferred with supported manual accounting boundaries.",
+      "releaseGate": "D06 required for chosen segment or explicitly deferred; no asset automation claim until complete.",
+      "ownerRole": "Accounting product lead",
+      "reviewerRole": "Independent accountant",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP14"
+      ]
+    },
+    {
+      "id": "R36",
+      "title": "Add governed budgets and scenario cash forecasting",
+      "priority": "P2 conditional",
+      "dependencies": [
+        "R25",
+        "R27"
+      ],
+      "status": "CONDITIONAL_NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Define budget grain, versions, approval, currencies and ownership; connect actuals to the same account/period basis.",
+      "acceptance": "Users can compare approved budget to trusted actuals and evaluate reproducible scenarios with clear uncertainty.",
+      "releaseGate": "D06 confirmed planning need, stable R27 actuals and data quality threshold.",
+      "ownerRole": "FP&A/BI product lead",
+      "reviewerRole": "Finance owner",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP20"
+      ]
+    },
+    {
+      "id": "R37",
+      "title": "Add consent-aware customer retention and cohort analytics",
+      "priority": "P2 conditional",
+      "dependencies": [
+        "R13",
+        "R22",
+        "R25",
+        "R26"
+      ],
+      "status": "CONDITIONAL_NOT_STARTED",
+      "progress": "No completion claim in this execution batch; prior implementation and planning evidence still require current package-specific acceptance.",
+      "evidence": [],
+      "nextAction": "Define repeat customer, cohort membership, observation window, identity merge/split and treatment of returns/anonymous transactions.",
+      "acceptance": "Each published cohort has a defensible population and privacy contract, or the feature stays explicitly deferred.",
+      "releaseGate": "D06 useful business decision and approved identity/consent quality; otherwise defer.",
+      "ownerRole": "Commercial analytics lead",
+      "reviewerRole": "Privacy and product owner",
+      "humanAssignment": "UNCONFIRMED",
+      "findings": [
+        "F12"
+      ],
+      "capabilities": [
+        "CAP20",
+        "CAP25"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "file": "baseline-payroll-gate.result.json",
+      "name": "baseline-payroll-gate",
+      "command": [
+        "node",
+        "scripts/payroll-trust-spine-readiness-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/baseline-payroll-gate.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/baseline-payroll-gate.json"
+      ],
+      "startedAt": "2026-09-30T20:25:00.789Z",
+      "endedAt": "2026-09-30T20:25:01.758Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 795,
+      "stderrBytes": 0
+    },
+    {
+      "file": "baseline-report-gate.result.json",
+      "name": "baseline-report-gate",
+      "command": [
+        "node",
+        "scripts/report-trust-export-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/baseline-report-gate.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/baseline-report-gate.json"
+      ],
+      "startedAt": "2026-09-30T20:25:07.621Z",
+      "endedAt": "2026-09-30T20:25:14.335Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 2592,
+      "stderrBytes": 0
+    },
+    {
+      "file": "baseline-stale-tests.result.json",
+      "name": "baseline-stale-tests",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "what-next/platform-correctness-audit/2026-09-30-run-01/jest-direct.config.cjs",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/accounting/__tests__/manual-journal.test.ts",
+        "services/analytics/__tests__/business-pulse-links.test.ts",
+        "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+        "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+        "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:24:19.407Z",
+      "endedAt": "2026-09-30T20:25:14.563Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 25650
+    },
+    {
+      "file": "close-assurance-integration.result.json",
+      "name": "close-assurance-integration",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/accounting/__tests__/periods.service.test.ts",
+        "services/accounting/__tests__/close-assurance.service.test.ts",
+        "services/accounting/__tests__/close-assurance-pack.service.test.ts",
+        "actions/accounting/__tests__/settings.actions.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:36:21.322Z",
+      "endedAt": "2026-09-30T20:36:56.597Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 392
+    },
+    {
+      "file": "close-functional-preflight.result.json",
+      "name": "close-functional-preflight",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/accounting/__tests__/periods.service.test.ts",
+        "actions/accounting/__tests__/settings.actions.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:51:14.733Z",
+      "endedAt": "2026-09-30T20:52:12.981Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 255
+    },
+    {
+      "file": "payroll-gate-after.result.json",
+      "name": "payroll-gate-after",
+      "command": [
+        "node",
+        "scripts/payroll-trust-spine-readiness-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/payroll-gate-after.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/payroll-gate-after.json"
+      ],
+      "startedAt": "2026-09-30T20:46:33.300Z",
+      "endedAt": "2026-09-30T20:46:33.656Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 741,
+      "stderrBytes": 0
+    },
+    {
+      "file": "readiness-gate-regressions-retry.result.json",
+      "name": "readiness-gate-regressions-retry",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+        "services/analytics/__tests__/completed-sales-evidence.test.ts",
+        "services/analytics/__tests__/financial-reports.service.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:38:02.505Z",
+      "endedAt": "2026-09-30T20:43:02.727Z",
+      "code": null,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 0
+    },
+    {
+      "file": "readiness-gate-regressions.result.json",
+      "name": "readiness-gate-regressions",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+        "services/analytics/__tests__/completed-sales-evidence.test.ts",
+        "services/analytics/__tests__/financial-reports.service.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:32:16.423Z",
+      "endedAt": "2026-09-30T20:35:16.826Z",
+      "code": null,
+      "signal": "SIGTERM",
+      "timedOut": true,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 0
+    },
+    {
+      "file": "report-control-behavior.result.json",
+      "name": "report-control-behavior",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+        "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+        "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts",
+        "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+        "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+        "services/analytics/__tests__/completed-sales-evidence.test.ts",
+        "--json",
+        "--outputFile=what-next/platform-remediation/2026-09-30-run-01/report-control-behavior.jest.json"
+      ],
+      "startedAt": "2026-09-30T20:57:57.982Z",
+      "endedAt": "2026-09-30T21:00:20.355Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 693
+    },
+    {
+      "file": "report-gate-after.result.json",
+      "name": "report-gate-after",
+      "command": [
+        "node",
+        "scripts/report-trust-export-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/report-gate-after.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/report-gate-after.json"
+      ],
+      "startedAt": "2026-09-30T20:46:13.600Z",
+      "endedAt": "2026-09-30T20:46:16.744Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 2358,
+      "stderrBytes": 0
+    },
+    {
+      "file": "report-gate-final.result.json",
+      "name": "report-gate-final",
+      "command": [
+        "node",
+        "scripts/report-trust-export-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/report-gate-final.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/report-gate-final.json"
+      ],
+      "startedAt": "2026-09-30T21:09:32.086Z",
+      "endedAt": "2026-09-30T21:09:37.506Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 2358,
+      "stderrBytes": 0
+    },
+    {
+      "file": "runner/app-build-final.result.json",
+      "startedAt": "2026-09-30T21:30:35.369Z",
+      "endedAt": "2026-09-30T21:49:41.458Z",
+      "command": "node scripts/build-app-safe.js --skip-clean",
+      "environment": {
+        "NODE_ENV": "production",
+        "NEXT_DIST_DIR": ".next-remediation-r01-20260930",
+        "databaseTarget": "disabled localhost:1"
+      },
+      "configChanges": [
+        {
+          "file": "tsconfig.json",
+          "beforeHash": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+          "generatedHash": "9c7ce40263a8de6d2567926504b6035a6858a104d84e7e53bc952af3f0de98d4",
+          "restoredBuildOnlyChange": true
+        },
+        {
+          "file": "next-env.d.ts",
+          "beforeHash": "4c9344e62bfcabbb29c4fc820a895546444aa5c2cc6cc60b870a3d6e547b70c3",
+          "generatedHash": "4982d3991b29cdab00be63d0bbcb08ef0db5252ec359921d99c388ebfc8707b6",
+          "restoredBuildOnlyChange": true
+        }
+      ],
+      "sourceChanges": [],
+      "root": "E:\\ohada saas\\Focused projects\\stoquify",
+      "status": "failed",
+      "exitCode": 1,
+      "allowOrphans": false,
+      "dryRun": false,
+      "skippedClean": true,
+      "devProcessesBlockBuildOutput": false,
+      "processInspectionError": null,
+      "orphanedBuildProcesses": [],
+      "nextOutput": {
+        "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+        "state": "stale-or-corrupt",
+        "shouldClean": true,
+        "reasons": [
+          ".next-remediation-r01-20260930 has production build markers but no BUILD_ID"
+        ],
+        "buildId": null,
+        "requireStandalone": false
+      },
+      "cleanedNext": false,
+      "build": {
+        "commandLine": "C:\\Program Files\\nodejs\\node.exe E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\next\\dist\\bin\\next build",
+        "exitCode": 1,
+        "signal": null,
+        "spawnError": null,
+        "timedOut": false,
+        "childPid": 19716
+      },
+      "postBuildNextOutput": {
+        "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+        "state": "stale-or-corrupt",
+        "shouldClean": true,
+        "reasons": [
+          ".next-remediation-r01-20260930/standalone/server.js is missing for standalone output"
+        ],
+        "buildId": "GqRaF9F_RTehAxrqSBlS2",
+        "requireStandalone": true
+      },
+      "postBuildOrphanedBuildProcesses": [],
+      "postBuildProcessInspectionError": null
+    },
+    {
+      "file": "runner/app-build.result.json",
+      "startedAt": "2026-09-30T20:44:56.240Z",
+      "endedAt": "2026-09-30T21:04:06.039Z",
+      "command": "node scripts/build-app-safe.js --skip-clean",
+      "environment": {
+        "NODE_ENV": "production",
+        "NEXT_DIST_DIR": ".next-remediation-r01-20260930",
+        "databaseTarget": "disabled localhost:1"
+      },
+      "configChanges": [
+        {
+          "file": "tsconfig.json",
+          "beforeHash": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+          "generatedHash": "9c7ce40263a8de6d2567926504b6035a6858a104d84e7e53bc952af3f0de98d4",
+          "restoredBuildOnlyChange": true
+        },
+        {
+          "file": "next-env.d.ts",
+          "beforeHash": "4c9344e62bfcabbb29c4fc820a895546444aa5c2cc6cc60b870a3d6e547b70c3",
+          "generatedHash": "4982d3991b29cdab00be63d0bbcb08ef0db5252ec359921d99c388ebfc8707b6",
+          "restoredBuildOnlyChange": true
+        }
+      ],
+      "root": "E:\\ohada saas\\Focused projects\\stoquify",
+      "status": "failed",
+      "exitCode": 1,
+      "allowOrphans": false,
+      "dryRun": false,
+      "skippedClean": true,
+      "devProcessesBlockBuildOutput": false,
+      "processInspectionError": null,
+      "orphanedBuildProcesses": [],
+      "nextOutput": {
+        "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+        "state": "absent",
+        "shouldClean": false,
+        "reasons": [],
+        "buildId": null,
+        "requireStandalone": false
+      },
+      "cleanedNext": false,
+      "build": {
+        "commandLine": "C:\\Program Files\\nodejs\\node.exe E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\next\\dist\\bin\\next build",
+        "exitCode": 1,
+        "signal": null,
+        "spawnError": null,
+        "timedOut": false,
+        "childPid": 8764
+      },
+      "postBuildNextOutput": {
+        "nextDir": "E:\\ohada saas\\Focused projects\\stoquify\\.next-remediation-r01-20260930",
+        "state": "stale-or-corrupt",
+        "shouldClean": true,
+        "reasons": [
+          ".next-remediation-r01-20260930 has production build markers but no BUILD_ID"
+        ],
+        "buildId": null,
+        "requireStandalone": false
+      },
+      "postBuildOrphanedBuildProcesses": [],
+      "postBuildProcessInspectionError": null
+    },
+    {
+      "file": "runner/normal-jest-small.result.json",
+      "name": "normal-jest-small",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/normal-jest-small.jest.json"
+      ],
+      "startedAt": "2026-09-30T20:26:03.053Z",
+      "endedAt": "2026-09-30T20:26:46.232Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/prisma-validate.result.json",
+      "name": "prisma-validate",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/prisma/build/index.js",
+        "validate"
+      ],
+      "startedAt": "2026-09-30T20:37:11.364Z",
+      "endedAt": "2026-09-30T20:38:05.608Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/readiness-gates-normal.result.json",
+      "name": "readiness-gates-normal",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js",
+        "--reporters",
+        "default",
+        "--reporters",
+        "./what-next/platform-remediation/2026-09-30-run-01/runner/progress-reporter.cjs",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/readiness-gates-normal.jest.json"
+      ],
+      "startedAt": "2026-09-30T20:49:54.398Z",
+      "endedAt": "2026-09-30T21:07:56.770Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/report-gate-ledger-summary.result.json",
+      "name": "report-gate-ledger-summary",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "--testNamePattern",
+        "recognizes ledger summary exports and rejects replacement of service-derived summary",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/report-gate-ledger-summary.jest.json"
+      ],
+      "startedAt": "2026-09-30T21:08:27.914Z",
+      "endedAt": "2026-09-30T21:09:06.917Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/report-gate-positive-case.result.json",
+      "name": "report-gate-positive-case",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "--testNamePattern",
+        "passes when report trust is service-owned and explicit",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/report-gate-positive-case.jest.json"
+      ],
+      "startedAt": "2026-09-30T20:46:54.126Z",
+      "endedAt": "2026-09-30T20:47:50.755Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/report-trust-frozen.result.json",
+      "name": "report-trust-frozen",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "scripts/report-trust-export-gate.js",
+        "--mode",
+        "fail",
+        "--out",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/report-trust-frozen.md",
+        "--json-out",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/report-trust-frozen.json"
+      ],
+      "startedAt": "2026-09-30T21:27:00.490Z",
+      "endedAt": "2026-09-30T21:27:03.307Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/source-owned-final-regressions.result.json",
+      "name": "source-owned-final-regressions",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "scripts/__tests__/report-trust-export-gate.test.js",
+        "--testNamePattern",
+        "recognizes source-owned reversal protection",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/source-owned-final-regressions.jest.json"
+      ],
+      "startedAt": "2026-09-30T21:25:06.220Z",
+      "endedAt": "2026-09-30T21:25:45.824Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/standalone-recovery.result.json",
+      "startedAt": "2026-09-30T22:12:18.445Z",
+      "buildId": "GqRaF9F_RTehAxrqSBlS2",
+      "originalBuildExitCode": 1,
+      "originalBuildStatus": "failed",
+      "recordedCandidate": true,
+      "candidateScope": "Recorded compiled candidate; NOT the current checkout",
+      "preexistingCheckoutDrift": [
+        "actions/purchaseOrderWorkflow/__tests__/purchase-receiving.actions.test.ts",
+        "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx",
+        "components/purchasing/InvoiceCorrectionWorkbench.tsx",
+        "components/purchasing/InvoicePreparationWorkbench.tsx",
+        "services/inventory/inventory-stock-event.service.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "services/purchase-order/__tests__/purchase-receipt-accounting-evidence.test.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/purchase-order/purchase-receipt-accounting-evidence.ts",
+        "services/purchase-order/purchase-receiving-authority.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "services/purchasing/__tests__/invoice-receipt-recognition.test.ts",
+        "services/purchasing/ap-control.service.ts",
+        "services/purchasing/invoice-receipt-recognition.ts",
+        "services/purchasing/purchase-return-credit.service.ts",
+        "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+        "services/purchase-order/__tests__/receipt-recognition-source.test.ts",
+        "services/purchase-order/__tests__/receipt-recognition.service.test.ts",
+        "services/purchase-order/receipt-ledger-recovery-authority.ts",
+        "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+        "services/purchase-order/receipt-ledger-recovery.service.ts",
+        "services/purchase-order/receipt-recognition-source.ts",
+        "services/purchase-order/receipt-recognition.service.ts",
+        "services/purchasing/receipt-return-recognition.ts"
+      ],
+      "changedPackagingInputs": [],
+      "inputProvenance": {
+        "matchedRecordedFingerprints": 2,
+        "retainedCompiledInputs": 781,
+        "previouslyUnfingerprintedInputs": 4209,
+        "limitation": "Dependencies and public/messages inputs absent from the original source manifest have newly pinned hashes and modification-time corroboration only; no retrospective build-start hash is claimed."
+      },
+      "mode": "Exact installed Next writeStandaloneDirectory replay; process-local guarded EPERM directory-copy fallback",
+      "installedNextIndexHash": "f7ef456d065abbeb6a6d5e752d29f3471f7fbf93c31634fae0f1474dac911b70",
+      "installedNextUtilsHash": "b6d586f8ed85c911e5f41e981296879daa6efe21034957ed72c707241e2b3bee",
+      "partialOutputBackup": ".next-remediation-r01-20260930\\standalone.failed-20260930",
+      "status": "failed-validation",
+      "traceCount": 188,
+      "uniqueTracePaths": 4731,
+      "verifiedCopyPlanFiles": 4991,
+      "verifiedCopyPlanDirectories": 132,
+      "fallbackCount": 132,
+      "fallbackCopiedFiles": 24247,
+      "outputFileCount": 29239,
+      "mismatches": [
+        {
+          "file": "node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\next-server\\server.runtime.prod.js",
+          "reason": "missing"
+        }
+      ],
+      "compiledChanges": [],
+      "sourceChanges": [
+        "components/purchase-orders/ReceiptLedgerRecoveryDialog.tsx",
+        "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+        "services/inventory/inventory-stock-event.service.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "services/purchase-order/__tests__/receipt-recognition-source.test.ts",
+        "services/purchase-order/__tests__/receipt-recognition.service.test.ts",
+        "services/purchase-order/receipt-ledger-recovery-contracts.ts",
+        "services/purchase-order/receipt-ledger-recovery.service.ts",
+        "services/purchase-order/receipt-recognition-source.ts",
+        "services/purchase-order/receipt-recognition.service.ts",
+        "services/purchasing/__tests__/purchase-return-credit.service.test.ts",
+        "services/purchasing/purchase-return-credit.service.ts",
+        "services/purchasing/receipt-return-recognition.ts",
+        "actions/purchaseOrderWorkflow/__tests__/receipt-ledger-recovery.actions.test.ts",
+        "components/purchase-orders/__tests__/ReceiptLedgerRecoveryDialog.test.tsx",
+        "services/purchase-order/__tests__/receipt-ledger-recovery-authority.test.ts",
+        "services/purchase-order/__tests__/receipt-ledger-recovery.service.test.ts",
+        "services/purchasing/__tests__/receipt-return-recognition.test.ts"
+      ],
+      "packagingInputChanges": [],
+      "guardErrors": [],
+      "residualProbeCount": 0,
+      "linksFound": 0,
+      "serverJsPresent": true,
+      "endedAt": "2026-09-30T22:25:58.728Z"
+    },
+    {
+      "file": "runner/typecheck-final.result.json",
+      "name": "typecheck-final",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-09-30T21:09:56.778Z",
+      "endedAt": "2026-09-30T21:13:46.107Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/typecheck-full.result.json",
+      "name": "typecheck-full",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--incremental",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-09-30T20:26:30.722Z",
+      "endedAt": "2026-09-30T20:34:32.323Z",
+      "code": 2,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/typecheck-guard-followup.result.json",
+      "name": "typecheck-guard-followup",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-09-30T21:22:02.411Z",
+      "endedAt": "2026-09-30T21:24:29.012Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/typecheck-incremental.result.json",
+      "name": "typecheck-incremental",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-09-30T20:39:37.314Z",
+      "endedAt": "2026-09-30T20:41:17.699Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "stale-tests-normal-after.result.json",
+      "name": "stale-tests-normal-after",
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "services/accounting/__tests__/manual-journal.test.ts",
+        "services/analytics/__tests__/business-pulse-links.test.ts",
+        "services/payroll/__tests__/payroll-seed-backfill-plan.service.test.ts",
+        "services/payroll/__tests__/payroll-proof-backfill-executor.service.test.ts",
+        "services/payroll/__tests__/payroll-proof-backfill-reconciliation.service.test.ts",
+        "services/payroll/__tests__/payroll-statutory-scenario-coverage.service.test.ts"
+      ],
+      "startedAt": "2026-09-30T20:26:42.938Z",
+      "endedAt": "2026-09-30T20:27:53.589Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "databaseTarget": "disabled localhost:1; no live database",
+      "stdoutBytes": 0,
+      "stderrBytes": 573
+    },
+    {
+      "file": "runner/hris-inbox-green-20261007.result.json",
+      "name": "hris-inbox-green-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runTestsByPath",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+        "actions/hris/__tests__/approval-inbox.actions.test.ts",
+        "services/hris/__tests__/approval-inbox.service.test.ts",
+        "--runInBand",
+        "--watch=false",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/hris-inbox-green-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:13:14.369Z",
+      "endedAt": "2026-10-07T05:13:32.597Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/hris-inbox-green-settled-20261007.result.json",
+      "name": "hris-inbox-green-settled-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runTestsByPath",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+        "actions/hris/__tests__/approval-inbox.actions.test.ts",
+        "services/hris/__tests__/approval-inbox.service.test.ts",
+        "--runInBand",
+        "--watch=false",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/hris-inbox-green-settled-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:13:47.375Z",
+      "endedAt": "2026-10-07T05:14:05.136Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/hris-inbox-lint-20261007.result.json",
+      "name": "hris-inbox-lint-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "components/hris/HrisApprovalInbox.tsx",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx"
+      ],
+      "startedAt": "2026-10-07T05:14:30.823Z",
+      "endedAt": "2026-10-07T05:15:12.214Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/hris-inbox-red-20261007.result.json",
+      "name": "hris-inbox-red-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runTestsByPath",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+        "actions/hris/__tests__/approval-inbox.actions.test.ts",
+        "--runInBand",
+        "--watch=false",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/hris-inbox-red-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:11:09.936Z",
+      "endedAt": "2026-10-07T05:12:18.645Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/hris-time-claim-green-20261007.result.json",
+      "name": "hris-time-claim-green-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--watch=false",
+        "--runTestsByPath",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+        "services/hris/__tests__/operational-time.service.test.ts",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/hris-time-claim-green-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:19:39.873Z",
+      "endedAt": "2026-10-07T05:19:53.029Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/hris-time-claim-red-20261007.result.json",
+      "name": "hris-time-claim-red-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--watch=false",
+        "--runTestsByPath",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/hris-time-claim-red-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:18:47.498Z",
+      "endedAt": "2026-10-07T05:19:01.067Z",
+      "code": 1,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-focused-final-20261007.result.json",
+      "name": "modernization-focused-final-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--watch=false",
+        "--runTestsByPath",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+        "actions/hris/__tests__/approval-inbox.actions.test.ts",
+        "services/hris/__tests__/approval-inbox.service.test.ts",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+        "services/hris/__tests__/operational-time.service.test.ts",
+        "services/accounting/__tests__/close-evidence-workflow.service.test.ts",
+        "--json",
+        "--outputFile",
+        "what-next/platform-remediation/2026-09-30-run-01/runner/modernization-focused-final-20261007.jest.json"
+      ],
+      "startedAt": "2026-10-07T05:22:43.047Z",
+      "endedAt": "2026-10-07T05:23:01.235Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-lint-final-20261007.result.json",
+      "name": "modernization-lint-final-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/eslint/bin/eslint.js",
+        "components/hris/HrisApprovalInbox.tsx",
+        "components/hris/__tests__/HrisApprovalInbox.test.tsx",
+        "services/hris/operational-time.service.ts",
+        "services/hris/__tests__/operational-time.service.test.ts",
+        "services/hris/__tests__/operational-time-decision-concurrency.test.ts",
+        "tests/postgres/ui-workflow/hris-time-decision.test.ts",
+        "services/accounting/close-evidence-workflow.service.ts"
+      ],
+      "startedAt": "2026-10-07T05:22:55.297Z",
+      "endedAt": "2026-10-07T05:23:00.790Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-prisma-generate-20261007.result.json",
+      "name": "modernization-prisma-generate-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/prisma/build/index.js",
+        "generate",
+        "--schema",
+        "prisma/schema.prisma"
+      ],
+      "startedAt": "2026-10-07T05:16:52.023Z",
+      "endedAt": "2026-10-07T05:17:41.837Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-types-20261007.result.json",
+      "name": "modernization-types-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--incremental",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-10-07T05:12:12.747Z",
+      "endedAt": "2026-10-07T05:14:26.703Z",
+      "code": 2,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-types-final-20261007.result.json",
+      "name": "modernization-types-final-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--incremental",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-10-07T05:23:27.744Z",
+      "endedAt": "2026-10-07T05:25:23.715Z",
+      "code": 0,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    },
+    {
+      "file": "runner/modernization-types-generated-20261007.result.json",
+      "name": "modernization-types-generated-20261007",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false",
+        "--incremental",
+        "false",
+        "--extendedDiagnostics"
+      ],
+      "startedAt": "2026-10-07T05:17:54.781Z",
+      "endedAt": "2026-10-07T05:20:14.636Z",
+      "code": 2,
+      "signal": null,
+      "timedOut": false,
+      "fingerprints": {
+        "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+        "tsconfig.json": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "next.config.mjs": "1c1fd23d7b59708200e3bf6d590ffb949e9aaf02fc7df12689b344704a2f72cc"
+      },
+      "databaseTarget": "disabled localhost:1; no live data target"
+    }
+  ],
+  "verificationReceiptScope": "The verification array contains command-wrapper *.result.json receipts; it is not the complete evidence index or a count of unique tests.",
+  "additionalVerificationArtifacts": [
+    "accounting/accounting-suite-final-results.json",
+    "offline/final-focused-jest.json",
+    "offline/verification-manifest.json",
+    "accounting/journal-guard-supplement-results.json",
+    "data-impact/restore/journal-boundary-probes-after.json",
+    "data-impact/restore/journal-migration-verification.json",
+    "data-impact/restore/payroll-trust-spine-postgres.json",
+    "data-impact/restore/fresh-replay-89-execution.json",
+    "data-impact/restore/fresh-replay-89.json",
+    "data-impact/seed-producer-verification.json",
+    "runner/standalone-recovery.lifecycle.json",
+    "runner/standalone-resolution-preflight.json",
+    "runner/packaging-probe-cleanup.json",
+    "data-impact/browser/relocated/relocated-readiness.json",
+    "data-impact/browser/reconciliation-followup/review-classification.json",
+    "CAMEROON_FIRST_VERIFICATION_2026-10-07.json",
+    "runner/modernization-focused-final-20261007.jest.json",
+    "runner/hris-time-postgres-20261007.jest.json",
+    "runner/hris-time-postgres-bootstrap-20261007.json"
+  ],
+  "production": {
+    "deployed": false,
+    "migrationsAppliedToSource": false,
+    "historicalDataRepaired": false,
+    "offlineReplayEnabled": false
+  },
+  "updatedAt": "2026-10-07T05:54:09Z",
+  "latestContinuation": {
+    "date": "2026-10-07",
+    "programme": "CAMEROON_FIRST_CONTINUATION_2026-10-07.md",
+    "verification": "CAMEROON_FIRST_VERIFICATION_2026-10-07.json",
+    "sourceResearch": "CAMEROON_SOURCE_REFRESH_2026-10-07.md",
+    "releaseApproved": false
+  }
+}

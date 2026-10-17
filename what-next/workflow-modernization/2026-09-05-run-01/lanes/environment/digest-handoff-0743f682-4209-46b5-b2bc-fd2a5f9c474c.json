@@ -1,0 +1,185 @@
+{
+  "at": "2026-09-27T12:25:59.276Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "242fdf517ce2cbf9a1881f84d212a1ebeb8e73a9724f06c191befd73c4c75cb2",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "bedb6ed20d665aaa0344a74aa7278d3c70896cff968f2751bba854a0d403e882",
+    "messages/fr.json": "f2d457fa899b49c88228ffb4472fd3ef2c919ad3a6bd5f9f170526dc05859fd2"
+  },
+  "managerBrowserOnly": false,
+  "checks": [
+    {
+      "name": "owner-label-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "administrator",
+      "owner": true,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "owner-authority-revoked",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-unassigned",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assigned",
+      "owner": false,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-inactive-site",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-deleted-site",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "foreign-site-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assignment-revoked",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assignment-restored",
+      "owner": false,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "242fdf517ce2cbf9a1881f84d212a1ebeb8e73a9724f06c191befd73c4c75cb2",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "bedb6ed20d665aaa0344a74aa7278d3c70896cff968f2751bba854a0d403e882",
+    "messages/fr.json": "f2d457fa899b49c88228ffb4472fd3ef2c919ad3a6bd5f9f170526dc05859fd2"
+  },
+  "sourceStable": true
+}

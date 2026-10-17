@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-17T11:39:37.752Z",
+  "steps": [
+    "Never-uploaded evidence visible; local close prevented before any close action",
+    "Actual authenticated signed ingestion committed; response lost; immutable evidence remains UNCERTAIN",
+    "Reload/reconnect and keyboard retry acknowledge the same event once; no sale/payment/stock/ledger effects",
+    "Unauthenticated action and spoofed tenant denied without an extra batch",
+    "expired policy/device: real server conflict, retained evidence and manager path; no retry/clear escape",
+    "revoked policy/device: real server conflict, retained evidence and manager path; no retry/clear escape",
+    "French manager recovery and retained counts survive route reload at mobile width"
+  ],
+  "fixture": "org-full-pos-07062757-185e-415f-97f2-1b77bc7612e5",
+  "origin": "http://127.0.0.1:3187",
+  "browser": "149.0.7827.55",
+  "viewport": {
+    "width": 1366,
+    "height": 768
+  },
+  "before": {
+    "commits": 0,
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "stock": "5",
+    "shift": "ACTIVE"
+  },
+  "dropProof": {
+    "id": "cmvcbr5xc0075ma08rjko4oq0",
+    "status": "PENDING_REPLAY",
+    "payloadHash": "470c82d0faa70eff18313d8027996741869cb72ffcfd5310bdd69e8d5b06fea7"
+  },
+  "unauthenticatedBoundary": {
+    "status": 307,
+    "destination": "/en/login"
+  },
+  "after": {
+    "commits": 0,
+    "payments": 0,
+    "movements": 0,
+    "journals": 0,
+    "postings": 0,
+    "stock": "5",
+    "shift": "ACTIVE"
+  },
+  "status": "PASS"
+}
