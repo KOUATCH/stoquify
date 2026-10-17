@@ -178,18 +178,18 @@ describe("landing navigation and French public localization contract", () => {
     }
   })
 
-  it("maps every menu item to one stable section in rendered page order", () => {
-    let previousPosition = -1
-
-    for (const [, id, file, component] of navigation) {
-      const componentSource = read(`components/landing/${file}`)
-      expect(componentSource).toContain(`id="${id}"`)
-      expect(componentSource).toContain("scroll-mt-20")
-
-      const position = pageSource.indexOf(`<${component}`)
-      expect(position).toBeGreaterThan(previousPosition)
-      previousPosition = position
-    }
+  it("preserves existing section bookmarks through the cinematic page composition", () => {
+    expect(pageSource).toContain("<CinematicLanding />")
+    const main = read("components/landing/cinematic-landing.tsx")
+    const product = read("components/landing/cinematic-product.tsx")
+    const chapters = read("components/landing/cinematic-chapters.tsx")
+    for (const id of ["problem", "workflow", "product"]) expect(product).toContain(`id="${id}"`)
+    expect(main).toContain("<CinematicProduct />")
+    expect(main).toContain("<CinematicStory />")
+    expect(main).toContain("<CinematicChapters />")
+    expect(main).toContain("<CapabilityOverview />")
+    expect(chapters).toContain("<GettingStarted />")
+    expect(read("components/landing/landing-message-sections.tsx")).toContain('id="pricing"')
   })
 
   it("provides four direct desktop links, complete mobile links, and scrollspy state", () => {

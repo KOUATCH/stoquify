@@ -1,9 +1,11 @@
 import { getSession } from "@/lib/auth-server";
 import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingHeader } from "@/components/landing/landing-header";
+import { LandingRouteShell } from "@/components/landing/cinematic-shell";
 import type { ReactNode } from "react";
 import { landingFontVars } from "./landing-fonts";
 import "./landing.css"
+import "@/components/landing/cinematic.css"
 
 /**
  * Marketing-page shell.
@@ -27,9 +29,9 @@ export default async function HomeLayout({
   const session = await getSession()
   return (
     <div className={`landing-root ${landingFontVars} bg-[var(--color-canvas)] text-[var(--color-text-secondary)]`}>
-      <LandingHeader session={session} />
-      {children}
-      <LandingFooter />
+      <LandingRouteShell signedIn={Boolean(session)} header={<LandingHeader session={session} />} footer={<LandingFooter />}>
+        {children}
+      </LandingRouteShell>
     </div>
   )
 }
