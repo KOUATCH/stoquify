@@ -12,6 +12,7 @@ import {
   Prisma,
 } from "@prisma/client"
 import { z } from "zod"
+import { boundedArray } from "@/lib/validation/bounded-array"
 
 import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
@@ -64,7 +65,7 @@ const importSchema = actor.extend({
   sourceFileName: z.string().trim().max(255).optional(),
   sourceHash: proofHash,
   idempotencyKey: z.string().trim().min(8).max(160),
-  entries: z.array(z.object({
+  entries: boundedArray(z.array(z.object({
     sourceRecordId: z.string().trim().min(1).max(160),
     employeeId: z.string().trim().min(1),
     workDate: z.coerce.date(),
@@ -73,7 +74,7 @@ const importSchema = actor.extend({
     overtimeMinutes: z.number().int().nonnegative().default(0),
     absenceMinutes: z.number().int().nonnegative().default(0),
     sourceHash: proofHash,
-  })).min(1).max(5000),
+  })).min(1).max(5000), 5000),
 })
 
 const anomalyDecisionSchema = actor.extend({
@@ -195,12 +196,12 @@ export const createTimeFoundationInputSchema = actor.extend({
   effectiveFrom: z.coerce.date(),
   effectiveTo: z.coerce.date().nullable().optional(),
   calendarSourceHash: proofHash,
-  holidays: z.array(z.object({
+  holidays: boundedArray(z.array(z.object({
     date: z.coerce.date(),
     name: z.string().trim().min(1).max(160),
     paid: z.boolean().default(true),
     sourceHash: proofHash,
-  })).max(100),
+  })).max(100), 100),
   leavePolicyCode: z.string().trim().min(1).max(40),
   leavePolicyName: z.string().trim().min(1).max(160),
   leavePolicyVersion: z.number().int().positive().default(1),

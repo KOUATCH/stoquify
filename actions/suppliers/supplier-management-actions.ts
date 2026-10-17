@@ -3,6 +3,7 @@
 import { createHash } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { boundedArray } from "@/lib/validation/bounded-array"
 
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { requireFreshAuth } from "@/lib/security/auth-session"
@@ -58,7 +59,7 @@ type ActionResult<T> = {
 const SupplierExportIntentSchema = z.object({
   rowCount: z.number().int().min(0).max(100_000),
   includeSensitiveFields: z.boolean().default(false),
-  fields: z.array(z.string().trim().min(1).max(80)).min(1).max(32),
+  fields: boundedArray(z.array(z.string().trim().min(1).max(80)).min(1).max(32), 32),
 }).strict()
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([

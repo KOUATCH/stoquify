@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { boundedArray } from "@/lib/validation/bounded-array"
 
 const trimmedNonEmpty = z.string().trim().min(1)
 const optionalNullableTrimmed = z
@@ -51,7 +52,7 @@ export const CustomerExportRequestSchema = z
   .object({
     scope: CustomerExportScopeSchema.optional().default("customers"),
     customerId: z.string().trim().min(1).optional(),
-    customerIds: z.array(z.string().trim().min(1)).max(5000).optional(),
+    customerIds: boundedArray(z.array(z.string().trim().min(1)).max(5000), 5000).optional(),
     purpose: z.string().trim().min(3).max(160).optional().default("CUSTOMER_DATA_EXPORT"),
     fileType: z.literal("csv").optional().default("csv"),
     filters: CustomerExportFiltersSchema.optional().default({}),

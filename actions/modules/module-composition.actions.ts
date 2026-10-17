@@ -1,13 +1,14 @@
 "use server"
 
 import { z } from "zod"
+import { boundedArray } from "@/lib/validation/bounded-array"
 import { revalidatePath } from "next/cache"
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import { applyModuleComposition, getModuleCompositionData, getModuleCompositionHistory, previewModuleComposition, reopenModuleComposition, saveModuleCompositionDraft, resumeModuleComposition } from "@/services/modules/module-composition.service"
 import type { CompositionHistoryEntry, CompositionHistoryPage, ModuleCompositionApplyResult, ModuleCompositionData, ModuleCompositionPreview } from "@/services/modules/module-composition-contracts"
 
 const scopeId = z.string().trim().min(1).max(128)
-const selection = z.object({ selectedModules: z.array(z.string().trim().min(1).max(64)).max(30), stopNewWorkModules: z.array(z.string().trim().min(1).max(64)).max(30).optional(), setupInputs: z.object({ payrollPeriodId: scopeId.optional(), complianceAdapterId: scopeId.optional() }).optional(), expectedRevision: z.number().int().min(0) })
+const selection = z.object({ selectedModules: boundedArray(z.array(z.string().trim().min(1).max(64)).max(30), 30), stopNewWorkModules: boundedArray(z.array(z.string().trim().min(1).max(64)).max(30), 30).optional(), setupInputs: z.object({ payrollPeriodId: scopeId.optional(), complianceAdapterId: scopeId.optional() }).optional(), expectedRevision: z.number().int().min(0) })
 const key = z.string().trim().min(8).max(128)
 const draft = selection.extend({ idempotencyKey: key })
 const apply = draft.extend({ previewHash: z.string().regex(/^[a-f0-9]{64}$/) })

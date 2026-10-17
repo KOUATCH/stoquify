@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { boundedArray } from "@/lib/validation/bounded-array";
 
 import {
   ApplicationError,
@@ -72,7 +73,7 @@ const prepareSchema = z
       .string()
       .trim()
       .regex(/^[a-f0-9]{7,64}$/i),
-    allowedRoleCodes: z.array(z.string().trim().min(1).max(80)).min(1).max(20),
+    allowedRoleCodes: boundedArray(z.array(z.string().trim().min(1).max(80)).min(1).max(20), 20),
     activationStartsAt: z.coerce.date(),
     activationEndsAt: z.coerce.date(),
     residualRisks: z.record(z.string(), z.unknown()).optional(),
