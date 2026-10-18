@@ -6,9 +6,6 @@ import { Link } from "@/i18n/navigation"
 import StoquifyLogo from "@/components/global/kit-logo"
 import { useCinematicLight, useCinematicMotionOff } from "./cinematic-shell"
 
-// Local art-direction trial: false restores the preserved courtyard and laptop motion.
-export const SME_HERO_ENABLED = true
-
 export function CinematicHero() {
   const locale = useLocale()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
@@ -68,10 +65,10 @@ export function CinematicHero() {
       const imageScale = 1 + progress * 0.24
       const screenX =
         (width - 1672 * cover) * positionX +
-        (SME_HERO_ENABLED ? 928 : 859) * cover
+        928 * cover
       const screenY =
         (height - 941 * cover) * positionY +
-        (SME_HERO_ENABLED ? 594 : 678) * cover
+        594 * cover
       const anchoredX =
         image.offsetLeft + originX + (screenX - originX) * imageScale
       const anchoredY =
@@ -83,14 +80,12 @@ export function CinematicHero() {
       // Grow from the physical display; only recenter after the photograph fades.
       const recenterPhase = Math.min(1, Math.max(0, (phase - 0.65) / 0.35))
       const recenter = recenterPhase * recenterPhase * (3 - 2 * recenterPhase)
-      const startScale =
-        ((SME_HERO_ENABLED ? 426 : 274) * cover * imageScale) / 1000
+      const startScale = (426 * cover * imageScale) / 1000
       const endScale = Math.min(
         (width * 0.88) / 1000,
         Math.max(
           0.2,
-          (Math.min(height, window.innerHeight) - 150) /
-            (SME_HERO_ENABLED ? 520 : 600),
+          (Math.min(height, window.innerHeight) - 150) / 520,
         ),
         1.12,
       )
@@ -150,7 +145,7 @@ export function CinematicHero() {
 
   return (
     <section
-      className={"cinema" + (SME_HERO_ENABLED ? " hero-sme hero-aio" : "")}
+      className="cinema hero-sme hero-aio"
       id="overview"
       ref={sectionRef}
       aria-label={t("Introduction", "Présentation")}
@@ -162,17 +157,9 @@ export function CinematicHero() {
         <img
           className="hero-image"
           ref={imageRef}
-          src={
-            SME_HERO_ENABLED
-              ? "/landing/cinematic/sme-bakery-aio.webp"
-              : "/landing/cinematic/stoquify-courtyard-front.webp"
-          }
-          srcSet={
-            SME_HERO_ENABLED
-              ? "/landing/cinematic/sme-bakery-aio-960.webp 960w, /landing/cinematic/sme-bakery-aio.webp 1672w"
-              : undefined
-          }
-          sizes={SME_HERO_ENABLED ? "100vw" : undefined}
+          src="/landing/cinematic/sme-bakery-aio.webp"
+          srcSet="/landing/cinematic/sme-bakery-aio-960.webp 960w, /landing/cinematic/sme-bakery-aio.webp 1672w"
+          sizes="100vw"
           alt=""
           width={1672}
           height={941}
