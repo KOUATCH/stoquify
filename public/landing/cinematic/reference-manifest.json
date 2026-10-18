@@ -21,7 +21,7 @@
       "prompt": "Use case: precise-object-edit. Edit target: supplied original Stoquify courtyard image. Preserve the coastal commercial courtyard, palms, blue sky, warm stone arcades, teal shop awnings, curved walnut counter, parcels, lighting and panoramic 16:9 composition. Change ONLY the laptop: rotate it to face the camera directly, centered horizontally at 50% of image width on the counter. Its open screen must be front-on, level rectangular edges, no perspective skew, approximately 18% image width, screen centered at 76% image height. Screen plain very dark navy with no text or icons; the website will overlay its own real interface. A slim silver chassis with keyboard facing us beneath the screen. Keep upper half spacious for white headline. Premium natural architectural photography. No logos, text, watermarks. Laptop screen should be clearly visible and accurately rectangular."
     }
   ],
-  "motion": "Original HTML/CSS product scenes and native scroll-driven laptop-to-workspace transition. Six manually selected demos; static in reduced-motion mode. No third-party footage.",
+  "motion": "Original HTML/CSS product scenes and native scroll-driven bakery-to-workspace transition in the active SME trial. Preserved courtyard-to-laptop variant remains available. Six manually selected demos; static in reduced-motion mode. No third-party footage.",
   "updatedOn": "2026-10-18",
   "interfaceArtwork": {
     "source": "Original code-native Stoquify workflow illustrations in cinematic-modules.tsx",
@@ -35,5 +35,44 @@
     ],
     "data": "Fictional illustrative records, not live data",
     "icons": "Existing installed lucide-react icons"
+  },
+  "smeStoryTrial": {
+    "date": "2026-10-18",
+    "generator": "Built-in image generation",
+    "activeHero": "sme-bakery.webp",
+    "preservedHero": "stoquify-courtyard-front.webp",
+    "restore": "Set SME_HERO_ENABLED to false in cinematic-hero.tsx. Previous asset and laptop motion remain available.",
+    "assets": [
+      {
+        "name": "bakery",
+        "file": "sme-bakery.webp",
+        "width": 1672,
+        "height": 941,
+        "bytes": 228410,
+        "source": "exec-8d890e53-eeee-497e-a85e-972ba3f708c2.png",
+        "prompt": "Use case: photorealistic-natural. Asset type: premium Stoquify SME website hero, wide 16:9 editorial photograph. Original scene, no reference image. A busy well-run contemporary West/Central African urban bakery, high-volume bread production and retail: Black African adult staff in clean navy and ivory workwear and hair coverings, moving abundant fresh baguettes and round bread on wheeled stainless bakery racks behind an inviting wood and stone sales counter. Three believable staff doing different work, one serving an adult customer at right, another loading a rack, authentic candid gestures and realistic hands. Warm natural morning side light, restrained deep blue architectural accents, warm cream plaster, amber bread, brushed steel, elegant practical interior, polished documentary photography with true textures and no exaggerated luxury. Wide view showing connected work, generous calm shadowed space across upper left 45% for website white text overlay; key people and bread center-right and lower half. No text or logos on anything, no watermarks, no computers required, no fantasy, no customer testimonial staging. Scientifically plausible bakery workflow, balanced exposure, refined natural color grade, professional architectural editorial lens. Landscape composition suitable for responsive cropping. Output one image only."
+      },
+      {
+        "name": "pharmacy",
+        "file": "sme-pharmacy.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 85952,
+        "source": "exec-85457427-a73f-40f8-a55f-0f5d128436a5.png",
+        "prompt": "Use case: photorealistic-natural. Asset type: premium Stoquify SME story photography, wide 3:2 landscape. Original editorial documentary photograph inside a well-organized contemporary West/Central African community pharmacy. Two Black African adult pharmacy staff in clean white coats with restrained blue details; one checking a small stock tray of plain unbranded medicine cartons, another speaking with an adult customer across a tidy counter. Background shelves neatly stocked with generic plain cartons in cream, pale blue and muted green, no readable text, no brands, no prescriptions or private records. Natural window light, ivory surfaces, subtle navy fixtures, warm wood detail, authentic commercially practical space. Camera at human eye level, thoughtful candid movement, realistic anatomy and hands, generous depth, premium photography with natural texture and consistent warm highlights/cool navy shadows. Focus is everyday stock and retail operations, no medical procedure or health claim. Main staff and counter central so a mobile crop remains meaningful. No logos, watermarks, added text, sci-fi, lavish hospital or staged endorsement. Output one image only."
+      },
+      {
+        "name": "materials",
+        "file": "sme-materials.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 115506,
+        "source": "exec-07b866df-a3d4-4eb2-8029-74b9f3b199e5.png",
+        "prompt": "Use case: photorealistic-natural. Asset type: premium Stoquify SME story photography, wide 3:2 landscape. Original editorial photograph in a thriving West/Central African building-materials merchant, viewed across a practical trade counter into an orderly open warehouse. Black African adult female store manager in navy work shirt checking a plain delivery sheet with a male trade customer; in the background another adult worker arranging neutral sacks on a trolley. Recognizable useful stock: neatly stacked unbranded cement sacks, PVC pipes, tile samples, small paint tins and timber shelves; safe orderly working environment. No readable text, no logos, no brands, no personal data. Natural late morning light from open frontage, warm cream masonry, navy shelf details, muted terracotta and timber, accurate tactile materials and believable hands. Busy but composed medium-wide documentary photography, professional yet everyday SME, emphasis on quantities, deliveries and trade payments. Main subjects centered for mobile cropping. Cohesive editorial grade with warm highlights, cool blue shadows and restrained colors. No fantasy construction, stereotypical poverty or artificial corporate posing. Output one image only."
+      }
+    ],
+    "responsiveHero": "sme-bakery-960.webp",
+    "classification": "Original generated illustrative SME scenes; no customer endorsement",
+    "motion": "Bakery scene fades into an illustrative workspace on scroll. Mobile and reduced-motion modes retain a static photograph."
   }
 }

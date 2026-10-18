@@ -31,8 +31,8 @@ export function CinematicProduct() {
           </p>
           <h2>
             {t(
-              "Your operations. Your people. One workspace.",
-              "Vos opérations. Vos équipes. Un même espace.",
+              "Operations, people and accounts. Connected.",
+              "Opérations, équipes et comptes. Reliés.",
             )}
           </h2>
           <div className="accordion">
@@ -162,22 +162,22 @@ const stories = [
     "SALE-104 · 2 articles",
   ],
   [
-    "Follow every movement.",
-    "Suivez chaque mouvement.",
-    "Trace the quantity change back to its source and location. Keep the sale and the stock movement in the same story.",
-    "Retrouvez l’origine et l’emplacement du changement de quantité. Gardez la vente et le mouvement de stock dans le même parcours.",
-    "Stock movement",
-    "Mouvement de stock",
+    "Reconcile what was recorded.",
+    "Rapprochez les paiements enregistrés.",
+    "Compare payment records with statements or supported provider evidence. Keep differences visible until they are reviewed.",
+    "Comparez les paiements aux relevés ou aux justificatifs des prestataires pris en charge. Gardez les écarts visibles jusqu’à leur examen.",
+    "Payment reconciliation",
+    "Rapprochement des paiements",
     "Main shop · Quantity −2",
     "Boutique principale · Quantité −2",
   ],
   [
-    "Bring the evidence together.",
-    "Rassemblez les justificatifs.",
-    "Compare the recorded payment with its supporting evidence before completing the review.",
-    "Comparez le paiement enregistré à ses justificatifs avant de terminer la vérification.",
-    "Payment to review",
-    "Paiement à vérifier",
+    "Prepare the period-end close.",
+    "Préparez la clôture de période.",
+    "Review source-linked journals, reconciliation differences and outstanding evidence. Give your accountant a clear view of what still needs attention.",
+    "Examinez les écritures liées aux pièces, les écarts et les justificatifs en attente. Donnez à votre comptable une vue claire des points à traiter.",
+    "Accounting and close",
+    "Comptabilité et clôture",
     "Evidence available · Review pending",
     "Justificatif disponible · Vérification en attente",
   ],
@@ -194,18 +194,18 @@ export function CinematicStory() {
       <div className="narrow center reveal">
         <h2 className="display">
           {t(
-            "From the counter to financial review.",
-            "De la caisse à la révision financière.",
+            "A sale is the beginning of the record.",
+            "Une vente ouvre un parcours comptable.",
           )}
         </h2>
       </div>
       <div className="audience-strip">
         {[
-          ["Retail", "Commerce"],
-          ["Distribution", "Distribution"],
-          ["Storefront", "Boutique"],
-          ["Warehouse", "Entrepôt"],
           ["Sales", "Ventes"],
+          ["Stock", "Stocks"],
+          ["Reconciliation", "Rapprochement"],
+          ["OHADA records", "Comptes OHADA"],
+          ["Close", "Clôture"],
         ].map(([en, fr]) => (
           <span key={en}>{t(en, fr)}</span>
         ))}
@@ -273,7 +273,7 @@ export function CinematicStory() {
               )}
             </p>
             <CinematicModuleScene
-              module={(["pos", "inventory", "finance"] as const)[active]}
+              module={(["pos", "finance", "accounting"] as const)[active]}
             />
           </div>
         </div>

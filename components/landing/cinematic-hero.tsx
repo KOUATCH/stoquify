@@ -6,6 +6,9 @@ import { Link } from "@/i18n/navigation"
 import StoquifyLogo from "@/components/global/kit-logo"
 import { useCinematicMotionOff } from "./cinematic-shell"
 
+// Local art-direction trial: false restores the preserved courtyard and laptop motion.
+export const SME_HERO_ENABLED = true
+
 export function CinematicHero() {
   const locale = useLocale()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
@@ -25,7 +28,11 @@ export function CinematicHero() {
     const note = noteRef.current
     const cue = cueRef.current
     if (!section || !image || !copy || !zoom || !note || !cue) return
-    const mobile = window.matchMedia("(max-width: 760px)")
+    const mobile = window.matchMedia(
+      SME_HERO_ENABLED
+        ? "(max-width: 760px), (max-height: 500px) and (pointer: coarse)"
+        : "(max-width: 760px)",
+    )
     let frame = 0
     let failed = image.complete && image.naturalWidth === 0
     const update = () => {
@@ -78,6 +85,17 @@ export function CinematicHero() {
       zoom.style.borderRadius = 3 + ease * 9 + "px"
       image.style.opacity = String(1 - ease * 0.94)
       image.style.transform = `scale(${imageScale}) translateY(${-progress * 2}%)`
+      if (SME_HERO_ENABLED) {
+        // Reveal the workspace from everyday activity, without a fictitious laptop anchor.
+        zoom.style.opacity = staticScene ? "0" : String(ease)
+        zoom.style.left = width / 2 + "px"
+        zoom.style.top =
+          (Math.min(height, window.innerHeight) + 70) / 2 +
+          (1 - ease) * 90 +
+          "px"
+        zoom.style.transform = `translate(-50%, -50%) scale(${endScale * (0.88 + ease * 0.12)})`
+        zoom.style.borderRadius = "12px"
+      }
     }
     const queue = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -111,7 +129,7 @@ export function CinematicHero() {
 
   return (
     <section
-      className="cinema"
+      className={"cinema" + (SME_HERO_ENABLED ? " hero-sme" : "")}
       id="overview"
       ref={sectionRef}
       aria-label={t("Introduction", "Présentation")}
@@ -123,7 +141,17 @@ export function CinematicHero() {
         <img
           className="hero-image"
           ref={imageRef}
-          src="/landing/cinematic/stoquify-courtyard-front.webp"
+          src={
+            SME_HERO_ENABLED
+              ? "/landing/cinematic/sme-bakery.webp"
+              : "/landing/cinematic/stoquify-courtyard-front.webp"
+          }
+          srcSet={
+            SME_HERO_ENABLED
+              ? "/landing/cinematic/sme-bakery-960.webp 960w, /landing/cinematic/sme-bakery.webp 1672w"
+              : undefined
+          }
+          sizes={SME_HERO_ENABLED ? "100vw" : undefined}
           alt=""
           width={1672}
           height={941}
@@ -131,16 +159,22 @@ export function CinematicHero() {
         />
         <div className="hero-shade" />
         <div className="hero-copy" ref={copyRef}>
+          <p className="hero-eyebrow">
+            {t(
+              "THE WORKSPACE FOR SMEs IN OHADA MARKETS",
+              "L’ESPACE DE GESTION DES PME EN ZONE OHADA",
+            )}
+          </p>
           <h1>
             {t(
-              "Run your business with a clearer view.",
-              "Pilotez votre activité avec une vision claire.",
+              "From your first sale to your month-end close.",
+              "De la première vente à la clôture du mois.",
             )}
           </h1>
           <p className="hero-intro">
             {t(
-              "Bring sales, stock, people and financial review into one workspace. Keep your teams connected to the work behind the numbers.",
-              "Réunissez ventes, stocks, personnel et révision financière. Donnez à vos équipes une vue claire des opérations derrière les chiffres.",
+              "Connect POS, stock, payment reconciliation and OHADA accounting with HRIS and payroll. Give every team a clear view of the work behind the numbers.",
+              "Reliez caisse, stocks, rapprochement des paiements et comptabilité OHADA au SIRH et à la paie. Donnez à chaque équipe une vision claire des opérations derrière les chiffres.",
             )}
           </p>
           <div className="hero-actions">
@@ -156,8 +190,8 @@ export function CinematicHero() {
         </div>
         <div className="hero-note" ref={noteRef}>
           {t(
-            "For retail and distribution teams, from the shop floor to HR and finance.",
-            "Pour les commerces et la distribution, des équipes terrain aux RH et à la finance.",
+            "For owners, operations, finance and HR teams. Illustrative SME scene.",
+            "Pour les dirigeants, les équipes terrain, la finance et les RH. Scène de PME illustrative.",
           )}
         </div>
         <div
@@ -186,7 +220,10 @@ export function CinematicHero() {
             </aside>
             <div>
               <h2>
-                {t("Your business, connected.", "Votre activité, connectée.")}
+                {t(
+                  "From daily activity to close review.",
+                  "De l’activité quotidienne à la clôture.",
+                )}
               </h2>
               <div className="zoom-kpis">
                 <span>
@@ -221,7 +258,7 @@ export function CinematicHero() {
                 <div>
                   <b>REF-104</b>
                   <span>
-                    {t("Finance → Accounting", "Finance → Comptabilité")}
+                    {t("Reconciliation → Close", "Rapprochement → Clôture")}
                   </span>
                   <em>{t("Review pending", "À vérifier")}</em>
                 </div>

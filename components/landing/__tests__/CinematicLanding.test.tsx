@@ -4,11 +4,13 @@ import { LandingRouteShell } from "../cinematic-shell"
 import { CinematicHero } from "../cinematic-hero"
 import { CinematicProduct, CinematicStory } from "../cinematic-product"
 import { CinematicSetup } from "../cinematic-setup"
+import { CinematicBusinessStory } from "../cinematic-business-story"
 
 let mockLocale = "en"
 let mockPathname = "/"
 let mockReduced = false
 let mockMobile = false
+let mockLandscape = false
 
 jest.mock("next-intl", () => ({ useLocale: () => mockLocale }))
 jest.mock("@/i18n/navigation", () => ({
@@ -44,9 +46,12 @@ beforeEach(() => {
   mockPathname = "/"
   mockReduced = false
   mockMobile = false
+  mockLandscape = false
   window.history.replaceState(null, "", "/")
   window.matchMedia = jest.fn((query) => ({
-    matches: query.includes("reduced") ? mockReduced : mockMobile,
+    matches: query.includes("reduced")
+      ? mockReduced
+      : mockMobile || (mockLandscape && query.includes("pointer: coarse")),
     media: query,
     onchange: null,
     addListener: jest.fn(),
@@ -116,7 +121,7 @@ test("preserves signed-in dashboard navigation and French routes", () => {
     screen.getByRole("link", { name: "Switch to English" }),
   ).toHaveAttribute("href", "/en")
   expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-    "Pilotez votre activité avec une vision claire.",
+    "De la première vente à la clôture du mois.",
   )
   expect(
     screen.getByRole("link", { name: "Créer votre compte" }),
@@ -156,22 +161,26 @@ function loadScrolledScene(container: HTMLElement) {
   fireEvent.load(container.querySelector(".hero-image")!)
 }
 
-test.each(["mobile", "reduced"])(
+test.each(["mobile", "reduced", "landscape"])(
   "keeps original artwork static for %s visitors",
   (mode) => {
     mockMobile = mode === "mobile"
+    mockLandscape = mode === "landscape"
     mockReduced = mode === "reduced"
     const { container } = render(shell(<CinematicHero />))
     loadScrolledScene(container)
     expect(container.querySelector("video")).toBeNull()
     expect(container.querySelector(".hero-image")).toHaveAttribute(
       "src",
-      "/landing/cinematic/stoquify-courtyard-front.webp",
+      "/landing/cinematic/sme-bakery.webp",
     )
     expect(container.querySelector(".hero-image")).toHaveStyle({
       transform: "scale(1) translateY(0%)",
     })
     expect(container.querySelector(".hero-copy")).toHaveStyle({ opacity: "1" })
+    expect(container.querySelector(".zoom-preview")).toHaveStyle({
+      opacity: "0",
+    })
     if (mockReduced)
       expect(
         screen.getByRole("button", { name: "Reduced motion enabled" }),
@@ -297,7 +306,7 @@ test.each(["en", "fr"])(
   },
 )
 
-test("hero workspace starts inside the laptop screen and grows on scroll", () => {
+test("SME hero reveals the workspace on scroll and restores the photograph on return", () => {
   const { container } = render(shell(<CinematicHero />))
   const scene = container.querySelector(".cinema") as HTMLElement
   const image = container.querySelector(".hero-image") as HTMLImageElement
@@ -308,19 +317,55 @@ test("hero workspace starts inside the laptop screen and grows on scroll", () =>
   const bounds = jest.spyOn(scene, "getBoundingClientRect")
   bounds.mockReturnValue({ top: 0 } as DOMRect)
   fireEvent.load(image)
-  expect(preview.style.left).toBe("859px")
-  expect(preview.style.top).toBe("678px")
-  expect(preview.style.transform).toContain("scale(0.274)")
+  expect(preview.style.left).toBe("836px")
+  expect(preview.style.opacity).toBe("0")
+  const restingTransform = preview.style.transform
   bounds.mockReturnValue({ top: -1000 } as DOMRect)
   fireEvent.load(image)
-  expect(preview.style.transform).not.toContain("scale(0.274)")
+  expect(preview.style.opacity).toBe("1")
+  expect(preview.style.transform).not.toBe(restingTransform)
   expect((container.querySelector(".hero-copy") as HTMLElement).inert).toBe(
     true,
   )
   bounds.mockReturnValue({ top: 0 } as DOMRect)
   fireEvent.load(image)
-  expect(preview.style.transform).toContain("scale(0.274)")
+  expect(preview.style.opacity).toBe("0")
+  expect(preview.style.transform).toBe(restingTransform)
   expect((container.querySelector(".hero-copy") as HTMLElement).inert).toBe(
     false,
   )
 })
+
+test.each(["en", "fr"])(
+  "SME story keeps illustrations descriptive and workflow destinations localized in %s",
+  (locale) => {
+    mockLocale = locale
+    const { container } = render(<CinematicBusinessStory />)
+    const photos = screen.getAllByRole("img")
+    expect(photos).toHaveLength(2)
+    for (const photo of photos) {
+      expect(photo).toHaveAttribute("loading", "lazy")
+      expect(photo.getAttribute("alt")?.length).toBeGreaterThan(30)
+      expect(photo).toHaveAttribute("width", "1200")
+      expect(photo).toHaveAttribute("height", "800")
+    }
+    for (const workflow of [
+      "stockToSale",
+      "paymentReconciliation",
+      "accountingCloseAssurance",
+      "peopleToPay",
+    ]) {
+      expect(
+        container.querySelector(
+          `a[href="/${locale}/workflows#workflow-${workflow}"]`,
+        ),
+      ).toBeInTheDocument()
+    }
+    expect(container.querySelector("#accounting-close")).toHaveTextContent(
+      "SYSCOHADA",
+    )
+    expect(container.querySelector("#people-payroll")).toHaveTextContent(
+      locale === "fr" ? "SIRH" : "HRIS",
+    )
+  },
+)
