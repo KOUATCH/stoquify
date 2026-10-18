@@ -1,15 +1,39 @@
 {
-  "reference": "https://mercury.com/",
-  "capturedOn": "2026-10-17",
-  "source": "Approved standalone Stoquify prototype",
+  "createdOn": "2026-10-17",
+  "source": "Original AI-generated Stoquify artwork",
+  "generator": "Built-in image generation tool",
   "assets": [
     {
-      "file": "hero-start.webp",
-      "source": "https://mercury.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fhero_start_frame_xl.39vs55l6ttdit.jpg&w=3840&q=75"
+      "file": "stoquify-courtyard.webp",
+      "width": 1672,
+      "height": 941,
+      "referenceImages": [],
+      "prompt": "Use case: ads-marketing. Create one original premium photorealistic website hero background for Stoquify, a business operating system for retail and distribution. Wide 16:9 cinematic composition, ideally 2560x1440. Scene: a beautiful contemporary West/Central African coastal commercial courtyard seen from an elevated shaded open-air studio, refined sand-colored stone arcades, restrained terracotta, sculptural tropical greenery, quiet teal glazed storefronts and an airy distant blue sea horizon. Foreground lower center: a curved walnut counter with an open unbranded slim laptop, a small neat stack of neutral inventory cartons and one ceramic vessel, no office chair. Suggest connected everyday commerce, clarity, calm ambition and room to grow. The upper 45 percent must be very calm low-detail slate-blue atmospheric sky and shaded architectural negative space suitable for centered white headline and buttons; no objects or bright sun behind that text zone. Keep central subject in lower half so it survives a centered portrait crop. Natural early morning light from the side, rich deep blue-green shadows, warm highlights, authentic architectural texture, sophisticated editorial photography, believable proportions, exceptionally polished. No written text, logos, watermark, charts, text overlays or UI. Avoid mountain valleys, rivers, forest cliffs, isolated office desk in wilderness, banking imagery, futuristic neon, crowded scene or recognizable existing website artwork. This is an entirely new composition; no reference image is being supplied."
     },
     {
-      "file": "hero-scrub.mp4",
-      "source": "https://mercury.com/videos/hero/hero-scrub-lg.mp4"
+      "file": "stoquify-courtyard-front.webp",
+      "width": 1672,
+      "height": 941,
+      "referenceImages": [
+        "stoquify-courtyard.webp"
+      ],
+      "generator": "Built-in image generation tool",
+      "prompt": "Use case: precise-object-edit. Edit target: supplied original Stoquify courtyard image. Preserve the coastal commercial courtyard, palms, blue sky, warm stone arcades, teal shop awnings, curved walnut counter, parcels, lighting and panoramic 16:9 composition. Change ONLY the laptop: rotate it to face the camera directly, centered horizontally at 50% of image width on the counter. Its open screen must be front-on, level rectangular edges, no perspective skew, approximately 18% image width, screen centered at 76% image height. Screen plain very dark navy with no text or icons; the website will overlay its own real interface. A slim silver chassis with keyboard facing us beneath the screen. Keep upper half spacious for white headline. Premium natural architectural photography. No logos, text, watermarks. Laptop screen should be clearly visible and accurately rectangular."
     }
-  ]
+  ],
+  "motion": "Original HTML/CSS product scenes and native scroll-driven laptop-to-workspace transition. Six manually selected demos; static in reduced-motion mode. No third-party footage.",
+  "updatedOn": "2026-10-18",
+  "interfaceArtwork": {
+    "source": "Original code-native Stoquify workflow illustrations in cinematic-modules.tsx",
+    "modules": [
+      "POS",
+      "Inventory",
+      "Finance",
+      "Accounting",
+      "HRIS",
+      "Payroll"
+    ],
+    "data": "Fictional illustrative records, not live data",
+    "icons": "Existing installed lucide-react icons"
+  }
 }

@@ -1,5 +1,15 @@
 # Cinematic public homepage — 17 October 2026
 
+## Original Stoquify artwork update
+
+This section records the first artwork replacement. The subsequent front-facing laptop, six-module showcase and current verification are documented in [the 18 October product refresh](STOQUIFY_LANDING_PRODUCT_REFRESH_2026-10-18.md).
+
+At the user’s request, the live homepage now replaces the reference photo and camera video with original AI-generated Stoquify artwork: `public/landing/cinematic/stoquify-courtyard.webp` (1672 × 941, 289,722 bytes). The built-in image-generation tool created a coastal trading courtyard viewed from a shaded workspace, with warm stone, teal storefronts, greenery and a curved counter. No reference image was supplied. The complete prompt and provenance are recorded in `public/landing/cinematic/reference-manifest.json`.
+
+The earlier Mercury poster and MP4 have been removed from the application asset directory. Scroll now applies a gentle scale/pan directly to the original image while retaining the workspace reveal, CTA fade/inert behavior, pause control and static mobile/reduced-motion presentation. This is image-based camera movement, not generated video. The lower-page code illustrations were already original and remain unchanged. Earlier media/video verification sections below describe the previous implementation, not the current asset pipeline.
+
+Verification: workflow contract, focused ESLint, focused non-emitting TypeScript and CSS scope checks passed; all 11 focused component tests passed, including original-image scrolling, pause/resume, static mobile/reduced motion and image-error fallback. Browser checks confirmed the local image loads, no video element remains, scroll/reveal/pause behavior works and French mobile content fits at 390 × 844 without horizontal overflow. The new artwork was inspected on the EN page at 927 × 521. Screenshots are retained in the prototype artifact folder under `original-artwork/`.
+
 ## Decision and scope
 
 The user approved implementing the reviewed Mercury-style Stoquify prototype, preserving its visuals and motion, Stoquify branding, EN/FR content and existing routes. This decision applies only to the locale homepage. It does not adopt a new authenticated theme or change business behavior.

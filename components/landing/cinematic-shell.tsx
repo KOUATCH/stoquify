@@ -10,6 +10,7 @@ import {
 } from "react"
 import { useLocale } from "next-intl"
 import { Link, usePathname } from "@/i18n/navigation"
+import { cinematicModules } from "./cinematic-modules"
 import StoquifyLogo from "@/components/global/kit-logo"
 
 const MotionContext = createContext(true)
@@ -116,12 +117,7 @@ function CinematicShell({
     }
   }, [menu])
 
-  const products = [
-    ["Sales & daily activity", "Ventes et activité quotidienne"],
-    ["Inventory & movements", "Stocks et mouvements"],
-    ["Payments & evidence", "Paiements et justificatifs"],
-    ["Accounting review", "Révision comptable"],
-  ]
+  const products = cinematicModules.map((module) => module.label)
 
   return (
     <MotionContext.Provider value={motionOff}>
@@ -229,8 +225,8 @@ function CinematicShell({
               </h2>
               <p>
                 {t(
-                  "Explore a connected path from a sale to accounting review.",
-                  "Explorez un parcours connecté, de la vente à la révision comptable.",
+                  "Explore sales, stock, people, payroll and financial review.",
+                  "Explorez les ventes, les stocks, le personnel, la paie et la révision financière.",
                 )}
               </p>
               <Link className="text-link" href="/#modules">

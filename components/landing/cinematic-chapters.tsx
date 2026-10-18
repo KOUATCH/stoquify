@@ -1,8 +1,9 @@
 "use client"
 import { useLocale } from "next-intl"
-import type { CSSProperties } from "react"
 import { Link } from "@/i18n/navigation"
 import { GettingStarted } from "./landing-message-sections"
+import { cinematicModules, CinematicModuleArt } from "./cinematic-modules"
+
 export function CinematicChapters() {
   const locale = useLocale()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
@@ -10,168 +11,96 @@ export function CinematicChapters() {
     <div className="light-chapter" id="light-chapter">
       <section className="section features">
         <div className="section-title reveal">
+          <p className="eyebrow">
+            {t(
+              "BUILT FOR THE WORK BEHIND YOUR BUSINESS",
+              "POUR LES MÉTIERS QUI FONT VIVRE VOTRE ENTREPRISE",
+            )}
+          </p>
           <h2 className="display">
             {t(
-              "Less piecing things together. More moving forward.",
-              "Moins de rapprochements. Plus de clarté pour avancer.",
+              "From the first sale to the month-end review.",
+              "De la première vente à la révision de fin de mois.",
             )}
           </h2>
+          <p>
+            {t(
+              "Give every team the context to move its work forward.",
+              "Donnez à chaque équipe les informations nécessaires pour avancer.",
+            )}
+          </p>
         </div>
+        <p className="art-disclosure">
+          {t(
+            "Illustrative workflows with fictional records.",
+            "Parcours illustratifs avec des données fictives.",
+          )}
+        </p>
         <div className="feature-grid">
-          <article className="feature reveal">
-            <div className="art cards" aria-hidden="true">
-              <div className="paper p3">
-                <small>{t("SALE · 104", "VENTE · 104")}</small>
-                <b>{t("One connected record", "Un dossier connecté")}</b>
-                <em>{t("Stock movement →", "Mouvement de stock →")}</em>
-              </div>
-              <div className="paper p2">
-                <small>{t("STOCK · MAIN SHOP", "STOCK · BOUTIQUE")}</small>
-                <b>{t("Quantity −2", "Quantité −2")}</b>
-                <em>{t("Linked to sale 104", "Lié à la vente 104")}</em>
-              </div>
-              <div className="paper p1">
-                <small>
-                  {t("PAYMENT · REVIEW", "PAIEMENT · VÉRIFICATION")}
-                </small>
-                <b>{t("Evidence attached", "Justificatif joint")}</b>
-                <em>{t("Ready for review", "Prêt pour vérification")}</em>
-              </div>
-            </div>
-            <h3>{t("Keep the sale connected", "Gardez la vente connectée")}</h3>
-            <p>
-              {t(
-                "Follow the sale, its stock movement and the payment record through one understandable sequence.",
-                "Suivez la vente, son mouvement de stock et son paiement dans un parcours compréhensible.",
-              )}
-            </p>
-          </article>
-          <article className="feature reveal">
-            <div className="art bars" aria-hidden="true">
-              <div className="bar-chart">
-                <i style={{ "--h": "42%", "--i": "0" } as CSSProperties}></i>
-                <i style={{ "--h": "64%", "--i": "1" } as CSSProperties}></i>
-                <i style={{ "--h": "49%", "--i": "2" } as CSSProperties}></i>
-                <i style={{ "--h": "86%", "--i": "3" } as CSSProperties}></i>
-                <i style={{ "--h": "65%", "--i": "4" } as CSSProperties}></i>
-                <i style={{ "--h": "96%", "--i": "5" } as CSSProperties}></i>
-                <i style={{ "--h": "78%", "--i": "6" } as CSSProperties}></i>
-              </div>
-              <div className="art-pill">
-                {t("Main shop · Warehouse", "Boutique · Entrepôt")}
-              </div>
-            </div>
-            <h3>
-              {t("Know what moved, and where", "Sachez ce qui a bougé, et où")}
-            </h3>
-            <p>
-              {t(
-                "Read stock quantities in their location context and inspect the movement behind a change.",
-                "Consultez les stocks par emplacement et examinez le mouvement à l’origine d’un changement.",
-              )}
-            </p>
-          </article>
-          <article className="feature reveal">
-            <div className="art orbit" aria-hidden="true">
-              <div className="ring r1"></div>
-              <div className="ring r2"></div>
-              <div className="ring r3"></div>
-              <span className="orb"></span>
-            </div>
-            <h3>
-              {t(
-                "Give every payment its context",
-                "Donnez du contexte à chaque paiement",
-              )}
-            </h3>
-            <p>
-              {t(
-                "Keep the recorded amount, source and supporting evidence close to the review.",
-                "Gardez le montant enregistré, la source et les justificatifs à portée de la vérification.",
-              )}
-            </p>
-          </article>
-          <article className="feature reveal">
-            <div className="art ledger-art" aria-hidden="true">
-              <div className="ledger">
-                <div style={{ "--i": "0" } as CSSProperties}>
-                  <i>{"01"}</i>
-                  <span>{t("Sale recorded", "Vente enregistrée")}</span>
-                  <b>{"↗︎"}</b>
-                </div>
-                <div style={{ "--i": "1" } as CSSProperties}>
-                  <i>{"02"}</i>
-                  <span>{t("Movement linked", "Mouvement relié")}</span>
-                  <b>{"↗︎"}</b>
-                </div>
-                <div style={{ "--i": "2" } as CSSProperties}>
-                  <i>{"03"}</i>
-                  <span>{t("Payment to review", "Paiement à vérifier")}</span>
-                  <b>{"↗︎"}</b>
-                </div>
-              </div>
-            </div>
-            <h3>
-              {t(
-                "Follow the path to review",
-                "Suivez le chemin vers la révision",
-              )}
-            </h3>
-            <p>
-              {t(
-                "Bring source records into view before deciding what is ready for accounting review.",
-                "Consultez les pièces d’origine avant de décider ce qui est prêt pour la révision comptable.",
-              )}
-            </p>
-          </article>
+          {cinematicModules.map((module) => (
+            <article className="feature reveal" key={module.id}>
+              <CinematicModuleArt module={module.id} />
+              <p className="eyebrow">{t(module.label[0], module.label[1])}</p>
+              <h3>{t(module.title[0], module.title[1])}</h3>
+              <p>{t(module.body[0], module.body[1])}</p>
+            </article>
+          ))}
         </div>
       </section>
       <section className="section statement reveal">
         <h2>
           {t(
-            "One sale shouldn’t become five disconnected records.",
-            "Une vente ne devrait pas devenir cinq dossiers déconnectés.",
+            "Less time reconstructing the day. More clarity for the next decision.",
+            "Moins de temps à reconstituer la journée. Plus de clarté pour décider.",
           )}
         </h2>
         <p>
           {t(
-            "Clarity begins with the connections.",
-            "La clarté commence par les liens.",
+            "Keep the source, the status and the next step together.",
+            "Gardez ensemble l’origine, le statut et la prochaine étape.",
           )}
         </p>
       </section>
       <section className="section onboarding split" id="start">
         <div className="reveal">
+          <p className="eyebrow">
+            {t("A PRACTICAL START", "UN DÉMARRAGE CONCRET")}
+          </p>
           <h2>
             {t(
-              "Start with your workspace. Build from there.",
-              "Commencez par votre espace de travail. Avancez à partir de là.",
+              "Set up the workspace your team needs.",
+              "Préparez l’espace dont votre équipe a besoin.",
             )}
           </h2>
           <div className="steps">
             <details name="cinematic-onboarding" open>
               <summary>
-                <span>{t("Create your account", "Créez votre compte")}</span>
-                <span aria-hidden="true">{"+"}</span>
+                <span>
+                  {t(
+                    "Create and verify your account",
+                    "Créez et vérifiez votre compte",
+                  )}
+                </span>
+                <span aria-hidden="true">+</span>
               </summary>
               <p>
                 {t(
-                  "Register and verify your email.",
-                  "Inscrivez-vous et vérifiez votre adresse e-mail.",
+                  "Register your organization and verify your email before signing in.",
+                  "Inscrivez votre organisation et vérifiez votre adresse e-mail avant de vous connecter.",
                 )}
               </p>
             </details>
             <details name="cinematic-onboarding">
               <summary>
                 <span>
-                  {t("Set up your workspace", "Configurez votre espace")}
+                  {t("Prepare your operations", "Préparez votre activité")}
                 </span>
-                <span aria-hidden="true">{"+"}</span>
+                <span aria-hidden="true">+</span>
               </summary>
               <p>
                 {t(
-                  "Configure the organization and locations for your business.",
-                  "Configurez l’organisation et les emplacements de votre entreprise.",
+                  "Confirm enabled modules, configure locations and assign your team’s access.",
+                  "Confirmez les modules activés, configurez vos sites et définissez les accès de l’équipe.",
                 )}
               </p>
             </details>
@@ -179,292 +108,150 @@ export function CinematicChapters() {
               <summary>
                 <span>
                   {t(
-                    "Follow your first workflow",
-                    "Suivez votre premier parcours",
+                    "Begin with a reviewed workflow",
+                    "Commencez par un parcours vérifié",
                   )}
                 </span>
-                <span aria-hidden="true">{"+"}</span>
+                <span aria-hidden="true">+</span>
               </summary>
               <p>
                 {t(
-                  "Explore the records behind a sale, stock movement and payment.",
-                  "Explorez les pièces liées à une vente, un mouvement de stock et un paiement.",
+                  "Prepare opening data and required settings, then follow your first operation through its checks.",
+                  "Préparez les données initiales et les paramètres nécessaires, puis suivez votre première opération et ses contrôles.",
                 )}
               </p>
             </details>
           </div>
           <Link className="button primary" href="/register">
-            <span>{t("Create your account", "Créer votre compte")}</span>
-            <span aria-hidden="true">{"↗︎"}</span>
+            {t("Create your account", "Créer votre compte")}{" "}
+            <span aria-hidden="true">↗︎</span>
           </Link>
         </div>
-        <div className="convergence reveal" aria-hidden="true">
-          <svg viewBox="0 0 500 600">
-            <defs>
-              <linearGradient id="beam">
-                <stop stopColor="#a4d6dc" stopOpacity="0" />
-                <stop offset="1" stopColor="#dbeefa" />
-              </linearGradient>
-              <radialGradient id="halo">
-                <stop stopColor="#f8fcff" stopOpacity=".8" />
-                <stop offset=".2" stopColor="#8ed2df" stopOpacity=".25" />
-                <stop offset="1" stopColor="#7bcbd9" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="250" cy="160" r="130" fill="url(#halo)" />
-            <path
-              d="M-2 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M26 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M54 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M82 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M110 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M138 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M166 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M194 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M222 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M250 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M278 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M306 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M334 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M362 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M390 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M418 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M446 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M474 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <path
-              d="M502 600Q250 450 250 160"
-              stroke="url(#beam)"
-              fill="none"
-              opacity=".4"
-            />
-            <circle
-              className="signal-dot"
-              cx="250"
-              cy="160"
-              r="6"
-              fill="#edfaff"
-            />
-            <circle
-              className="signal-dot second"
-              cx="250"
-              cy="340"
-              r="4"
-              fill="#edfaff"
-            />
-          </svg>
+        <div className="convergence workspace-map reveal" aria-hidden="true">
+          <div className="map-brand">
+            Stoquify<small>{t("Your workspace", "Votre espace")}</small>
+          </div>
+          <div className="map-modules">
+            {cinematicModules.map((module) => (
+              <div key={module.id}>
+                <module.icon size={22} />
+                <span>{t(module.label[0], module.label[1])}</span>
+              </div>
+            ))}
+          </div>
+          <p>
+            {t(
+              "People, operations and financial review.",
+              "Personnel, opérations et révision financière.",
+            )}
+          </p>
         </div>
       </section>
       <section className="section context">
         <div className="section-title reveal">
           <h2 className="display">
             {t(
-              "The detail you need. The perspective you want.",
-              "Le détail nécessaire. La vue d’ensemble souhaitée.",
+              "Know what needs your attention.",
+              "Sachez où porter votre attention.",
             )}
           </h2>
         </div>
         <div className="context-grid">
-          <article className="reveal">
-            <span className="large-number">{"01"}</span>
-            <h3>{t("Source", "Origine")}</h3>
-            <p>
-              {t(
-                "See where the record came from.",
-                "Identifiez l’origine de chaque pièce.",
-              )}
-            </p>
-          </article>
-          <article className="reveal">
-            <span className="large-number">{"02"}</span>
-            <h3>{t("Location", "Emplacement")}</h3>
-            <p>
-              {t(
-                "Keep the right shop or warehouse in view.",
-                "Gardez la bonne boutique ou le bon entrepôt en vue.",
-              )}
-            </p>
-          </article>
-          <article className="reveal">
-            <span className="large-number">{"03"}</span>
-            <h3>{t("Status", "Statut")}</h3>
-            <p>
-              {t(
-                "Distinguish recorded activity from completed review.",
-                "Distinguez l’activité enregistrée de la vérification terminée.",
-              )}
-            </p>
-          </article>
-          <article className="reveal">
-            <span className="large-number">{"04"}</span>
-            <h3>{t("Next step", "Prochaine étape")}</h3>
-            <p>
-              {t(
-                "Find the action that follows the evidence.",
-                "Identifiez l’action à mener au vu des justificatifs.",
-              )}
-            </p>
-          </article>
+          {[
+            [
+              "Source",
+              "Origine",
+              "Return to the sale, receipt or document behind a figure.",
+              "Retrouvez la vente, la réception ou la pièce derrière un chiffre.",
+            ],
+            [
+              "Location",
+              "Site",
+              "Read stock and activity in the right shop or warehouse.",
+              "Consultez stocks et activité pour la bonne boutique ou le bon entrepôt.",
+            ],
+            [
+              "Status",
+              "Statut",
+              "Separate recorded activity from work still awaiting review.",
+              "Distinguez l’activité enregistrée des éléments encore à vérifier.",
+            ],
+            [
+              "Responsibility",
+              "Responsabilité",
+              "Give the next decision to the team with the right access.",
+              "Confiez la prochaine décision à l’équipe disposant des accès adaptés.",
+            ],
+          ].map(([en, fr, body, frenchBody], i) => (
+            <article className="reveal" key={en}>
+              <span className="large-number">0{i + 1}</span>
+              <h3>{t(en, fr)}</h3>
+              <p>{t(body, frenchBody)}</p>
+            </article>
+          ))}
         </div>
       </section>
       <section className="section safeguards">
         <div className="section-title reveal">
           <h2 className="display">
             {t(
-              "Confidence comes from knowing the full story.",
-              "La confiance vient d’une vision complète.",
+              "Clear records. Deliberate decisions.",
+              "Des dossiers clairs. Des décisions éclairées.",
             )}
           </h2>
         </div>
         <div className="three-grid">
-          <article className="reveal">
-            <div className="symbol" aria-hidden="true">
-              {"◇"}
-            </div>
-            <h3>{t("Connected records", "Des pièces reliées")}</h3>
-            <p>
-              {t(
-                "Keep the relationship between business activity and review visible.",
-                "Gardez visibles les liens entre l’activité et sa révision.",
-              )}
-            </p>
-          </article>
-          <article className="reveal">
-            <div className="symbol" aria-hidden="true">
-              {"◎"}
-            </div>
-            <h3>{t("Clear context", "Un contexte clair")}</h3>
-            <p>
-              {t(
-                "Read figures with their location, period and source.",
-                "Lisez les chiffres avec leur emplacement, leur période et leur source.",
-              )}
-            </p>
-          </article>
-          <article className="reveal">
-            <div className="symbol" aria-hidden="true">
-              {"≡"}
-            </div>
-            <h3>{t("Visible next steps", "Des suites visibles")}</h3>
-            <p>
-              {t(
-                "Give attention to records that still need a decision.",
-                "Portez votre attention sur les pièces qui attendent une décision.",
-              )}
-            </p>
-          </article>
+          {[
+            [
+              "Connected evidence",
+              "Des justificatifs reliés",
+              "Keep the link between operations, supporting documents and review.",
+              "Conservez le lien entre opérations, justificatifs et révision.",
+            ],
+            [
+              "Useful context",
+              "Un contexte utile",
+              "Read figures with their period, currency, location and source.",
+              "Lisez les chiffres avec leur période, devise, site et origine.",
+            ],
+            [
+              "Visible checks",
+              "Des contrôles visibles",
+              "Keep outstanding reviews visible before moving to the next step.",
+              "Gardez les vérifications en attente visibles avant de poursuivre.",
+            ],
+          ].map(([en, fr, body, frenchBody]) => (
+            <article className="reveal" key={en}>
+              <h3>{t(en, fr)}</h3>
+              <p>{t(body, frenchBody)}</p>
+            </article>
+          ))}
         </div>
       </section>
       <section className="section resources">
         <h2 className="reveal">
-          <span>{t("Explore your next step", "Explorez la suite")}</span>
+          {t("Choose where to begin.", "Choisissez votre point de départ.")}
         </h2>
         <div className="three-grid">
-          <Link className="resource reveal" href="/workflows">
-            <small>{"01"}</small>
-            <h3>{t("Explore the workflow atlas", "Explorer les parcours")}</h3>
-            <span aria-hidden="true">{"↗︎"}</span>
-          </Link>
-          <Link className="resource reveal" href="/#showcase">
-            <small>{"02"}</small>
-            <h3>
-              {t("Meet the connected workspace", "Découvrir l’espace connecté")}
-            </h3>
-            <span aria-hidden="true">{"↗︎"}</span>
-          </Link>
-          <Link className="resource reveal" href="/#start">
-            <small>{"03"}</small>
-            <h3>{t("See how to get started", "Voir comment démarrer")}</h3>
-            <span aria-hidden="true">{"↗︎"}</span>
-          </Link>
+          {[
+            [
+              "/workflows",
+              "Explore business workflows",
+              "Explorer les parcours métier",
+            ],
+            [
+              "/#showcase",
+              "See the six product views",
+              "Découvrir les six vues produit",
+            ],
+            ["/#start", "Prepare your workspace", "Préparer votre espace"],
+          ].map(([href, en, fr], i) => (
+            <Link className="resource reveal" href={href} key={href}>
+              <small>0{i + 1}</small>
+              <h3>{t(en, fr)}</h3>
+              <span aria-hidden="true">↗︎</span>
+            </Link>
+          ))}
         </div>
       </section>
       <div className="availability">
@@ -473,35 +260,45 @@ export function CinematicChapters() {
       <section id="get-started" className="section closing center reveal">
         <h2 className="display">
           {t(
-            "Make room for a clearer way to work.",
-            "Faites place à une façon plus claire de travailler.",
+            "Bring your next working day into focus.",
+            "Abordez votre prochaine journée avec clarté.",
           )}
         </h2>
         <div className="closing-actions">
           <Link className="button primary" href="/register">
-            <span>{t("Create your account", "Créer votre compte")}</span>
-            <span aria-hidden="true">{"↗︎"}</span>
+            {t("Create your account", "Créer votre compte")}{" "}
+            <span aria-hidden="true">↗︎</span>
           </Link>
-          <Link className="button outline" href="/#workflow">
-            <span>{t("See the workflow", "Voir le parcours")}</span>
+          <Link className="button outline" href="/workflows">
+            {t("Explore the workflows", "Explorer les parcours")}
           </Link>
         </div>
         <div className="closing-cards">
           <article>
-            <h3>{t("For retail businesses", "Pour les commerces")}</h3>
+            <h3>
+              {t(
+                "For owners and operations teams",
+                "Pour les dirigeants et les équipes terrain",
+              )}
+            </h3>
             <p>
               {t(
-                "Follow sales, stock and payments across your daily operations.",
-                "Suivez les ventes, les stocks et les paiements au quotidien.",
+                "Follow sales, stock and recorded payments across your configured locations.",
+                "Suivez ventes, stocks et paiements enregistrés sur vos sites configurés.",
               )}
             </p>
           </article>
           <article>
-            <h3>{t("For distribution businesses", "Pour la distribution")}</h3>
+            <h3>
+              {t(
+                "For HR and finance teams",
+                "Pour les équipes RH et financières",
+              )}
+            </h3>
             <p>
               {t(
-                "Keep locations, movements and source records connected.",
-                "Reliez les emplacements, les mouvements et les pièces d’origine.",
+                "Prepare people records, payroll inputs and accounting reviews with their supporting context.",
+                "Préparez les dossiers du personnel, les données de paie et les révisions comptables avec leurs justificatifs.",
               )}
             </p>
           </article>

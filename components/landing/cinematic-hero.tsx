@@ -11,7 +11,7 @@ export function CinematicHero() {
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
   const motionOff = useCinematicMotionOff()
   const sectionRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
   const zoomRef = useRef<HTMLDivElement>(null)
   const noteRef = useRef<HTMLDivElement>(null)
@@ -19,29 +19,15 @@ export function CinematicHero() {
 
   useEffect(() => {
     const section = sectionRef.current
-    const video = videoRef.current
+    const image = imageRef.current
     const copy = copyRef.current
     const zoom = zoomRef.current
     const note = noteRef.current
     const cue = cueRef.current
-    if (!section || !video || !copy || !zoom || !note || !cue) return
+    if (!section || !image || !copy || !zoom || !note || !cue) return
     const mobile = window.matchMedia("(max-width: 760px)")
     let frame = 0
-    let targetTime = 0
-    let failed = false
-
-    const seek = () => {
-      if (
-        motionOff ||
-        mobile.matches ||
-        failed ||
-        video.readyState < 1 ||
-        video.seeking
-      )
-        return
-      if (Math.abs(video.currentTime - targetTime) > 0.045)
-        video.currentTime = targetTime
-    }
+    let failed = image.complete && image.naturalWidth === 0
     const update = () => {
       frame = 0
       const staticScene = motionOff || mobile.matches || failed
@@ -60,57 +46,64 @@ export function CinematicHero() {
       copy.style.transform = `translateY(${-progress * 70}px)`
       note.style.opacity = String(fade)
       cue.style.opacity = String(fade)
-      zoom.style.opacity = String(
-        Math.min(1, Math.max(0, (progress - 0.24) / 0.12)),
+      // Screen bounds measured on our 1672 × 941 artwork, corrected for object-fit cover.
+      const width = image.clientWidth
+      const height = image.clientHeight
+      const cover = Math.max(width / 1672, height / 941)
+      const imageScale = 1 + progress * 0.24
+      const screenX = (width - 1672 * cover) / 2 + 859 * cover
+      const screenY = (height - 941 * cover) / 2 + 678 * cover
+      const anchoredX = width * 0.55 + (screenX - width * 0.55) * imageScale
+      const anchoredY =
+        height * 0.7 +
+        (screenY - height * 0.7 - progress * 0.02 * height) * imageScale
+      const phase = Math.min(1, Math.max(0, (progress - 0.08) / 0.72))
+      const ease = phase * phase * (3 - 2 * phase)
+      const startScale = (274 * cover * imageScale) / 1000
+      const endScale = Math.min(
+        (width * 0.88) / 1000,
+        Math.max(0.2, (Math.min(height, window.innerHeight) - 150) / 600),
+        1.12,
       )
-      zoom.style.top = `${(0.62 - 0.17 * Math.min(1, progress / 0.75)) * 100}%`
-      zoom.style.transform = `translateY(-50%) scale(${Math.min(1, 0.055 + progress ** 3 * 2.5)})`
-      const duration = Number.isFinite(video.duration) ? video.duration : 6.4
-      targetTime = Math.max(0, Math.min(duration - 0.05, progress * duration))
-      seek()
+      zoom.style.opacity = failed ? "0" : "1"
+      zoom.style.left = anchoredX + (width / 2 - anchoredX) * ease + "px"
+      zoom.style.top =
+        anchoredY +
+        ((Math.min(height, window.innerHeight) + 70) / 2 - anchoredY) * ease +
+        "px"
+      zoom.style.transform =
+        "translate(-50%, -50%) scale(" +
+        (startScale + (endScale - startScale) * ease) +
+        ")"
+      zoom.style.borderRadius = 3 + ease * 9 + "px"
+      image.style.opacity = String(1 - ease * 0.94)
+      image.style.transform = `scale(${imageScale}) translateY(${-progress * 2}%)`
     }
     const queue = () => {
       if (!frame) frame = requestAnimationFrame(update)
     }
-    const configure = () => {
-      video.pause()
-      if (motionOff || mobile.matches) {
-        video.style.opacity = "0"
-        if (video.hasAttribute("src")) {
-          video.removeAttribute("src")
-          video.load()
-        }
-      } else if (!video.hasAttribute("src") && !failed) {
-        video.src = "/landing/cinematic/hero-scrub.mp4"
-        video.load()
-      }
-      update()
-    }
     const loaded = () => {
+      failed = false
       section.classList.remove("media-fallback")
-      video.style.opacity = motionOff || mobile.matches ? "0" : "1"
       update()
     }
     const error = () => {
       failed = true
-      video.style.opacity = "0"
       section.classList.add("media-fallback")
       update()
     }
-    video.addEventListener("loadeddata", loaded)
-    video.addEventListener("seeked", seek)
-    video.addEventListener("error", error)
-    mobile.addEventListener("change", configure)
+    image.addEventListener("load", loaded)
+    image.addEventListener("error", error)
+    mobile.addEventListener("change", queue)
     window.addEventListener("scroll", queue, { passive: true })
     window.addEventListener("resize", queue)
-    configure()
+    section.classList.toggle("media-fallback", failed)
+    update()
     return () => {
       cancelAnimationFrame(frame)
-      video.pause()
-      video.removeEventListener("loadeddata", loaded)
-      video.removeEventListener("seeked", seek)
-      video.removeEventListener("error", error)
-      mobile.removeEventListener("change", configure)
+      image.removeEventListener("load", loaded)
+      image.removeEventListener("error", error)
+      mobile.removeEventListener("change", queue)
       window.removeEventListener("scroll", queue)
       window.removeEventListener("resize", queue)
     }
@@ -125,38 +118,29 @@ export function CinematicHero() {
     >
       <span id="top" className="anchor" />
       <div className="hero-sticky">
-        {/* Deliberately unoptimized: this pre-sized local poster must match the video exactly. */}
+        {/* Pre-sized original artwork keeps the full-bleed scene stable while loading. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="hero-image"
-          src="/landing/cinematic/hero-start.webp"
+          ref={imageRef}
+          src="/landing/cinematic/stoquify-courtyard-front.webp"
           alt=""
-          width={1920}
-          height={1080}
+          width={1672}
+          height={941}
           fetchPriority="high"
-        />
-        <video
-          id="hero-video"
-          ref={videoRef}
-          muted
-          playsInline
-          preload="none"
-          aria-hidden="true"
-          tabIndex={-1}
-          poster="/landing/cinematic/hero-start.webp"
         />
         <div className="hero-shade" />
         <div className="hero-copy" ref={copyRef}>
           <h1>
             {t(
-              "Your business. Beautifully connected.",
-              "Votre activité. Enfin connectée.",
+              "Run your business with a clearer view.",
+              "Pilotez votre activité avec une vision claire.",
             )}
           </h1>
           <p className="hero-intro">
             {t(
-              "Keep sales, stock and payments in one workspace, with a path to accounting review.",
-              "Réunissez ventes, stocks et paiements dans un espace de travail, jusqu’à la révision comptable.",
+              "Bring sales, stock, people and financial review into one workspace. Keep your teams connected to the work behind the numbers.",
+              "Réunissez ventes, stocks, personnel et révision financière. Donnez à vos équipes une vue claire des opérations derrière les chiffres.",
             )}
           </p>
           <div className="hero-actions">
@@ -165,15 +149,15 @@ export function CinematicHero() {
               <span aria-hidden="true">↗︎</span>
             </Link>
             <Link className="button glass" href="/#showcase">
-              {t("See how it works", "Voir comment ça marche")}
+              {t("Explore the workspace", "Découvrir l’espace de travail")}
               <span aria-hidden="true">↗︎</span>
             </Link>
           </div>
         </div>
         <div className="hero-note" ref={noteRef}>
           {t(
-            "For owners and managers of retail and distribution businesses.",
-            "Pour les dirigeants et responsables des commerces et entreprises de distribution.",
+            "For retail and distribution teams, from the shop floor to HR and finance.",
+            "Pour les commerces et la distribution, des équipes terrain aux RH et à la finance.",
           )}
         </div>
         <div
@@ -192,7 +176,9 @@ export function CinematicHero() {
                 t("Overview", "Vue d’ensemble"),
                 t("Sales", "Ventes"),
                 t("Inventory", "Stocks"),
-                t("Payments", "Paiements"),
+                t("HRIS", "SIRH"),
+                t("Payroll", "Paie"),
+                t("Finance", "Finance"),
                 t("Accounting", "Comptabilité"),
               ].map((label) => (
                 <div key={label}>{label}</div>
@@ -216,14 +202,30 @@ export function CinematicHero() {
                   <b>3</b>
                 </span>
               </div>
-              <svg viewBox="0 0 800 180">
-                <path
-                  d="M0 155L80 135L150 150L230 80L300 95L380 45L450 65L530 25L600 45L710 10L800 20"
-                  fill="none"
-                  stroke="#5796ff"
-                  strokeWidth="4"
-                />
-              </svg>
+              <div className="hero-table">
+                <div>
+                  <span>{t("Source", "Origine")}</span>
+                  <span>{t("Workflow", "Parcours")}</span>
+                  <span>{t("Status", "Statut")}</span>
+                </div>
+                <div>
+                  <b>SALE-104</b>
+                  <span>{t("POS → Inventory", "Caisse → Stocks")}</span>
+                  <em>{t("Recorded", "Enregistré")}</em>
+                </div>
+                <div>
+                  <b>EMP-024</b>
+                  <span>{t("HRIS → Payroll", "SIRH → Paie")}</span>
+                  <em>{t("Inputs to review", "Données à vérifier")}</em>
+                </div>
+                <div>
+                  <b>REF-104</b>
+                  <span>
+                    {t("Finance → Accounting", "Finance → Comptabilité")}
+                  </span>
+                  <em>{t("Review pending", "À vérifier")}</em>
+                </div>
+              </div>
               <p>
                 {t(
                   "Sample records · Main shop · Not live data",
