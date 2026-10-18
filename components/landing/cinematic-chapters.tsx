@@ -1,7 +1,7 @@
 "use client"
 import { useLocale } from "next-intl"
 import { Link } from "@/i18n/navigation"
-import { GettingStarted } from "./landing-message-sections"
+import { CinematicOffers } from "./cinematic-offers"
 import { CinematicBusinessStory } from "./cinematic-business-story"
 import { CinematicSetup } from "./cinematic-setup"
 
@@ -11,6 +11,7 @@ export function CinematicChapters() {
   return (
     <div className="light-chapter" id="light-chapter">
       <CinematicBusinessStory />
+      <CinematicOffers />
       <CinematicSetup />
       <section className="section resources">
         <h2 className="reveal">
@@ -25,8 +26,8 @@ export function CinematicChapters() {
             ],
             [
               "/#showcase",
-              "See the six product views",
-              "Découvrir les six vues produit",
+              "See the eight product views",
+              "Découvrir les huit vues produit",
             ],
             ["/#start", "Prepare your workspace", "Préparer votre espace"],
           ].map(([href, en, fr], i) => (
@@ -38,9 +39,6 @@ export function CinematicChapters() {
           ))}
         </div>
       </section>
-      <div className="availability">
-        <GettingStarted />
-      </div>
       <section id="get-started" className="section closing center reveal">
         <h2 className="display">
           {t(

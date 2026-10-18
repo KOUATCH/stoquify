@@ -10,6 +10,85 @@ import {
 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 
+function SmeComputerPhoto({
+  scene,
+  alt,
+}: {
+  scene: "pharmacy" | "materials"
+  alt: string
+}) {
+  const fr = useLocale() === "fr"
+  return (
+    <div className={`sme-photo-scene sme-photo-${scene}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/landing/cinematic/sme-${scene}-aio.webp`}
+        width={1200}
+        height={800}
+        loading="lazy"
+        decoding="async"
+        alt={alt}
+      />
+      <div
+        className="sme-computer-screen"
+        aria-hidden="true"
+        data-visual-classification="sample"
+      >
+        <div className="sme-screen-brand">
+          <span>q</span>
+          <strong>stoquify</strong>
+          <small>{fr ? "ESPACE ILLUSTRATIF" : "ILLUSTRATIVE WORKSPACE"}</small>
+        </div>
+        <div className="sme-screen-workspace">
+          <aside>
+            {[
+              fr ? "Ventes" : "Sales",
+              fr ? "Stocks" : "Inventory",
+              "Finance",
+              fr ? "Comptabilité" : "Accounting",
+            ].map((label) => (
+              <span key={label}>{label}</span>
+            ))}
+          </aside>
+          <div>
+            <b>
+              {scene === "pharmacy"
+                ? fr
+                  ? "Ventes et stocks"
+                  : "Sales and inventory"
+                : fr
+                  ? "Paiements et rapprochement"
+                  : "Payments and reconciliation"}
+            </b>
+            <div className="sme-screen-kpis">
+              <span>
+                {fr ? "Ventes" : "Sales"}
+                <b>24</b>
+              </span>
+              <span>
+                {fr ? "Stocks" : "Stock"}
+                <b>18</b>
+              </span>
+              <span>
+                {fr ? "À vérifier" : "To review"}
+                <b>3</b>
+              </span>
+            </div>
+            <div className="sme-screen-row">
+              <span>SALE-104</span>
+              <span>{fr ? "Enregistré" : "Recorded"}</span>
+            </div>
+            <div className="sme-screen-row">
+              <span>REF-104</span>
+              <span>{fr ? "À vérifier" : "To review"}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function CinematicBusinessStory() {
   const fr = useLocale() === "fr"
   const t = (en: string, french: string) => (fr ? french : en)
@@ -48,16 +127,11 @@ export function CinematicBusinessStory() {
 
       <article className="section sme-editorial reveal">
         <figure className="sme-photo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/landing/cinematic/sme-pharmacy.webp"
-            width={1200}
-            height={800}
-            loading="lazy"
-            decoding="async"
+          <SmeComputerPhoto
+            scene="pharmacy"
             alt={t(
-              "Illustrative pharmacy team serving a customer and checking stock behind the counter",
-              "Scène illustrative : une équipe de pharmacie accueille une cliente et vérifie le stock derrière le comptoir",
+              "Illustrative pharmacy team serving a customer, with Stoquify sales and stock records on an all-in-one computer",
+              "Scène illustrative : une équipe de pharmacie accueille une cliente, avec les ventes et stocks Stoquify sur un ordinateur tout-en-un",
             )}
           />
           <figcaption>
@@ -110,16 +184,11 @@ export function CinematicBusinessStory() {
 
       <article className="section sme-editorial sme-editorial-reverse reveal">
         <figure className="sme-photo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/landing/cinematic/sme-materials.webp"
-            width={1200}
-            height={800}
-            loading="lazy"
-            decoding="async"
+          <SmeComputerPhoto
+            scene="materials"
             alt={t(
-              "Illustrative building-materials merchant reviewing a delivery record with a customer at the trade counter",
-              "Scène illustrative : une négociante en matériaux examine une pièce de livraison avec un client au comptoir",
+              "Illustrative building-materials merchant reviewing a delivery with a customer, beside an all-in-one computer displaying Stoquify reconciliation",
+              "Scène illustrative : une négociante en matériaux examine une livraison avec un client, à côté d’un ordinateur tout-en-un affichant le rapprochement Stoquify",
             )}
           />
           <figcaption>

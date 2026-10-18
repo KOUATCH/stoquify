@@ -12,9 +12,12 @@ import { useLocale } from "next-intl"
 import { Link, usePathname } from "@/i18n/navigation"
 import { cinematicModules } from "./cinematic-modules"
 import StoquifyLogo from "@/components/global/kit-logo"
+import { Moon, Sun } from "lucide-react"
 
-const MotionContext = createContext(true)
-export const useCinematicMotionOff = () => useContext(MotionContext)
+const CinematicContext = createContext({ motionOff: true, light: false })
+export const useCinematicMotionOff = () =>
+  useContext(CinematicContext).motionOff
+export const useCinematicLight = () => useContext(CinematicContext).light
 
 /** Only the locale homepage gets the cinematic chrome; other public routes keep their shell. */
 export function LandingRouteShell({
@@ -76,9 +79,6 @@ function CinematicShell({
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
         setScrolled(window.scrollY > 24)
-        const chapter =
-          headerRef.current?.parentElement?.querySelector("#light-chapter")
-        setLight(Boolean(chapter && chapter.getBoundingClientRect().top <= 72))
       })
     }
     const resize = () => {
@@ -120,9 +120,10 @@ function CinematicShell({
   const products = cinematicModules.map((module) => module.label)
 
   return (
-    <MotionContext.Provider value={motionOff}>
+    <CinematicContext.Provider value={{ motionOff, light }}>
       <div
         className={`cinematic-home${ready ? " motion-ready" : ""}${motionOff ? " motion-off" : ""}`}
+        data-theme={light ? "light" : "dark"}
       >
         <a className="skip" href="#main">
           {t("Skip to content", "Aller au contenu")}
@@ -169,10 +170,31 @@ function CinematicShell({
               </button>
               <Link href="/#workflow">{t("Workflows", "Parcours")}</Link>
               <Link href="/#pricing">
-                {t("Getting started", "Bien démarrer")}
+                {t("Offers & pricing", "Offres et tarifs")}
               </Link>
             </div>
             <div className="nav-actions">
+              <button
+                className="theme-toggle"
+                type="button"
+                aria-label={t(
+                  "Light mode for the entire page",
+                  "Mode clair pour toute la page",
+                )}
+                aria-pressed={light}
+                title={
+                  light
+                    ? t("Switch to dark mode", "Passer au mode sombre")
+                    : t("Switch to light mode", "Passer au mode clair")
+                }
+                onClick={() => setLight(!light)}
+              >
+                {light ? (
+                  <Moon size={19} aria-hidden="true" />
+                ) : (
+                  <Sun size={19} aria-hidden="true" />
+                )}
+              </button>
               <Link
                 id="language"
                 href="/"
@@ -256,7 +278,7 @@ function CinematicShell({
             <Link href="/#modules">{t("Capabilities", "Fonctionnalités")}</Link>
             <Link href="/#workflow">{t("Workflows", "Parcours")}</Link>
             <Link href="/#pricing">
-              {t("Getting started", "Bien démarrer")}
+              {t("Offers & pricing", "Offres et tarifs")}
             </Link>
             <Link href="/workflows">
               {t("Workflow atlas", "Catalogue des parcours")}
@@ -282,7 +304,7 @@ function CinematicShell({
               aria-label={t("Stoquify home", "Accueil Stoquify")}
             >
               <StoquifyLogo
-                theme="light"
+                theme={light ? "light" : "dark"}
                 width={212}
                 height={48}
                 tagline={t("OHADA operating OS", "Système opérationnel OHADA")}
@@ -303,7 +325,7 @@ function CinematicShell({
               </Link>
               <Link href="/login">{t("Log in", "Connexion")}</Link>
               <Link href="/#pricing">
-                {t("Adoption options", "Options d’adoption")}
+                {t("Offers & pricing", "Offres et tarifs")}
               </Link>
             </div>
             <div>
@@ -339,6 +361,6 @@ function CinematicShell({
               : t("Pause motion", "Suspendre les animations")}
         </button>
       </div>
-    </MotionContext.Provider>
+    </CinematicContext.Provider>
   )
 }

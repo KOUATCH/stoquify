@@ -21,7 +21,7 @@
       "prompt": "Use case: precise-object-edit. Edit target: supplied original Stoquify courtyard image. Preserve the coastal commercial courtyard, palms, blue sky, warm stone arcades, teal shop awnings, curved walnut counter, parcels, lighting and panoramic 16:9 composition. Change ONLY the laptop: rotate it to face the camera directly, centered horizontally at 50% of image width on the counter. Its open screen must be front-on, level rectangular edges, no perspective skew, approximately 18% image width, screen centered at 76% image height. Screen plain very dark navy with no text or icons; the website will overlay its own real interface. A slim silver chassis with keyboard facing us beneath the screen. Keep upper half spacious for white headline. Premium natural architectural photography. No logos, text, watermarks. Laptop screen should be clearly visible and accurately rectangular."
     }
   ],
-  "motion": "Original HTML/CSS product scenes and native scroll-driven bakery-to-workspace transition in the active SME trial. Preserved courtyard-to-laptop variant remains available. Six manually selected demos; static in reduced-motion mode. No third-party footage.",
+  "motion": "Original HTML/CSS product scenes and scroll-driven bakery all-in-one screen-to-workspace transition. Mobile, paused and reduced-motion modes retain a static anchored screen. No third-party footage.",
   "updatedOn": "2026-10-18",
   "interfaceArtwork": {
     "source": "Original code-native Stoquify workflow illustrations in cinematic-modules.tsx",
@@ -31,7 +31,9 @@
       "Finance",
       "Accounting",
       "HRIS",
-      "Payroll"
+      "Payroll",
+      "AP / suppliers",
+      "AR / clients / invoicing"
     ],
     "data": "Fictional illustrative records, not live data",
     "icons": "Existing installed lucide-react icons"
@@ -39,9 +41,9 @@
   "smeStoryTrial": {
     "date": "2026-10-18",
     "generator": "Built-in image generation",
-    "activeHero": "sme-bakery.webp",
+    "activeHero": "sme-bakery-aio.webp",
     "preservedHero": "stoquify-courtyard-front.webp",
-    "restore": "Set SME_HERO_ENABLED to false in cinematic-hero.tsx. Previous asset and laptop motion remain available.",
+    "restore": "Set SME_HERO_ENABLED to false to restore the original courtyard laptop. Original bakery image remains preserved.",
     "assets": [
       {
         "name": "bakery",
@@ -69,10 +71,49 @@
         "bytes": 115506,
         "source": "exec-07b866df-a3d4-4eb2-8029-74b9f3b199e5.png",
         "prompt": "Use case: photorealistic-natural. Asset type: premium Stoquify SME story photography, wide 3:2 landscape. Original editorial photograph in a thriving West/Central African building-materials merchant, viewed across a practical trade counter into an orderly open warehouse. Black African adult female store manager in navy work shirt checking a plain delivery sheet with a male trade customer; in the background another adult worker arranging neutral sacks on a trolley. Recognizable useful stock: neatly stacked unbranded cement sacks, PVC pipes, tile samples, small paint tins and timber shelves; safe orderly working environment. No readable text, no logos, no brands, no personal data. Natural late morning light from open frontage, warm cream masonry, navy shelf details, muted terracotta and timber, accurate tactile materials and believable hands. Busy but composed medium-wide documentary photography, professional yet everyday SME, emphasis on quantities, deliveries and trade payments. Main subjects centered for mobile cropping. Cohesive editorial grade with warm highlights, cool blue shadows and restrained colors. No fantasy construction, stereotypical poverty or artificial corporate posing. Output one image only."
+      },
+      {
+        "name": "bakery-aio",
+        "file": "sme-bakery-aio.webp",
+        "width": 1672,
+        "height": 941,
+        "bytes": 228478,
+        "source": "exec-4caac102-c33e-4a72-b1a5-c88621dbee5e.png",
+        "editTarget": "sme-bakery.webp",
+        "screenBounds": {
+          "centerX": 928,
+          "centerY": 594,
+          "width": 426,
+          "height": 222
+        },
+        "prompt": "Use case: precise-object-edit. Asset type: Stoquify landing hero photograph, wide 16:9. Input image is the edit target, an original busy African bakery. Preserve the bakery interior, three staff and customer, bread racks, warm sunlight, navy walls and cream stone, realistic editorial photographic quality. Introduce a premium slim silver Mac-style all-in-one desktop computer on the foreground counter, facing the viewer directly, screen perfectly front-on with level horizontal and vertical edges, no perspective skew. Place computer centered horizontally at about 62% of image width, lower half, SCREEN center at about 74% of image height, SCREEN width about 25% of image width, screen aspect approximately 5:3. Keep the upper-left half available for headline overlay; do not cover the serving employee's face at right. Move only enough foreground bread to make a credible clear counter area under the computer. A thin silver chin and elegant aluminum stand physically resting on counter, subtle realistic contact shadows and reflections. The active screen area must be plain uniform very dark navy with NO content, NO logo, NO text, NO reflections obscuring it, for a real website UI overlay. Match the reference lighting. No Apple logo, no new people, no watermarks, no interface text. Preserve existing image composition as much as possible. One image only."
+      },
+      {
+        "name": "pharmacy-aio",
+        "file": "sme-pharmacy-aio.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 90916,
+        "source": "exec-924dc94d-4022-4187-8fb8-459e05f02c98.png",
+        "editTarget": "sme-pharmacy.webp",
+        "prompt": "Use case: precise-object-edit. Original Stoquify website SME editorial image, landscape 3:2. Edit the supplied target photograph. Preserve the people, their faces, the shop interior, shelves and navy/cream natural photographic grade. Add ONE slim silver Mac-style all-in-one computer on the foreground counter facing the camera squarely. Level rectangular screen, no perspective skew, slim silver chin and aluminum stand with realistic contact shadow. Position in the lower central part of the photograph, never covering anyone's face, moving only foreground counter items needed to make space. The screen must be a clean plain dark navy rectangle with NO content, NO text, NO logo, NO reflection; the website will overlay its own actual Stoquify interface. Screen around 30% of image width and wide landscape aspect, center near 48% image width and 71% image height. Keep all important subjects and the entire computer in the central 75% for responsive use. Preserve scene realism and lighting. No Apple logo or watermarks. One image only. Remove the existing black monitor at right so the new all-in-one is the main screen. Keep medicine cartons unbranded and the pharmacy team recognizable.",
+        "interface": "Localized code-rendered Stoquify workspace overlay; illustrative data; follows landing theme"
+      },
+      {
+        "name": "materials-aio",
+        "file": "sme-materials-aio.webp",
+        "width": 1200,
+        "height": 800,
+        "bytes": 129788,
+        "source": "exec-a70bea59-5849-41d8-b587-037220be2d44.png",
+        "editTarget": "sme-materials.webp",
+        "prompt": "Use case: precise-object-edit. Original Stoquify website SME editorial image, landscape 3:2. Edit the supplied target photograph. Preserve the people, their faces, the shop interior, shelves and navy/cream natural photographic grade. Add ONE slim silver Mac-style all-in-one computer on the foreground counter facing the camera squarely. Level rectangular screen, no perspective skew, slim silver chin and aluminum stand with realistic contact shadow. Position in the lower central part of the photograph, never covering anyone's face, moving only foreground counter items needed to make space. The screen must be a clean plain dark navy rectangle with NO content, NO text, NO logo, NO reflection; the website will overlay its own actual Stoquify interface. Screen around 30% of image width and wide landscape aspect, center near 48% image width and 71% image height. Keep all important subjects and the entire computer in the central 75% for responsive use. Preserve scene realism and lighting. No Apple logo or watermarks. One image only. Preserve the merchant and customer reviewing the delivery record, building materials and worker in background. Set the computer on the foreground trade counter.",
+        "interface": "Localized code-rendered Stoquify workspace overlay; illustrative data; follows landing theme"
       }
     ],
-    "responsiveHero": "sme-bakery-960.webp",
+    "responsiveHero": "sme-bakery-aio-960.webp",
     "classification": "Original generated illustrative SME scenes; no customer endorsement",
-    "motion": "Bakery scene fades into an illustrative workspace on scroll. Mobile and reduced-motion modes retain a static photograph."
+    "motion": "Original HTML/CSS product scenes and scroll-driven bakery all-in-one screen-to-workspace transition. Mobile, paused and reduced-motion modes retain a static anchored screen. No third-party footage.",
+    "theme": "Landing-only dark default with header light/dark toggle. All sections and computer screens follow the selected theme."
   }
 }

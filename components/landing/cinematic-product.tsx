@@ -13,8 +13,9 @@ export function CinematicProduct() {
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
   useEffect(() => {
     const followHash = () => {
-      const match = window.location.hash.match(/^#flow-tab-([0-5])$/)
-      if (match) setActive(Number(match[1]))
+      const match = window.location.hash.match(/^#flow-tab-(\d+)$/)
+      if (match && Number(match[1]) < cinematicModules.length)
+        setActive(Number(match[1]))
     }
     followHash()
     window.addEventListener("hashchange", followHash)
@@ -27,7 +28,7 @@ export function CinematicProduct() {
       <div className="split showcase-inner">
         <div className="product-copy reveal">
           <p className="eyebrow">
-            {t("SIX CONNECTED WORKFLOWS", "SIX PARCOURS CONNECTÉS")}
+            {t("EIGHT CONNECTED WORKFLOWS", "HUIT PARCOURS CONNECTÉS")}
           </p>
           <h2>
             {t(
@@ -56,13 +57,14 @@ export function CinematicProduct() {
                     onKeyDown={(event) => {
                       const next =
                         event.key === "ArrowDown"
-                          ? (index + 1) % 6
+                          ? (index + 1) % cinematicModules.length
                           : event.key === "ArrowUp"
-                            ? (index + 5) % 6
+                            ? (index + cinematicModules.length - 1) %
+                              cinematicModules.length
                             : event.key === "Home"
                               ? 0
                               : event.key === "End"
-                                ? 5
+                                ? cinematicModules.length - 1
                                 : null
                       if (next === null) return
                       event.preventDefault()
@@ -162,6 +164,36 @@ const stories = [
     "SALE-104 · 2 articles",
   ],
   [
+    "Follow the stock behind the sale.",
+    "Suivez le stock derrière chaque vente.",
+    "Keep receipts, transfers and stock movements visible by location. Know where a quantity came from and what needs replenishing.",
+    "Retrouvez réceptions, transferts et mouvements de stock par site. Identifiez l’origine des quantités et les besoins de réapprovisionnement.",
+    "Stock movements",
+    "Mouvements de stock",
+    "SKU-024",
+    "SKU-024",
+  ],
+  [
+    "Invoice the customer. Follow the balance.",
+    "Facturez le client. Suivez son solde.",
+    "Bring customer invoices, due dates and collections into one view. Keep partial payments and outstanding amounts visible for follow-up.",
+    "Réunissez factures clients, échéances et encaissements. Gardez les paiements partiels et les montants restant à recevoir visibles pour les relances.",
+    "Clients and invoicing",
+    "Clients et facturation",
+    "INV-104",
+    "INV-104",
+  ],
+  [
+    "Connect supplier bills to what you received.",
+    "Reliez les factures fournisseurs aux réceptions.",
+    "Follow supplier orders, goods receipts and invoices together. Review the payable and its supporting documents before preparing a payment.",
+    "Suivez ensemble commandes fournisseurs, réceptions et factures. Vérifiez la dette et ses justificatifs avant de préparer un règlement.",
+    "Suppliers and payables",
+    "Fournisseurs et dettes",
+    "BILL-028",
+    "BILL-028",
+  ],
+  [
     "Reconcile what was recorded.",
     "Rapprochez les paiements enregistrés.",
     "Compare payment records with statements or supported provider evidence. Keep differences visible until they are reviewed.",
@@ -203,6 +235,8 @@ export function CinematicStory() {
         {[
           ["Sales", "Ventes"],
           ["Stock", "Stocks"],
+          ["Client invoices", "Factures clients"],
+          ["Supplier bills", "Factures fournisseurs"],
           ["Reconciliation", "Rapprochement"],
           ["OHADA records", "Comptes OHADA"],
           ["Close", "Clôture"],
@@ -238,13 +272,13 @@ export function CinematicStory() {
                 onKeyDown={(event) => {
                   const next =
                     event.key === "ArrowRight"
-                      ? (index + 1) % 3
+                      ? (index + 1) % stories.length
                       : event.key === "ArrowLeft"
-                        ? (index + 2) % 3
+                        ? (index + stories.length - 1) % stories.length
                         : event.key === "Home"
                           ? 0
                           : event.key === "End"
-                            ? 2
+                            ? stories.length - 1
                             : null
                   if (next === null) return
                   event.preventDefault()
@@ -273,7 +307,18 @@ export function CinematicStory() {
               )}
             </p>
             <CinematicModuleScene
-              module={(["pos", "finance", "accounting"] as const)[active]}
+              module={
+                (
+                  [
+                    "pos",
+                    "inventory",
+                    "receivables",
+                    "payables",
+                    "finance",
+                    "accounting",
+                  ] as const
+                )[active]
+              }
             />
           </div>
         </div>

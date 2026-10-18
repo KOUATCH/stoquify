@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { useLocale } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import StoquifyLogo from "@/components/global/kit-logo"
-import { useCinematicMotionOff } from "./cinematic-shell"
+import { useCinematicLight, useCinematicMotionOff } from "./cinematic-shell"
 
 // Local art-direction trial: false restores the preserved courtyard and laptop motion.
 export const SME_HERO_ENABLED = true
@@ -13,6 +13,7 @@ export function CinematicHero() {
   const locale = useLocale()
   const t = (en: string, fr: string) => (locale === "fr" ? fr : en)
   const motionOff = useCinematicMotionOff()
+  const light = useCinematicLight()
   const sectionRef = useRef<HTMLElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const copyRef = useRef<HTMLDivElement>(null)
@@ -29,9 +30,7 @@ export function CinematicHero() {
     const cue = cueRef.current
     if (!section || !image || !copy || !zoom || !note || !cue) return
     const mobile = window.matchMedia(
-      SME_HERO_ENABLED
-        ? "(max-width: 760px), (max-height: 500px) and (pointer: coarse)"
-        : "(max-width: 760px)",
+      "(max-width: 760px), (max-height: 500px) and (pointer: coarse)",
     )
     let frame = 0
     let failed = image.complete && image.naturalWidth === 0
@@ -56,46 +55,63 @@ export function CinematicHero() {
       // Screen bounds measured on our 1672 × 941 artwork, corrected for object-fit cover.
       const width = image.clientWidth
       const height = image.clientHeight
+      if (!width || !height) return
+      const imageStyle = getComputedStyle(image)
+      const position = imageStyle.objectPosition.split(" ")
+      const origin = imageStyle.transformOrigin.split(" ")
+      const positionX =
+        Number.parseFloat(position[0]) / 100 || (mobile.matches ? 0.7 : 0.5)
+      const positionY = Number.parseFloat(position[1]) / 100 || 0.5
+      const originX = Number.parseFloat(origin[0]) || width * 0.55
+      const originY = Number.parseFloat(origin[1]) || height * 0.7
       const cover = Math.max(width / 1672, height / 941)
       const imageScale = 1 + progress * 0.24
-      const screenX = (width - 1672 * cover) / 2 + 859 * cover
-      const screenY = (height - 941 * cover) / 2 + 678 * cover
-      const anchoredX = width * 0.55 + (screenX - width * 0.55) * imageScale
+      const screenX =
+        (width - 1672 * cover) * positionX +
+        (SME_HERO_ENABLED ? 928 : 859) * cover
+      const screenY =
+        (height - 941 * cover) * positionY +
+        (SME_HERO_ENABLED ? 594 : 678) * cover
+      const anchoredX =
+        image.offsetLeft + originX + (screenX - originX) * imageScale
       const anchoredY =
-        height * 0.7 +
-        (screenY - height * 0.7 - progress * 0.02 * height) * imageScale
+        image.offsetTop +
+        originY +
+        (screenY - originY - progress * 0.02 * height) * imageScale
       const phase = Math.min(1, Math.max(0, (progress - 0.08) / 0.72))
       const ease = phase * phase * (3 - 2 * phase)
-      const startScale = (274 * cover * imageScale) / 1000
+      // Grow from the physical display; only recenter after the photograph fades.
+      const recenterPhase = Math.min(1, Math.max(0, (phase - 0.65) / 0.35))
+      const recenter = recenterPhase * recenterPhase * (3 - 2 * recenterPhase)
+      const startScale =
+        ((SME_HERO_ENABLED ? 426 : 274) * cover * imageScale) / 1000
       const endScale = Math.min(
         (width * 0.88) / 1000,
-        Math.max(0.2, (Math.min(height, window.innerHeight) - 150) / 600),
+        Math.max(
+          0.2,
+          (Math.min(height, window.innerHeight) - 150) /
+            (SME_HERO_ENABLED ? 520 : 600),
+        ),
         1.12,
       )
       zoom.style.opacity = failed ? "0" : "1"
-      zoom.style.left = anchoredX + (width / 2 - anchoredX) * ease + "px"
+      zoom.style.visibility = failed ? "hidden" : "visible"
+      zoom.style.left = anchoredX + (width / 2 - anchoredX) * recenter + "px"
       zoom.style.top =
         anchoredY +
-        ((Math.min(height, window.innerHeight) + 70) / 2 - anchoredY) * ease +
+        ((Math.min(height, window.innerHeight) + 70) / 2 - anchoredY) *
+          recenter +
         "px"
       zoom.style.transform =
         "translate(-50%, -50%) scale(" +
         (startScale + (endScale - startScale) * ease) +
         ")"
       zoom.style.borderRadius = 3 + ease * 9 + "px"
-      image.style.opacity = String(1 - ease * 0.94)
+      const sceneFade = Math.min(1, phase / 0.65)
+      image.style.opacity = String(
+        1 - sceneFade * sceneFade * (3 - 2 * sceneFade),
+      )
       image.style.transform = `scale(${imageScale}) translateY(${-progress * 2}%)`
-      if (SME_HERO_ENABLED) {
-        // Reveal the workspace from everyday activity, without a fictitious laptop anchor.
-        zoom.style.opacity = staticScene ? "0" : String(ease)
-        zoom.style.left = width / 2 + "px"
-        zoom.style.top =
-          (Math.min(height, window.innerHeight) + 70) / 2 +
-          (1 - ease) * 90 +
-          "px"
-        zoom.style.transform = `translate(-50%, -50%) scale(${endScale * (0.88 + ease * 0.12)})`
-        zoom.style.borderRadius = "12px"
-      }
     }
     const queue = () => {
       if (!frame) frame = requestAnimationFrame(update)
@@ -115,10 +131,15 @@ export function CinematicHero() {
     mobile.addEventListener("change", queue)
     window.addEventListener("scroll", queue, { passive: true })
     window.addEventListener("resize", queue)
+    const observer =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(queue) : null
+    observer?.observe(image)
+    observer?.observe(section)
     section.classList.toggle("media-fallback", failed)
     update()
     return () => {
       cancelAnimationFrame(frame)
+      observer?.disconnect()
       image.removeEventListener("load", loaded)
       image.removeEventListener("error", error)
       mobile.removeEventListener("change", queue)
@@ -129,7 +150,7 @@ export function CinematicHero() {
 
   return (
     <section
-      className={"cinema" + (SME_HERO_ENABLED ? " hero-sme" : "")}
+      className={"cinema" + (SME_HERO_ENABLED ? " hero-sme hero-aio" : "")}
       id="overview"
       ref={sectionRef}
       aria-label={t("Introduction", "Présentation")}
@@ -143,12 +164,12 @@ export function CinematicHero() {
           ref={imageRef}
           src={
             SME_HERO_ENABLED
-              ? "/landing/cinematic/sme-bakery.webp"
+              ? "/landing/cinematic/sme-bakery-aio.webp"
               : "/landing/cinematic/stoquify-courtyard-front.webp"
           }
           srcSet={
             SME_HERO_ENABLED
-              ? "/landing/cinematic/sme-bakery-960.webp 960w, /landing/cinematic/sme-bakery.webp 1672w"
+              ? "/landing/cinematic/sme-bakery-aio-960.webp 960w, /landing/cinematic/sme-bakery-aio.webp 1672w"
               : undefined
           }
           sizes={SME_HERO_ENABLED ? "100vw" : undefined}
@@ -190,18 +211,24 @@ export function CinematicHero() {
         </div>
         <div className="hero-note" ref={noteRef}>
           {t(
-            "For owners, operations, finance and HR teams. Illustrative SME scene.",
-            "Pour les dirigeants, les équipes terrain, la finance et les RH. Scène de PME illustrative.",
+            "For owners, operations, finance and HR teams. Illustrative workspace.",
+            "Pour les dirigeants, les équipes terrain, la finance et les RH. Espace de travail illustratif.",
           )}
         </div>
         <div
           className="zoom-preview"
+          style={{ visibility: "hidden" }}
           ref={zoomRef}
           aria-hidden="true"
           data-visual-classification="sample"
         >
           <div className="zoom-head">
-            <StoquifyLogo theme="dark" width={180} height={42} tagline="" />
+            <StoquifyLogo
+              theme={light ? "light" : "dark"}
+              width={180}
+              height={42}
+              tagline=""
+            />
             <small>{t("ILLUSTRATIVE WORKSPACE", "ESPACE ILLUSTRATIF")}</small>
           </div>
           <div className="zoom-body">

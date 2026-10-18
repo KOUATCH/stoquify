@@ -15,7 +15,7 @@ import {
   FileCheck2,
 } from "lucide-react"
 
-// Retain the original four deep-link indices; people modules extend the public demo.
+// Append modules to preserve the existing public deep-link indices.
 export const cinematicModules = [
   {
     id: "pos",
@@ -97,6 +97,34 @@ export const cinematicModules = [
     ],
     workflow: "peopleToPay",
     icon: ClipboardList,
+  },
+  {
+    id: "payables",
+    label: ["AP & suppliers", "Fournisseurs et comptes à payer"],
+    title: [
+      "From supplier bill to payment review.",
+      "De la facture fournisseur au règlement.",
+    ],
+    body: [
+      "Connect suppliers, purchase orders, goods received and supplier invoices. Review amounts due and supporting documents before preparing payment.",
+      "Reliez fournisseurs, commandes, réceptions et factures d’achat. Vérifiez les échéances et les justificatifs avant de préparer le règlement.",
+    ],
+    workflow: "procureToPay",
+    icon: Package,
+  },
+  {
+    id: "receivables",
+    label: ["AR, clients & invoicing", "Clients, facturation et créances"],
+    title: [
+      "Keep each invoice and collection connected.",
+      "Reliez chaque facture à son encaissement.",
+    ],
+    body: [
+      "Follow customer invoices, due dates and outstanding balances. Link collections to the customer record and keep unpaid amounts visible for follow-up.",
+      "Suivez les factures clients, les échéances et les soldes à recevoir. Reliez les encaissements au dossier client et gardez les impayés visibles pour les relances.",
+    ],
+    workflow: "customerToCollection",
+    icon: ReceiptText,
   },
 ] as const
 
@@ -270,6 +298,96 @@ export function CinematicModuleScene({
             {t(
               "Matching amounts still require review.",
               "Des montants identiques restent à vérifier.",
+            )}
+          </div>
+        </>
+      )}
+      {module === "payables" && (
+        <>
+          <div className="scene-topline">
+            <span>
+              {t("Supplier account · October", "Compte fournisseur · Octobre")}
+            </span>
+            <span>XAF</span>
+          </div>
+          <div className="finance-pair">
+            <div>
+              <small>{t("Supplier invoice", "Facture fournisseur")}</small>
+              <strong>120 000</strong>
+              <span>BILL-028</span>
+            </div>
+            <div>
+              <small>{t("Amount due", "Montant à payer")}</small>
+              <strong>120 000</strong>
+              <span>{t("Due 31 Oct", "Échéance 31 oct.")}</span>
+            </div>
+          </div>
+          <div className="scene-table">
+            {row(
+              t("Purchase order", "Commande"),
+              "PO-028",
+              t("Available", "Disponible"),
+              true,
+            )}
+            {row(
+              t("Goods receipt", "Bon de réception"),
+              "GR-028",
+              t("Available", "Disponible"),
+              true,
+            )}
+            {row(
+              t("Invoice review", "Contrôle de facture"),
+              "BILL-028",
+              t("Pending", "En attente"),
+            )}
+          </div>
+          <div className="scene-caption">
+            <FileCheck2 size={17} aria-hidden="true" />
+            {t(
+              "Order → receipt → invoice → payment review",
+              "Commande → réception → facture → contrôle du règlement",
+            )}
+          </div>
+        </>
+      )}
+      {module === "receivables" && (
+        <>
+          <div className="scene-topline">
+            <span>
+              {t("Customer account · October", "Compte client · Octobre")}
+            </span>
+            <span>CLIENT-012</span>
+          </div>
+          <div className="journal-summary">
+            <ReceiptText aria-hidden="true" />
+            <div>
+              <small>{t("Customer invoice", "Facture client")}</small>
+              <strong>INV-104 · 60 000 XAF</strong>
+            </div>
+            <span className="pending">
+              {t("Part paid", "Paiement partiel")}
+            </span>
+          </div>
+          <div className="scene-table">
+            {row(t("Invoice date", "Date de facture"), "15/10")}
+            {row(
+              t("Collection recorded", "Encaissement enregistré"),
+              "40 000 XAF",
+              t("Recorded", "Enregistré"),
+              true,
+            )}
+            {row(t("Outstanding", "Reste à recevoir"), "20 000 XAF")}
+            {row(
+              t("Due date", "Échéance"),
+              "31/10",
+              t("Follow-up", "À suivre"),
+            )}
+          </div>
+          <div className="scene-caption">
+            <Users size={17} aria-hidden="true" />
+            {t(
+              "Customer → invoice → collection → balance",
+              "Client → facture → encaissement → solde",
             )}
           </div>
         </>
