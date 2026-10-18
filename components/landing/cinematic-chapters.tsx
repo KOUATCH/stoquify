@@ -3,6 +3,7 @@ import { useLocale } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { GettingStarted } from "./landing-message-sections"
 import { cinematicModules, CinematicModuleArt } from "./cinematic-modules"
+import { CinematicSetup } from "./cinematic-setup"
 
 export function CinematicChapters() {
   const locale = useLocale()
@@ -61,92 +62,7 @@ export function CinematicChapters() {
           )}
         </p>
       </section>
-      <section className="section onboarding split" id="start">
-        <div className="reveal">
-          <p className="eyebrow">
-            {t("A PRACTICAL START", "UN DÉMARRAGE CONCRET")}
-          </p>
-          <h2>
-            {t(
-              "Set up the workspace your team needs.",
-              "Préparez l’espace dont votre équipe a besoin.",
-            )}
-          </h2>
-          <div className="steps">
-            <details name="cinematic-onboarding" open>
-              <summary>
-                <span>
-                  {t(
-                    "Create and verify your account",
-                    "Créez et vérifiez votre compte",
-                  )}
-                </span>
-                <span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                {t(
-                  "Register your organization and verify your email before signing in.",
-                  "Inscrivez votre organisation et vérifiez votre adresse e-mail avant de vous connecter.",
-                )}
-              </p>
-            </details>
-            <details name="cinematic-onboarding">
-              <summary>
-                <span>
-                  {t("Prepare your operations", "Préparez votre activité")}
-                </span>
-                <span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                {t(
-                  "Confirm enabled modules, configure locations and assign your team’s access.",
-                  "Confirmez les modules activés, configurez vos sites et définissez les accès de l’équipe.",
-                )}
-              </p>
-            </details>
-            <details name="cinematic-onboarding">
-              <summary>
-                <span>
-                  {t(
-                    "Begin with a reviewed workflow",
-                    "Commencez par un parcours vérifié",
-                  )}
-                </span>
-                <span aria-hidden="true">+</span>
-              </summary>
-              <p>
-                {t(
-                  "Prepare opening data and required settings, then follow your first operation through its checks.",
-                  "Préparez les données initiales et les paramètres nécessaires, puis suivez votre première opération et ses contrôles.",
-                )}
-              </p>
-            </details>
-          </div>
-          <Link className="button primary" href="/register">
-            {t("Create your account", "Créer votre compte")}{" "}
-            <span aria-hidden="true">↗︎</span>
-          </Link>
-        </div>
-        <div className="convergence workspace-map reveal" aria-hidden="true">
-          <div className="map-brand">
-            Stoquify<small>{t("Your workspace", "Votre espace")}</small>
-          </div>
-          <div className="map-modules">
-            {cinematicModules.map((module) => (
-              <div key={module.id}>
-                <module.icon size={22} />
-                <span>{t(module.label[0], module.label[1])}</span>
-              </div>
-            ))}
-          </div>
-          <p>
-            {t(
-              "People, operations and financial review.",
-              "Personnel, opérations et révision financière.",
-            )}
-          </p>
-        </div>
-      </section>
+      <CinematicSetup />
       <section className="section context">
         <div className="section-title reveal">
           <h2 className="display">

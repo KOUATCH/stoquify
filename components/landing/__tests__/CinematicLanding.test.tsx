@@ -3,6 +3,7 @@ import { forwardRef } from "react"
 import { LandingRouteShell } from "../cinematic-shell"
 import { CinematicHero } from "../cinematic-hero"
 import { CinematicProduct, CinematicStory } from "../cinematic-product"
+import { CinematicSetup } from "../cinematic-setup"
 
 let mockLocale = "en"
 let mockPathname = "/"
@@ -56,6 +57,45 @@ beforeEach(() => {
   }))
 })
 afterEach(() => jest.restoreAllMocks())
+
+test.each(["en", "fr"])(
+  "connects setup steps to the matching preview and localized CTA in %s",
+  (locale) => {
+    mockLocale = locale
+    const { container } = render(shell(<CinematicSetup />))
+    const steps = [
+      ...container.querySelectorAll<HTMLButtonElement>(".setup-step button"),
+    ]
+    const preview = container.querySelector("#setup-preview")!
+    expect(steps).toHaveLength(3)
+    expect(preview).toHaveAttribute("aria-labelledby", "setup-step-0")
+    expect(preview.querySelector(".setup-account")).toBeInTheDocument()
+    fireEvent.click(steps[1])
+    expect(
+      steps.filter((button) => button.getAttribute("aria-expanded") === "true"),
+    ).toHaveLength(1)
+    expect(preview).toHaveAttribute("aria-labelledby", "setup-step-1")
+    expect(preview.querySelectorAll(".setup-module-grid > div")).toHaveLength(6)
+    expect(preview.querySelector(".setup-account")).toBeNull()
+    fireEvent.keyDown(steps[1], { key: "End" })
+    expect(steps[2]).toHaveFocus()
+    expect(preview.querySelectorAll(".setup-check")).toHaveLength(3)
+    expect(preview).toHaveTextContent(
+      locale === "fr" ? "À vérifier" : "To review",
+    )
+    fireEvent.keyDown(steps[2], { key: "ArrowDown" })
+    expect(steps[0]).toHaveFocus()
+    expect(preview).toHaveAttribute("aria-labelledby", "setup-step-0")
+    expect(preview).toHaveTextContent(
+      locale === "fr" ? "Aucun compte créé" : "No account is created",
+    )
+    expect(
+      within(container.querySelector("#start")!).getByRole("link", {
+        name: locale === "fr" ? "Créer votre compte" : "Create your account",
+      }),
+    ).toHaveAttribute("href", `/${locale}/register`)
+  },
+)
 
 test("leaves non-home public routes on the existing chrome", () => {
   mockPathname = "/workflows"

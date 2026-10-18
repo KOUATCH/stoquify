@@ -1,5 +1,17 @@
 # Stoquify landing product refresh — 2026-10-18
 
+## Follow-up: complete workspace setup
+
+After commit `1bf88f00`, review identified an incomplete setup section: the inherited `.convergence svg` sizing stretched module icons to the full card width, crowded their labels and pushed the setup steps below a large empty gap. Selecting a setup step did not change the illustration.
+
+The landing-only `CinematicSetup` component replaces that section with three controlled steps and matching original account-verification, operations/module and opening-data previews. Explicit icon dimensions prevent the inherited sizing defect. Finite entrance motion follows each selection; the page pause control and reduced-motion CSS disable it. EN/FR copy retains account-verification, module-access and review requirements. The register route is unchanged; previews are explicitly illustrative.
+
+Follow-up verification: 16 isolated component tests passed (including both locale setup interactions), focused ESLint passed, and the focused TypeScript program reported 0 errors. Browser checks covered all three setup states in EN/FR at actual CSS widths 320, 391, 768, 1024 and 1440: 30 states, one active step, matching preview, no page/preview horizontal overflow and no oversized icons. Home/End selection and focus, pause behavior (`animation-name: none`) and the final console were checked in the browser; no warnings/errors were reported. OS-level reduced-motion emulation, physical devices, screen-reader certification, application build and database tests were not run. Skill search: project UI/UX Pro Max `ux-guidelines.csv`, Animation/Continuous Animation informed finite motion; unrelated loading and haptic recommendations were not used.
+
+Evidence: `setup-browser-checks.json`, `setup-en-desktop.jpg`, `setup-fr-desktop.jpg` and `setup-fr-mobile.jpg` in the local review folder below. Verification was recorded before the requested local commit; no push or deployment was performed.
+
+---
+
 Verification snapshot recorded before the requested local commit. No push, deployment, migration or application build performed for this refresh.
 
 ## Result and scope
