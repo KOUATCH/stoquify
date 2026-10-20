@@ -1,4 +1,11 @@
 import { cn } from "@/lib/utils";
+import {
+  STOQUIFY_MARK_FACES,
+  STOQUIFY_MARK_PATH,
+  STOQUIFY_WORDMARK_PATH,
+  STOQUIFY_WORDMARK_RATIO,
+  STOQUIFY_WORDMARK_VIEWBOX,
+} from "./stoquify-logo-artwork";
 
 type StoquifyLogoProps = {
   theme?: "light" | "dark";
@@ -10,22 +17,8 @@ type StoquifyLogoProps = {
 };
 
 const palette = {
-  light: {
-    markBackground: "#132028",
-    markText: "#f7faf8",
-    text: "#132028",
-    muted: "#53675f",
-    accent: "#178e83",
-    glow: "rgba(23,142,131,0.24)",
-  },
-  dark: {
-    markBackground: "#f0c54d",
-    markText: "#132028",
-    text: "#ffffff",
-    muted: "#b8c7c2",
-    accent: "#7de8dc",
-    glow: "rgba(125,232,220,0.22)",
-  },
+  light: { text: "#132028", muted: "#536575" },
+  dark: { text: "#ffffff", muted: "#b8c7d4" },
 } as const;
 
 const StoquifyLogo = ({
@@ -37,65 +30,55 @@ const StoquifyLogo = ({
   compact = false,
 }: StoquifyLogoProps) => {
   const colors = palette[theme];
-  const markSize = Math.max(34, Math.min(height * 0.76, 46));
-  const wordSize = Math.max(21, Math.min(height * 0.48, 31));
+  const markSize = compact ? Math.min(height, 46) : Math.max(34, Math.min(height * 0.82, 46));
+  const wordHeight = Math.max(26, Math.min(height * 0.68, 36));
 
   return (
     <div
-      className={cn("inline-flex min-w-0 items-center gap-3", className)}
+      className={cn("inline-flex min-w-0 items-center gap-2.5", className)}
       style={{ maxWidth: width }}
+      role="img"
       aria-label="Stoquify"
     >
-      <span
-        className="relative grid shrink-0 place-items-center overflow-hidden rounded-xl font-black shadow-lg"
-        style={{
-          width: markSize,
-          height: markSize,
-          backgroundColor: colors.markBackground,
-          color: colors.markText,
-          boxShadow: `0 16px 34px ${colors.glow}`,
-        }}
-        aria-hidden="true"
-      >
-        <span
-          className="relative -mt-0.5 font-black leading-none tracking-normal"
-          style={{ fontSize: markSize * 0.58 }}
+      <span className="inline-flex shrink-0" aria-hidden="true">
+        <svg
+          width={markSize}
+          height={markSize}
+          viewBox="0 0 70 70"
+          fill="none"
+          focusable="false"
+          aria-hidden="true"
         >
-          q
-          <span
-            className="absolute left-[53%] top-[18%] h-[72%] w-[0.11em] -rotate-[30deg] rounded-full"
-            style={{ backgroundColor: colors.accent }}
-          />
-        </span>
-        <span
-          className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: colors.accent, boxShadow: `0 0 0 4px ${colors.glow}` }}
-        />
+          <path d={STOQUIFY_MARK_PATH} fill="var(--product-brand, #2f7df6)" />
+          {markSize >= 32 && STOQUIFY_MARK_FACES.map(face => (
+            <path key={face.token} d={face.path} fill={`var(${face.token}, ${face.fallback})`} />
+          ))}
+        </svg>
       </span>
 
       {compact ? null : (
-        <span className="min-w-0 leading-none">
-          <span
-            className="block truncate font-black lowercase tracking-normal"
-            style={{ color: colors.text, fontSize: wordSize }}
-            aria-hidden="true"
-          >
-            sto
-            <span className="relative inline-block">
-              q
-              <span
-                className="absolute left-[55%] top-[16%] h-[72%] w-[0.075em] -rotate-[30deg] rounded-full"
-                style={{ backgroundColor: colors.accent }}
-              />
+        <span className="min-w-0 leading-none" style={{ width: "max-content", maxWidth: Math.max(0, width - markSize - 10) }} aria-hidden="true">
+          <span className="block">
+            <svg
+              className="block h-auto max-w-full"
+              width={wordHeight * STOQUIFY_WORDMARK_RATIO}
+              height={wordHeight}
+              viewBox={STOQUIFY_WORDMARK_VIEWBOX}
+              fill={colors.text}
+              focusable="false"
+              aria-hidden="true"
+            >
+              <path d={STOQUIFY_WORDMARK_PATH} />
+            </svg>
+          </span>
+          {tagline && (
+            <span
+              className="mt-1 block break-words text-[0.62rem] font-semibold uppercase leading-tight tracking-[0.04em] max-[360px]:hidden"
+              style={{ color: colors.muted }}
+            >
+              {tagline}
             </span>
-            uify
-          </span>
-          <span
-            className="mt-1 block truncate text-[0.62rem] font-bold uppercase tracking-[0.14em]"
-            style={{ color: colors.muted }}
-          >
-            {tagline}
-          </span>
+          )}
         </span>
       )}
     </div>

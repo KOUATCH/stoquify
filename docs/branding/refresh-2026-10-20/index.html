@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoquify — Connect identity</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f8fc; color: #132028; font-family: system-ui, sans-serif; }
+  main { width: min(1120px, 100%); margin: auto; padding: 48px 24px; }
+  h1 { font-size: clamp(32px, 5vw, 52px); letter-spacing: -.04em; margin: 12px 0; }
+  h2 { margin-top: 48px; }
+  p { line-height: 1.65; color: #536575; max-width: 740px; }
+  .eyebrow { color: #2563eb; font-size: 12px; font-weight: 700; letter-spacing: .12em; }
+  .canvas { background: white; border-radius: 20px; min-height: 300px; display: grid; place-items: center; padding: 40px 24px; }
+  .canvas[data-dark="true"] { background: #132028; }
+  .canvas img { width: min(700px, 100%); height: auto; }
+  .choices { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0; }
+  button, a { font: inherit; }
+  button { padding: 10px 18px; min-height: 44px; background: white; color: #132028; border: 1px solid #aab7c7; border-radius: 8px; cursor: pointer; }
+  button[aria-pressed="true"] { background: #2563eb; border-color: #2563eb; color: white; }
+  button:focus-visible, a:focus-visible { outline: 3px solid #2f7df6; outline-offset: 4px; }
+  .board { display: block; width: 100%; height: auto; border-radius: 16px; margin: 20px 0; }
+  a { color: #1d4ed8; text-underline-offset: 3px; }
+  .downloads { display: flex; gap: 20px; flex-wrap: wrap; line-height: 2; }
+</style>
+<main>
+  <div class="eyebrow">STOQUIFY / IDENTITY REFRESH / 20 OCTOBER 2026</div>
+  <h1>Connect. With dimension.</h1>
+  <p>Three coordinated units express sales, stock, and finance. Faceted blue surfaces give the mark depth while the open channels keep its silhouette clear. This is the final implemented vector artwork.</p>
+  <div class="choices" aria-label="Logo appearance">
+    <button type="button" aria-pressed="true" data-variant="light">Light</button>
+    <button type="button" aria-pressed="false" data-variant="dark">Dark</button>
+    <button type="button" aria-pressed="false" data-variant="black">Monochrome</button>
+  </div>
+  <div class="canvas" id="canvas"><img id="signature" src="../../../public/brand/stoquify-logo-light.svg" width="700" height="160" alt="Stoquify — three interlocking blue units"></div>
+  <p>Color follows the existing brand tokens: #2f7df6, #5796ff, and #1d4ed8. Operational status colors retain their existing meanings. Tiny icons use a simplified flat silhouette.</p>
+  <div class="downloads">
+    <a href="../../../public/brand/stoquify-logo-light.svg" download>Light SVG</a>
+    <a href="../../../public/brand/stoquify-logo-dark.svg" download>Dark SVG</a>
+    <a href="../../../public/brand/stoquify-logo-black.svg" download>Monochrome SVG</a>
+    <a href="../../../public/brand/stoquify-app-icon.png" download>App icon</a>
+    <a href="README.md">Implementation and verification</a>
+  </div>
+  <h2>The three original directions</h2>
+  <img class="board" src="concepts.png" alt="Concept 1: Flow S. Concept 2: Control Q. Concept 3: Connect interlocking units." width="1881" height="1028">
+  <p>You selected concept 3, Connect, then requested dimensional treatment within the system palette. The artwork above is the vector refinement of that direction.</p>
+  <h2>Before and after</h2>
+  <img class="board" src="previews/before-after.png" alt="Previous decorated q identity alongside the new dimensional Connect signature" width="1200" height="380">
+  <h2>Variants and small sizes</h2>
+  <img class="board" src="previews/identity-board.png" alt="Final logo on white and dark surfaces, monochrome, and 16, 24, 32 and 48 pixel favicon examples" width="1200" height="880">
+  <p>These are asset previews, not screenshots of the running application. See the verification notes for the checks actually completed.</p>
+</main>
+<script>
+  document.querySelectorAll("[data-variant]").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll("[data-variant]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    document.querySelector("#signature").src = "../../../public/brand/stoquify-logo-" + button.dataset.variant + ".svg";
+    document.querySelector("#canvas").dataset.dark = String(button.dataset.variant === "dark");
+  }));
+</script>
+</html>

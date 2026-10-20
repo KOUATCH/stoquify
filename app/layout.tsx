@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "OHADA-aware POS, inventory, finance, payroll, accounting, and evidence operations platform",
   icons: {
     icon: "/brand/stoquify-mark.svg",
+    shortcut: "/favicon.ico",
+    apple: "/brand/apple-touch-icon.png",
   },
 };
 
