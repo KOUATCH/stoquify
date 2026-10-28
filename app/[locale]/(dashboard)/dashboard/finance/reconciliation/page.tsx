@@ -1,18 +1,17 @@
 import PaymentReconciliationWorkbench from "@/components/finance/PaymentReconciliationWorkbench"
 
-import { FinanceRouteAccess, type FinanceRouteParams } from "../FinanceRouteAccess"
+import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
 
-export default async function FinanceReconciliationPage({ params }: { params: FinanceRouteParams }) {
-  return FinanceRouteAccess({
+export default async function FinanceReconciliationPage({ params }: { params: Promise<{ locale: string }> }) {
+  const surface = routeByKey("finance-reconciliation")
+
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-reconciliation")
+  }
+
+  return withFinanceSurfaceAccess({
     params,
-    permissions: ["payments.reconciliation.read"],
-    resource: "PaymentReconciliationWorkbench",
-    title: "Payment reconciliation",
-    module: {
-      moduleSlug: "payment_reconciliation",
-      surface: "/dashboard/finance/reconciliation",
-      accessIntent: "read",
-    },
-    children: <PaymentReconciliationWorkbench />,
+    surface,
+    onAllowed: () => <PaymentReconciliationWorkbench />,
   })
 }

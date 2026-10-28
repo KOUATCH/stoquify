@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
 
 import { CashCommandDashboard } from "@/components/cash-command/CashCommandDashboard"
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
-import { localizePath } from "@/i18n/routing"
-import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
 import { getCashCommandData } from "@/services/cash-command/cash-command.service"
+import { withFinanceSurfaceAccess, routeByKey } from "../finance-route-access"
 
 export const metadata: Metadata = {
   title: "Cash Command | Kontava",
@@ -24,57 +22,37 @@ const copy = {
   },
 } as const
 
-function pickLocale(locale: string) {
-  return locale === "fr" ? "fr" : "en"
-}
-
 export default async function CashCommandPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-  const resolvedLocale = pickLocale(locale)
-  let data: Awaited<ReturnType<typeof getCashCommandData>>
+  const surface = routeByKey("finance-cash-command")
 
-  try {
-    const ctx = await requireAnyPermission(["finance.read", "dashboard.read"], {
-      resource: "KontavaCashCommand",
-    })
-    data = await getCashCommandData({
-      organizationId: ctx.orgId,
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      actorRoleCodes: ctx.roles.map((role) => role.code),
-      isSuperUser: ctx.isSuperUser,
-    })
-  } catch (error) {
-    if (error instanceof RbacError) {
-      const noActiveOrg = error.code === "NO_ACTIVE_ORG"
-
-      return (
-        <DashboardRouteState
-          kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-          title={noActiveOrg ? "Cash Command needs an active organization" : "Cash Command is not available for this role"}
-          message={
-            noActiveOrg
-              ? "Refresh your session from the dashboard so Cash Command can load tenant-scoped evidence."
-              : "This read-only tenant cash command requires administrator-wide operating authority. The denial was recorded by the RBAC guard."
-          }
-          primaryHref={localizePath("/dashboard", resolvedLocale)}
-        />
-      )
-    }
-
-    throw error
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-cash-command")
   }
 
-  return (
-    <CashCommandDashboard
-      data={data}
-      locale={resolvedLocale}
-      title={copy[resolvedLocale].title}
-      subtitle={copy[resolvedLocale].subtitle}
-    />
-  )
+  return withFinanceSurfaceAccess({
+    params,
+    surface,
+    onAllowed: async (context, locale) => {
+      const data = await getCashCommandData({
+        organizationId: context.orgId,
+        actorId: context.userId,
+        actorPermissions: context.permissions,
+        actorRoleCodes: context.roles.map((role) => role.code),
+        isSuperUser: context.isSuperUser,
+      })
+
+      return (
+        <CashCommandDashboard
+          data={data}
+          locale={locale}
+          title={copy[locale].title}
+          subtitle={copy[locale].subtitle}
+        />
+      )
+    },
+  })
 }

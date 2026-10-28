@@ -162,18 +162,21 @@ model User {
   invalidatedBranchDailyCloseSignOffs BranchDailyCloseSignOff[] @relation("BranchDailyCloseInvalidatedBy")
 
   // Transaction tracking
-  createdTransactions    InventoryTransaction[] @relation("TransactionCreatedBy")
-  createdPurchaseOrders  PurchaseOrder[]        @relation("PurchaseOrderCreatedBy")
-  approvedPurchaseOrders PurchaseOrder[]        @relation("PurchaseOrderApprovedBy")
-  createdSalesOrders     SalesOrder[]           @relation("SalesOrderCreatedBy")
-  createdAdjustments     StockAdjustment[]      @relation("AdjustmentCreatedBy")
-  approvedAdjustments    StockAdjustment[]      @relation("AdjustmentApprovedBy")
-  createdTransfers       StockTransfer[]        @relation("TransferCreatedBy")
-  approvedTransfers      StockTransfer[]        @relation("TransferApprovedBy")
-  receivedGoodsReceipts  GoodsReceipt[]         @relation("GoodsReceiptReceivedBy")
+  createdTransactions               InventoryTransaction[]             @relation("TransactionCreatedBy")
+  createdPurchaseOrders             PurchaseOrder[]                    @relation("PurchaseOrderCreatedBy")
+  approvedPurchaseOrders            PurchaseOrder[]                    @relation("PurchaseOrderApprovedBy")
+  createdSalesOrders                SalesOrder[]                       @relation("SalesOrderCreatedBy")
+  createdAdjustments                StockAdjustment[]                  @relation("AdjustmentCreatedBy")
+  approvedAdjustments               StockAdjustment[]                  @relation("AdjustmentApprovedBy")
+  createdTransfers                  StockTransfer[]                    @relation("TransferCreatedBy")
+  approvedTransfers                 StockTransfer[]                    @relation("TransferApprovedBy")
+  receivedGoodsReceipts             GoodsReceipt[]                     @relation("GoodsReceiptReceivedBy")
+  goodsReceiptInspections           GoodsReceiptInspection[]           @relation("GoodsReceiptInspectedBy")
+  goodsReceiptInspectionResolutions GoodsReceiptInspectionResolution[] @relation("GoodsReceiptInspectionResolvedBy")
 
   // POS relationships
   posSessions            POSSession[]
+  posCommitResults       POSCommitResult[]
   cashDrawerTransactions CashDrawerTransaction[]
   paymentsProcessed      Payment[]
   refundsProcessed       PaymentRefund[]
@@ -265,27 +268,30 @@ model Organization {
   updatedAt              DateTime  @updatedAt
 
   // Relationships
-  users                 User[]
-  invites               Invite[]
-  roles                 Role[]
-  locations             Location[]
-  items                 Item[]
-  categories            Category[]
-  brands                Brand[]
-  units                 Unit[]
-  taxRates              TaxRate[]
-  suppliers             Supplier[]
-  customers             Customer[]
-  purchaseOrders        PurchaseOrder[]
-  salesOrders           SalesOrder[]
-  stockAdjustments      StockAdjustment[]
-  stockTransfers        StockTransfer[]
-  goodsReceipts         GoodsReceipt[]
-  inventoryTransactions InventoryTransaction[]
-  serialNumbers         SerialNumber[]
-  posStations           POSStation[]
-  dailySalesReports     DailySalesReport[]
-  payments              Payment[]
+  users                             User[]
+  invites                           Invite[]
+  roles                             Role[]
+  locations                         Location[]
+  items                             Item[]
+  categories                        Category[]
+  brands                            Brand[]
+  units                             Unit[]
+  taxRates                          TaxRate[]
+  suppliers                         Supplier[]
+  customers                         Customer[]
+  customerLocations                 CustomerLocation[]
+  purchaseOrders                    PurchaseOrder[]
+  salesOrders                       SalesOrder[]
+  stockAdjustments                  StockAdjustment[]
+  stockTransfers                    StockTransfer[]
+  goodsReceipts                     GoodsReceipt[]
+  goodsReceiptInspections           GoodsReceiptInspection[]
+  goodsReceiptInspectionResolutions GoodsReceiptInspectionResolution[]
+  inventoryTransactions             InventoryTransaction[]
+  serialNumbers                     SerialNumber[]
+  posStations                       POSStation[]
+  dailySalesReports                 DailySalesReport[]
+  payments                          Payment[]
 
   expenseCategories                       ExpenseCategory[]
   expenses                                Expense[]
@@ -299,6 +305,12 @@ model Organization {
   customerStatementRecipientActionStates  CustomerStatementRecipientActionState[]
   customerStatementDeliveries             CustomerStatementDelivery[]
   customerStatementDeliveryStates         CustomerStatementDeliveryState[]
+  supplierPoEnvelopes                     SupplierPoEnvelope[]
+  supplierPoAccessTokens                  SupplierPoAccessToken[]
+  supplierPoAccessLogs                    SupplierPoAccessLog[]
+  supplierPoProposals                     SupplierPoProposal[]
+  supplierPoProposalLines                 SupplierPoProposalLine[]
+  supplierPoProposalStates                SupplierPoProposalState[]
   referralAttributions                    ReferralAttribution[]
   referralAttributionEvents               ReferralAttributionEvent[]               @relation("ReferralAttributionSourceOrganization")
   referralConversionEvents                ReferralAttributionEvent[]               @relation("ReferralAttributionTargetOrganization")
@@ -321,6 +333,8 @@ model Organization {
   ledgerAuditEvents                       LedgerAuditEvent[]
   businessEvents                          BusinessEvent[]
   businessEventOutbox                     BusinessEventOutbox[]
+  businessEventAudits                     BusinessEventAudit[]
+  businessEventAnomalies                  BusinessEventAnomaly[]
   auditLogs                               AuditLog[]
   branchDailyCloseRuns                    BranchDailyCloseRun[]
   branchDailyCloseSignOffs                BranchDailyCloseSignOff[]
@@ -332,6 +346,7 @@ model Organization {
   posOfflineEvents                        POSOfflineEvent[]
   posOfflineSyncConflicts                 POSOfflineSyncConflict[]
   posOfflineSyncCertificates              POSOfflineSyncCertificate[]
+  posCommitResults                        POSCommitResult[]
   payrollEmployees                        PayrollEmployee[]
   hrisOrgUnits                            HrisOrgUnit[]
   hrisPositions                           HrisPosition[]
@@ -355,6 +370,7 @@ model Organization {
   payrollPeriods                          PayrollPeriod[]
   payrollAttendanceSnapshots              PayrollAttendanceSnapshot[]
   payrollRuns                             PayrollRun[]
+  payrollRunTransitions                   PayrollRunTransition[]
   payrollRunLines                         PayrollRunLine[]
   payrollPayslips                         PayrollPayslip[]
   payrollPayslipLines                     PayrollPayslipLine[]
@@ -387,6 +403,7 @@ model Organization {
   fiscalDocuments                         FiscalDocument[]
   fiscalDocumentLines                     FiscalDocumentLine[]
   fiscalSequences                         FiscalSequence[]
+  documentSequences                       DocumentSequence[]
   complianceSubmissions                   ComplianceSubmission[]
   complianceAdapterConfigs                ComplianceAdapterConfig[]
   complianceEvidence                      ComplianceEvidence[]
@@ -395,6 +412,11 @@ model Organization {
   supplierBankChanges                     SupplierBankChangeRequest[]
   supplierInvoices                        SupplierInvoice[]
   supplierInvoiceLines                    SupplierInvoiceLine[]
+  supplierInvoiceMatchExceptions          SupplierInvoiceMatchException[]
+  purchaseReturns                         PurchaseReturn[]
+  purchaseReturnLines                     PurchaseReturnLine[]
+  supplierCreditNotes                     SupplierCreditNote[]
+  supplierCreditNoteLines                 SupplierCreditNoteLine[]
   threeWayMatches                         ThreeWayMatch[]
   supplierPayments                        SupplierPayment[]
   supplierPaymentAllocations              SupplierPaymentAllocation[]
@@ -410,6 +432,11 @@ model Organization {
   agentPolicyIncidents                    AgentPolicyIncident[]
   aiActionProposals                       AiActionProposal[]
   agentActivationPackages                 AgentActivationPackage[]
+  onboardingImportMappings                OnboardingImportMapping[]
+  onboardingImportBatches                 OnboardingImportBatch[]
+  onboardingImportRows                    OnboardingImportRow[]
+  onboardingImportIssues                  OnboardingImportIssue[]
+  onboardingReadinessMilestones           OnboardingReadinessMilestone[]
 
   @@unique([slug])
   @@index([slug])
@@ -479,6 +506,7 @@ model Location {
   transfersTo                StockTransfer[]             @relation("TransferTo")
   purchaseOrders             PurchaseOrder[]
   salesOrders                SalesOrder[]
+  customerLocations          CustomerLocation[]
   stockAdjustments           StockAdjustment[]
   goodsReceipts              GoodsReceipt[]
   posStations                POSStation[]
@@ -488,6 +516,7 @@ model Location {
   posOfflineDevices          POSOfflineDevice[]
   posOfflineEvents           POSOfflineEvent[]
   posOfflineSyncCertificates POSOfflineSyncCertificate[]
+  posCommitResults           POSCommitResult[]
   expenses                   Expense[]
   serialNumbers              SerialNumber[]
   stockCountSessions         StockCountSession[]
@@ -946,6 +975,7 @@ enum InventoryTransactionTimeProvenance {
 enum TransactionType {
   // Inbound
   PURCHASE_RECEIPT
+  PURCHASE_RETURN_REVERSAL
   SALES_RETURN
   TRANSFER_IN
   ADJUSTMENT_IN
@@ -1054,14 +1084,17 @@ model Supplier {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  supplierItems    ItemSupplier[]
-  purchaseOrders   PurchaseOrder[]
-  expenses         Expense[]
-  ledgerEntries    SupplierLedgerEntry[]
-  bankAccounts     SupplierBankAccount[]
-  bankChanges      SupplierBankChangeRequest[]
-  supplierInvoices SupplierInvoice[]
-  supplierPayments SupplierPayment[]
+  supplierItems              ItemSupplier[]
+  purchaseOrders             PurchaseOrder[]
+  purchaseReturns            PurchaseReturn[]
+  supplierCreditNotes        SupplierCreditNote[]
+  expenses                   Expense[]
+  ledgerEntries              SupplierLedgerEntry[]
+  bankAccounts               SupplierBankAccount[]
+  bankChanges                SupplierBankChangeRequest[]
+  supplierInvoices           SupplierInvoice[]
+  supplierPayments           SupplierPayment[]
+  poAcknowledgementEnvelopes SupplierPoEnvelope[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1122,6 +1155,7 @@ model Customer {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
+  locationAssignments CustomerLocation[]
   salesOrders         SalesOrder[]
   ledgerEntries       CustomerLedgerEntry[]
   receivableDocuments CustomerReceivableDocument[]
@@ -1132,11 +1166,211 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, code])
+  @@unique([organizationId, id])
   @@index([organizationId])
   @@index([organizationId, isActive, deletedAt])
   @@index([email])
   @@index([phone])
   @@map("customers")
+}
+
+enum CustomerLocationSource {
+  HISTORICAL_SALE
+  POS_CREATION
+  MANUAL
+}
+
+model CustomerLocation {
+  id             String                 @id @default(cuid())
+  organizationId String
+  customerId     String
+  locationId     String
+  source         CustomerLocationSource @default(MANUAL)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer     @relation(fields: [organizationId, customerId], references: [organizationId, id], onDelete: Cascade)
+  location     Location     @relation(fields: [organizationId, locationId], references: [organizationId, id], onDelete: Cascade)
+
+  @@unique([organizationId, customerId, locationId])
+  @@index([organizationId, locationId, customerId])
+  @@index([organizationId, customerId])
+  @@map("customer_locations")
+}
+
+// ============================================================
+// GOVERNED MASTER-DATA ONBOARDING
+// ============================================================
+
+enum OnboardingImportTarget {
+  CUSTOMER
+  SUPPLIER
+  ITEM
+}
+
+enum OnboardingImportStatus {
+  UPLOADED
+  VALIDATED
+  BLOCKED
+  APPROVED
+  COMMITTING
+  COMMITTED
+}
+
+enum OnboardingImportIssueSeverity {
+  ERROR
+  WARNING
+}
+
+enum OnboardingImportRiskLevel {
+  STANDARD
+  HIGH
+}
+
+enum OnboardingReadinessState {
+  NOT_STARTED
+  IMPORTED
+  RECONCILED
+  BLOCKED
+  WAIVED
+}
+
+model OnboardingImportMapping {
+  id             String                 @id @default(cuid())
+  organizationId String
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target         OnboardingImportTarget
+  version        Int
+  schemaVersion  String                 @default("1")
+  fieldMap       Json
+  requiredFields String[]
+  createdById    String
+  createdAt      DateTime               @default(now())
+
+  batches OnboardingImportBatch[]
+
+  @@unique([organizationId, target, version])
+  @@index([organizationId, target, createdAt])
+  @@map("onboarding_import_mappings")
+}
+
+model OnboardingImportBatch {
+  id                        String                    @id @default(cuid())
+  organizationId            String
+  organization              Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target                    OnboardingImportTarget
+  status                    OnboardingImportStatus    @default(UPLOADED)
+  sourceFilename            String
+  sourceMimeType            String
+  sourceByteSize            Int
+  contentHash               String
+  mappingId                 String
+  mapping                   OnboardingImportMapping   @relation(fields: [mappingId], references: [id], onDelete: Restrict)
+  mappingVersion            Int
+  schemaVersion             String
+  sourceRecordCount         Int                       @default(0)
+  validRecordCount          Int                       @default(0)
+  errorRecordCount          Int                       @default(0)
+  duplicateRecordCount      Int                       @default(0)
+  riskLevel                 OnboardingImportRiskLevel @default(STANDARD)
+  riskReasons               String[]
+  sourceRequiredFieldTotals Json
+  preCommitRecordCount      Int?
+  postCommitRecordCount     Int?
+  destinationRequiredTotals Json?
+  committedRecordCount      Int                       @default(0)
+  uploadedById              String
+  uploadedAt                DateTime                  @default(now())
+  validatedAt               DateTime?
+  approvedById              String?
+  approvedAt                DateTime?
+  approvalDigest            String?
+  commitStartedAt           DateTime?
+  committedAt               DateTime?
+  replayCount               Int                       @default(0)
+  lastReplayedAt            DateTime?
+  evidenceManifest          Json?
+  evidenceHash              String?
+  lastSafeErrorCode         String?
+  retentionExpiresAt        DateTime
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+
+  rows   OnboardingImportRow[]
+  issues OnboardingImportIssue[]
+
+  @@unique([organizationId, target, contentHash, mappingVersion])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, target, createdAt])
+  @@index([organizationId, riskLevel, status, createdAt])
+  @@map("onboarding_import_batches")
+}
+
+model OnboardingImportRow {
+  id                String                @id @default(cuid())
+  organizationId    String
+  organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  batchId           String
+  batch             OnboardingImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  rowNumber         Int
+  sourceRowHash     String
+  businessKey       String?
+  normalizedData    Json
+  valid             Boolean               @default(false)
+  commitAttemptedAt DateTime?
+  committedRecordId String?
+  committedAt       DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  issues OnboardingImportIssue[]
+
+  @@unique([batchId, rowNumber])
+  @@index([organizationId, batchId, businessKey])
+  @@index([batchId, committedRecordId])
+  @@map("onboarding_import_rows")
+}
+
+model OnboardingImportIssue {
+  id             String                        @id @default(cuid())
+  organizationId String
+  organization   Organization                  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  batchId        String
+  batch          OnboardingImportBatch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  rowId          String?
+  row            OnboardingImportRow?          @relation(fields: [rowId], references: [id], onDelete: Cascade)
+  rowNumber      Int
+  field          String?
+  severity       OnboardingImportIssueSeverity @default(ERROR)
+  code           String
+  safeMessage    String
+  createdAt      DateTime                      @default(now())
+
+  @@index([organizationId, batchId, severity])
+  @@index([batchId, rowNumber])
+  @@map("onboarding_import_issues")
+}
+
+model OnboardingReadinessMilestone {
+  id                String                   @id @default(cuid())
+  organizationId    String
+  organization      Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  target            OnboardingImportTarget
+  state             OnboardingReadinessState @default(NOT_STARTED)
+  evidenceBatchId   String?
+  sourceRecordCount Int                      @default(0)
+  committedCount    Int                      @default(0)
+  blockerCount      Int                      @default(0)
+  waivedById        String?
+  waivedAt          DateTime?
+  waiverReason      String?
+  updatedAt         DateTime                 @updatedAt
+  createdAt         DateTime                 @default(now())
+
+  @@unique([organizationId, target])
+  @@index([organizationId, state])
+  @@map("onboarding_readiness_milestones")
 }
 
 // ============================================================
@@ -1179,16 +1413,20 @@ model PurchaseOrder {
   approvedBy   User?     @relation("PurchaseOrderApprovedBy", fields: [approvedById], references: [id])
   approvedAt   DateTime?
 
-  lines            PurchaseOrderLine[]
-  goodsReceipts    GoodsReceipt[]
-  payments         Payment[]
-  supplierInvoices SupplierInvoice[]
-  threeWayMatches  ThreeWayMatch[]
+  lines                    PurchaseOrderLine[]
+  goodsReceipts            GoodsReceipt[]
+  payments                 Payment[]
+  supplierInvoices         SupplierInvoice[]
+  threeWayMatches          ThreeWayMatch[]
+  acknowledgementEnvelopes SupplierPoEnvelope[]
+  purchaseReturns          PurchaseReturn[]
+  supplierCreditNotes      SupplierCreditNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, orderNumber])
+  @@unique([organizationId, id])
   @@index([supplierId])
   @@index([organizationId, status, orderDate])
   @@index([organizationId, orderDate])
@@ -1224,6 +1462,7 @@ model PurchaseOrderLine {
 
   goodsReceiptLines    GoodsReceiptLine[]
   supplierInvoiceLines SupplierInvoiceLine[]
+  purchaseReturnLines  PurchaseReturnLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1233,18 +1472,263 @@ model PurchaseOrderLine {
   @@map("purchase_order_lines")
 }
 
+enum SupplierPoAccessTokenStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum SupplierPoAccessAction {
+  VIEW
+  RESPOND
+}
+
+enum SupplierPoAccessOutcome {
+  GRANTED
+  DENIED
+}
+
+enum SupplierPoProposalType {
+  ACCEPT
+  REJECT
+  REQUEST_CHANGE
+}
+
+enum SupplierPoProposalStatus {
+  SUBMITTED
+  BUYER_ACCEPTED
+  BUYER_REJECTED
+}
+
+enum SupplierPoProposalActorType {
+  SUPPLIER
+  BUYER
+}
+
+/// Immutable, redacted purchase-order snapshot shared with one supplier.
+/// Purchase-order, stock, AP, and accounting records remain authoritative.
+model SupplierPoEnvelope {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+  preferredLocale Locale @default(EN)
+  payload         Json
+  sourceStateHash String
+  contentHash     String
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+  createdById     String
+
+  accessTokens SupplierPoAccessToken[]
+  accessLogs   SupplierPoAccessLog[]
+  proposals    SupplierPoProposal[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, purchaseOrderId, contentHash])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, purchaseOrderId, createdAt])
+  @@index([organizationId, supplierId, createdAt])
+  @@map("supplier_po_envelopes")
+}
+
+model SupplierPoAccessToken {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenHash           String
+  jtiHash             String
+  envelopeContentHash String
+  recipientHash       String?
+
+  allowView    Boolean                     @default(true)
+  allowRespond Boolean                     @default(true)
+  status       SupplierPoAccessTokenStatus @default(ACTIVE)
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+
+  issuedById String
+  issuedAt   DateTime
+  expiresAt  DateTime
+
+  revokedById      String?
+  revokedAt        DateTime?
+  revocationReason String?
+
+  lastAccessedAt DateTime?
+  accessCount    Int       @default(0)
+  metadata       Json?
+
+  accessLogs SupplierPoAccessLog[]
+  proposal   SupplierPoProposal?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, tokenHash])
+  @@unique([organizationId, jtiHash])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@unique([organizationId, businessEventId])
+  @@index([organizationId, envelopeId, status])
+  @@index([organizationId, status, expiresAt])
+  @@map("supplier_po_access_tokens")
+}
+
+/// Append-only, redacted supplier access evidence. Raw tokens and request
+/// metadata are never stored.
+model SupplierPoAccessLog {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenId String
+  token   SupplierPoAccessToken @relation(fields: [tokenId], references: [id], onDelete: Restrict)
+
+  action  SupplierPoAccessAction
+  outcome SupplierPoAccessOutcome
+
+  envelopeContentHash String
+  tokenHashPrefix     String
+  ipHash              String?
+  userAgentHash       String?
+  responseHash        String?
+  denialReason        String?
+  occurredAt          DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId, envelopeId, occurredAt])
+  @@index([organizationId, tokenId, occurredAt])
+  @@map("supplier_po_access_logs")
+}
+
+/// Supplier response is an immutable proposal only; it never updates the PO.
+model SupplierPoProposal {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  envelopeId String
+  envelope   SupplierPoEnvelope @relation(fields: [envelopeId], references: [id], onDelete: Restrict)
+
+  tokenId String                @unique
+  token   SupplierPoAccessToken @relation(fields: [tokenId], references: [id], onDelete: Restrict)
+
+  proposalType          SupplierPoProposalType
+  requestedDeliveryDate DateTime?
+  supplierNote          String?
+  noteHash              String?
+  payloadHash           String
+
+  idempotencyKey  String
+  correlationId   String
+  businessEventId String
+
+  lines  SupplierPoProposalLine[]
+  states SupplierPoProposalState[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, envelopeId, idempotencyKey])
+  @@unique([organizationId, correlationId])
+  @@index([organizationId, envelopeId, proposalType, createdAt])
+  @@map("supplier_po_proposals")
+}
+
+model SupplierPoProposalLine {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  proposalId String
+  proposal   SupplierPoProposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+
+  purchaseOrderLineId     String
+  originalOrderedQuantity Decimal @db.Decimal(12, 3)
+  requestedQuantity       Decimal @db.Decimal(12, 3)
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, proposalId, purchaseOrderLineId])
+  @@index([organizationId, purchaseOrderLineId])
+  @@map("supplier_po_proposal_lines")
+}
+
+/// Current proposal status is derived from this append-only hash chain.
+model SupplierPoProposalState {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  proposalId String
+  proposal   SupplierPoProposal @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+
+  version Int
+  status  SupplierPoProposalStatus
+
+  effectiveAt DateTime
+  actorType   SupplierPoProposalActorType
+  actorId     String?
+  reason      String?
+
+  previousStateHash String?
+  stateHash         String
+  evidenceHash      String
+  businessEventId   String
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, proposalId, version])
+  @@unique([organizationId, stateHash])
+  @@index([organizationId, proposalId, effectiveAt])
+  @@map("supplier_po_proposal_states")
+}
+
 // ============================================================
 // GOODS RECEIPT
 // ============================================================
 
 model GoodsReceipt {
-  id              String             @id @default(cuid())
-  receiptNumber   String // per-org unique
-  receiptDate     DateTime           @default(now())
-  status          GoodsReceiptStatus @default(DRAFT)
-  notes           String?
-  purchaseOrderId String
-  purchaseOrder   PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id])
+  id                String             @id @default(cuid())
+  receiptNumber     String // per-org unique
+  receiptDate       DateTime           @default(now())
+  status            GoodsReceiptStatus @default(DRAFT)
+  idempotencyKey    String?            @db.VarChar(191)
+  payloadHash       String?            @db.VarChar(64)
+  finalizedAt       DateTime?
+  inventoryPostedAt DateTime?
+  notes             String?
+  purchaseOrderId   String
+  purchaseOrder     PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id])
 
   locationId String
   location   Location @relation(fields: [locationId], references: [id])
@@ -1255,15 +1739,22 @@ model GoodsReceipt {
   receivedById String?
   receivedBy   User?   @relation("GoodsReceiptReceivedBy", fields: [receivedById], references: [id])
 
-  lines           GoodsReceiptLine[]
-  threeWayMatches ThreeWayMatch[]
+  lines                GoodsReceiptLine[]
+  threeWayMatches      ThreeWayMatch[]
+  inspection           GoodsReceiptInspection?
+  inspectionResolution GoodsReceiptInspectionResolution?
+  purchaseReturns      PurchaseReturn[]
+  supplierCreditNotes  SupplierCreditNote[]
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   @@unique([organizationId, receiptNumber])
+  @@unique([organizationId, id])
+  @@unique([organizationId, idempotencyKey])
   @@index([purchaseOrderId])
+  @@index([organizationId, purchaseOrderId, status])
   @@index([organizationId, status, receiptDate])
   @@index([locationId])
   @@map("goods_receipts")
@@ -1271,9 +1762,27 @@ model GoodsReceipt {
 
 enum GoodsReceiptStatus {
   DRAFT
+  HELD
   RECEIVED
   COMPLETED
+  REJECTED
   CANCELLED
+}
+
+model DocumentSequence {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documentType   String       @db.VarChar(32)
+  scopeKey       String       @default("GLOBAL") @db.VarChar(64)
+  nextValue      Int          @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, documentType, scopeKey])
+  @@index([organizationId, documentType])
+  @@map("document_sequences")
 }
 
 model GoodsReceiptLine {
@@ -1291,8 +1800,11 @@ model GoodsReceiptLine {
   notes            String?
   batchNumber      String?
   expiryDate       DateTime?
+  serialNumbers    String[]  @default([])
 
-  supplierInvoiceLines SupplierInvoiceLine[]
+  supplierInvoiceLines    SupplierInvoiceLine[]
+  purchaseReturnLines     PurchaseReturnLine[]
+  supplierCreditNoteLines SupplierCreditNoteLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1301,6 +1813,64 @@ model GoodsReceiptLine {
   @@index([purchaseOrderLineId])
   @@index([itemId])
   @@map("goods_receipt_lines")
+}
+
+enum GoodsReceiptInspectionOutcome {
+  PASSED
+  FAILED
+  INCOMPLETE
+}
+
+enum GoodsReceiptInspectionResolutionDecision {
+  ACCEPT
+  REJECT
+}
+
+/// Immutable receiving-time inspection evidence. A failed or incomplete
+/// inspection keeps the receipt held until a separate resolution is recorded.
+model GoodsReceiptInspection {
+  id             String                        @id @default(cuid())
+  organizationId String
+  organization   Organization                  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  goodsReceiptId String                        @unique
+  goodsReceipt   GoodsReceipt                  @relation(fields: [goodsReceiptId], references: [id], onDelete: Restrict)
+  outcome        GoodsReceiptInspectionOutcome
+  inspectedById  String
+  inspectedBy    User                          @relation("GoodsReceiptInspectedBy", fields: [inspectedById], references: [id], onDelete: Restrict)
+  reason         String?
+  evidenceNotes  String?
+  inspectedAt    DateTime                      @default(now())
+  createdAt      DateTime                      @default(now())
+
+  resolution GoodsReceiptInspectionResolution?
+
+  @@unique([organizationId, goodsReceiptId], map: "gr_inspection_org_receipt_key")
+  @@index([organizationId, outcome, inspectedAt], map: "gr_inspection_org_outcome_at_idx")
+  @@map("goods_receipt_inspections")
+}
+
+/// Immutable decision that releases or rejects a held receipt. The receipt
+/// state and inventory mutation are applied atomically with this evidence.
+model GoodsReceiptInspectionResolution {
+  id             String                                   @id @default(cuid())
+  organizationId String
+  organization   Organization                             @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  goodsReceiptId String                                   @unique
+  goodsReceipt   GoodsReceipt                             @relation(fields: [goodsReceiptId], references: [id], onDelete: Restrict)
+  inspectionId   String                                   @unique
+  inspection     GoodsReceiptInspection                   @relation(fields: [inspectionId], references: [id], onDelete: Restrict)
+  decision       GoodsReceiptInspectionResolutionDecision
+  resolvedById   String
+  resolvedBy     User                                     @relation("GoodsReceiptInspectionResolvedBy", fields: [resolvedById], references: [id], onDelete: Restrict)
+  reason         String
+  idempotencyKey String                                   @db.VarChar(191)
+  payloadHash    String                                   @db.VarChar(64)
+  resolvedAt     DateTime                                 @default(now())
+  createdAt      DateTime                                 @default(now())
+
+  @@unique([organizationId, idempotencyKey], map: "gr_inspection_resolution_org_idem_key")
+  @@index([organizationId, decision, resolvedAt], map: "gr_inspection_resolution_org_decision_idx")
+  @@map("goods_receipt_inspection_resolutions")
 }
 
 // ============================================================
@@ -1336,6 +1906,14 @@ enum ThreeWayMatchStatus {
   EXCEPTION
   APPROVED_EXCEPTION
   REJECTED
+}
+
+enum SupplierInvoiceMatchExceptionStatus {
+  OPEN
+  APPROVED
+  REJECTED
+  EXPIRED
+  RESOLVED
 }
 
 enum SupplierPaymentStatus {
@@ -1469,14 +2047,17 @@ model SupplierInvoice {
   metadata     Json?
   deletedAt    DateTime?
 
-  lines              SupplierInvoiceLine[]
-  threeWayMatches    ThreeWayMatch[]
-  paymentAllocations SupplierPaymentAllocation[]
+  lines               SupplierInvoiceLine[]
+  threeWayMatches     ThreeWayMatch[]
+  matchExceptions     SupplierInvoiceMatchException[]
+  paymentAllocations  SupplierPaymentAllocation[]
+  supplierCreditNotes SupplierCreditNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, supplierId, invoiceNumber])
+  @@unique([organizationId, id])
   @@unique([organizationId, idempotencyKey])
   @@unique([organizationId, duplicateFingerprint])
   @@index([organizationId, status, invoiceDate])
@@ -1512,6 +2093,8 @@ model SupplierInvoiceLine {
   matchStatus ThreeWayMatchStatus @default(MATCHED)
   notes       String?
   metadata    Json?
+
+  supplierCreditNoteLines SupplierCreditNoteLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1551,14 +2134,59 @@ model ThreeWayMatch {
   evidenceHash String?
   metadata     Json?
 
+  matchExceptions SupplierInvoiceMatchException[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([organizationId, id])
   @@index([organizationId, status, matchedAt])
   @@index([supplierInvoiceId])
   @@index([purchaseOrderId])
   @@index([goodsReceiptId])
   @@map("three_way_matches")
+}
+
+model SupplierInvoiceMatchException {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  supplierInvoiceId String
+  supplierInvoice   SupplierInvoice @relation(fields: [organizationId, supplierInvoiceId], references: [organizationId, id], onDelete: Restrict)
+
+  threeWayMatchId String
+  threeWayMatch   ThreeWayMatch @relation(fields: [organizationId, threeWayMatchId], references: [organizationId, id], onDelete: Restrict)
+
+  status SupplierInvoiceMatchExceptionStatus @default(OPEN)
+
+  policyVersion     String
+  reason            String
+  evidenceReference String
+  varianceAmount    Decimal @db.Decimal(14, 2)
+  priceVariance     Decimal @db.Decimal(14, 2)
+
+  requestedById String
+  approvedById  String?
+  rejectedById  String?
+  resolvedById  String?
+
+  requestedAt    DateTime  @default(now())
+  decidedAt      DateTime?
+  expiresAt      DateTime
+  resolvedAt     DateTime?
+  decisionReason String?
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, id])
+  @@index([organizationId, supplierInvoiceId, status])
+  @@index([organizationId, threeWayMatchId, status])
+  @@index([organizationId, status, expiresAt])
+  @@map("supplier_invoice_match_exceptions")
 }
 
 model SupplierPayment {
@@ -1628,6 +2256,197 @@ model SupplierPaymentAllocation {
   @@unique([supplierPaymentId, supplierInvoiceId])
   @@index([organizationId, supplierInvoiceId])
   @@map("supplier_payment_allocations")
+}
+
+enum PurchaseCorrectionDirection {
+  CORRECTION
+  REVERSAL
+}
+
+/// Immutable, source-linked return-to-supplier fact. Original purchase orders
+/// and goods receipts are never edited to represent a return.
+model PurchaseReturn {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, map: "purchase_returns_organizationId_fkey")
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [organizationId, purchaseOrderId], references: [organizationId, id], onDelete: Restrict, map: "purchase_returns_po_tenant_fkey")
+
+  goodsReceiptId String
+  goodsReceipt   GoodsReceipt @relation(fields: [organizationId, goodsReceiptId], references: [organizationId, id], onDelete: Restrict, map: "purchase_returns_receipt_tenant_fkey")
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict, map: "purchase_returns_supplierId_fkey")
+
+  returnNumber String
+  direction    PurchaseCorrectionDirection @default(CORRECTION)
+
+  reversalOfPurchaseReturnId String?         @unique
+  reversalOfPurchaseReturn   PurchaseReturn? @relation("PurchaseReturnReversal", fields: [reversalOfPurchaseReturnId], references: [id], onDelete: Restrict, map: "purchase_returns_reversal_fkey")
+  reversedByPurchaseReturn   PurchaseReturn? @relation("PurchaseReturnReversal")
+
+  reason         String
+  idempotencyKey String @db.VarChar(191)
+  payloadHash    String @db.VarChar(71)
+  documentHash   String @db.VarChar(71)
+  evidenceHash   String @db.VarChar(71)
+
+  inventoryBusinessEventId String
+  ledgerPostingBatchId     String?
+  journalEntryId           String?
+  postedById               String
+  occurredAt               DateTime
+  createdAt                DateTime @default(now())
+
+  lines               PurchaseReturnLine[]
+  supplierCreditNotes SupplierCreditNote[]
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, returnNumber])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, evidenceHash])
+  @@index([organizationId, purchaseOrderId, occurredAt], map: "purchase_returns_po_occurred_idx")
+  @@index([organizationId, goodsReceiptId, occurredAt], map: "purchase_returns_receipt_occurred_idx")
+  @@index([organizationId, direction, occurredAt], map: "purchase_returns_direction_occurred_idx")
+  @@map("purchase_returns")
+}
+
+/// Immutable line evidence derived from the source receipt. Quantity and cost
+/// are server-derived; invoiced and uninvoiced portions drive AP/GRNI posting.
+model PurchaseReturnLine {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, map: "purchase_return_lines_organizationId_fkey")
+
+  purchaseReturnId String
+  purchaseReturn   PurchaseReturn @relation(fields: [organizationId, purchaseReturnId], references: [organizationId, id], onDelete: Restrict, map: "purchase_return_lines_return_tenant_fkey")
+
+  sourceGoodsReceiptLineId String
+  sourceGoodsReceiptLine   GoodsReceiptLine @relation(fields: [sourceGoodsReceiptLineId], references: [id], onDelete: Restrict, map: "purchase_return_lines_receipt_line_fkey")
+
+  sourcePurchaseOrderLineId String
+  sourcePurchaseOrderLine   PurchaseOrderLine @relation(fields: [sourcePurchaseOrderLineId], references: [id], onDelete: Restrict, map: "purchase_return_lines_po_line_fkey")
+
+  itemId              String
+  quantity            Decimal @db.Decimal(12, 3)
+  invoicedQuantity    Decimal @db.Decimal(12, 3)
+  uninvoicedQuantity  Decimal @db.Decimal(12, 3)
+  unitCost            Decimal @db.Decimal(12, 2)
+  inventoryAmount     Decimal @db.Decimal(14, 2)
+  supplierClaimAmount Decimal @db.Decimal(14, 2)
+  grniAmount          Decimal @db.Decimal(14, 2)
+
+  inventoryTransactionId String   @unique
+  evidenceHash           String   @db.VarChar(71)
+  createdAt              DateTime @default(now())
+
+  supplierCreditNoteLines SupplierCreditNoteLine[]
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, purchaseReturnId, sourceGoodsReceiptLineId], map: "purchase_return_lines_source_key")
+  @@index([organizationId, sourceGoodsReceiptLineId], map: "purchase_return_lines_receipt_line_idx")
+  @@index([organizationId, sourcePurchaseOrderLineId], map: "purchase_return_lines_po_line_idx")
+  @@map("purchase_return_lines")
+}
+
+/// Supplier-issued credit/debit evidence. Values are derived from the linked
+/// posted invoice and return; the supplier document number/hash are mandatory.
+model SupplierCreditNote {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, map: "supplier_credit_notes_organizationId_fkey")
+
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict, map: "supplier_credit_notes_supplierId_fkey")
+
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [organizationId, purchaseOrderId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_notes_po_tenant_fkey")
+
+  goodsReceiptId String
+  goodsReceipt   GoodsReceipt @relation(fields: [organizationId, goodsReceiptId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_notes_receipt_tenant_fkey")
+
+  purchaseReturnId String
+  purchaseReturn   PurchaseReturn @relation(fields: [organizationId, purchaseReturnId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_notes_return_tenant_fkey")
+
+  supplierInvoiceId String
+  supplierInvoice   SupplierInvoice @relation(fields: [organizationId, supplierInvoiceId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_notes_invoice_tenant_fkey")
+
+  direction PurchaseCorrectionDirection @default(CORRECTION)
+
+  reversalOfSupplierCreditNoteId String?             @unique(map: "supplier_credit_notes_reversal_key")
+  reversalOfSupplierCreditNote   SupplierCreditNote? @relation("SupplierCreditNoteReversal", fields: [reversalOfSupplierCreditNoteId], references: [id], onDelete: Restrict, map: "supplier_credit_notes_reversal_fkey")
+  reversedBySupplierCreditNote   SupplierCreditNote? @relation("SupplierCreditNoteReversal")
+
+  creditNoteNumber           String
+  normalizedCreditNoteNumber String
+  creditDate                 DateTime
+  currency                   String   @default("XAF")
+  subtotal                   Decimal  @db.Decimal(14, 2)
+  taxAmount                  Decimal  @db.Decimal(14, 2)
+  total                      Decimal  @db.Decimal(14, 2)
+
+  idempotencyKey String @db.VarChar(191)
+  payloadHash    String @db.VarChar(71)
+  documentHash   String @db.VarChar(71)
+  evidenceHash   String @db.VarChar(71)
+
+  ledgerPostingBatchId  String?
+  journalEntryId        String?
+  postedBusinessEventId String
+  postedById            String
+  reason                String
+  createdAt             DateTime @default(now())
+
+  lines SupplierCreditNoteLine[]
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, supplierId, normalizedCreditNoteNumber], map: "supplier_credit_notes_supplier_number_key")
+  @@unique([organizationId, supplierId, documentHash], map: "supplier_credit_notes_supplier_document_key")
+  @@unique([organizationId, idempotencyKey], map: "supplier_credit_notes_idempotency_key")
+  @@unique([organizationId, purchaseReturnId, direction], map: "supplier_credit_notes_return_direction_key")
+  @@unique([organizationId, evidenceHash], map: "supplier_credit_notes_evidence_key")
+  @@index([organizationId, purchaseOrderId, creditDate], map: "supplier_credit_notes_po_date_idx")
+  @@index([organizationId, goodsReceiptId, creditDate], map: "supplier_credit_notes_receipt_date_idx")
+  @@index([organizationId, supplierInvoiceId, creditDate], map: "supplier_credit_notes_invoice_date_idx")
+  @@map("supplier_credit_notes")
+}
+
+model SupplierCreditNoteLine {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict, map: "supplier_credit_note_lines_organizationId_fkey")
+
+  supplierCreditNoteId String
+  supplierCreditNote   SupplierCreditNote @relation(fields: [organizationId, supplierCreditNoteId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_note_lines_credit_tenant_fkey")
+
+  sourcePurchaseReturnLineId String
+  sourcePurchaseReturnLine   PurchaseReturnLine @relation(fields: [organizationId, sourcePurchaseReturnLineId], references: [organizationId, id], onDelete: Restrict, map: "supplier_credit_note_lines_return_line_tenant_fkey")
+
+  sourceSupplierInvoiceLineId String
+  sourceSupplierInvoiceLine   SupplierInvoiceLine @relation(fields: [sourceSupplierInvoiceLineId], references: [id], onDelete: Restrict, map: "supplier_credit_note_lines_invoice_line_fkey")
+
+  sourceGoodsReceiptLineId String
+  sourceGoodsReceiptLine   GoodsReceiptLine @relation(fields: [sourceGoodsReceiptLineId], references: [id], onDelete: Restrict, map: "supplier_credit_note_lines_receipt_line_fkey")
+
+  itemId       String
+  quantity     Decimal  @db.Decimal(12, 3)
+  unitCost     Decimal  @db.Decimal(12, 2)
+  taxRate      Decimal  @db.Decimal(6, 3)
+  taxAmount    Decimal  @db.Decimal(14, 2)
+  lineTotal    Decimal  @db.Decimal(14, 2)
+  evidenceHash String   @db.VarChar(71)
+  createdAt    DateTime @default(now())
+
+  @@unique([organizationId, id])
+  @@unique([organizationId, supplierCreditNoteId, sourcePurchaseReturnLineId], map: "supplier_credit_note_lines_source_key")
+  @@index([organizationId, sourceSupplierInvoiceLineId], map: "supplier_credit_note_lines_invoice_line_idx")
+  @@index([organizationId, sourceGoodsReceiptLineId], map: "supplier_credit_note_lines_receipt_line_idx")
+  @@map("supplier_credit_note_lines")
 }
 
 // ============================================================
@@ -1744,6 +2563,16 @@ enum PayrollRunStatus {
   POSTED
   ARCHIVED
   CANCELLED
+}
+
+enum PayrollRunTransitionOrigin {
+  RUNTIME
+  LEGACY_BACKFILL
+}
+
+enum PayrollRunTransitionEvidenceStatus {
+  VERIFIED
+  LEGACY_PARTIAL_EVIDENCE
 }
 
 enum PayrollPayslipStatus {
@@ -2573,6 +3402,8 @@ model HrisTimeRequest {
   requestedAt            DateTime              @default(now())
   reviewedById           String?
   reviewedAt             DateTime?
+  decisionBusinessEventId String?
+  decisionBusinessEvent   BusinessEvent?         @relation("HrisTimeRequestDecisionBusinessEvent", fields: [organizationId, decisionBusinessEventId], references: [organizationId, id], onDelete: Restrict)
   requestEvidenceHash    String
   approvalEvidenceHash   String?
   sourceHash             String
@@ -2584,6 +3415,7 @@ model HrisTimeRequest {
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, employeeId, status, type, periodStart])
   @@index([organizationId, status, requestedAt])
+  @@index([organizationId, decisionBusinessEventId])
   @@map("hris_time_requests")
 }
 
@@ -2713,11 +3545,20 @@ model PayrollRun {
   approvedById String?
   emittedById  String?
   postedById   String?
+  reviewedAt   DateTime?
   approvedAt   DateTime?
   emittedAt    DateTime?
   postedAt     DateTime?
   archivedAt   DateTime?
   cancelledAt  DateTime?
+
+  reviewedBusinessEventId String?
+  reviewedBusinessEvent   BusinessEvent? @relation("PayrollRunReviewedBusinessEvent", fields: [organizationId, reviewedBusinessEventId], references: [organizationId, id], onDelete: Restrict)
+  approvedBusinessEventId String?
+  approvedBusinessEvent   BusinessEvent? @relation("PayrollRunApprovedBusinessEvent", fields: [organizationId, approvedBusinessEventId], references: [organizationId, id], onDelete: Restrict)
+  emittedBusinessEventId  String?
+  emittedBusinessEvent    BusinessEvent? @relation("PayrollRunEmittedBusinessEvent", fields: [organizationId, emittedBusinessEventId], references: [organizationId, id], onDelete: Restrict)
+  postedBusinessEvent     BusinessEvent? @relation("PayrollRunPostedBusinessEvent", fields: [organizationId, postedBusinessEventId], references: [organizationId, id], onDelete: Restrict)
 
   metadata  Json?
   deletedAt DateTime?
@@ -2727,18 +3568,64 @@ model PayrollRun {
   declarations         PayrollDeclaration[]
   paymentBatches       PayrollPaymentBatch[]
   employeeBalanceCases PayrollEmployeeBalanceCase[]
+  transitions          PayrollRunTransition[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, runNumber])
   @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, id])
   @@index([organizationId, status, createdAt])
   @@index([organizationId, payrollPeriodId, runType])
+  @@index([organizationId, reviewedBusinessEventId])
+  @@index([organizationId, approvedBusinessEventId])
+  @@index([organizationId, emittedBusinessEventId])
   @@index([ledgerPostingBatchId])
   @@index([postedBusinessEventId])
   @@index([originalRunId])
   @@map("payroll_runs")
+}
+
+/// Append-only evidence for independently authorized payroll lifecycle stages.
+/// Runtime rows are complete; historical bridge rows remain explicitly partial.
+model PayrollRunTransition {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  payrollRunId String
+  payrollRun   PayrollRun @relation(fields: [organizationId, payrollRunId], references: [organizationId, id], onDelete: Restrict)
+
+  sequence    Int
+  fromStatus  PayrollRunStatus?
+  toStatus    PayrollRunStatus
+  fromVersion Int?
+  toVersion   Int?
+
+  actorId       String?
+  transitionedAt DateTime?
+
+  businessEventId String?
+  businessEvent   BusinessEvent? @relation("PayrollRunTransitionBusinessEvent", fields: [organizationId, businessEventId], references: [organizationId, id], onDelete: Restrict)
+
+  idempotencyKey String?
+  payloadHash    String?
+  origin         PayrollRunTransitionOrigin         @default(RUNTIME)
+  evidenceStatus PayrollRunTransitionEvidenceStatus @default(VERIFIED)
+  legacyNote     String?
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, payrollRunId, sequence])
+  @@unique([organizationId, payrollRunId, toStatus])
+  @@unique([organizationId, idempotencyKey])
+  @@unique([organizationId, businessEventId])
+  @@index([organizationId, payrollRunId, createdAt])
+  @@index([organizationId, toStatus, transitionedAt])
+  @@map("payroll_run_transitions")
 }
 
 model PayrollRunLine {
@@ -2821,6 +3708,9 @@ model PayrollPayslip {
   archiveUri   String?
   metadata     Json?
 
+  emittedBusinessEventId String?
+  emittedBusinessEvent   BusinessEvent? @relation("PayrollPayslipEmittedBusinessEvent", fields: [organizationId, emittedBusinessEventId], references: [organizationId, id], onDelete: Restrict)
+
   lines              PayrollPayslipLine[]
   paymentAllocations PayrollPaymentAllocation[]
   balanceCases       PayrollEmployeeBalanceCase[]
@@ -2831,6 +3721,7 @@ model PayrollPayslip {
   @@unique([organizationId, payslipNumber])
   @@index([organizationId, payrollRunId])
   @@index([organizationId, employeeId, issuedAt])
+  @@index([organizationId, emittedBusinessEventId])
   @@map("payroll_payslips")
 }
 
@@ -3122,12 +4013,20 @@ model PayrollEmployeeBalanceEvent {
 // ============================================================
 
 model SalesOrder {
-  id          String           @id @default(cuid())
-  orderNumber String
-  status      SalesOrderStatus @default(DRAFT)
-  orderDate   DateTime         @default(now())
-  dueDate     DateTime?
-  notes       String?
+  id                   String            @id @default(cuid())
+  orderNumber          String
+  status               SalesOrderStatus  @default(DRAFT)
+  channel              SalesOrderChannel @default(POS)
+  version              Int               @default(0)
+  orderDate            DateTime          @default(now())
+  dueDate              DateTime?
+  notes                String?
+  deliveryAddress      Json?
+  priceTaxSnapshotHash String?           @db.VarChar(64)
+  confirmedAt          DateTime?
+  confirmedById        String?
+  deliveredAt          DateTime?
+  deliveredById        String?
 
   // Totals
   subtotal     Decimal @default(0) @db.Decimal(14, 2)
@@ -3159,8 +4058,12 @@ model SalesOrder {
   lines                         SalesOrderLine[]
   payments                      Payment[]
   publicReceiptAccessTokens     PublicReceiptAccessToken[]
+  posCommitResults              POSCommitResult[]
   customerReceivableDocuments   CustomerReceivableDocument[]
   customerSettlementAllocations CustomerSettlementAllocation[]
+  deliveryReservations          DeliveryReservation[]
+  deliveryGoodsIssues           DeliveryGoodsIssue[]
+  deliveryBillingOutcome        DeliveryBillingOutcome?
 
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -3171,9 +4074,15 @@ model SalesOrder {
   @@index([organizationId, orderDate]) // hot: daily reports
   @@index([organizationId, locationId, orderDate]) // hot: location-scoped daily
   @@index([organizationId, status, orderDate])
+  @@index([organizationId, channel, status, orderDate])
   @@index([organizationId, paymentStatus])
   @@index([locationId])
   @@map("sales_orders")
+}
+
+enum SalesOrderChannel {
+  POS
+  DELIVERY
 }
 
 enum SalesOrderStatus {
@@ -3235,13 +4144,20 @@ model SalesOrderLine {
   itemId       String
   item         Item       @relation(fields: [itemId], references: [id])
 
-  quantity  Decimal @db.Decimal(12, 3)
-  unitPrice Decimal @db.Decimal(12, 2)
-  discount  Decimal @default(0) @db.Decimal(14, 2)
-  taxRate   Decimal @default(0) @db.Decimal(6, 3)
-  taxAmount Decimal @default(0) @db.Decimal(14, 2)
-  lineTotal Decimal @db.Decimal(14, 2)
-  notes     String?
+  quantity          Decimal @db.Decimal(12, 3)
+  unitPrice         Decimal @db.Decimal(12, 2)
+  discount          Decimal @default(0) @db.Decimal(14, 2)
+  taxRate           Decimal @default(0) @db.Decimal(6, 3)
+  taxAmount         Decimal @default(0) @db.Decimal(14, 2)
+  lineTotal         Decimal @db.Decimal(14, 2)
+  notes             String?
+  reservedQuantity  Decimal @default(0) @db.Decimal(12, 3)
+  deliveredQuantity Decimal @default(0) @db.Decimal(12, 3)
+  billedQuantity    Decimal @default(0) @db.Decimal(12, 3)
+
+  deliveryReservationLines DeliveryReservationLine[]
+  deliveryGoodsIssueLines  DeliveryGoodsIssueLine[]
+  deliveryBillingLines     DeliveryBillingLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -3249,6 +4165,188 @@ model SalesOrderLine {
   @@index([salesOrderId])
   @@index([itemId])
   @@map("sales_order_lines")
+}
+
+enum DeliveryReservationStatus {
+  ACTIVE
+  CONSUMED
+  RELEASED
+}
+
+model DeliveryReservation {
+  id String @id @default(cuid())
+
+  organizationId String
+  salesOrderId   String
+  salesOrder     SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  locationId     String
+
+  status         DeliveryReservationStatus @default(ACTIVE)
+  version        Int                       @default(1)
+  documentHash   String                    @db.VarChar(64)
+  commandEventId String                    @db.VarChar(191)
+
+  reservedAt  DateTime  @default(now())
+  consumedAt  DateTime?
+  releasedAt  DateTime?
+  createdById String
+
+  lines DeliveryReservationLine[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, salesOrderId])
+  @@unique([organizationId, commandEventId])
+  @@index([organizationId, locationId, status])
+  @@map("delivery_reservations")
+}
+
+model DeliveryReservationLine {
+  id String @id @default(cuid())
+
+  organizationId   String
+  reservationId    String
+  reservation      DeliveryReservation @relation(fields: [reservationId], references: [id], onDelete: Restrict)
+  salesOrderLineId String
+  salesOrderLine   SalesOrderLine      @relation(fields: [salesOrderLineId], references: [id], onDelete: Restrict)
+  itemId           String
+  locationId       String
+
+  quantity         Decimal @db.Decimal(12, 3)
+  consumedQuantity Decimal @default(0) @db.Decimal(12, 3)
+
+  createdAt DateTime @default(now())
+
+  @@unique([reservationId, salesOrderLineId])
+  @@index([organizationId, itemId, locationId])
+  @@map("delivery_reservation_lines")
+}
+
+enum DeliveryGoodsIssueKind {
+  ISSUE
+  REVERSAL
+}
+
+model DeliveryGoodsIssue {
+  id String @id @default(cuid())
+
+  organizationId String
+  salesOrderId   String
+  salesOrder     SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  locationId     String
+
+  kind           DeliveryGoodsIssueKind @default(ISSUE)
+  issueNumber    String
+  documentHash   String                 @db.VarChar(64)
+  commandEventId String                 @db.VarChar(191)
+  totalCost      Decimal                @default(0) @db.Decimal(14, 2)
+
+  reversalOfGoodsIssueId String?             @unique
+  reversalOfGoodsIssue   DeliveryGoodsIssue? @relation("DeliveryGoodsIssueReversal", fields: [reversalOfGoodsIssueId], references: [id], onDelete: Restrict)
+  reversedByGoodsIssue   DeliveryGoodsIssue? @relation("DeliveryGoodsIssueReversal")
+
+  ledgerPostingBatchId String?
+  journalEntryId       String?
+  issuedAt             DateTime @default(now())
+  issuedById           String
+  reason               String?
+
+  lines DeliveryGoodsIssueLine[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, issueNumber])
+  @@unique([organizationId, commandEventId])
+  @@index([organizationId, salesOrderId, kind, issuedAt])
+  @@map("delivery_goods_issues")
+}
+
+model DeliveryGoodsIssueLine {
+  id String @id @default(cuid())
+
+  organizationId   String
+  goodsIssueId     String
+  goodsIssue       DeliveryGoodsIssue @relation(fields: [goodsIssueId], references: [id], onDelete: Restrict)
+  salesOrderLineId String
+  salesOrderLine   SalesOrderLine     @relation(fields: [salesOrderLineId], references: [id], onDelete: Restrict)
+  itemId           String
+  locationId       String
+
+  quantity               Decimal @db.Decimal(12, 3)
+  unitCost               Decimal @db.Decimal(12, 2)
+  totalCost              Decimal @db.Decimal(14, 2)
+  inventoryTransactionId String?
+
+  createdAt DateTime @default(now())
+
+  @@unique([goodsIssueId, salesOrderLineId])
+  @@index([organizationId, itemId, locationId])
+  @@map("delivery_goods_issue_lines")
+}
+
+enum DeliveryBillingStatus {
+  POSTED
+  CREDITED
+}
+
+model DeliveryBillingOutcome {
+  id String @id @default(cuid())
+
+  organizationId String
+  salesOrderId   String     @unique
+  salesOrder     SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+
+  status         DeliveryBillingStatus @default(POSTED)
+  invoiceNumber  String
+  currency       String                @db.VarChar(3)
+  subtotal       Decimal               @db.Decimal(14, 2)
+  taxAmount      Decimal               @db.Decimal(14, 2)
+  discountAmount Decimal               @default(0) @db.Decimal(14, 2)
+  totalAmount    Decimal               @db.Decimal(14, 2)
+  documentHash   String                @db.VarChar(64)
+  commandEventId String                @db.VarChar(191)
+
+  customerReceivableDocumentId String?
+  customerLedgerEntryId        String?
+  ledgerPostingBatchId         String?
+  journalEntryId               String?
+  fiscalDocumentId             String?
+
+  postedAt   DateTime              @default(now())
+  postedById String
+  lines      DeliveryBillingLine[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, invoiceNumber])
+  @@unique([organizationId, commandEventId])
+  @@index([organizationId, status, postedAt])
+  @@map("delivery_billing_outcomes")
+}
+
+model DeliveryBillingLine {
+  id String @id @default(cuid())
+
+  organizationId   String
+  billingOutcomeId String
+  billingOutcome   DeliveryBillingOutcome @relation(fields: [billingOutcomeId], references: [id], onDelete: Restrict)
+  salesOrderLineId String
+  salesOrderLine   SalesOrderLine         @relation(fields: [salesOrderLineId], references: [id], onDelete: Restrict)
+  itemId           String
+
+  deliveredQuantity Decimal @db.Decimal(12, 3)
+  billedQuantity    Decimal @db.Decimal(12, 3)
+  unitPrice         Decimal @db.Decimal(12, 2)
+  discountAmount    Decimal @default(0) @db.Decimal(14, 2)
+  taxRate           Decimal @default(0) @db.Decimal(6, 3)
+  taxAmount         Decimal @default(0) @db.Decimal(14, 2)
+  lineTotal         Decimal @db.Decimal(14, 2)
+
+  createdAt DateTime @default(now())
+
+  @@unique([billingOutcomeId, salesOrderLineId])
+  @@index([organizationId, itemId])
+  @@map("delivery_billing_lines")
 }
 
 // ============================================================
@@ -3657,6 +4755,7 @@ model POSStation {
   offlineDevices          POSOfflineDevice[]
   offlineEvents           POSOfflineEvent[]
   offlineSyncCertificates POSOfflineSyncCertificate[]
+  posCommitResults        POSCommitResult[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -3704,6 +4803,7 @@ model POSSession {
   organizationId String
 
   salesOrders            SalesOrder[]
+  posCommitResults       POSCommitResult[]
   cashDrawerTransactions CashDrawerTransaction[]
   offlineEvents          POSOfflineEvent[]
 
@@ -3725,6 +4825,53 @@ enum POSSessionStatus {
   SUSPENDED
   CLOSED
   RECONCILED
+}
+
+enum POSCommitResultStatus {
+  CLAIMED
+  COMMITTED
+  COMPLETED
+}
+
+model POSCommitResult {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  terminalId String
+  terminal   POSStation @relation(fields: [terminalId], references: [id], onDelete: Restrict)
+
+  sessionId String
+  session   POSSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  salesOrderId String
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+
+  actorId String
+  actor   User   @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  clientCommitId       String @db.VarChar(191)
+  requestHash          String @db.VarChar(64)
+  requestSchemaVersion Int    @default(1)
+
+  status         POSCommitResultStatus @default(CLAIMED)
+  resultEnvelope Json?
+  resultHash     String?               @db.VarChar(64)
+  committedAt    DateTime?
+  completedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, terminalId, clientCommitId])
+  @@index([organizationId, locationId, status, createdAt])
+  @@index([organizationId, salesOrderId])
+  @@index([organizationId, sessionId, createdAt])
+  @@map("pos_commit_results")
 }
 
 model CashDrawer {
@@ -4298,6 +5445,7 @@ enum StatementLineStatus {
 enum PaymentTransactionState {
   PENDING
   PROCESSING
+  UNKNOWN
   CONFIRMED
   SETTLED
   FAILED
@@ -4586,14 +5734,16 @@ model ProviderEvent {
   archivedAt  DateTime?
   legalHoldAt DateTime?
 
-  matchRecords      MatchRecord[]
-  paymentExceptions PaymentException[]
+  matchRecords                MatchRecord[]
+  paymentExceptions           PaymentException[]
+  authorityPaymentTransaction PaymentTransaction? @relation("PaymentTransactionAuthorityEvent")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, providerAccountId, providerEventId])
   @@unique([organizationId, providerAccountId, idempotencyKey])
+  @@unique([organizationId, id])
   @@index([organizationId, providerAccountId, status, receivedAt])
   @@index([organizationId, providerTransactionId])
   @@index([organizationId, providerReference])
@@ -4701,6 +5851,9 @@ model PaymentTransaction {
   providerAccountId String?
   providerAccount   ProviderAccount? @relation(fields: [providerAccountId], references: [id])
 
+  providerAuthorityEventId String?        @unique
+  providerAuthorityEvent   ProviderEvent? @relation("PaymentTransactionAuthorityEvent", fields: [organizationId, providerAuthorityEventId], references: [organizationId, id], onDelete: Restrict)
+
   ledgerPostingBatchId String?
   ledgerPostingBatch   LedgerPostingBatch? @relation("PaymentTransactionLedgerBatch", fields: [ledgerPostingBatchId], references: [id])
 
@@ -4735,6 +5888,7 @@ model PaymentTransaction {
 
   @@unique([organizationId, idempotencyKey])
   @@unique([organizationId, providerAccountId, providerTransactionId])
+  @@unique([organizationId, providerAuthorityEventId])
   @@index([organizationId, state, createdAt])
   @@index([organizationId, providerReference])
   @@index([providerAccountId, state])
@@ -6795,10 +7949,15 @@ enum AccountingSourceType {
   POS_PAYMENT
   POS_REFUND
   POS_VOID
+  DELIVERY_ORDER
+  DELIVERY_GOODS_ISSUE
+  DELIVERY_INVOICE
   CASH_DRAWER_CLOSE
   GOODS_RECEIPT
   SUPPLIER_INVOICE
   SUPPLIER_PAYMENT
+  PURCHASE_RETURN
+  SUPPLIER_CREDIT_NOTE
   CUSTOMER_SETTLEMENT
   EXPENSE
   STOCK_ADJUSTMENT
@@ -6818,6 +7977,7 @@ enum AccountingSourceType {
   CUSTOMER_STATEMENT
   CUSTOMER_STATEMENT_DELIVERY
   CUSTOMER_STATEMENT_RECIPIENT_ACTION
+  SUPPLIER_PO_ACKNOWLEDGEMENT
   CUSTOMER_SETTLEMENT_ALLOCATION
   CUSTOMER_SETTLEMENT_REVERSAL
   ACCOUNTANT_CLIENT_INVITE
@@ -6826,6 +7986,8 @@ enum AccountingSourceType {
 enum AccountingPostingPurpose {
   MANUAL_JOURNAL
   SALE_COMPLETION
+  GOODS_ISSUE
+  SALES_INVOICE
   PAYMENT_RECEIPT
   REFUND
   VOID
@@ -6833,6 +7995,8 @@ enum AccountingPostingPurpose {
   GOODS_RECEIPT
   SUPPLIER_INVOICE
   SUPPLIER_PAYMENT
+  PURCHASE_RETURN
+  SUPPLIER_CREDIT_NOTE
   CUSTOMER_SETTLEMENT
   EXPENSE_APPROVAL
   INVENTORY_ADJUSTMENT
@@ -6867,6 +8031,7 @@ model BusinessEvent {
   idempotencyKey String
   payloadHash    String
   payload        Json
+  correlationId  String?
 
   occurredAt  DateTime
   recordedAt  DateTime  @default(now())
@@ -6888,15 +8053,26 @@ model BusinessEvent {
   metadata       Json?
 
   outboxMessages   BusinessEventOutbox[]
+  audits           BusinessEventAudit[]
+  anomalies        BusinessEventAnomaly[]
   offlinePosEvents POSOfflineEvent[]
+  reviewedPayrollRuns PayrollRun[] @relation("PayrollRunReviewedBusinessEvent")
+  approvedPayrollRuns PayrollRun[] @relation("PayrollRunApprovedBusinessEvent")
+  emittedPayrollRuns  PayrollRun[] @relation("PayrollRunEmittedBusinessEvent")
+  postedPayrollRuns   PayrollRun[] @relation("PayrollRunPostedBusinessEvent")
+  payrollRunTransition PayrollRunTransition? @relation("PayrollRunTransitionBusinessEvent")
+  emittedPayrollPayslips PayrollPayslip[] @relation("PayrollPayslipEmittedBusinessEvent")
+  decidedHrisTimeRequests HrisTimeRequest[] @relation("HrisTimeRequestDecisionBusinessEvent")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([organizationId, eventSource, idempotencyKey])
+  @@unique([organizationId, id])
   @@index([organizationId, eventType, occurredAt])
   @@index([organizationId, status, recordedAt])
   @@index([organizationId, sourceType, sourceId])
+  @@index([organizationId, correlationId])
   @@index([payloadHash])
   @@map("business_events")
 }
@@ -6917,6 +8093,7 @@ model BusinessEventOutbox {
   idempotencyKey String
   payloadHash    String
   payload        Json
+  correlationId  String?
 
   status      BusinessOutboxStatus @default(PENDING)
   attempts    Int                  @default(0)
@@ -6937,8 +8114,68 @@ model BusinessEventOutbox {
 
   @@unique([organizationId, channel, idempotencyKey])
   @@index([organizationId, status, availableAt])
+  @@index([organizationId, correlationId])
   @@index([businessEventId])
   @@map("business_event_outbox")
+}
+
+model BusinessEventAudit {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessEventId String
+  businessEvent   BusinessEvent @relation(fields: [businessEventId], references: [id], onDelete: Cascade)
+
+  action               BusinessEventAuditAction
+  eventSource          BusinessEventSource?
+  actorId              String?
+  reason               String?
+  payloadHash          String?
+  attemptedPayloadHash String?
+  correlationId        String?
+  metadata             Json?
+  createdAt            DateTime @default(now())
+
+  @@index([organizationId, createdAt])
+  @@index([businessEventId, createdAt])
+  @@index([organizationId, action, createdAt])
+  @@map("business_event_audits")
+}
+
+model BusinessEventAnomaly {
+  id String @id @default(cuid())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessEventId String
+  businessEvent   BusinessEvent @relation(fields: [businessEventId], references: [id], onDelete: Cascade)
+
+  anomalyType      String
+  code             String
+  severity         BusinessEventAnomalySeverity
+  status           BusinessEventAnomalyStatus @default(OPEN)
+  summary          String
+  fingerprint      String
+  occurrenceCount Int @default(1)
+  correlationId    String?
+  metadata         Json?
+  firstSeenAt      DateTime @default(now())
+  lastSeenAt       DateTime @default(now())
+  acknowledgedAt   DateTime?
+  acknowledgedBy   String?
+  resolvedAt       DateTime?
+  resolvedBy       String?
+  resolutionReason String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([organizationId, businessEventId, anomalyType, fingerprint])
+  @@index([organizationId, status, severity, lastSeenAt])
+  @@index([businessEventId, createdAt])
+  @@map("business_event_anomalies")
 }
 
 enum BusinessEventSource {
@@ -6979,6 +8216,31 @@ enum BusinessOutboxStatus {
   FAILED
   DEAD_LETTER
   CANCELLED
+}
+
+enum BusinessEventAuditAction {
+  RECORDED
+  APPLIED
+  STATUS_CHANGED
+  IDEMPOTENT_REPLAY
+  IDEMPOTENCY_CONFLICT
+  OUTBOX_RETRY
+  OUTBOX_DELIVERED
+  OUTBOX_DEAD_LETTERED
+}
+
+enum BusinessEventAnomalySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BusinessEventAnomalyStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
 }
 
 // ============================================================

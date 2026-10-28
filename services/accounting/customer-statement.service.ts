@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   NotFoundError,
@@ -736,13 +737,23 @@ async function runSerializable<T>(
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       })
     } catch (error) {
-      if (
-        (!isPrismaCode(error, "P2034") &&
-          !isPrismaCode(error, "P2002")) ||
-        attempt === CUSTOMER_STATEMENT_MAX_SERIALIZABLE_ATTEMPTS
-      ) {
-        throw error
+      if (error instanceof ApplicationError) throw error
+      const retryable =
+        isPrismaCode(error, "P2034") || isPrismaCode(error, "P2002")
+      if (retryable && attempt < CUSTOMER_STATEMENT_MAX_SERIALIZABLE_ATTEMPTS) {
+        continue
       }
+      if (retryable) {
+        throw new ConflictError(
+          "Customer statement snapshot transaction could not be serialized",
+        )
+      }
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer statement snapshot transaction failed.",
+        500,
+        false,
+      )
     }
   }
   throw new ConflictError(

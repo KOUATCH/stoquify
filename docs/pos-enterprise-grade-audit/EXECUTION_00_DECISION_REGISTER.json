@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "asOf": "2026-08-17",
+  "developmentAuthorization": {
+    "receivedAt": "2026-08-17T05:21:10.8894399Z",
+    "source": "Direct user instruction in the active Codex task",
+    "scope": "Development-only M2 execution",
+    "approvedControls": {
+      "storeCredit": "DISABLED",
+      "sessionBoundary": "TERMINAL_REGISTER_AND_DRAWER",
+      "countryCurrencyLocales": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+      "tenders": "CASH_ONLY",
+      "electronicCapture": "DISABLED",
+      "offlineCapture": "DISABLED",
+      "receipt": "NON_STATUTORY_DEVELOPMENT_ONLY"
+    },
+    "unresolvedPlaceholders": [
+      "pilotLocation",
+      "pilotTerminal",
+      "browserAndOs",
+      "productApproverIdentityAndRole",
+      "controllerApproverIdentityAndRole",
+      "migrationTargetDisposition",
+      "migrationCheckerIdentityAndRole",
+      "backupRestoreHistoryAndAuthenticationEvidence"
+    ],
+    "productionAuthorized": false,
+    "legalOrStatutoryApproval": false,
+    "migrationExecutionAuthorized": false
+  },
+  "developmentImplementation": {
+    "implementedAt": "2026-08-17T05:47:13.4724149Z",
+    "status": "M2_A01_A04_COMPLETE_LOCAL_G2_BLOCKED",
+    "evidenceReport": "docs/pos-enterprise-grade-audit/EXECUTION_02_M2_CLIENT_COMMIT_REPLAY_REPORT.md",
+    "gateEvidence": "docs/pos-enterprise-grade-audit/EXECUTION_02_M2_GATE_EVIDENCE.json",
+    "enforcedControls": [
+      "tenant-terminal clientCommitId result replay",
+      "canonical request hash and changed-payload conflict audit",
+      "cash-only tender policy",
+      "store-credit rejection",
+      "electronic and on-account tender rejection",
+      "offline replay rejection",
+      "non-statutory on-screen receipt only",
+      "customer-contact-free receipt replay envelope",
+      "no public receipt token issuance during commit"
+    ],
+    "databaseMigrationApplied": false,
+    "postgresCertificationExecuted": false,
+    "productionAuthorized": false
+  },
+  "approvalContract": {
+    "requiredFields": ["selectedOption", "rationale", "accountableApprover", "approvedAt", "effectiveVersion", "reviewOrExpiryAt", "evidenceLinks", "affectedCapabilities", "rollbackOrDisablePolicy"],
+    "rule": "A recommendation is not an approval. Missing fields keep the decision REQUIRES_EXPERT_REVIEW."
+  },
+  "decisions": [
+    { "id": "D-01", "title": "Store-credit tender disposition", "status": "AUTHORIZED_DEVELOPMENT_ONLY", "recommendation": "Hide and reject STORE_CREDIT in the current POS. Introduce it later only through a separately governed customer-liability ledger and redemption workflow.", "requiredApprovers": ["Product owner", "Controller", "Payments owner"], "productionApprovalStatus": "MISSING_NAMED_APPROVERS" },
+    { "id": "D-02", "title": "Physical session and drawer boundary", "status": "AUTHORIZED_DEVELOPMENT_ONLY", "recommendation": "Use an explicit physical terminal/register claim with at most one active terminal session and one active drawer claim. Cashier identity is an actor, not the lock key.", "requiredApprovers": ["Retail operations", "POS architect", "Security owner"], "productionApprovalStatus": "MISSING_NAMED_APPROVERS" },
+    { "id": "D-03", "title": "First electronic payment provider", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Choose one named country/provider/merchant sandbox with signed callbacks, documented status and reversal semantics, statement source, secret custody and a kill switch. Keep electronic tender disabled until selected.", "requiredApprovers": ["Payments owner", "Treasury", "Security owner"] },
+    { "id": "D-04", "title": "Offline tender policy", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Start with bounded cash-only offline operation after device, sequence, replay and conflict gates. Do not accept offline electronic payments without provider certification.", "requiredApprovers": ["Product owner", "Risk owner", "Retail operations"] },
+    { "id": "D-05", "title": "Browser, terminal and peripheral support matrix", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Approve a narrow named matrix for browser/OS, terminal identity, printer, scanner, cash drawer and reference network; fail closed outside it for pilot claims.", "requiredApprovers": ["Retail operations", "QA owner", "Support owner"] },
+    { "id": "D-06", "title": "Returns, voids and refunds policy", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Use linked partial-capable compensating workflows with reason codes, return disposition, provider/fiscal consequences, fresh authentication and maker-checker thresholds. Never rewrite completed facts.", "requiredApprovers": ["Controller", "Retail operations", "Risk owner"] },
+    { "id": "D-07", "title": "Pilot country, currency, language and fiscal profile", "status": "AUTHORIZED_DEVELOPMENT_ONLY", "repositoryBackedCandidate": { "country": "Cameroon", "currency": "XAF", "languages": ["en", "fr"] }, "recommendation": "Use Cameroon/XAF/EN-FR only as a development pilot until a qualified reviewer approves minor-unit, rounding, tax, receipt, numbering, correction and retention rules against dated sources.", "requiredApprovers": ["Product owner", "Controller", "Qualified country-pack reviewer"], "productionApprovalStatus": "MISSING_NAMED_AND_QUALIFIED_APPROVERS" },
+    { "id": "D-08", "title": "Pilot service levels and error budgets", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Adopt the roadmap performance budgets only after the D-05 reference matrix is approved, then establish provider, receipt, replay, reconciliation and close SLOs from measured baselines.", "requiredApprovers": ["SRE owner", "Product owner", "Support owner"] },
+    { "id": "D-09", "title": "Delivery invoice recognition event", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Default invoice eligibility to accepted physical delivery/hand-over quantity. Any advance-billing policy must be explicit, versioned and approved; order confirmation remains non-posting.", "requiredApprovers": ["Controller", "Order-to-cash product owner", "Qualified accounting reviewer"] },
+    { "id": "D-10", "title": "Reservation, availability and goods-issue policy", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Reservation changes reserved and available quantities only. Physical hand-over/dispatch owns goods issue, on-hand reduction and COGS. Negative stock and unsupported lot/serial/UOM combinations fail closed.", "requiredApprovers": ["Inventory controller", "Fulfillment owner", "Accounting owner"] },
+    { "id": "D-11", "title": "Business-day, statement and accounting-close boundary", "status": "REQUIRES_EXPERT_REVIEW", "recommendation": "Model cashier session, drawer declaration, governed business day, provider statement, reconciliation run and accounting close as separate versioned objects with distinct owners and observable states.", "requiredApprovers": ["Controller", "Treasury", "Retail operations"] }
+  ]
+}

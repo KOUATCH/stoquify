@@ -42,6 +42,8 @@ const mockDb = db as unknown as {
 }
 const mockCommitPOSSale = commitPOSSale as jest.Mock
 const mockGetSalesReceipt = getSalesReceipt as jest.Mock
+const previousOfflineReplayTestAuthorization =
+  process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
 
 const mockTx = {
   pOSStation: { findFirst: jest.fn() },
@@ -261,6 +263,19 @@ function commitResult(overrides: Record<string, unknown> = {}) {
 }
 
 describe("offline POS sync service", () => {
+  beforeAll(() => {
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS = "1"
+  })
+
+  afterAll(() => {
+    if (previousOfflineReplayTestAuthorization === undefined) {
+      delete process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
+    } else {
+      process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS =
+        previousOfflineReplayTestAuthorization
+    }
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     resetMockTx()
@@ -558,6 +573,7 @@ describe("offline POS sync service", () => {
       legalDeliveryBlocked: false,
     })
     expect(mockCommitPOSSale).toHaveBeenCalledWith({
+      clientCommitId: `offline:${event.id}`,
       salesOrderId: "sale-1",
       locationId: "loc-1",
       terminalId: "terminal-1",
@@ -588,6 +604,50 @@ describe("offline POS sync service", () => {
       }),
     )
     expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+  })
+
+  it("hydrates receipt evidence after a committed sale before acknowledging offline replay", async () => {
+    const event = offlineReplayEvent()
+    const receipt = receiptFixture()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockDb.salesOrder.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: "sale-1",
+        orderNumber: "POS-20260615-0001",
+      })
+    mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
+    mockCommitPOSSale.mockResolvedValueOnce(commitResult({
+      receipt: null,
+      receiptStatus: "RETRY_REQUIRED",
+    }))
+    mockGetSalesReceipt.mockResolvedValueOnce(receipt)
+    mockTx.pOSOfflineEvent.count.mockResolvedValue(0)
+
+    const result = await replayPendingOfflineSaleEnvelope({
+      organizationId: "org-1",
+      userId: "user-1",
+      offlineEventId: event.id,
+    })
+
+    expect(result).toMatchObject({
+      status: "REPLAYED",
+      saleId: "sale-1",
+      postingBatchId: "posting-batch-1",
+    })
+    expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
+    expect(mockGetSalesReceipt).toHaveBeenCalledWith({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+    })
+    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "REPLAYED",
+          postingBatchId: "posting-batch-1",
+        }),
+      }),
+    )
   })
 
   it("blocks pending replay after the enrolled device is revoked", async () => {

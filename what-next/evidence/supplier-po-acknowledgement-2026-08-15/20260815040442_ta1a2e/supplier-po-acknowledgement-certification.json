@@ -1,0 +1,101 @@
+{
+  "runId": "20260815040442_ta1a2e",
+  "startedAt": "2026-08-15T04:29:16.175Z",
+  "flow": [
+    "protected buyer workbench loaded",
+    "French date and quantity change proposal submitted",
+    "buyer explicitly accepted change proposal",
+    "supplier acceptance and buyer acceptance certified",
+    "supplier rejection and explicit buyer rejection certified",
+    "tampered signed access denied without disclosure",
+    "revoked access denied with the same public state",
+    "database rejected proposal and state mutation",
+    "PO, stock, AP, and accounting fingerprints unchanged"
+  ],
+  "checks": {
+    "bilingualUi": "passed",
+    "redaction": "passed",
+    "signedInvalidAccess": "passed",
+    "revokedAccess": "passed",
+    "supplierChoices": [
+      "ACCEPT",
+      "REJECT",
+      "REQUEST_CHANGE"
+    ],
+    "buyerDecisions": [
+      "BUYER_ACCEPTED",
+      "BUYER_REJECTED"
+    ],
+    "immutableDatabaseGuards": "passed",
+    "authoritativeFingerprintUnchanged": {
+      "purchaseOrder": {
+        "id": "cmstur03j000dma2wz2aj1rvc",
+        "orderNumber": "PO-ACK-20260815040442_ta1a2e",
+        "status": "APPROVED",
+        "orderDate": "2026-08-15T04:04:42.151Z",
+        "expectedDeliveryDate": "2026-08-29T04:04:42.151Z",
+        "actualDeliveryDate": null,
+        "paymentTerms": "Net 30",
+        "notes": "PRIVATE BUYER NOTE MUST BE REDACTED",
+        "internalNotes": "PRIVATE INTERNAL APPROVAL NOTE MUST BE REDACTED",
+        "subtotal": "25000",
+        "taxAmount": "4812.5",
+        "shippingCost": "500",
+        "discount": "0",
+        "total": "30312.5",
+        "supplierId": "cmstur00u0005ma2wjh2wzmzf",
+        "locationId": "cmstur01i0007ma2wyz16rmm8",
+        "approvedById": "usr_supplier_po_ack_e2e",
+        "approvedAt": "2026-08-15T04:04:42.151Z",
+        "updatedAt": "2026-08-15T04:04:42.943Z",
+        "lines": [
+          {
+            "id": "cmstur03k000fma2wpil316xr",
+            "orderedQuantity": "10",
+            "receivedQuantity": "0",
+            "unitCost": "2500",
+            "taxAmount": "4812.5",
+            "lineTotal": "29812.5",
+            "updatedAt": "2026-08-15T04:04:42.943Z"
+          }
+        ]
+      },
+      "inventoryLevel": {
+        "id": "cmstur029000bma2wj7qohu99",
+        "quantityOnHand": "40",
+        "quantityReserved": "0",
+        "quantityAvailable": "40",
+        "quantityInTransit": "0",
+        "quantityOnOrder": "7",
+        "averageCost": "2400",
+        "totalValue": "96000",
+        "version": 0,
+        "updatedAt": "2026-08-15T04:04:42.897Z"
+      },
+      "inventoryTransactions": [],
+      "supplierInvoices": [],
+      "accounting": {
+        "journalEntries": 0,
+        "journalEntryLines": 0,
+        "postingBatches": 0,
+        "sourceLinks": 0
+      }
+    },
+    "evidenceCounts": {
+      "before": {
+        "envelopeCount": 1,
+        "tokenCount": 1,
+        "proposalCount": 0,
+        "stateCount": 0
+      },
+      "after": {
+        "envelopeCount": 1,
+        "tokenCount": 4,
+        "proposalCount": 3,
+        "stateCount": 6
+      }
+    }
+  },
+  "completedAt": "2026-08-15T04:34:28.934Z",
+  "status": "passed"
+}

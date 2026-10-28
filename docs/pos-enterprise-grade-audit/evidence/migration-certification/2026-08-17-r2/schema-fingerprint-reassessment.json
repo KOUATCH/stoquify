@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-08-17T10:55:50.716Z",
+  "mode": "reassess",
+  "restore": {
+    "protocol": "postgresql:",
+    "host": "localhost",
+    "port": "5432",
+    "database": "stoquify_dev_migrated_20260814",
+    "schema": "codex_pos_commit_result_restore_20260817_r2"
+  },
+  "target": {
+    "protocol": "postgresql:",
+    "host": "localhost",
+    "port": "5432",
+    "database": "stoquify_dev_migrated_20260814",
+    "schema": "codex_pos_commit_result_cert_20260817"
+  },
+  "databaseMutationPerformed": false,
+  "expectedMigrationCount": 67,
+  "finishedMigrationCount": 67,
+  "restoreFingerprint": {
+    "sha256": "4490e390ea32a96b7a18e0b75e3a2490db70210e4353a488162ccb13b4162086",
+    "columnCount": 3442,
+    "constraintCount": 3011,
+    "indexCount": 965,
+    "componentSha256": {
+      "columns": "8613c74823462866fa15356d8167836adcf71a044d2dbe960bae615c2cf7f6e0",
+      "constraints": "59e4e0c56aae7505aa2d83176b04a2f2f127e282e5080685a5f8533e05e561fb",
+      "indexes": "c99c46a01a237d615bc617939136e7393333fb1000676a86b2835770c6724feb"
+    }
+  },
+  "targetFingerprint": {
+    "sha256": "4490e390ea32a96b7a18e0b75e3a2490db70210e4353a488162ccb13b4162086",
+    "columnCount": 3442,
+    "constraintCount": 3011,
+    "indexCount": 965,
+    "componentSha256": {
+      "columns": "8613c74823462866fa15356d8167836adcf71a044d2dbe960bae615c2cf7f6e0",
+      "constraints": "59e4e0c56aae7505aa2d83176b04a2f2f127e282e5080685a5f8533e05e561fb",
+      "indexes": "c99c46a01a237d615bc617939136e7393333fb1000676a86b2835770c6724feb"
+    }
+  },
+  "fingerprintsMatch": true
+}

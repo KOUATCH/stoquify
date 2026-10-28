@@ -1,12 +1,14 @@
-import { Prisma } from "@prisma/client"
+import { Prisma, PurchaseCorrectionDirection } from "@prisma/client"
 
 import { db } from "@/prisma/db"
 
 import {
   postGoodsReceiptStock,
+  postDeliveryOrderStockIssue,
   postManualStockCorrection,
   postOpeningStock,
   postPOSStockIssue,
+  postPurchaseReturnStock,
 } from "../inventory-stock-event.service"
 
 jest.mock("@/prisma/db", () => ({
@@ -229,6 +231,85 @@ it("posts purchase receipt stock through the inventory kernel with receipt evide
   )
 })
 
+it("posts a source-linked purchase return as a negative inventory movement tied to the AP batch", async () => {
+  await postPurchaseReturnStock({
+    organizationId: "org-1",
+    purchaseReturnId: "return-1",
+    returnNumber: "PR-000001",
+    purchaseOrderId: "po-1",
+    goodsReceiptId: "receipt-1",
+    direction: PurchaseCorrectionDirection.CORRECTION,
+    postedById: "actor-1",
+    occurredAt: eventDate,
+    idempotencyKey: "purchase-return-stock:idem-1",
+    documentHash: "sha256:return-document",
+    accountingPostingBatchId: "ap-return-batch-1",
+    lines: [{ itemId: "item-1", locationId: "loc-1", quantity: 2, unitCost: 100 }],
+  })
+
+  expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({
+    data: expect.objectContaining({
+      eventType: "purchase.return.stock_posted",
+      sourceType: "PURCHASE_RETURN",
+      sourceId: "return-1",
+      postingBatchId: "ap-return-batch-1",
+    }),
+  }))
+  expect(mockedDb.inventoryTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+    data: expect.objectContaining({
+      type: "PURCHASE_RETURN",
+      quantity: decimal("-2.000"),
+      unitCost: decimal("100.00"),
+      totalCost: decimal("200.00"),
+      balanceAfter: decimal("8.000"),
+      referenceType: "RETURN",
+      referenceId: "return-1",
+      reversalOfTransactionId: null,
+    }),
+  }))
+})
+
+it("reverses a purchase return by restoring stock and referencing the exact original movement", async () => {
+  mockedDb.inventoryLevel.findUnique.mockResolvedValue(inventoryLevel({
+    quantityOnHand: decimal("8"),
+    quantityAvailable: decimal("8"),
+    totalValue: decimal("800"),
+  }))
+
+  await postPurchaseReturnStock({
+    organizationId: "org-1",
+    purchaseReturnId: "return-reversal-1",
+    returnNumber: "PR-000002",
+    purchaseOrderId: "po-1",
+    goodsReceiptId: "receipt-1",
+    direction: PurchaseCorrectionDirection.REVERSAL,
+    postedById: "actor-1",
+    occurredAt: eventDate,
+    idempotencyKey: "purchase-return-stock:idem-reversal-1",
+    documentHash: "sha256:return-reversal-document",
+    accountingPostingBatchId: "ap-return-reversal-batch-1",
+    lines: [{
+      itemId: "item-1",
+      locationId: "loc-1",
+      quantity: 2,
+      unitCost: 100,
+      sourceInventoryTransactionId: "movement-original-1",
+    }],
+  })
+
+  expect(mockedDb.inventoryTransaction.create).toHaveBeenCalledWith(expect.objectContaining({
+    data: expect.objectContaining({
+      type: "PURCHASE_RETURN_REVERSAL",
+      quantity: decimal("2.000"),
+      totalCost: decimal("200.00"),
+      balanceAfter: decimal("10.000"),
+      referenceType: "RETURN",
+      referenceId: "return-reversal-1",
+      reversalOfTransactionId: "movement-original-1",
+    }),
+  }))
+})
+
 it("posts POS sale stock issue with stable POS event identity and no silent ledger blocker", async () => {
   await postPOSStockIssue({
     organizationId: "org-1",
@@ -269,6 +350,60 @@ it("posts POS sale stock issue with stable POS event identity and no silent ledg
         quantity: decimal("-2.000"),
         referenceType: "SALES_ORDER",
         referenceId: "sale-1",
+      }),
+    }),
+  )
+})
+
+it("consumes reserved delivery stock without reducing available quantity twice", async () => {
+  mockedDb.inventoryLevel.findUnique.mockResolvedValueOnce(
+    inventoryLevel({
+      quantityOnHand: decimal("10.000"),
+      quantityReserved: decimal("2.000"),
+      quantityAvailable: decimal("8.000"),
+    }),
+  )
+
+  await postDeliveryOrderStockIssue({
+    organizationId: "org-1",
+    salesOrderId: "order-1",
+    goodsIssueId: "goods-issue-1",
+    issueNumber: "GI-001",
+    locationId: "loc-1",
+    actorId: "warehouse-1",
+    occurredAt: eventDate,
+    idempotencyKey: "delivery-goods-issue:command-1",
+    lines: [
+      {
+        salesOrderLineId: "line-1",
+        itemId: "item-1",
+        quantity: 2,
+        unitCost: 100,
+      },
+    ],
+  })
+
+  expect(mockedDb.inventoryLevel.updateMany).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: expect.objectContaining({
+        quantityOnHand: { gte: decimal("2.000") },
+        quantityAvailable: { gte: decimal("0.000") },
+        quantityReserved: { gte: decimal("2.000") },
+      }),
+      data: expect.objectContaining({
+        quantityOnHand: decimal("8.000"),
+        quantityReserved: decimal("0.000"),
+        quantityAvailable: decimal("8.000"),
+      }),
+    }),
+  )
+  expect(mockedDb.inventoryTransaction.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({
+        type: "SALE",
+        quantity: decimal("-2.000"),
+        referenceType: "SALES_ORDER",
+        referenceId: "line-1",
       }),
     }),
   )

@@ -30,6 +30,11 @@ const UNSAFE_PROPOSAL_PATTERNS = [
   /\b(approve|certify|close|reverse|file|submit)\b.{0,24}\b(payroll|period|return|declaration|invoice|authority)\b/i,
   /\b(change|rotate|reveal)\b.{0,24}\b(secret|credential|password|api.?key)\b/i,
   /\b(grant|revoke|change)\b.{0,24}\b(permission|role|entitlement)\b/i,
+  /\b(comptabiliser|enregistrer)\b.{0,32}\b(ecriture|journal|grand livre)\b/i,
+  /\b(payer|verser|liberer)\b.{0,32}\b(paiement|paie|fonds|salaire)\b/i,
+  /\b(approuver|certifier|cloturer|annuler|inverser|deposer|soumettre)\b.{0,32}\b(paie|periode|declaration|facture|autorite)\b/i,
+  /\b(changer|modifier|reveler)\b.{0,32}\b(secret|identifiant|mot de passe|cle api)\b/i,
+  /\b(accorder|revoquer|modifier)\b.{0,32}\b(permission|role|habilitation)\b/i,
 ] as const
 const MAX_PROPOSAL_TTL_MS = 24 * 60 * 60 * 1000
 
@@ -356,7 +361,10 @@ function containsUnsafeProposal(input: CreateCopilotProposalInput) {
     input.targetRoute,
     input.title,
     input.detail,
-  ].join(" ")
+  ]
+    .join(" ")
+    .normalize("NFKD")
+    .replace(/\p{Diacritic}/gu, "")
   return UNSAFE_PROPOSAL_PATTERNS.some((pattern) => pattern.test(candidate))
 }
 

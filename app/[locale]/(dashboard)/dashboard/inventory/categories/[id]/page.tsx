@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
+import { routeByKey, withInventorySurfaceAccess } from "../../inventory-route-access"
 
 interface CategoryDetailPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -23,7 +24,7 @@ function formatDate(date: Date | string) {
   }).format(new Date(date))
 }
 
-export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
+async function CategoryDetailPageImpl({ params }: CategoryDetailPageProps) {
   await checkPermission("inventory.categories.read")
 
   const { locale: rawLocale, id } = await params
@@ -166,4 +167,20 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-categories-detail")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-categories-detail")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CategoryDetailPageImpl(props),
+  })
 }

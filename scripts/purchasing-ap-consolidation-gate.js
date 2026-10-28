@@ -49,6 +49,11 @@ function section(source, startMarker, endMarker) {
 
 function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
   const purchaseOrder = read(root, "services/purchase-order/purchase-order.service.ts")
+  const inventoryStockEvent = read(root, "services/inventory/inventory-stock-event.service.ts")
+  const purchaseReceivingPostgresTests = read(
+    root,
+    "services/purchase-order/__tests__/purchase-receiving.postgres.test.ts",
+  )
   const apControl = read(root, "services/purchasing/ap-control.service.ts")
   const apActions = read(root, "actions/purchasing/ap-control.actions.ts")
   const apActionTests = read(root, "actions/purchasing/__tests__/ap-control.actions.test.ts")
@@ -56,10 +61,25 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
   const hardDeleteGate = read(root, "scripts/hard-delete-gate.js")
   const assurance = read(root, "services/assurance/assurance-registry.service.ts")
   const packageJson = read(root, "package.json")
+  const applyInventoryReceiptSection = section(
+    purchaseOrder,
+    "async function applyInventoryReceipt",
+    "// ── DTO transformer",
+  )
   const receiptSection = section(
     purchaseOrder,
     "export async function receiveItems",
+    "function inspectionResolutionPayloadHash",
+  )
+  const inspectionResolutionSection = section(
+    purchaseOrder,
+    "export async function resolveGoodsReceiptInspection",
     "export async function bulkUpdateStatus",
+  )
+  const goodsReceiptStockSection = section(
+    inventoryStockEvent,
+    "export function postGoodsReceiptStock",
+    "export function postPurchaseReturnStock",
   )
   const apPostingSection = section(
     apControl,
@@ -79,14 +99,49 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
     {
       id: "goods_receipt_atomic_stock_posting",
       ready:
-        purchaseOrder.includes("postGoodsReceiptStock(") &&
+        markersInOrder(applyInventoryReceiptSection, [
+          "await postGoodsReceiptStock(",
+          "idempotencyKey:",
+          "tx,",
+        ]) &&
         markersInOrder(receiptSection, [
           "db.$transaction(async (tx)",
+          "FOR UPDATE",
+          "idempotencyKey: input.idempotencyKey",
           "tx.goodsReceipt.create(",
           "tx.goodsReceiptLine.create(",
-          "tx.purchaseOrderLine.update(",
+          "tx.purchaseOrderLine.updateMany(",
           "await applyInventoryReceipt(tx,",
-        ]),
+        ]) &&
+        receiptSection.includes('"organizationId" = ${input.organizationId}') &&
+        markersInOrder(inspectionResolutionSection, [
+          "db.$transaction(async (tx)",
+          'FROM "goods_receipts"',
+          '"organizationId" = ${input.organizationId}',
+          "FOR UPDATE",
+          'FROM "purchase_orders"',
+          '"organizationId" = ${input.organizationId}',
+          "FOR UPDATE",
+          "tx.goodsReceiptInspectionResolution.create(",
+          "tx.purchaseOrderLine.updateMany(",
+          "await applyInventoryReceipt(tx,",
+          "tx.goodsReceipt.update(",
+        ]) &&
+        markersInOrder(goodsReceiptStockSection, [
+          "return postInventoryStockEvent(",
+          "client,",
+        ]) &&
+        inventoryStockEvent.includes("if (hasTransaction(client)) return client.$transaction(run)") &&
+        inventoryStockEvent.includes("return run(client)") &&
+        purchaseReceivingPostgresTests.includes(
+          'it("commits receipt evidence, ordered quantity, and stock posting as one unit"',
+        ) &&
+        purchaseReceivingPostgresTests.includes(
+          'it("rolls back receipt evidence and ordered quantity when stock posting fails"',
+        ) &&
+        purchaseReceivingPostgresTests.includes(
+          'it("holds failed inspection stock and releases it exactly once through authorized resolution"',
+        ),
     },
     {
       id: "evidence_preserving_line_cleanup",
@@ -114,7 +169,13 @@ function buildPurchasingAPReadiness(root = process.cwd(), options = {}) {
       ready:
         apControl.includes("tx.goodsReceiptLine.findFirst(") &&
         apControl.includes("Supplier invoice quantity exceeds received and uninvoiced goods.") &&
-        apControl.includes("Supplier invoice unit cost does not match goods receipt cost"),
+        apControl.includes("const requiresMatchException = varianceAmount.gt(0)") &&
+        apControl.includes("EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION") &&
+        apControl.includes("Supplier invoice posting is blocked until its exact-match variance has an approved active exception.") &&
+        apControl.includes("status: SupplierInvoiceMatchExceptionStatus.APPROVED") &&
+        apControl.includes("expiresAt: { gt: approvalAt }") &&
+        apActions.includes('permission: "purchasing.ap.match.review"') &&
+        apServiceTests.includes("blocks disputed invoice posting without an approved active exception"),
     },
     {
       id: "supplier_invoice_three_way_match_evidence",

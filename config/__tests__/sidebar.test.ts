@@ -149,6 +149,21 @@ describe("sidebar finance reconciliation permissions", () => {
   })
 })
 
+describe("sidebar governed data onboarding ownership", () => {
+  it("exposes exactly one canonical settings-module entry through any readable target", () => {
+    const destinations = sidebarLinks.flatMap((link) => link.dropdownMenu ?? [])
+    const onboarding = destinations.filter((item) => item.href === "/dashboard/settings/data-onboarding")
+
+    expect(onboarding).toHaveLength(1)
+    expect(onboarding[0]).toEqual(expect.objectContaining({
+      title: "Data onboarding",
+      moduleSlug: "settings",
+      permissionMode: "any",
+      permissions: ["customers.read", "purchases.suppliers.read", "inventory.items.read"],
+    }))
+  })
+})
+
 describe("sidebar HR and payroll visibility", () => {
   it("exposes the implemented payroll command, declaration, payment, employee, and self-service routes", () => {
     const hrPayroll = sidebarLinks.find((link) => link.title === "HR & Payroll")
@@ -271,6 +286,42 @@ describe("sidebar filtering and route matching", () => {
       "/dashboard/finance/receivables/history",
       "/dashboard/purchases/payables/history",
     ]))
+  })
+
+  it.each([
+    "purchasing.ap.invoice.view",
+    "finance.payables.read",
+    "purchases.suppliers.read",
+  ])("shows AP history to an authorized %s user", (permission) => {
+    const filtered = filterSidebarLinksByPermission(
+      sidebarLinks,
+      (candidate) => candidate === permission,
+    )
+
+    expect(filtered.find((link) => link.title === "Purchases")?.dropdownMenu).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "AP History",
+          href: "/dashboard/purchases/payables/history",
+        }),
+      ]),
+    )
+  })
+
+  it("keeps the AP history navigation rule aligned with the route boundary", () => {
+    const purchases = sidebarLinks.find((link) => link.title === "Purchases")
+    const history = purchases?.dropdownMenu?.find(
+      (item) => item.href === "/dashboard/purchases/payables/history",
+    )
+
+    expect(history).toEqual(expect.objectContaining({
+      permissions: [
+        "purchasing.ap.invoice.view",
+        "finance.payables.read",
+        "purchases.suppliers.read",
+      ],
+      permissionMode: "any",
+    }))
   })
 
   it("keeps the default sidebar broad enough for functional testability", () => {

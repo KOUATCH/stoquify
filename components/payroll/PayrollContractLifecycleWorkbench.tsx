@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -13,6 +15,11 @@ import {
 import type { PayrollEmployeeContractWorkflowResult } from "@/actions/payroll/payroll-contract.actions"
 import { localizePath } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   data: PayrollEmployeeContractWorkflowResult | null
@@ -98,15 +105,36 @@ function contractCountLabel(count: number) {
 }
 
 export default function PayrollContractLifecycleWorkbench({ data, error, locale }: Props) {
+  const employees = data?.employees ?? []
+  const contractRows = employees.flatMap((employee) =>
+    employee.contracts.map((contract) => ({ employee, contract })),
+  )
+  const employeeTable = useHrPayrollTable({
+    rows: employees,
+    searchText: (employee) => JSON.stringify(employee),
+    dateValue: (employee) =>
+      employee.contracts.find((contract) => contract.id === employee.activeContractId)?.effectiveFrom ?? data?.asOf,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (employee) => employee.displayName },
+      { key: "mapping", label: "User mapping", value: (employee) => employee.userMappingStatus },
+      { key: "eligibility", label: "Eligibility", value: (employee) => employee.payrollEligible },
+      { key: "contracts", label: "Contract count", value: (employee) => employee.contracts.length },
+    ],
+  })
+  const contractTable = useHrPayrollTable({
+    rows: contractRows,
+    searchText: (row) => JSON.stringify(row),
+    dateValue: (row) => row.contract.effectiveFrom,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (row) => row.employee.displayName },
+      { key: "contract", label: "Contract", value: (row) => row.contract.contractNumber },
+      { key: "effective", label: "Effective date", value: (row) => row.contract.effectiveFrom },
+      { key: "status", label: "Status", value: (row) => row.contract.status },
+    ],
+  })
+
   if (error) return <ErrorPanel message={error} />
   if (!data) return <EmptyState />
-
-  const contractRows = data.employees.flatMap((employee) =>
-    employee.contracts.map((contract) => ({
-      employee,
-      contract,
-    })),
-  )
 
   return (
     <main className="flex min-w-0 flex-col gap-4 text-slate-100">
@@ -141,7 +169,8 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
         <div className="border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-semibold text-white">Employee readiness</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={employeeTable} locale={locale} tableLabel="employee contract readiness" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1020px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -153,7 +182,7 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.employees.map((employee) => {
+              {employeeTable.rows.length ? employeeTable.rows.map((employee) => {
                 const activeContract = employee.contracts.find((contract) => contract.id === employee.activeContractId)
 
                 return (
@@ -189,10 +218,13 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
                     </td>
                   </tr>
                 )
-              })}
+              }) : (
+                <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">No employees match the table filters.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={employeeTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
@@ -200,7 +232,8 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Contract rows</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={contractTable} locale={locale} tableLabel="contract rows" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1180px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -214,8 +247,8 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {contractRows.length ? (
-                contractRows.map(({ employee, contract }) => (
+              {contractTable.rows.length ? (
+                contractTable.rows.map(({ employee, contract }) => (
                   <tr key={contract.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{employee.displayName}</p>
@@ -255,6 +288,7 @@ export default function PayrollContractLifecycleWorkbench({ data, error, locale 
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={contractTable} locale={locale} />
       </section>
     </main>
   )

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
   AlertTriangle,
@@ -12,6 +14,11 @@ import {
 import type { PayrollRegisterReadModel } from "@/actions/payroll/payroll-register.actions"
 import { localizePath } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   data: PayrollRegisterReadModel | null
@@ -120,6 +127,19 @@ function componentFamilyLabel(value: string) {
 }
 
 export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
+  const registerTable = useHrPayrollTable({
+    rows: data?.rows ?? [],
+    searchText: (row) => JSON.stringify(row),
+    dateValue: () => data?.period.payDate,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (row) => row.displayName },
+      { key: "payslip", label: "Payslip", value: (row) => row.payslipNumber },
+      { key: "net", label: "Net payable", value: (row) => Number(row.amounts.netPayableAmount) },
+      { key: "paid", label: "Paid amount", value: (row) => Number(row.amounts.paidAmount) },
+      { key: "status", label: "Payment tie-out", value: (row) => row.tieOut.payment },
+    ],
+  })
+
   if (error) {
     return (
       <section className="rounded-lg border border-rose-400/30 bg-rose-950/30 p-5 text-rose-50">
@@ -244,7 +264,8 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
         <div className="border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-semibold text-white">Register rows</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={registerTable} locale={locale} tableLabel="payroll register rows" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1240px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -259,7 +280,7 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.rows.map((row) => (
+              {registerTable.rows.length ? registerTable.rows.map((row) => (
                 <tr key={row.runLineId} className="align-top">
                   <td className="px-4 py-3">
                     <p className="break-words font-semibold text-white">{row.displayName}</p>
@@ -294,10 +315,13 @@ export default function PayrollRegisterTieOut({ data, error, locale }: Props) {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-400">No register rows match the table filters.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={registerTable} locale={locale} />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2">

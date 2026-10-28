@@ -26,12 +26,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useDeleteCategory, useOrgCategories } from "@/hooks/useCategories"
+import type { Locale } from "@/types/bilingual"
 import type { CategoryDTO } from "@/types/category"
 
 interface EnhancedCategoriesManagementProps {
   data: CategoryDTO[]
   organizationId: string
   basePath?: string
+  locale?: Locale
 }
 
 function downloadCsv(categories: CategoryDTO[]) {
@@ -64,6 +66,7 @@ export default function EnhancedCategoriesManagement({
   data,
   organizationId,
   basePath = "/dashboard/inventory/categories",
+  locale = "en",
 }: EnhancedCategoriesManagementProps) {
   const [statusFilter, setStatusFilter] = useState("all")
   const [hierarchyFilter, setHierarchyFilter] = useState("all")
@@ -258,6 +261,7 @@ export default function EnhancedCategoriesManagement({
           <DataTable
             columns={columns}
             data={filteredData}
+            locale={locale}
             searchPlaceholder="Search categories"
             showToolbar={false}
             variant="landing"

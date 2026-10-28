@@ -128,13 +128,26 @@ function isTestOrMockPath(file) {
   )
 }
 
-function classifyFinding(file, pattern) {
+function classifyFinding(file, pattern, contents) {
   if (isTestOrMockPath(file)) {
     return {
       allowed: true,
       classification: "TEST_ONLY",
       severity: "low",
       reason: "Tests and mocks may use mock/demo terminology.",
+    }
+  }
+
+  if (
+    pattern.name === "DEMO_ROUTE_MARKER" &&
+    /process\.env\.NODE_ENV\s*!==\s*["']development["']/.test(contents) &&
+    /\bnotFound\s*\(\s*\)/.test(contents)
+  ) {
+    return {
+      allowed: true,
+      classification: "DEVELOPMENT_ONLY_ROUTE_GUARD",
+      severity: "low",
+      reason: "The diagnostic route fails closed outside the development runtime.",
     }
   }
 
@@ -155,7 +168,7 @@ function scanFile(root, filePath) {
   lines.forEach((line, index) => {
     for (const pattern of PATTERNS) {
       if (!pattern.expression.test(line)) continue
-      const classification = classifyFinding(relative, pattern)
+      const classification = classifyFinding(relative, pattern, contents)
       findings.push({
         file: relative,
         line: index + 1,

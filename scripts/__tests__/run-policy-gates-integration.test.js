@@ -13,7 +13,7 @@ describe("integration policy gate runner", () => {
 
   it("preserves the complete ordered integration gate contract", () => {
     expect(GATES).toHaveLength(26);
-    expect(GATES[0]).toBe("inventory:boundary:fail");
+    expect(GATES[0]).toBe("inventory:boundary");
     expect(GATES[1]).toBe("inventory:valuation:truth:gate");
     expect(GATES.indexOf("purchasing:ap:gate")).toBeLessThan(
       GATES.indexOf("ap:fraud-control:gate"),

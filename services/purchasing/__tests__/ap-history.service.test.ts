@@ -103,7 +103,7 @@ describe("readAPHistory", () => {
         organizationId: "org-1",
         actorUserId: "user-1",
         actorPermissions: ["purchasing.ap.invoice.view"],
-        filters: { pageSize: 25 },
+        filters: { supplierId: "supplier-1", pageSize: 25 },
       },
       { client: client as never, cursorCodec: cursorCodec(), now: () => now, recordedThrough },
     )
@@ -126,6 +126,18 @@ describe("readAPHistory", () => {
       ledgerBlockerCount: 0,
     })
     expect(result.pageInfo).toEqual({ nextCursor: null, hasMore: false })
+    expect(client.supplierInvoice.findMany).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: expect.objectContaining({ organizationId: "org-1", supplierId: "supplier-1" }),
+      }),
+    )
+    expect(client.supplierPayment.findMany).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        where: expect.objectContaining({ organizationId: "org-1", supplierId: "supplier-1" }),
+      }),
+    )
   })
 
   it("rejects a cursor from another tenant before querying AP rows", async () => {

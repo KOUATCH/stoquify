@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0",
+  "entity": "SUPPLIER",
+  "result": "PASS_WITH_CONDITIONS",
+  "scope": [
+    "English and French supplier list",
+    "routed supplier create",
+    "existing supplier detail",
+    "existing supplier edit",
+    "URL transitions and hard-refresh persistence",
+    "authenticated RBAC denial",
+    "desktop, tablet, and mobile presentation",
+    "absence of dialogs on routed workflow surfaces"
+  ],
+  "revision": {
+    "branch": "codex/service-boundary-burndown",
+    "commit": "4a6cc16",
+    "workingTree": "dirty before verification; only scoped defects and verification assets were changed"
+  },
+  "browser": {
+    "engine": "installed local Google Chrome via Playwright",
+    "baseUrls": [
+      "http://127.0.0.1:3022",
+      "http://127.0.0.1:3024"
+    ],
+    "viewports": {
+      "desktop": "1280px",
+      "tablet": "834px",
+      "mobile": "412px"
+    }
+  },
+  "routeEvidence": {
+    "records": 24,
+    "locales": ["en", "fr"],
+    "surfacesPerViewport": ["list", "create-page", "detail-page", "edit-page"],
+    "dialogCount": 0,
+    "seriousAccessibilityViolationCount": 0,
+    "horizontalOverflowCount": 0,
+    "clippedActionCount": 0,
+    "overlappingActionCount": 0,
+    "urlTransitionsPassed": true,
+    "hardRefreshPersistencePassed": true
+  },
+  "rbacEvidence": {
+    "status": "PASS",
+    "routes": 8,
+    "authenticated": true,
+    "permissionDenied": true,
+    "supplierDataDisclosed": false,
+    "mutationOrExportControlsExposed": false,
+    "seriousAccessibilityViolationCount": 0,
+    "horizontalOverflow": false,
+    "unhandledBrowserErrors": []
+  },
+  "focusedTests": {
+    "suites": 3,
+    "tests": 20,
+    "status": "PASS"
+  },
+  "fixes": [
+    "Localized supplier layout permission-denied and no-active-organization copy for French routes.",
+    "Removed the remote default avatar fetch so authenticated local workflows use the existing initials fallback.",
+    "Updated the browser evidence harness for route-first pages, English/French coverage, configurable evidence output, installed-Chrome execution, and dev-compilation-aware URL waits."
+  ],
+  "conditions": [
+    "The broader mobile supplier suite's unrelated archive-menu scenario timed out after every requested route-first record had passed; archive confirmation is outside this certification scope.",
+    "The local Playwright wrapper hung while stopping its Next.js dev server after the isolated RBAC test emitted a pass and wrote PASS evidence; fixture and auth cleanup were completed separately and verified."
+  ],
+  "cleanup": {
+    "syntheticOrganizations": 0,
+    "syntheticUsers": 0,
+    "syntheticSuppliers": 0,
+    "supplierAuthStatesRemoved": true,
+    "temporaryNextBuildsRemoved": true
+  }
+}

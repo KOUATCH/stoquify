@@ -1,0 +1,87 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-15T17:29:42.789Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 16,
+    "readyCount": 16,
+    "blockerCount": 0
+  },
+  "checks": [
+    {
+      "id": "cameroon_adapter_registered_under_shared_contract",
+      "ready": true
+    },
+    {
+      "id": "production_authority_submission_remains_fail_closed",
+      "ready": true
+    },
+    {
+      "id": "official_spec_version_date_reference_and_hash_storage",
+      "ready": true
+    },
+    {
+      "id": "independent_expert_review_and_conflict_declaration",
+      "ready": true
+    },
+    {
+      "id": "credential_reference_is_external_and_redacted",
+      "ready": true
+    },
+    {
+      "id": "credential_expiry_and_rotation_evidence",
+      "ready": true
+    },
+    {
+      "id": "tenant_disable_control_preserves_pos_posting",
+      "ready": true
+    },
+    {
+      "id": "accept_reject_outage_and_rate_limit_fixtures",
+      "ready": true
+    },
+    {
+      "id": "idempotent_submission_and_hashed_evidence",
+      "ready": true
+    },
+    {
+      "id": "authority_submission_lifecycle_business_events",
+      "ready": true
+    },
+    {
+      "id": "operator_health_queue_age_and_credential_expiry",
+      "ready": true
+    },
+    {
+      "id": "fresh_auth_rbac_and_stable_action_contract",
+      "ready": true
+    },
+    {
+      "id": "durable_compliance_and_adapter_schema_migration",
+      "ready": true
+    },
+    {
+      "id": "country_pack_blocks_unverified_production_automation",
+      "ready": true
+    },
+    {
+      "id": "pilot_runbook_declares_disable_and_production_boundaries",
+      "ready": true
+    },
+    {
+      "id": "country_adapter_gate_is_release_wired",
+      "ready": true
+    }
+  ],
+  "blockers": [],
+  "certificationBoundary": {
+    "developmentPilotReady": true,
+    "productionAuthorityCertified": false,
+    "productionBlockers": [
+      "official_dgi_technical_contract_not_validated",
+      "independent_expert_production_review_not_attached",
+      "regulator_production_credentials_not_provisioned",
+      "external_sandbox_conformance_not_executed"
+    ]
+  }
+}

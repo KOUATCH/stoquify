@@ -1,12 +1,12 @@
 # Graph Report - actions  (2026-08-09)
 
 ## Corpus Check
-- 227 files · ~84,973 words
+- 227 files · ~85,496 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1044 nodes · 1282 edges · 70 communities detected
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 90 edges (avg confidence: 0.8)
+- 1044 nodes · 1284 edges · 71 communities detected
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -17,13 +17,14 @@
 - [[_COMMUNITY_Community 4|Community 4]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Community 11|Community 11]]
+- [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 13|Community 13]]
 - [[_COMMUNITY_Community 15|Community 15]]
 - [[_COMMUNITY_Community 16|Community 16]]
 - [[_COMMUNITY_Community 17|Community 17]]
 - [[_COMMUNITY_Community 18|Community 18]]
+- [[_COMMUNITY_Community 19|Community 19]]
 - [[_COMMUNITY_Community 21|Community 21]]
 - [[_COMMUNITY_Community 22|Community 22]]
 - [[_COMMUNITY_Community 24|Community 24]]
@@ -82,7 +83,7 @@
 - [[_COMMUNITY_Community 119|Community 119]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `safeLoggedActionErrorMessage()` - 48 edges
+1. `safeLoggedActionErrorMessage()` - 50 edges
 2. `scopedOrg()` - 21 edges
 3. `safeSuccessActionErrorResult()` - 13 edges
 4. `response()` - 12 edges
@@ -112,8 +113,8 @@ Cohesion: 0.05
 Nodes (32): registerUser(), signInWithCredentials(), boundedError(), createBulkCategories(), emptyResult(), normalizeCreateInput(), normalizeImageUrl(), createLocation() (+24 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.11
-Nodes (40): addItemSuppliers(), getActionErrorMessage(), getActionErrorMessage(), getItemWithSuppliersById(), getOrgLocations(), createOrganizationSettings(), getOrganizationManagementRows(), getOrganizationSettings() (+32 more)
+Cohesion: 0.09
+Nodes (30): createItemAction(), updateItemFromFormAction(), addItemSuppliers(), getActionErrorMessage(), getActionErrorMessage(), getItemWithSuppliersById(), getOrgLocations(), createOrganizationSettings() (+22 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.2
@@ -135,7 +136,7 @@ Nodes (14): deletePhoto(), deletePhotoLocally(), requireInventoryPhotoWrite(), s
 Cohesion: 0.3
 Nodes (13): createActionTaxRate(), normalizeTaxRateInput(), getOrgTaxRates(), assertOrganizationAccess(), cleanText(), createManagedTaxRate(), deleteManagedTaxRate(), getActionErrorMessage() (+5 more)
 
-### Community 11 - "Community 11"
+### Community 10 - "Community 10"
 Cohesion: 0.23
 Nodes (9): signBranchDailyCloseAction(), asRecord(), booleanValue(), certificationInput(), certifyPayrollPilotCycleAction(), firstValue(), signoff(), signoffBundle() (+1 more)
 
@@ -148,18 +149,22 @@ Cohesion: 0.41
 Nodes (12): assertOrganizationAccess(), cleanText(), createManagedCustomer(), deleteManagedCustomer(), getActionErrorMessage(), getCustomerAnalyticsData(), getCustomerManagementData(), hasPermission() (+4 more)
 
 ### Community 15 - "Community 15"
+Cohesion: 0.41
+Nodes (12): assertOrganizationAccess(), cleanText(), createManagedSupplier(), deleteManagedSupplier(), getActionErrorMessage(), getSupplierAnalyticsData(), getSupplierManagementData(), hasPermission() (+4 more)
+
+### Community 16 - "Community 16"
 Cohesion: 0.18
 Nodes (2): asRecord(), ownRequestFields()
 
-### Community 16 - "Community 16"
+### Community 17 - "Community 17"
 Cohesion: 0.3
 Nodes (8): asRecord(), countryPackReviewIntakeInput(), firstValue(), parseProposedCountryPack(), resolveBaseCountryPack(), reviewTopicEvidence(), stringValue(), targetFamilies()
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.44
 Nodes (11): createItemSupplier(), deleteItemSupplier(), getAllOrgItemSuppliers(), getItemSupplierActionErrorMessage(), getItemSupplierById(), getItemSuppliers(), getItemSuppliersByItemId(), itemSupplierActionError() (+3 more)
 
-### Community 18 - "Community 18"
+### Community 19 - "Community 19"
 Cohesion: 0.44
 Nodes (10): actionError(), createCategory(), deleteCategory(), getCategoryById(), getOrgCategories(), normalizeCreateInput(), normalizeImageUrl(), normalizeUpdateInput() (+2 more)
 
@@ -390,7 +395,7 @@ Nodes (2): getCashDrawerDashboardAction(), optionalStringField()
 ## Knowledge Gaps
 - **1 isolated node(s):** `MockFreshAuthRequiredError`
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 15`** (12 nodes): `applyApprovedHrisPaymentDestinationChangeAction()`, `approveHrisPaymentDestinationChangeAction()`, `asRecord()`, `getHrisPaymentDestinationStatusAction()`, `getOwnHrisPaymentDestinationStatusAction()`, `managedMutation()`, `ownRequestFields()`, `rejectHrisPaymentDestinationChangeAction()`, `requestHrisPaymentDestinationChangeAction()`, `requestOwnHrisPaymentDestinationChangeAction()`, `revalidatePaymentDestinationPaths()`, `payment-destination.actions.ts`
+- **Thin community `Community 16`** (12 nodes): `applyApprovedHrisPaymentDestinationChangeAction()`, `approveHrisPaymentDestinationChangeAction()`, `asRecord()`, `getHrisPaymentDestinationStatusAction()`, `getOwnHrisPaymentDestinationStatusAction()`, `managedMutation()`, `ownRequestFields()`, `rejectHrisPaymentDestinationChangeAction()`, `requestHrisPaymentDestinationChangeAction()`, `requestOwnHrisPaymentDestinationChangeAction()`, `revalidatePaymentDestinationPaths()`, `payment-destination.actions.ts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 39`** (7 nodes): `branch-daily-close-sign-off.actions.test.ts`, `freshAuthFixture()`, `FreshAuthRequiredError`, `.constructor()`, `setContextOverride()`, `signOffFixture()`, `validInput()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -470,14 +475,14 @@ Nodes (2): getCashDrawerDashboardAction(), optionalStringField()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `safeLoggedActionErrorMessage()` connect `Community 1` to `Community 0`, `Community 7`, `Community 8`, `Community 13`, `Community 17`, `Community 21`, `Community 22`?**
-  _High betweenness centrality (0.032) - this node is a cross-community bridge._
+- **Why does `safeLoggedActionErrorMessage()` connect `Community 1` to `Community 0`, `Community 7`, `Community 8`, `Community 13`, `Community 15`, `Community 18`, `Community 21`, `Community 22`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `normalizeOptions()` connect `Community 0` to `Community 1`, `Community 3`?**
-  _High betweenness centrality (0.013) - this node is a cross-community bridge._
-- **Why does `safeActionErrorMessage()` connect `Community 0` to `Community 24`, `Community 18`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Are the 45 inferred relationships involving `safeLoggedActionErrorMessage()` (e.g. with `getCustomerManagementData()` and `getCustomerAnalyticsData()`) actually correct?**
-  _`safeLoggedActionErrorMessage()` has 45 INFERRED edges - model-reasoned connections that need verification._
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `safeActionErrorMessage()` connect `Community 0` to `Community 24`, `Community 19`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
+- **Are the 47 inferred relationships involving `safeLoggedActionErrorMessage()` (e.g. with `getCustomerManagementData()` and `getCustomerAnalyticsData()`) actually correct?**
+  _`safeLoggedActionErrorMessage()` has 47 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 10 inferred relationships involving `safeSuccessActionErrorResult()` (e.g. with `registerUser()` and `signInWithCredentials()`) actually correct?**
   _`safeSuccessActionErrorResult()` has 10 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `MockFreshAuthRequiredError` to the rest of the system?**

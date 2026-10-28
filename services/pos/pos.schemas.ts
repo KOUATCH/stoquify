@@ -17,7 +17,7 @@ export const posTerminalListSchema = z.object({
 })
 
 export const activePOSSessionSchema = z.object({
-  terminalId: z.string().min(1, "Terminal is required"),
+  terminalId: z.string().min(1, "Terminal is required").optional(),
 })
 
 export const openShiftSchema = z.object({
@@ -51,6 +51,12 @@ export const posCatalogSchema = z.object({
   search: z.string().trim().max(120).optional(),
   categoryId: z.string().min(1).optional(),
   take: z.coerce.number().int().min(1).max(120).default(48),
+})
+
+export const posCustomerListSchema = z.object({
+  locationId: z.string().min(1, "Location is required"),
+  search: z.string().trim().max(120).optional(),
+  take: z.coerce.number().int().min(1).max(50).default(24),
 })
 
 export const activeCartSchema = z.object({
@@ -87,6 +93,7 @@ export const posTenderMethodSchema = z.enum([
 export const posTenderSchema = z.object({
   method: posTenderMethodSchema,
   amount: z.coerce.number().positive("Tender amount must be positive"),
+  paymentTransactionId: z.string().trim().min(1).max(191).optional(),
   reference: z.string().trim().max(120).optional(),
   cardLast4: z.string().trim().regex(/^\d{4}$/).optional(),
   cardType: z.string().trim().max(40).optional(),
@@ -94,6 +101,22 @@ export const posTenderSchema = z.object({
   mobileMoneyProvider: z.enum(CAMEROON_PAYMENT_PROVIDER_CODES).optional(),
   mobileMoneyPhoneNumber: z.string().trim().max(40).optional(),
   bankName: z.string().trim().max(120).optional(),
+}).superRefine((tender, ctx) => {
+  const electronic = ["CARD", "MOBILE_MONEY", "BANK_TRANSFER"].includes(tender.method)
+  if (electronic && !tender.paymentTransactionId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["paymentTransactionId"],
+      message: "Electronic tenders require provider-authoritative payment transaction evidence",
+    })
+  }
+  if (!electronic && tender.paymentTransactionId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["paymentTransactionId"],
+      message: "Provider payment transaction evidence is only valid for electronic tenders",
+    })
+  }
 })
 
 const receiptDestinationSchema = z.string().trim().max(320, "Receipt destination cannot exceed 320 characters").optional()
@@ -134,6 +157,14 @@ export const commitSaleReceiptSchema = z.object({
 }).superRefine(validateReceiptDestination)
 
 export const commitSaleSchema = z.object({
+  clientCommitId: z.string()
+    .trim()
+    .min(8, "Commit identifier must be at least 8 characters")
+    .max(191, "Commit identifier must not exceed 191 characters")
+    .regex(
+      /^[A-Za-z0-9][A-Za-z0-9._:-]*$/,
+      "Commit identifier contains unsupported characters",
+    ),
   salesOrderId: z.string().min(1, "Cart is required"),
   locationId: z.string().min(1, "Location is required"),
   terminalId: z.string().min(1, "Terminal is required"),
@@ -230,6 +261,7 @@ export type ActivePOSSessionInput = z.infer<typeof activePOSSessionSchema>
 export type OpenShiftInput = z.infer<typeof openShiftSchema>
 export type CloseShiftInput = z.infer<typeof closeShiftSchema>
 export type POSCatalogInput = z.infer<typeof posCatalogSchema>
+export type POSCustomerListInput = z.infer<typeof posCustomerListSchema>
 export type ActiveCartInput = z.infer<typeof activeCartSchema>
 export type AddCartLineInput = z.infer<typeof addCartLineSchema>
 export type UpdateCartLineInput = z.infer<typeof updateCartLineSchema>

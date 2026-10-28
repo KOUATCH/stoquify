@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-08-13",
+  "referenceRoute": "/dashboard/finance/receivables",
+  "contract": {
+    "penultimateFullWidth": true,
+    "workflowFullWidthAndLast": true,
+    "domOrder": ["operational", "workflow"],
+    "wideWorkflowRow": true,
+    "mobilePageOverflowAllowed": false
+  },
+  "routes": [
+    {
+      "route": "/dashboard/finance",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Overview workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/analytics",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Analytics workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/cash-command",
+      "decision": "not applicable",
+      "family": "cash-command",
+      "component": "components/cash-command/CashCommandDashboard.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "The service-owned cash command surface ends with drawer and module-control summaries; its permission-filtered action priority board is operational content, not a navigation workflow footer."
+    },
+    {
+      "route": "/dashboard/finance/cash-drawer",
+      "decision": "not applicable",
+      "family": "cash-drawer",
+      "component": "components/pos/CashDrawerManagementDashboard.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "This specialized drawer/session/journal workbench has no closing operational-data plus navigation-workflow pair; its terminal and control flows remain in place."
+    },
+    {
+      "route": "/dashboard/finance/cash-flow",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Cash flow workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/cash-payment-history",
+      "decision": "not applicable",
+      "family": "transaction-history",
+      "component": "components/finance/CashPaymentHistoryWorkbench.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "This route is a paginated transaction-history workbench with filters, detail drawers, and exception actions, not a dashboard ending in navigation workflows."
+    },
+    {
+      "route": "/dashboard/finance/costs",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Cost control workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/payables",
+      "decision": "normalize",
+      "family": "specialized-ledger",
+      "component": "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+      "penultimateSectionTitle": "Recent supplier disbursements",
+      "finalWorkflowSectionTitle": "Payables workflows",
+      "workflowLinkCount": 6
+    },
+    {
+      "route": "/dashboard/finance/payments",
+      "decision": "normalize",
+      "family": "specialized-ledger",
+      "component": "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+      "penultimateSectionTitle": "Payment ledger stream",
+      "finalWorkflowSectionTitle": "Payment workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/profit-loss",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Profitability workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/profitability",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Profitability workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/receivables",
+      "decision": "already compliant",
+      "family": "specialized-ledger",
+      "component": "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+      "penultimateSectionTitle": "Recent customer receipts",
+      "finalWorkflowSectionTitle": "Receivables workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/receivables/history",
+      "decision": "not applicable",
+      "family": "transaction-history",
+      "component": "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "This route is an AR open-item history workbench with snapshot filters and record details; adding a footer would change the history interaction model."
+    },
+    {
+      "route": "/dashboard/finance/reconciliation",
+      "decision": "not applicable",
+      "family": "payment-reconciliation",
+      "component": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "Reconciliation is a specialized maker-checker and suspense workbench whose closing cards are internal control stages, not navigation workflows."
+    },
+    {
+      "route": "/dashboard/finance/retail",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Retail finance workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/sales",
+      "decision": "extract-and-normalize",
+      "family": "finance-command-center",
+      "component": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "penultimateSectionTitle": "Payment mix",
+      "finalWorkflowSectionTitle": "Sales finance workflows",
+      "workflowLinkCount": 5
+    },
+    {
+      "route": "/dashboard/finance/stock-to-cash",
+      "decision": "not applicable",
+      "family": "stock-to-cash",
+      "component": "components/stock-to-cash/StockToCashFlowDashboard.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "The service-owned stock-to-cash surface ends with conversion and evidence panels and exposes no compatible navigation workflow footer."
+    },
+    {
+      "route": "/dashboard/finance/tax-rates/create",
+      "decision": "not applicable",
+      "family": "tax-rate-form",
+      "component": "components/tax-rates/TaxRatesManagementDashboard.tsx",
+      "penultimateSectionTitle": null,
+      "finalWorkflowSectionTitle": null,
+      "workflowLinkCount": 0,
+      "reason": "This route opens a tax-rate creation form; it is not a dashboard with two compatible closing sections."
+    }
+  ]
+}

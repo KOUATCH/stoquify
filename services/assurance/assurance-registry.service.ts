@@ -319,10 +319,8 @@ const RELEASED_PAYROLL_PAYMENT_STATUSES: PayrollPaymentBatchStatus[] = [
   PayrollPaymentBatchStatus.SETTLED,
 ]
 const PAYROLL_RUN_PAYMENT_READY_STATUSES: PayrollRunStatus[] = [
-  PayrollRunStatus.APPROVED,
-  PayrollRunStatus.EMITTED,
-  PayrollRunStatus.PAID,
   PayrollRunStatus.POSTED,
+  PayrollRunStatus.PAID,
   PayrollRunStatus.ARCHIVED,
 ]
 const PAYROLL_PAYMENT_RECONCILIATION_MONITORED_STATUSES: PayrollPaymentBatchStatus[] = [

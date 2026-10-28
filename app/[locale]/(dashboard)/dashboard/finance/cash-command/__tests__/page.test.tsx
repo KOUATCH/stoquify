@@ -16,6 +16,7 @@ jest.mock("@/components/dashboard/DashboardRouteState", () => ({
 
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string) => href,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
 }))
 
 jest.mock("@/lib/security/rbac", () => ({
@@ -56,13 +57,12 @@ describe("CashCommandPage", () => {
     mockGetCashCommandData.mockResolvedValue({ organizationId: "org-session" })
   })
 
-  it("passes server-owned role and superuser evidence to the service", async () => {
+  it("passes tenant context to the service and renders dashboard content", async () => {
     render(await CashCommandPage({ params: Promise.resolve({ locale: "en" }) }))
 
-    expect(mockRequireAnyPermission).toHaveBeenCalledWith(
-      ["finance.read", "dashboard.read"],
-      { resource: "KontavaCashCommand" },
-    )
+    expect(mockRequireAnyPermission).toHaveBeenCalledWith(["finance.read", "dashboard.read"], {
+      resource: "KontavaCashCommand",
+    })
     expect(mockGetCashCommandData).toHaveBeenCalledWith({
       organizationId: "org-session",
       actorId: "user-session",
@@ -74,18 +74,13 @@ describe("CashCommandPage", () => {
   })
 
   it("renders permission denied when tenant-wide authority is rejected", async () => {
-    mockGetCashCommandData.mockRejectedValue(
-      new RbacError(
-        "Forbidden: Cash Command requires tenant-wide operating authority",
-        "FORBIDDEN",
-        403,
-      ),
+    mockRequireAnyPermission.mockRejectedValue(
+      new RbacError("Forbidden: Cash Command requires tenant-wide operating authority", "FORBIDDEN", 403),
     )
 
-    render(await CashCommandPage({ params: Promise.resolve({ locale: "en" }) }))
+    render(await CashCommandPage({ params: Promise.resolve({ locale: "en" }) }) )
 
     expect(screen.getByText("route:permission_denied")).toBeInTheDocument()
-    expect(screen.queryByText("org-session:en")).not.toBeInTheDocument()
+    expect(mockGetCashCommandData).not.toHaveBeenCalled()
   })
 })
-

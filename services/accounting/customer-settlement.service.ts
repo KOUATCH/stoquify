@@ -16,6 +16,7 @@ import {
 
 import { db } from "@/prisma/db"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   NotFoundError,
@@ -1048,12 +1049,25 @@ async function runSerializable<T>(
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       })
     } catch (error) {
+      if (error instanceof ApplicationError) throw error
+      if (isPrismaCode(error, "P2002")) throw error
       if (
-        !isPrismaCode(error, "P2034") ||
-        attempt === CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS
+        isPrismaCode(error, "P2034") &&
+        attempt < CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS
       ) {
-        throw error
+        continue
       }
+      if (isPrismaCode(error, "P2034")) {
+        throw new ConflictError(
+          "Customer settlement transaction could not be serialized",
+        )
+      }
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer settlement transaction failed.",
+        500,
+        false,
+      )
     }
   }
 
@@ -1097,7 +1111,15 @@ export async function collectCustomerSettlementWithControls(
       return collectCustomerSettlementInTx(tx, command, control)
     })
   } catch (error) {
-    if (!isPrismaCode(error, "P2002")) throw error
+    if (!isPrismaCode(error, "P2002")) {
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer settlement collection failed.",
+        500,
+        false,
+      )
+    }
 
     const existing = await client.customerSettlement.findFirst({
       where: {

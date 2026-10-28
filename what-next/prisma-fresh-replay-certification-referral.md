@@ -1,7 +1,7 @@
 # Prisma Fresh Replay Certification
 
 - Status: **READY_WITH_INTENTIONAL_RESIDUAL_DRIFT**
-- Database: `stoquify_referral_release_20260809_exact` (local dedicated replay database)
+- Database: `stoquify_referral_baseline_rebuild_20260809` (local dedicated replay database)
 - Catalog/applied migrations: 62/62
 - Residual drift statements: 164
 - Unexpected structural drift: 0

@@ -1,6 +1,13 @@
 const fs = require("fs")
 const path = require("path")
-const { REQUIRED_TRIGGERS, buildReport, exitCodeForReport, parseArgs, safeDatabase } = require("../payroll-immutability-runtime-check")
+const {
+  REQUIRED_TRIGGERS,
+  buildReport,
+  createRuntimeClient,
+  exitCodeForReport,
+  parseArgs,
+  safeDatabase,
+} = require("../payroll-immutability-runtime-check")
 
 const ORIGINAL_ENV = process.env
 
@@ -41,6 +48,20 @@ describe("payroll immutability runtime check", () => {
       dbName: "stockflow_immutability_test",
       host: "localhost",
     })
+  })
+
+  it("uses a direct PostgreSQL client independent of generated Prisma client mode", () => {
+    const directClient = {}
+    const ClientCtor = jest.fn(function RuntimeClient() {
+      return directClient
+    })
+    const url = "postgresql://user:pass@localhost:5432/stockflow_immutability_test"
+
+    expect(createRuntimeClient(url, ClientCtor)).toBe(directClient)
+    expect(ClientCtor).toHaveBeenCalledWith({ connectionString: url })
+
+    const source = fs.readFileSync(path.join(__dirname, "..", "payroll-immutability-runtime-check.js"), "utf8")
+    expect(source).not.toContain('require("@prisma/client")')
   })
 
   it("keeps all protected payroll trigger names in the runtime contract", () => {

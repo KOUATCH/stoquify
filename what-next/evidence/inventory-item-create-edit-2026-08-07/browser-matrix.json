@@ -1,0 +1,76 @@
+{
+  "status": "FAIL",
+  "checkedAt": "2026-08-08T08:06:56.584Z",
+  "fixture": {
+    "source": "scripts/inventory-items-e2e-fixture.js",
+    "organizationId": "org_inventory_items_e2e_local",
+    "roleCode": "INVENTORY_ITEMS_E2E",
+    "seededItemId": "item_inventory_items_e2e_editable",
+    "foreignItemId": "item_inventory_items_e2e_foreign",
+    "requiredPermissions": [
+      "inventory.items.read",
+      "inventory.items.create",
+      "inventory.items.update"
+    ],
+    "productionBackfill": false
+  },
+  "cleanup": {
+    "mechanism": "Playwright project teardown",
+    "project": "inventory-items-cleanup",
+    "residualEvidence": "cleanup.json"
+  },
+  "expectedEvidenceCount": 10,
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "name": "tablet",
+      "width": 834,
+      "height": 1112
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "results": [
+    {
+      "surface": "create",
+      "phase": "render",
+      "viewport": "desktop",
+      "path": "/en/dashboard/inventory/items/create",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/inventory/items/create",
+      "screenshot": "what-next/evidence/inventory-item-create-edit-2026-08-07/create-render-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "horizontallyClippedControls": []
+      }
+    },
+    {
+      "surface": "edit",
+      "phase": "before-save",
+      "viewport": "desktop",
+      "path": "/en/dashboard/inventory/items/item_inventory_items_e2e_editable/edit",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/inventory/items/item_inventory_items_e2e_editable/edit",
+      "screenshot": "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-before-save-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "horizontallyClippedControls": []
+      }
+    }
+  ]
+}

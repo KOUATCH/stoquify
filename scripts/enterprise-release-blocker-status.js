@@ -13,6 +13,16 @@ const {
 
 const DEFAULT_MARKDOWN_OUT = "what-next/enterprise-release-blocker-status.md";
 const DEFAULT_JSON_OUT = "what-next/enterprise-release-blocker-status.json";
+const PRIOR_RELEASE_AGGREGATE_PATH = DEFAULT_JSON_OUT;
+const IMMUTABILITY_PROOF_DIRECTORY = "what-next/payroll";
+const IMMUTABILITY_CANONICAL_FILE = "payroll-immutability-runtime-check.json";
+const IMMUTABILITY_DIRECT_FILE_PATTERN =
+  /^payroll-immutability-runtime-check-run-\d+\.json$/;
+const EXPECTED_IMMUTABILITY_COUNTS = Object.freeze({
+  triggers: 9,
+  blockedMutations: 14,
+  allowedLifecycleMutations: 3,
+});
 
 const EVIDENCE_PATHS = Object.freeze({
   build: "what-next/build-diagnostics/enterprise-unblocking-b01/summary.json",
@@ -50,7 +60,7 @@ const BLOCKER_META = Object.freeze({
     title: "Payroll immutability runtime proof",
     blockedStatus: "ENGINEERING_BLOCKED",
     nextAction:
-      "Restore the dedicated database proof and rerun payroll immutability.",
+      "Run the isolated PostgreSQL payroll immutability proof and attach its direct evidence.",
   },
   B03: {
     title: "Production database target and migration history",
@@ -145,6 +155,11 @@ function loadEvidence(root, overrides = {}) {
       buffers[key] = Buffer.from(JSON.stringify(overrides[key] ?? null));
       continue;
     }
+    if (key === "immutability") {
+      documents[key] = null;
+      buffers[key] = null;
+      continue;
+    }
     const target = path.resolve(root, relativePath);
     if (!fs.existsSync(target)) {
       documents[key] = null;
@@ -164,6 +179,260 @@ function loadEvidence(root, overrides = {}) {
   }
 
   return { documents, buffers, errors };
+}
+
+function parseEvidenceTime(value) {
+  if (typeof value !== "string") return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function isIsolatedDatabaseName(value) {
+  return (
+    typeof value === "string" &&
+    /(?:test|testing|immutability|isolated|development|dev|local)/i.test(value)
+  );
+}
+
+function immutableProofEvaluation(document) {
+  const summary = document?.summary || {};
+  const triggers = Array.isArray(document?.triggers) ? document.triggers : [];
+  const blockedChecks = Array.isArray(document?.blockedChecks)
+    ? document.blockedChecks
+    : [];
+  const allowedChecks = Array.isArray(document?.allowedChecks)
+    ? document.allowedChecks
+    : [];
+  const blockers = [];
+
+  if (document?.status !== "ready") blockers.push("proof_status_not_ready");
+  if (document?.mode !== "fail") blockers.push("proof_not_release_enforced");
+  if (!parseEvidenceTime(document?.generatedAt)) {
+    blockers.push("proof_generated_at_invalid");
+  }
+  if (!isIsolatedDatabaseName(document?.safety?.dbName)) {
+    blockers.push("proof_database_not_isolated");
+  }
+  if (
+    typeof document?.safety?.host !== "string" ||
+    document.safety.host.trim().length === 0
+  ) {
+    blockers.push("proof_database_host_missing");
+  }
+  if (
+    summary.requiredTriggers !== EXPECTED_IMMUTABILITY_COUNTS.triggers ||
+    summary.presentTriggers !== EXPECTED_IMMUTABILITY_COUNTS.triggers ||
+    triggers.length !== EXPECTED_IMMUTABILITY_COUNTS.triggers ||
+    triggers.some((trigger) => trigger?.present !== true)
+  ) {
+    blockers.push("proof_trigger_catalog_incomplete");
+  }
+  if (
+    summary.expectedBlockedMutations !==
+      EXPECTED_IMMUTABILITY_COUNTS.blockedMutations ||
+    summary.blockedMutations !==
+      EXPECTED_IMMUTABILITY_COUNTS.blockedMutations ||
+    blockedChecks.length !== EXPECTED_IMMUTABILITY_COUNTS.blockedMutations ||
+    blockedChecks.some((check) => check?.passed !== true)
+  ) {
+    blockers.push("proof_forbidden_mutations_not_blocked");
+  }
+  if (
+    summary.expectedAllowedLifecycleMutations !==
+      EXPECTED_IMMUTABILITY_COUNTS.allowedLifecycleMutations ||
+    summary.allowedLifecycleMutations !==
+      EXPECTED_IMMUTABILITY_COUNTS.allowedLifecycleMutations ||
+    allowedChecks.length !==
+      EXPECTED_IMMUTABILITY_COUNTS.allowedLifecycleMutations ||
+    allowedChecks.some((check) => check?.passed !== true)
+  ) {
+    blockers.push("proof_allowed_lifecycle_not_verified");
+  }
+  if (summary.blockerCount !== 0 || (document?.blockers?.length || 0) !== 0) {
+    blockers.push("proof_reports_runtime_blockers");
+  }
+
+  return {
+    ready: blockers.length === 0,
+    blockers: [...new Set(blockers)],
+  };
+}
+
+function candidateFromDocument(document, sourcePath, sourceKind, buffer) {
+  const encoded = buffer || Buffer.from(JSON.stringify(document ?? null));
+  const evaluation = immutableProofEvaluation(document);
+  return {
+    document,
+    sourcePath,
+    sourceKind,
+    buffer: encoded,
+    sha256: sha256Prefixed(encoded),
+    generatedAt: document?.generatedAt || null,
+    generatedAtMs: parseEvidenceTime(document?.generatedAt),
+    evaluation,
+  };
+}
+
+function loadImmutabilityCandidates(root, evidence, options = {}) {
+  if (Array.isArray(options.immutabilityCandidates)) {
+    return options.immutabilityCandidates.map((candidate, index) =>
+      candidateFromDocument(
+        candidate.document,
+        candidate.sourcePath || `supplied-immutability-proof-${index + 1}`,
+        candidate.sourceKind || "supplied_runtime_proof",
+        candidate.buffer,
+      ),
+    );
+  }
+
+  if (
+    options.documents &&
+    Object.prototype.hasOwnProperty.call(options.documents, "immutability")
+  ) {
+    return [
+      candidateFromDocument(
+        evidence.documents.immutability,
+        EVIDENCE_PATHS.immutability,
+        "supplied_runtime_proof",
+        evidence.buffers.immutability,
+      ),
+    ];
+  }
+
+  const directory = path.resolve(root, IMMUTABILITY_PROOF_DIRECTORY);
+  let names = [];
+  try {
+    names = fs
+      .readdirSync(directory, { withFileTypes: true })
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .filter(
+        (name) =>
+          name === IMMUTABILITY_CANONICAL_FILE ||
+          IMMUTABILITY_DIRECT_FILE_PATTERN.test(name),
+      );
+  } catch {
+    evidence.errors.push("immutability:evidence_directory_missing");
+    return [];
+  }
+
+  const candidates = [];
+  for (const name of names.sort()) {
+    const sourcePath = path
+      .join(IMMUTABILITY_PROOF_DIRECTORY, name)
+      .replace(/\\/g, "/");
+    try {
+      const buffer = fs.readFileSync(path.resolve(root, sourcePath));
+      const document = JSON.parse(buffer.toString("utf8"));
+      candidates.push(
+        candidateFromDocument(
+          document,
+          sourcePath,
+          IMMUTABILITY_DIRECT_FILE_PATTERN.test(name)
+            ? "direct_isolated_postgresql_proof"
+            : "canonical_runtime_proof",
+          buffer,
+        ),
+      );
+    } catch {
+      evidence.errors.push(`immutability:${sourcePath}:evidence_unparseable`);
+    }
+  }
+
+  if (candidates.length === 0) {
+    evidence.errors.push("immutability:evidence_missing");
+  }
+  return candidates;
+}
+
+function loadPriorReleaseAggregate(root, options = {}) {
+  if (Object.prototype.hasOwnProperty.call(options, "priorReleaseAggregate")) {
+    return options.priorReleaseAggregate;
+  }
+  if (options.documents) return null;
+  try {
+    return JSON.parse(
+      fs.readFileSync(path.resolve(root, PRIOR_RELEASE_AGGREGATE_PATH), "utf8"),
+    );
+  } catch {
+    return null;
+  }
+}
+
+function priorImmutabilityState(aggregate) {
+  const gate = Array.isArray(aggregate?.blockers)
+    ? aggregate.blockers.find((item) => item?.id === "B02")
+    : null;
+  if (!gate || typeof gate.ready !== "boolean") return null;
+  return {
+    generatedAt: aggregate.generatedAt || null,
+    generatedAtMs: parseEvidenceTime(aggregate.generatedAt),
+    ready: gate.ready,
+    status: gate.status || null,
+  };
+}
+
+function evaluateImmutabilityEvidence(root, evidence, options = {}) {
+  const candidates = loadImmutabilityCandidates(root, evidence, options);
+  const ranked = [...candidates].sort((left, right) => {
+    const timeDifference =
+      (right.generatedAtMs ?? Number.NEGATIVE_INFINITY) -
+      (left.generatedAtMs ?? Number.NEGATIVE_INFINITY);
+    if (timeDifference !== 0) return timeDifference;
+    if (left.sourceKind === right.sourceKind) {
+      return left.sourcePath.localeCompare(right.sourcePath);
+    }
+    return left.sourceKind === "direct_isolated_postgresql_proof" ? -1 : 1;
+  });
+  const selected = ranked[0] || null;
+  const prior = priorImmutabilityState(
+    loadPriorReleaseAggregate(root, options),
+  );
+  const conflictingCandidates = selected
+    ? ranked.filter(
+        (candidate) =>
+          candidate !== selected &&
+          candidate.evaluation.ready !== selected.evaluation.ready,
+      )
+    : [];
+  const aggregateConflict = Boolean(
+    selected && prior && prior.ready !== selected.evaluation.ready,
+  );
+  const staleAggregateInvalidated = Boolean(
+    aggregateConflict &&
+    selected.generatedAtMs !== null &&
+    prior?.generatedAtMs !== null &&
+    selected.generatedAtMs > prior.generatedAtMs,
+  );
+
+  return {
+    document: selected?.document || null,
+    ready: selected?.evaluation.ready === true,
+    blockers: selected?.evaluation.blockers || [
+      "payroll_immutability_not_verified",
+    ],
+    provenance: {
+      selectedSource: selected?.sourcePath || null,
+      sourceKind: selected?.sourceKind || null,
+      generatedAt: selected?.generatedAt || null,
+      sha256: selected?.sha256 || null,
+      claimScope: "ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+      productionDatabaseVerifiedByThisProof: false,
+      productionReleaseAuthorizedByThisProof: false,
+      candidateCount: ranked.length,
+      conflictingCandidateCount: conflictingCandidates.length,
+      supersededSources: ranked.slice(1).map((candidate) => ({
+        source: candidate.sourcePath,
+        generatedAt: candidate.generatedAt,
+        ready: candidate.evaluation.ready,
+      })),
+      priorAggregate: prior,
+      aggregateConflictDetected: aggregateConflict,
+      staleAggregateInvalidated,
+      precedence:
+        "Newest direct runtime evidence wins by evidence generatedAt; derived release aggregates never override their source proof.",
+    },
+  };
 }
 
 function blocker(id, ready, facts = [], blockers = []) {
@@ -245,6 +514,8 @@ function evaluateOperations(evidence, credentialEvaluation, options) {
 function buildEnterpriseBlockerStatus(root = process.cwd(), options = {}) {
   const evidence = loadEvidence(root, options.documents || {});
   const d = evidence.documents;
+  const immutability = evaluateImmutabilityEvidence(root, evidence, options);
+  d.immutability = immutability.document;
   const credential = evaluateCredentials(evidence, options);
   const operational = evaluateOperations(evidence, credential, options);
 
@@ -252,13 +523,7 @@ function buildEnterpriseBlockerStatus(root = process.cwd(), options = {}) {
     d.build?.status === "passed" &&
     d.build?.exitCode === 0 &&
     d.build?.timedOut === false;
-  const b02Ready =
-    d.immutability?.status === "ready" &&
-    d.immutability?.summary?.presentTriggers === 9 &&
-    d.immutability?.summary?.requiredTriggers === 9 &&
-    d.immutability?.summary?.blockedMutations === 14 &&
-    d.immutability?.summary?.allowedLifecycleMutations === 3 &&
-    d.immutability?.summary?.blockerCount === 0;
+  const b02Ready = immutability.ready;
   const b03Ready =
     d.migrationPreflight?.summary?.status === "ready" &&
     d.migrationPreflight?.deployment?.databaseConfigured === true &&
@@ -323,10 +588,15 @@ function buildEnterpriseBlockerStatus(root = process.cwd(), options = {}) {
       "B02",
       b02Ready,
       [
-        `triggers=${d.immutability?.summary?.presentTriggers ?? 0}/9`,
-        `blockedMutations=${d.immutability?.summary?.blockedMutations ?? 0}/14`,
+        `proofScope=${immutability.provenance.claimScope}`,
+        `proofSource=${immutability.provenance.selectedSource || "missing"}`,
+        `proofGeneratedAt=${immutability.provenance.generatedAt || "missing"}`,
+        `triggers=${d.immutability?.summary?.presentTriggers ?? 0}/${d.immutability?.summary?.requiredTriggers ?? EXPECTED_IMMUTABILITY_COUNTS.triggers}`,
+        `blockedMutations=${d.immutability?.summary?.blockedMutations ?? 0}/${d.immutability?.summary?.expectedBlockedMutations ?? EXPECTED_IMMUTABILITY_COUNTS.blockedMutations}`,
+        `allowedLifecycle=${d.immutability?.summary?.allowedLifecycleMutations ?? 0}/${d.immutability?.summary?.expectedAllowedLifecycleMutations ?? EXPECTED_IMMUTABILITY_COUNTS.allowedLifecycleMutations}`,
+        `staleAggregateInvalidated=${immutability.provenance.staleAggregateInvalidated}`,
       ],
-      b02Ready ? [] : ["payroll_immutability_not_verified"],
+      b02Ready ? [] : immutability.blockers,
     ),
     blocker(
       "B03",
@@ -432,12 +702,14 @@ function buildEnterpriseBlockerStatus(root = process.cwd(), options = {}) {
   const readyCount = blockers.filter((item) => item.ready).length;
   const allReady =
     readyCount === blockers.length && evidence.errors.length === 0;
+  const countryPackEvidenceReady = b05Ready && b06Ready;
+  const operatorEvidenceReady = b07Ready && b08Ready && b09Ready && b10Ready;
   const nextActions = blockers
     .filter((item) => !item.ready)
     .map((item) => ({ id: item.id, action: item.nextAction }));
 
   return {
-    schemaVersion: "1.0",
+    schemaVersion: "1.1",
     generatedAt: new Date().toISOString(),
     status: allReady ? "READY_FOR_AUTHORIZED_PROMOTION_DECISION" : "BLOCKED",
     releasePosture: allReady
@@ -462,10 +734,41 @@ function buildEnterpriseBlockerStatus(root = process.cwd(), options = {}) {
       readyForPhase3Review: b12Ready,
       activationAuthorizedByThisGate: false,
     },
+    claims: {
+      payrollImmutability: {
+        status: b02Ready
+          ? "ISOLATED_POSTGRESQL_RUNTIME_CONTROL_VERIFIED"
+          : "NOT_VERIFIED",
+        scope: immutability.provenance.claimScope,
+        productionDatabaseVerified: false,
+        productionReleaseAuthorized: false,
+      },
+      countryPackProduction: {
+        status: countryPackEvidenceReady
+          ? "EVIDENCE_READY_FOR_RELEASE_REVIEW"
+          : "FAIL_CLOSED",
+        gateIds: ["B05", "B06"],
+        productionUseAuthorized: false,
+      },
+      operatorReadiness: {
+        status: operatorEvidenceReady
+          ? "EVIDENCE_READY_FOR_RELEASE_REVIEW"
+          : "FAIL_CLOSED",
+        gateIds: ["B07", "B08", "B09", "B10"],
+        productionOperationAuthorized: false,
+      },
+      overallRelease: {
+        status: allReady ? "AWAIT_AUTHORIZED_PROMOTION_DECISION" : "NOT_READY",
+        activationAuthorized: false,
+      },
+    },
     blockers,
     evidenceErrors: evidence.errors,
     nextActions,
     evidencePaths: EVIDENCE_PATHS,
+    evidenceProvenance: {
+      immutability: immutability.provenance,
+    },
     safety: {
       evidenceMutated: false,
       externalAuthorityInferred: false,
@@ -505,6 +808,23 @@ function renderMarkdown(report) {
     `- Ready to request gate 017: ${report.decisions.readyToRequestGate017 ? "yes" : "no"}`,
     `- Ready for Phase 2B review: ${report.decisions.readyForPhase2bReview ? "yes" : "no"}`,
     `- Ready for Phase 3 review: ${report.decisions.readyForPhase3Review ? "yes" : "no"}`,
+    "",
+    "## Claim semantics",
+    "",
+    `- Payroll immutability: \`${report.claims.payrollImmutability.status}\` within \`${report.claims.payrollImmutability.scope}\`.`,
+    "- This proof does not verify the production database and does not authorize production release.",
+    `- Country-pack production evidence: \`${report.claims.countryPackProduction.status}\` (B05-B06 remain independent).`,
+    `- Operator readiness evidence: \`${report.claims.operatorReadiness.status}\` (B07-B10 remain independent).`,
+    `- Overall release claim: \`${report.claims.overallRelease.status}\`; activation authorized: no.`,
+    "",
+    "## Payroll immutability evidence provenance",
+    "",
+    `- Selected source: \`${report.evidenceProvenance.immutability.selectedSource || "missing"}\``,
+    `- Source kind: \`${report.evidenceProvenance.immutability.sourceKind || "missing"}\``,
+    `- Evidence generated: ${report.evidenceProvenance.immutability.generatedAt || "missing"}`,
+    `- Evidence digest: \`${report.evidenceProvenance.immutability.sha256 || "missing"}\``,
+    `- Stale conflicting aggregate invalidated: ${report.evidenceProvenance.immutability.staleAggregateInvalidated ? "yes" : "no"}`,
+    `- Precedence: ${report.evidenceProvenance.immutability.precedence}`,
     "",
     "## B01-B12",
     "",

@@ -1,17 +1,23 @@
 import { redirect } from "next/navigation"
 
-import { requireAnyPermission } from "@/lib/security/rbac"
+import { routeByKey, withCashDrawerSurfaceAccess } from "./cash-drawer-route-access"
 
-type LegacyLocaleCashDrawerPageProps = {
+export default async function LegacyLocaleCashDrawerPage({
+  params,
+}: {
   params: Promise<{ locale: string }>
-}
+}) {
+  const surface = routeByKey("cash-drawer-legacy-redirect")
 
-export default async function LegacyLocaleCashDrawerPage({ params }: LegacyLocaleCashDrawerPageProps) {
-  const { locale } = await params
+  if (!surface) {
+    throw new Error("Missing cash drawer route surface definition: cash-drawer-legacy-redirect")
+  }
 
-  await requireAnyPermission(["finance.cash-drawer.read", "finance.read"], {
-    resource: "LegacyCashDrawerRedirect",
+  return withCashDrawerSurfaceAccess({
+    params,
+    surface,
+    onAllowed: (_context, locale) => {
+      redirect(`/${locale}/dashboard/finance/cash-drawer`)
+    },
   })
-
-  redirect(`/${locale}/dashboard/finance/cash-drawer`)
 }

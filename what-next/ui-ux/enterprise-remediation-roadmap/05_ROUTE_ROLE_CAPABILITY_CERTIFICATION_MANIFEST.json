@@ -1,0 +1,269 @@
+{
+  "$schema": "./schemas/uiux-certification-manifest.schema.json",
+  "schemaVersion": "1.0.0",
+  "manifestId": "STQ-UIUX-CERT-2026-08-06",
+  "status": "planned-not-certified",
+  "generatedAt": "2026-08-06",
+  "owner": "Quality Engineering Lead",
+  "approvers": [
+    "Accessibility Lead",
+    "Security Architecture Lead",
+    "Accounting Controls Lead",
+    "Release Director",
+    "Independent Assurance Lead"
+  ],
+  "sources": {
+    "routeRegistry": "planned: B-01",
+    "capabilityContract": "planned: A-08 / CT-04",
+    "fixtureCatalog": "planned: G0-03",
+    "audit": "docs/system-audit/STOQUIFY_ENTERPRISE_UI_UX_SYSTEM_AUDIT_2026-08-06.md",
+    "traceabilityRegister": "what-next/ui-ux/enterprise-remediation-roadmap/01_AUDIT_TRACEABILITY_REGISTER.json"
+  },
+  "coveragePolicy": {
+    "universalRule": "Every canonical protected route and action in the B-01 registry must map to exactly one owning module, at least one permitted capability fixture, at least one denied fixture, its declared route states, and a risk tier.",
+    "aliasRule": "Aliases receive redirect and locale-preservation tests, not duplicate functional certification.",
+    "changedRouteRule": "A change to a Tier-0 or Tier-1 route, shared primitive, contract, capability policy, formatter, or route-state renderer invalidates affected evidence and blocks merge until recertified.",
+    "tier0": "Every commit affecting the surface; all supported locales, required browsers and viewports; automated accessibility plus manual AT at phase/release gate.",
+    "tier1": "Every affected commit and every release candidate; all supported locales and themes, three browser engines, role/package allow-and-deny coverage.",
+    "tier2": "At least one canonical success/state path per release candidate plus changed-route dimensions; rotate full route coverage every 30 days.",
+    "evidenceFreshnessDays": {"tier0":14,"tier1":14,"tier2":30},
+    "prohibitedEvidence": [
+      "screenshots without route and fixture metadata",
+      "dev-server timings represented as production performance",
+      "a retry that discards the failed run",
+      "UI visibility tests without server authorization tests",
+      "automated accessibility as a substitute for manual assistive-technology validation"
+    ]
+  },
+  "dimensions": {
+    "locales": [
+      {"id":"en","status":"supported"},
+      {"id":"fr","status":"supported"},
+      {"id":"pseudo","status":"planned-test-only"}
+    ],
+    "currencies": ["XAF","XOF","EUR","USD"],
+    "timeZones": ["Africa/Douala","Africa/Abidjan","Europe/Paris","UTC"],
+    "themes": [
+      {"id":"dark","status":"current-dominant"},
+      {"id":"light","status":"planned-pending-ADR-UI-004"},
+      {"id":"system","status":"planned-pending-ADR-UI-004"}
+    ],
+    "browsers": [
+      {"id":"chromium","requiredFor":["tier0","tier1","tier2"]},
+      {"id":"firefox","requiredFor":["tier0","tier1"]},
+      {"id":"webkit","requiredFor":["tier0","tier1"]}
+    ],
+    "viewports": [
+      {"id":"desktop","width":1440,"height":900,"requiredFor":["tier0","tier1","tier2"]},
+      {"id":"tablet","width":1024,"height":768,"requiredFor":["tier0","tier1"]},
+      {"id":"mobile","width":390,"height":844,"requiredFor":["tier0","tier1-except-pos"]},
+      {"id":"compact","width":320,"height":568,"requiredFor":["tier0","responsive-contracts"]},
+      {"id":"zoom200","zoomPercent":200,"requiredFor":["tier0","tier1"]},
+      {"id":"zoom400","zoomPercent":400,"requiredFor":["tier0","form-and-content-routes"]}
+    ],
+    "connectionStates": ["online","slow","offline-where-supported","reconnecting"],
+    "dataStates": ["loading","empty","filtered_empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+    "roles": [
+      "anonymous",
+      "owner",
+      "cashier",
+      "inventory_controller",
+      "purchaser",
+      "ap_clerk",
+      "accountant",
+      "external_accountant",
+      "payroll_operator",
+      "employee",
+      "manager",
+      "security_admin",
+      "support"
+    ],
+    "packages": [
+      "legacy_full_suite",
+      "core_only",
+      "inventory",
+      "purchasing_ap",
+      "finance_accounting",
+      "hris_payroll",
+      "pos",
+      "suspended",
+      "read_only"
+    ]
+  },
+  "fixtureProfiles": [
+    {"id":"fx-anonymous","role":"anonymous","package":"none","organizationState":"none","expected":"public-only"},
+    {"id":"fx-owner-full-en-xaf","role":"owner","package":"legacy_full_suite","locale":"en","currency":"XAF","organizationState":"active","expected":"broad-allow"},
+    {"id":"fx-owner-core-fr-eur","role":"owner","package":"core_only","locale":"fr","currency":"EUR","organizationState":"active","expected":"core-allow-module-lock"},
+    {"id":"fx-inventory-xof","role":"inventory_controller","package":"inventory","locale":"fr","currency":"XOF","organizationState":"active","locationScope":"assigned","expected":"inventory-allow"},
+    {"id":"fx-purchaser-xaf","role":"purchaser","package":"purchasing_ap","locale":"en","currency":"XAF","organizationState":"active","expected":"purchasing-allow-ap-deny"},
+    {"id":"fx-ap-clerk-xaf","role":"ap_clerk","package":"purchasing_ap","locale":"fr","currency":"XAF","organizationState":"active","expected":"ap-allow"},
+    {"id":"fx-accountant-xaf","role":"accountant","package":"finance_accounting","locale":"fr","currency":"XAF","organizationState":"active","expected":"finance-close-allow"},
+    {"id":"fx-external-accountant-readonly","role":"external_accountant","package":"read_only","locale":"fr","currency":"XAF","organizationState":"active","expected":"scoped-read-export"},
+    {"id":"fx-payroll-operator","role":"payroll_operator","package":"hris_payroll","locale":"fr","currency":"XAF","organizationState":"active","expected":"payroll-allow-pii-controlled"},
+    {"id":"fx-employee-self-service","role":"employee","package":"hris_payroll","locale":"fr","currency":"XAF","organizationState":"active","expected":"self-service-only"},
+    {"id":"fx-manager-scope","role":"manager","package":"hris_payroll","locale":"en","currency":"XAF","organizationState":"active","expected":"assigned-team-only"},
+    {"id":"fx-cashier-online","role":"cashier","package":"pos","locale":"fr","currency":"XAF","organizationState":"active","locationScope":"assigned","expected":"pos-allow"},
+    {"id":"fx-cashier-offline","role":"cashier","package":"pos","locale":"fr","currency":"XAF","organizationState":"active","connectionState":"offline-where-supported","expected":"bounded-offline-allow"},
+    {"id":"fx-security-admin","role":"security_admin","package":"legacy_full_suite","locale":"en","currency":"USD","organizationState":"active","expected":"security-admin-allow"},
+    {"id":"fx-support","role":"support","package":"core_only","locale":"en","currency":"USD","organizationState":"active","expected":"support-safe-diagnostics"},
+    {"id":"fx-suspended-owner","role":"owner","package":"suspended","locale":"fr","currency":"XAF","organizationState":"suspended","expected":"suspension-boundary"}
+  ],
+  "routeFamilies": [
+    {
+      "id":"RF-00-public",
+      "tier":"tier0",
+      "patterns":["/{locale}","/{locale}/privacy","/{locale}/terms","/{locale}/invited"],
+      "owner":"Growth Product Lead",
+      "requiredRoles":["anonymous"],
+      "requiredPackages":["none"],
+      "requiredStates":["loading","error","success"],
+      "requiredEvidence":["functional","axe","keyboard","visual","responsive","localization"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-01-auth",
+      "tier":"tier0",
+      "patterns":["/{locale}/login","/{locale}/register","/{locale}/forgot-password","/{locale}/reset-password","/{locale}/verify-email"],
+      "owner":"Identity Product Lead",
+      "requiredRoles":["anonymous"],
+      "requiredPackages":["none"],
+      "requiredStates":["loading","error","success"],
+      "requiredEvidence":["functional","security","axe","keyboard","screen-reader","visual","responsive","zoom400","localization"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-02-dashboard",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard"],
+      "owner":"Product Experience Lead",
+      "requiredRoles":["owner","cashier","inventory_controller","purchaser","ap_clerk","accountant","payroll_operator","manager","security_admin","support"],
+      "requiredPackages":["legacy_full_suite","core_only","inventory","purchasing_ap","finance_accounting","hris_payroll","pos","suspended"],
+      "requiredStates":["loading","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","capability-parity","axe","visual","localization","telemetry"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-03-inventory",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/inventory","/{locale}/dashboard/inventory/items","/{locale}/dashboard/inventory/items/create","/{locale}/dashboard/inventory/movements","/{locale}/dashboard/inventory/transfers","/{locale}/dashboard/inventory/loss"],
+      "owner":"Inventory Domain Lead",
+      "requiredRoles":["owner","inventory_controller","accountant","support"],
+      "requiredPackages":["legacy_full_suite","inventory","core_only","suspended","read_only"],
+      "requiredStates":["loading","empty","filtered_empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","financial-truth","capability-parity","axe","visual","responsive","localization","export-artifact","performance"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-04-purchasing-ap",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/purchases","/{locale}/dashboard/purchases/suppliers","/{locale}/dashboard/purchases/purchase-orders","/{locale}/dashboard/payables"],
+      "owner":"Purchasing and AP Lead",
+      "requiredRoles":["owner","purchaser","ap_clerk","accountant","support"],
+      "requiredPackages":["legacy_full_suite","purchasing_ap","core_only","suspended","read_only"],
+      "requiredStates":["loading","empty","filtered_empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","control-workflow","capability-parity","axe","visual","responsive","localization","export-artifact"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-05-finance-accounting",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/finance","/{locale}/dashboard/finance/payments","/{locale}/dashboard/finance/reconciliation","/{locale}/dashboard/accounting","/{locale}/dashboard/accounting/journals","/{locale}/dashboard/accounting/close"],
+      "owner":"Accounting Controls Lead",
+      "requiredRoles":["owner","accountant","external_accountant","support"],
+      "requiredPackages":["legacy_full_suite","finance_accounting","core_only","suspended","read_only"],
+      "requiredStates":["loading","empty","filtered_empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","financial-truth","audit-evidence","capability-parity","axe","visual","responsive","localization","export-artifact","performance"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-06-hris-payroll",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/hr","/{locale}/dashboard/payroll","/{locale}/dashboard/payroll/command-center","/{locale}/dashboard/payroll/payslips"],
+      "owner":"Payroll Domain Lead",
+      "requiredRoles":["owner","payroll_operator","employee","manager","accountant","support"],
+      "requiredPackages":["legacy_full_suite","hris_payroll","core_only","suspended","read_only"],
+      "requiredStates":["loading","empty","filtered_empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","privacy","financial-truth","capability-parity","axe","visual","responsive","localization","export-artifact"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-07-pos",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/pos"],
+      "owner":"POS Domain Lead",
+      "requiredRoles":["owner","cashier","support"],
+      "requiredPackages":["legacy_full_suite","pos","core_only","suspended"],
+      "requiredStates":["loading","empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","offline-replay","capability-parity","axe","visual","desktop","tablet","localization","performance"],
+      "explicitExclusions":["Phone POS certification unless product scope changes"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-08-settings-admin",
+      "tier":"tier1",
+      "patterns":["/{locale}/dashboard/settings","/{locale}/dashboard/settings/modules","/{locale}/dashboard/settings/users","/{locale}/dashboard/settings/security","/{locale}/dashboard/settings/company","/{locale}/dashboard/settings/locations","/{locale}/dashboard/settings/tax-rates"],
+      "owner":"Administration Product Lead",
+      "requiredRoles":["owner","security_admin","support"],
+      "requiredPackages":["legacy_full_suite","core_only","suspended"],
+      "requiredStates":["loading","empty","partial","stale","error","permission_denied","module_locked","not_configured","success"],
+      "requiredEvidence":["functional","security","audit-evidence","capability-parity","axe","visual","responsive","localization"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-09-all-remaining-canonical",
+      "tier":"tier2",
+      "patterns":["registry://canonical-routes-excluding-RF-00-through-RF-08"],
+      "owner":"Respective route owner from B-01 registry",
+      "requiredRoles":["registry://permitted-and-denied-fixtures"],
+      "requiredPackages":["registry://entitled-and-non-entitled-fixtures"],
+      "requiredStates":["registry://declared-route-states"],
+      "requiredEvidence":["functional","capability-parity","axe","visual","localization","changed-route-dimensions"],
+      "status":"planned"
+    },
+    {
+      "id":"RF-10-aliases",
+      "tier":"tier1",
+      "patterns":["registry://aliases"],
+      "owner":"Web Platform Lead",
+      "requiredRoles":["anonymous","authenticated-as-applicable"],
+      "requiredPackages":["all-as-applicable"],
+      "requiredStates":["redirect"],
+      "requiredEvidence":["locale-preservation","query-preservation","analytics-continuity","retirement-date"],
+      "status":"planned"
+    }
+  ],
+  "evidenceRecordRequiredFields": [
+    "evidenceId",
+    "manifestVersion",
+    "commitSha",
+    "environment",
+    "fixtureHash",
+    "routeOrActionId",
+    "routeFamily",
+    "riskTier",
+    "role",
+    "package",
+    "capabilityDecision",
+    "organizationState",
+    "locationScope",
+    "locale",
+    "currency",
+    "timeZone",
+    "theme",
+    "browser",
+    "viewport",
+    "dataState",
+    "command",
+    "startedAt",
+    "completedAt",
+    "result",
+    "artifacts",
+    "reviewer",
+    "expiresAt"
+  ],
+  "completion": {
+    "certified": false,
+    "reason": "This file defines the execution matrix. Certification requires B-01, A-08, G0-03 and B-06 implementation followed by D-01/D-02 evidence.",
+    "openPrerequisites": ["G0-03","A-08","B-01","B-06","D-01","D-02"]
+  }
+}

@@ -1,5 +1,14 @@
 import { Prisma } from '@prisma/client'
 import { z } from 'zod'
+import {
+  itemImageReferenceSchema,
+  itemNameEnSchema,
+  itemNonNegativeNumberSchema,
+  itemOrganizationIdSchema,
+  itemSkuSchema,
+  nullableTrimmedItemText,
+  validateItemStockRange,
+} from './form-validation'
 import { itemStandardInclude } from './includes'
 
 // Shared
@@ -17,7 +26,7 @@ export const basicInfoSchema = z.object({
 })
 
 export const detailsSchema = z.object({
-  sku: z.string().min(1, 'SKU is required').max(128),
+  sku: z.string().trim().min(1, 'SKU is required').max(128),
   barcode: z.string().optional().nullable(),
   dimensions: z.string().optional().nullable(),
   weight: z.coerce.number().min(0).optional().nullable(),
@@ -91,7 +100,7 @@ export const trackingSchema = z.object({
 //   initialInventory: z
 //     .object({
 //       locationId: z.string().min(1),
-//       quantity: z.coerce.number().int().min(0),
+//       quantity: z.coerce.number().int().min(1, 'Opening quantity must be at least 1'),
 //       unitCost: z.coerce.number().min(0).default(0),
 //       notes: z.string().optional(),
 //       createdById: z.string().optional(),
@@ -162,16 +171,16 @@ export const deleteItemSchema = getItemSchema
 
 // Zod schema for creating an item (align with your Item model)
 export const createItemSchema = z.object({
-  organizationId: z.string().min(1, 'Organization ID is required'),
+  organizationId: itemOrganizationIdSchema,
   // Core
-  nameEn: z.string().min(1, 'English name is required').max(255),
+  nameEn: itemNameEnSchema,
   nameFr: z.string().optional().nullable(),
-  sku: z.string().min(1, 'SKU is required').max(128),
+  sku: itemSkuSchema,
 
   // Optionals
   descriptionEn: z.string().optional().nullable(),
   descriptionFr: z.string().optional().nullable(),
-  imageUrls: z.string().optional().nullable(),
+  imageUrls: z.string().trim().min(1, 'Product image is required'),
   thumbnail: z.string().optional().nullable(),
   barcode: z.string().optional().nullable(),
   dimensions: z.string().optional().nullable(),
@@ -184,9 +193,9 @@ export const createItemSchema = z.object({
   isbn: z.string().optional().nullable(),
 
   // Pricing
-  costPrice: z.coerce.number().min(0).default(0),
-  sellingPrice: z.coerce.number().min(0).default(0),
-  tax: z.coerce.number().min(0).optional().nullable(), // percent
+  costPrice: itemNonNegativeNumberSchema().default(0),
+  sellingPrice: itemNonNegativeNumberSchema().default(0),
+  tax: itemNonNegativeNumberSchema().optional().nullable(), // percent
 
   // Relations
   categoryId: z.string().optional().nullable(),
@@ -195,8 +204,8 @@ export const createItemSchema = z.object({
   taxRateId: z.string().optional().nullable(),
 
   // Stock policy stored at item-level
-  minStockLevel: z.coerce.number().min(0).default(0),
-  maxStockLevel: z.coerce.number().min(0).optional().nullable(),
+  minStockLevel: itemNonNegativeNumberSchema().default(0),
+  maxStockLevel: itemNonNegativeNumberSchema().optional().nullable(),
   unitOfMeasure: z.string().optional().nullable(),
 
   // Tracking
@@ -208,16 +217,70 @@ export const createItemSchema = z.object({
   initialInventory: z
     .object({
       locationId: z.string().min(1),
-      quantity: z.coerce.number().int().min(0),
+      quantity: z.coerce.number().int().min(1, 'Opening quantity must be at least 1'),
       unitCost: z.coerce.number().min(0).default(0),
       notes: z.string().optional(),
-      createdById: z.string().optional(),
       batchNumber: z.string().optional(),
       serialNumbers: z.array(z.string()).optional(),
       expiryDate: z.coerce.date().optional(),
       referenceNumber: z.string().optional(),
     })
     .optional(),
+}).superRefine(validateItemStockRange)
+
+/**
+ * Canonical item-master edit contract. Organization and actor identity are
+ * intentionally absent: the server action derives both from the session.
+ */
+export const updateItemFromFormSchema = z.object({
+  id: idSchema,
+  updatedAt: z.string().datetime({ message: 'The item version is invalid' }),
+  nameEn: itemNameEnSchema,
+  nameFr: nullableTrimmedItemText(255),
+  descriptionEn: nullableTrimmedItemText(4000),
+  descriptionFr: nullableTrimmedItemText(4000),
+  imageUrls: itemImageReferenceSchema,
+  retainedImageUrls: z.array(itemImageReferenceSchema).max(20).default([]),
+  thumbnail: itemImageReferenceSchema.nullable().optional(),
+  sku: itemSkuSchema,
+  barcode: nullableTrimmedItemText(128),
+  dimensions: nullableTrimmedItemText(255),
+  weight: itemNonNegativeNumberSchema('Weight must be positive or 0').nullable().optional(),
+  costPrice: itemNonNegativeNumberSchema('Cost price must be positive or 0'),
+  sellingPrice: itemNonNegativeNumberSchema('Selling price must be positive or 0'),
+  msrp: itemNonNegativeNumberSchema('MSRP must be positive or 0').nullable().optional(),
+  categoryId: z.string().trim().min(1).nullable().optional(),
+  brandId: z.string().trim().min(1).nullable().optional(),
+  unitId: z.string().trim().min(1).nullable().optional(),
+  taxRateId: z.string().trim().min(1).nullable().optional(),
+  trackInventory: z.boolean(),
+  minStockLevel: itemNonNegativeNumberSchema('Minimum stock level must be positive or 0'),
+  maxStockLevel: itemNonNegativeNumberSchema('Maximum stock level must be positive or 0').nullable().optional(),
+  reorderLevel: itemNonNegativeNumberSchema('Reorder level must be positive or 0'),
+  reorderQuantity: itemNonNegativeNumberSchema('Reorder quantity must be positive or 0').nullable().optional(),
+  isActive: z.boolean(),
+  isDiscontinued: z.boolean(),
+  trackSerialNumbers: z.boolean(),
+  trackBatches: z.boolean(),
+  trackExpiry: z.boolean(),
+}).superRefine((data, ctx) => {
+  validateItemStockRange(data, ctx)
+
+  if (!data.trackInventory && (data.trackSerialNumbers || data.trackBatches || data.trackExpiry)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Serial, batch, and expiry tracking require inventory tracking',
+      path: ['trackInventory'],
+    })
+  }
+
+  if (data.isDiscontinued && data.isActive) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'A discontinued item cannot remain active',
+      path: ['isActive'],
+    })
+  }
 })
 
 // Shared Action result shape
@@ -288,7 +351,7 @@ export function slugify(input: string): string {
 //   initialInventory: z
 //     .object({
 //       locationId: z.string().min(1),
-//       quantity: z.coerce.number().int().min(0),
+//       quantity: z.coerce.number().int().min(1, 'Opening quantity must be at least 1'),
 //       unitCost: z.coerce.number().min(0).default(0),
 //       notes: z.string().optional(),
 //       createdById: z.string().optional(),
@@ -301,3 +364,4 @@ export function slugify(input: string): string {
 // })
 
 export type CreateItemInput = z.infer<typeof createItemSchema>
+export type UpdateItemFromFormInput = z.infer<typeof updateItemFromFormSchema>

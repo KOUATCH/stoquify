@@ -2611,12 +2611,26 @@ function verifiedCustomerStatementExternalAccessFoundationSource() {
       customer_statement_recipient_actions_prevent_mutation_trigger
       customer_statement_recipient_action_states_prevent_mutation_trigger
     `,
-    tokenService: `
-      const TOKEN_SCOPE = "customer_statement"
-      process.env.AQSTOQFLOW_STATEMENT_TOKEN_SECRET || process.env.STATEMENT_TOKEN_SECRET
-      secret.length >= 32
+    sharedTokenHelper: `
+      import { createHmac, timingSafeEqual } from "node:crypto"
+      if (secret && secret.length >= 32) return secret
       createHmac("sha256", secret)
+      leftBuffer.length === rightBuffer.length
       timingSafeEqual(leftBuffer, rightBuffer)
+    `,
+    tokenService: `
+      import {
+        configuredExternalAccessSecret,
+        signExternalAccessPayload,
+        verifyExternalAccessSignature,
+      } from "@/services/_shared/signed-external-access-token"
+      const TOKEN_SCOPE = "customer_statement"
+      configuredExternalAccessSecret([
+        "AQSTOQFLOW_STATEMENT_TOKEN_SECRET",
+        "STATEMENT_TOKEN_SECRET",
+      ])
+      signExternalAccessPayload(payload, secret)
+      verifyExternalAccessSignature({ token: input.token, secret, })
       statementContentHash: input.statementContentHash
       payload.statementSnapshotId !== input.statementSnapshotId
       payload.exp <= nowSeconds
@@ -2625,6 +2639,13 @@ function verifiedCustomerStatementExternalAccessFoundationSource() {
       hashCustomerStatementAccessValue(token)
       hashCustomerStatementAccessValue(jti)
       const tokenRow = { tokenHash, jtiHash, statementContentHash: snapshot.contentHash }
+      const where = {
+        organizationId: payload.organizationId,
+        statementSnapshotId,
+        tokenHash,
+        jtiHash,
+        statementContentHash: payload.statementContentHash,
+      }
       hashBusinessPayload(snapshot.statementPayload) !== snapshot.contentHash
       row.status !== CustomerStatementAccessTokenStatus.ACTIVE
       !permissionAllowed(input.action, row, payload.permissions)
@@ -3056,6 +3077,11 @@ function writeReadyFixture(root) {
   )
   write(
     root,
+    "services/_shared/signed-external-access-token.ts",
+    customerStatementExternalAccess.sharedTokenHelper,
+  )
+  write(
+    root,
     "services/accounting/customer-statement-access.service.ts",
     customerStatementExternalAccess.accessService,
   )
@@ -3254,6 +3280,28 @@ describe("report trust and export certification gate", () => {
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
   })
 
+  it("recognizes centralized signed external-access token controls", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const tokenService = fs.readFileSync(
+      path.join(root, "services/accounting/customer-statement-token.ts"),
+      "utf8",
+    )
+
+    expect(tokenService).toContain(
+      'from "@/services/_shared/signed-external-access-token"',
+    )
+    expect(tokenService).not.toContain("createHmac")
+    expect(tokenService).not.toContain("timingSafeEqual")
+
+    const report = buildReportTrustExportReadiness(root, { mode: "fail" })
+
+    expect(report.checks).toContainEqual({
+      id: "signed_customer_statement_external_access_foundation",
+      ready: true,
+    })
+  })
+
   it.each([
     [
       "immutable document trigger removed",
@@ -3351,9 +3399,63 @@ describe("report trust and export certification gate", () => {
     ],
     [
       "constant-time signature comparison removed",
-      "services/accounting/customer-statement-token.ts",
+      "services/_shared/signed-external-access-token.ts",
       "timingSafeEqual(leftBuffer, rightBuffer)",
       "leftBuffer.equals(rightBuffer)",
+    ],
+    [
+      "signature length guard removed",
+      "services/_shared/signed-external-access-token.ts",
+      "leftBuffer.length === rightBuffer.length",
+      "true",
+    ],
+    [
+      "minimum signing secret length removed",
+      "services/_shared/signed-external-access-token.ts",
+      "secret.length >= 32",
+      "secret.length >= 8",
+    ],
+    [
+      "HMAC-SHA256 signing removed",
+      "services/_shared/signed-external-access-token.ts",
+      'createHmac("sha256", secret)',
+      'createHash("sha256")',
+    ],
+    [
+      "centralized signing delegation removed",
+      "services/accounting/customer-statement-token.ts",
+      "signExternalAccessPayload(payload, secret)",
+      "JSON.stringify(payload)",
+    ],
+    [
+      "centralized verification delegation removed",
+      "services/accounting/customer-statement-token.ts",
+      "verifyExternalAccessSignature({ token: input.token, secret, })",
+      "{ ok: true, encodedPayload: input.token }",
+    ],
+    [
+      "expiry validation removed",
+      "services/accounting/customer-statement-token.ts",
+      "payload.exp <= nowSeconds",
+      "payload.exp > nowSeconds",
+    ],
+    [
+      "statement binding removed",
+      "services/accounting/customer-statement-token.ts",
+      "payload.statementSnapshotId !== input.statementSnapshotId",
+      "payload.statementSnapshotId !== payload.statementSnapshotId",
+    ],
+    [
+      "tenant binding removed",
+      "services/accounting/customer-statement-access.service.ts",
+      "organizationId: payload.organizationId",
+      "organizationId: row.organizationId",
+    ],
+    [
+      "revoked token status check removed",
+      "services/accounting/customer-statement-access.service.ts",
+      "row.status !== CustomerStatementAccessTokenStatus.ACTIVE",
+      "row.status === CustomerStatementAccessTokenStatus.ACTIVE",
     ],
     [
       "snapshot content integrity check removed",

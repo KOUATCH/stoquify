@@ -4,6 +4,7 @@ import {
 } from "@prisma/client"
 
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   NotFoundError,
@@ -493,7 +494,15 @@ export async function ensurePostedCustomerReceivableDocumentInTx(
     })
     return { document, state, replayed: false }
   } catch (error) {
-    if (!isUniqueConflict(error)) throw error
+    if (!isUniqueConflict(error)) {
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Posted customer receivable creation failed.",
+        500,
+        false,
+      )
+    }
     const raced = await tx.customerReceivableDocument.findFirst({
       where: { organizationId, sourceSalesOrderId: salesOrderId, version: 1 },
     })

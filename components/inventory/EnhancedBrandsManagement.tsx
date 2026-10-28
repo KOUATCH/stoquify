@@ -26,12 +26,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useDeleteBrand, useOrgBrands } from "@/hooks/useBrands"
+import type { Locale } from "@/types/bilingual"
 import type { BrandDTO } from "@/types/brand"
 
 interface EnhancedBrandsManagementProps {
   data: BrandDTO[]
   organizationId: string
   basePath?: string
+  locale?: Locale
 }
 
 function downloadCsv(brands: BrandDTO[]) {
@@ -63,6 +65,7 @@ export default function EnhancedBrandsManagement({
   data,
   organizationId,
   basePath = "/dashboard/inventory/brands",
+  locale = "en",
 }: EnhancedBrandsManagementProps) {
   const [statusFilter, setStatusFilter] = useState("all")
   const [usageFilter, setUsageFilter] = useState("all")
@@ -257,6 +260,7 @@ export default function EnhancedBrandsManagement({
           <DataTable
             columns={columns}
             data={filteredData}
+            locale={locale}
             searchPlaceholder="Search brands"
             showToolbar={false}
             variant="landing"

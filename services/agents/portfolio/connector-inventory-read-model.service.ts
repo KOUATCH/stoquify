@@ -12,6 +12,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { evaluateConnectorHealth, type ConnectorHealthResult } from "./connector-health.service"
 import { type EvidenceGrade } from "@/services/evidence/evidence-contracts"
 import { assertPortfolioAccess, type PortfolioRelianceIntent } from "./evidence-trust.contracts"
@@ -355,19 +356,19 @@ export async function getConnectorInventoryReadModel(
 
 function normalizeInput(input: ConnectorInventoryInput) {
   if (!input.trustedOrganizationId || !input.organizationId || !input.correlationId) {
-    throw new Error("Connector inventory requires trustedOrganizationId, organizationId and correlationId.")
+    throw new BusinessRuleError("Connector inventory requires trustedOrganizationId, organizationId and correlationId.")
   }
   const parsedAsOf = new Date(input.asOf ?? new Date())
   if (Number.isNaN(parsedAsOf.getTime())) {
-    throw new Error("Connector inventory asOf must be a valid timestamp.")
+    throw new BusinessRuleError("Connector inventory asOf must be a valid timestamp.")
   }
   const defaultFreshnessSlaMinutes = input.defaultFreshnessSlaMinutes ?? DEFAULT_FRESHNESS_SLA_MINUTES
   if (!Number.isInteger(defaultFreshnessSlaMinutes) || defaultFreshnessSlaMinutes <= 0) {
-    throw new Error("Connector inventory freshness SLA must be a positive integer.")
+    throw new BusinessRuleError("Connector inventory freshness SLA must be a positive integer.")
   }
   const limit = input.limit ?? DEFAULT_LIMIT
   if (!Number.isInteger(limit) || limit <= 0 || limit > 1000) {
-    throw new Error("Connector inventory limit must be an integer between 1 and 1000.")
+    throw new BusinessRuleError("Connector inventory limit must be an integer between 1 and 1000.")
   }
 
   return {

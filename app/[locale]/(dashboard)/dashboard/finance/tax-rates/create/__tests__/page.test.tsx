@@ -1,26 +1,8 @@
 import { render, screen } from "@testing-library/react"
-import { redirect } from "next/navigation"
 
 import TaxRatesManagementDashboard from "@/components/tax-rates/TaxRatesManagementDashboard"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 
 import CreateFinanceTaxRatePage from "../page"
-
-jest.mock("@/config/useAuth", () => ({
-  checkPermission: jest.fn(),
-  getAuthenticatedUser: jest.fn(),
-}))
-
-jest.mock("next/navigation", () => ({
-  redirect: jest.fn((url: string) => {
-    throw new Error(`NEXT_REDIRECT:${url}`)
-  }),
-}))
-
-jest.mock("@/i18n/routing", () => ({
-  localizePath: (href: string, locale: string) => `/${locale}${href}`,
-  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
-}))
 
 jest.mock("@/components/tax-rates/TaxRatesManagementDashboard", () =>
   jest.fn(({ organizationId, locale, initialAction }) => (
@@ -33,9 +15,32 @@ jest.mock("@/components/tax-rates/TaxRatesManagementDashboard", () =>
   )),
 )
 
-const mockCheckPermission = checkPermission as jest.Mock
-const mockGetAuthenticatedUser = getAuthenticatedUser as jest.Mock
-const mockRedirect = redirect as unknown as jest.Mock
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({
+  DashboardRouteState: ({ kind }: { kind: string }) => <div>{`route:${kind}`}</div>,
+}))
+
+jest.mock("@/i18n/routing", () => ({
+  localizePath: (href: string, locale: string) => `/${locale}${href}`,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
+}))
+
+jest.mock("@/lib/security/rbac", () => ({
+  RbacError: class RbacError extends Error {
+    constructor(
+      message: string,
+      public readonly code: string,
+      public readonly status: number,
+    ) {
+      super(message)
+      this.name = "RbacError"
+    }
+  },
+  requireAnyPermission: jest.fn(),
+}))
+
+import { RbacError, requireAnyPermission } from "@/lib/security/rbac"
+
+const mockRequireAnyPermission = requireAnyPermission as jest.Mock
 const mockTaxRatesManagementDashboard = TaxRatesManagementDashboard as jest.Mock
 
 const pageProps = {
@@ -45,15 +50,19 @@ const pageProps = {
 describe("CreateFinanceTaxRatePage", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockCheckPermission.mockResolvedValue(true)
-    mockGetAuthenticatedUser.mockResolvedValue({ organizationId: "org-tax" })
+    mockRequireAnyPermission.mockResolvedValue({
+      orgId: "org-tax",
+      userId: "user-tax",
+      permissions: ["taxes.create"],
+      roles: [{ code: "tax_admin" }],
+      isSuperUser: false,
+    })
   })
 
-  it("requires tax-rate create permission before rendering the tenant-scoped create dashboard", async () => {
+  it("requires tax-rate create permission before rendering tenant-scoped dashboard", async () => {
     render(await CreateFinanceTaxRatePage(pageProps))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("taxes.create")
-    expect(mockGetAuthenticatedUser).toHaveBeenCalledTimes(1)
+    expect(mockRequireAnyPermission).toHaveBeenCalledWith(["taxes.create"], { resource: "FinanceTaxRatesCreate" })
     expect(mockTaxRatesManagementDashboard).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: "org-tax",
@@ -66,23 +75,21 @@ describe("CreateFinanceTaxRatePage", () => {
     expect(screen.getByText("organization:org-tax")).toBeInTheDocument()
   })
 
-  it("stops before tenant lookup and rendering when tax-rate create permission is denied", async () => {
-    mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
+  it("renders permission denied when tax-rate create permission is denied", async () => {
+    mockRequireAnyPermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
-    await expect(CreateFinanceTaxRatePage(pageProps)).rejects.toThrow("Forbidden")
+    render(await CreateFinanceTaxRatePage(pageProps))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("taxes.create")
-    expect(mockGetAuthenticatedUser).not.toHaveBeenCalled()
+    expect(screen.getByText("route:permission_denied")).toBeInTheDocument()
     expect(mockTaxRatesManagementDashboard).not.toHaveBeenCalled()
   })
 
-  it("redirects to the localized unauthorized page when tenant scope is unavailable", async () => {
-    mockGetAuthenticatedUser.mockResolvedValue({ organizationId: null })
+  it("renders no-active-org state when tenant scope is unavailable", async () => {
+    mockRequireAnyPermission.mockRejectedValue(new RbacError("No active org", "NO_ACTIVE_ORG", 401))
 
-    await expect(CreateFinanceTaxRatePage(pageProps)).rejects.toThrow("NEXT_REDIRECT:/en/unauthorized")
+    render(await CreateFinanceTaxRatePage(pageProps))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("taxes.create")
-    expect(mockRedirect).toHaveBeenCalledWith("/en/unauthorized")
+    expect(screen.getByText("route:no_active_org")).toBeInTheDocument()
     expect(mockTaxRatesManagementDashboard).not.toHaveBeenCalled()
   })
 })

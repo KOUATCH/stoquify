@@ -15,6 +15,13 @@ export class OrganizationCurrencyUnavailableError extends Error {
   }
 }
 
+export function currencyFractionDigits(currency: string): number {
+  return new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: currency.trim().toUpperCase(),
+  }).resolvedOptions().maximumFractionDigits ?? 2
+}
+
 export function createOrganizationMoneyFormatter(
   context: OrganizationMoneyContext,
 ): Intl.NumberFormat {

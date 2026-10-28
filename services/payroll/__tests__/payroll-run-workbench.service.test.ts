@@ -24,6 +24,10 @@ jest.mock("@/services/accounting/posting.service", () => ({
   linkAccountingSource: jest.fn(),
 }));
 
+jest.mock("@/services/accounting/data-trust.service", () => ({
+  getAccountantPortalData: jest.fn(),
+}));
+
 jest.mock("@/services/accounting/periods.service", () => ({
   getOpenPeriodForDate: jest.fn(),
 }));
@@ -55,13 +59,18 @@ import {
   PayrollPayslipStatus,
   PayrollPeriodStatus,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   PayrollRunType,
   Prisma,
 } from "@prisma/client";
 
 import { db } from "@/prisma/db";
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service";
 
 import { getPayrollRunWorkbenchData } from "../payroll-control.service";
+
+const originalTrustSpineWriteSwitch = process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
 
 const mockDb = db as unknown as {
   payrollRun: {
@@ -80,13 +89,97 @@ const mockDb = db as unknown as {
   };
 };
 
+const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock;
+
+function payrollAuditProofPack() {
+  return {
+    kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+    version: 1,
+    generatedAt: "2026-06-30T10:00:00.000Z",
+    scopeHash: "sha256:audit-scope",
+    organizationScoped: true,
+    redaction: {
+      mode: "HASHES_AND_AGGREGATES_ONLY",
+      excluded: [
+        "employee identifiers",
+        "bank and mobile-money details",
+        "raw salary rows",
+      ],
+    },
+    certification: {
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+    },
+    sourceTables: [
+      "payroll_runs",
+      "payroll_payment_batches",
+      "accounting_source_links",
+    ],
+    aggregateEvidence: {
+      declarationRegisterProofGaps: 1,
+      paymentRegisterProofGaps: 1,
+      paymentsMissingLedger: 0,
+    },
+    proofGates: [
+      {
+        gate: "payroll.declarations.proof",
+        status: "BLOCKED",
+        blockerCount: 1,
+        blockerIds: ["payroll-declaration-register-proof-missing"],
+        evidence: ["payroll declaration evidence source register hash"],
+      },
+      {
+        gate: "payroll.accounting.source-link",
+        status: "PASS",
+        blockerCount: 0,
+        blockerIds: [],
+        evidence: ["accounting source link hashes"],
+      },
+    ],
+    blockers: [
+      {
+        id: "payroll-declaration-register-proof-missing",
+        severity: "critical",
+        gate: "payroll.declarations.proof",
+        title: "Declaration register proof missing",
+      },
+    ],
+    latestSourceLinks: [
+      {
+        sourceLinkHash: "sha256:source-link-proof",
+        sourceType: "PAYROLL_RUN",
+        sourceNumber: null,
+        sourceRefHash: "sha256:run-ref",
+        journalEntryNumber: "JE-2026-06",
+        postingBatchId: "ledger-batch-1",
+        postingStatus: "POSTED",
+        createdAt: "2026-06-30T09:20:00.000Z",
+      },
+    ],
+  };
+}
+
+
 describe("payroll run workbench service", () => {
   beforeEach(() => {
+    process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = "true";
     jest.clearAllMocks();
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" });
     mockDb.user.findMany.mockResolvedValue([]);
+    mockGetAccountantPortalData.mockResolvedValue(null);
   });
 
+  afterAll(() => {
+    if (originalTrustSpineWriteSwitch === undefined) {
+      delete process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED;
+    } else {
+      process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = originalTrustSpineWriteSwitch;
+    }
+  });
   it("builds a proof-backed run lifecycle read model with close blockers", async () => {
     const periodStart = new Date("2026-06-01T00:00:00.000Z");
     const periodEnd = new Date("2026-06-30T23:59:59.999Z");
@@ -102,7 +195,7 @@ describe("payroll run workbench service", () => {
         runNumber: "RUN-2026-06-CORR",
         runType: PayrollRunType.CORRECTION,
         status: PayrollRunStatus.POSTED,
-        version: 2,
+        version: 5,
         countryCode: "CM",
         countryPackVersion: "CM-2026.1",
         countryPackSchemaVersion: "country-pack.v1",
@@ -130,6 +223,48 @@ describe("payroll run workbench service", () => {
         approvedAt: new Date("2026-06-30T09:00:00.000Z"),
         emittedAt: new Date("2026-06-30T09:10:00.000Z"),
         postedAt: new Date("2026-06-30T09:20:00.000Z"),
+        transitions: [
+          {
+            toStatus: PayrollRunStatus.REVIEWED,
+            fromVersion: 1,
+            toVersion: 2,
+            actorId: "reviewer-1",
+            transitionedAt: new Date("2026-06-30T08:40:00.000Z"),
+            businessEventId: "event-reviewed-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.APPROVED,
+            fromVersion: 2,
+            toVersion: 3,
+            actorId: "approver-1",
+            transitionedAt: new Date("2026-06-30T09:00:00.000Z"),
+            businessEventId: "event-approved-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.EMITTED,
+            fromVersion: 3,
+            toVersion: 4,
+            actorId: "emitter-1",
+            transitionedAt: new Date("2026-06-30T09:10:00.000Z"),
+            businessEventId: "event-emitted-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+          {
+            toStatus: PayrollRunStatus.POSTED,
+            fromVersion: 4,
+            toVersion: 5,
+            actorId: "poster-1",
+            transitionedAt: new Date("2026-06-30T09:20:00.000Z"),
+            businessEventId: "event-posted-1",
+            origin: PayrollRunTransitionOrigin.RUNTIME,
+            evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+          },
+        ],
         metadata: {
           componentRegisterProofHash: "sha256:component-register",
           payrollComponentMappingHash: "sha256:component-mapping",
@@ -149,6 +284,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 2,
@@ -193,6 +329,11 @@ describe("payroll run workbench service", () => {
             paymentTransactionId: "payment-transaction-1",
             paymentExceptionId: null,
             reconciliationStatus: "PENDING",
+            requestedById: "requester-1",
+            approvedById: "approver-1",
+            releasedById: "releaser-1",
+            approvedAt: new Date("2026-07-05T00:01:00.000Z"),
+            releasedAt: new Date("2026-07-05T00:02:00.000Z"),
             metadata: {},
           },
         ],
@@ -261,6 +402,10 @@ describe("payroll run workbench service", () => {
       },
     ]);
 
+    mockGetAccountantPortalData.mockResolvedValue({
+      payrollAuditProofPack: payrollAuditProofPack(),
+    });
+
     const result = await getPayrollRunWorkbenchData({
       organizationId: "org-1",
       actorId: "controller-1",
@@ -288,6 +433,58 @@ describe("payroll run workbench service", () => {
         policy: "kontava-proof-hidden-identifier-policy",
       }),
     );
+    expect(mockGetAccountantPortalData).toHaveBeenCalledWith(
+      {
+        organizationId: "org-1",
+        periodId: "acct-period-1",
+        limit: 25,
+      },
+      mockDb,
+      expect.any(Date),
+    );
+    expect(result.accountingAuditProof).toEqual(
+      expect.objectContaining({
+        available: true,
+        status: "BLOCKED",
+        periodId: "acct-period-1",
+        scopeHash: "sha256:audit-scope",
+        redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+        blockerCount: 1,
+        proofGateCount: 2,
+        blockedProofGateCount: 1,
+        sourceLinkCount: 1,
+      }),
+    );
+    expect(result.accountingAuditProof.proofGates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          gate: "payroll.declarations.proof",
+          status: "BLOCKED",
+          blockerIds: ["payroll-declaration-register-proof-missing"],
+        }),
+      ]),
+    );
+    expect(result.accountingAuditProof.latestSourceLinks).toEqual([
+      expect.objectContaining({
+        sourceLinkHash: "sha256:source-link-proof",
+        sourceRefHash: "sha256:run-ref",
+        postingBatchId: "ledger-batch-1",
+      }),
+    ]);
+    expect(result.sourceScope).toEqual(
+      expect.objectContaining({
+        accountingAuditProofAvailable: true,
+        accountingAuditProofGateCount: 2,
+        accountingAuditProofSourceLinkCount: 1,
+        accountingAuditProofPeriodId: "acct-period-1",
+        returnedAccountingPeriodIds: ["acct-period-1"],
+        accountingAuditProofCoverageComplete: true,
+      }),
+    );
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("EMP-001");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("Ada Payroll");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("paymentDestinationHash");
+
     expect(result.paymentRequesterCandidates).toEqual([
       expect.objectContaining({
         userId: "requester-1",
@@ -312,6 +509,11 @@ describe("payroll run workbench service", () => {
         proof: expect.objectContaining({
           registerProofPresent: true,
           componentRegisterProofHash: "sha256:component-register",
+          lifecycle: expect.objectContaining({
+            transitionEvidence: "VERIFIED",
+            complete: true,
+            nextAction: null,
+          }),
         }),
         accounting: expect.objectContaining({
           ledgerPostingBatchId: "ledger-batch-1",
@@ -347,9 +549,14 @@ describe("payroll run workbench service", () => {
           paymentBatches: expect.any(Object),
           payslips: expect.any(Object),
           payrollPeriod: expect.any(Object),
+          transitions: expect.objectContaining({
+            orderBy: { sequence: "asc" },
+          }),
         }),
       }),
     );
+    expect(JSON.stringify(result.runs[0].proof.lifecycle)).not.toContain("reviewer-1");
+    expect(JSON.stringify(result.runs[0].proof.lifecycle)).not.toContain("approver-1");
     expect(mockDb.user.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -372,6 +579,13 @@ describe("payroll run workbench service", () => {
               mode: "allow",
               reasonCode: "ALLOWED",
               policy: "kontava-proof-hidden-identifier-policy",
+            }),
+            accountingAuditProof: expect.objectContaining({
+              available: true,
+              status: "BLOCKED",
+              periodId: "acct-period-1",
+              proofGateCount: 2,
+              sourceLinkCount: 1,
             }),
           }),
         }),
@@ -447,6 +661,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 1,
@@ -544,6 +759,14 @@ describe("payroll run workbench service", () => {
     expect(result.runs[0].blockers.map((blocker) => blocker.id)).not.toContain(
       "PAYROLL_CORRECTION_EVIDENCE_HASH_MISSING",
     );
+    expect(result.runs[0].nextActions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "request-payments",
+          requiredPermission: "payroll.payments.request",
+        }),
+      ]),
+    );
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -620,6 +843,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 1,

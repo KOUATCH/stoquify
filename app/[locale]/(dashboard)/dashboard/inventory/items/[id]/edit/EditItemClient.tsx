@@ -1,17 +1,19 @@
 "use client"
 
-import ModernItemFormForEditing from "@/components/dashboard/items/ModernItemFormForEditing"
+import ModernItemFormForEditing, {
+  type ItemEditReference,
+} from "@/components/dashboard/items/ModernItemFormForEditing"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
+import type { ItemEditDTO } from "@/services/item/item.service"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
 import { usePathname, useRouter } from "next/navigation"
-import { useState } from "react"
 
 interface EditItemClientProps {
-  itemData: unknown
-  initialBrandData: unknown[]
-  initialUnitData: unknown[]
-  initialTaxRateData: unknown[]
-  initialCategoryData: unknown[]
+  itemData: ItemEditDTO
+  initialBrandData: ItemEditReference[]
+  initialUnitData: ItemEditReference[]
+  initialTaxRateData: ItemEditReference[]
+  initialCategoryData: ItemEditReference[]
 }
 
 export default function EditItemClient({
@@ -25,24 +27,18 @@ export default function EditItemClient({
   const pathname = usePathname()
   const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
   const itemsHref = localizePath("/dashboard/inventory/items", locale)
-  const [open, setOpen] = useState(true)
 
   return (
     <ModernItemFormForEditing
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next)
-        if (!next) router.push(itemsHref)
-      }}
-      itemData={itemData as never}
-      onSuccess={() => {
-        setOpen(false)
+      itemData={itemData}
+      onCancel={() => router.push(itemsHref)}
+      onSaved={() => {
         router.push(itemsHref)
       }}
-      initialBrandData={initialBrandData as never}
-      initialUnitData={initialUnitData as never}
-      initialCategoryData={initialCategoryData as never}
-      initialTaxRateData={initialTaxRateData as never}
+      initialBrandData={initialBrandData}
+      initialUnitData={initialUnitData}
+      initialCategoryData={initialCategoryData}
+      initialTaxRateData={initialTaxRateData}
     />
   )
 }

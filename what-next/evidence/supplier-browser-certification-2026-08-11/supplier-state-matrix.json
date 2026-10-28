@@ -1,0 +1,99 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-11T17:38:11.760Z",
+  "project": "supplier-state-matrix",
+  "verifiedStates": [
+    "degraded",
+    "empty",
+    "error",
+    "loading"
+  ],
+  "requiredStates": [
+    "loading",
+    "empty",
+    "error",
+    "degraded"
+  ],
+  "results": [
+    {
+      "state": "loading",
+      "surface": "list",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers",
+      "evidenceMethod": "controlled-server-action-delay",
+      "screenshot": "what-next/evidence/supplier-browser-certification-2026-08-11/loading-list-en-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1280,
+        "documentWidth": 1280,
+        "bodyWidth": 1280,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "state": "empty",
+      "surface": "list",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers",
+      "evidenceMethod": "zero-result-supplier-filter",
+      "screenshot": "what-next/evidence/supplier-browser-certification-2026-08-11/empty-list-en-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1280,
+        "documentWidth": 1280,
+        "bodyWidth": 1280,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "state": "error",
+      "surface": "profile",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/en/dashboard/purchases/suppliers/supplier_supplier_e2e_missing",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers/supplier_supplier_e2e_missing",
+      "evidenceMethod": "missing-supplier-id-read",
+      "screenshot": "what-next/evidence/supplier-browser-certification-2026-08-11/error-profile-en-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1280,
+        "documentWidth": 1280,
+        "bodyWidth": 1280,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "state": "degraded",
+      "surface": "profile",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/en/dashboard/purchases/suppliers/supplier_supplier_e2e_foreign",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/suppliers/supplier_supplier_e2e_foreign",
+      "evidenceMethod": "foreign-tenant-id-safe-nondisclosing-fallback",
+      "screenshot": "what-next/evidence/supplier-browser-certification-2026-08-11/degraded-profile-en-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1280,
+        "documentWidth": 1280,
+        "bodyWidth": 1280,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    }
+  ]
+}

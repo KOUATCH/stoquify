@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import {
   AccountingPostingPurpose,
   LedgerPostingBatchStatus,
@@ -13,9 +13,14 @@ import {
 } from "@prisma/client";
 
 import {
-  approveAndPostPayrollRunAction,
+  approvePayrollPaymentBatchAction,
+  approvePayrollRunAction,
   calculatePayrollRunAction,
+  emitPayrollPayslipsAction,
+  postPayrollRunAction,
   preparePayrollDeclarationsAction,
+  reviewPayrollRunAction,
+  requestPayrollPaymentBatchAction,
   releasePayrollPaymentBatchAction,
   type PayrollRunWorkbenchResult,
 } from "@/actions/payroll/payroll-control.actions";
@@ -28,9 +33,14 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/actions/payroll/payroll-control.actions", () => ({
-  approveAndPostPayrollRunAction: jest.fn(),
+  approvePayrollPaymentBatchAction: jest.fn(),
+  approvePayrollRunAction: jest.fn(),
   calculatePayrollRunAction: jest.fn(),
+  emitPayrollPayslipsAction: jest.fn(),
+  postPayrollRunAction: jest.fn(),
   preparePayrollDeclarationsAction: jest.fn(),
+  reviewPayrollRunAction: jest.fn(),
+  requestPayrollPaymentBatchAction: jest.fn(),
   releasePayrollPaymentBatchAction: jest.fn(),
 }));
 
@@ -74,11 +84,17 @@ jest.mock("lucide-react", () => {
   );
 });
 
-const mockApproveAndPostPayrollRunAction =
-  approveAndPostPayrollRunAction as jest.Mock;
+const mockApprovePayrollRunAction = approvePayrollRunAction as jest.Mock;
 const mockCalculatePayrollRunAction = calculatePayrollRunAction as jest.Mock;
+const mockReviewPayrollRunAction = reviewPayrollRunAction as jest.Mock;
+const mockEmitPayrollPayslipsAction = emitPayrollPayslipsAction as jest.Mock;
+const mockPostPayrollRunAction = postPayrollRunAction as jest.Mock;
 const mockPreparePayrollDeclarationsAction =
   preparePayrollDeclarationsAction as jest.Mock;
+const mockRequestPayrollPaymentBatchAction =
+  requestPayrollPaymentBatchAction as jest.Mock;
+const mockApprovePayrollPaymentBatchAction =
+  approvePayrollPaymentBatchAction as jest.Mock;
 const mockReleasePayrollPaymentBatchAction =
   releasePayrollPaymentBatchAction as jest.Mock;
 
@@ -134,6 +150,83 @@ function workbenchData(): PayrollRunWorkbenchResult {
       netPayableInScope: "95800.00",
       coverageComplete: true,
     },
+    accountingAuditProof: {
+      available: true,
+      status: "BLOCKED",
+      generatedAt: "2026-06-30T10:00:00.000Z",
+      scopeHash: "sha256:audit-scope",
+      periodId: "acct-period-1",
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+      proofGateCount: 3,
+      blockedProofGateCount: 1,
+      reviewProofGateCount: 1,
+      sourceLinkCount: 1,
+      sourceTableCount: 3,
+      redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+      redactionExcluded: [
+        "employee identifiers",
+        "bank and mobile-money details",
+        "raw salary rows",
+      ],
+      sourceTables: [
+        "payroll_runs",
+        "payroll_payment_batches",
+        "accounting_source_links",
+      ],
+      aggregateEvidence: {
+        declarationRegisterProofGaps: 1,
+        paymentRegisterProofGaps: 1,
+        paymentsMissingLedger: 0,
+      },
+      proofGates: [
+        {
+          gate: "payroll.declarations.proof",
+          status: "BLOCKED",
+          blockerCount: 1,
+          blockerIds: ["payroll-declaration-register-proof-missing"],
+          evidence: ["payroll declaration evidence source register hash"],
+        },
+        {
+          gate: "payroll.payment.proof",
+          status: "REVIEW",
+          blockerCount: 1,
+          blockerIds: ["payroll-payment-register-proof-missing"],
+          evidence: ["payroll payment settlement source register hash"],
+        },
+        {
+          gate: "payroll.accounting.source-link",
+          status: "PASS",
+          blockerCount: 0,
+          blockerIds: [],
+          evidence: ["accounting source link hashes"],
+        },
+      ],
+      blockers: [
+        {
+          id: "payroll-declaration-register-proof-missing",
+          severity: "critical",
+          gate: "payroll.declarations.proof",
+          title: "Declaration register proof missing",
+        },
+      ],
+      latestSourceLinks: [
+        {
+          sourceLinkHash: "sha256:source-link-proof",
+          sourceType: "PAYROLL_RUN",
+          sourceNumber: null,
+          sourceRefHash: "sha256:run-ref",
+          journalEntryNumber: "JE-2026-06",
+          postingBatchId: "ledger-batch-1",
+          postingStatus: "POSTED",
+          createdAt: "2026-06-30T09:20:00.000Z",
+        },
+      ],
+    },
     runs: [
       {
         id: "run-1",
@@ -148,6 +241,7 @@ function workbenchData(): PayrollRunWorkbenchResult {
           periodStart: "2026-06-01T00:00:00.000Z",
           periodEnd: "2026-06-30T23:59:59.999Z",
           payDate: "2026-07-05T00:00:00.000Z",
+          accountingPeriodId: "acct-period-1",
         },
         amounts: {
           grossAmount: "120000.00",
@@ -180,6 +274,21 @@ function workbenchData(): PayrollRunWorkbenchResult {
           approvedAt: "2026-06-30T09:00:00.000Z",
           emittedAt: "2026-06-30T09:10:00.000Z",
           postedAt: "2026-06-30T09:20:00.000Z",
+          lifecycle: {
+            status: PayrollRunStatus.POSTED,
+            version: 2,
+            transitionEvidence: "VERIFIED",
+            writeEnabled: true,
+            complete: true,
+            blockerCodes: [],
+            nextAction: null,
+            stages: [
+              { stage: PayrollRunStatus.REVIEWED, completed: true, actorPresent: true, transitionedAt: "2026-06-30T08:40:00.000Z", businessEventId: "event-reviewed-1", fromVersion: 1, toVersion: 2, origin: "RUNTIME", evidenceStatus: "VERIFIED" },
+              { stage: PayrollRunStatus.APPROVED, completed: true, actorPresent: true, transitionedAt: "2026-06-30T09:00:00.000Z", businessEventId: "event-approved-1", fromVersion: 2, toVersion: 3, origin: "RUNTIME", evidenceStatus: "VERIFIED" },
+              { stage: PayrollRunStatus.EMITTED, completed: true, actorPresent: true, transitionedAt: "2026-06-30T09:10:00.000Z", businessEventId: "event-emitted-1", fromVersion: 3, toVersion: 4, origin: "RUNTIME", evidenceStatus: "VERIFIED" },
+              { stage: PayrollRunStatus.POSTED, completed: true, actorPresent: true, transitionedAt: "2026-06-30T09:20:00.000Z", businessEventId: "event-posted-1", fromVersion: 4, toVersion: 5, origin: "RUNTIME", evidenceStatus: "VERIFIED" },
+            ],
+          },
         },
         correction: {
           correctionRun: true,
@@ -246,6 +355,11 @@ function workbenchData(): PayrollRunWorkbenchResult {
             paymentTransactionId: "payment-transaction-1",
             paymentExceptionId: null,
             reconciliationStatus: "PENDING",
+            requestedById: "requester-1",
+            approvedById: "approver-1",
+            releasedById: "releaser-1",
+            approvedAt: "2026-07-05T00:01:00.000Z",
+            releasedAt: "2026-07-05T00:02:00.000Z",
             latestSettlementSourceRegisterHash: null,
           },
         ],
@@ -282,6 +396,8 @@ function workbenchData(): PayrollRunWorkbenchResult {
             requiresFreshAuth: false,
             requiresSeparateApprover: false,
             href: "/dashboard/accounting/close",
+            allowed: true,
+            blockedBy: [],
           },
         ],
         blockers: [
@@ -311,6 +427,12 @@ function workbenchData(): PayrollRunWorkbenchResult {
       returned: 1,
       coverageComplete: true,
       sourceService: "services/payroll/payroll-control.service.ts",
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 3,
+      accountingAuditProofSourceLinkCount: 1,
+      accountingAuditProofPeriodId: "acct-period-1",
+      returnedAccountingPeriodIds: ["acct-period-1"],
+      accountingAuditProofCoverageComplete: true,
     },
   };
 }
@@ -318,7 +440,19 @@ function workbenchData(): PayrollRunWorkbenchResult {
 describe("PayrollRunWorkbench", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockApproveAndPostPayrollRunAction.mockResolvedValue({
+    mockApprovePayrollRunAction.mockResolvedValue({
+      success: true,
+      data: { id: "run-1" },
+    });
+    mockReviewPayrollRunAction.mockResolvedValue({
+      success: true,
+      data: { id: "run-1" },
+    });
+    mockEmitPayrollPayslipsAction.mockResolvedValue({
+      success: true,
+      data: { id: "run-1" },
+    });
+    mockPostPayrollRunAction.mockResolvedValue({
       success: true,
       data: { id: "run-1" },
     });
@@ -329,6 +463,14 @@ describe("PayrollRunWorkbench", () => {
     mockPreparePayrollDeclarationsAction.mockResolvedValue({
       success: true,
       data: { id: "declaration-1" },
+    });
+    mockRequestPayrollPaymentBatchAction.mockResolvedValue({
+      success: true,
+      data: { id: "payment-batch-1" },
+    });
+    mockApprovePayrollPaymentBatchAction.mockResolvedValue({
+      success: true,
+      data: { id: "payment-batch-1" },
     });
     mockReleasePayrollPaymentBatchAction.mockResolvedValue({
       success: true,
@@ -382,6 +524,31 @@ describe("PayrollRunWorkbench", () => {
     );
   });
 
+  it("renders accountant auditor proof drawer with redacted hash evidence", () => {
+    render(<PayrollRunWorkbench data={workbenchData()} locale="en" />);
+
+    expect(
+      screen.getByRole("heading", { name: "Auditor proof" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("acct-period-1")).toBeInTheDocument();
+    expect(screen.getByText("1 blocked / 1 review / 3 total")).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Auditor proof drawer" }),
+    );
+
+    const dialog = screen.getByRole("dialog");
+    const drawer = within(dialog);
+    expect(drawer.getByText("Payroll auditor proof pack")).toBeInTheDocument();
+    expect(drawer.getAllByText("HASHES_AND_AGGREGATES_ONLY").length).toBeGreaterThanOrEqual(2);
+    expect(drawer.getByText("sha256:source-link-proof")).toBeInTheDocument();
+    expect(drawer.getByText("payroll.declarations.proof:BLOCKED, payroll.payment.proof:REVIEW, payroll.accounting.source-link:PASS")).toBeInTheDocument();
+    expect(drawer.getByText("declarationRegisterProofGaps:1, paymentRegisterProofGaps:1")).toBeInTheDocument();
+    expect(drawer.getByText("employee identifiers, bank and mobile-money details, raw salary rows")).toBeInTheDocument();
+    expect(drawer.queryByText("EMP-001")).not.toBeInTheDocument();
+    expect(drawer.queryByText("Ada Payroll")).not.toBeInTheDocument();
+  });
+
   it("renders correction proof identifier redaction when service denies proof access", () => {
     const data = workbenchData();
     data.redaction.correctionProofIdentifiers = {
@@ -430,6 +597,8 @@ describe("PayrollRunWorkbench", () => {
         requiresFreshAuth: false,
         requiresSeparateApprover: false,
         href: null,
+        allowed: true,
+        blockedBy: [],
       },
       {
         id: "prepare-declarations",
@@ -438,6 +607,8 @@ describe("PayrollRunWorkbench", () => {
         requiresFreshAuth: false,
         requiresSeparateApprover: false,
         href: "/dashboard/payroll/declarations",
+        allowed: true,
+        blockedBy: [],
       },
     ];
 
@@ -513,18 +684,20 @@ describe("PayrollRunWorkbench", () => {
     );
     expect(mockRefresh).toHaveBeenCalledTimes(2);
   });
-  it("submits release payments from service-owned payslip allocations only", async () => {
+  it("submits a payment request from service-owned payslip allocations without client actor fields", async () => {
     const data = workbenchData();
     data.runs[0].paymentBatches = [];
     data.runs[0].counts.paymentBatches = 0;
     data.runs[0].nextActions = [
       {
-        id: "release-payments",
-        label: "Release payment batch",
-        requiredPermission: "payroll.payments.release",
+        id: "request-payments",
+        label: "Request payment batch",
+        requiredPermission: "payroll.payments.request",
         requiresFreshAuth: true,
-        requiresSeparateApprover: true,
+        requiresSeparateApprover: false,
         href: null,
+        allowed: true,
+        blockedBy: [],
       },
     ];
 
@@ -532,26 +705,23 @@ describe("PayrollRunWorkbench", () => {
 
     expect(screen.queryByLabelText("Requested by")).not.toBeInTheDocument();
     const paymentTrigger = screen.getByRole("button", {
-      name: "Open payment drawer",
+      name: "Open payment request drawer",
     });
     expect(paymentTrigger).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(paymentTrigger);
     expect(paymentTrigger).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByLabelText("Requested by")).toHaveValue("requester-1");
-    expect(screen.getByText("Requester evidence")).toBeInTheDocument();
-    expect(screen.getByText("payroll.payments.request")).toBeInTheDocument();
+    expect(screen.getAllByText("payroll.payments.request").length).toBeGreaterThan(0);
     expect(screen.getByText("Source register proof")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Release payments" }));
+    fireEvent.click(screen.getByRole("button", { name: "Request payments" }));
 
     await waitFor(() =>
-      expect(mockReleasePayrollPaymentBatchAction).toHaveBeenCalledTimes(1),
+      expect(mockRequestPayrollPaymentBatchAction).toHaveBeenCalledTimes(1),
     );
-    const payload = mockReleasePayrollPaymentBatchAction.mock.calls[0][0];
+    const payload = mockRequestPayrollPaymentBatchAction.mock.calls[0][0];
 
     expect(payload).toEqual(
       expect.objectContaining({
         payrollRunId: "run-1",
-        requestedById: "requester-1",
         method: PaymentMethod.BANK_TRANSFER,
         paymentDate: expect.any(String),
         allocations: [
@@ -567,23 +737,77 @@ describe("PayrollRunWorkbench", () => {
       }),
     );
     expect(payload).not.toHaveProperty("organizationId");
+    expect(payload).not.toHaveProperty("requestedById");
     expect(payload).not.toHaveProperty("approvedById");
     expect(payload).not.toHaveProperty("releasedById");
     expect(payload).not.toHaveProperty("actorPermissions");
     expect(payload).not.toHaveProperty("lastAuthAt");
     await waitFor(() =>
       expect(
-        screen.getByText("Payroll payment release requested."),
+        screen.getByText(
+          "Payroll payment request persisted for independent approval.",
+        ),
       ).toBeInTheDocument(),
     );
     expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 
-  it("blocks payment release when no separate requester candidate is service-backed", () => {
+  it("approves a persisted draft payment batch without client actor fields", async () => {
     const data = workbenchData();
-    data.paymentRequesterCandidates = [];
-    data.runs[0].paymentBatches = [];
-    data.runs[0].counts.paymentBatches = 0;
+    data.runs[0].paymentBatches = [
+      {
+        ...data.runs[0].paymentBatches[0],
+        status: PayrollPaymentBatchStatus.DRAFT,
+        approvedById: null,
+        releasedById: null,
+        approvedAt: null,
+        releasedAt: null,
+      },
+    ];
+    data.runs[0].nextActions = [
+      {
+        id: "approve-payments",
+        label: "Approve payment batch",
+        requiredPermission: "payroll.payments.approve",
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+        href: null,
+        allowed: true,
+        blockedBy: [],
+      },
+    ];
+
+    render(<PayrollRunWorkbench data={data} locale="en" />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open payment approval drawer" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Approve payments" }));
+    await waitFor(() =>
+      expect(mockApprovePayrollPaymentBatchAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payrollPaymentBatchId: "payment-batch-1",
+          idempotencyKey: expect.any(String),
+        }),
+      ),
+    );
+    const payload = mockApprovePayrollPaymentBatchAction.mock.calls[0][0];
+    expect(payload).not.toHaveProperty("organizationId");
+    expect(payload).not.toHaveProperty("approvedById");
+    expect(payload).not.toHaveProperty("requestedById");
+    expect(payload).not.toHaveProperty("releasedById");
+  });
+
+  it("releases only a persisted approved payment batch without mutable allocations", async () => {
+    const data = workbenchData();
+    data.runs[0].paymentBatches = [
+      {
+        ...data.runs[0].paymentBatches[0],
+        status: PayrollPaymentBatchStatus.APPROVED,
+        releasedById: null,
+        releasedAt: null,
+      },
+    ];
     data.runs[0].nextActions = [
       {
         id: "release-payments",
@@ -592,33 +816,88 @@ describe("PayrollRunWorkbench", () => {
         requiresFreshAuth: true,
         requiresSeparateApprover: true,
         href: null,
+        allowed: true,
+        blockedBy: [],
+      },
+    ];
+
+    render(<PayrollRunWorkbench data={data} locale="en" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open payment release drawer" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Release payments" }));
+    await waitFor(() =>
+      expect(mockReleasePayrollPaymentBatchAction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payrollPaymentBatchId: "payment-batch-1",
+          idempotencyKey: expect.any(String),
+        }),
+      ),
+    );
+    const payload = mockReleasePayrollPaymentBatchAction.mock.calls[0][0];
+    expect(payload).not.toHaveProperty("allocations");
+    expect(payload).not.toHaveProperty("requestedById");
+    expect(payload).not.toHaveProperty("approvedById");
+    expect(payload).not.toHaveProperty("releasedById");
+  });
+
+  it("submits the service-owned emission stage without client tenant or actor fields", async () => {
+    const data = workbenchData();
+    data.runs[0].status = PayrollRunStatus.APPROVED;
+    data.runs[0].version = 3;
+    data.runs[0].proof.lifecycle = {
+      ...data.runs[0].proof.lifecycle,
+      status: PayrollRunStatus.APPROVED,
+      version: 3,
+      complete: false,
+      nextAction: {
+        id: "emit",
+        label: "Emit approved payslips",
+        requiredPermission: "payroll.payslips.emit",
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+        href: "/dashboard/payroll/runs",
+      },
+      stages: data.runs[0].proof.lifecycle.stages.slice(0, 2),
+    };
+    data.runs[0].nextActions = [
+      {
+        ...data.runs[0].proof.lifecycle.nextAction!,
+        allowed: true,
+        blockedBy: [],
       },
     ];
 
     render(<PayrollRunWorkbench data={data} locale="en" />);
 
-    expect(screen.queryByLabelText("Requested by")).not.toBeInTheDocument();
     fireEvent.click(
-      screen.getByRole("button", { name: "Open payment drawer" }),
+      screen.getByRole("button", { name: "Open emission drawer" }),
+    );
+    fireEvent.change(screen.getByLabelText("Evidence hash"), {
+      target: { value: "sha256:emission-evidence" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "Emit approved payslips" }),
     );
 
-    expect(screen.getByLabelText("Requested by")).toBeDisabled();
-    expect(
-      screen.getByText("No separate requester available"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Payment release requires a separate service-backed requester, visible payroll amounts, emitted payslips, and payment destination proof.",
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Release payments" }),
-    ).toBeDisabled();
-    expect(mockReleasePayrollPaymentBatchAction).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(mockEmitPayrollPayslipsAction).toHaveBeenCalledTimes(1),
+    );
+    const payload = mockEmitPayrollPayslipsAction.mock.calls[0][0];
+    expect(payload).toEqual(expect.objectContaining({
+      payrollRunId: "run-1",
+      expectedVersion: 3,
+      evidenceHash: "sha256:emission-evidence",
+      idempotencyKey: expect.any(String),
+    }));
+    expect(payload).not.toHaveProperty("organizationId");
+    expect(payload).not.toHaveProperty("actorId");
+    expect(payload).not.toHaveProperty("actorPermissions");
+    expect(payload).not.toHaveProperty("lastAuthAt");
+    expect(await screen.findByText("Payslip emission persisted.")).toBeInTheDocument();
   });
-
   it("shows fresh-auth denials without leaking auth fields into approve payloads", async () => {
-    mockApproveAndPostPayrollRunAction.mockResolvedValueOnce({
+    mockApprovePayrollRunAction.mockResolvedValueOnce({
       success: false,
       error: "Fresh authentication is required.",
       code: "FRESH_AUTH_REQUIRED",
@@ -627,12 +906,14 @@ describe("PayrollRunWorkbench", () => {
     const data = workbenchData();
     data.runs[0].nextActions = [
       {
-        id: "approve-post",
-        label: "Approve and post run",
+        id: "approve",
+        label: "Approve reviewed run",
         requiredPermission: "payroll.runs.approve",
         requiresFreshAuth: true,
         requiresSeparateApprover: true,
         href: null,
+        allowed: true,
+        blockedBy: [],
       },
     ];
 
@@ -642,14 +923,18 @@ describe("PayrollRunWorkbench", () => {
       screen.getByRole("button", { name: "Open approval drawer" }),
     );
     expect(screen.getAllByText("Maker-checker").length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByRole("button", { name: "Approve and post" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Approve reviewed run" }),
+    );
 
     await waitFor(() =>
-      expect(mockApproveAndPostPayrollRunAction).toHaveBeenCalledTimes(1),
+      expect(mockApprovePayrollRunAction).toHaveBeenCalledTimes(1),
     );
-    const payload = mockApproveAndPostPayrollRunAction.mock.calls[0][0];
+    const payload = mockApprovePayrollRunAction.mock.calls[0][0];
 
-    expect(payload).toEqual(expect.objectContaining({ payrollRunId: "run-1" }));
+    expect(payload).toEqual(
+      expect.objectContaining({ payrollRunId: "run-1", expectedVersion: 2 }),
+    );
     expect(payload).not.toHaveProperty("organizationId");
     expect(payload).not.toHaveProperty("approvedById");
     expect(payload).not.toHaveProperty("actorPermissions");

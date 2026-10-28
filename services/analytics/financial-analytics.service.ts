@@ -13,6 +13,7 @@ import { endOfDay, startOfDay } from "date-fns"
 
 import { db } from "@/prisma/db"
 import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
+import { classifyPayrollTransitionEvidence } from "@/services/payroll/payroll-transition-evidence"
 import { evaluateRedaction } from "@/services/security/redaction-policy.service"
 import type {
   SnapshotBlocker,
@@ -496,6 +497,19 @@ async function getPayrollFinanceFacts(input: {
       },
     },
     include: {
+      transitions: {
+        orderBy: { sequence: "asc" },
+        select: {
+          toStatus: true,
+          fromVersion: true,
+          toVersion: true,
+          actorId: true,
+          transitionedAt: true,
+          businessEventId: true,
+          origin: true,
+          evidenceStatus: true,
+        },
+      },
       lines: {
         include: {
           employee: { select: { locationId: true } },
@@ -560,6 +574,15 @@ async function getPayrollFinanceFacts(input: {
     ? allLines
     : allLines.filter(({ line }) => line.employee.locationId === input.locationId)
   const blockers = new Set<string>()
+
+  for (const run of runs) {
+    const transitionEvidence = classifyPayrollTransitionEvidence(run)
+    if (transitionEvidence === "MISSING_POST_CUTOVER") {
+      blockers.add("PAYROLL_TRANSITION_PROOF_MISSING")
+    } else if (transitionEvidence === "LEGACY_PARTIAL") {
+      blockers.add("PAYROLL_TRANSITION_LEGACY_PARTIAL_EVIDENCE")
+    }
+  }
 
   if (!scopedToAllLocations && allLines.some(({ line }) => !line.employee.locationId)) {
     blockers.add("PAYROLL_LOCATION_ALLOCATION_MISSING")
@@ -645,7 +668,7 @@ async function getPayrollFinanceFacts(input: {
         status: "NON_AUTHORITATIVE",
         reasonCode: "PAYROLL_EVIDENCE_INCOMPLETE",
         message:
-          "Payroll salary and payroll-tax amounts are omitted because payroll register, effective component, ledger, or payment evidence is incomplete.",
+          "Payroll salary and payroll-tax amounts are omitted because lifecycle transition, payroll register, effective component, ledger, or payment evidence is incomplete.",
         runCount: runs.length,
         lineCount: selectedLines.length,
         paymentBatchCount: selectedPaymentBatchIds.size,

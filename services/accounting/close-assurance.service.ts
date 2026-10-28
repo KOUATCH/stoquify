@@ -21,6 +21,7 @@ import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   ForbiddenError,
@@ -449,6 +450,7 @@ const CLOSE_SOURCE_TABLES = [
   "stock_count_sessions",
   "payroll_periods",
   "payroll_runs",
+  "payroll_run_transitions",
   "payroll_payment_batches",
   "payroll_declarations",
   "payroll_declaration_evidence",
@@ -3519,9 +3521,15 @@ async function runMissingCloseEvidenceTransaction<T>(
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       })
     } catch (error) {
+      if (error instanceof ApplicationError) throw error
       const code = getPrismaKnownRequest(error)?.code
       if (attempt === 2 || (code !== "P2034" && code !== "P2002")) {
-        throw error
+        throw new ApplicationError(
+          "INTERNAL_ERROR",
+          "Missing-proof workflow transaction failed.",
+          500,
+          false,
+        )
       }
     }
   }

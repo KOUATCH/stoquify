@@ -134,7 +134,6 @@ describe("accountant client invite service", () => {
         redactedEmail: "a***@example.test",
         inviteTokenHash: expect.stringMatching(/^[0-9a-f]{64}$/),
         evidenceHash: expect.stringMatching(/^[0-9a-f]{64}$/),
-        createdAt: now,
       }),
     })
     expect(tx.accountantClientInviteState.create).toHaveBeenCalledWith({

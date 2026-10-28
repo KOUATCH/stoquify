@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "MIG-20260611130000-DESTRUCTIVE-FINDING-INVENTORY-20260817",
+  "artifactStatus": "PRESENT_VALID_TECHNICAL_INVENTORY",
+  "generatedAt": "2026-08-17T14:42:34.311Z",
+  "organization": "Stoquify",
+  "sourceCandidate": {
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "productionApprovalCandidate": false
+  },
+  "migration": {
+    "path": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+    "rawFileSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+    "canonicalLfSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+    "byteLength": 24674,
+    "destructiveOperationCount": 13,
+    "destructiveInventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1"
+  },
+  "approvalState": {
+    "registryPath": "prisma/migration-risk-approvals.json",
+    "registrySha256": "6d386babbd94bcc3eabbdae9ba493717bbe47a12aa769a6cf7ed23ff85fc2192",
+    "approved": 0,
+    "pending": 13,
+    "gateBlocker": "destructive_sql_is_exact_hash_approved"
+  },
+  "findings": [
+    { "id": "D-001", "line": 80, "rule": "drop_column", "object": "accounts.access_token", "gateClauseSha256": "82476106e62275adbbf0bdf3f8a334a867bd228c97bffeb203470b7b848e56e7", "canonicalOperationSha256": "5f9f80a6ef931e002134e4e2aa220ea9acf22c3c2134496e0671affe147988c0", "findingSha256": "4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb", "risk": "HIGH", "requiredTreatment": "Prove zero rows or preserve/map token data; validate reauthentication and recovery." },
+    { "id": "D-002", "line": 81, "rule": "drop_column", "object": "accounts.expires_at", "gateClauseSha256": "f652a3b318f285284e026fcd5b4c24e58a0d14307850fffb06162005cb7848ab", "canonicalOperationSha256": "b7eab3bc9315a06e40938ff57ded5c5431ed2222fe68dd09b3f587aa7c69090f", "findingSha256": "277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55", "risk": "HIGH", "requiredTreatment": "Prove zero rows or define conversion and reconciliation for expiry semantics." },
+    { "id": "D-003", "line": 82, "rule": "drop_column", "object": "accounts.id_token", "gateClauseSha256": "c549cdb7ff1a93361b570badce9b7faace6ffcbd7b03cbfe8dc141b6c0df2a20", "canonicalOperationSha256": "9617601b5fa48b23905e69ab0709e24ac42a9aeac346621a19f4af0d4fa46889", "findingSha256": "5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13", "risk": "HIGH", "requiredTreatment": "Prove zero rows or preserve/map OIDC token data." },
+    { "id": "D-004", "line": 83, "rule": "drop_column", "object": "accounts.provider", "gateClauseSha256": "ce41787f691ed1692706e119214aa23e0f2b1f360f3537041c59e990a0d693a0", "canonicalOperationSha256": "8b5c158498132b69a3f1d9ee8fb82ccc46676000e296d6beead2cf6356a8b26d", "findingSha256": "fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or map provider identity without collisions before providerId becomes required." },
+    { "id": "D-005", "line": 84, "rule": "drop_column", "object": "accounts.providerAccountId", "gateClauseSha256": "8641e4aa22e89045be9bcca389829602b55cff18448f9367277d32c41db3d7a5", "canonicalOperationSha256": "4e87e6a7aa428e2c1ff064889c6b7c140a9e458bbf99ca558d7fe461ad111252", "findingSha256": "b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or map provider subjects and verify uniqueness/collisions." },
+    { "id": "D-006", "line": 85, "rule": "drop_column", "object": "accounts.refresh_token", "gateClauseSha256": "9823b6d3cfb2276a4cd005377e6082784182c9e26829b6813817eef9701e0d96", "canonicalOperationSha256": "eb731b37536517b7ff029fb4029e0413b15b95911de15c47d49adee177966cfc", "findingSha256": "07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492", "risk": "HIGH", "requiredTreatment": "Prove zero rows or preserve/map refresh tokens and test refresh behavior." },
+    { "id": "D-007", "line": 86, "rule": "drop_column", "object": "accounts.session_state", "gateClauseSha256": "defa287c3723b704404889577da31386f3027c3011f347f4f9aaa7c97d1058a2", "canonicalOperationSha256": "d78e048f5e398174730608db403aac86b2e829c97c731ef3e872a88683db3b82", "findingSha256": "6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988", "risk": "HIGH", "requiredTreatment": "Record retention/deletion decision and prove no required consumer or audit use." },
+    { "id": "D-008", "line": 87, "rule": "drop_column", "object": "accounts.token_type", "gateClauseSha256": "92d1661114de882963cbf9087dd39835d7afc8b0f145317c0664aaf8e246c5e5", "canonicalOperationSha256": "0f20190067a5fe024673fb1985a6d656ac380dca7266d2469ade5831a37a1f3b", "findingSha256": "42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165", "risk": "HIGH", "requiredTreatment": "Record retention/deletion decision and provider compatibility evidence." },
+    { "id": "D-009", "line": 88, "rule": "drop_column", "object": "accounts.type", "gateClauseSha256": "10186a5502378de299a4df9a468a5417532c08c1d24eb0660321a9e1f42803a8", "canonicalOperationSha256": "d57e56dd40511f3240b0efd4eeeb8483d2589e5bef799c7d1fd458a0c8b3a8d6", "findingSha256": "5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de", "risk": "HIGH", "requiredTreatment": "Record classification mapping or intentional deletion evidence." },
+    { "id": "D-010", "line": 101, "rule": "drop_column", "object": "sessions.expires", "gateClauseSha256": "1ad705e6a0896e85f3b4f5321d636b4b888a789d7c5f76e631b4535385ca7ee4", "canonicalOperationSha256": "84c1f1c438a50d09814575e756f95e636c4d0cbd0b7814eecb622e500bd31a95", "findingSha256": "8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or map expiry accurately and test active-session continuity/revocation." },
+    { "id": "D-011", "line": 102, "rule": "drop_column", "object": "sessions.sessionToken", "gateClauseSha256": "8bd2210234809622ce5ba3f64bd1887e98b504a4b9f86e9787e4bae248347a50", "canonicalOperationSha256": "eba142f101ee62145d06759f392bea86a325dade07838aeff2d52be93ac73076", "findingSha256": "ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or preserve/map unique tokens; test sign-in, revocation, and step-up." },
+    { "id": "D-012", "line": 112, "rule": "drop_column", "object": "users.emailVerified", "gateClauseSha256": "91c160e19ae2987ab9a0360bef0ffa7ff2f6b6a4b5b77e2576856cce3c86704c", "canonicalOperationSha256": "6ee6d1bbaa68a1cba355923e93db7f5489648b2dbe4d3685a0c865d1c36f7d88", "findingSha256": "4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or map timestamp/null truth to Boolean without resetting verified users." },
+    { "id": "D-013", "line": 116, "rule": "drop_table", "object": "auth_sessions", "gateClauseSha256": "45cb1a1e1e0ae99fbc0fc9d824f086629987486a7fa7e1d481de5257e2cc25ca", "canonicalOperationSha256": "0f5eb881cca0bd115195a7aa7f27045beb5d02b8d6dde09684cc190c3a5df3bd", "findingSha256": "69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe", "risk": "CRITICAL", "requiredTreatment": "Prove zero rows or archive/retain security provenance and test recovery." }
+  ],
+  "limitations": [
+    "Regenerate from the final clean release candidate before approval.",
+    "This artifact contains no human approval and no production target data-impact proof."
+  ]
+}

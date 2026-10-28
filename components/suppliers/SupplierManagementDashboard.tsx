@@ -1,11 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
 import {
   AlertCircle,
   Archive,
+  ArrowLeft,
   BarChart3,
   Building2,
   CalendarClock,
@@ -49,14 +51,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -69,9 +63,24 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+  CommandBriefHeader,
+  RouteStatePanel,
+  StatusStrip,
+  dashboardPanelClass,
+  dashboardRowClass,
+  dashboardToneClass,
+  type DashboardTone,
+} from "@/components/dashboard/primitives/command-center-primitives"
 import { cn } from "@/lib/utils"
+import { buildSupplierClipboardPayload, buildSupplierExportCsv, buildSupplierExportHeaders, buildSupplierExportRows } from "@/components/suppliers/supplier-export-utils"
+import { prepareSupplierManagementExport } from "@/actions/suppliers/supplier-management-actions"
 import type { Locale } from "@/types/bilingual"
-import type { SupplierManagementInput, SupplierManagementRow } from "@/actions/suppliers/supplier-management-actions"
+import type {
+  SupplierManagementInput,
+  SupplierManagementRow,
+} from "@/actions/suppliers/supplier-management-actions"
 import {
   useCreateManagedSupplier,
   useDeleteManagedSupplier,
@@ -84,14 +93,17 @@ interface SupplierManagementDashboardProps {
   organizationId: string
   locale?: Locale
   basePath?: string
+  createPath?: string
   initialAction?: "create"
   initialEditId?: string
   initialAnalyticsId?: string
+  canExport?: boolean
+  canExportSensitive?: boolean
+  canEdit?: boolean
 }
 
 type StatusFilter = "all" | "active" | "inactive"
 type RiskFilter = "all" | "open-orders" | "over-limit" | "linked-items" | "no-links"
-type LocaleFilter = "all" | "EN" | "FR"
 type SupplierLocale = "EN" | "FR"
 
 type SupplierFormState = {
@@ -132,7 +144,6 @@ const copy = {
     actions: "Actions",
     viewAnalytics: "View analytics",
     editSupplier: "Edit supplier",
-    openEditPage: "Open edit page",
     copyId: "Copy ID",
     archive: "Archive",
     loadingTitle: "Loading suppliers",
@@ -144,7 +155,6 @@ const copy = {
     search: "Search suppliers, code, contact, email, phone, country...",
     status: "Status",
     risk: "Activity",
-    language: "Language",
     all: "All",
     active: "Active",
     inactive: "Inactive",
@@ -175,6 +185,9 @@ const copy = {
     copyFailedBody: "The browser could not copy this identifier.",
     exportTitle: "Suppliers exported",
     exportBody: "The current supplier view was exported as CSV.",
+    exportSensitiveNotice: "Contact, email, phone, and tax ID are omitted from export by default for data minimization.",
+    includeSensitiveFields: "Include sensitive fields",
+    sensitiveFieldsIncluded: "Sensitive fields included",
     requiredTitle: "Supplier details required",
     requiredBody: "Enter a supplier name before saving.",
     invalidEmailTitle: "Invalid email",
@@ -187,6 +200,20 @@ const copy = {
     saving: "Saving",
     creating: "Creating",
     formDescription: "Supplier identity, contact, commercial terms, language preference, and active status.",
+    createSummary: "Create a purchasing-ready supplier record with clear identity, contact, terms, and operating status.",
+    editSummary: "Update this supplier while preserving purchasing, payable, and historical context.",
+    detailSummary: "Review supplier state, risk, payable proof, purchasing activity, payments, and linked items.",
+    backToSuppliers: "Back to suppliers",
+    backToSupplier: "Back to supplier",
+    supplierRecord: "Supplier record",
+    purchasingContext: "Purchasing context",
+    purchasingReady: "Ready for supplier setup",
+    recordUpdated: "Record updated",
+    apProof: "AP proof scope",
+    creditExposure: "Credit exposure",
+    withinLimit: "Within configured limit",
+    supplierNotFoundTitle: "Supplier not found",
+    supplierNotFoundBody: "The requested supplier is unavailable in this organization or is no longer accessible.",
     archiveTitle: "Archive supplier",
     archiveBody: "Suppliers with history are deactivated. Unused suppliers are archived from active lists.",
     confirmArchive: "Archive supplier",
@@ -198,6 +225,23 @@ const copy = {
     noOrders: "No purchase orders yet",
     noLedger: "No ledger entries yet",
     noItems: "No item links yet",
+    overviewTab: "Overview",
+    purchasesTab: "Purchases",
+    invoicesTab: "Invoices & AP",
+    paymentsTab: "Payments",
+    itemsTab: "Linked items",
+    invoiceHistory: "Invoice and AP history",
+    paymentHistory: "Payment history",
+    noInvoices: "No supplier invoices yet",
+    noPayments: "No supplier payments yet",
+    openPayable: "Open payable",
+    releasedPayments: "Released payments",
+    ledgerBlockers: "Ledger blockers",
+    completeHistory: "Operational AP history complete",
+    partialHistory: "AP history has incomplete sources",
+    viewAllInvoices: "View all supplier invoices",
+    viewAllPayments: "View all supplier payments",
+    viewAllPurchaseOrders: "View all purchase orders",
     contact: "Contact",
     terms: "Terms",
     commercial: "Commercial",
@@ -268,7 +312,6 @@ const copy = {
     actions: "Actions",
     viewAnalytics: "Voir analyse",
     editSupplier: "Modifier fournisseur",
-    openEditPage: "Ouvrir page modification",
     copyId: "Copier ID",
     archive: "Archiver",
     loadingTitle: "Chargement fournisseurs",
@@ -280,7 +323,6 @@ const copy = {
     search: "Rechercher fournisseur, code, contact, email, telephone, pays...",
     status: "Statut",
     risk: "Activite",
-    language: "Langue",
     all: "Tous",
     active: "Actif",
     inactive: "Inactif",
@@ -311,6 +353,9 @@ const copy = {
     copyFailedBody: "Le navigateur n'a pas pu copier cet identifiant.",
     exportTitle: "Fournisseurs exportes",
     exportBody: "La vue fournisseur actuelle a ete exportee en CSV.",
+    exportSensitiveNotice: "Le contact, l'email, le telephone et l'ID fiscal sont omis de l'export par defaut.",
+    includeSensitiveFields: "Inclure les informations sensibles",
+    sensitiveFieldsIncluded: "Informations sensibles inclues",
     requiredTitle: "Details fournisseur requis",
     requiredBody: "Saisissez le nom du fournisseur avant d'enregistrer.",
     invalidEmailTitle: "Email invalide",
@@ -323,6 +368,20 @@ const copy = {
     saving: "Enregistrement",
     creating: "Creation",
     formDescription: "Identite, contact, conditions commerciales, langue et statut actif.",
+    createSummary: "Creez une fiche fournisseur prete pour les achats avec identite, contact, conditions et statut clairs.",
+    editSummary: "Mettez a jour ce fournisseur en preservant le contexte achats, dettes et historique.",
+    detailSummary: "Consultez statut, risque, preuve AP, achats, paiements et articles lies du fournisseur.",
+    backToSuppliers: "Retour aux fournisseurs",
+    backToSupplier: "Retour au fournisseur",
+    supplierRecord: "Fiche fournisseur",
+    purchasingContext: "Contexte achats",
+    purchasingReady: "Pret pour la configuration fournisseur",
+    recordUpdated: "Fiche mise a jour",
+    apProof: "Portee de preuve AP",
+    creditExposure: "Exposition credit",
+    withinLimit: "Dans la limite configuree",
+    supplierNotFoundTitle: "Fournisseur introuvable",
+    supplierNotFoundBody: "Le fournisseur demande est indisponible dans cette organisation ou n'est plus accessible.",
     archiveTitle: "Archiver fournisseur",
     archiveBody: "Les fournisseurs avec historique sont desactives. Les fournisseurs inutilises sont archives.",
     confirmArchive: "Archiver fournisseur",
@@ -334,6 +393,23 @@ const copy = {
     noOrders: "Aucune commande d'achat",
     noLedger: "Aucune ecriture fournisseur",
     noItems: "Aucun lien article",
+    overviewTab: "Vue d ensemble",
+    purchasesTab: "Achats",
+    invoicesTab: "Factures et dettes",
+    paymentsTab: "Paiements",
+    itemsTab: "Articles lies",
+    invoiceHistory: "Historique factures et dettes",
+    paymentHistory: "Historique paiements",
+    noInvoices: "Aucune facture fournisseur",
+    noPayments: "Aucun paiement fournisseur",
+    openPayable: "Dette ouverte",
+    releasedPayments: "Paiements liberes",
+    ledgerBlockers: "Blocages comptables",
+    completeHistory: "Historique operationnel complet",
+    partialHistory: "Certaines sources AP sont incompletes",
+    viewAllInvoices: "Voir toutes les factures fournisseur",
+    viewAllPayments: "Voir tous les paiements fournisseur",
+    viewAllPurchaseOrders: "Voir toutes les commandes",
     contact: "Contact",
     terms: "Conditions",
     commercial: "Commercial",
@@ -448,6 +524,15 @@ function formatCurrency(value: number, locale: Locale) {
     maximumFractionDigits: 0,
   }).format(value)
 }
+function formatCurrencyText(value: string | number, currency: string, locale: Locale) {
+  const amount = typeof value === "number" ? value : Number(value)
+  return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 2,
+  }).format(Number.isFinite(amount) ? amount : 0)
+}
+
 
 function formatDate(value: Date | string | null | undefined, locale: Locale, fallback = "Never") {
   if (!value) return fallback
@@ -457,11 +542,6 @@ function formatDate(value: Date | string | null | undefined, locale: Locale, fal
   return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
     dateStyle: "medium",
   }).format(date)
-}
-
-function escapeCsv(value: string | number | boolean | null | undefined) {
-  const text = String(value ?? "")
-  return `"${text.replace(/"/g, '""')}"`
 }
 
 function initials(name: string) {
@@ -478,15 +558,8 @@ function isOverCreditLimit(supplier: SupplierManagementRow) {
   return supplier.creditLimit !== null && supplier.currentBalance > supplier.creditLimit
 }
 
-function toneClass(tone: "brand" | "success" | "spruce" | "gold" | "danger" | "info") {
-  return {
-    brand: "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]",
-    success: "border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]",
-    spruce: "border-[var(--dash-spruce)] bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]",
-    gold: "border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]",
-    danger: "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]",
-    info: "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-  }[tone]
+function toneClass(tone: DashboardTone) {
+  return dashboardToneClass(tone)
 }
 
 function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
@@ -501,22 +574,47 @@ export default function SupplierManagementDashboard({
   organizationId,
   locale = "en",
   basePath = "/dashboard/purchases/suppliers",
+  createPath = `${basePath}/create`,
   initialAction,
   initialEditId,
   initialAnalyticsId,
+  canExport = false,
+  canExportSensitive = false,
+  canEdit = false,
 }: SupplierManagementDashboardProps) {
   const t = copy[locale]
   const notifications = useNotifications()
+  const router = useRouter()
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [riskFilter, setRiskFilter] = useState<RiskFilter>("all")
-  const [localeFilter, setLocaleFilter] = useState<LocaleFilter>("all")
   const [formOpen, setFormOpen] = useState(false)
+  const archiveOpenerRef = useRef<HTMLButtonElement | null>(null)
+  const archiveOpenerSupplierIdRef = useRef<string | null>(null)
   const [editingSupplier, setEditingSupplier] = useState<SupplierManagementRow | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<SupplierManagementRow | null>(null)
-  const [analyticsSupplierId, setAnalyticsSupplierId] = useState<string | null>(null)
+  const [requestedSupplierMissing, setRequestedSupplierMissing] = useState(false)
+  const [includeSensitiveExport, setIncludeSensitiveExport] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
   const [formState, setFormState] = useState<SupplierFormState>(() => getDefaultForm())
   const [formError, setFormError] = useState<string | null>(null)
   const [initialRequestHandled, setInitialRequestHandled] = useState(false)
+
+  const restoreArchiveOpenerFocus = useCallback(() => {
+    const rememberedOpener = archiveOpenerRef.current
+    const rememberedSupplierId = archiveOpenerSupplierIdRef.current
+    const currentOpener = rememberedOpener?.isConnected
+      ? rememberedOpener
+      : Array.from(
+          document.querySelectorAll<HTMLButtonElement>("[data-supplier-actions-id]"),
+        ).find(
+          (candidate) =>
+            candidate.dataset.supplierActionsId === rememberedSupplierId,
+        )
+    currentOpener?.focus()
+
+    archiveOpenerRef.current = null
+    archiveOpenerSupplierIdRef.current = null
+  }, [])
 
   const {
     data,
@@ -529,17 +627,25 @@ export default function SupplierManagementDashboard({
   const createMutation = useCreateManagedSupplier(organizationId, locale)
   const updateMutation = useUpdateManagedSupplier(organizationId, locale)
   const archiveMutation = useDeleteManagedSupplier(organizationId, locale)
+  const analyticsSupplierId = initialAnalyticsId ?? null
   const analyticsQuery = useSupplierAnalyticsData(organizationId, analyticsSupplierId)
 
   const suppliers = useMemo(() => data?.suppliers ?? [], [data?.suppliers])
   const isSaving = createMutation.isPending || updateMutation.isPending
   const analyticsSupplier = analyticsQuery.data?.supplier ?? suppliers.find((supplier) => supplier.id === analyticsSupplierId) ?? null
+  const invoiceHistoryRows = useMemo(
+    () => (analyticsQuery.data?.apHistory.rows ?? []).filter((row) => row.lane === "invoice"),
+    [analyticsQuery.data?.apHistory.rows],
+  )
+  const paymentHistoryRows = useMemo(
+    () => (analyticsQuery.data?.apHistory.rows ?? []).filter((row) => row.lane === "payment"),
+    [analyticsQuery.data?.apHistory.rows],
+  )
 
   const filteredSuppliers = useMemo(() => {
     return suppliers.filter((supplier) => {
       if (statusFilter === "active" && !supplier.isActive) return false
       if (statusFilter === "inactive" && supplier.isActive) return false
-      if (localeFilter !== "all" && supplier.preferredLocale !== localeFilter) return false
       if (riskFilter === "open-orders" && supplier.openPurchaseOrdersCount === 0) return false
       if (riskFilter === "over-limit" && !isOverCreditLimit(supplier)) return false
       if (riskFilter === "linked-items" && supplier.supplierItemsCount === 0) return false
@@ -547,10 +653,11 @@ export default function SupplierManagementDashboard({
 
       return true
     })
-  }, [localeFilter, riskFilter, statusFilter, suppliers])
+  }, [riskFilter, statusFilter, suppliers])
 
   const openCreate = useCallback(() => {
     setEditingSupplier(null)
+    setRequestedSupplierMissing(false)
     setFormError(null)
     setFormState(getDefaultForm())
     setFormOpen(true)
@@ -558,10 +665,20 @@ export default function SupplierManagementDashboard({
 
   const openEdit = useCallback((supplier: SupplierManagementRow) => {
     setEditingSupplier(supplier)
+    setRequestedSupplierMissing(false)
     setFormError(null)
     setFormState(formFromSupplier(supplier))
     setFormOpen(true)
   }, [])
+  const closeForm = useCallback(() => {
+    if (isSaving) return
+    setFormOpen(false)
+    setEditingSupplier(null)
+    setFormError(null)
+    setFormState(getDefaultForm())
+    if (initialEditId) router.replace(basePath + "/" + initialEditId)
+    else if (initialAction) router.replace(basePath)
+  }, [basePath, initialAction, initialEditId, isSaving, router])
 
   useEffect(() => {
     if (initialRequestHandled || isLoading) return
@@ -578,28 +695,23 @@ export default function SupplierManagementDashboard({
       if (supplier) {
         openEdit(supplier)
       } else {
-        notifications.error(t.errorTitle, "The requested supplier could not be opened for editing.")
+        setRequestedSupplierMissing(true)
+        setFormOpen(false)
       }
 
       setInitialRequestHandled(true)
       return
     }
 
-    if (initialAnalyticsId) {
-      setAnalyticsSupplierId(initialAnalyticsId)
-      setInitialRequestHandled(true)
-    }
+    setInitialRequestHandled(true)
   }, [
     initialAction,
-    initialAnalyticsId,
     initialEditId,
     initialRequestHandled,
     isLoading,
-    notifications,
     openCreate,
     openEdit,
     suppliers,
-    t.errorTitle,
   ])
 
   const updateFormField = useCallback(<K extends keyof SupplierFormState>(field: K, value: SupplierFormState[K]) => {
@@ -663,10 +775,13 @@ export default function SupplierManagementDashboard({
     if (!payload) return
 
     try {
-      if (editingSupplier) {
-        await updateMutation.mutateAsync({ id: editingSupplier.id, data: payload })
-      } else {
-        await createMutation.mutateAsync(payload)
+      const savedSupplier = editingSupplier
+        ? await updateMutation.mutateAsync({ id: editingSupplier.id, data: payload })
+        : await createMutation.mutateAsync(payload)
+
+      if ((initialAction || initialEditId) && savedSupplier) {
+        router.replace(`${basePath}/${savedSupplier.id}`)
+        return
       }
 
       setFormOpen(false)
@@ -676,58 +791,72 @@ export default function SupplierManagementDashboard({
     } catch (mutationError) {
       setFormError(mutationError instanceof Error ? mutationError.message : t.errorTitle)
     }
-  }, [buildInput, createMutation, editingSupplier, t.errorTitle, updateMutation])
+  }, [
+    basePath,
+    buildInput,
+    createMutation,
+    editingSupplier,
+    initialAction,
+    initialEditId,
+    router,
+    t.errorTitle,
+    updateMutation,
+  ])
 
   const copySupplierId = useCallback(async (supplier: SupplierManagementRow) => {
     try {
-      await navigator.clipboard.writeText(supplier.id)
+      await navigator.clipboard.writeText(buildSupplierClipboardPayload(supplier))
       notifications.success(t.copiedTitle, t.copiedBody)
     } catch {
       notifications.error(t.copyFailedTitle, t.copyFailedBody)
     }
   }, [notifications, t.copiedBody, t.copiedTitle, t.copyFailedBody, t.copyFailedTitle])
 
-  const exportSuppliers = useCallback(() => {
-    const header = [
-      "Name",
-      "Code",
-      "Contact",
-      "Email",
-      "Phone",
-      "Country",
-      "Payment Terms",
-      "Credit Limit",
-      "Balance",
-      "Active",
-      "Linked Items",
-      "Open Orders",
-    ]
-    const rows = filteredSuppliers.map((supplier) => [
-      supplier.name,
-      supplier.code ?? "",
-      supplier.contactPerson ?? "",
-      supplier.email ?? "",
-      supplier.phone ?? "",
-      supplier.country ?? "",
-      supplier.paymentTerms ?? "",
-      supplier.creditLimit ?? "",
-      supplier.currentBalance,
-      supplier.isActive ? "true" : "false",
-      supplier.supplierItemsCount,
-      supplier.openPurchaseOrdersCount,
-    ])
-    const csv = [header, ...rows]
-      .map((row) => row.map((value) => escapeCsv(value)).join(","))
-      .join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement("a")
-    anchor.href = url
-    anchor.download = "suppliers.csv"
-    anchor.click()
-    URL.revokeObjectURL(url)
-    notifications.success(t.exportTitle, t.exportBody)
-  }, [filteredSuppliers, notifications, t.exportBody, t.exportTitle])
+  const exportSuppliers = useCallback(async () => {
+    if (!canExport || isExporting) return
+    setIsExporting(true)
+
+    try {
+      const includeSensitiveFields = canExportSensitive && includeSensitiveExport
+      const includedFields = buildSupplierExportHeaders(includeSensitiveFields)
+      const preparation = await prepareSupplierManagementExport(organizationId, {
+        rowCount: filteredSuppliers.length,
+        includeSensitiveFields,
+        fields: includedFields,
+      })
+      if (!preparation.success || !preparation.data) {
+        throw new Error(preparation.error || "Supplier export could not be prepared")
+      }
+
+      const csv = buildSupplierExportCsv(filteredSuppliers, { includeSensitiveFields })
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement("a")
+      anchor.href = url
+      anchor.download = `suppliers-${includeSensitiveFields ? "full" : "redacted"}-${preparation.data.watermarkId}.csv`
+      anchor.click()
+      URL.revokeObjectURL(url)
+      notifications.success(t.exportTitle, t.exportBody)
+    } catch (exportError) {
+      notifications.error(
+        t.errorTitle,
+        exportError instanceof Error ? exportError.message : t.errorTitle,
+      )
+    } finally {
+      setIsExporting(false)
+    }
+  }, [
+    canExport,
+    canExportSensitive,
+    filteredSuppliers,
+    includeSensitiveExport,
+    isExporting,
+    notifications,
+    organizationId,
+    t.errorTitle,
+    t.exportBody,
+    t.exportTitle,
+  ])
 
   const columns = useMemo<ColumnDef<SupplierManagementRow>[]>(() => [
     {
@@ -748,7 +877,7 @@ export default function SupplierManagementDashboard({
             <div className="min-w-0">
               <p className="truncate font-semibold text-[var(--dash-text)]">{supplier.name}</p>
               <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5">
-                <Badge variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.72)] font-mono text-[var(--dash-text-soft)]">
+                <Badge variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] font-mono text-[var(--dash-text-soft)]">
                   {supplier.code || t.noCode}
                 </Badge>
                 <Badge variant="outline" className={cn("rounded-lg", supplier.preferredLocale === "FR" ? toneClass("spruce") : toneClass("brand"))}>
@@ -842,7 +971,7 @@ export default function SupplierManagementDashboard({
         const overLimit = isOverCreditLimit(supplier)
         return (
           <div className="space-y-2">
-            <Badge variant="outline" className={cn("rounded-lg", supplier.isActive ? toneClass("success") : "border-[var(--dash-border-subtle)] bg-[rgba(126,145,137,0.14)] text-[var(--dash-text-soft)]")}>
+            <Badge variant="outline" className={cn("rounded-lg", supplier.isActive ? toneClass("spruce") : toneClass("muted"))}>
               {supplier.isActive ? <CheckCircle2 className="me-1 h-3.5 w-3.5" /> : <XCircle className="me-1 h-3.5 w-3.5" />}
               {supplier.isActive ? t.active : t.inactive}
             </Badge>
@@ -880,7 +1009,16 @@ export default function SupplierManagementDashboard({
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]">
+              <Button
+                variant="ghost"
+                size="icon"
+                data-supplier-actions-id={supplier.id}
+                onClick={(event) => {
+                  archiveOpenerRef.current = event.currentTarget
+                  archiveOpenerSupplierIdRef.current = supplier.id
+                }}
+                className="h-9 w-9 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]"
+              >
                 <MoreHorizontal className="h-4 w-4" />
                 <span className="sr-only">Open supplier actions</span>
               </Button>
@@ -892,22 +1030,36 @@ export default function SupplierManagementDashboard({
                 {t.copyId}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAnalyticsSupplierId(supplier.id)}>
-                <BarChart3 className="me-2 h-4 w-4" />
-                {t.viewAnalytics}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openEdit(supplier)}>
-                <Edit3 className="me-2 h-4 w-4" />
-                {t.editSupplier}
-              </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`${basePath}/${supplier.id}/edit`}>
-                  <ExternalLink className="me-2 h-4 w-4" />
-                  {t.openEditPage}
+                <Link href={`${basePath}/${supplier.id}`}>
+                  <BarChart3 className="me-2 h-4 w-4" />
+                  {t.viewAnalytics}
                 </Link>
               </DropdownMenuItem>
+              {canEdit ? (
+                <DropdownMenuItem asChild>
+                  <Link href={`${basePath}/${supplier.id}/edit`}>
+                    <Edit3 className="me-2 h-4 w-4" />
+                    {t.editSupplier}
+                  </Link>
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-[var(--dash-danger)] focus:text-[var(--dash-danger)]" onClick={() => setArchiveTarget(supplier)}>
+              <DropdownMenuItem
+                className="text-[var(--dash-danger)] focus:text-[var(--dash-danger)]"
+                onClick={() => {
+                  archiveOpenerSupplierIdRef.current = supplier.id
+                  archiveOpenerRef.current = Array.from(
+                    document.querySelectorAll<HTMLButtonElement>(
+                      "[data-supplier-actions-id]",
+                    ),
+                  ).find(
+                    (candidate) =>
+                      candidate.dataset.supplierActionsId === supplier.id,
+                  ) ?? null
+                  setArchiveTarget(supplier)
+                }}
+              >
                 <Archive className="me-2 h-4 w-4" />
                 {t.archive}
               </DropdownMenuItem>
@@ -916,7 +1068,7 @@ export default function SupplierManagementDashboard({
         )
       },
     },
-  ], [basePath, copySupplierId, locale, openEdit, t])
+  ], [basePath, canEdit, copySupplierId, locale, t])
 
   const statsCards = useMemo(() => {
     const summary = data?.summary
@@ -972,6 +1124,22 @@ export default function SupplierManagementDashboard({
     ]
   }, [data?.summary, locale, t])
 
+  const isDirectFormRoute = Boolean(initialAction || initialEditId)
+  const isDirectDetailRoute = Boolean(initialAnalyticsId)
+  const routeEditingSupplier =
+    editingSupplier ??
+    (initialEditId
+      ? suppliers.find((supplier) => supplier.id === initialEditId) ?? null
+      : null)
+  const routeDetailSupplier =
+    analyticsSupplier ??
+    (initialAnalyticsId
+      ? suppliers.find((supplier) => supplier.id === initialAnalyticsId) ?? null
+      : null)
+  const apCompleteness = analyticsQuery.data?.apHistory.completeness.state
+  const apRecordedThrough =
+    analyticsQuery.data?.apHistory.snapshot.recordedThrough ?? null
+
   if (isLoading) {
     return (
       <section className="dashboard-glass-panel flex min-h-[24rem] items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] p-8 text-center">
@@ -1008,6 +1176,213 @@ export default function SupplierManagementDashboard({
 
   return (
     <>
+      {isDirectFormRoute ? (
+        <section
+          className="space-y-4"
+          data-supplier-presentation={
+            initialEditId ? "edit-page" : "create-page"
+          }
+        >
+          <CommandBriefHeader
+            eyebrow={t.purchasingContext}
+            title={
+              initialEditId
+                ? routeEditingSupplier?.name ?? t.edit
+                : t.create
+            }
+            summary={initialEditId ? t.editSummary : t.createSummary}
+            state={{
+              label: routeEditingSupplier
+                ? routeEditingSupplier.isActive
+                  ? t.active
+                  : t.inactive
+                : t.purchasingReady,
+              tone: routeEditingSupplier
+                ? routeEditingSupplier.isActive
+                  ? "spruce"
+                  : "muted"
+                : "info",
+              icon: routeEditingSupplier?.isActive
+                ? CheckCircle2
+                : routeEditingSupplier
+                  ? XCircle
+                  : Truck,
+            }}
+            metadata={
+              routeEditingSupplier
+                ? [
+                    {
+                      label: t.fields.code,
+                      value: routeEditingSupplier.code || t.noCode,
+                      icon: Building2,
+                    },
+                    {
+                      label: t.recordUpdated,
+                      value: formatDate(routeEditingSupplier.updatedAt, locale),
+                      icon: CalendarClock,
+                    },
+                  ]
+                : [
+                    {
+                      label: t.supplierRecord,
+                      value: t.formDescription,
+                      icon: Truck,
+                    },
+                  ]
+            }
+            actions={[
+              {
+                label: initialEditId
+                  ? t.backToSupplier
+                  : t.backToSuppliers,
+                href: initialEditId
+                  ? basePath + "/" + initialEditId
+                  : basePath,
+                icon: ArrowLeft,
+                variant: "secondary",
+              },
+            ]}
+          />
+        </section>
+      ) : isDirectDetailRoute ? (
+        <section
+          className="space-y-4"
+          data-supplier-presentation="detail-page"
+        >
+          <CommandBriefHeader
+            eyebrow={t.supplierRecord}
+            title={routeDetailSupplier?.name ?? t.analytics}
+            summary={t.detailSummary}
+            state={{
+              label: routeDetailSupplier?.isActive ? t.active : t.inactive,
+              tone: routeDetailSupplier?.isActive ? "spruce" : "muted",
+              icon: routeDetailSupplier?.isActive ? CheckCircle2 : XCircle,
+            }}
+            metadata={[
+              {
+                label: t.fields.code,
+                value: routeDetailSupplier?.code || t.noCode,
+                icon: Building2,
+              },
+              {
+                label: t.recordUpdated,
+                value: routeDetailSupplier
+                  ? formatDate(routeDetailSupplier.updatedAt, locale)
+                  : "-",
+                icon: CalendarClock,
+              },
+            ]}
+            actions={[
+              {
+                label: t.backToSuppliers,
+                href: basePath,
+                icon: ArrowLeft,
+                variant: "secondary",
+              },
+              ...(canEdit && initialAnalyticsId
+                ? [
+                    {
+                      label: t.editSupplier,
+                      href: basePath + "/" + initialAnalyticsId + "/edit",
+                      icon: Edit3,
+                      variant: "primary" as const,
+                    },
+                  ]
+                : []),
+              ...(initialAnalyticsId
+                ? [
+                    {
+                      label: t.invoiceHistory,
+                      href:
+                        "/" +
+                        locale +
+                        "/dashboard/purchases/payables/history?supplierId=" +
+                        encodeURIComponent(initialAnalyticsId),
+                      icon: CalendarClock,
+                      variant: "secondary" as const,
+                    },
+                  ]
+                : []),
+            ]}
+            proof={{
+              state:
+                apCompleteness === "partial" ? "pending" : "operational",
+              label:
+                apCompleteness === "partial"
+                  ? t.partialHistory
+                  : t.completeHistory,
+              source: apRecordedThrough
+                ? formatDate(apRecordedThrough, locale)
+                : t.apProof,
+            }}
+          />
+
+          {analyticsQuery.data && routeDetailSupplier ? (
+            <StatusStrip
+              title={t.supplierRecord}
+              detail={t.detailSummary}
+              items={[
+                {
+                  id: "lifecycle",
+                  label: t.status,
+                  value: routeDetailSupplier.isActive
+                    ? t.active
+                    : t.inactive,
+                  tone: routeDetailSupplier.isActive ? "spruce" : "muted",
+                  icon: routeDetailSupplier.isActive
+                    ? CheckCircle2
+                    : XCircle,
+                },
+                {
+                  id: "credit",
+                  label: t.creditExposure,
+                  value: formatCurrency(
+                    routeDetailSupplier.currentBalance,
+                    locale,
+                  ),
+                  detail: isOverCreditLimit(routeDetailSupplier)
+                    ? t.overLimit
+                    : t.withinLimit,
+                  tone: isOverCreditLimit(routeDetailSupplier)
+                    ? "danger"
+                    : "info",
+                  icon: Wallet,
+                },
+                {
+                  id: "open-payable",
+                  label: t.openPayable,
+                  value: formatCurrencyText(
+                    analyticsQuery.data.apHistory.summary.openPayable,
+                    analyticsQuery.data.apHistory.summary.currency,
+                    locale,
+                  ),
+                  tone: "gold",
+                  icon: Wallet,
+                },
+                {
+                  id: "blockers",
+                  label: t.ledgerBlockers,
+                  value: formatNumber(
+                    analyticsQuery.data.apHistory.summary
+                      .ledgerBlockerCount,
+                    locale,
+                  ),
+                  tone:
+                    analyticsQuery.data.apHistory.summary
+                      .ledgerBlockerCount > 0
+                      ? "danger"
+                      : "success",
+                  icon:
+                    analyticsQuery.data.apHistory.summary
+                      .ledgerBlockerCount > 0
+                      ? ShieldAlert
+                      : CheckCircle2,
+                },
+              ]}
+            />
+          ) : null}
+        </section>
+      ) : (
       <section className="space-y-6">
         <div className="flex min-w-0 flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div className="min-w-0 max-w-3xl">
@@ -1016,7 +1391,7 @@ export default function SupplierManagementDashboard({
               {t.eyebrow}
             </div>
             <div className="flex min-w-0 items-start gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)]">
                 <Truck className="h-6 w-6 text-[var(--dash-brand-strong)]" />
               </div>
               <div className="min-w-0">
@@ -1036,9 +1411,11 @@ export default function SupplierManagementDashboard({
               <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
               {isFetching ? t.refreshing : t.refresh}
             </Button>
-            <Button type="button" onClick={openCreate} className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
-              <Plus className="h-4 w-4" />
-              {t.create}
+            <Button asChild className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
+              <Link href={createPath}>
+                <Plus className="h-4 w-4" />
+                {t.create}
+              </Link>
             </Button>
           </div>
         </div>
@@ -1057,7 +1434,7 @@ export default function SupplierManagementDashboard({
             locale={locale}
             valueFor={(supplier) => formatCurrency(supplier.totalPurchaseValue, locale)}
             emptyText={t.noOrders}
-            onOpen={setAnalyticsSupplierId}
+            hrefFor={(supplier) => `${basePath}/${supplier.id}`}
           />
           <AnalyticsListCard
             title={t.topBalances}
@@ -1066,12 +1443,12 @@ export default function SupplierManagementDashboard({
             locale={locale}
             valueFor={(supplier) => formatCurrency(supplier.currentBalance, locale)}
             emptyText={t.noLedger}
-            onOpen={setAnalyticsSupplierId}
+            hrefFor={(supplier) => `${basePath}/${supplier.id}`}
           />
         </div>
 
-        <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-          <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] px-5 py-4 sm:px-6">
+        <Card className={cn(dashboardPanelClass, "min-w-0 overflow-hidden")}>
+          <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] px-5 py-4 sm:px-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]">
@@ -1100,19 +1477,44 @@ export default function SupplierManagementDashboard({
                   <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
                   {isFetching ? t.refreshing : t.refresh}
                 </Button>
-                <Button type="button" variant="outline" size="sm" onClick={exportSuppliers} className="dashboard-button-secondary h-9 rounded-lg">
-                  <Download className="h-4 w-4" />
-                  {t.export}
-                </Button>
+                {canExport ? (
+                  <>
+                    <p className="max-w-sm text-[0.68rem] leading-4 text-[var(--dash-text-soft)]">
+                      {t.exportSensitiveNotice}
+                    </p>
+                    {canExportSensitive ? (
+                      <div className="flex items-center gap-2 rounded-lg border border-[var(--dash-warning)]/30 bg-[var(--dash-warning-soft)] px-2 py-1.5">
+                        <Switch
+                          checked={includeSensitiveExport}
+                          onCheckedChange={setIncludeSensitiveExport}
+                          aria-label={t.includeSensitiveFields}
+                        />
+                        <span className="text-xs text-[var(--dash-text)]">
+                          {includeSensitiveExport ? t.sensitiveFieldsIncluded : t.includeSensitiveFields}
+                        </span>
+                      </div>
+                    ) : null}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => void exportSuppliers()}
+                      disabled={isExporting}
+                      className="dashboard-button-secondary h-9 rounded-lg"
+                    >
+                      {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                      {t.export}
+                    </Button>
+                  </>
+                ) : null}
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4 p-3 sm:p-5">
-            {(statusFilter !== "all" || riskFilter !== "all" || localeFilter !== "all") && (
+            {(statusFilter !== "all" || riskFilter !== "all") && (
               <div className="flex flex-wrap items-center gap-2">
                 {statusFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{statusFilter === "active" ? t.active : t.inactive}</Badge> : null}
                 {riskFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{riskFilter}</Badge> : null}
-                {localeFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{localeFilter}</Badge> : null}
                 <Button
                   type="button"
                   variant="ghost"
@@ -1121,7 +1523,6 @@ export default function SupplierManagementDashboard({
                   onClick={() => {
                     setStatusFilter("all")
                     setRiskFilter("all")
-                    setLocaleFilter("all")
                   }}
                 >
                   {t.clear}
@@ -1132,15 +1533,17 @@ export default function SupplierManagementDashboard({
             <DataTable
               columns={columns}
               data={filteredSuppliers}
+              locale={locale}
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
+              searchContainerClassName="lg:w-64 lg:flex-none xl:w-72"
               showToolbar={false}
               variant="landing"
               filters={{
                 additionalFilters: (
                   <>
                     <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
+                      <SelectTrigger aria-label={t.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
                         <SelectValue placeholder={t.status} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1150,7 +1553,7 @@ export default function SupplierManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={riskFilter} onValueChange={(value) => setRiskFilter(value as RiskFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
+                      <SelectTrigger aria-label={t.risk} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
                         <SelectValue placeholder={t.risk} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1161,16 +1564,6 @@ export default function SupplierManagementDashboard({
                         <SelectItem value="no-links">{t.noLinks}</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Select value={localeFilter} onValueChange={(value) => setLocaleFilter(value as LocaleFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[145px]">
-                        <SelectValue placeholder={t.language} />
-                      </SelectTrigger>
-                      <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                        <SelectItem value="all">{t.all}</SelectItem>
-                        <SelectItem value="EN">EN</SelectItem>
-                        <SelectItem value="FR">FR</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </>
                 ),
               }}
@@ -1178,31 +1571,16 @@ export default function SupplierManagementDashboard({
           </CardContent>
         </Card>
       </section>
+      )}
 
-      <Dialog
-        open={formOpen}
-        onOpenChange={(open) => {
-          setFormOpen(open)
-          if (!open && !isSaving) {
-            setEditingSupplier(null)
-            setFormError(null)
-            setFormState(getDefaultForm())
-          }
-        }}
-      >
-        <DialogContent className="dashboard-glass-panel max-h-[92vh] max-w-5xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[var(--dash-text)]">
-              <Truck className="h-5 w-5 text-[var(--dash-brand-strong)]" />
-              {editingSupplier ? t.edit : t.create}
-            </DialogTitle>
-            <DialogDescription className="text-[var(--dash-text-soft)]">
-              {t.formDescription}
-            </DialogDescription>
-          </DialogHeader>
-
+      {isDirectFormRoute ? formOpen ? (
+        <section
+          className="dashboard-glass-panel rounded-lg border border-[var(--dash-border-subtle)] p-4 text-[var(--dash-text)] sm:p-6"
+          data-supplier-page-content="form"
+        >
           <form
             className="space-y-5"
+            aria-label={editingSupplier ? t.edit : t.create}
             onSubmit={(event) => {
               event.preventDefault()
               void submitForm()
@@ -1215,6 +1593,7 @@ export default function SupplierManagementDashboard({
                     <Field id="supplier-name" label={t.fields.name} required>
                       <Input
                         id="supplier-name"
+                        required
                         value={formState.name}
                         onChange={(event) => updateFormField("name", event.target.value)}
                         placeholder={t.placeholders.name}
@@ -1362,7 +1741,7 @@ export default function SupplierManagementDashboard({
                         </SelectContent>
                       </Select>
                     </Field>
-                    <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-3">
+                    <div className={cn(dashboardRowClass, "flex items-center justify-between gap-3 p-3")}>
                       <Label htmlFor="supplier-active" className="text-sm font-medium text-[var(--dash-text)]">{t.fields.isActive}</Label>
                       <Switch id="supplier-active" checked={formState.isActive} onCheckedChange={(checked) => updateFormField("isActive", checked)} />
                     </div>
@@ -1395,13 +1774,16 @@ export default function SupplierManagementDashboard({
             </div>
 
             {formError ? (
-              <div className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-sm font-medium text-[var(--dash-danger)]">
+              <div
+                role="alert"
+                className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-sm font-medium text-[var(--dash-danger)]"
+              >
                 {formError}
               </div>
             ) : null}
 
-            <DialogFooter className="gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setFormOpen(false)} disabled={isSaving} className="dashboard-button-secondary h-10 rounded-lg">
+            <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+              <Button type="button" variant="outline" onClick={closeForm} disabled={isSaving} className="dashboard-button-secondary h-10 rounded-lg">
                 {t.cancel}
               </Button>
               <Button type="submit" disabled={isSaving} className="dashboard-button-primary h-10 rounded-lg">
@@ -1417,34 +1799,59 @@ export default function SupplierManagementDashboard({
                   </>
                 )}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </section>
+      ) : requestedSupplierMissing ? (
+        <RouteStatePanel
+          kind="empty"
+          title={t.supplierNotFoundTitle}
+          message={t.supplierNotFoundBody}
+          action={{
+            label: t.backToSuppliers,
+            href: basePath,
+            icon: ArrowLeft,
+            variant: "secondary",
+          }}
+        />
+      ) : (
+        <RouteStatePanel kind="loading" title={t.loadingTitle} message={t.loadingBody} />
+      ) : null}
 
-      <Dialog open={!!analyticsSupplierId} onOpenChange={(open) => !open && setAnalyticsSupplierId(null)}>
-        <DialogContent className="dashboard-glass-panel max-h-[92vh] max-w-5xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[var(--dash-text)]">
-              <BarChart3 className="h-5 w-5 text-[var(--dash-brand-strong)]" />
-              {analyticsSupplier?.name ?? t.analytics}
-            </DialogTitle>
-            <DialogDescription className="text-[var(--dash-text-soft)]">
-              {analyticsSupplier ? `${analyticsSupplier.code || t.noCode} | ${analyticsSupplier.contactPerson || t.noContact}` : t.analytics}
-            </DialogDescription>
-          </DialogHeader>
-
+      {isDirectDetailRoute ? (
+        <section
+          className="dashboard-glass-panel rounded-lg border border-[var(--dash-border-subtle)] p-4 text-[var(--dash-text)] sm:p-6"
+          data-supplier-page-content="analytics"
+        >
           {analyticsQuery.isLoading ? (
-            <div className="flex min-h-56 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[var(--dash-brand-strong)]" />
-            </div>
+            <RouteStatePanel kind="loading" title={t.loadingTitle} message={t.loadingBody} />
           ) : analyticsQuery.isError ? (
-            <div className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4 text-sm text-[var(--dash-danger)]">
-              {analyticsQuery.error instanceof Error ? analyticsQuery.error.message : t.errorTitle}
-            </div>
+            <RouteStatePanel
+              kind={analyticsQuery.error instanceof Error && analyticsQuery.error.message.toLowerCase().includes("not found") ? "empty" : "error"}
+              title={analyticsQuery.error instanceof Error && analyticsQuery.error.message.toLowerCase().includes("not found") ? t.supplierNotFoundTitle : t.errorTitle}
+              message={analyticsQuery.error instanceof Error ? analyticsQuery.error.message : t.errorTitle}
+              action={{
+                label: t.backToSuppliers,
+                href: basePath,
+                icon: ArrowLeft,
+                variant: "secondary",
+              }}
+            />
+          ) : !analyticsQuery.data || !analyticsSupplier ? (
+            <RouteStatePanel
+              kind="empty"
+              title={t.supplierNotFoundTitle}
+              message={t.supplierNotFoundBody}
+              action={{
+                label: t.backToSuppliers,
+                href: basePath,
+                icon: ArrowLeft,
+                variant: "secondary",
+              }}
+            />
           ) : (
             <div className="space-y-4">
-              {analyticsSupplier ? (
+              {analyticsSupplier && !isDirectDetailRoute ? (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <InlineMetric label={t.linkedItemsCard} value={formatNumber(analyticsSupplier.supplierItemsCount, locale)} />
                   <InlineMetric label={t.openOrdersCard} value={formatNumber(analyticsSupplier.openPurchaseOrdersCount, locale)} />
@@ -1453,48 +1860,174 @@ export default function SupplierManagementDashboard({
                 </div>
               ) : null}
 
-              <div className="grid gap-4 lg:grid-cols-3">
-                <DetailList
-                  title={t.recentOrders}
-                  icon={ShoppingCart}
-                  emptyText={t.noOrders}
-                  items={(analyticsQuery.data?.purchaseOrders ?? []).map((order) => ({
-                    id: order.id,
-                    title: order.orderNumber,
-                    meta: `${order.status} | ${formatDate(order.orderDate, locale)}`,
-                    value: formatCurrency(order.total, locale),
-                  }))}
-                />
-                <DetailList
-                  title={t.recentLedger}
-                  icon={Wallet}
-                  emptyText={t.noLedger}
-                  items={(analyticsQuery.data?.ledgerEntries ?? []).map((entry) => ({
-                    id: entry.id,
-                    title: entry.type,
-                    meta: `${formatDate(entry.entryDate, locale)} | ${entry.description}`,
-                    value: formatCurrency(entry.balanceAfter, locale),
-                  }))}
-                />
-                <DetailList
-                  title={t.linkedItemsTitle}
-                  icon={PackageCheck}
-                  emptyText={t.noItems}
-                  items={(analyticsQuery.data?.linkedItems ?? []).map((item) => ({
-                    id: item.id,
-                    title: item.itemName,
-                    meta: `${item.supplierSku || t.noCode}${item.isPreferred ? " | Preferred" : ""}`,
-                    value: item.unitCost !== null ? formatCurrency(item.unitCost, locale) : "-",
-                  }))}
-                />
-              </div>
+              <Tabs defaultValue="overview" className="space-y-4">
+                <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-[var(--dash-surface-raised)] p-1 sm:grid-cols-5">
+                  <TabsTrigger value="overview">{t.overviewTab}</TabsTrigger>
+                  <TabsTrigger value="purchases">{t.purchasesTab}</TabsTrigger>
+                  <TabsTrigger value="invoices">{t.invoicesTab}</TabsTrigger>
+                  <TabsTrigger value="payments">{t.paymentsTab}</TabsTrigger>
+                  <TabsTrigger value="items">{t.itemsTab}</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview" className="mt-0 space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <InlineMetric
+                      label={t.openPayable}
+                      value={formatCurrencyText(
+                        analyticsQuery.data?.apHistory.summary.openPayable ?? "0",
+                        analyticsQuery.data?.apHistory.summary.currency ?? "XAF",
+                        locale,
+                      )}
+                      tone="gold"
+                    />
+                    <InlineMetric
+                      label={t.releasedPayments}
+                      value={formatCurrencyText(
+                        analyticsQuery.data?.apHistory.summary.releasedPaymentTotal ?? "0",
+                        analyticsQuery.data?.apHistory.summary.currency ?? "XAF",
+                        locale,
+                      )}
+                    />
+                    <InlineMetric
+                      label={t.ledgerBlockers}
+                      value={formatNumber(analyticsQuery.data?.apHistory.summary.ledgerBlockerCount ?? 0, locale)}
+                      tone={(analyticsQuery.data?.apHistory.summary.ledgerBlockerCount ?? 0) > 0 ? "danger" : "default"}
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "rounded-lg",
+                        analyticsQuery.data?.apHistory.completeness.state === "partial" ? toneClass("gold") : toneClass("success"),
+                      )}
+                    >
+                      {analyticsQuery.data?.apHistory.completeness.state === "partial" ? t.partialHistory : t.completeHistory}
+                    </Badge>
+                    <span className="text-xs text-[var(--dash-text-faint)]">
+                      {analyticsQuery.data?.apHistory.snapshot.recordedThrough
+                        ? formatDate(analyticsQuery.data.apHistory.snapshot.recordedThrough, locale)
+                        : "-"}
+                    </span>
+                  </div>
+                  <DetailList
+                    title={t.recentLedger}
+                    icon={Wallet}
+                    emptyText={t.noLedger}
+                    items={(analyticsQuery.data?.ledgerEntries ?? []).map((entry) => ({
+                      id: entry.id,
+                      title: entry.type,
+                      meta: `${formatDate(entry.entryDate, locale)} | ${entry.description}`,
+                      value: formatCurrency(entry.balanceAfter, locale),
+                    }))}
+                  />
+                </TabsContent>
+
+                <TabsContent value="purchases" className="mt-0 space-y-3">
+                  <DetailList
+                    title={t.recentOrders}
+                    icon={ShoppingCart}
+                    emptyText={t.noOrders}
+                    items={(analyticsQuery.data?.purchaseOrders ?? []).map((order) => ({
+                      id: order.id,
+                      title: order.orderNumber,
+                      meta: `${order.status} | ${formatDate(order.orderDate, locale)}`,
+                      value: formatCurrency(order.total, locale),
+                      href: `/${locale}/dashboard/purchase-orders/${order.id}`,
+                    }))}
+                  />
+                  {analyticsSupplierId ? (
+                    <Button asChild variant="outline" className="dashboard-button-secondary rounded-lg">
+                      <Link href={`/${locale}/dashboard/purchase-orders?supplierId=${encodeURIComponent(analyticsSupplierId)}`}>
+                        {t.viewAllPurchaseOrders}
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  ) : null}
+                </TabsContent>
+
+                <TabsContent value="invoices" className="mt-0 space-y-3">
+                  <DetailList
+                    title={t.invoiceHistory}
+                    icon={Wallet}
+                    emptyText={t.noInvoices}
+                    items={invoiceHistoryRows.map((row) => ({
+                      id: row.id,
+                      title: row.reference.invoiceNumber ?? row.sourceId,
+                      meta: `${row.controlState} | ${formatDate(row.effectiveAt, locale)}${row.reference.dueDate ? ` | Due ${formatDate(row.reference.dueDate, locale)}` : ""}`,
+                      value: formatCurrencyText(row.amount, row.currency, locale),
+                      href: analyticsSupplierId
+                        ? `/${locale}/dashboard/purchases/payables/history?supplierId=${encodeURIComponent(analyticsSupplierId)}&lane=invoice&selected=${encodeURIComponent(row.id)}`
+                        : undefined,
+                    }))}
+                  />
+                  {analyticsSupplierId ? (
+                    <Button asChild variant="outline" className="dashboard-button-secondary rounded-lg">
+                      <Link href={`/${locale}/dashboard/purchases/payables/history?supplierId=${encodeURIComponent(analyticsSupplierId)}&lane=invoice`}>
+                        {t.viewAllInvoices}
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  ) : null}
+                </TabsContent>
+
+                <TabsContent value="payments" className="mt-0 space-y-3">
+                  <DetailList
+                    title={t.paymentHistory}
+                    icon={Wallet}
+                    emptyText={t.noPayments}
+                    items={paymentHistoryRows.map((row) => ({
+                      id: row.id,
+                      title: row.reference.paymentNumber ?? row.sourceId,
+                      meta: `${row.controlState} | ${formatDate(row.effectiveAt, locale)}${row.payment.method ? ` | ${row.payment.method}` : ""}`,
+                      value: formatCurrencyText(row.amount, row.currency, locale),
+                      href: analyticsSupplierId
+                        ? `/${locale}/dashboard/purchases/payables/history?supplierId=${encodeURIComponent(analyticsSupplierId)}&lane=payment&selected=${encodeURIComponent(row.id)}`
+                        : undefined,
+                    }))}
+                  />
+                  {analyticsSupplierId ? (
+                    <Button asChild variant="outline" className="dashboard-button-secondary rounded-lg">
+                      <Link href={`/${locale}/dashboard/purchases/payables/history?supplierId=${encodeURIComponent(analyticsSupplierId)}&lane=payment`}>
+                        {t.viewAllPayments}
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  ) : null}
+                </TabsContent>
+
+                <TabsContent value="items" className="mt-0">
+                  <DetailList
+                    title={t.linkedItemsTitle}
+                    icon={PackageCheck}
+                    emptyText={t.noItems}
+                    items={(analyticsQuery.data?.linkedItems ?? []).map((item) => ({
+                      id: item.id,
+                      title: item.itemName,
+                      meta: `${item.supplierSku || t.noCode}${item.isPreferred ? " | Preferred" : ""}`,
+                      value: item.unitCost !== null ? formatCurrency(item.unitCost, locale) : "-",
+                      href: `/${locale}/dashboard/inventory/items/${item.itemId}`,
+                    }))}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </section>
+      ) : null}
 
-      <AlertDialog open={!!archiveTarget} onOpenChange={(open) => !open && setArchiveTarget(null)}>
-        <AlertDialogContent className="dashboard-glass-panel border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+      <AlertDialog
+        open={!!archiveTarget}
+        onOpenChange={(open) => !open && setArchiveTarget(null)}
+      >
+        <AlertDialogContent
+          onCloseAutoFocus={(event) => {
+
+            event.preventDefault()
+            restoreArchiveOpenerFocus()
+          }}
+          className="dashboard-glass-panel border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>{t.archiveTitle}</AlertDialogTitle>
             <AlertDialogDescription className="text-[var(--dash-text-soft)]">
@@ -1560,7 +2093,7 @@ function Field({
     <div className="space-y-2">
       <Label htmlFor={id} className="text-sm font-semibold text-[var(--dash-text-muted)]">
         {label}
-        {required ? <span className="ms-1 text-[var(--dash-warning)]">*</span> : null}
+        {required ? <span aria-hidden="true" className="ms-1 text-[var(--dash-warning)]">*</span> : null}
       </Label>
       {children}
     </div>
@@ -1577,7 +2110,7 @@ function FormSection({
   children: ReactNode
 }) {
   return (
-    <section className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-4">
+    <section className={cn(dashboardRowClass, "p-4")}>
       <div className="mb-4 flex items-center gap-2">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
           <Icon className="h-4 w-4" />
@@ -1640,7 +2173,8 @@ function InlineMetric({
   return (
     <div
       className={cn(
-        "rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.32)] p-2",
+        dashboardRowClass,
+        "p-2",
         tone === "danger" && "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]",
         tone === "gold" && "border-[var(--dash-gold)] bg-[var(--dash-gold-soft)]",
       )}
@@ -1658,7 +2192,7 @@ function AnalyticsListCard({
   locale,
   valueFor,
   emptyText,
-  onOpen,
+  hrefFor,
 }: {
   title: string
   icon: LucideIcon
@@ -1666,11 +2200,11 @@ function AnalyticsListCard({
   locale: Locale
   valueFor: (supplier: SupplierManagementRow) => string
   emptyText: string
-  onOpen: (id: string) => void
+  hrefFor: (supplier: SupplierManagementRow) => string
 }) {
   return (
-    <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-      <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.48)] px-5 py-4">
+    <Card className={cn(dashboardPanelClass, "min-w-0 overflow-hidden")}>
+      <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] px-5 py-4">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-[var(--dash-text)]">
           <Icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
           {title}
@@ -1678,11 +2212,10 @@ function AnalyticsListCard({
       </CardHeader>
       <CardContent className="space-y-2 p-4">
         {rows.length ? rows.map((supplier) => (
-          <button
+          <Link
             key={supplier.id}
-            type="button"
-            onClick={() => onOpen(supplier.id)}
-            className="flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-3 text-left transition hover:bg-[var(--dash-brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]"
+            href={hrefFor(supplier)}
+            className={cn(dashboardRowClass, "flex w-full min-w-0 items-center justify-between gap-3 p-3 text-left transition hover:bg-[var(--dash-brand-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]")}
           >
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{supplier.name}</p>
@@ -1691,9 +2224,9 @@ function AnalyticsListCard({
               </p>
             </div>
             <span className="shrink-0 text-sm font-semibold text-[var(--dash-brand-strong)]">{valueFor(supplier)}</span>
-          </button>
+          </Link>
         )) : (
-          <p className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-4 text-sm text-[var(--dash-text-soft)]">
+          <p className={cn(dashboardRowClass, "p-4 text-sm text-[var(--dash-text-soft)]")}>
             {emptyText}
           </p>
         )}
@@ -1711,11 +2244,11 @@ function DetailList({
   title: string
   icon: LucideIcon
   emptyText: string
-  items: Array<{ id: string; title: string; meta: string; value: string }>
+  items: Array<{ id: string; title: string; meta: string; value: string; href?: string }>
 }) {
   return (
-    <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-      <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.48)] px-4 py-3">
+    <Card className={cn(dashboardPanelClass, "min-w-0 overflow-hidden")}>
+      <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] px-4 py-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold text-[var(--dash-text)]">
           <Icon className="h-4 w-4 text-[var(--dash-brand-strong)]" />
           {title}
@@ -1723,17 +2256,33 @@ function DetailList({
       </CardHeader>
       <CardContent className="space-y-2 p-3">
         {items.length ? items.map((item) => (
-          <div key={item.id} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-3">
-            <div className="flex min-w-0 items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{item.title}</p>
-                <p className="mt-1 line-clamp-2 text-xs text-[var(--dash-text-faint)]">{item.meta}</p>
+          <div key={item.id} className={cn(dashboardRowClass, "p-3")}>
+            {item.href ? (
+              <Link
+                href={item.href}
+                className="flex min-w-0 items-start justify-between gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{item.title}</p>
+                  <p className="mt-1 line-clamp-2 text-xs text-[var(--dash-text-faint)]">{item.meta}</p>
+                </div>
+                <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-[var(--dash-brand-strong)]">
+                  {item.value}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </span>
+              </Link>
+            ) : (
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{item.title}</p>
+                  <p className="mt-1 line-clamp-2 text-xs text-[var(--dash-text-faint)]">{item.meta}</p>
+                </div>
+                <span className="shrink-0 text-sm font-semibold text-[var(--dash-brand-strong)]">{item.value}</span>
               </div>
-              <span className="shrink-0 text-sm font-semibold text-[var(--dash-brand-strong)]">{item.value}</span>
-            </div>
+            )}
           </div>
         )) : (
-          <p className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.24)] p-4 text-sm text-[var(--dash-text-soft)]">
+          <p className={cn(dashboardRowClass, "p-4 text-sm text-[var(--dash-text-soft)]")}>
             {emptyText}
           </p>
         )}

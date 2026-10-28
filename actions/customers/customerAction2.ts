@@ -2,7 +2,8 @@
 
 import type { ServerActionResult } from "@/lib/error-handling/types"
 import { requirePermission } from "@/lib/security/rbac"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   archiveLegacyCustomerForOrg,
   createLegacyCustomerForOrg,
@@ -19,7 +20,12 @@ import type {
 } from "@/types/customerTypes"
 import type { CustomerEditFormData, CustomerFormData } from "@/validations/customer"
 
-type CustomerPermission = "customers.read" | "customers.create" | "customers.update" | "customers.delete"
+type CustomerPermission =
+  | "customers.read"
+  | "customers.create"
+  | "customers.update"
+  | "customers.delete"
+  | "customers.orders.read"
 
 function emptyToNull(value: string | null | undefined): string | null {
   const trimmed = value?.trim()
@@ -38,6 +44,20 @@ async function requireCustomerAccess(
 
   if (!ctx.orgId) {
     throw new BusinessRuleError("Organization ID is required")
+  }
+
+  const moduleDecision = await observeModuleAccess({
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    moduleSlug: "sales",
+    surfaceType: "action",
+    surface: permission,
+    accessIntent: permission.endsWith(".read") ? "read" : "write",
+    mode: "enforce",
+  })
+  if (!moduleDecision.allowed) {
+    throw new ForbiddenError("Forbidden: sales module is not available for this organization")
   }
 
   return ctx.orgId
@@ -127,7 +147,7 @@ export async function getCustomerOrders(customerId: string): Promise<ServerActio
     throw new BusinessRuleError("Customer ID is required")
   }
 
-  const organizationId = await requireCustomerAccess("customers.read", { resourceId: customerId })
+  const organizationId = await requireCustomerAccess("customers.orders.read", { resourceId: customerId })
   const result = await getLegacyCustomerOrdersForOrg(organizationId, customerId)
 
   return { success: true, data: result }

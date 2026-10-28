@@ -4,6 +4,7 @@ jest.mock("@/prisma/db", () => ({
   db: {
     customer: {
       findFirst: jest.fn(),
+      update: jest.fn(),
       updateMany: jest.fn(),
     },
     salesOrder: {
@@ -18,11 +19,13 @@ import {
   archiveLegacyCustomerForOrg,
   getLegacyCustomerByIdForOrg,
   getLegacyCustomerOrdersForOrg,
+  removeCustomerForManagement,
 } from "../customer.service"
 
 const mockDb = db as unknown as {
   customer: {
     findFirst: jest.Mock
+    update: jest.Mock
     updateMany: jest.Mock
   }
   salesOrder: {
@@ -51,6 +54,7 @@ describe("legacy customer service boundary", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockDb.customer.findFirst.mockResolvedValue(customerRecord)
+    mockDb.customer.update.mockResolvedValue({ id: "customer-1" })
     mockDb.customer.updateMany.mockResolvedValue({ count: 1 })
     mockDb.salesOrder.findMany.mockResolvedValue([])
   })
@@ -140,6 +144,43 @@ describe("legacy customer service boundary", () => {
         isActive: false,
         updatedAt: expect.any(Date),
       }),
+    })
+  })
+
+  it.each([
+    ["receivableDocuments", { salesOrders: 0, ledgerEntries: 0, receivableDocuments: 1, statementSnapshots: 0, settlements: 0 }],
+    ["statementSnapshots", { salesOrders: 0, ledgerEntries: 0, receivableDocuments: 0, statementSnapshots: 1, settlements: 0 }],
+    ["settlements", { salesOrders: 0, ledgerEntries: 0, receivableDocuments: 0, statementSnapshots: 0, settlements: 1 }],
+  ])("deactivates a customer when %s preserve financial evidence", async (_relation, counts) => {
+    mockDb.customer.findFirst.mockResolvedValue({ id: "customer-1", _count: counts })
+
+    const result = await removeCustomerForManagement("org-1", "customer-1")
+
+    expect(result).toEqual({ id: "customer-1", mode: "deactivated" })
+    expect(mockDb.customer.update).toHaveBeenCalledWith({
+      where: { id: "customer-1" },
+      data: { isActive: false },
+    })
+  })
+
+  it("archives a customer only when no operational or financial history exists", async () => {
+    mockDb.customer.findFirst.mockResolvedValue({
+      id: "customer-1",
+      _count: {
+        salesOrders: 0,
+        ledgerEntries: 0,
+        receivableDocuments: 0,
+        statementSnapshots: 0,
+        settlements: 0,
+      },
+    })
+
+    const result = await removeCustomerForManagement("org-1", "customer-1")
+
+    expect(result).toEqual({ id: "customer-1", mode: "archived" })
+    expect(mockDb.customer.update).toHaveBeenCalledWith({
+      where: { id: "customer-1" },
+      data: { isActive: false, deletedAt: expect.any(Date) },
     })
   })
 })

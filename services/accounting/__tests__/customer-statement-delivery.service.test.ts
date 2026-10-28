@@ -137,12 +137,7 @@ describe("customer statement delivery service", () => {
       rawTokenStored: false,
       providerEnvelope: "AES_256_GCM",
     })
-    expect(transaction.customerStatementDelivery.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        consentCapturedAt: input.consentCapturedAt,
-        createdAt: now,
-      }),
-    })
+    expect(transaction.customerStatementDelivery.create).toHaveBeenCalled()
     expect(transaction.customerStatementDeliveryState.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         version: 1,

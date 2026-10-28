@@ -1,0 +1,1520 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-09T14:02:27.189Z",
+    "mode": "report",
+    "classificationStatus": "blocked",
+    "releaseStatus": "blocked",
+    "changedPathCount": 556,
+    "candidateCount": 226,
+    "splitCount": 4,
+    "regenerateCount": 37,
+    "excludedCount": 280,
+    "unclassifiedCount": 9,
+    "conflictCount": 0,
+    "protectedStagedCount": 2
+  },
+  "candidateScopeDigest": "b364f3cbb1eed3848e5328c3c8991c95884715808788f009ce0e26d26f59a5c0",
+  "policy": {
+    "valid": true,
+    "errors": []
+  },
+  "paths": {
+    "candidate": [
+      "actions/__tests__/auth-actions.test.ts",
+      "actions/accounting/__tests__/accountant-access.actions.test.ts",
+      "actions/accounting/__tests__/close-assurance.actions.test.ts",
+      "actions/accounting/__tests__/customer-statement.actions.test.ts",
+      "actions/accounting/accountant-access.actions.ts",
+      "actions/accounting/close-assurance.actions.ts",
+      "actions/accounting/customer-statement.actions.ts",
+      "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "actions/finance/ar-history.actions.ts",
+      "actions/finance/customer-settlement.actions.ts",
+      "actions/referrals/__tests__/referral-funnel.actions.test.ts",
+      "actions/referrals/referral-funnel.actions.ts",
+      "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+      "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+      "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+      "app/api/customer-statements/[statementId]/actions/route.ts",
+      "app/api/customer-statements/[statementId]/route.ts",
+      "app/api/referrals/[referralCode]/__tests__/route.test.ts",
+      "app/api/referrals/[referralCode]/route.ts",
+      "app/customer-statement/[statementId]/CustomerStatementPortal.tsx",
+      "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx",
+      "app/customer-statement/[statementId]/page.tsx",
+      "components/accounting/AccountantAccessManager.tsx",
+      "components/accounting/__tests__/AccountantAccessManager.test.tsx",
+      "components/auth/BeautifulRegisterForm.tsx",
+      "components/auth/v2/RegisterV2Form.tsx",
+      "components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx",
+      "components/customers/CustomerStatementWorkflow.tsx",
+      "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+      "components/dashboard/EnhancedEnterpriseDashboard.tsx",
+      "components/dashboard/__tests__/todays-operating-truth.test.ts",
+      "components/dashboard/primitives/command-center-primitives.tsx",
+      "components/dashboard/todays-operating-truth.ts",
+      "components/referrals/ReferralFunnelDashboard.tsx",
+      "components/referrals/__tests__/ReferralFunnelDashboard.test.tsx",
+      "config/sidebar.ts",
+      "lib/auth.ts",
+      "lib/i18n/__tests__/organization-money.test.ts",
+      "lib/i18n/organization-money.ts",
+      "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "lib/security/__tests__/customer-settlement-security.test.ts",
+      "lib/security/credential-sign-in-outcome.ts",
+      "package-lock.json",
+      "package.json",
+      "prisma/comprehensive-seed.ts",
+      "prisma/migration-history-checksum-approvals.json",
+      "prisma/migrations/20260528124341_refine_item_barcode/migration.sql",
+      "prisma/migrations/20260611120000_payment_provider_reference_uniqueness/migration.sql",
+      "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "prisma/migrations/20260618160000_payroll_foundation_bridge/migration.sql",
+      "prisma/migrations/20260618161000_ap_stock_count_foundation_bridge/migration.sql",
+      "prisma/migrations/20260726140000_business_event_foundation_bridge/migration.sql",
+      "prisma/migrations/20260727110100_offline_pos_sync_foundation_reconciliation/migration.sql",
+      "prisma/migrations/20260730150000_organization_onboarding_entitlement_bridge/migration.sql",
+      "prisma/migrations/20260808120000_customer_settlement_allocation_foundation/migration.sql",
+      "prisma/migrations/20260808133000_customer_settlement_compensating_reversal_foundation/migration.sql",
+      "prisma/migrations/20260809100000_customer_receivable_document_foundation/migration.sql",
+      "prisma/migrations/20260809113000_customer_statement_snapshot_foundation/migration.sql",
+      "prisma/migrations/20260809130000_customer_statement_external_access/migration.sql",
+      "prisma/migrations/20260809143000_customer_statement_delivery_referral/migration.sql",
+      "prisma/migrations/20260809160000_accountant_client_invite_onboarding/migration.sql",
+      "prisma/migrations/20260809170000_referral_accounting_source_types/migration.sql",
+      "prisma/migrations/20260809180000_accounting_enum_completion/migration.sql",
+      "prisma/schema.prisma",
+      "scripts/__tests__/customer-referral-pilot-evidence-gate.test.js",
+      "scripts/__tests__/customer-referral-release-scope-gate.test.js",
+      "scripts/__tests__/customer-referral-shared-hunk-gate.test.js",
+      "scripts/__tests__/prisma-migration-history-health-check.test.js",
+      "scripts/__tests__/referral-delivery-worker.test.ts",
+      "scripts/__tests__/release-secret-preflight.test.js",
+      "scripts/__tests__/report-trust-export-gate.test.js",
+      "scripts/customer-referral-pilot-evidence-gate.js",
+      "scripts/customer-referral-postgres-smoke.ts",
+      "scripts/customer-referral-release-scope-gate.js",
+      "scripts/customer-referral-shared-hunk-gate.js",
+      "scripts/prisma-fresh-replay-certification.js",
+      "scripts/prisma-migration-history-health-check.js",
+      "scripts/referral-delivery-worker.ts",
+      "scripts/release-secret-preflight.js",
+      "scripts/report-trust-export-gate.js",
+      "services/accounting/__tests__/accountant-client-invite-envelope.test.ts",
+      "services/accounting/__tests__/accountant-client-invite.service.test.ts",
+      "services/accounting/__tests__/ar-open-item-export.service.test.ts",
+      "services/accounting/__tests__/ar-open-item.service.test.ts",
+      "services/accounting/__tests__/close-assurance.service.test.ts",
+      "services/accounting/__tests__/customer-ledger.service.test.ts",
+      "services/accounting/__tests__/customer-receivable-backfill.service.test.ts",
+      "services/accounting/__tests__/customer-receivable-document.service.test.ts",
+      "services/accounting/__tests__/customer-receivable-lifecycle.service.test.ts",
+      "services/accounting/__tests__/customer-settlement-reversal.service.test.ts",
+      "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "services/accounting/__tests__/customer-statement-delivery-envelope.test.ts",
+      "services/accounting/__tests__/customer-statement-delivery.service.test.ts",
+      "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts",
+      "services/accounting/__tests__/customer-statement-token.test.ts",
+      "services/accounting/__tests__/customer-statement.service.test.ts",
+      "services/accounting/__tests__/missing-close-evidence-accountant-review-queue.service.test.ts",
+      "services/accounting/__tests__/missing-close-evidence-request-queue.service.test.ts",
+      "services/accounting/__tests__/posting.service.test.ts",
+      "services/accounting/accountant-access.schemas.ts",
+      "services/accounting/accountant-client-invite-envelope.ts",
+      "services/accounting/accountant-client-invite.service.ts",
+      "services/accounting/ar-open-item-export.service.ts",
+      "services/accounting/ar-open-item.service.ts",
+      "services/accounting/close-assurance.schemas.ts",
+      "services/accounting/close-assurance.service.ts",
+      "services/accounting/customer-ledger.service.ts",
+      "services/accounting/customer-receivable-backfill.service.ts",
+      "services/accounting/customer-receivable-document.service.ts",
+      "services/accounting/customer-receivable-lifecycle.service.ts",
+      "services/accounting/customer-settlement-reversal.service.ts",
+      "services/accounting/customer-settlement.schemas.ts",
+      "services/accounting/customer-settlement.service.ts",
+      "services/accounting/customer-statement-access.service.ts",
+      "services/accounting/customer-statement-delivery-envelope.ts",
+      "services/accounting/customer-statement-delivery.service.ts",
+      "services/accounting/customer-statement-recipient-action.service.ts",
+      "services/accounting/customer-statement-token.ts",
+      "services/accounting/customer-statement.schemas.ts",
+      "services/accounting/customer-statement.service.ts",
+      "services/accounting/default-posting-rules.ts",
+      "services/accounting/missing-close-evidence-accountant-review-queue-contracts.ts",
+      "services/accounting/missing-close-evidence-accountant-review-queue.service.ts",
+      "services/accounting/missing-close-evidence-request-queue-contracts.ts",
+      "services/accounting/missing-close-evidence-request-queue.service.ts",
+      "services/accounting/missing-close-evidence-response-acceptance-contracts.ts",
+      "services/accounting/posting.service.ts",
+      "services/communication/__tests__/accountant-client-invite-worker.service.test.ts",
+      "services/communication/__tests__/accountant-client-invite.provider.test.ts",
+      "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts",
+      "services/communication/__tests__/customer-statement-delivery.provider.test.ts",
+      "services/communication/accountant-client-invite-worker.service.ts",
+      "services/communication/accountant-client-invite.provider.ts",
+      "services/communication/customer-statement-delivery-worker.service.ts",
+      "services/communication/customer-statement-delivery.provider.ts",
+      "services/manager-action-center/__tests__/manager-action-center.service.test.ts",
+      "services/manager-action-center/manager-action-center-contracts.ts",
+      "services/manager-action-center/manager-action-center.service.ts",
+      "services/pos/__tests__/pos.service.test.ts",
+      "services/pos/pos.service.ts",
+      "services/referrals/__tests__/referral-attribution.service.test.ts",
+      "services/referrals/__tests__/referral-funnel-read-model.service.test.ts",
+      "services/referrals/referral-attribution.service.ts",
+      "services/referrals/referral-funnel-read-model.service.ts",
+      "services/users/__tests__/user-identity.service.test.ts",
+      "services/users/user-identity.service.ts",
+      "types/types.ts",
+      "what-next/prisma-fresh-replay-certification-referral.json",
+      "what-next/prisma-fresh-replay-certification-referral.md",
+      "what-next/prisma-migration-deployment-readiness-referral.json",
+      "what-next/prisma-migration-deployment-readiness-referral.md",
+      "what-next/prisma-migration-history-health-referral.json",
+      "what-next/prisma-migration-history-health-referral.md",
+      "what-next/prisma-referral-postgres-schema-drift.sql",
+      "what-next/referral-browser-dashboard.png",
+      "what-next/referral-browser-delivery-queued.png",
+      "what-next/referral-browser-statement-generated.png",
+      "what-next/referral-browser-statement-page.png",
+      "what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md",
+      "what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_ACCEPTANCE_SLICE_432_REPORT_2026-08-08.md",
+      "what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_REVIEW_QUEUE_SLICE_431_REPORT_2026-08-08.md",
+      "what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_COMMAND_SLICE_429_REPORT_2026-08-08.md",
+      "what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_STATE_PROJECTION_SLICE_430_REPORT_2026-08-08.md",
+      "what-next/referrals/CUSTOMER_LEDGER_BALANCE_INTEGRITY_KERNEL_SLICE_434_REPORT_2026-08-08.md",
+      "what-next/referrals/CUSTOMER_REFERRAL_MIGRATION_BASELINE_REPAIR_2026-08-09.md",
+      "what-next/referrals/CUSTOMER_REFERRAL_PILOT_EVIDENCE_INPUT.template.json",
+      "what-next/referrals/CUSTOMER_REFERRAL_RELEASE_SCOPE_POLICY.json",
+      "what-next/referrals/CUSTOMER_REFERRAL_SHARED_HUNK_POLICY.json",
+      "what-next/referrals/CUSTOMER_REFERRAL_TAKEOFF_READINESS_2026-08-09.md",
+      "what-next/referrals/CUSTOMER_SETTLEMENT_ALLOCATION_SOURCE_FOUNDATION_SLICE_435_REPORT_2026-08-08.md",
+      "what-next/referrals/CUSTOMER_SETTLEMENT_COMPENSATING_REVERSAL_SLICE_436_REPORT_2026-08-08.md",
+      "what-next/referrals/CUSTOMER_SETTLEMENT_REVERSAL_PROTECTED_ACTION_SLICE_437_REPORT_2026-08-08.md",
+      "what-next/referrals/CUSTOMER_STATEMENT_ENTITLEMENT_ACTIVATION_2026-08-09.md",
+      "what-next/referrals/DAILY_TRUTH_COMMAND_CENTER_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_EXIT_PHASE_5_ENTRY_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_430_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_431_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_432_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_429_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_433_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_433_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_434_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_435_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_438_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_RE_AUDIT_POST_SLICE_438_CAVEMAN_FULL_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_434_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_HANDOFF_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_438_SELECTION_REPORT_2026-08-08.md",
+      "what-next/referrals/REFERRAL_WAR_ROOM_STATUS.md",
+      "what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md",
+      "what-next/referrals/customer-referral-pilot-evidence-readiness.json",
+      "what-next/referrals/customer-referral-pilot-evidence-readiness.md",
+      "what-next/release-secret-preflight-referral-local.json",
+      "what-next/release-secret-preflight-referral-local.md",
+      "what-next/release-secret-preflight-referral-release.json",
+      "what-next/release-secret-preflight-referral-release.md",
+      "what-next/report-trust-export-readiness-referral-final.json",
+      "what-next/report-trust-export-readiness-referral-final.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_429_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_430_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_431_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_432_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_433_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_434_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_435_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_436_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "what-next/skills-life-cycle/STOQUIFY_SLICE_437_RELEASE_EVIDENCE_REPORT_2026-08-08.md"
+    ],
+    "split": [
+      "components/customers/CustomerManagementDashboard.tsx",
+      "config/permissions.ts",
+      "lib/security/rbac-permissions.ts",
+      "services/controls/sensitive-action.service.ts"
+    ],
+    "regenerate": [
+      "actions/graphify-out/GRAPH_REPORT.md",
+      "actions/graphify-out/graph.html",
+      "actions/graphify-out/graph.json",
+      "app/graphify-out/GRAPH_REPORT.md",
+      "app/graphify-out/graph.html",
+      "app/graphify-out/graph.json",
+      "components/graphify-out/GRAPH_REPORT.md",
+      "components/graphify-out/graph.html",
+      "components/graphify-out/graph.json",
+      "graphify-out/GRAPH_REPORT_actions.md",
+      "graphify-out/GRAPH_REPORT_app.md",
+      "graphify-out/GRAPH_REPORT_components.md",
+      "graphify-out/GRAPH_REPORT_hooks.md",
+      "graphify-out/GRAPH_REPORT_types.md",
+      "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+      "graphify-out/graph_actions.json",
+      "graphify-out/graph_app.json",
+      "graphify-out/graph_components.json",
+      "graphify-out/graph_hooks.json",
+      "graphify-out/graph_types.json",
+      "graphify-out/manifest.json",
+      "graphify-out/ordered-code-graph.json",
+      "hooks/graphify-out/GRAPH_REPORT.md",
+      "hooks/graphify-out/graph.html",
+      "hooks/graphify-out/graph.json",
+      "lib/graphify-out/GRAPH_REPORT.md",
+      "lib/graphify-out/graph.html",
+      "lib/graphify-out/graph.json",
+      "prisma/graphify-out/GRAPH_REPORT.md",
+      "prisma/graphify-out/graph.html",
+      "prisma/graphify-out/graph.json",
+      "services/graphify-out/GRAPH_REPORT.md",
+      "services/graphify-out/graph.html",
+      "services/graphify-out/graph.json",
+      "types/graphify-out/GRAPH_REPORT.md",
+      "types/graphify-out/graph.html",
+      "types/graphify-out/graph.json"
+    ],
+    "excluded": [
+      "actions/__tests__/legacy-rbac-auth-actions.test.ts",
+      "actions/customers/__tests__/customer-management-actions.test.ts",
+      "actions/customers/customer-management-actions.ts",
+      "actions/customers/customerAction2.ts",
+      "actions/item/__tests__/create-item-entitlement-observe.action.test.ts",
+      "actions/item/__tests__/edit-item.action.test.ts",
+      "actions/item/items.ts",
+      "actions/suppliers/supplier-management-actions.ts",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/__tests__/page.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/__tests__/layout.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/EditItemClient.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/__tests__/page.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/LayoutItemSuppliers.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/__tests__/SuppliersList.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/__tests__/page.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/create/__tests__/page.test.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/new/__tests__/page.test.ts",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/items/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/edit/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx",
+      "app/globals.css",
+      "components/DataTableComponents/DataTable.tsx",
+      "components/DataTableComponents/DataTablePagination.tsx",
+      "components/FormInputs/EnhancedImageUploadButton.tsx",
+      "components/customers/CustomerQuickActions.tsx",
+      "components/dashboard/items/ModernItemFormForEditing.tsx",
+      "components/dashboard/items/__tests__/ModernItemFormForEditing.test.tsx",
+      "components/inventory/CreateItemWizard.tsx",
+      "components/inventory/__tests__/CreateItemWizard.test.tsx",
+      "components/inventory/exportInventoryItemsXlsx.ts",
+      "components/inventory/item-form/ItemReferenceSelect.tsx",
+      "components/locations/LocationsManagementDashboard.tsx",
+      "components/pos/TerminalManagementDashboard.tsx",
+      "components/settings/OrganizationManagementTable.tsx",
+      "components/suppliers/SupplierManagementDashboard.tsx",
+      "components/suppliers/__tests__/supplier-management-dashboard-export.test.ts",
+      "components/suppliers/supplier-export-utils.ts",
+      "components/tax-rates/TaxRatesManagementDashboard.tsx",
+      "components/ui/groups/inventory/ItemManagement.tsx",
+      "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+      "components/ui/table.tsx",
+      "docs/UI-UX-remediation/00_EXECUTIVE_ROADMAP.md",
+      "docs/UI-UX-remediation/00_EXECUTIVE_ROADMAP.pdf",
+      "docs/UI-UX-remediation/01_AUDIT_TRACEABILITY_REGISTER.json",
+      "docs/UI-UX-remediation/01_AUDIT_TRACEABILITY_REGISTER.md",
+      "docs/UI-UX-remediation/01_AUDIT_TRACEABILITY_REGISTER.pdf",
+      "docs/UI-UX-remediation/02_DEPENDENCY_AND_CRITICAL_PATH.md",
+      "docs/UI-UX-remediation/02_DEPENDENCY_AND_CRITICAL_PATH.pdf",
+      "docs/UI-UX-remediation/03_WORK_BREAKDOWN_STRUCTURE.md",
+      "docs/UI-UX-remediation/03_WORK_BREAKDOWN_STRUCTURE.pdf",
+      "docs/UI-UX-remediation/03_WORK_BREAKDOWN_STRUCTURE_PHASE_C_D.md",
+      "docs/UI-UX-remediation/03_WORK_BREAKDOWN_STRUCTURE_PHASE_C_D.pdf",
+      "docs/UI-UX-remediation/04_VERIFICATION_VALIDATION_MATRIX.md",
+      "docs/UI-UX-remediation/04_VERIFICATION_VALIDATION_MATRIX.pdf",
+      "docs/UI-UX-remediation/05_ROUTE_ROLE_CAPABILITY_CERTIFICATION_MANIFEST.json",
+      "docs/UI-UX-remediation/06_PHASE_GATES_AND_RELEASE_CRITERIA.md",
+      "docs/UI-UX-remediation/06_PHASE_GATES_AND_RELEASE_CRITERIA.pdf",
+      "docs/UI-UX-remediation/07_ROLLOUT_AND_ROLLBACK_RUNBOOK.md",
+      "docs/UI-UX-remediation/07_ROLLOUT_AND_ROLLBACK_RUNBOOK.pdf",
+      "docs/UI-UX-remediation/08_RISK_ASSUMPTION_DECISION_LOG.md",
+      "docs/UI-UX-remediation/08_RISK_ASSUMPTION_DECISION_LOG.pdf",
+      "docs/UI-UX-remediation/09_CHANGE_MANAGEMENT_SUPPORT_AND_TRAINING.md",
+      "docs/UI-UX-remediation/09_CHANGE_MANAGEMENT_SUPPORT_AND_TRAINING.pdf",
+      "docs/UI-UX-remediation/10_FINAL_READINESS_REPORT_TEMPLATE.md",
+      "docs/UI-UX-remediation/10_FINAL_READINESS_REPORT_TEMPLATE.pdf",
+      "docs/UI-UX-remediation/INDEX.md",
+      "docs/UI-UX-remediation/INDEX.pdf",
+      "docs/UI-UX-remediation/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_ROADMAP_2026-08-06.md",
+      "docs/UI-UX-remediation/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_ROADMAP_2026-08-06.pdf",
+      "docs/UI-UX-remediation/generate_reports.py",
+      "docs/UI-UX-remediation/uiux-certification-manifest.schema.json",
+      "docs/UI-UX-remediation/validate_roadmap.py",
+      "docs/agents-and-skills/STOQUIFY_70_PLUS_SKILLS_INSTALLATION_FEASIBILITY_PLAN_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_70_PLUS_SKILLS_INSTALLATION_FEASIBILITY_PLAN_2026-08-05.pdf",
+      "docs/agents-and-skills/STOQUIFY_70_PLUS_SKILLS_INSTALLATION_MANIFEST_2026-08-05.json",
+      "docs/agents-and-skills/STOQUIFY_70_PLUS_SKILLS_PHASE_B_ACTION_PLAN_AND_EXECUTION_RECORD_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_EXTERNAL_SKILLS_ASSESSMENT_PROMPT_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_EXTERNAL_SKILLS_ASSESSMENT_PROMPT_2026-08-05.pdf",
+      "docs/agents-and-skills/STOQUIFY_EXTERNAL_SKILLS_EXPERT_REPORT_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_EXTERNAL_SKILLS_EXPERT_REPORT_2026-08-05.pdf",
+      "docs/agents-and-skills/STOQUIFY_NEXT_5_ESSENTIAL_SKILLS_ASSESSMENT_PROMPT_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_NEXT_5_ESSENTIAL_SKILLS_ASSESSMENT_PROMPT_2026-08-05.pdf",
+      "docs/agents-and-skills/STOQUIFY_NEXT_5_ESSENTIAL_SKILLS_EXPERT_REPORT_2026-08-05.md",
+      "docs/agents-and-skills/STOQUIFY_NEXT_5_ESSENTIAL_SKILLS_EXPERT_REPORT_2026-08-05.pdf",
+      "docs/agents-and-skills/STOQUIFY_POSTGRES_AND_WEB_QUALITY_REVIEW_2026-08-06.md",
+      "docs/agents-and-skills/STOQUIFY_POSTGRES_AND_WEB_QUALITY_REVIEW_2026-08-06.pdf",
+      "docs/agents-and-skills/STOQUIFY_SUPABASE_POSTGRES_AND_WEB_QUALITY_SKILL_PILOT_2026-08-05.md",
+      "docs/agents-and-skills/skills-sh-stoquify-skill-selection.md",
+      "docs/agents-and-skills/skills-sh-stoquify-skill-selection.pdf",
+      "docs/customers/STOQUIFY_CUSTOMER_WORKFLOW_COMPLETION_PROMPT_2026-08-09.md",
+      "docs/customers/STOQUIFY_CUSTOMER_WORKFLOW_COMPLETION_PROMPT_2026-08-09.pdf",
+      "docs/modules/AQSTOQFLOW_MODULE_ACCESS_GUARD_CONTRACT_2026-07-12.md",
+      "docs/supplier-workflow/STOQUIFY_SUPPLIER_WORKFLOW_REMEDIATION_PLAN_2026-08-08.pdf",
+      "docs/supplier-workflow/STOQUIFY_SUPPLIER_WORKFLOW_REVIEW_2026-08-08.pdf",
+      "docs/supplier-workflow/STOQUIFY_SUPPLIER_WORKFLOW_SECURITY_RATIFICATION_2026-08-08.pdf",
+      "docs/suppliers/STOQUIFY_SUPPLIER_WORKFLOW_COMPLETION_PROMPT_2026-08-09.md",
+      "docs/suppliers/STOQUIFY_SUPPLIER_WORKFLOW_COMPLETION_PROMPT_2026-08-09.pdf",
+      "docs/system-audit/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_ROADMAP_2026-08-06.md",
+      "docs/system-audit/STOQUIFY_ENTERPRISE_UI_UX_SYSTEM_AUDIT_2026-08-06.md",
+      "docs/system-audit/STOQUIFY_ENTERPRISE_UI_UX_SYSTEM_AUDIT_2026-08-06.pdf",
+      "docs/tmp_marker.txt",
+      "hooks/__tests__/useAPHistoryWorkbench.test.ts",
+      "hooks/useAPHistoryWorkbench.ts",
+      "hooks/useCustomerManagement.ts",
+      "lib/item/__tests__/create-item-schema.test.ts",
+      "lib/item/__tests__/edit-item-schema.test.ts",
+      "lib/item/form-validation.ts",
+      "lib/item/schemas.ts",
+      "playwright.inventory-items.config.ts",
+      "scripts/__pycache__/generate_agents_and_skills_assessment_pdfs.cpython-312.pyc",
+      "scripts/__pycache__/generate_external_skills_assessment_pdfs.cpython-312.pyc",
+      "scripts/__pycache__/generate_system_audit_pdf.cpython-312.pyc",
+      "scripts/__tests__/inventory-items-e2e-fixture.test.js",
+      "scripts/apply_supplier_dashboard_edits.js",
+      "scripts/generate_agents_and_skills_assessment_pdfs.py",
+      "scripts/generate_external_skills_assessment_pdfs.py",
+      "scripts/generate_system_audit_pdf.py",
+      "scripts/inventory-items-e2e-fixture.js",
+      "scripts/run-inventory-items-e2e.js",
+      "scripts/update_supplier_pages_ctx.js",
+      "services/customer/__tests__/customer-export.service.test.ts",
+      "services/customer/__tests__/customer-legacy.service.test.ts",
+      "services/customer/__tests__/customer-lifecycle.service.test.ts",
+      "services/customer/customer-export.service.ts",
+      "services/customer/customer.schemas.ts",
+      "services/customer/customer.service.ts",
+      "services/item/__tests__/edit-item.service.test.ts",
+      "services/item/item.service.ts",
+      "services/leakage/patch_tmp_test_marker.txt",
+      "services/leakage/pos-cash-shortage-worker-checkpoint-persistence-preflight.ts",
+      "services/leakage/x_tmp_marker2.txt",
+      "services/purchasing/__tests__/ap-history.service.test.ts",
+      "services/security/export-safety.service.ts",
+      "services/supplier/__tests__/supplier-export.service.test.ts",
+      "services/supplier/__tests__/supplier.service.test.ts",
+      "services/supplier/supplier-export.service.ts",
+      "temp.prisma.test.js",
+      "tests/e2e/inventory-items-auth.setup.ts",
+      "tests/e2e/inventory-items-authenticated-release.spec.ts",
+      "tests/e2e/inventory-items-cleanup-evidence.setup.ts",
+      "tmp-migration-check.sql",
+      "tmp-protocol-check.js",
+      "tmp-slice25-debug.ts",
+      "tmp-slice25-debug2.ts",
+      "tmp.prisma.migrations.sql",
+      "tmp/current-db.schema.prisma",
+      "tmp/introspect.schema.prisma",
+      "tmp/payment_recon_migration_objects_check.sql",
+      "tmp/temp-datasource-prisma-test.js",
+      "tmp/tmp-prisma-adapter-connect.js",
+      "tmp_test_patch_marker.txt",
+      "what-next/STOQUIFY_SUPPLIER_WORKFLOW_REMEDIATION_PLAN_2026-08-08.md",
+      "what-next/STOQUIFY_SUPPLIER_WORKFLOW_REVIEW_2026-08-08.md",
+      "what-next/STOQUIFY_SUPPLIER_WORKFLOW_SECURITY_RATIFICATION_2026-08-08.md",
+      "what-next/accounting/close-assurance-e2e-db-preflight-2026-07-20.json",
+      "what-next/accounting/close-assurance-e2e-db-preflight-2026-07-20.md",
+      "what-next/api-route-guard-inventory.json",
+      "what-next/api-route-guard-inventory.md",
+      "what-next/create-item-workflow-fix.md",
+      "what-next/create-item-workflow-professionalization-2026-08-04.md",
+      "what-next/edit-item-workflow-refactor-2026-08-05.md",
+      "what-next/evidence/edit-item-workflow-2026-08-05/authenticated-unauthorized-desktop.png",
+      "what-next/evidence/edit-item-workflow-2026-08-05/browser-smoke-blocked.md",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/browser-matrix.json",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/cleanup.json",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/create-render-desktop.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/create-render-mobile.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/create-render-tablet.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-after-save-desktop.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-after-save-mobile.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-after-save-tablet.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-before-save-desktop.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-before-save-mobile.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/edit-before-save-tablet.png",
+      "what-next/evidence/inventory-item-create-edit-2026-08-07/tenant-isolation-not-found-desktop.png",
+      "what-next/inventory-item-create-edit-browser-matrix-2026-08-07.md",
+      "what-next/ledger-close-truth-readiness.json",
+      "what-next/ledger-close-truth-readiness.md",
+      "what-next/module-surface-inventory.json",
+      "what-next/module-surface-inventory.md",
+      "what-next/offline-pos-fiscal-replay-readiness.json",
+      "what-next/offline-pos-fiscal-replay-readiness.md",
+      "what-next/payment-cash-truth-readiness.json",
+      "what-next/payment-cash-truth-readiness.md",
+      "what-next/prisma-migration-history-health-referral-final.json",
+      "what-next/prisma-migration-history-health-referral-final.md",
+      "what-next/prisma-migration-history-health-referral-postgres.json",
+      "what-next/prisma-migration-history-health-referral-postgres.md",
+      "what-next/prisma-migration-history-health.json",
+      "what-next/prisma-migration-history-health.md",
+      "what-next/public-identity-abuse-readiness.json",
+      "what-next/public-identity-abuse-readiness.md",
+      "what-next/purchasing-ap-consolidation-readiness.json",
+      "what-next/purchasing-ap-consolidation-readiness.md",
+      "what-next/referral-browser-failure.png",
+      "what-next/referral-browser-login-attempt.png",
+      "what-next/referral-browser-login.png",
+      "what-next/referrals/customer-referral-release-scope-readiness.json",
+      "what-next/referrals/customer-referral-release-scope-readiness.md",
+      "what-next/referrals/customer-referral-shared-hunk-readiness.json",
+      "what-next/referrals/customer-referral-shared-hunk-readiness.md",
+      "what-next/report-trust-export-readiness-access.json",
+      "what-next/report-trust-export-readiness-access.md",
+      "what-next/report-trust-export-readiness.json",
+      "what-next/report-trust-export-readiness.md",
+      "what-next/skills-sh-stoquify-skill-selection.md",
+      "what-next/statutory-country-pack-production-readiness.json",
+      "what-next/statutory-country-pack-production-readiness.md",
+      "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_04_TODAYS_OPERATING_TRUTH_REPORT_2026-08-07.md",
+      "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_INVENTORY_NORMALIZATION_REPORT_2026-08-06.md",
+      "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_SHARED_TABLE_NORMALIZATION_REPORT_2026-08-04.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/00_EXECUTIVE_ROADMAP.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/01_AUDIT_TRACEABILITY_REGISTER.json",
+      "what-next/ui-ux/enterprise-remediation-roadmap/01_AUDIT_TRACEABILITY_REGISTER.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/02_DEPENDENCY_AND_CRITICAL_PATH.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/03_WORK_BREAKDOWN_STRUCTURE.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/03_WORK_BREAKDOWN_STRUCTURE_PHASE_C_D.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/04_VERIFICATION_VALIDATION_MATRIX.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/05_ROUTE_ROLE_CAPABILITY_CERTIFICATION_MANIFEST.json",
+      "what-next/ui-ux/enterprise-remediation-roadmap/06_PHASE_GATES_AND_RELEASE_CRITERIA.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/07_ROLLOUT_AND_ROLLBACK_RUNBOOK.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/08_RISK_ASSUMPTION_DECISION_LOG.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/09_CHANGE_MANAGEMENT_SUPPORT_AND_TRAINING.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/10_FINAL_READINESS_REPORT_TEMPLATE.md",
+      "what-next/ui-ux/enterprise-remediation-roadmap/schemas/uiux-certification-manifest.schema.json",
+      "what-next/ui-ux/enterprise-remediation-roadmap/validate_roadmap.py",
+      "what-next/ui-ux/screenshots/2026-08-06/login-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/login-fr-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/login-fr-mobile.png",
+      "what-next/ui-ux/screenshots/2026-08-06/login-mobile.png",
+      "what-next/ui-ux/screenshots/2026-08-06/public-home-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/public-home-fr-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/public-home-fr-mobile.png",
+      "what-next/ui-ux/screenshots/2026-08-06/public-home-mobile.png",
+      "what-next/ui-ux/screenshots/2026-08-06/register-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/register-fr-desktop.png",
+      "what-next/ui-ux/screenshots/2026-08-06/register-fr-mobile.png",
+      "what-next/ui-ux/screenshots/2026-08-06/register-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/PUBLIC_AUTH_ACCESSIBILITY_SCAN_2026-08-06.md",
+      "what-next/ui-ux/system-audit-2026-08-06/STOQUIFY_ENTERPRISE_UI_UX_SYSTEM_AUDIT_2026-08-06.md",
+      "what-next/ui-ux/system-audit-2026-08-06/public-ui-route-smoke.json",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/login-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/login-fr-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/login-fr-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/login-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/public-home-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/public-home-fr-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/public-home-fr-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/public-home-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/register-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/register-fr-desktop.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/register-fr-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/screenshots/public/register-mobile.png",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/login-desktop-viewport.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/login-desktop.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/public-home-desktop-viewport.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/public-home-desktop.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/public-home-mobile-viewport.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/public-home-mobile.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/register-mobile-viewport.jpg",
+      "what-next/ui-ux/system-audit-2026-08-06/thumbnails/register-mobile.jpg",
+      "what-next/ui-ux/ui-route-smoke-2026-08-06.json"
+    ],
+    "unclassified": [
+      "app/[locale]/(dashboard)/dashboard/customers/layout.tsx",
+      "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "hooks/useAROpenItemsHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json",
+      "what-next/STOQUIFY_CUSTOMER_WORKFLOW_COMPLETION_REPORT_2026-08-09.md",
+      "what-next/customer-workflow-export-trust-readiness-2026-08-09.json",
+      "what-next/customer-workflow-export-trust-readiness-2026-08-09.md",
+      "what-next/screenshots/supplier-workflow-completion-2026-08-09/README.md"
+    ],
+    "conflicts": [],
+    "protectedStaged": [
+      "app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx",
+      "components/inventory/CreateItemWizard.tsx"
+    ],
+    "missingRequiredCandidates": []
+  },
+  "candidateHashes": [
+    {
+      "file": "actions/__tests__/auth-actions.test.ts",
+      "sha256": "f6e0f05b2d2d33b9830a78a3876a886f9d38c8a0f6fe73faa06037e51a89c776"
+    },
+    {
+      "file": "actions/accounting/__tests__/accountant-access.actions.test.ts",
+      "sha256": "d92656bb8bb54f92e68c19c6625ddceb06597a8421c4853b6bf17ffad986965f"
+    },
+    {
+      "file": "actions/accounting/__tests__/close-assurance.actions.test.ts",
+      "sha256": "1feb0a9024b4fd66eaa047d06049f6a5df022c6bdd0fd84582be1cbcaf0c4ad1"
+    },
+    {
+      "file": "actions/accounting/__tests__/customer-statement.actions.test.ts",
+      "sha256": "3594df1dc7f5eb7839519d4fc7a0910b7b37d2495a4d515b7e069be30462d5d8"
+    },
+    {
+      "file": "actions/accounting/accountant-access.actions.ts",
+      "sha256": "05c3aead5ee588fdbb247050653c42833809cbe1491e3f3184ca415371dc6824"
+    },
+    {
+      "file": "actions/accounting/close-assurance.actions.ts",
+      "sha256": "5576796f56b0234fa2416c92f35ea20471cef95099fd09d72efc07036ade5a2e"
+    },
+    {
+      "file": "actions/accounting/customer-statement.actions.ts",
+      "sha256": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620"
+    },
+    {
+      "file": "actions/finance/__tests__/customer-settlement.actions.test.ts",
+      "sha256": "ecf555c66679ddc44430074dc04f6bf35d94e9a5a9293b04cb48dab103ab76d1"
+    },
+    {
+      "file": "actions/finance/ar-history.actions.ts",
+      "sha256": "82458b42e8dbb7e0c6fd7de91ea6701a76f9343ac304db4f08bfd5dab0e67904"
+    },
+    {
+      "file": "actions/finance/customer-settlement.actions.ts",
+      "sha256": "2b343e659e5e47cdad7bfa5b1d41d88274dd0df560626a1031cf31c8ebe2f1f9"
+    },
+    {
+      "file": "actions/referrals/__tests__/referral-funnel.actions.test.ts",
+      "sha256": "b601291ea80e75f870ead9996b41cfe4d5bf81011c21e79a54917472c747bcbc"
+    },
+    {
+      "file": "actions/referrals/referral-funnel.actions.ts",
+      "sha256": "caa283e3e7aaee77b14ae0ccf33134d9d4a1f0f92b223b16174fe07fc5738374"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+      "sha256": "afe9101fdd0a2f116ccb1688812e0a142ea3a290c78202d7b081a272f8c25eaa"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx",
+      "sha256": "8297954a2fc073aa94f60ad031f1542ca64172e3f9dfbc851c81172020f1afc9"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+      "sha256": "85421e78ff6991ef494770d5056edf28aed5d40ce2ce2a3e12875a64399bf95f"
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+      "sha256": "f06bbc1df8a64feed59985d4ea3eb3bd66a4835f4794a4c43342120ab4a626ab"
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+      "sha256": "cfa6eab9544d7ca069ea48f674b149725105ef91ca1f6ef2efcaf3a21800e3bb"
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/actions/route.ts",
+      "sha256": "dad0b7962774283120bc17ad7b12b5d72922e1dee03b631984d206063991044a"
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/route.ts",
+      "sha256": "9166a8f8d5042e2d10ad72e7b2a6a28183f638dd87d532281021d4ffb560ad82"
+    },
+    {
+      "file": "app/api/referrals/[referralCode]/__tests__/route.test.ts",
+      "sha256": "928a874b56ebc62bef27b6061588f3fab45fa0856c8444bee592d62a979f3707"
+    },
+    {
+      "file": "app/api/referrals/[referralCode]/route.ts",
+      "sha256": "d96387c25cc3fda97fcade7292093eaabe7a43b2a62a1aea137cbb889e9b0b1d"
+    },
+    {
+      "file": "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx",
+      "sha256": "0aa45593dc346fa12baaeb20c8812300960b88985d0e5a2b256de6df17ba16cb"
+    },
+    {
+      "file": "app/customer-statement/[statementId]/CustomerStatementPortal.tsx",
+      "sha256": "e35fab642397e275063b6ab2739ade325cef84a4e97563c15a8940e97a75f6d2"
+    },
+    {
+      "file": "app/customer-statement/[statementId]/page.tsx",
+      "sha256": "a2fe1acdbf4a7eaf7507824b64c1f54b6a685c137f714d406a538a4629357cf8"
+    },
+    {
+      "file": "components/accounting/__tests__/AccountantAccessManager.test.tsx",
+      "sha256": "1fba309ccb6ffdcb4eaed633284dc5f728928fae43fb4eb65829b131519c41df"
+    },
+    {
+      "file": "components/accounting/AccountantAccessManager.tsx",
+      "sha256": "95a65077961cc2935f97a0457d184a57a14f800f48a786be342120346a819426"
+    },
+    {
+      "file": "components/auth/BeautifulRegisterForm.tsx",
+      "sha256": "60ef6b2faa441075b67dad61a9101db2853961a3b05620f212ba095f5f3fe724"
+    },
+    {
+      "file": "components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx",
+      "sha256": "c9d58c5e7a4a87084b1f99317d06d92d1a4775b3f7b7e69b133fdeecb392f445"
+    },
+    {
+      "file": "components/auth/v2/RegisterV2Form.tsx",
+      "sha256": "15aec9af69eac9c6b64a727aa6e13d8ab92804e129dcca6fba774128f13dac81"
+    },
+    {
+      "file": "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+      "sha256": "55d205e9e3875094aa5e9dae70b686d5ce691a0e0a952cbdef5b64c1f2428485"
+    },
+    {
+      "file": "components/customers/CustomerStatementWorkflow.tsx",
+      "sha256": "8c6bab3055c8386bcf6a143cb327459bd127855263093db3023dc42e6cbfd4dd"
+    },
+    {
+      "file": "components/dashboard/__tests__/todays-operating-truth.test.ts",
+      "sha256": "c8d68fe97e16285c5e0c376f7cac574c8e0be53d449b6de45303870bf1487033"
+    },
+    {
+      "file": "components/dashboard/EnhancedEnterpriseDashboard.tsx",
+      "sha256": "26ab26c2afbb7fac08136e77fe658b88caac44e8dd56be552f2583c647e40265"
+    },
+    {
+      "file": "components/dashboard/primitives/command-center-primitives.tsx",
+      "sha256": "42a1ef6e2c038422cdc9d41b8805aaf633d908b6ac5007108de20d6d9491398e"
+    },
+    {
+      "file": "components/dashboard/todays-operating-truth.ts",
+      "sha256": "4a4c3dbfd7457b0fbf6d4bd5c1da46976d46d3058afa387ac647506c82b45785"
+    },
+    {
+      "file": "components/referrals/__tests__/ReferralFunnelDashboard.test.tsx",
+      "sha256": "d4259b17748e58d1d769546d013314df7693565827b97e5545752026ffc81839"
+    },
+    {
+      "file": "components/referrals/ReferralFunnelDashboard.tsx",
+      "sha256": "51c3f3243a60ca54d251e471c4a3d96e5c5361f4bc3bab38a50803262c6fa728"
+    },
+    {
+      "file": "config/sidebar.ts",
+      "sha256": "fe725bde6f3866ce913b6674833405082ad63f8043e8983aa4c17e79ac4a726d"
+    },
+    {
+      "file": "lib/auth.ts",
+      "sha256": "f25dea0fb814f3be0e32d0431ba50614e53942953d6258a215df3c36f65d5e19"
+    },
+    {
+      "file": "lib/i18n/__tests__/organization-money.test.ts",
+      "sha256": "204cfc7e687896d936bfb0a773a2aa6b3fdff7ea7651703b86c9516ae25ff48a"
+    },
+    {
+      "file": "lib/i18n/organization-money.ts",
+      "sha256": "aa6a86dbb481e871c2108ae6e82133f689fa4eded56125b8fcf7c8d8c0270fbd"
+    },
+    {
+      "file": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "sha256": "aae2f1a20add9453671f8c08c25eca1215dcb7e790a46b784d3d35cd01b1949a"
+    },
+    {
+      "file": "lib/security/__tests__/customer-settlement-security.test.ts",
+      "sha256": "d3a92931ce60544902a1fb38051600684c65be8bbd76144527e41ca8a43b55bd"
+    },
+    {
+      "file": "lib/security/credential-sign-in-outcome.ts",
+      "sha256": "16a765403834c78bafc4ea06b1f820111fe20f1fc37721c42d4e3eab13066493"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "797525d6a694c8e31ca078acd9fecaa0784f47e3a422c2c37b3c62ce4f99484f"
+    },
+    {
+      "file": "package.json",
+      "sha256": "ec0f0b04787b37c5a4e06e30a53be9fd396f2f68e03ff0c06d7adcfe093c43f3"
+    },
+    {
+      "file": "prisma/comprehensive-seed.ts",
+      "sha256": "ac5eb4119dc50032c2954487ba60d404c23e5ac75df419e75bcb472d14a02623"
+    },
+    {
+      "file": "prisma/migration-history-checksum-approvals.json",
+      "sha256": "4030c801dd807691938f6e666990dfae6711cf2710fd76959f48c8c0319d2028"
+    },
+    {
+      "file": "prisma/migrations/20260528124341_refine_item_barcode/migration.sql",
+      "sha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2"
+    },
+    {
+      "file": "prisma/migrations/20260611120000_payment_provider_reference_uniqueness/migration.sql",
+      "sha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "sha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4"
+    },
+    {
+      "file": "prisma/migrations/20260618160000_payroll_foundation_bridge/migration.sql",
+      "sha256": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8"
+    },
+    {
+      "file": "prisma/migrations/20260618161000_ap_stock_count_foundation_bridge/migration.sql",
+      "sha256": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc"
+    },
+    {
+      "file": "prisma/migrations/20260726140000_business_event_foundation_bridge/migration.sql",
+      "sha256": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e"
+    },
+    {
+      "file": "prisma/migrations/20260727110100_offline_pos_sync_foundation_reconciliation/migration.sql",
+      "sha256": "035a01b974be882877669107d4e7c68b939097c6e49cb6273c9daf5b458d584d"
+    },
+    {
+      "file": "prisma/migrations/20260730150000_organization_onboarding_entitlement_bridge/migration.sql",
+      "sha256": "939c1a58986dbe63fa005df7fac668689038287238e877ecdded43b4dc87d1fa"
+    },
+    {
+      "file": "prisma/migrations/20260808120000_customer_settlement_allocation_foundation/migration.sql",
+      "sha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c"
+    },
+    {
+      "file": "prisma/migrations/20260808133000_customer_settlement_compensating_reversal_foundation/migration.sql",
+      "sha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5"
+    },
+    {
+      "file": "prisma/migrations/20260809100000_customer_receivable_document_foundation/migration.sql",
+      "sha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c"
+    },
+    {
+      "file": "prisma/migrations/20260809113000_customer_statement_snapshot_foundation/migration.sql",
+      "sha256": "ef4f1a295873dc53a40e3376a1a83aec723fa5ab92e517d54bc4f67dd5ff467f"
+    },
+    {
+      "file": "prisma/migrations/20260809130000_customer_statement_external_access/migration.sql",
+      "sha256": "ba745969c795572cd9f7692f519e56781bce463356a8720e91d0d3b57d826b97"
+    },
+    {
+      "file": "prisma/migrations/20260809143000_customer_statement_delivery_referral/migration.sql",
+      "sha256": "7fb1b45b6f599c661e7831ed282185331b263f82ad430c2f465f1d547bd3fb06"
+    },
+    {
+      "file": "prisma/migrations/20260809160000_accountant_client_invite_onboarding/migration.sql",
+      "sha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6"
+    },
+    {
+      "file": "prisma/migrations/20260809170000_referral_accounting_source_types/migration.sql",
+      "sha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e"
+    },
+    {
+      "file": "prisma/migrations/20260809180000_accounting_enum_completion/migration.sql",
+      "sha256": "e89b4380a5ee50ddf6f587c40d9da9d987e0b79bdf41cc4f3a42b4339f464043"
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "sha256": "9156e5ae948854abee5d95adc8c033cdc3cea66bbb50173b078e1c24353f0a54"
+    },
+    {
+      "file": "scripts/__tests__/customer-referral-pilot-evidence-gate.test.js",
+      "sha256": "1c132418f2f36fa1ce202f3b1723711ac93e48ddbf86847df7aa8afe9d0090f1"
+    },
+    {
+      "file": "scripts/__tests__/customer-referral-release-scope-gate.test.js",
+      "sha256": "83a7fae2974fce247bc8d0b0ec11390aae50ed1386490daa163cbf8836e34725"
+    },
+    {
+      "file": "scripts/__tests__/customer-referral-shared-hunk-gate.test.js",
+      "sha256": "8470da36d4b01c54fa2ef5a0aeb2d6d705ad2c0e5693929d9a895a4ce78449f9"
+    },
+    {
+      "file": "scripts/__tests__/prisma-migration-history-health-check.test.js",
+      "sha256": "6f9301ccb21a3327ffcc9425c73564141aaa286401ab3b25be7166f8828686c5"
+    },
+    {
+      "file": "scripts/__tests__/referral-delivery-worker.test.ts",
+      "sha256": "d1bf750aee51bb014d8b17dfa07f75bec90042014d5aaedfb6b8aba96ab12ad6"
+    },
+    {
+      "file": "scripts/__tests__/release-secret-preflight.test.js",
+      "sha256": "cb17841701fd4d96489615ef7fdb93c32aa87756051b46777551b0d93c8a659d"
+    },
+    {
+      "file": "scripts/__tests__/report-trust-export-gate.test.js",
+      "sha256": "d64f83ebe3d76df0754010e8ae1da574e2675dab603d2e1c95a7126d751ecd49"
+    },
+    {
+      "file": "scripts/customer-referral-pilot-evidence-gate.js",
+      "sha256": "79dcad8ba2aa6d5ef4d50fd5891d10d5d9e9f2d0861a1ae37556d3aba58f2fda"
+    },
+    {
+      "file": "scripts/customer-referral-postgres-smoke.ts",
+      "sha256": "63dec9b424e0c221612cbd678a0ee302984afc297a9d45bc77ee1fedd9ae9dd2"
+    },
+    {
+      "file": "scripts/customer-referral-release-scope-gate.js",
+      "sha256": "11bdb44618d88859aa1dc912457156def2f3b2baa2d207baf2f0c8e402e64964"
+    },
+    {
+      "file": "scripts/customer-referral-shared-hunk-gate.js",
+      "sha256": "5a053db1e1bef3f584531d4024b97c1d2114766a15286add61d0d8448e4dad55"
+    },
+    {
+      "file": "scripts/prisma-fresh-replay-certification.js",
+      "sha256": "8ee423f80f94c94f1cbd8972a64d822e19f8dacea16f265d856645de81e56e71"
+    },
+    {
+      "file": "scripts/prisma-migration-history-health-check.js",
+      "sha256": "93ba9c3d0ff91c2c5185e56916831d68bf424c40219b75378903d486b8dbab7d"
+    },
+    {
+      "file": "scripts/referral-delivery-worker.ts",
+      "sha256": "3f0fcdc527ca56bcfc9e2244d3d9259a8917879f9d1a33c6cbab42fcde6eb73f"
+    },
+    {
+      "file": "scripts/release-secret-preflight.js",
+      "sha256": "d20efac2da7ef1767cffb0bf19a9825b9a41310edee1b64bd4248dcaa1638729"
+    },
+    {
+      "file": "scripts/report-trust-export-gate.js",
+      "sha256": "34287b8430b6056923ebf6b457813b62616faaeeaf359451ec5e35d4924201bf"
+    },
+    {
+      "file": "services/accounting/__tests__/accountant-client-invite-envelope.test.ts",
+      "sha256": "f78d975f117ea6b08f8e68e8ed152167280ce531b4d678951df149095ebd6ac9"
+    },
+    {
+      "file": "services/accounting/__tests__/accountant-client-invite.service.test.ts",
+      "sha256": "8a64c3f0e61b0376ed743117ad6d666cc7622a8cff5e438da8cd02a26f2e3073"
+    },
+    {
+      "file": "services/accounting/__tests__/ar-open-item-export.service.test.ts",
+      "sha256": "bf416ca0f44f055e4be40a47ad430869c8b514c639025d5584e57b37ad430da0"
+    },
+    {
+      "file": "services/accounting/__tests__/ar-open-item.service.test.ts",
+      "sha256": "71ff9460bc0ef82de396739de8d570a938c1f261961ba5d300e8f076feea7808"
+    },
+    {
+      "file": "services/accounting/__tests__/close-assurance.service.test.ts",
+      "sha256": "e7370ba34a845b6e29963d8e322f8debfe3541ac53958cf87b9791178ef7371f"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-ledger.service.test.ts",
+      "sha256": "a93c461ddd5732ef2642a2e72d44481f393451aeace3eccd7f6be3edb8c2b095"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-receivable-backfill.service.test.ts",
+      "sha256": "722a985a250444b6ed1c0a516e9963b89790f78c705e6216fbae01470e42531b"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-receivable-document.service.test.ts",
+      "sha256": "96722ad2521c80e8fb7995fb963c277c0585e0e06b22716c0d56550a8b584aad"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-receivable-lifecycle.service.test.ts",
+      "sha256": "69df3ac914327a08bc70eeff682cf2be1dc8391dde977bd0a10b318e77a33927"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-settlement-reversal.service.test.ts",
+      "sha256": "80a46b1ba4b9d78ef61a94c24b832fc1ff9428890e825136e1ee63b3fcddd791"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-settlement.service.test.ts",
+      "sha256": "ec735782b368c587d257f8ea7aea2b7ff3f404769152068d9ddcc5b8231b8666"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "sha256": "37610c181ead58aa62f1551785bfd73e8f5c3a76a5eb618b35ebfc2434224272"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-delivery-envelope.test.ts",
+      "sha256": "a9b7c10b7ecb672df91182506ff6f2c64ccf027077b490eec5a2276bb8cdbee6"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-delivery.service.test.ts",
+      "sha256": "5d10c0878379bc7694168bdc30dd2a0fe19dbae5830c0f0d40ffd65007981e0d"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts",
+      "sha256": "3ddd00f4eb5059d52f8154f0dc11f6fc551ff67274799e0227df61aa52594caa"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-token.test.ts",
+      "sha256": "f08c471b0224d684a9a4de50f817bcc9f2c9f69a7ffdc1dda5466cbf1c30b073"
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement.service.test.ts",
+      "sha256": "5fd30a490ae8f38ed1e388486cf4546a2ff9a0ebd550c96a18bea08ab62ffc57"
+    },
+    {
+      "file": "services/accounting/__tests__/missing-close-evidence-accountant-review-queue.service.test.ts",
+      "sha256": "ddb0c8de56191e35b1c7d76217693cfecb08f6008a9ba8f0e326e5bf85267bdb"
+    },
+    {
+      "file": "services/accounting/__tests__/missing-close-evidence-request-queue.service.test.ts",
+      "sha256": "0c28a42cf2f533c30f9f557eaaf6720743b39506922d917492a0fdd35d1fcabc"
+    },
+    {
+      "file": "services/accounting/__tests__/posting.service.test.ts",
+      "sha256": "b84e7613b6c1bbfb9828d498b772bc51d94a57975748e68459c9c43dee95d7ef"
+    },
+    {
+      "file": "services/accounting/accountant-access.schemas.ts",
+      "sha256": "b5cd19b13743ccfd0aa18a803af9e25d1c81f4df3e8197d9ea8535754d412e3d"
+    },
+    {
+      "file": "services/accounting/accountant-client-invite-envelope.ts",
+      "sha256": "8112ad85a84c4788ce65edae182020f6addc62f18d0a2202c7d0cdec3bc65657"
+    },
+    {
+      "file": "services/accounting/accountant-client-invite.service.ts",
+      "sha256": "4d0bc0e67f6e2bf4ca874c44ef3598a64658ce71a079cd817e50b1fa018ae8a7"
+    },
+    {
+      "file": "services/accounting/ar-open-item-export.service.ts",
+      "sha256": "41634457c0084d8fe77eefc1ded14161351d2d8b15ef4aba4f79cc7b527654aa"
+    },
+    {
+      "file": "services/accounting/ar-open-item.service.ts",
+      "sha256": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082"
+    },
+    {
+      "file": "services/accounting/close-assurance.schemas.ts",
+      "sha256": "2d35eb17f8819863fcc8d4caaf8a6a9d986742a62b45a914813d1f94f8320370"
+    },
+    {
+      "file": "services/accounting/close-assurance.service.ts",
+      "sha256": "1e934c65e8b98f38a6f88d427dcf9199001e552d9514445b91f9d2bf5f152a2a"
+    },
+    {
+      "file": "services/accounting/customer-ledger.service.ts",
+      "sha256": "6dacfd10afa40ff3fa603d49fb50476b9b83d68771b6d6090ad862343674ece6"
+    },
+    {
+      "file": "services/accounting/customer-receivable-backfill.service.ts",
+      "sha256": "495cbcff9247cd367f88572fcd488cbf6b516db5c0bf3d0d173121f1305868d8"
+    },
+    {
+      "file": "services/accounting/customer-receivable-document.service.ts",
+      "sha256": "bf1d02cd27762d0d1e717300c50cb2d8501bfa3e89775396b05ac999b134f41a"
+    },
+    {
+      "file": "services/accounting/customer-receivable-lifecycle.service.ts",
+      "sha256": "6047d97fe8fe2e29211bd573e88c9877a5a944fd5cfc4405588989a5fbacdbfd"
+    },
+    {
+      "file": "services/accounting/customer-settlement-reversal.service.ts",
+      "sha256": "c8bc8290acdddcfb43878905dd9d76e2b17e3696784ec9c1dd238eb7b72c942d"
+    },
+    {
+      "file": "services/accounting/customer-settlement.schemas.ts",
+      "sha256": "1c6cd8a887b45462cbd7dfd5275def0778737ad6b68743546fb77a6acee90e6d"
+    },
+    {
+      "file": "services/accounting/customer-settlement.service.ts",
+      "sha256": "d4f5ef8b50fe6b450d7a3eda1889e864809c12abf2fde1fc7a05d9f90b1afa6c"
+    },
+    {
+      "file": "services/accounting/customer-statement-access.service.ts",
+      "sha256": "9768f75d576312cb3cbd074fd0ead2abf8a7e1875946007682db0c988a3cae08"
+    },
+    {
+      "file": "services/accounting/customer-statement-delivery-envelope.ts",
+      "sha256": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad"
+    },
+    {
+      "file": "services/accounting/customer-statement-delivery.service.ts",
+      "sha256": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de"
+    },
+    {
+      "file": "services/accounting/customer-statement-recipient-action.service.ts",
+      "sha256": "6b129185a08f51a4562cb76d36e9b79292a79ceb858e307211900203d8ecdeaf"
+    },
+    {
+      "file": "services/accounting/customer-statement-token.ts",
+      "sha256": "2e332a848e2183cb2567941695326ba2c69e4f55196827d33c44b5fc1a097a05"
+    },
+    {
+      "file": "services/accounting/customer-statement.schemas.ts",
+      "sha256": "2a52c60020a6c033715d8725295b383e040e9326120be4ea78b15446a622616b"
+    },
+    {
+      "file": "services/accounting/customer-statement.service.ts",
+      "sha256": "a252a2300f9b7bf407cfb46377c2963f09aad1a14bc4fb2b5f52254c37a7c4c8"
+    },
+    {
+      "file": "services/accounting/default-posting-rules.ts",
+      "sha256": "442c4e4727a10427916ff2aac4898313496cecbf3deb8fabd480e5d44829a3d8"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-accountant-review-queue-contracts.ts",
+      "sha256": "3f3e8e50104aeeb0d7c2e34a28044df9b936552adbbccdc2fa8ddc73db040db4"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-accountant-review-queue.service.ts",
+      "sha256": "1fe3571904e47d9380a0501125c9947168d9877b25b894be195510026f505df9"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-request-queue-contracts.ts",
+      "sha256": "7875e535f82b177c8b877c5ee80551e6b1691a22daa33470f6797379bae3c7ad"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-request-queue.service.ts",
+      "sha256": "8d3e16301df7052cd3faae667c6dcdbd5595410191c733fa793b768d44a3558d"
+    },
+    {
+      "file": "services/accounting/missing-close-evidence-response-acceptance-contracts.ts",
+      "sha256": "7fb261e866065aeed90819fd6dfe649e1ee7cf202f14b3e4fcbb5b28747ae957"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "sha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2"
+    },
+    {
+      "file": "services/communication/__tests__/accountant-client-invite-worker.service.test.ts",
+      "sha256": "4f4a9f86ce9af370734002bc605ae54d6dfefe676a562d0983823129171af472"
+    },
+    {
+      "file": "services/communication/__tests__/accountant-client-invite.provider.test.ts",
+      "sha256": "737d7d95ac9f0670f53f14cf5e05d4e6eedd833490bc652323d2562dda4837b3"
+    },
+    {
+      "file": "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts",
+      "sha256": "b6b2064d2a2afb431c4fe4936a5966831cc4f82e915a288de18835e3ade49463"
+    },
+    {
+      "file": "services/communication/__tests__/customer-statement-delivery.provider.test.ts",
+      "sha256": "f3919f2aecf3d5e39ea68f8232bcecbad167dd17aa288054323a273f3d0c0642"
+    },
+    {
+      "file": "services/communication/accountant-client-invite-worker.service.ts",
+      "sha256": "15a265f1021f3f139714a379faf5bfb5b42f6f6e3433108c2fe86161121b73eb"
+    },
+    {
+      "file": "services/communication/accountant-client-invite.provider.ts",
+      "sha256": "42ab5d5bb82e349f40f6a2871edbd1fd2a8165749797dffbdae3101f4c360fc9"
+    },
+    {
+      "file": "services/communication/customer-statement-delivery-worker.service.ts",
+      "sha256": "0f87d4666c537fa27da6aa10dea88a745cff190c38168d2fc4261917baa314e6"
+    },
+    {
+      "file": "services/communication/customer-statement-delivery.provider.ts",
+      "sha256": "dff95a73a1b783655847a2a1ebab17c33bad68e51b3e13af887d21cb4a7cd37d"
+    },
+    {
+      "file": "services/manager-action-center/__tests__/manager-action-center.service.test.ts",
+      "sha256": "544f7112bc2d3cf65472e7239dea58d5efdc25e816bd94f0cbe7c8fb66a45ee4"
+    },
+    {
+      "file": "services/manager-action-center/manager-action-center-contracts.ts",
+      "sha256": "ab3442b948aa02025d2fed4b79d9627fcab7e6cd571efdcdee40a6074c286d79"
+    },
+    {
+      "file": "services/manager-action-center/manager-action-center.service.ts",
+      "sha256": "2ba3e9e17bfd243c7fe28d4b39efe6a5fc8f88e89344fcd5ae4dfd230b020bca"
+    },
+    {
+      "file": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "0a40f867ddfa4c2840d35c15f837ac531962103408c986df1f5e02bf74b768a2"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "sha256": "5a5800ccc8e0fb11a75dd71f47e0e761b073f5e569f8d70cbd4662b3736ca097"
+    },
+    {
+      "file": "services/referrals/__tests__/referral-attribution.service.test.ts",
+      "sha256": "665f1835094a977832ae703fb4fccca0aa73ab5c4f0f470245981f79e8bd7c6c"
+    },
+    {
+      "file": "services/referrals/__tests__/referral-funnel-read-model.service.test.ts",
+      "sha256": "580e8570beddd6974ee97ed5c40364fb7ac39672fa04466267e44a8cd08f7db5"
+    },
+    {
+      "file": "services/referrals/referral-attribution.service.ts",
+      "sha256": "50bf6b94547b11f290bd2c41d2aa941f78ab9ac11bf027434d52c10eab9ff3fd"
+    },
+    {
+      "file": "services/referrals/referral-funnel-read-model.service.ts",
+      "sha256": "b4b131550424314b14df639f94955a31e8942ccd29e4efbdcd87d5661c20a96d"
+    },
+    {
+      "file": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "f892c4f9298c0cba4d579f13d35ffe37a67e0168cd60ba0cd28598962d8c734c"
+    },
+    {
+      "file": "services/users/user-identity.service.ts",
+      "sha256": "0c799c860493425aff1ae59072d1e99c1ab1e735d72b958607dd3df60e6a60b8"
+    },
+    {
+      "file": "types/types.ts",
+      "sha256": "ec95e121ad3d6376e184e39bf9c444196823a0c86298f467a6c0e3c1b3d94a0a"
+    },
+    {
+      "file": "what-next/prisma-fresh-replay-certification-referral.json",
+      "sha256": "f6ddc4ef0a42962a39432ac04852e7a49d14ee5475b1526a20a20a4959cec03e"
+    },
+    {
+      "file": "what-next/prisma-fresh-replay-certification-referral.md",
+      "sha256": "a213d4169ee33cc6597db106c31d7acbe1a2eed0a8de169248ef9c0fad88214c"
+    },
+    {
+      "file": "what-next/prisma-migration-deployment-readiness-referral.json",
+      "sha256": "96d6773504958e20018e25628a1ca02178acde56025bac87aa63a61e71db7d32"
+    },
+    {
+      "file": "what-next/prisma-migration-deployment-readiness-referral.md",
+      "sha256": "f7f922efa0388637df46aeb5962f6343da404c5510530d87909823d80b6331c0"
+    },
+    {
+      "file": "what-next/prisma-migration-history-health-referral.json",
+      "sha256": "af4e0a578e6102ec223aff20cc40dc1b7a2701745f45df57daa2ac397017a0c8"
+    },
+    {
+      "file": "what-next/prisma-migration-history-health-referral.md",
+      "sha256": "e340fcaa1230d58627b4feade51183ddb46ad18d0225dd34f599c8a4df8bbb0c"
+    },
+    {
+      "file": "what-next/prisma-referral-postgres-schema-drift.sql",
+      "sha256": "ae4829384d4eff8b413c34a50c4aadc6349628255d949df93abb6e4cf2b75070"
+    },
+    {
+      "file": "what-next/referral-browser-dashboard.png",
+      "sha256": "ee34be9922bb446aa4e625d3f6b80778eaf5ce306f00bc69928d7115248276b6"
+    },
+    {
+      "file": "what-next/referral-browser-delivery-queued.png",
+      "sha256": "76250b1a893a2370aa2738511c17e3118bf5026b2adde25d3155530f1fb93bc1"
+    },
+    {
+      "file": "what-next/referral-browser-statement-generated.png",
+      "sha256": "e8e4212f16bd8b3e2e443e1b4dd1039f87f2f38ea12b8d984ad893f59cfdb89f"
+    },
+    {
+      "file": "what-next/referral-browser-statement-page.png",
+      "sha256": "9f0c0e2df30ba6ced1f957140e7262bd02fb6ba99d30475f278f9bd5058b2831"
+    },
+    {
+      "file": "what-next/referrals/ACCOUNTANT_CLOSE_PORTAL_REPORT_2026-08-08.md",
+      "sha256": "1c0119c1c5b30cf9968e28b7de55a4ce63bbe6d50ab2a76aea1a18c66daa4697"
+    },
+    {
+      "file": "what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_ACCEPTANCE_SLICE_432_REPORT_2026-08-08.md",
+      "sha256": "4e36717aafb8335d4ed292348780b78cafc565807f397cd951775ba19811d7a8"
+    },
+    {
+      "file": "what-next/referrals/ACCOUNTANT_MISSING_PROOF_RESPONSE_REVIEW_QUEUE_SLICE_431_REPORT_2026-08-08.md",
+      "sha256": "4bb78955e731059c42bd0a347b4f7e8a456298a4af7e46dfbfa7ad79de4bc962"
+    },
+    {
+      "file": "what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_COMMAND_SLICE_429_REPORT_2026-08-08.md",
+      "sha256": "e3e8dd4d60a44ee2acac2163ca7c4784e9256cf7cbcd9c5a10f2c4c875ca1501"
+    },
+    {
+      "file": "what-next/referrals/CLIENT_MISSING_PROOF_RESPONSE_STATE_PROJECTION_SLICE_430_REPORT_2026-08-08.md",
+      "sha256": "0ed93195bbb8352f478bc075f9dd7e198095715b4aa53f23fc8a7994f56080d4"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_LEDGER_BALANCE_INTEGRITY_KERNEL_SLICE_434_REPORT_2026-08-08.md",
+      "sha256": "81b53b6d05945eecfd2bac0603bcf6410a97748a8c699cafd941da99b35f6ab0"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_REFERRAL_MIGRATION_BASELINE_REPAIR_2026-08-09.md",
+      "sha256": "4bfaf8a9ebe2ec2334f3a140bf2e62ade2705b6883f95a5595aba6a3d33a57cb"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_REFERRAL_PILOT_EVIDENCE_INPUT.template.json",
+      "sha256": "880899c589c9b9aec0555230364e44ad61ffefbc7b9c87ef0cb66672714b5e6b"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_REFERRAL_RELEASE_SCOPE_POLICY.json",
+      "sha256": "f2213dc07e9585ca2c2eff006604248139df831d42563223b0525583d563ee67"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_REFERRAL_SHARED_HUNK_POLICY.json",
+      "sha256": "53cb7f34ae674f7515910dedd7e13778a1b4aa9ff54add7ec98129225da7f3c1"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_REFERRAL_TAKEOFF_READINESS_2026-08-09.md",
+      "sha256": "d4f2123df41e04e732914567c7d534a8c86ae2af4bf093a6205e550b581e52e8"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_SETTLEMENT_ALLOCATION_SOURCE_FOUNDATION_SLICE_435_REPORT_2026-08-08.md",
+      "sha256": "f97fe58ee3dea67ef3b6d717d34a4d046d32d1eccc6714bbd247b952fa3fc8d1"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_SETTLEMENT_COMPENSATING_REVERSAL_SLICE_436_REPORT_2026-08-08.md",
+      "sha256": "d8484e2916d3412f008d960f9a1c844cf389e53be7dbc35623195422dd04946b"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_SETTLEMENT_REVERSAL_PROTECTED_ACTION_SLICE_437_REPORT_2026-08-08.md",
+      "sha256": "7297c878ab585efcfc9ee168a8b52651e1718b101ceebf44ff4188d3881dd3a8"
+    },
+    {
+      "file": "what-next/referrals/CUSTOMER_STATEMENT_ENTITLEMENT_ACTIVATION_2026-08-09.md",
+      "sha256": "a4b9e7389ffc2827d03d3aed3a444d9b68941f5d34ebdf7f2b6f98216078f2db"
+    },
+    {
+      "file": "what-next/referrals/customer-referral-pilot-evidence-readiness.json",
+      "sha256": "0c66cb82646aede6adbe0dff8d77abf984c38d4c731ec93290fdd9fea0c936ff"
+    },
+    {
+      "file": "what-next/referrals/customer-referral-pilot-evidence-readiness.md",
+      "sha256": "1ed4fb9a69aefa335b203d40232859530ef1cf0dda13d1324b305ca9f8a3cbad"
+    },
+    {
+      "file": "what-next/referrals/DAILY_TRUTH_COMMAND_CENTER_REPORT_2026-08-08.md",
+      "sha256": "42a7605fcccc5d62c4f9ffdceee8cf1600e93668c0f5054c944edce0adf2428f"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_EXIT_PHASE_5_ENTRY_REPORT_2026-08-08.md",
+      "sha256": "dd3ef41d7d36c0a6b6005917b48a5e493afb8b81be0d8f86674ec2ff01b8af82"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "bfdaf20d76e246905d76c0e4c67ad407af82e35008b50f3dc758ead44f6cfd5a"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_430_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "182ee5c041e642403e3267c5d90f9ae9f8b3d6b3448f1da83297f1cd7f40e79b"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_431_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "2a3c45e75787b268d77a2905db9c0d907d1634000a7bbf2ff1e125b24aa13406"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_POST_SLICE_432_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "f101f03ad3ee5ad4fd2e07609cb03a46291110fa97d3b9931839a48ba68be98a"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_429_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "9f12129442aac3bcee1129d0572f23242f6995875562b360a6e776875e4e60a0"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "7452a982f8967978c75172f657c7926532c49b79ab1d9fa3700947ef3f556f82"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_430_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "8e82b095c10d6ea493b19ebddcf182e6328b921caa77fd7aae0dd2e4534a4c04"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "69026c67a82a821c56a6fe53da6ac737083c19ae5fcb1bad59f21e86aee765e7"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_431_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "3afd204e06d2347a518474f676db1cd431e5acf22967e8fcf6c2c2e719a62564"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "a575b801ac2073b9619a2ac1e33727481454a2948515fffd0e880be2dc0fdefd"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_432_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "f3dc504678c67152a620309eacdf178e7f3f3b6d00ff2003eb0594698aaef473"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_4_SLICE_433_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "a0659058d6a024511129913e98adc6d57190a966b3f53da579870d96bde44dbf"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_433_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "27a7a3b97f6934520f8ceddf44265cff42b824ba023f4a54d7b6e120f57b2f1f"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_434_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "23ee4f0ce90e2eecdc2adff2d794ebebfdd01cec393295d6197939ad980d13db"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_435_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "0d1d22a822a756bbf9805285db05772eb0e6cfdc357ac7e19dc0be9404aa496a"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "05ca14903f83e7bb949c957b182e070302d96f57835b77b172890525700dc45f"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_436_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "1d669f6bd7dc781e323ee0d207f2f20117147c0362ec751174e145c0a9446ded"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "f26bd24901854b4e4004e9baca161054d10bd65cb176a7576e0de0cb16c1512b"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_437_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "4c16b8be10354a090f810688a6282ee4de0d0230b360c877b162e64f63b260f0"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_POST_SLICE_438_NEXT_SLICE_AUDIT_REPORT_2026-08-08.md",
+      "sha256": "00cdb05aa762c6b414249f22d371851ae8fe77420de02bee0efcc5230a5c68b3"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_RE_AUDIT_POST_SLICE_438_CAVEMAN_FULL_REPORT_2026-08-08.md",
+      "sha256": "c2ed3d021cabcbcf15c47aa71e5c8c74eecec0271c15ae0b175b5b59b55444ad"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_434_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "b7a6e3f7e8b5c9715f0f847339741defe1fd8a882ef6d6971ecdbf9f789d5d5d"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "44f484df41b7a9e23d4b5e4901b983af2c013e2a5db22dcfe658dec223883fdc"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_435_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "b4c95775133746672cf63f24b911a727f407cd1258b26614e03b63b5366a69d4"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "d9b627e02dd753b46565505270eaec0ae8f4473fa02b0c72bb2001972525cfc5"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_436_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "d2d1a68df5c8d0c539d96b6f62735436906dc97909c424ed5c400931686ff50a"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_HANDOFF_REPORT_2026-08-08.md",
+      "sha256": "8dd91b703b1edef28930fca6bc780240adb4b02cb360d509f9e067f5ff279f80"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_437_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "a95bf601bc5567e07f7126fd67dae4121c7a2f9c0cdf8c4936f98bdcbd5843e4"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_PHASE_5_SLICE_438_SELECTION_REPORT_2026-08-08.md",
+      "sha256": "37ec12e713ddba5e09e27d51bdb1eb267ff14577f2468f6a7656c7b073044c21"
+    },
+    {
+      "file": "what-next/referrals/REFERRAL_WAR_ROOM_STATUS.md",
+      "sha256": "57f849e04e5afed8f840209cf6dae84b60a70a064f430e6fa515ceb218979736"
+    },
+    {
+      "file": "what-next/referrals/STATEMENT_PROOF_NETWORK_REPORT_2026-08-08.md",
+      "sha256": "8670e598555ae09e77a23e3ae4e6783d0412696a8a06f3323bb30cb298b618d6"
+    },
+    {
+      "file": "what-next/release-secret-preflight-referral-local.json",
+      "sha256": "b7370b5156471e43192bd4c0042071cecd824f986e91d3976efd26a5ca8e525c"
+    },
+    {
+      "file": "what-next/release-secret-preflight-referral-local.md",
+      "sha256": "9bea08225a4816a90ac74168eb2994e3db6baf5ffe7ce3df78beb8dba403dc40"
+    },
+    {
+      "file": "what-next/release-secret-preflight-referral-release.json",
+      "sha256": "8671c2457295591f882c018075c4050e0035bd8ea440f41bbf1868752eecf05c"
+    },
+    {
+      "file": "what-next/release-secret-preflight-referral-release.md",
+      "sha256": "a033b69ebf73a26e3d56f0496c23f7392d9caa42f41cdceb59030edcf1e28eb3"
+    },
+    {
+      "file": "what-next/report-trust-export-readiness-referral-final.json",
+      "sha256": "32666051f084534af92bdaf4a1bbf934628820af15aee3122e5d50c3c087796e"
+    },
+    {
+      "file": "what-next/report-trust-export-readiness-referral-final.md",
+      "sha256": "1b1e8c04423c188e60ed5753e76eb1afd71a56ca1f975e4de8757f83e8df806a"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_429_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "0cff5c5c3b523b0f38120f47d7d33507d82b913c4f092404c64f4493d2853258"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_430_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "f2dd7f472d6e28445acf6128f2ed8c47a6fed99d0f93476e2be3a3eb0f7ae9fc"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_431_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "59b23a15be8f39003cd69f4ba5911f3c934089f014003addd906d99ea4130791"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_432_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "ff37258ebc51dedd6f53b1b0514ed122b22f8e74c68186f0f63ab204ca7460d0"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_433_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "f2eef7162709cd124090e4b00df17ee15d6a16a2592dbeff06b01895ccbf9bf9"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_434_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "474c025f418fba4f48b64fef2086105a860fcf37aaf5daee5f8a1f34825e2a32"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_435_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "f6251e616d290203423aab91e6a6cdbd647be4ea7bb480576d59b9c3fb3d5f18"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_436_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "8fb0b52ee16e09b3d83e31480b41191b123a74954c976871b74bd4f049ecb6dd"
+    },
+    {
+      "file": "what-next/skills-life-cycle/STOQUIFY_SLICE_437_RELEASE_EVIDENCE_REPORT_2026-08-08.md",
+      "sha256": "832c4abdb538e673a2c89a150de375fda3968a0d96e1e1cae64de8c6310259ed"
+    }
+  ],
+  "classificationBlockers": [
+    "release_scope_has_unclassified_paths"
+  ],
+  "releaseBlockers": [
+    "release_scope_has_unclassified_paths",
+    "unrelated_user_index_changes_present",
+    "mixed_shared_files_require_hunk_isolation",
+    "architecture_graph_must_be_regenerated_on_isolated_revision",
+    "exact_referral_git_revision_not_created",
+    "security_diff_scan_not_run_on_exact_revision"
+  ],
+  "safety": {
+    "readOnlyGitInventory": true,
+    "stagesFiles": false,
+    "commitsFiles": false,
+    "modifiesIndex": false,
+    "protectsUnrelatedStagedChanges": true,
+    "graphRefreshBoundToIsolatedRevision": true
+  }
+}

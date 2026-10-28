@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-08-22",
+  "candidateCommit": "7736416bd57fc45d3b618ba397850d39320ac3e1",
+  "productionAuthorized": false,
+  "blockers": [
+    {"id": "B01", "title": "Application production build", "status": "READY_REVERIFY_AT_FREEZE", "gate": "build:app", "ownerRole": "ENGINEERING_RELEASE_MANAGER"},
+    {"id": "B02", "title": "Payroll immutability runtime proof", "status": "READY_REVERIFY_AT_FREEZE", "gate": "payroll:immutability:runtime", "ownerRole": "ENGINEERING_RELEASE_MANAGER", "evidence": "isolated PostgreSQL proof: 9/9 triggers, 14/14 blocked mutations, 3/3 allowed lifecycle; production not verified"},
+    {"id": "B03", "title": "Production database target and migration history", "status": "BLOCKED_EXTERNAL_CONFIG", "gate": "prisma:migration:release:preflight + direct history health", "ownerRole": "DATABASE_MIGRATION_OWNER"},
+    {"id": "B04", "title": "Managed production release secrets", "status": "BLOCKED_EXTERNAL_CONFIG", "gate": "release:secrets:preflight:release", "ownerRole": "MANAGED_SECRETS_OWNER"},
+    {"id": "B05", "title": "Cameroon source-artifact hash binding", "status": "READY_REVERIFY_AT_FREEZE", "gate": "statutory country-pack source hash verification", "ownerRole": "STATUTORY_COUNTRY_PACK_OWNER"},
+    {"id": "B06", "title": "Cameroon qualified expert approval", "status": "REQUIRES_EXPERT_REVIEW", "gate": "statutory:country-pack:gate", "ownerRole": "QUALIFIED_CAMEROON_REVIEWER_AND_INDEPENDENT_CHECKER"},
+    {"id": "B07", "title": "Credential rotation and revocation", "status": "BLOCKED_DEPENDENCY", "gate": "agent:credential-rotation:gate", "ownerRole": "SECURITY_AUTHORITY"},
+    {"id": "B08", "title": "Operational release evidence", "status": "BLOCKED_DEPENDENCY", "gate": "agent:operational-release:gate", "ownerRole": "SRE_OBSERVABILITY_OWNER"},
+    {"id": "B09", "title": "Clean immutable release freeze", "status": "WAIT_FOR_STABLE_TREE", "gate": "agent:phase2a:freeze:gate", "ownerRole": "ENGINEERING_RELEASE_MANAGER"},
+    {"id": "B10", "title": "Governance approvals and ownership", "status": "BLOCKED_DEPENDENCY", "gate": "release evidence and owner acceptance", "ownerRole": "PRODUCT_OWNER_AND_SECURITY_AUTHORITY"},
+    {"id": "B11", "title": "Phase 2B entry", "status": "BLOCKED_DEPENDENCY", "gate": "agent:phase2b:entry:gate + enterprise Gate 017", "ownerRole": "INDEPENDENT_FINAL_RELEASE_REVIEWER"},
+    {"id": "B12", "title": "Phase 3 production decision", "status": "NOT_STARTED", "gate": "agent:phase3:entry:gate", "ownerRole": "INDEPENDENT_FINAL_RELEASE_REVIEWER"},
+    {"id": "R01", "title": "Raw-error boundary", "status": "ENGINEERING_BLOCKED", "severity": "MEDIUM", "count": 8, "gate": "error:boundary:fail", "ownerRole": "DOMAIN_CODE_OWNERS_AND_SECURITY_REVIEWER"},
+    {"id": "M01", "title": "Destructive migration exact-hash decisions", "status": "BLOCKED", "severity": "HIGH_RELEASE_CONTROL", "count": 13, "gate": "prisma:migration:safety:gate", "ownerRole": "DATABASE_MIGRATION_OWNER_AND_INDEPENDENT_CHECKER"},
+    {"id": "C01", "title": "Country adapter official DGI technical contract", "status": "EXTERNAL_EVIDENCE_REQUIRED", "gate": "country adapter external conformance", "ownerRole": "CAMEROON_DGI_PROVIDER_OWNER"},
+    {"id": "C02", "title": "Country adapter expert production review", "status": "EXTERNAL_EVIDENCE_REQUIRED", "gate": "statutory expert approval", "ownerRole": "QUALIFIED_CAMEROON_REVIEWER"},
+    {"id": "C03", "title": "Regulator production credentials", "status": "EXTERNAL_EVIDENCE_REQUIRED", "gate": "managed credential and rotation gates", "ownerRole": "MANAGED_SECRETS_OWNER_AND_CAMEROON_DGI_PROVIDER_OWNER"},
+    {"id": "C04", "title": "External sandbox conformance", "status": "EXTERNAL_EVIDENCE_REQUIRED", "gate": "provider sandbox conformance", "ownerRole": "CAMEROON_DGI_PROVIDER_OWNER"},
+    {"id": "L01", "title": "Windows generated report lock", "status": "NOT_REPRODUCED_CLOSED_WITH_MONITORING", "gate": "exclusive file-open probe + clean CI policy run", "ownerRole": "ENGINEERING_RELEASE_MANAGER"},
+    {"id": "O01", "title": "Named owner and approval binding", "status": "BLOCKED_EXTERNAL_INPUT", "gate": "external evidence intake", "ownerRole": "EXECUTIVE_SPONSOR"},
+    {"id": "P01", "title": "Pilot country and capability approval", "status": "PENDING_STEERING_APPROVAL", "gate": "WP0 steering decision", "ownerRole": "EXECUTIVE_SPONSOR_AND_PRODUCT_OWNER"}
+  ]
+}
+

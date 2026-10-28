@@ -72,6 +72,8 @@ function commandData(): PayrollCommandReadModel {
       canReviewRuns: true,
       canCalculateRuns: false,
       canApproveRuns: false,
+      canEmitPayslips: false,
+      canPostRuns: false,
       canReleasePayments: false,
       canPrepareDeclarations: false,
       canExportPayroll: false,
@@ -116,6 +118,10 @@ function commandData(): PayrollCommandReadModel {
       currentPeriodRuns: 1,
       currentPeriodPaymentBatches: 1,
       currentPeriodDeclarations: 1,
+      payrollAuditProofGates: 3,
+      payrollAuditBlockedProofGates: 0,
+      payrollAuditReviewProofGates: 0,
+      payrollAuditSourceLinks: 1,
     },
     readiness: {
       employees: { state: "ACTION_REQUIRED", blockerCodes: ["PAYROLL_EMPLOYEE_USER_MAPPING_GAP"], source: "payroll.employee_source", message: "Employee/user mappings need cleanup.", counts: { activeEmployees: 2 } },
@@ -130,6 +136,7 @@ function commandData(): PayrollCommandReadModel {
       declarations: { state: "ACTION_REQUIRED", blockerCodes: ["PAYROLL_DECLARATION_ACTION_REQUIRED"], source: "payroll.declarations", message: "Declaration data is available for the current period." },
       posting: { state: "BLOCKED", blockerCodes: ["PAYROLL_LEDGER_POSTING_BLOCKERS_OPEN"], source: "payroll.ledger_posting", message: "Ledger posting blockers must be cleared." },
       close: { state: "BLOCKED", blockerCodes: ["PAYROLL_CLOSE_CRITICAL_BLOCKERS_OPEN"], source: "accounting.close_assurance", message: "Critical close blockers are open." },
+      accountingAuditProof: { state: "READY", blockerCodes: [], source: "accounting.payroll_auditor_proof", message: "Payroll auditor proof gates are pass-ready for close evidence.", counts: { proofGateCount: 3, blockedProofGateCount: 0, reviewProofGateCount: 0, sourceLinkCount: 1 } },
       adapterOperations: { state: "BLOCKED", blockerCodes: ["PAYROLL_PROVIDER_OPERATIONS_BLOCKED", "PAYROLL_AUTHORITY_ADAPTER_DEAD_LETTER", "PAYROLL_ADAPTER_CERTIFICATION_GAPS", "PAYROLL_ADAPTER_CHAOS_GATE_MISSING"], source: "payroll.adapter_operations", message: "Adapter operations have provider or authority dead-letter blockers." },
       pilotCertification: { state: "ACTION_REQUIRED", blockerCodes: ["PAYROLL_PILOT_CYCLE_SIGNOFF_REQUIRED"], source: "payroll.pilot_cycle_certification", message: "Controlled pilot-cycle evidence is clean and awaiting required signoffs." },
       finalRelease: { state: "BLOCKED", blockerCodes: ["FINAL_STATUTORY_SCENARIO_COVERAGE_NOT_READY"], source: "payroll.final_release_readiness", message: "Final release evidence pack still has open production-readiness blockers." },
@@ -144,11 +151,11 @@ function commandData(): PayrollCommandReadModel {
       { code: "PAYROLL_FINAL_RELEASE_READINESS_BLOCKED", domain: "certification", severity: "critical", message: "Final HR/payroll production release readiness still has open evidence blockers.", source: "services/payroll/payroll-final-release-readiness.service.ts", count: 1 },
     ],
     nextActions: [
-      { id: "activate-payroll-contracts", label: "Activate missing payroll contracts", priority: "high", requiredPermission: "payroll.contracts.manage", source: "payroll.contracts", blockedBy: ["PAYROLL_ACTIVE_CONTRACT_GAP"], href: "/dashboard/payroll/contracts", allowed: true },
-      { id: "resolve-payroll-payment-exceptions", label: "Resolve payroll payment reconciliation exceptions", priority: "high", requiredPermission: "payments.reconciliation.exception.resolve", source: "payroll.payment_reconciliation", blockedBy: ["PAYROLL_PAYMENT_RECON_EXCEPTIONS_OPEN"], href: "/dashboard/finance/reconciliation", allowed: true },
-      { id: "prepare-payroll-declarations", label: "Prepare payroll declarations", priority: "normal", requiredPermission: "payroll.declarations.prepare", source: "payroll.declarations", blockedBy: ["PAYROLL_RUN_NOT_POSTED"], href: null, allowed: false },
-      { id: "clear-salary-change-queue", label: "Clear pending salary change approvals", priority: "normal", requiredPermission: "payroll.salary_changes.approve", source: "payroll.compensation", blockedBy: ["PAYROLL_SALARY_CHANGE_QUEUE_OPEN"], href: "/dashboard/payroll/compensation", allowed: false },
-      { id: "review-payroll-adapter-operations", label: "Review payroll adapter operations", priority: "critical", requiredPermission: "payroll.payments.reconcile", source: "payroll.adapter_operations", blockedBy: ["PAYROLL_PROVIDER_OPERATIONS_BLOCKED", "PAYROLL_AUTHORITY_ADAPTER_DEAD_LETTER", "PAYROLL_ADAPTER_CERTIFICATION_GAPS", "PAYROLL_ADAPTER_CHAOS_GATE_MISSING"], href: "/dashboard/payroll/payments", allowed: true },
+      { id: "activate-payroll-contracts", label: "Activate missing payroll contracts", priority: "high", requiredPermission: "payroll.contracts.manage", source: "payroll.contracts", blockedBy: ["PAYROLL_ACTIVE_CONTRACT_GAP"], href: "/dashboard/payroll/contracts", allowed: true, requiresFreshAuth: false, requiresSeparateApprover: false },
+      { id: "resolve-payroll-payment-exceptions", label: "Resolve payroll payment reconciliation exceptions", priority: "high", requiredPermission: "payments.reconciliation.exception.resolve", source: "payroll.payment_reconciliation", blockedBy: ["PAYROLL_PAYMENT_RECON_EXCEPTIONS_OPEN"], href: "/dashboard/finance/reconciliation", allowed: true, requiresFreshAuth: false, requiresSeparateApprover: false },
+      { id: "prepare-payroll-declarations", label: "Prepare payroll declarations", priority: "normal", requiredPermission: "payroll.declarations.prepare", source: "payroll.declarations", blockedBy: ["PAYROLL_RUN_NOT_POSTED"], href: null, allowed: false, requiresFreshAuth: false, requiresSeparateApprover: false },
+      { id: "clear-salary-change-queue", label: "Clear pending salary change approvals", priority: "normal", requiredPermission: "payroll.salary_changes.approve", source: "payroll.compensation", blockedBy: ["PAYROLL_SALARY_CHANGE_QUEUE_OPEN"], href: "/dashboard/payroll/compensation", allowed: false, requiresFreshAuth: false, requiresSeparateApprover: false },
+      { id: "review-payroll-adapter-operations", label: "Review payroll adapter operations", priority: "critical", requiredPermission: "payroll.payments.reconcile", source: "payroll.adapter_operations", blockedBy: ["PAYROLL_PROVIDER_OPERATIONS_BLOCKED", "PAYROLL_AUTHORITY_ADAPTER_DEAD_LETTER", "PAYROLL_ADAPTER_CERTIFICATION_GAPS", "PAYROLL_ADAPTER_CHAOS_GATE_MISSING"], href: "/dashboard/payroll/payments", allowed: true, requiresFreshAuth: false, requiresSeparateApprover: false },
     ],
     adapterOperations: {
       summary: {
@@ -329,6 +336,28 @@ function commandData(): PayrollCommandReadModel {
         paymentBatchCount: 1,
         declarationCount: 1,
         updatedAt: "2026-06-26T07:00:00.000Z",
+        lifecycle: {
+          status: "CALCULATED",
+          version: 1,
+          transitionEvidence: "NOT_APPLICABLE",
+          writeEnabled: true,
+          complete: false,
+          blockerCodes: [],
+          nextAction: {
+            id: "review",
+            label: "Review calculated payroll run",
+            requiredPermission: "payroll.runs.review",
+            requiresFreshAuth: true,
+            requiresSeparateApprover: true,
+            href: "/dashboard/payroll/runs",
+          },
+          stages: [
+            { stage: "REVIEWED", completed: false, actorPresent: false, transitionedAt: null, businessEventId: null, fromVersion: null, toVersion: null, origin: null, evidenceStatus: null },
+            { stage: "APPROVED", completed: false, actorPresent: false, transitionedAt: null, businessEventId: null, fromVersion: null, toVersion: null, origin: null, evidenceStatus: null },
+            { stage: "EMITTED", completed: false, actorPresent: false, transitionedAt: null, businessEventId: null, fromVersion: null, toVersion: null, origin: null, evidenceStatus: null },
+            { stage: "POSTED", completed: false, actorPresent: false, transitionedAt: null, businessEventId: null, fromVersion: null, toVersion: null, origin: null, evidenceStatus: null },
+          ],
+        },
       },
       latestPaymentBatch: {
         id: "batch-1",
@@ -401,8 +430,8 @@ function commandData(): PayrollCommandReadModel {
         blockerCount: 1,
         criticalBlockerCount: 1,
         highBlockerCount: 0,
-        gateCount: 3,
-        passGateCount: 2,
+        gateCount: 4,
+        passGateCount: 3,
         actionRequiredGateCount: 0,
         blockedGateCount: 1,
         missingGateCount: 0,
@@ -412,7 +441,7 @@ function commandData(): PayrollCommandReadModel {
           status: "BLOCKED",
           evidenceHash: "sha256:statutory-scenario-coverage",
           blockerCodes: ["FINAL_STATUTORY_SCENARIO_COVERAGE_NOT_READY"],
-          families: "8/9",
+          families: "9/10",
           missingReviewEvidenceCount: 1,
           sourceEvidenceHashCount: 1,
           requiredReviewTopicCount: 2,
@@ -430,6 +459,21 @@ function commandData(): PayrollCommandReadModel {
           targetFamilies: ["IRPP_PERIOD"],
           freshAuthSatisfied: true,
           approvalEvidenceHashPresent: true,
+        },
+        browserValidation: {
+          gateStatus: "PASS",
+          evidenceHash: "sha256:browser-validation",
+          blockerCodes: [],
+          checkedAt: "2026-07-02T04:30:00.000Z",
+          routeSmokeCheckedAt: "2026-07-02T04:22:09.000Z",
+          routeSmokeOk: true,
+          routeCount: 11,
+          expectedRouteCount: 11,
+          checkCount: 12,
+          surfaceCount: 12,
+          safeErrorCount: 0,
+          seriousViolationCount: 0,
+          mobileOverflowCount: 0,
         },
         gates: [
           {
@@ -456,13 +500,62 @@ function commandData(): PayrollCommandReadModel {
             evidenceHash: "sha256:policy-runtime",
             source: "what-next/payroll/payroll-immutability-runtime-check.json",
           },
+          {
+            key: "browser_validation",
+            label: "Authenticated browser and accessibility validation",
+            status: "PASS",
+            blockerCodes: [],
+            evidenceHash: "sha256:browser-validation",
+            source: "what-next/payroll/AQSTOQFLOW_PAYROLL_PROMPT_19_BROWSER_SMOKE_WARMUP_2026-07-02.json",
+          },
         ],
         redactionPolicy: "payroll-final-release-readiness-pack-redaction",
+      },
+      accountingAuditProof: {
+        available: true,
+        status: "PASS",
+        generatedAt: "2026-06-26T07:56:00.000Z",
+        scopeHash: "sha256:accountant-scope",
+        periodId: "acct-period-1",
+        trustLevel: "T4",
+        verdict: "CERTIFIED",
+        exportable: true,
+        blockerCount: 0,
+        criticalBlockerCount: 0,
+        highBlockerCount: 0,
+        proofGateCount: 3,
+        blockedProofGateCount: 0,
+        reviewProofGateCount: 0,
+        sourceLinkCount: 1,
+        sourceTableCount: 3,
+        redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+        redactionExcluded: ["employee names", "employee identifiers", "bank and mobile-money details", "raw salary rows", "raw authority/provider payloads"],
+        sourceTables: ["payroll_runs", "payroll_run_lines", "accounting_source_links"],
+        aggregateEvidence: { deductionRecoveryLedgerMappingGaps: 0, paymentRegisterProofGaps: 0, declarationRegisterProofGaps: 0 },
+        proofGates: [
+          { gate: "payroll.accounting.posting", status: "PASS", blockerCount: 0, blockerIds: [], evidence: ["ledger posting proof"] },
+          { gate: "payroll.payment.proof", status: "PASS", blockerCount: 0, blockerIds: [], evidence: ["payment proof"] },
+          { gate: "payroll.declarations.proof", status: "PASS", blockerCount: 0, blockerIds: [], evidence: ["declaration proof"] },
+        ],
+        blockers: [],
+        latestSourceLinks: [
+          {
+            sourceLinkHash: "sha256:payroll-source-link",
+            sourceType: "PAYROLL_RUN",
+            sourceNumber: "PR-2026-06",
+            sourceRefHash: "sha256:payroll-source-ref",
+            journalEntryNumber: "JE-2026-06",
+            postingBatchId: "batch-1",
+            postingStatus: "POSTED",
+            createdAt: "2026-06-26T07:45:00.000Z",
+          },
+        ],
       },
     },
     freshness: [
       { source: "payroll.period", asOf: "2026-06-26T07:00:00.000Z", status: "fresh", ageHours: 1 },
       { source: "payroll.workbench", asOf: "2026-06-26T07:30:00.000Z", status: "fresh", ageHours: 0.5 },
+      { source: "accounting.payroll_auditor_proof", asOf: "2026-06-26T07:56:00.000Z", status: "fresh", ageHours: 0.1 },
       { source: "payroll.pilot_cycle_certification", asOf: "2026-06-26T07:55:00.000Z", status: "fresh", ageHours: 0.1 },
       { source: "payroll.final_release_readiness", asOf: "2026-06-26T07:58:00.000Z", status: "fresh", ageHours: 0 },
     ],
@@ -474,7 +567,10 @@ function commandData(): PayrollCommandReadModel {
       employeeCoverageComplete: true,
       paymentEvidenceCoverageComplete: true,
       employeeBalanceCoverageComplete: true,
-      sourceServices: ["services/payroll/adapter-operations-read-model.service.ts", "services/payroll/payroll-control.service.ts", "services/payroll/payroll-pilot-cycle-certification.service.ts", "services/payroll/payroll-final-release-readiness.service.ts"],
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 3,
+      accountingAuditProofSourceLinkCount: 1,
+      sourceServices: ["services/payroll/adapter-operations-read-model.service.ts", "services/payroll/payroll-control.service.ts", "services/payroll/payroll-pilot-cycle-certification.service.ts", "services/payroll/payroll-final-release-readiness.service.ts", "services/accounting/data-trust.service.ts"],
     },
     workbench: {
       organizationId: "org-1",
@@ -645,10 +741,17 @@ describe("PayrollCommandCenter", () => {
     expect(screen.getAllByText("sha256:proof-backfill-certificate").length).toBeGreaterThan(0)
     expect(screen.getAllByText("READY_FOR_SIGNOFF").length).toBeGreaterThan(0)
     expect(screen.getByRole("heading", { name: "Final release readiness" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Auditor proof" })).toBeInTheDocument()
+    expect(screen.getByText("0 blocked, 0 review, 3 total gate(s)")).toBeInTheDocument()
     expect(screen.getAllByText("sha256:final-release-pack").length).toBeGreaterThan(0)
     expect(screen.getByText("payroll-final-release-readiness-pack-redaction")).toBeInTheDocument()
     expect(screen.getByText("Statutory setup and country-pack readiness")).toBeInTheDocument()
     expect(screen.getByText("Policy and payroll immutability runtime")).toBeInTheDocument()
+    expect(screen.getByText("Authenticated browser and accessibility validation")).toBeInTheDocument()
+    expect(screen.getByText("Browser validation")).toBeInTheDocument()
+    expect(screen.getByText("Route smoke 11/11; browser checks 12; surfaces 12")).toBeInTheDocument()
+    expect(screen.getByText("Safe errors")).toBeInTheDocument()
+    expect(screen.getAllByText("Mobile overflow").length).toBeGreaterThan(0)
     expect(screen.getAllByText("1 blockers").length).toBeGreaterThan(0)
     expect(screen.getByText("Mobile Money CM")).toBeInTheDocument()
     expect(screen.getByText("Provider health")).toBeInTheDocument()
@@ -686,6 +789,13 @@ describe("PayrollCommandCenter", () => {
     expect(screen.getAllByText("sha256:country-pack").length).toBeGreaterThan(0)
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }))
+    fireEvent.click(proofButtons[2])
+
+    expect(screen.getByText("Transition proof")).toBeInTheDocument()
+    expect(screen.getAllByText("NOT_APPLICABLE").length).toBeGreaterThan(0)
+    expect(screen.getByText("Trust Spine writes")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }))
     fireEvent.click(proofButtons[4])
 
     expect(screen.getByText("Country-pack register proof")).toBeInTheDocument()
@@ -698,6 +808,19 @@ describe("PayrollCommandCenter", () => {
     expect(screen.getAllByText("sha256:statutory-scenario-coverage").length).toBeGreaterThan(0)
     expect(screen.getByText("Review evidence hashes")).toBeInTheDocument()
     expect(screen.getByText("sha256:review-source-1")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }))
+    fireEvent.click(proofButtons[6])
+
+    expect(screen.getByText("Payroll auditor proof pack")).toBeInTheDocument()
+    expect(screen.getByText("Redaction mode")).toBeInTheDocument()
+    expect(screen.getByText("HASHES_AND_AGGREGATES_ONLY")).toBeInTheDocument()
+    expect(screen.getByText("Source link hashes")).toBeInTheDocument()
+    expect(screen.getByText("sha256:payroll-source-link")).toBeInTheDocument()
+    expect(screen.getByText("Gate details")).toBeInTheDocument()
+    expect(screen.getByText("payroll.accounting.posting:PASS, payroll.payment.proof:PASS, payroll.declarations.proof:PASS")).toBeInTheDocument()
+    expect(screen.queryByText("employeeNumber")).not.toBeInTheDocument()
+    expect(screen.queryByText("bankAccount")).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }))
     fireEvent.click(proofButtons[proofButtons.length - 2])
@@ -716,6 +839,17 @@ describe("PayrollCommandCenter", () => {
     expect(screen.getByText("Country-pack target families")).toBeInTheDocument()
     expect(screen.getByText("IRPP_PERIOD")).toBeInTheDocument()
     expect(screen.getByText("Country-pack fresh auth")).toBeInTheDocument()
+    expect(screen.getByText("Browser gate status")).toBeInTheDocument()
+    expect(screen.getByText("Browser gate hash")).toBeInTheDocument()
+    expect(screen.getAllByText("sha256:browser-validation").length).toBeGreaterThan(0)
+    expect(screen.getAllByText("Route smoke ok").length).toBeGreaterThan(0)
+    expect(screen.getByText("Authenticated routes")).toBeInTheDocument()
+    expect(screen.getByText("11/11")).toBeInTheDocument()
+    expect(screen.getByText("Browser checks")).toBeInTheDocument()
+    expect(screen.getByText("Surface checks")).toBeInTheDocument()
+    expect(screen.getByText("Safe-error states")).toBeInTheDocument()
+    expect(screen.getByText("Serious accessibility")).toBeInTheDocument()
+    expect(screen.getAllByText("Mobile overflow").length).toBeGreaterThan(0)
     expect(screen.getByText("Release gate requirements")).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: "Close" }))

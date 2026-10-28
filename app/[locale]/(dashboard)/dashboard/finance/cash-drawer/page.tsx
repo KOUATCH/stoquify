@@ -1,13 +1,17 @@
 import CashDrawerManagementDashboard from "@/components/pos/CashDrawerManagementDashboard"
 
-import { FinanceRouteAccess, type FinanceRouteParams } from "../FinanceRouteAccess"
+import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
 
-export default async function FinanceCashDrawerPage({ params }: { params: FinanceRouteParams }) {
-  return FinanceRouteAccess({
+export default async function FinanceCashDrawerPage({ params }: { params: Promise<{ locale: string }> }) {
+  const surface = routeByKey("finance-cash-drawer")
+
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-cash-drawer")
+  }
+
+  return withFinanceSurfaceAccess({
     params,
-    permissions: ["finance.cash-drawer.read", "finance.read"],
-    resource: "FinanceCashDrawer",
-    title: "Finance cash drawer",
-    children: <CashDrawerManagementDashboard />,
+    surface,
+    onAllowed: () => <CashDrawerManagementDashboard />,
   })
 }

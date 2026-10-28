@@ -621,7 +621,7 @@ export function ControlPlaneStatusPanel({
         <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.noEvents}</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[840px] text-sm">
+          <table className="dashboard-table-base w-full min-w-[840px] text-sm">
             <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
               <tr>
                 <th className="px-4 py-3">{t.source}</th>
@@ -885,7 +885,7 @@ export function AccountMappingsPanel({
   return (
     <Panel title={t.mappingsTitle} description={t.mappingsDescription}>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[780px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[780px] text-sm">
           <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
             <tr>
               <th className="px-4 py-3">{t.required}</th>
@@ -948,7 +948,7 @@ export function DefaultJournalsPanel({
   return (
     <Panel title={t.journalsTitle} description={t.journalsDescription}>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[620px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[620px] text-sm">
           <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
             <tr>
               <th className="px-4 py-3">{t.type}</th>
@@ -998,7 +998,7 @@ export function PostingRulesStatusTable({
   return (
     <Panel title={t.rulesTitle} description={t.rulesDescription}>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[940px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[940px] text-sm">
           <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
             <tr>
               <th className="px-4 py-3">{t.purpose}</th>

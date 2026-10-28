@@ -14,6 +14,7 @@ import {
   type AuthSessionClaims,
 } from "@/lib/security/auth-session";
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   NotFoundError,
@@ -1214,12 +1215,25 @@ async function runSerializable<T>(
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       });
     } catch (error) {
+      if (error instanceof ApplicationError) throw error;
+      if (isPrismaCode(error, "P2002")) throw error;
       if (
-        !isPrismaCode(error, "P2034") ||
-        attempt === CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS
+        isPrismaCode(error, "P2034") &&
+        attempt < CUSTOMER_SETTLEMENT_MAX_SERIALIZABLE_ATTEMPTS
       ) {
-        throw error;
+        continue;
       }
+      if (isPrismaCode(error, "P2034")) {
+        throw new ConflictError(
+          "Customer settlement reversal transaction could not be serialized",
+        );
+      }
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer settlement reversal transaction failed.",
+        500,
+        false,
+      );
     }
   }
 
@@ -1278,7 +1292,15 @@ export async function reverseCustomerSettlementWithControls(
   try {
     return await execute();
   } catch (error) {
-    if (!isPrismaCode(error, "P2002")) throw error;
+    if (!isPrismaCode(error, "P2002")) {
+      if (error instanceof ApplicationError) throw error;
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer settlement reversal failed.",
+        500,
+        false,
+      );
+    }
     try {
       return await execute();
     } catch (replayError) {
@@ -1287,7 +1309,13 @@ export async function reverseCustomerSettlementWithControls(
           "Customer settlement reversal uniqueness conflict",
         );
       }
-      throw replayError;
+      if (replayError instanceof ApplicationError) throw replayError;
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Customer settlement reversal replay failed.",
+        500,
+        false,
+      );
     }
   }
 }

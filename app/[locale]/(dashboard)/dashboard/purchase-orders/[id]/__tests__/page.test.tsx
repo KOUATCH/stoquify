@@ -41,11 +41,20 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 
 jest.mock("@/components/purchase-orders/ModernPurchaseOrderDetailPage", () => ({
   __esModule: true,
-  default: ({ id, organizationId }: { id: string; organizationId?: string }) => (
+  default: ({
+    id,
+    organizationId,
+    requestedAction,
+  }: {
+    id: string
+    organizationId?: string
+    requestedAction?: "receive"
+  }) => (
     <section>
       <h1>Purchase order detail rendered</h1>
       <p>{id}</p>
       <p>{organizationId}</p>
+      <p>{requestedAction ?? "no-requested-action"}</p>
     </section>
   ),
 }))
@@ -103,16 +112,18 @@ describe("PurchaseOrderDetailPage", () => {
       resourceId: "po-1",
       auditAllowed: true,
     })
-    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
-      organizationId: "org-1",
-      userId: "user-1",
-      actorPermissions: ["purchases.orders.read"],
-      moduleSlug: "purchasing",
-      surfaceType: "page",
-      surface: "/dashboard/purchase-orders/[id]",
-      accessIntent: "read",
-      mode: "observe",
-    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "user-1",
+        actorPermissions: ["purchases.orders.read"],
+        moduleSlug: "purchasing",
+        surfaceType: "page",
+        surface: "/dashboard/purchase-orders/[id]",
+        accessIntent: "read",
+        mode: "observe",
+      }),
+    )
     expect(screen.getByRole("heading", { name: "Purchase order detail rendered" })).toBeInTheDocument()
     expect(screen.getByText("po-1")).toBeInTheDocument()
     expect(screen.getByText("org-1")).toBeInTheDocument()
@@ -128,14 +139,23 @@ describe("PurchaseOrderDetailPage", () => {
     expect(screen.queryByText("attacker-org")).not.toBeInTheDocument()
   })
 
+  it("passes the supported receive deep link to the capability-aware detail component", async () => {
+    render(await PurchaseOrderDetailPage({
+      params: params("fr", "po-1"),
+      searchParams: Promise.resolve({ tab: "receive" }),
+    }))
+
+    expect(screen.getByText("receive")).toBeInTheDocument()
+  })
+
   it("stops before module observation and detail rendering when RBAC denies access", async () => {
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 
     render(await PurchaseOrderDetailPage({ params: params("fr", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase order details are not available for this role" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order detail is not available for this role" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "permission_denied")
-    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard/purchase-orders")
+    expect(screen.getByRole("link", { name: "Back to purchase orders" })).toHaveAttribute("href", "/fr/dashboard")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(screen.queryByRole("heading", { name: "Purchase order detail rendered" })).not.toBeInTheDocument()
   })
@@ -145,7 +165,7 @@ describe("PurchaseOrderDetailPage", () => {
 
     render(await PurchaseOrderDetailPage({ params: params("en", "po-1") }))
 
-    expect(screen.getByRole("heading", { name: "Purchase order details need an active organization" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Purchase order detail needs an active organization" })).toBeInTheDocument()
     expect(screen.getByRole("main")).toHaveAttribute("data-kind", "no_active_org")
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(screen.queryByRole("heading", { name: "Purchase order detail rendered" })).not.toBeInTheDocument()

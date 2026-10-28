@@ -1,6 +1,6 @@
 # HRIS/Payroll Migration-Backfill Development Readiness
 
-Generated: 2026-07-26T17:01:15.515Z
+Generated: 2026-08-20T11:08:12.760Z
 Mode: fail
 Status: READY_FOR_SYNTHETIC_MIGRATION_DRY_RUN
 
@@ -18,7 +18,7 @@ Status: READY_FOR_SYNTHETIC_MIGRATION_DRY_RUN
 - Checks ready: 11/11
 - Development blockers: 0
 - Upstream production status: blocked
-- Upstream production blockers: source_artifact_hash_verification, source_artifact_expert_approval
+- Upstream production blockers: source_artifact_expert_approval
 
 ## Checks
 

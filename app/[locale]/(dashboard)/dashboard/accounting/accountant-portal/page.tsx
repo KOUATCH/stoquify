@@ -5,13 +5,14 @@ import { AccountantPortal } from "@/components/accounting/AccountantPortal"
 import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingPageShell } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type AccountantPortalPageProps = {
   params: Promise<{ locale?: Locale }>
   searchParams?: Promise<{ clientOrganizationId?: string }>
 }
 
-export default async function AccountantPortalPage({ params, searchParams }: AccountantPortalPageProps) {
+async function AccountantPortalPageImpl({ params, searchParams }: AccountantPortalPageProps) {
   await checkPermission("accounting.audit.read")
 
   const query = await searchParams
@@ -32,4 +33,20 @@ export default async function AccountantPortalPage({ params, searchParams }: Acc
       <AccountantPortal initialData={portal} initialError={portalResponse.error} locale={locale} />
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-accountant-portal")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-accountant-portal")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountantPortalPageImpl(props),
+  })
 }

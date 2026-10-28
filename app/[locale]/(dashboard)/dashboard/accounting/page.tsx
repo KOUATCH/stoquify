@@ -11,6 +11,7 @@ import {
   accountingDate,
   formatAccountingMoney,
 } from "./_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "./accounting-route-access"
 
 type AccountingSummary = {
   settings: { accountingEnabled: boolean; setupStatus: string; baseCurrency: string } | null
@@ -33,7 +34,7 @@ type AccountingSummary = {
   }>
 }
 
-export default async function AccountingDashboardPage() {
+async function AccountingDashboardPageImpl() {
   await checkPermission("accounting.reports.read")
 
   const summaryResponse = await getAccountingDashboardSummaryAction({})
@@ -144,7 +145,7 @@ export default async function AccountingDashboardPage() {
 
           <AccountingPanel title="Latest journal entries" description="Recent activity from draft and posted journals.">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="dashboard-table-base w-full min-w-[760px] text-sm">
                 <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                   <tr>
                     <th className="px-4 py-3">Entry</th>
@@ -184,4 +185,20 @@ export default async function AccountingDashboardPage() {
       )}
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-dashboard")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-dashboard")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingDashboardPageImpl(),
+  })
 }

@@ -18,9 +18,19 @@ interface ItemSuppliersLayoutProps {
   // Assuming allSuppliers is an array of suppliers available in the system
   // This is used to populate the dropdown or selection list in the form
   allSuppliers: Supplier[] | null
+  organizationId: string
+  currency: string
+  locale: string
 }
 
-export default function LayoutItemSuppliers({ itemId, itemSuppliers, allSuppliers }: ItemSuppliersLayoutProps) {
+export default function LayoutItemSuppliers({
+  itemId,
+  itemSuppliers,
+  allSuppliers,
+  organizationId,
+  currency,
+  locale,
+}: ItemSuppliersLayoutProps) {
   const [selectedSupplier, setSelectedSupplier] = useState<ItemSupplierDTO | null>(null)
   const allItemSuppliers = itemSuppliers?.map((itSup => {
     return {
@@ -40,6 +50,9 @@ export default function LayoutItemSuppliers({ itemId, itemSuppliers, allSupplier
           itemSuppliers={allItemSuppliers}
           selectedSupplier={selectedSupplier}
           onSelectSupplier={setSelectedSupplier}
+          organizationId={organizationId}
+          currency={currency}
+          locale={locale}
         />
       </div>
 

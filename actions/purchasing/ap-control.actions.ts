@@ -10,7 +10,9 @@ import {
   getAPWorkbenchData,
   prepareSupplierInvoice,
   releaseSupplierPaymentWithControls,
+  requestSupplierInvoiceMatchException,
   requestSupplierBankChange,
+  reviewSupplierInvoiceMatchException,
   type APWorkbenchData,
 } from "@/services/purchasing/ap-control.service"
 import {
@@ -19,7 +21,9 @@ import {
   approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
+  requestSupplierInvoiceMatchExceptionInputSchema,
   requestSupplierBankChangeInputSchema,
+  reviewSupplierInvoiceMatchExceptionInputSchema,
 } from "@/services/purchasing/ap-control.schemas"
 
 export type { APWorkbenchData }
@@ -97,6 +101,57 @@ const approveAndPostInvoice = protect<unknown, Awaited<ReturnType<typeof approve
 
 export async function postSupplierInvoiceAction(input: unknown) {
   return approveAndPostInvoice(input)
+}
+
+const requestMatchException = protect<
+  unknown,
+  Awaited<ReturnType<typeof requestSupplierInvoiceMatchException>>
+>(
+  {
+    permission: "purchasing.ap.invoice.post",
+    auditResource: "SupplierInvoiceMatchException",
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = requestSupplierInvoiceMatchExceptionInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      requestedById: ctx.userId,
+    })
+    const result = await requestSupplierInvoiceMatchException(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function requestSupplierInvoiceMatchExceptionAction(input: unknown) {
+  return requestMatchException(input)
+}
+
+const reviewMatchException = protect<
+  unknown,
+  Awaited<ReturnType<typeof reviewSupplierInvoiceMatchException>>
+>(
+  {
+    permission: "purchasing.ap.match.review",
+    auditResource: "SupplierInvoiceMatchException",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = reviewSupplierInvoiceMatchExceptionInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      reviewedById: ctx.userId,
+    })
+    const result = await reviewSupplierInvoiceMatchException(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function reviewSupplierInvoiceMatchExceptionAction(input: unknown) {
+  return reviewMatchException(input)
 }
 
 const requestBankChange = protect<unknown, Awaited<ReturnType<typeof requestSupplierBankChange>>>(

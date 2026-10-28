@@ -81,6 +81,7 @@ jest.mock("@/services/events/business-event.service", () => ({
 }))
 
 import { db } from "@/prisma/db"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 import { resolveAccountantClientAccess } from "../accountant-access.service"
 import { getAccountantPortalData } from "../data-trust.service"
 import { reconcileInventoryClass3 } from "@/services/inventory/inventory-valuation.service"
@@ -742,6 +743,71 @@ describe("close assurance service", () => {
     )
   })
 
+  it("projects missing payroll transition proof as a critical close blocker", async () => {
+    const dataTrust = cleanDataTrust()
+    mockGetAccountantPortalData.mockResolvedValue({
+      ...dataTrust,
+      source: {
+        ...dataTrust.source,
+        trustLevel: "T0",
+        certificationStatus: "NON_COMPLIANT",
+      },
+      certificate: {
+        ...dataTrust.certificate,
+        level: "T0",
+        verdict: "NON_COMPLIANT",
+      },
+      summary: {
+        ...dataTrust.summary,
+        blockerCount: 1,
+        criticalBlockers: 1,
+      },
+      moduleEvidence: dataTrust.moduleEvidence.map((module) =>
+        module.module === "payroll"
+          ? { ...module, status: "blocked" }
+          : module,
+      ),
+      blockers: [
+        {
+          id: "payroll-transition-proof-missing",
+          severity: "critical",
+          gate: "payroll.lifecycle.transition-proof",
+          title: "Payroll lifecycle transition proof is missing",
+          detail:
+            "One post-cutover payroll run lacks complete verified lifecycle proof.",
+          sourceTables: ["payroll_runs", "payroll_run_transitions"],
+        },
+      ],
+      exportReadiness: {
+        ...dataTrust.exportReadiness,
+        canExportCertifiedPack: false,
+        disabledReason: "Critical payroll transition proof is missing.",
+      },
+    })
+
+    const result = await getCloseAssuranceDashboard("org-1", period.id)
+
+    expect(result.run.status).toBe("BLOCKED")
+    expect(result.checklist).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "data-trust-provenance",
+          status: "FAILED",
+        }),
+      ]),
+    )
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          domain: "PAYROLL",
+          severity: "CRITICAL",
+          sourceType: "payroll.lifecycle.transition-proof",
+          sourceId: "payroll-transition-proof-missing",
+        }),
+      ]),
+    )
+  })
+
   it("blocks close readiness when payroll finance forecast proof is incomplete", async () => {
     mockGetTenantOperatingSnapshot.mockResolvedValue(
       tenantOperatingSnapshot({
@@ -1350,6 +1416,38 @@ describe("close assurance service", () => {
       expect(mockRecordBusinessEventInTx).toHaveBeenCalledTimes(1)
     },
   )
+
+  it("normalizes an unexpected missing-proof transaction failure without retrying", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-08-02T09:00:00.000Z"))
+    mockDb.$transaction.mockRejectedValueOnce(
+      new Error("database transport leaked detail"),
+    )
+
+    await expect(
+      requestMissingCloseEvidence(
+        "firm-org",
+        {
+          clientOrganizationId: "client-org",
+          findingId: "finding-1",
+          requestedFromId: "client-user-1",
+          requestText: "Please attach the missing signed bank statement.",
+          dueAt: new Date("2026-08-05T12:00:00.000Z"),
+          correlationId: "missing-proof-corr-1",
+        },
+        { actorId: "accountant-1" },
+      ),
+    ).rejects.toMatchObject({
+      name: "ApplicationError",
+      code: "INTERNAL_ERROR",
+      status: 500,
+      expose: false,
+      message: "Missing-proof workflow transaction failed.",
+    })
+
+    expect(mockDb.$transaction).toHaveBeenCalledTimes(1)
+    expect(mockDb.accountantComment.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
 
   it("submits an atomic recipient-owned missing-proof response with minimized evidence", async () => {
     const responseText =
@@ -2019,7 +2117,7 @@ describe("close assurance service", () => {
   it("fails closed when delegated REVIEW access is denied", async () => {
     jest.useFakeTimers().setSystemTime(new Date("2026-08-02T11:00:00.000Z"))
     mockResolveAccountantClientAccess.mockRejectedValue(
-      new Error("Read-only grant cannot request client work"),
+      new ForbiddenError("Read-only grant cannot request client work"),
     )
 
     await expect(

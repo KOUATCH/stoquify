@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-14T12:52:10.047Z",
+  "project": "supplier-rbac-negative",
+  "scenarios": [
+    5
+  ],
+  "routes": [
+    "/en/dashboard/purchases/suppliers",
+    "/en/dashboard/purchases/suppliers/create",
+    "/en/dashboard/purchases/suppliers/supplier_supplier_e2e_primary",
+    "/en/dashboard/purchases/suppliers/supplier_supplier_e2e_primary/edit",
+    "/fr/dashboard/purchases/suppliers",
+    "/fr/dashboard/purchases/suppliers/create",
+    "/fr/dashboard/purchases/suppliers/supplier_supplier_e2e_primary",
+    "/fr/dashboard/purchases/suppliers/supplier_supplier_e2e_primary/edit"
+  ],
+  "assertions": {
+    "authenticated": true,
+    "permissionDenied": true,
+    "supplierDataDisclosed": false,
+    "exportControlExposed": false,
+    "lifecycleControlExposed": false,
+    "seriousViolationCount": 0,
+    "hasDocumentOverflow": false,
+    "unhandledBrowserErrors": []
+  },
+  "screenshot": "supplier-rbac-evidence-20260814/rbac-denied-desktop.png"
+}

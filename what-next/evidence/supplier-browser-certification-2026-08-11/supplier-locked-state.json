@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-11T17:38:47.627Z",
+  "project": "supplier-locked-state",
+  "state": "locked",
+  "fixture": {
+    "source": "scripts/supplier-locked-e2e-fixture.js",
+    "productionBackfill": false,
+    "organizationId": "org_supplier_e2e_locked",
+    "requestedModules": [
+      "sales"
+    ],
+    "absentModule": "purchasing"
+  },
+  "results": [
+    {
+      "state": "locked",
+      "surface": "history",
+      "locale": "en",
+      "viewport": "desktop",
+      "path": "/en/dashboard/purchases/payables/history",
+      "finalUrl": "http://127.0.0.1:3137/en/dashboard/purchases/payables/history?supplierId=supplier_supplier_e2e_primary",
+      "evidenceMethod": "enforced-purchasing-module-entitlement-denial",
+      "screenshot": "what-next/evidence/supplier-browser-certification-2026-08-11/locked-history-en-desktop.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1280,
+        "documentWidth": 1280,
+        "bodyWidth": 1280,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    }
+  ]
+}

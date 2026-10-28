@@ -42,6 +42,7 @@ function receivableDocument(input: {
   paid: string
   unpaid: string
   status?: CustomerReceivableDocumentStatus
+  currency?: string
   lifecycleStates?: unknown[]
 }) {
   return {
@@ -54,7 +55,7 @@ function receivableDocument(input: {
     issuedAt: new Date(input.invoiceDate),
     invoiceDate: new Date(input.invoiceDate),
     dueDate: new Date(input.dueDate),
-    currency: "XAF",
+    currency: input.currency ?? "XAF",
     totalAmount: decimal(input.total),
     documentHash: `document-hash-${input.id}`,
     customerSnapshot: { name: "Customer One" },
@@ -179,11 +180,64 @@ describe("getCustomerAROpenItems", () => {
       itemCount: 2,
       openItemCount: 1,
       settledItemCount: 1,
+      currency: "XAF",
+      mixedCurrency: false,
       totalOpened: "150.00",
       totalAllocated: "90.00",
       totalOpen: "60.00",
       overdueAmount: "60.00",
     })
+    expect(result.summariesByCurrency).toEqual([
+      expect.objectContaining({ currency: "XAF", totalOpen: "60.00" }),
+    ])
+  })
+
+  it("keeps monetary totals separated when the tenant has more than one receivable currency", async () => {
+    const client = mockClient([
+      receivableDocument({
+        id: "document-1",
+        documentNumber: "AR-XAF-001",
+        orderNumber: "SO-XAF-001",
+        invoiceDate: "2026-06-01T00:00:00.000Z",
+        dueDate: "2026-06-30T00:00:00.000Z",
+        total: "10000.00",
+        paid: "2500.00",
+        unpaid: "7500.00",
+        currency: "XAF",
+      }),
+      receivableDocument({
+        id: "document-2",
+        documentNumber: "AR-EUR-001",
+        orderNumber: "SO-EUR-001",
+        invoiceDate: "2026-06-02T00:00:00.000Z",
+        dueDate: "2026-06-30T00:00:00.000Z",
+        total: "100.00",
+        paid: "40.00",
+        unpaid: "60.00",
+        currency: "EUR",
+      }),
+    ])
+
+    const result = await getCustomerAROpenItems({
+      organizationId: "org-1",
+      asOf: new Date("2026-07-15T00:00:00.000Z"),
+      recordedThrough: new Date("2026-07-15T12:00:00.000Z"),
+      client: client as never,
+    })
+
+    expect(result.summary).toMatchObject({
+      itemCount: 2,
+      currency: null,
+      mixedCurrency: true,
+      totalOpened: null,
+      totalAllocated: null,
+      totalOpen: null,
+      overdueAmount: null,
+    })
+    expect(result.summariesByCurrency).toEqual([
+      expect.objectContaining({ currency: "EUR", totalOpened: "100.00", totalOpen: "60.00" }),
+      expect.objectContaining({ currency: "XAF", totalOpened: "10000.00", totalOpen: "7500.00" }),
+    ])
   })
 
   it("preserves a voided document as terminal statement evidence", async () => {

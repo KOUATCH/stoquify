@@ -113,6 +113,9 @@ export async function getCustomerOrdersAction(customerId: string): Promise<Serve
     const orders = assertSuccess(await getCustomerOrders(customerId))
     const totalOrders = orders.length
     const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0)
+    const deliveredOrders = orders.filter(
+      (order) => order.status === "DELIVERED" || order.status === "COMPLETED",
+    ).length
 
     return {
       success: true,
@@ -122,6 +125,7 @@ export async function getCustomerOrdersAction(customerId: string): Promise<Serve
           totalOrders,
           totalRevenue,
           averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
+          deliveredOrders,
         },
       },
     }

@@ -8,7 +8,7 @@ if (process.env.DATABASE_URL?.includes("${")) {
 }
 
 const seedCommand =
-  'ts-node -r tsconfig-paths/register --compiler-options {"module":"CommonJS","moduleResolution":"node"} prisma/comprehensive-seed.ts'
+  'ts-node -r tsconfig-paths/register --compiler-options {"module":"CommonJS","moduleResolution":"node"} prisma/realistic-development-seed.ts'
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

@@ -8,21 +8,20 @@ import {
   revokePublicReceiptAccessTokenAction,
   searchPublicReceiptSalesAction,
 } from "@/actions/pos/receipt-token.actions"
+import { getPOSCustomersAction } from "@/actions/pos/catalog.actions"
 
 import {
   posOperationsKeys,
+  usePOSCustomers,
   usePublicReceiptAccessTokens,
   usePublicReceiptSalesSearch,
   usePublicReceiptTokenManagementCapability,
   useRevokePublicReceiptAccessToken,
 } from "../usePosOperations"
 
-jest.mock("@/actions/customers/customerActions", () => ({
-  getCustomersAction: jest.fn(),
-}))
-
 jest.mock("@/actions/pos/catalog.actions", () => ({
   getPOSCatalogAction: jest.fn(),
+  getPOSCustomersAction: jest.fn(),
   getPOSLocationsAction: jest.fn(),
   getPOSTerminalsAction: jest.fn(),
 }))
@@ -54,6 +53,7 @@ jest.mock("@/actions/pos/tender.actions", () => ({
 }))
 
 const mockGetPublicReceiptAccessTokensAction = getPublicReceiptAccessTokensAction as jest.Mock
+const mockGetPOSCustomersAction = getPOSCustomersAction as jest.Mock
 const mockGetPublicReceiptTokenManagementCapabilityAction = getPublicReceiptTokenManagementCapabilityAction as jest.Mock
 const mockRevokePublicReceiptAccessTokenAction = revokePublicReceiptAccessTokenAction as jest.Mock
 const mockSearchPublicReceiptSalesAction = searchPublicReceiptSalesAction as jest.Mock
@@ -176,5 +176,28 @@ describe("POS receipt token hooks", () => {
       salesOrderId: "sale-1",
     })
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: posOperationsKeys.receiptTokens("sale-1") })
+  })
+
+  it("partitions POS customer searches by location and search text", async () => {
+    mockGetPOSCustomersAction.mockResolvedValue({
+      success: true,
+      data: { customers: [], total: 0 },
+      error: null,
+    })
+    const queryClient = createQueryClient()
+
+    const { result } = renderHook(
+      () => usePOSCustomers({ locationId: "location-a", search: "alice" }),
+      { wrapper: createWrapper(queryClient) },
+    )
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.dataUpdatedAt).toBeGreaterThan(0)
+    expect(mockGetPOSCustomersAction).toHaveBeenCalledWith({
+      locationId: "location-a",
+      search: "alice",
+    })
+    expect(posOperationsKeys.customers("location-a", "alice"))
+      .not.toEqual(posOperationsKeys.customers("location-b", "alice"))
   })
 })

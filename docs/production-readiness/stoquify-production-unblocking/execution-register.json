@@ -1,0 +1,51 @@
+{
+  "program": "stoquify_production_unblocking",
+  "objective": "Execute WP0-WP12 without bypassing HIGH or CRITICAL invariants or fabricating external authority.",
+  "startedAt": "2026-08-22",
+  "startingBranch": "codex/service-boundary-burndown",
+  "startingCommit": "7736416bd57fc45d3b618ba397850d39320ac3e1",
+  "activeWorkPackage": "WP0",
+  "programStatus": "ACTIVE_BLOCKED_AT_WP0_EXTERNAL_INPUT",
+  "productionAuthorized": false,
+  "promotionPolicy": {
+    "singleActiveCodePackage": true,
+    "parallelExternalEvidenceCollectionAllowed": true,
+    "parallelEvidenceCannotPromote": true,
+    "blockOnHighOrCritical": true,
+    "implementerMaySelfCertify": false,
+    "liveOrLegalEffectsRequireExplicitAuthorization": true
+  },
+  "workPackages": [
+    {"id": "WP0", "status": "BLOCKED_EXTERNAL_INPUT", "decision": "NO_PROMOTION"},
+    {"id": "WP1", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP0"},
+    {"id": "WP2", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP1"},
+    {"id": "WP3", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP0_WP1"},
+    {"id": "WP4", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP3"},
+    {"id": "WP5", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP0"},
+    {"id": "WP6", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP0"},
+    {"id": "WP7", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP5_WP6"},
+    {"id": "WP8", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP2_WP7"},
+    {"id": "WP9", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP2_WP4_TO_WP8"},
+    {"id": "WP10", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP9"},
+    {"id": "WP11", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP10"},
+    {"id": "WP12", "status": "NOT_AUTHORIZED", "decision": "PENDING_WP11"}
+  ],
+  "liveBaseline": {
+    "countryAdapterPilot": "READY_16_OF_16_PRODUCTION_NOT_CERTIFIED",
+    "statutoryCountryPack": "BLOCKED_11_OF_12_SOURCE_ARTIFACT_EXPERT_APPROVAL",
+    "migrationSafety": "BLOCKED_8_OF_9_THIRTEEN_EXACT_HASH_FINDINGS",
+    "rawErrorBoundary": "BLOCKED_8_ACTIVE_125_ALLOWED",
+    "enterpriseRelease": "BLOCKED_3_OF_12_READY",
+    "externalEvidenceIntake": "EXTERNAL_EVIDENCE_REQUIRED_1_OF_6_READY_70_BLOCKERS",
+    "reportFileLock": "NOT_REPRODUCED",
+    "payrollImmutabilityB02": "READY_ISOLATED_POSTGRESQL_9_OF_9_TRIGGERS_14_OF_14_BLOCKED_3_OF_3_ALLOWED_PRODUCTION_NOT_VERIFIED"
+  },
+  "wp0Decision": {
+    "decision": "BLOCKED_EXTERNAL_INPUT_NO_PROMOTION",
+    "ownerIdentityAssignmentsComplete": false,
+    "pilotCountryAndScopeApproved": false,
+    "noFabricatedAuthority": true,
+    "wp1Authorized": false
+  }
+}
+

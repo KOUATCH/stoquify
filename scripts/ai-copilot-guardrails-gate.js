@@ -7,16 +7,19 @@ function read(file) {
   return fs.readFileSync(path.join(ROOT, file), "utf8")
 }
 
-function containsAll(file, markers) {
-  const text = read(file)
+function markerSetPresent(file, markers, overrides = {}) {
+  const text = Object.prototype.hasOwnProperty.call(overrides, file)
+    ? overrides[file]
+    : read(file)
   return markers.every((marker) => text.includes(marker))
 }
 
-function evaluate() {
+function evaluate(overrides = {}) {
+  const contains = (file, markers) => markerSetPresent(file, markers, overrides)
   const checks = [
     {
       key: "agent_runtime_tools_remain_read_only",
-      ready: containsAll("services/agents/agent-policy.service.ts", [
+      ready: contains("services/agents/agent-policy.service.ts", [
         'tool.toolType !== "read_only"',
         'tool.riskLevel !== "read_only"',
         "WRITE_TOOL_NOT_ALLOWED",
@@ -24,7 +27,7 @@ function evaluate() {
     },
     {
       key: "autonomous_high_authority_actions_are_prohibited",
-      ready: containsAll("services/agents/agent-policy.service.ts", [
+      ready: contains("services/agents/agent-policy.service.ts", [
         "ledger.*post",
         "statutory.*fil",
         "payroll.*approv",
@@ -34,7 +37,7 @@ function evaluate() {
     },
     {
       key: "answers_cite_tenant_period_as_of_and_sources",
-      ready: containsAll("services/agents/command-agent-contracts.ts", [
+      ready: contains("services/agents/command-agent-contracts.ts", [
         "tenantId:",
         "periodStart:",
         "periodEnd:",
@@ -44,7 +47,7 @@ function evaluate() {
     },
     {
       key: "proposal_types_are_non_executing_and_allowlisted",
-      ready: containsAll("services/ai/copilot-proposal.schemas.ts", [
+      ready: contains("services/ai/copilot-proposal.schemas.ts", [
         "NAVIGATE_TO_WORKFLOW",
         "PREPARE_REVIEW_CHECKLIST",
         "REQUEST_HUMAN_REVIEW",
@@ -52,7 +55,7 @@ function evaluate() {
     },
     {
       key: "proposal_acceptance_has_no_execution_authority",
-      ready: containsAll("services/ai/copilot-proposal.service.ts", [
+      ready: contains("services/ai/copilot-proposal.service.ts", [
         'executionAuthority: "NONE"',
         "Acceptance records human intent only",
         "It never invokes the target workflow",
@@ -60,7 +63,7 @@ function evaluate() {
     },
     {
       key: "proposal_evidence_is_bound_to_completed_tenant_run",
-      ready: containsAll("services/ai/copilot-proposal.service.ts", [
+      ready: contains("services/ai/copilot-proposal.service.ts", [
         'status: "COMPLETED"',
         "organizationId",
         "actorId",
@@ -70,7 +73,7 @@ function evaluate() {
     },
     {
       key: "unsafe_proposals_are_blocked_and_audited",
-      ready: containsAll("services/ai/copilot-proposal.service.ts", [
+      ready: contains("services/ai/copilot-proposal.service.ts", [
         "UNSAFE_ACTION_PROPOSAL_BLOCKED",
         "COPILOT_NO_EXECUTION_AUTHORITY",
         'severity: "HIGH"',
@@ -78,8 +81,21 @@ function evaluate() {
       ]),
     },
     {
+      key: "unsafe_action_classification_is_bilingual",
+      ready:
+        contains("services/ai/copilot-proposal.service.ts", [
+          '.normalize("NFKD")',
+          "soumettre",
+          "autorite",
+        ]) &&
+        contains("services/ai/__tests__/copilot-proposal.service.test.ts", [
+          "unsafe French authority-submission request",
+          "Soumettre la déclaration",
+        ]),
+    },
+    {
       key: "proposal_actions_require_rbac_fresh_auth_and_server_scope",
-      ready: containsAll("actions/ai/copilot-proposal.actions.ts", [
+      ready: contains("actions/ai/copilot-proposal.actions.ts", [
         'permission: "dashboard.read"',
         "freshAuth: { maxAgeSeconds: 600 }",
         'tenantGuard: "handler-derived"',
@@ -91,9 +107,25 @@ function evaluate() {
       ]),
     },
     {
+      key: "proposal_actions_return_stable_typed_results",
+      ready:
+        contains("actions/ai/copilot-proposal.actions.ts", [
+          "CopilotGuardrailErrorCode",
+          '"FORBIDDEN"',
+          '"STEP_UP_REQUIRED"',
+          '"MISSING_DOCUMENT"',
+          "ok: true as const",
+          "ok: false as const",
+        ]) &&
+        contains("actions/ai/__tests__/copilot-proposal.actions.test.ts", [
+          "success: true",
+          "ok: true",
+        ]),
+    },
+    {
       key: "proposal_phase_is_server_authorized_and_ui_inactive_by_default",
       ready:
-        containsAll("services/ai/copilot-proposal-release.service.ts", [
+        contains("services/ai/copilot-proposal-release.service.ts", [
           "PHASE_3_READ_AND_DRAFT",
           'state: "ACTIVE_INTERNAL"',
           "STOQUIFY_AGENT_RELEASE_COMMIT_SHA",
@@ -102,7 +134,7 @@ function evaluate() {
           'executionAuthority: "NONE"',
           "STOQUIFY_COPILOT_PROPOSAL_KILL_SWITCH",
         ]) &&
-        containsAll("components/agents/AgentCommandPanel.tsx", [
+        contains("components/agents/AgentCommandPanel.tsx", [
           "proposalDraftsEnabled = false",
           "proposalDraftsEnabled && brief.runId",
         ]),
@@ -110,10 +142,10 @@ function evaluate() {
     {
       key: "analysis_and_proposal_events_are_recorded",
       ready:
-        containsAll("actions/agents/command-agent.actions.ts", [
+        contains("actions/agents/command-agent.actions.ts", [
           "AI_ANALYSIS_REQUESTED",
         ]) &&
-        containsAll("services/ai/copilot-proposal.service.ts", [
+        contains("services/ai/copilot-proposal.service.ts", [
           "AI_ACTION_PROPOSAL_CREATED",
           "AI_ACTION_PROPOSAL_ACCEPTED",
           "AI_ACTION_PROPOSAL_REJECTED",
@@ -121,7 +153,7 @@ function evaluate() {
     },
     {
       key: "proposal_idempotency_and_hash_evidence_are_durable",
-      ready: containsAll("services/ai/copilot-proposal.service.ts", [
+      ready: contains("services/ai/copilot-proposal.service.ts", [
         "requestHash",
         "sourceHash",
         "organizationId_idempotencyKey",
@@ -130,14 +162,14 @@ function evaluate() {
     },
     {
       key: "proposal_notifications_are_outboxed",
-      ready: containsAll("services/ai/copilot-proposal.service.ts", [
+      ready: contains("services/ai/copilot-proposal.service.ts", [
         'channel: "NOTIFICATION"',
         "requiresHumanConfirmation: true",
       ]),
     },
     {
       key: "proposal_ui_exposes_loading_error_and_human_decision",
-      ready: containsAll("components/copilot/CopilotProposalControls.tsx", [
+      ready: contains("components/copilot/CopilotProposalControls.tsx", [
         "Loader2",
         'role="alert"',
         "Accept proposal",
@@ -147,7 +179,7 @@ function evaluate() {
     },
     {
       key: "proposal_schema_has_additive_migration",
-      ready: containsAll(
+      ready: contains(
         "prisma/migrations/20260727170000_ai_copilot_proposal_guardrails/migration.sql",
         [
           'CREATE TABLE "ai_action_proposals"',
@@ -157,13 +189,20 @@ function evaluate() {
       ),
     },
     {
+      key: "copilot_guardrail_gate_is_policy_wired",
+      ready: contains("package.json", [
+        '"ai:copilot:guardrails:gate": "node scripts/ai-copilot-guardrails-gate.js"',
+        "npm run ai:copilot:guardrails:gate",
+      ]),
+    },
+    {
       key: "hallucination_unsafe_tenant_rbac_and_ui_tests_exist",
       ready:
-        containsAll(
+        contains(
           "services/agents/__tests__/agent-output-validator.service.test.ts",
           ["rejects a material priority whose evidence citation is unknown"],
         ) &&
-        containsAll("services/ai/__tests__/copilot-proposal.service.test.ts", [
+        contains("services/ai/__tests__/copilot-proposal.service.test.ts", [
           "autonomous posting",
           "cross-tenant",
           "unbound evidence",
@@ -171,15 +210,15 @@ function evaluate() {
           "governed agent run",
           "governed window",
         ]) &&
-        containsAll(
+        contains(
           "actions/ai/__tests__/copilot-proposal.actions.test.ts",
           ["fresh authentication", "tenant", "governed Phase 3 release"],
         ) &&
-        containsAll(
+        contains(
           "services/ai/__tests__/copilot-proposal-release.service.test.ts",
           ["active governed release", "fails closed"],
         ) &&
-        containsAll(
+        contains(
           "components/copilot/__tests__/CopilotProposalControls.test.tsx",
           ["explicit human decision", "cannot execute"],
         ),

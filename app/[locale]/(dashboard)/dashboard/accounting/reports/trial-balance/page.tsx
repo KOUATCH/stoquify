@@ -9,6 +9,7 @@ import {
   formatAccountingMoney,
 } from "../../_components/accounting-ui"
 import { TrialBalanceTable } from "./trial-balance-table"
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type TrialBalance = {
   rows: Array<{
@@ -31,7 +32,7 @@ type TrialBalance = {
   }
 }
 
-export default async function TrialBalancePage() {
+async function TrialBalancePageImpl() {
   await checkPermission("accounting.reports.read")
 
   const reportResponse = await getTrialBalanceAction({ includeZeroBalance: true })
@@ -86,3 +87,19 @@ export default async function TrialBalancePage() {
   )
 }
 
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-reports-trial-balance")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-reports-trial-balance")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => TrialBalancePageImpl(),
+  })
+}

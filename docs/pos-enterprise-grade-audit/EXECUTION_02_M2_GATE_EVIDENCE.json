@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "capturedAt": "2026-08-17T05:47:13.4724149Z",
+  "candidate": {
+    "branch": "codex/service-boundary-burndown",
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "dirty": true,
+    "attribution": "Only paths listed in EXECUTION_02_M2_CLIENT_COMMIT_REPLAY_REPORT.md are attributed to this slice; unrelated dirty-worktree changes remain user-owned."
+  },
+  "authorization": {
+    "scope": "Development-only M2-A01 through M2-A04 with direct control dependencies",
+    "cashOnly": true,
+    "electronicCaptureEnabled": false,
+    "offlineCaptureEnabled": false,
+    "statutoryReceiptEnabled": false,
+    "databaseMigrationAuthorized": false,
+    "productionAuthorized": false
+  },
+  "checks": [
+    { "id": "M2-PRISMA-VALIDATE", "class": "LOCAL_STATIC", "status": "PASS", "summary": "Prisma schema is valid." },
+    { "id": "M2-PRISMA-GENERATE", "class": "LOCAL_STATIC", "status": "PASS", "summary": "Prisma client v6.19.3 regenerated; no database connection or migration execution." },
+    { "id": "M2-TYPECHECK", "class": "LOCAL_STATIC", "status": "PASS", "summary": "npm run typecheck exited 0." },
+    { "id": "M2-ESLINT", "class": "LOCAL_STATIC", "status": "PASS", "summary": "Targeted ESLint over changed implementation and tests exited 0." },
+    { "id": "M2-UNIT-ACTION-MIGRATION", "class": "LOCAL_UNIT", "status": "PASS", "summary": "3 suites and 43 tests passed: result replay, unique-race recovery, payload conflict audit, cash/receipt policy, action controls, additive migration/immutability." },
+    { "id": "M2-COMPONENT", "class": "LOCAL_UNIT", "status": "PASS", "summary": "POS component tests passed with cash-only and non-statutory receipt controls." },
+    { "id": "M2-SERVICE-BOUNDARY", "class": "LOCAL_STATIC", "status": "PASS", "summary": "0 active violations; 13 allowed test/mock/service findings." },
+    { "id": "M2-PAYMENT-CASH-TRUTH", "class": "LOCAL_STATIC", "status": "PASS", "summary": "14/14 checks; static internal evidence only." },
+    { "id": "M2-OFFLINE-REPLAY-STATIC", "class": "LOCAL_STATIC", "status": "PASS", "summary": "16/16 existing replay-foundation checks; runtime replay is disabled by development policy." },
+    { "id": "M2-RECEIPT-TOKEN", "class": "LOCAL_STATIC", "status": "PASS_WITH_WARNING", "summary": "4/4 local checks; production secret enforcement remains off." },
+    { "id": "M2-MIGRATION-STATUS", "class": "LOCAL_POSTGRES", "status": "BLOCKED_EXPECTED", "summary": "68 repository migrations; 20260817120000_pos_commit_result_registry is pending and was not applied." },
+    { "id": "M2-POS-COMMIT-POSTGRES-RACE", "class": "LOCAL_POSTGRES", "status": "BLOCKED_NOT_RUN", "summary": "Guarded harness exists but requires an authorized local certification schema and migration evidence." },
+    { "id": "M2-AUTHENTICATED-BROWSER-MATRIX", "class": "LOCAL_BROWSER", "status": "BLOCKED_NOT_RUN", "summary": "Pilot browser/OS/location/terminal and EN/FR authenticated matrix remain unspecified." }
+  ],
+  "sourceHashes": {
+    "prisma/schema.prisma": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9",
+    "prisma/migrations/20260817120000_pos_commit_result_registry/migration.sql": "991a1508f73aa75c2331316d019dbf4abc505097dd2d60d7d108a85e24d7f056",
+    "services/pos/pos.schemas.ts": "9f71072d75f6b7664ed1814467c1f1139e07ad886fcf9c8ba7562e121e766dc2",
+    "services/pos/pos.service.ts": "c4a524e13574526a7f8ca59ede7d99b92063fe90ea3cc06f9aa23d4fcdc30705",
+    "services/pos/receipt.service.ts": "13758a339983de648d98ab03977cc99b3e5e57da24dd12c88c340a7df4a29eff",
+    "services/pos/offline-sync.service.ts": "3643b2d0d25edb43a0981db506dbf3d1c73985d0b949ddfdfeaf3bcd25ead41f",
+    "components/pos/ProfessionalPOSSystem.tsx": "7f4de01e84aa6f0d6039e4df4b3dbb8b57fbbb5d6eaaf1de1003198647d02b14",
+    "services/pos/__tests__/pos-commit-result.postgres.test.ts": "4445d67737b8a593910b16b41905ab1f465819cbc7e26d8b44ae4cdcb0ba5532"
+  },
+  "gateDecision": {
+    "gate": "G2",
+    "status": "BLOCKED_PARTIAL_IMPLEMENTATION",
+    "completed": ["M2-A01", "M2-A02", "M2-A03", "M2-A04"],
+    "reason": "The authorized result-replay slice is complete locally, but the migration is unapplied, the real PostgreSQL sale race is not executed, and remaining cart/access/browser work is incomplete."
+  },
+  "privacy": {
+    "redactionChecked": true,
+    "containsSecrets": false,
+    "containsPanCvvPin": false,
+    "containsUnnecessaryCustomerPii": false
+  }
+}

@@ -1,15 +1,15 @@
 {
   "summary": {
-    "generatedAt": "2026-07-27T16:40:33.684Z",
-    "mode": "report",
-    "releaseEnforced": true,
-    "status": "blocked",
+    "generatedAt": "2026-08-22T08:01:07.682Z",
+    "mode": "fail",
+    "releaseEnforced": false,
+    "status": "conditional",
     "checkCount": 11,
     "readyCount": 11,
     "blockerCount": 0,
     "releaseConditionCount": 4,
-    "releaseBlockerCount": 5,
-    "readinessReleaseBlockerCount": 1,
+    "releaseBlockerCount": 6,
+    "readinessReleaseBlockerCount": 2,
     "releaseConditionBlockerCount": 4,
     "runReportCount": 14,
     "readinessArtifactCount": 10,
@@ -86,6 +86,7 @@
   ],
   "releaseBlockers": [
     "readiness:statutory-country-pack-production",
+    "readiness:prisma-migration-deployment",
     "public_identity_hash_secret",
     "public_receipt_token_secret",
     "history_cursor_signing_secret",
@@ -260,8 +261,8 @@
       "structurallyClear": true,
       "releaseReady": true,
       "status": "ready",
-      "readyCount": 11,
-      "checkCount": 11,
+      "readyCount": 14,
+      "checkCount": 14,
       "blockerCount": 0,
       "warningCount": 0
     },
@@ -305,9 +306,9 @@
       "structurallyClear": true,
       "releaseReady": false,
       "status": "blocked",
-      "readyCount": 10,
+      "readyCount": 11,
       "checkCount": 12,
-      "blockerCount": 2,
+      "blockerCount": 1,
       "warningCount": 0
     },
     {
@@ -320,8 +321,8 @@
       "structurallyClear": true,
       "releaseReady": true,
       "status": "ready",
-      "readyCount": 17,
-      "checkCount": 17,
+      "readyCount": 35,
+      "checkCount": 35,
       "blockerCount": 0,
       "warningCount": 0
     },
@@ -348,11 +349,11 @@
       "markdownExists": true,
       "parseable": true,
       "structurallyClear": true,
-      "releaseReady": true,
-      "status": "ready",
-      "readyCount": 9,
+      "releaseReady": false,
+      "status": "blocked",
+      "readyCount": 8,
       "checkCount": 9,
-      "blockerCount": 0,
+      "blockerCount": 1,
       "warningCount": 0
     },
     {
@@ -372,7 +373,8 @@
     }
   ],
   "readinessReleaseBlockers": [
-    "readiness:statutory-country-pack-production"
+    "readiness:statutory-country-pack-production",
+    "readiness:prisma-migration-deployment"
   ],
   "supportingArtifacts": [
     {

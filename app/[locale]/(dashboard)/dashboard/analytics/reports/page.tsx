@@ -1,6 +1,8 @@
+import type { Metadata } from "next"
+
 import ReportsClient from "./ReportsClient"
 
-import { requirePermission } from "@/lib/security/rbac"
+import { routeByKey, withAnalyticsSurfaceAccess } from "../analytics-route-access"
 
 type SearchParams = Record<string, string | string[] | undefined>
 
@@ -9,21 +11,39 @@ function firstParam(value: string | string[] | undefined) {
   return value
 }
 
+export const metadata: Metadata = {
+  title: "Analytics Reports | Stoquify",
+  description: "Server-owned analytics and reporting exports with tenant-scoped guard and search params.",
+}
+
 export default async function ReportsPage({
+  params = Promise.resolve({ locale: "en" }),
   searchParams,
 }: {
+  params?: Promise<{ locale: string }>
   searchParams?: Promise<SearchParams>
 }) {
-  const ctx = await requirePermission("reports.read", { resource: "AnalyticsReports" })
-  const resolvedSearchParams = searchParams ? await searchParams : {}
+  const surface = routeByKey("analytics-reports")
 
-  return (
-    <ReportsClient
-      organizationId={ctx.orgId}
-      locationId={firstParam(resolvedSearchParams.locationId) || "all"}
-      initialReport={firstParam(resolvedSearchParams.report)}
-      initialPeriod={firstParam(resolvedSearchParams.period)}
-      focusItemId={firstParam(resolvedSearchParams.itemId)}
-    />
-  )
+  if (!surface) {
+    throw new Error("Missing analytics route surface definition: analytics-reports")
+  }
+
+  return withAnalyticsSurfaceAccess({
+    params,
+    surface,
+    onAllowed: async (ctx, locale) => {
+      const resolvedSearchParams = searchParams ? await searchParams : {}
+
+      return (
+        <ReportsClient
+          organizationId={ctx.orgId}
+          locationId={firstParam(resolvedSearchParams.locationId) || "all"}
+          initialReport={firstParam(resolvedSearchParams.report)}
+          initialPeriod={firstParam(resolvedSearchParams.period)}
+          focusItemId={firstParam(resolvedSearchParams.itemId)}
+        />
+      )
+    },
+  })
 }

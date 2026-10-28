@@ -365,12 +365,19 @@ function safeErrorMessage(error: unknown) {
   return message.trim().slice(0, 500) || "Offline sale replay could not complete."
 }
 
-function extractCommitSalePayload(payload: unknown): CommitSaleInput {
+function extractCommitSalePayload(payload: unknown, fallbackClientCommitId?: string): CommitSaleInput {
   const candidate = isRecord(payload) && isRecord(payload.commitSale)
     ? payload.commitSale
     : payload
 
-  return commitSaleSchema.parse(candidate)
+  return commitSaleSchema.parse(
+    isRecord(candidate)
+      ? {
+          ...candidate,
+          clientCommitId: candidate.clientCommitId ?? fallbackClientCommitId,
+        }
+      : candidate,
+  )
 }
 
 function dateToString(value: Date | string | null | undefined) {
@@ -1204,7 +1211,20 @@ async function blockOfflineSaleReplay(input: {
   return result
 }
 
+function isOfflinePOSReplayAuthorizedForCurrentDeployment() {
+  return (
+    process.env.NODE_ENV === "test" &&
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS === "1"
+  )
+}
+
 export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayOfflineSaleEnvelopeInput>) {
+  if (!isOfflinePOSReplayAuthorizedForCurrentDeployment()) {
+    throw new BusinessRuleError(
+      "Offline POS capture and replay are disabled for the authorized development-only cash pilot.",
+    )
+  }
+
   const parsed = replayOfflineSaleEnvelopeSchema.parse(input)
   const event = await loadOfflineSaleReplayEvent({
     organizationId: input.organizationId,
@@ -1251,7 +1271,7 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
 
   let commitInput: CommitSaleInput
   try {
-    commitInput = extractCommitSalePayload(event.payload)
+    commitInput = extractCommitSalePayload(event.payload, `offline:${event.id}`)
     assertReplayScope(event, commitInput)
   } catch (error) {
     return blockOfflineSaleReplay({
@@ -1292,6 +1312,33 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
       organizationId: input.organizationId,
       userId: input.userId,
     })
+
+    if (!committed.receipt) {
+      const completedAfterCommit = await findCompletedReplayOutcome({
+        organizationId: input.organizationId,
+        event,
+        commitInput,
+      })
+
+      if (!completedAfterCommit) {
+        throw new BusinessRuleError(
+          "POS_SALE_COMMITTED_RECEIPT_RETRY_REQUIRED: the sale is complete, but its receipt evidence must be hydrated before the offline event can be acknowledged.",
+        )
+      }
+
+      return markOfflineSaleReplayed({
+        context: { organizationId: input.organizationId, userId: input.userId },
+        event,
+        receipt: completedAfterCommit.receipt,
+        result: replayResultFromReceipt({
+          offlineEventId: event.id,
+          saleId: completedAfterCommit.saleId,
+          orderNumber: completedAfterCommit.orderNumber,
+          postingBatchId: completedAfterCommit.postingBatchId,
+          receipt: completedAfterCommit.receipt,
+        }),
+      })
+    }
 
     return markOfflineSaleReplayed({
       context: { organizationId: input.organizationId, userId: input.userId },

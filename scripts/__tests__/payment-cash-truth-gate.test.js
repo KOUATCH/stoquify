@@ -29,6 +29,15 @@ function writeReadyFixture(root) {
     "assertProviderAccountReconciliationReady(providerAccount)",
     "const existingRun = await tx.reconciliationRun.findFirst(",
     "run = await tx.reconciliationRun.create(",
+    "const mismatchReasons = [",
+    '"PROVIDER_EVENT_AMOUNT"',
+    '"STATEMENT_LINE_AMOUNT"',
+    '"PROVIDER_EVENT_CURRENCY"',
+    '"STATEMENT_LINE_CURRENCY"',
+    "if (mismatchReasons.length > 0)",
+    "type: PaymentExceptionType.AMOUNT_MISMATCH",
+    "if (event || line)",
+    "status: MatchStatus.AUTO_MATCHED",
   ].join("\n"))
   write(root, "services/reconciliation/payment-reconciliation-certification.service.ts", [
     "assertProviderAccountReconciliationReady({ providerAccountReadyVerified: true",
@@ -88,6 +97,17 @@ function writeReadyFixture(root) {
     'ADD COLUMN "leasedBy" TEXT',
     'ADD COLUMN "leaseToken" TEXT',
   ].join("\n"))
+  write(root, "prisma/migrations/20260815190000_payment_reconciliation_evidence_immutability/migration.sql", [
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_assert_immutable_evidence"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_provider_events_prevent_evidence_mutation"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_statement_files_prevent_evidence_mutation"',
+    'CREATE OR REPLACE FUNCTION "payment_reconciliation_statement_lines_prevent_evidence_mutation"',
+    'BEFORE UPDATE OR DELETE ON "provider_events"',
+    'BEFORE UPDATE OR DELETE ON "statement_files"',
+    'BEFORE UPDATE OR DELETE ON "statement_lines"',
+    'Cannot modify immutable payment reconciliation evidence',
+    'Cannot delete immutable payment reconciliation evidence',
+  ].join("\n"))
 }
 
 describe("payment cash truth gate", () => {
@@ -97,8 +117,29 @@ describe("payment cash truth gate", () => {
 
     const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
 
-    expect(report.summary).toMatchObject({ status: "ready", readyCount: 12, blockerCount: 0 })
+    expect(report.summary).toMatchObject({ status: "ready", readyCount: 14, blockerCount: 0 })
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
+  })
+
+  it("blocks auto-match when external amount and currency agreement is not enforced", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const runPath = path.join(
+      root,
+      "services/reconciliation/payment-reconciliation-run.service.ts",
+    )
+    write(
+      root,
+      "services/reconciliation/payment-reconciliation-run.service.ts",
+      fs.readFileSync(runPath, "utf8").replace('"STATEMENT_LINE_AMOUNT"', '"REFERENCE_ONLY_MATCH"'),
+    )
+
+    const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain(
+      "auto_match_requires_amount_and_currency_agreement",
+    )
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
   })
 
   it("blocks when payment reconciliation tables are not in migration history before inbox leases", () => {
@@ -112,6 +153,22 @@ describe("payment cash truth gate", () => {
     const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
 
     expect(report.blockers).toContain("durable_payment_reconciliation_schema_migration")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it("blocks when provider and statement evidence has no database immutability boundary", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    fs.rmSync(
+      path.join(root, "prisma/migrations/20260815190000_payment_reconciliation_evidence_immutability"),
+      { recursive: true, force: true },
+    )
+
+    const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain(
+      "provider_and_statement_evidence_is_database_immutable",
+    )
     expect(gateResultForReport(report, "fail").exitCode).toBe(1)
   })
 

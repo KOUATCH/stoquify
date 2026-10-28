@@ -28,6 +28,8 @@ function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
   const contracts = read(root, "services/daily-habit/daily-habit-digest-contracts.ts")
   const component = read(root, "components/daily-habit/DailyHabitDigestDashboard.tsx")
   const route = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx")
+  const routeAccess = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx")
+  const routeDataAccess = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts")
   const loading = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx")
   const error = read(root, "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx")
   const packageJson = read(root, "package.json")
@@ -41,7 +43,8 @@ function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
     {
       id: "route_propagates_roles_without_currency_override",
       ready: route.includes("actorRoleCodes: ctx.roles.map") && route.includes("actorPermissions: ctx.permissions") &&
-        route.includes('"analytics.read"') && !route.includes('currency: "XAF"'),
+        (route.includes('"analytics.read"') || routeDataAccess.includes('"analytics.read"')) &&
+        !route.includes('currency: "XAF"'),
     },
     {
       id: "digest_configs_are_permission_filtered",
@@ -62,7 +65,8 @@ function buildRoleCockpitReadiness(root = process.cwd(), options = {}) {
     {
       id: "no_workspace_permission_and_session_states",
       ready: component.includes("No Daily Digest workspace is available") && component.includes('role="status"') &&
-        route.includes('kind={noActiveOrg ? "no_active_org" : "permission_denied"}') &&
+        (route.includes('kind={noActiveOrg ? "no_active_org" : "permission_denied"}') ||
+          routeAccess.includes('kind={noActiveOrg ? "no_active_org" : "permission_denied"}')) &&
         loading.includes("Preparing Daily Digest") && error.includes("Daily Digest could not load"),
     },
     {

@@ -100,6 +100,7 @@ describe("CustomerStatementWorkflow", () => {
   it("creates an immutable snapshot and queues a consent-hashed delivery", async () => {
     render(
       <CustomerStatementWorkflow
+        currency="XAF"
         customer={{
           id: "customer-1",
           name: "Ada Retail",
@@ -177,6 +178,7 @@ describe("CustomerStatementWorkflow", () => {
     })
     render(
       <CustomerStatementWorkflow
+        currency="XAF"
         customer={{
           id: "customer-1",
           name: "Ada Retail",
@@ -198,6 +200,42 @@ describe("CustomerStatementWorkflow", () => {
     expect(
       await screen.findByText("Authentication could not be verified"),
     ).toBeInTheDocument()
+    expect(mockCreate).not.toHaveBeenCalled()
+  })
+  it("rejects an inverted statement period before fresh authentication", async () => {
+    render(
+      <CustomerStatementWorkflow
+        currency="XAF"
+        customer={{
+          id: "customer-1",
+          name: "Ada Retail",
+          code: "C-001",
+          email: "customer@example.test",
+        }}
+        locale="en"
+      />,
+    )
+
+    const startInput = screen.getByLabelText<HTMLInputElement>("Period start")
+    const endInput = screen.getByLabelText<HTMLInputElement>("Period end")
+    fireEvent.change(startInput, { target: { value: "2026-08-10" } })
+    fireEvent.change(endInput, { target: { value: "2026-08-01" } })
+    expect(startInput).toHaveValue("2026-08-10")
+    expect(endInput).toHaveValue("2026-08-01")
+    fireEvent.change(screen.getByLabelText("Confirm your current password"), {
+      target: { value: "fresh-auth-password" },
+    })
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Generate immutable statement" }),
+    )
+
+    expect(
+      await screen.findByText(
+        "Choose a valid period whose end is on or after its start.",
+      ),
+    ).toBeInTheDocument()
+    expect(mockStepUp).not.toHaveBeenCalled()
     expect(mockCreate).not.toHaveBeenCalled()
   })
 })

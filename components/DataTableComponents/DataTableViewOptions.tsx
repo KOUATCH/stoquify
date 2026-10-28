@@ -15,9 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  label?: string;
 }
 export function DataTableViewOptions<TData>({
   table,
+  label = "View columns",
 }: DataTablePaginationProps<TData>) {
   return (
     <DropdownMenu>
@@ -26,13 +28,14 @@ export function DataTableViewOptions<TData>({
           variant="outline"
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
+          aria-label={label}
         >
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          View
+          {label}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

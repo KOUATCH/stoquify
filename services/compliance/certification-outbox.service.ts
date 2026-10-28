@@ -231,35 +231,69 @@ export async function leaseComplianceSubmissions(
     now.getTime() + Math.max(input.leaseSeconds ?? 60, 10) * 1000,
   )
 
+  const claimableWhere = {
+    organizationId: input.organizationId,
+    OR: [
+      {
+        status: {
+          in: [
+            ComplianceSubmissionStatus.PENDING,
+            ComplianceSubmissionStatus.RETRY_SCHEDULED,
+          ],
+        },
+        nextAttemptAt: { lte: now },
+      },
+      {
+        status: ComplianceSubmissionStatus.LEASED,
+        leasedUntil: { lte: now },
+      },
+      {
+        status: ComplianceSubmissionStatus.LEASED,
+        leasedUntil: null,
+      },
+    ],
+  } satisfies Prisma.ComplianceSubmissionWhereInput
+
   const due = await client.complianceSubmission.findMany({
     where: {
-      organizationId: input.organizationId,
-      status: {
-        in: [
-          ComplianceSubmissionStatus.PENDING,
-          ComplianceSubmissionStatus.RETRY_SCHEDULED,
-        ],
-      },
-      nextAttemptAt: { lte: now },
+      ...claimableWhere,
     },
     orderBy: { createdAt: "asc" },
     take: limit,
   })
 
-  return Promise.all(
-    due.map((submission) =>
-      client.complianceSubmission.update({
-        where: { id: submission.id },
-        data: {
-          status: ComplianceSubmissionStatus.LEASED,
-          leasedAt: now,
-          leasedUntil: leaseUntil,
-          leasedBy: input.leasedBy,
-          attempts: { increment: 1 },
-        },
-      }),
-    ),
-  )
+  const leased: typeof due = []
+  for (const submission of due) {
+    const claimed = await client.complianceSubmission.updateMany({
+      where: {
+        id: submission.id,
+        ...claimableWhere,
+      },
+      data: {
+        status: ComplianceSubmissionStatus.LEASED,
+        leasedAt: now,
+        leasedUntil: leaseUntil,
+        leasedBy: input.leasedBy,
+        attempts: { increment: 1 },
+      },
+    })
+
+    if (claimed.count !== 1) continue
+
+    const claimedSubmission = await client.complianceSubmission.findFirst({
+      where: {
+        id: submission.id,
+        organizationId: input.organizationId,
+        status: ComplianceSubmissionStatus.LEASED,
+        leasedBy: input.leasedBy,
+        leasedUntil: leaseUntil,
+      },
+    })
+
+    if (claimedSubmission) leased.push(claimedSubmission)
+  }
+
+  return leased
 }
 
 type FiscalDocumentForAdapter = {
@@ -445,8 +479,21 @@ export async function processComplianceSubmission(
   client: DbClient = db,
 ) {
   const now = input.now ?? new Date()
+  const workerId = input.processedBy?.trim()
 
-  const run = async (tx: Prisma.TransactionClient) => {
+  if (!workerId) {
+    throw new BusinessRuleError(
+      "Compliance submission processing requires an explicit worker identity.",
+    )
+  }
+
+  if (!hasTransaction(client)) {
+    throw new BusinessRuleError(
+      "Compliance submissions must be processed outside an existing database transaction.",
+    )
+  }
+
+  const prepared = await client.$transaction(async (tx) => {
     const submission = await tx.complianceSubmission.findFirst({
       where: {
         id: input.submissionId,
@@ -478,6 +525,53 @@ export async function processComplianceSubmission(
       )
     }
 
+    const ownsActiveLease = Boolean(
+      submission.status === ComplianceSubmissionStatus.LEASED &&
+        submission.leasedBy === workerId &&
+        submission.leasedUntil &&
+        submission.leasedUntil > now,
+    )
+
+    if (!ownsActiveLease) {
+      const claimed = await tx.complianceSubmission.updateMany({
+        where: {
+          id: submission.id,
+          organizationId: input.organizationId,
+          OR: [
+            {
+              status: ComplianceSubmissionStatus.PENDING,
+              nextAttemptAt: { lte: now },
+            },
+            {
+              status: ComplianceSubmissionStatus.RETRY_SCHEDULED,
+              nextAttemptAt: { lte: now },
+            },
+            {
+              status: ComplianceSubmissionStatus.LEASED,
+              leasedUntil: { lte: now },
+            },
+            {
+              status: ComplianceSubmissionStatus.LEASED,
+              leasedUntil: null,
+            },
+          ],
+        },
+        data: {
+          status: ComplianceSubmissionStatus.LEASED,
+          leasedAt: now,
+          leasedUntil: new Date(now.getTime() + 60_000),
+          leasedBy: workerId,
+          attempts: { increment: 1 },
+        },
+      })
+
+      if (claimed.count !== 1) {
+        throw new ConflictError(
+          "Compliance submission is not due or is leased by another worker.",
+        )
+      }
+    }
+
     const fiscalDocument = submission.fiscalDocument
     let adapterConfig = submission.adapterConfig
 
@@ -495,18 +589,59 @@ export async function processComplianceSubmission(
       })
     }
 
-    const failSubmission = async (options: {
-      status: ComplianceSubmissionStatus
-      errorCode: string
-      message: string
-      responsePayload?: Record<string, unknown> | null
-      responseHash?: string | null
-      rejectionReason?: string | null
-      retryAfterSeconds?: number | null
-      updateDocumentStatus?: FiscalDocumentStatus
-    }) => {
-      const retryable =
+    return {
+      submission,
+      fiscalDocument,
+      adapterConfig,
+      attemptNumber: ownsActiveLease
+        ? submission.attempts
+        : submission.attempts + 1,
+    }
+  })
+
+  const { submission, fiscalDocument } = prepared
+  const adapterConfig = prepared.adapterConfig
+
+  const failSubmission = async (options: {
+    status: ComplianceSubmissionStatus
+    errorCode: string
+    message: string
+    responsePayload?: Record<string, unknown> | null
+    responseHash?: string | null
+    rejectionReason?: string | null
+    retryAfterSeconds?: number | null
+    updateDocumentStatus?: FiscalDocumentStatus
+  }) =>
+    client.$transaction(async (tx) => {
+      const ownedSubmission = await tx.complianceSubmission.findFirst({
+        where: {
+          id: submission.id,
+          organizationId: submission.organizationId,
+          leasedBy: workerId,
+          status: {
+            in: [
+              ComplianceSubmissionStatus.LEASED,
+              ComplianceSubmissionStatus.SUBMITTED,
+            ],
+          },
+        },
+      })
+
+      if (!ownedSubmission) {
+        throw new ConflictError(
+          "Compliance submission lease ownership was lost before failure evidence could be finalized.",
+        )
+      }
+
+      const retryRequested =
         options.status === ComplianceSubmissionStatus.RETRY_SCHEDULED
+      const retryable =
+        retryRequested && prepared.attemptNumber < submission.maxAttempts
+      const persistedStatus = retryable
+        ? ComplianceSubmissionStatus.RETRY_SCHEDULED
+        : retryRequested
+          ? ComplianceSubmissionStatus.FAILED
+          : options.status
       const nextAttemptAt = retryable
         ? nextRetryAt(now, options.retryAfterSeconds)
         : submission.nextAttemptAt
@@ -514,7 +649,7 @@ export async function processComplianceSubmission(
       const updatedSubmission = await tx.complianceSubmission.update({
         where: { id: submission.id },
         data: {
-          status: options.status,
+          status: persistedStatus,
           errorCode: options.errorCode,
           errorMessage: options.message,
           rejectionReason: options.rejectionReason ?? null,
@@ -560,6 +695,8 @@ export async function processComplianceSubmission(
           metadata: {
             errorCode: options.errorCode,
             retryable,
+            attemptNumber: prepared.attemptNumber,
+            maxAttempts: submission.maxAttempts,
             sandboxGrade: true,
           },
         },
@@ -568,12 +705,15 @@ export async function processComplianceSubmission(
 
       await recordBusinessEventInTx(tx, {
         organizationId: submission.organizationId,
-        eventType: retryable
-          ? "compliance.submission.retry_scheduled"
-          : "compliance.submission.failed",
+        eventType:
+          persistedStatus === ComplianceSubmissionStatus.REJECTED
+            ? "AUTHORITY_SUBMISSION_REJECTED"
+            : retryable
+              ? "compliance.submission.retry_scheduled"
+              : "compliance.submission.failed",
         eventSource: "INTERNAL",
         idempotencyKey: `compliance-submission:${submission.id}:${options.errorCode}:${now.toISOString()}`,
-        actorId: input.processedBy ?? undefined,
+        actorId: workerId,
         sourceType: fiscalDocument.sourceType,
         sourceId: fiscalDocument.sourceId,
         postingBatchId: fiscalDocument.postingBatchId,
@@ -581,7 +721,7 @@ export async function processComplianceSubmission(
         payload: {
           submissionId: submission.id,
           fiscalDocumentId: fiscalDocument.id,
-          status: options.status,
+          status: persistedStatus,
           authorityChannel: submission.authorityChannel,
           adapterKey: submission.adapterKey ?? adapterConfig?.adapterKey ?? null,
           errorCode: options.errorCode,
@@ -597,7 +737,7 @@ export async function processComplianceSubmission(
             payload: {
               submissionId: submission.id,
               fiscalDocumentId: fiscalDocument.id,
-              status: options.status,
+              status: persistedStatus,
               errorCode: options.errorCode,
             },
           },
@@ -605,81 +745,83 @@ export async function processComplianceSubmission(
       })
 
       return updatedSubmission
-    }
+    })
 
-    if (submission.environment === ComplianceAdapterEnvironment.PRODUCTION) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "PRODUCTION_ADAPTER_BLOCKED",
-        message:
-          "Production compliance submissions are blocked until official certification is registered.",
-      })
-    }
+  if (submission.environment === ComplianceAdapterEnvironment.PRODUCTION) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "PRODUCTION_ADAPTER_BLOCKED",
+      message:
+        "Production compliance submissions are blocked until official certification is registered.",
+    })
+  }
 
-    if (
-      submission.environment !== ComplianceAdapterEnvironment.FAKE_SANDBOX &&
-      !adapterConfig
-    ) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
-        message:
-          "No tenant adapter configuration is registered for this country, channel, and environment.",
-      })
-    }
+  if (
+    submission.environment !== ComplianceAdapterEnvironment.FAKE_SANDBOX &&
+    !adapterConfig
+  ) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
+      message:
+        "No tenant adapter configuration is registered for this country, channel, and environment.",
+    })
+  }
 
-    if (
-      adapterConfig &&
-      adapterConfig.status !== ComplianceAdapterConfigStatus.ACTIVE
-    ) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
-        message:
-          "Tenant compliance adapter configuration is not active or is disabled.",
-      })
-    }
+  if (
+    adapterConfig &&
+    adapterConfig.status !== ComplianceAdapterConfigStatus.ACTIVE
+  ) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
+      message:
+        "Tenant compliance adapter configuration is not active or is disabled.",
+    })
+  }
 
-    if (
-      adapterConfig &&
-      submission.environment !== ComplianceAdapterEnvironment.FAKE_SANDBOX &&
-      !credentialReferenceSchema.safeParse(adapterConfig.credentialReference).success
-    ) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
-        message:
-          "Tenant compliance adapter credential reference is missing or is not an approved secret-manager URI; secrets must remain outside country packs and logs.",
-      })
-    }
+  if (
+    adapterConfig &&
+    submission.environment !== ComplianceAdapterEnvironment.FAKE_SANDBOX &&
+    !credentialReferenceSchema.safeParse(adapterConfig.credentialReference).success
+  ) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
+      message:
+        "Tenant compliance adapter credential reference is missing or is not an approved secret-manager URI; secrets must remain outside country packs and logs.",
+    })
+  }
 
-    if (
-      adapterConfig?.credentialExpiresAt &&
-      adapterConfig.credentialExpiresAt <= now
-    ) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
-        message:
-          "Tenant compliance adapter credentials have expired and must be rotated before submission.",
-      })
-    }
+  if (
+    adapterConfig?.credentialExpiresAt &&
+    adapterConfig.credentialExpiresAt <= now
+  ) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "CREDENTIAL_CONFIGURATION_ERROR",
+      message:
+        "Tenant compliance adapter credentials have expired and must be rotated before submission.",
+    })
+  }
 
-    if (
-      adapterConfig &&
-      adapterConfig.countryPackVersion !== fiscalDocument.countryPackVersion
-    ) {
-      return failSubmission({
-        status: ComplianceSubmissionStatus.FAILED,
-        errorCode: "CONFIGURATION_ERROR",
-        message:
-          "Tenant adapter configuration country-pack version does not match the fiscal document provenance.",
-      })
-    }
+  if (
+    adapterConfig &&
+    adapterConfig.countryPackVersion !== fiscalDocument.countryPackVersion
+  ) {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "CONFIGURATION_ERROR",
+      message:
+        "Tenant adapter configuration country-pack version does not match the fiscal document provenance.",
+    })
+  }
 
-    const adapterKey = submission.adapterKey ?? adapterConfig?.adapterKey ?? null
-    const adapter = getComplianceAdapter(adapterKey)
-    const canonicalPayload = buildCanonicalPayloadFromDocument(fiscalDocument)
+  const adapterKey = submission.adapterKey ?? adapterConfig?.adapterKey ?? null
+  const adapter = getComplianceAdapter(adapterKey)
+  const canonicalPayload = buildCanonicalPayloadFromDocument(fiscalDocument)
+
+  try {
     const validation = await adapter.validatePayload(canonicalPayload)
 
     if (!validation.ok) {
@@ -690,8 +832,45 @@ export async function processComplianceSubmission(
         updateDocumentStatus: FiscalDocumentStatus.REJECTED,
       })
     }
+  } catch {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "PAYLOAD_VALIDATION_ERROR",
+      message:
+        "Compliance payload validation failed before a trusted authority request could be built.",
+    })
+  }
 
-    const authorityPayload = await adapter.buildAuthorityPayload(canonicalPayload)
+  let authorityPayload: Awaited<
+    ReturnType<typeof adapter.buildAuthorityPayload>
+  >
+  try {
+    authorityPayload = await adapter.buildAuthorityPayload(canonicalPayload)
+  } catch {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.FAILED,
+      errorCode: "PAYLOAD_VALIDATION_ERROR",
+      message:
+        "Compliance authority payload construction failed before dispatch.",
+    })
+  }
+
+  await client.$transaction(async (tx) => {
+    const ownedSubmission = await tx.complianceSubmission.findFirst({
+      where: {
+        id: submission.id,
+        organizationId: submission.organizationId,
+        status: ComplianceSubmissionStatus.LEASED,
+        leasedBy: workerId,
+      },
+    })
+
+    if (!ownedSubmission) {
+      throw new ConflictError(
+        "Compliance submission lease ownership was lost before authority dispatch.",
+      )
+    }
+
     await recordComplianceEvidenceOnce(
       {
         organizationId: submission.organizationId,
@@ -727,7 +906,32 @@ export async function processComplianceSubmission(
       },
     })
 
-    const result = await adapter.submit(authorityPayload, {
+    await recordBusinessEventInTx(tx, {
+      organizationId: submission.organizationId,
+      eventType: "AUTHORITY_SUBMISSION_SENT",
+      eventSource: "INTERNAL",
+      idempotencyKey: `compliance-submission:${submission.id}:sent:${authorityPayload.payloadHash}`,
+      actorId: workerId,
+      sourceType: fiscalDocument.sourceType,
+      sourceId: fiscalDocument.sourceId,
+      postingBatchId: fiscalDocument.postingBatchId,
+      documentHash: authorityPayload.payloadHash,
+      payload: {
+        submissionId: submission.id,
+        fiscalDocumentId: fiscalDocument.id,
+        authorityChannel: submission.authorityChannel,
+        adapterKey: adapter.code,
+        requestHash: authorityPayload.payloadHash,
+        sandboxGrade: true,
+        productionCertification: false,
+      },
+      outboxMessages: [],
+    })
+  })
+
+  let result: Awaited<ReturnType<typeof adapter.submit>>
+  try {
+    result = await adapter.submit(authorityPayload, {
       organizationId: submission.organizationId,
       authorityChannel: submission.authorityChannel,
       environment: submission.environment,
@@ -736,37 +940,62 @@ export async function processComplianceSubmission(
         `${adapter.code}:${submission.id}:${authorityPayload.payloadHash.slice(-12)}`,
       adapterConfig: adapterConfigContext(adapterConfig),
     })
+  } catch {
+    return failSubmission({
+      status: ComplianceSubmissionStatus.RETRY_SCHEDULED,
+      errorCode: "UNKNOWN_UNSAFE_ERROR",
+      message:
+        "The authority adapter did not return a trusted response; the submission was scheduled for controlled retry.",
+    })
+  }
 
-    if (!result.ok) {
-      if (
-        result.status === "RETRYABLE_AUTHORITY_OUTAGE" ||
-        result.status === "RATE_LIMITED"
-      ) {
-        return failSubmission({
-          status: ComplianceSubmissionStatus.RETRY_SCHEDULED,
-          errorCode: result.status,
-          message: result.message,
-          responsePayload: result.responsePayload,
-          responseHash: result.responseHash,
-          retryAfterSeconds: result.retryAfterSeconds,
-        })
-      }
-
+  if (!result.ok) {
+    if (
+      result.status === "RETRYABLE_AUTHORITY_OUTAGE" ||
+      result.status === "RATE_LIMITED"
+    ) {
       return failSubmission({
-        status:
-          result.status === "TERMINAL_REJECTION"
-            ? ComplianceSubmissionStatus.REJECTED
-            : ComplianceSubmissionStatus.FAILED,
+        status: ComplianceSubmissionStatus.RETRY_SCHEDULED,
         errorCode: result.status,
         message: result.message,
         responsePayload: result.responsePayload,
         responseHash: result.responseHash,
-        rejectionReason: result.rejectionReason ?? null,
-        updateDocumentStatus:
-          result.status === "TERMINAL_REJECTION"
-            ? FiscalDocumentStatus.REJECTED
-            : undefined,
+        retryAfterSeconds: result.retryAfterSeconds,
       })
+    }
+
+    return failSubmission({
+      status:
+        result.status === "TERMINAL_REJECTION"
+          ? ComplianceSubmissionStatus.REJECTED
+          : ComplianceSubmissionStatus.FAILED,
+      errorCode: result.status,
+      message: result.message,
+      responsePayload: result.responsePayload,
+      responseHash: result.responseHash,
+      rejectionReason: result.rejectionReason ?? null,
+      updateDocumentStatus:
+        result.status === "TERMINAL_REJECTION"
+          ? FiscalDocumentStatus.REJECTED
+          : undefined,
+    })
+  }
+
+  return client.$transaction(async (tx) => {
+    const ownedSubmission = await tx.complianceSubmission.findFirst({
+      where: {
+        id: submission.id,
+        organizationId: submission.organizationId,
+        status: ComplianceSubmissionStatus.SUBMITTED,
+        leasedBy: workerId,
+        requestHash: authorityPayload.payloadHash,
+      },
+    })
+
+    if (!ownedSubmission) {
+      throw new ConflictError(
+        "Compliance submission lease ownership was lost before authority evidence could be finalized.",
+      )
     }
 
     const responseHash =
@@ -858,10 +1087,10 @@ export async function processComplianceSubmission(
 
     await recordBusinessEventInTx(tx, {
       organizationId: submission.organizationId,
-      eventType: "compliance.submission.accepted",
+      eventType: "AUTHORITY_SUBMISSION_ACCEPTED",
       eventSource: "INTERNAL",
       idempotencyKey: `compliance-submission:${submission.id}:accepted:${result.responseHash ?? authorityPayload.payloadHash}`,
-      actorId: input.processedBy ?? undefined,
+      actorId: workerId,
       sourceType: fiscalDocument.sourceType,
       sourceId: fiscalDocument.sourceId,
       postingBatchId: fiscalDocument.postingBatchId,
@@ -893,8 +1122,5 @@ export async function processComplianceSubmission(
     })
 
     return updatedSubmission
-  }
-
-  if (hasTransaction(client)) return client.$transaction(run)
-  return run(client)
+  })
 }

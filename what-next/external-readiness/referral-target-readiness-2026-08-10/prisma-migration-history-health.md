@@ -1,0 +1,59 @@
+# Prisma Migration History Health
+
+Generated: 2026-08-10T13:34:50.145Z
+Mode: `report`
+Status: `blocked`
+
+## Summary
+
+- Checks ready: 6/9
+- Repository migrations: 62
+- Completed history rows: 0
+- Unfinished history rows: 0
+- Rolled-back history rows: 0
+- Secret values printed: no
+- Migration logs printed: no
+
+## Target
+
+- Database configured: no
+- Target class: `unconfigured`
+- History query succeeded: no
+- Checksum approval registry valid: yes
+- Checksum approvals: 0
+
+## Checks
+
+- blocked: database_url_configured
+- ready: migration_catalog_present
+- ready: migration_checksum_approval_registry_valid
+- blocked: migration_history_query_succeeded
+- ready: migration_history_has_no_unfinished_rows
+- blocked: all_repository_migrations_successfully_applied
+- ready: applied_migration_checksums_match_repository
+- ready: database_has_no_unknown_successful_migrations
+- ready: database_has_no_duplicate_successful_migrations
+
+## Findings
+
+- Unfinished: none
+- Missing: 20260528124341_refine_item_barcode, 20260611120000_payment_provider_reference_uniqueness, 20260611130000_accounting_auth_baseline_bridge, 20260618154500_repair_accounting_source_links, 20260618160000_payroll_foundation_bridge, 20260618161000_ap_stock_count_foundation_bridge, 20260619120000_backfill_purchase_receive_permission, 20260621103000_workflow_assurance_registry_foundation, 20260621113000_workflow_assurance_incident_spine, 20260625110000_payroll_kernel_immutability, 20260626093000_payroll_compensation_approval, 20260626103000_payroll_payment_evidence_readiness, 20260626123000_payroll_cnps_country_pack_expansion, 20260626133000_payroll_declaration_lifecycle_evidence, 20260626143000_payroll_payment_reconciliation_lifecycle, 20260628123000_payroll_employee_balance_lifecycle, 20260630090000_payment_reconciliation_foundation, 20260630100000_payment_reconciliation_inbox_worker_leases, 20260703110000_public_receipt_access_tokens, 20260711133000_public_identity_abuse_limits, 20260714194500_inventory_history_accounting_time_controls, 20260714203000_session_assurance, 20260715090000_inventory_correction_reversal_lineage, 20260718100000_branch_daily_close_review_foundation, 20260718130000_branch_daily_close_sign_off_foundation, 20260719190000_hris_org_manager_scope_foundation, 20260719203000_workflow_assurance_stable_case_identity, 20260720090000_close_assurance_schema_foundation, 20260720130000_cash_shortage_policy_governance, 20260720210000_workflow_assurance_multi_finding_persistence, 20260722143000_agent_runtime_phase_1_foundation, 20260722150000_agent_runtime_tenant_consistency, 20260722153000_agent_runtime_incident_cascade_consistency, 20260722160000_agent_runtime_phase_2a_provenance, 20260722161000_agent_runtime_phase_2a_operational_controls, 20260722162000_agent_runtime_tenant_scoped_correlation, 20260723100000_agent_runtime_release_control, 20260724100000_agent_runtime_release_hardening, 20260724113000_agent_runtime_retirement_alert_dead_letter, 20260724193000_agent_reconciler_invocation_ledger, 20260726140000_business_event_foundation_bridge, 20260726143000_regulatory_isolation_outbox, 20260726190000_retire_production_bom_capability, 20260726213000_hris_operational_time_management, 20260727090000_accountant_access_portfolio, 20260727110000_offline_pos_sync_foundation, 20260727110100_offline_pos_sync_foundation_reconciliation, 20260727143000_country_adapter_pilot_foundation, 20260727170000_ai_copilot_proposal_guardrails, 20260728100000_pos_cash_shortage_checkpoint_persistence, 20260730150000_organization_onboarding_entitlement_bridge, 20260730160000_pos_sales_dependency_entitlement, 20260801153000_certified_fiscal_evidence_immutability, 20260808120000_customer_settlement_allocation_foundation, 20260808133000_customer_settlement_compensating_reversal_foundation, 20260809100000_customer_receivable_document_foundation, 20260809113000_customer_statement_snapshot_foundation, 20260809130000_customer_statement_external_access, 20260809143000_customer_statement_delivery_referral, 20260809160000_accountant_client_invite_onboarding, 20260809170000_referral_accounting_source_types, 20260809180000_accounting_enum_completion
+- Checksum mismatches: none
+- Approved checksum mismatches: none
+- Stale checksum approvals: none
+- Unknown successful migrations: none
+- Duplicate successful migrations: none
+
+## Blockers
+
+- database_url_configured
+- migration_history_query_succeeded
+- all_repository_migrations_successfully_applied
+
+## Safety
+
+- This gate performs a read-only query of `_prisma_migrations`.
+- It does not print or retain the database URL or migration error logs.
+- It compares successful history rows with the exact repository migration file checksums.
+- A legacy mismatch is accepted only when an approval matches the migration name, exact database checksum, and an exact current repository checksum.
+- It does not resolve, apply, roll back, or mutate a migration.

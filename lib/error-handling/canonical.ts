@@ -20,6 +20,13 @@ export type CanonicalErrorCode =
   | "NOT_FOUND"
   | "CONFLICT"
   | "BUSINESS_RULE_VIOLATION"
+  | "INVALID_TRANSITION"
+  | "CONCURRENCY_CONFLICT"
+  | "IDEMPOTENCY_CONFLICT"
+  | "SOD_VIOLATION"
+  | "TENANT_SCOPE_VIOLATION"
+  | "PAYROLL_TRANSITION_EVIDENCE_MISSING"
+  | "PAYROLL_LIFECYCLE_WRITES_DISABLED"
   | "DUPLICATE_KEY_CONFLICT"
   | "DATABASE_CONFLICT"
   | "DATABASE_UNAVAILABLE"
@@ -83,8 +90,10 @@ type RbacErrorLike = Error & {
   status?: number
 }
 
-const INTERNAL_MESSAGE = "The operation could not be completed. Please try again or contact support."
-const SECRET_PATTERN = /(password|secret|token|authorization|cookie|api[-_]?key|database_url|postgres(?:ql)?:\/\/|mongodb(?:\+srv)?:\/\/|prisma|sql|stack|\\users\\|\/users\/)/i
+const INTERNAL_MESSAGE =
+  "The operation could not be completed. Please try again or contact support."
+const SECRET_PATTERN =
+  /(password|secret|token|authorization|cookie|api[-_]?key|database_url|postgres(?:ql)?:\/\/|mongodb(?:\+srv)?:\/\/|prisma|sql|stack|\\users\\|\/users\/)/i
 
 export function createCorrelationId(prefix = "err") {
   if (globalThis.crypto?.randomUUID) {
@@ -95,9 +104,10 @@ export function createCorrelationId(prefix = "err") {
 }
 
 export function isNextControlFlowError(error: unknown): boolean {
-  const digest = typeof error === "object" && error !== null && "digest" in error
-    ? String((error as { digest?: unknown }).digest)
-    : ""
+  const digest =
+    typeof error === "object" && error !== null && "digest" in error
+      ? String((error as { digest?: unknown }).digest)
+      : ""
 
   return digest.startsWith("NEXT_REDIRECT") || digest === "NEXT_NOT_FOUND"
 }
@@ -111,11 +121,13 @@ function isApplicationErrorLike(error: unknown): error is ApplicationErrorLike {
 }
 
 function isRbacErrorLike(error: unknown): error is RbacErrorLike {
-  return error instanceof Error &&
+  return (
+    error instanceof Error &&
     typeof (error as RbacErrorLike).code === "string" &&
     ((error as RbacErrorLike).code === "UNAUTHENTICATED" ||
       (error as RbacErrorLike).code === "NO_ACTIVE_ORG" ||
       (error as RbacErrorLike).code === "FORBIDDEN")
+  )
 }
 
 function isFreshAuthRequiredError(error: unknown): error is Error {
@@ -123,16 +135,19 @@ function isFreshAuthRequiredError(error: unknown): error is Error {
 }
 
 function isPrismaKnownRequestError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
-  return error instanceof Prisma.PrismaClientKnownRequestError ||
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError ||
     (isRecord(error) &&
       typeof error.code === "string" &&
       /^P\d{4}$/.test(error.code) &&
       typeof error.clientVersion === "string")
+  )
 }
 
 function toStatus(value: unknown, fallback: CanonicalErrorStatus): CanonicalErrorStatus {
-  return typeof value === "number" && [400, 401, 403, 404, 405, 409, 422, 429, 500, 503].includes(value)
-    ? value as CanonicalErrorStatus
+  return typeof value === "number" &&
+    [400, 401, 403, 404, 405, 409, 422, 429, 500, 503].includes(value)
+    ? (value as CanonicalErrorStatus)
     : fallback
 }
 
@@ -155,10 +170,17 @@ function categoryForCode(code: CanonicalErrorCode) {
     case "FRESH_AUTH_REQUIRED":
       return ErrorCategory.AUTHENTICATION
     case "FORBIDDEN":
+    case "SOD_VIOLATION":
+    case "TENANT_SCOPE_VIOLATION":
       return ErrorCategory.AUTHORIZATION
     case "BUSINESS_RULE_VIOLATION":
+    case "INVALID_TRANSITION":
+    case "PAYROLL_TRANSITION_EVIDENCE_MISSING":
+    case "PAYROLL_LIFECYCLE_WRITES_DISABLED":
       return ErrorCategory.BUSINESS_RULE
     case "CONFLICT":
+    case "CONCURRENCY_CONFLICT":
+    case "IDEMPOTENCY_CONFLICT":
     case "DUPLICATE_KEY_CONFLICT":
     case "DATABASE_CONFLICT":
       return ErrorCategory.DATABASE
@@ -189,7 +211,11 @@ function notificationFor(severity: ErrorSeverity, retryable: boolean): Canonical
     return { user: true, admin: false, level: "warning" }
   }
 
-  return { user: true, admin: false, level: severity === ErrorSeverity.LOW ? "info" : "warning" }
+  return {
+    user: true,
+    admin: false,
+    level: severity === ErrorSeverity.LOW ? "info" : "warning",
+  }
 }
 
 function fieldErrorsFromZod(error: ZodError): Record<string, string[]> {
@@ -200,17 +226,20 @@ function fieldErrorsFromZod(error: ZodError): Record<string, string[]> {
   }, {})
 }
 
-function createCanonicalError(params: {
-  code: CanonicalErrorCode
-  status: CanonicalErrorStatus
-  userMessage: string
-  operatorMessage: string
-  retryable?: boolean
-  recoverable?: boolean
-  category?: ErrorCategory
-  severity?: ErrorSeverity
-  fieldErrors?: Record<string, string[]>
-}, options: CanonicalErrorOptions = {}): CanonicalError {
+function createCanonicalError(
+  params: {
+    code: CanonicalErrorCode
+    status: CanonicalErrorStatus
+    userMessage: string
+    operatorMessage: string
+    retryable?: boolean
+    recoverable?: boolean
+    category?: ErrorCategory
+    severity?: ErrorSeverity
+    fieldErrors?: Record<string, string[]>
+  },
+  options: CanonicalErrorOptions = {},
+): CanonicalError {
   const correlationId = options.correlationId || options.requestId || createCorrelationId()
   const retryable = options.retryable ?? params.retryable ?? false
   const status = options.status ?? params.status
@@ -226,7 +255,9 @@ function createCanonicalError(params: {
     retryable,
     recoverable: options.recoverable ?? params.recoverable ?? retryable,
     userMessage: safeUserMessage(options.userMessage ?? params.userMessage, params.userMessage),
-    operatorMessage: String(sanitizeErrorMetadata(options.operatorMessage ?? params.operatorMessage)),
+    operatorMessage: String(
+      sanitizeErrorMetadata(options.operatorMessage ?? params.operatorMessage),
+    ),
     correlationId,
     requestId: correlationId,
     context: options.context ?? ErrorContext.SERVER_ACTION,
@@ -243,129 +274,167 @@ function createCanonicalError(params: {
   }
 }
 
-export function normalizeToCanonicalError(error: unknown, options: CanonicalErrorOptions = {}): CanonicalError {
+export function normalizeToCanonicalError(
+  error: unknown,
+  options: CanonicalErrorOptions = {},
+): CanonicalError {
   if (isNextControlFlowError(error)) {
     throw error
   }
 
   if (error instanceof ZodError) {
-    return createCanonicalError({
-      code: "VALIDATION_ERROR",
-      status: 400,
-      userMessage: "Invalid input. Please review the form and try again.",
-      operatorMessage: error.message,
-      category: ErrorCategory.VALIDATION,
-      severity: ErrorSeverity.LOW,
-      fieldErrors: fieldErrorsFromZod(error),
-    }, options)
+    return createCanonicalError(
+      {
+        code: "VALIDATION_ERROR",
+        status: 400,
+        userMessage: "Invalid input. Please review the form and try again.",
+        operatorMessage: error.message,
+        category: ErrorCategory.VALIDATION,
+        severity: ErrorSeverity.LOW,
+        fieldErrors: fieldErrorsFromZod(error),
+      },
+      options,
+    )
   }
 
   if (isRbacErrorLike(error)) {
-    const isAuth = error.code === "UNAUTHENTICATED" || error.code === "NO_ACTIVE_ORG" || error.status === 401
-    return createCanonicalError({
-      code: isAuth ? "AUTH_REQUIRED" : "FORBIDDEN",
-      status: isAuth ? 401 : 403,
-      userMessage: isAuth ? "Unauthenticated" : "Forbidden",
-      operatorMessage: error.message,
-      category: isAuth ? ErrorCategory.AUTHENTICATION : ErrorCategory.AUTHORIZATION,
-      severity: ErrorSeverity.MEDIUM,
-    }, options)
+    const isAuth =
+      error.code === "UNAUTHENTICATED" || error.code === "NO_ACTIVE_ORG" || error.status === 401
+    return createCanonicalError(
+      {
+        code: isAuth ? "AUTH_REQUIRED" : "FORBIDDEN",
+        status: isAuth ? 401 : 403,
+        userMessage: isAuth ? "Unauthenticated" : "Forbidden",
+        operatorMessage: error.message,
+        category: isAuth ? ErrorCategory.AUTHENTICATION : ErrorCategory.AUTHORIZATION,
+        severity: ErrorSeverity.MEDIUM,
+      },
+      options,
+    )
   }
 
   if (isFreshAuthRequiredError(error)) {
-    return createCanonicalError({
-      code: "FRESH_AUTH_REQUIRED",
-      status: 403,
-      userMessage: "Fresh authentication required",
-      operatorMessage: error.message,
-      category: ErrorCategory.AUTHENTICATION,
-      severity: ErrorSeverity.MEDIUM,
-    }, options)
+    return createCanonicalError(
+      {
+        code: "FRESH_AUTH_REQUIRED",
+        status: 403,
+        userMessage: "Fresh authentication required",
+        operatorMessage: error.message,
+        category: ErrorCategory.AUTHENTICATION,
+        severity: ErrorSeverity.MEDIUM,
+      },
+      options,
+    )
   }
 
   if (isPrismaKnownRequestError(error)) {
     if (error.code === "P2002") {
-      return createCanonicalError({
-        code: "CONFLICT",
-        status: 409,
-        userMessage: "A record with the same unique value already exists.",
-        operatorMessage: error.message,
-        category: ErrorCategory.DATABASE,
-        severity: ErrorSeverity.MEDIUM,
-      }, options)
+      return createCanonicalError(
+        {
+          code: "CONFLICT",
+          status: 409,
+          userMessage: "A record with the same unique value already exists.",
+          operatorMessage: error.message,
+          category: ErrorCategory.DATABASE,
+          severity: ErrorSeverity.MEDIUM,
+        },
+        options,
+      )
     }
 
     if (error.code === "P2003") {
-      return createCanonicalError({
-        code: "DATABASE_CONFLICT",
-        status: 409,
-        userMessage: "The selected record cannot be used because a related record is missing.",
-        operatorMessage: error.message,
-        category: ErrorCategory.DATABASE,
-        severity: ErrorSeverity.MEDIUM,
-      }, options)
+      return createCanonicalError(
+        {
+          code: "DATABASE_CONFLICT",
+          status: 409,
+          userMessage: "The selected record cannot be used because a related record is missing.",
+          operatorMessage: error.message,
+          category: ErrorCategory.DATABASE,
+          severity: ErrorSeverity.MEDIUM,
+        },
+        options,
+      )
     }
 
     if (error.code === "P2025") {
-      return createCanonicalError({
-        code: "NOT_FOUND",
-        status: 404,
-        userMessage: "The requested record was not found.",
-        operatorMessage: error.message,
-        category: ErrorCategory.BUSINESS_RULE,
-        severity: ErrorSeverity.LOW,
-      }, options)
+      return createCanonicalError(
+        {
+          code: "NOT_FOUND",
+          status: 404,
+          userMessage: "The requested record was not found.",
+          operatorMessage: error.message,
+          category: ErrorCategory.BUSINESS_RULE,
+          severity: ErrorSeverity.LOW,
+        },
+        options,
+      )
     }
 
-    return createCanonicalError({
-      code: "DATABASE_UNAVAILABLE",
-      status: 503,
-      userMessage: "We are experiencing temporary technical difficulties. Please try again in a moment.",
-      operatorMessage: error.message,
-      category: ErrorCategory.DATABASE,
-      severity: ErrorSeverity.HIGH,
-      retryable: true,
-    }, options)
+    return createCanonicalError(
+      {
+        code: "DATABASE_UNAVAILABLE",
+        status: 503,
+        userMessage:
+          "We are experiencing temporary technical difficulties. Please try again in a moment.",
+        operatorMessage: error.message,
+        category: ErrorCategory.DATABASE,
+        severity: ErrorSeverity.HIGH,
+        retryable: true,
+      },
+      options,
+    )
   }
 
   if (isApplicationErrorLike(error)) {
     const status = toStatus(error.status, 500)
     const code = canonicalCodeFromString(error.code, status)
-    return createCanonicalError({
-      code,
-      status,
-      userMessage: error.expose === false ? INTERNAL_MESSAGE : error.message,
-      operatorMessage: error.message,
-      category: categoryForCode(code),
-      severity: severityForStatus(status),
-    }, options)
+    return createCanonicalError(
+      {
+        code,
+        status,
+        userMessage: error.expose === false ? INTERNAL_MESSAGE : error.message,
+        operatorMessage: error.message,
+        category: categoryForCode(code),
+        severity: severityForStatus(status),
+      },
+      options,
+    )
   }
 
   if (typeof error === "string") {
-    return createCanonicalError({
-      code: options.code ?? "INTERNAL_ERROR",
-      status: options.status ?? 500,
-      userMessage: options.userMessage ?? safeUserMessage(error),
-      operatorMessage: error,
-    }, options)
+    return createCanonicalError(
+      {
+        code: options.code ?? "INTERNAL_ERROR",
+        status: options.status ?? 500,
+        userMessage: options.userMessage ?? safeUserMessage(error),
+        operatorMessage: error,
+      },
+      options,
+    )
   }
 
   const message = error instanceof Error ? error.message : "Unknown error"
-  return createCanonicalError({
-    code: options.code ?? "INTERNAL_ERROR",
-    status: options.status ?? 500,
-    userMessage: options.userMessage ?? INTERNAL_MESSAGE,
-    operatorMessage: message,
-  }, {
-    ...options,
-    metadata: {
-      ...options.metadata,
-      errorName: error instanceof Error ? error.name : typeof error,
+  return createCanonicalError(
+    {
+      code: options.code ?? "INTERNAL_ERROR",
+      status: options.status ?? 500,
+      userMessage: options.userMessage ?? INTERNAL_MESSAGE,
+      operatorMessage: message,
     },
-  })
+    {
+      ...options,
+      metadata: {
+        ...options.metadata,
+        errorName: error instanceof Error ? error.name : typeof error,
+      },
+    },
+  )
 }
 
-function canonicalCodeFromString(code: string | undefined, status: CanonicalErrorStatus): CanonicalErrorCode {
+function canonicalCodeFromString(
+  code: string | undefined,
+  status: CanonicalErrorStatus,
+): CanonicalErrorCode {
   switch (code) {
     case "VALIDATION_ERROR":
     case "AUTH_REQUIRED":
@@ -374,6 +443,13 @@ function canonicalCodeFromString(code: string | undefined, status: CanonicalErro
     case "NOT_FOUND":
     case "CONFLICT":
     case "BUSINESS_RULE_VIOLATION":
+    case "INVALID_TRANSITION":
+    case "CONCURRENCY_CONFLICT":
+    case "IDEMPOTENCY_CONFLICT":
+    case "SOD_VIOLATION":
+    case "TENANT_SCOPE_VIOLATION":
+    case "PAYROLL_TRANSITION_EVIDENCE_MISSING":
+    case "PAYROLL_LIFECYCLE_WRITES_DISABLED":
     case "DUPLICATE_KEY_CONFLICT":
     case "DATABASE_CONFLICT":
     case "DATABASE_UNAVAILABLE":

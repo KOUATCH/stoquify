@@ -90,6 +90,27 @@
     "title": "Controle des caisses",
     "subtitle": "Suivi par lieu des tiroirs, confiance de rapprochement et historique des services caissiers.",
     "updated": "Mis a jour {time}",
+    "operatingStatus": {
+      "title": "Statut operationnel",
+      "prompt": "La caisse est-elle sous controle pour ce perimetre ?",
+      "states": {
+        "controlled": "Caisse sous controle",
+        "review": "Revue requise",
+        "critical": "Attention critique"
+      },
+      "confidence": "Confiance",
+      "alerts": "Alertes actives",
+      "openDrawers": "Tiroirs ouverts",
+      "lastUpdated": "Derniere mise a jour"
+    },
+    "navigation": {
+      "label": "Sections du controle caisse",
+      "overview": "Vue d'ensemble",
+      "drawers": "Tiroirs",
+      "movement": "Mouvements",
+      "sessions": "Services",
+      "journal": "Journal"
+    },
     "common": {
       "notAvailable": "Non disponible"
     },
@@ -111,7 +132,9 @@
       "pos": "PDV",
       "openPos": "Ouvrir PDV",
       "terminals": "Gerer terminaux",
-      "cashFlow": "Tresorerie"
+      "cashFlow": "Tresorerie",
+      "history": "Historique caisse et paiements",
+      "reconciliation": "Rapprochement"
     },
     "notifications": {
       "refreshTitle": "Actualisation du tableau caisses",
@@ -157,7 +180,9 @@
       "refunds": "Remboursements",
       "closingCounts": "Comptages finaux",
       "accuracy": "Exactitude {value}",
-      "thresholds": "Seuils d'ecart : revue a {medium}, attention manager a {high}."
+      "thresholds": "Seuils d'ecart : revue a {medium}, attention manager a {high}.",
+      "reviewThreshold": "Seuil de revue {amount}",
+      "managerThreshold": "Attention manager {amount}"
     },
     "alerts": {
       "highVariance": "{count} service(s) ont un ecart eleve totalisant {amount}.",
@@ -182,6 +207,15 @@
       "cashOut": "Sorties",
       "refunds": "Remb."
     },
+    "chart": {
+      "netMovement": "Mouvement net",
+      "totalInflow": "Total entrees",
+      "totalOutflow": "Total sorties",
+      "latestComparison": "Dernier jour vs precedent",
+      "comparisonUnavailable": "Donnees insuffisantes",
+      "net": "Net",
+      "daySummary": "{date} : net {net}"
+    },
     "table": {
       "session": "Service",
       "cashier": "Caissier",
@@ -193,6 +227,25 @@
       "drawer": "Tiroir",
       "amount": "Montant",
       "after": "Apres"
+    },
+    "details": {
+      "showSession": "Afficher les details du service",
+      "hideSession": "Masquer les details du service",
+      "showJournal": "Afficher les details du journal",
+      "hideJournal": "Masquer les details du journal",
+      "location": "Lieu",
+      "session": "Service",
+      "openingBalance": "Solde initial",
+      "expectedBalance": "Solde attendu",
+      "closingBalance": "Solde final",
+      "card": "Carte",
+      "mobileMoney": "Mobile money",
+      "bankTransfer": "Virement bancaire",
+      "credit": "Credit",
+      "transactions": "Transactions",
+      "balanceBefore": "Solde avant",
+      "balanceAfter": "Solde apres",
+      "reason": "Motif"
     },
     "statuses": {
       "ACTIVE": "Ouvert",
@@ -211,10 +264,25 @@
       "REFUND": "Remboursement",
       "PAYOUT": "Paiement sortant"
     },
+    "tableControls": {
+      "searchPlaceholder": "Rechercher service, caissier, terminal",
+      "status": "Statut",
+      "time": "Periode",
+      "statusAll": "Tous les statuts",
+      "timeAll": "Toutes les periodes",
+      "time24h": "24 derniere heures",
+      "time7d": "7 derniers jours",
+      "time30d": "30 derniers jours",
+      "rowsPerPage": "Lignes par page",
+      "previous": "Precedent",
+      "next": "Suivant",
+      "showing": "Affichage de {start} a {end} sur {total}"
+    },
     "empty": {
       "drawers": "Aucun tiroir caisse trouve pour ce perimetre.",
       "trend": "Aucun mouvement de caisse trouve sur cette periode.",
       "sessions": "Aucun service caissier trouve sur cette periode.",
+      "sessionsFiltered": "Aucun service ne correspond a votre recherche, filtres ou periode.",
       "journal": "Aucun evenement tiroir trouve sur cette periode."
     }
   },
@@ -258,6 +326,8 @@
       "view": "Vue",
       "location": "Lieu",
       "period": "Periode",
+      "startDate": "Date de debut",
+      "endDate": "Date de fin",
       "allLocations": "Tous les lieux"
     },
     "views": {
@@ -298,6 +368,20 @@
       "payables": "Dettes",
       "confidence": "Confiance"
     },
+    "tableControls": {
+      "searchPlaceholder": "Rechercher service, caissier, terminal",
+      "status": "Statut",
+      "time": "Période",
+      "statusAll": "Tous les statuts",
+      "timeAll": "Toutes les périodes",
+      "time24h": "24 dernières heures",
+      "time7d": "7 derniers jours",
+      "time30d": "30 derniers jours",
+      "rowsPerPage": "Lignes par page",
+      "previous": "Precedent",
+      "next": "Suivant",
+      "showing": "Affichage de {start} a {end} sur {total}"
+    },
     "details": {
       "cash": "Mouvement net {amount}",
       "margin": "Marge brute {value}",
@@ -317,7 +401,9 @@
       "payments": "Paiements recents",
       "paymentsDescription": "Derniers paiements entrants et sortants avec methode, statut, agent et tiers.",
       "methods": "Mix paiement",
-      "methodsDescription": "Methodes d'encaissement et de reglement pour la periode choisie."
+      "methodsDescription": "Methodes d'encaissement et de reglement pour la periode choisie.",
+      "workflows": "Flux {view}",
+      "workflowsDescription": "Passer de la vue {view} aux flux controles de paiement, rapprochement, tiroir, tresorerie et taxe."
     },
     "summary": {
       "paymentsCollected": "Encaisse",
@@ -393,6 +479,7 @@
       "customers": "Grand livre clients",
       "sales": "Flux ventes",
       "salesFinance": "Finance ventes",
+      "apHistory": "Historique AP",
       "apWorkbench": "Atelier AP",
       "purchaseOrders": "Commandes achat",
       "suppliers": "Grand livre fournisseurs"
@@ -422,6 +509,41 @@
         "methodsDescription": "Methodes d'encaissement et de settlement par montant capture sur la periode selectionnee.",
         "workflows": "Flux paiements",
         "workflowsDescription": "Passer directement de l'analyse paiement a la capture, au rapprochement, aux tiroirs, aux taxes et a la tresorerie."
+      },
+      "ledger": {
+        "searchPlaceholder": "Rechercher un paiement, un tiers, un agent, une méthode ou un montant",
+        "searchLabel": "Rechercher dans le grand livre paiements",
+        "clearSearch": "Effacer la recherche paiement",
+        "statusFilter": "Statut du paiement",
+        "methodFilter": "Méthode de paiement",
+        "allStatuses": "Tous les statuts",
+        "allMethods": "Toutes les méthodes",
+        "dateFrom": "Paiements à partir du",
+        "dateTo": "Paiements jusqu'au",
+        "columns": "Colonnes",
+        "visibleColumns": "Colonnes visibles",
+        "reset": "Réinitialiser",
+        "sortBy": "Trier par {column}",
+        "noResultsTitle": "Aucun paiement ne correspond à ces filtres",
+        "noResultsDescription": "Modifiez ou réinitialisez les filtres pour examiner un autre périmètre de paiement.",
+        "resultCount": "{visible} paiements affichés sur {total}",
+        "rowsPerPage": "Lignes par page",
+        "pageOf": "Page {page} sur {total}",
+        "firstPage": "Aller à la première page",
+        "previousPage": "Aller à la page précédente",
+        "nextPage": "Aller à la page suivante",
+        "lastPage": "Aller à la dernière page"
+      },
+      "mix": {
+        "capturedVolume": "Volume encaissé",
+        "capturedVolumeDetail": "Valeur totale représentée par les méthodes de paiement.",
+        "transactions": "Transactions",
+        "transactionsDetail": "Paiements saisis sur toutes les méthodes actives.",
+        "averagePayment": "Paiement moyen",
+        "averagePaymentDetail": "Valeur moyenne saisie par paiement.",
+        "leadingMethod": "Méthode dominante",
+        "paymentCount": "{count, plural, one {# paiement} other {# paiements}}",
+        "share": "{share}% du volume encaissé"
       },
       "summary": {
         "inboundRecent": "Encaissements recents",
@@ -508,6 +630,25 @@
       "providerAccounts": "Comptes fournisseur",
       "signoffQueue": "File de signature",
       "runFacts": "{matches} rapprochement(s), {exceptions} exception(s), suspense {suspense}",
+      "detail": {
+        "title": "Preuve du run selectionne",
+        "description": "{matches} rapprochement(s), {exceptions} exception(s) non resolue(s), {suspense} element(s) suspense non resolu(s), {subjects} sujet(s) de preuve",
+        "eligible": "Eligible",
+        "blocked": "Bloque",
+        "error": "Preuve du run indisponible.",
+        "unavailable": "Selectionnez un run pour inspecter la preuve.",
+        "matches": "Rapprochements",
+        "exceptions": "Exceptions",
+        "suspense": "Suspense",
+        "proofSubjects": "Sujets preuve",
+        "blockers": "Blocages",
+        "matchedEvidence": "Preuve rapprochee",
+        "unresolvedExceptions": "Exceptions non resolues",
+        "suspenseLinks": "Liens suspense",
+        "subjectCount": "{count} sujet(s) de preuve",
+        "emptyRows": "Aucun",
+        "noBlockers": "Aucun blocage de certification"
+      },
       "statuses": {
         "NO_EVIDENCE": "Aucune preuve",
         "READY_FOR_RUN": "Pret pour run",
@@ -530,6 +671,7 @@
       },
       "actions": {
         "run": "Lancer",
+        "inspect": "Preuve",
         "sign": "Signer",
         "export": "Exporter"
       },
@@ -561,6 +703,58 @@
       "available": "Disponible",
       "missing": "Manquante",
       "suspenseAmount": "Exposition {amount}"
+    },
+    "statementImport": {
+      "title": "Collecte des releves fournisseur",
+      "description": "Importez une preuve CSV ou JSON limitee au tenant. Les empreintes fichier et ligne evitent les doublons.",
+      "noActiveAccount": "Configurez un compte fournisseur actif avant d'importer une preuve de releve.",
+      "accountLabel": "Compte fournisseur",
+      "accountPlaceholder": "Selectionner un compte fournisseur",
+      "fileLabel": "Fichier de releve",
+      "fileNameLabel": "Nom du fichier de releve",
+      "fileNamePlaceholder": "Nom du fichier de releve",
+      "contentLabel": "Contenu du releve",
+      "contentPlaceholder": "Chargez un fichier CSV ou JSON, ou collez son contenu ici.",
+      "formatHint": "Colonnes requises : amount et date; transaction, reference, direction, frais et devise sont pris en charge.",
+      "action": "Importer le releve",
+      "historyTitle": "Preuves de releve recentes",
+      "emptyHistory": "Aucun fichier de releve n'a encore ete importe.",
+      "unnamedFile": "Releve sans nom",
+      "lineCount": "{count} ligne(s)",
+      "statuses": {
+        "IMPORTED": "Importe",
+        "DUPLICATE_FILE": "Fichier duplique",
+        "DUPLICATE_LINE": "Ligne dupliquee"
+      },
+      "notifications": {
+        "completedTitle": "Collecte du releve terminee",
+        "completedMessage": "{status} : {count} ligne(s) importee(s).",
+        "failedTitle": "Echec import du releve",
+        "failedMessage": "Le releve n'a pas pu etre importe en securite.",
+        "readFailedTitle": "Lecture du fichier impossible",
+        "readFailedMessage": "Choisissez un fichier de releve CSV ou JSON lisible."
+      }
+    },
+    "manualMatch": {
+      "title": "Revue du rapprochement manuel",
+      "description": "Comparez les preuves internes et externes masquees, proposez un montant borne, puis exigez un approbateur independant avec auth recente.",
+      "emptyCandidates": "Aucune paire de preuves ne demande actuellement une proposition manuelle.",
+      "internalEvidence": "Interne {reference} / {amount}",
+      "externalEvidence": "Externe {reference} / {amount}",
+      "amountLabel": "Montant a rapprocher",
+      "approvalTitle": "File d'approbation independante",
+      "emptyApprovals": "Aucune proposition manuelle n'attend approbation.",
+      "proposalFacts": "{id} / {amount} / {time}",
+      "actions": {
+        "propose": "Proposer",
+        "approve": "Approuver"
+      },
+      "notifications": {
+        "proposedTitle": "Rapprochement manuel propose",
+        "proposedMessage": "La paire de preuves attend un examinateur independant.",
+        "approvedTitle": "Rapprochement manuel approuve",
+        "approvedMessage": "La preuve d'approbation independante a ete creee."
+      }
     },
     "suspenseWorkflow": {
       "title": "File approbation suspense",
@@ -606,7 +800,7 @@
     },
     "source": {
       "captureReadModel": "Vue paiements captures",
-      "providerPersistencePending": "La persistence des releves fournisseur et des runs signes n'existe pas encore; cette vue montre la preparation du rapprochement depuis les paiements existants."
+      "providerPersistencePending": "Les syntheses de paiements captures restent diagnostiques; le noyau de preuve durable ci-dessus fait foi pour les releves, la signature et les blocages de cloture."
     },
     "notifications": {
       "refreshTitle": "Actualisation rapprochement",
@@ -637,7 +831,7 @@
     "proof": {
       "open": "Ouvrir preuve",
       "loading": "Chargement preuve",
-      "unavailable": "Aucune preuve de transaction paiement n'est liee a cette ligne.",
+      "unavailable": "Aucune piste de preuve prise en charge n'est liee a cette ligne.",
       "error": "La preuve de transaction paiement n'a pas pu etre chargee en securite."
     },
     "metrics": {
@@ -916,6 +1110,7 @@
       "terminal": "Terminal",
       "chooseLocation": "Choisir un lieu",
       "chooseTerminal": "Choisir un terminal",
+      "terminalOccupied": "Occupe",
       "noLocation": "Aucun lieu selectionne",
       "noTerminal": "Aucun terminal selectionne",
       "activeRegister": "Caisse active",
@@ -927,6 +1122,8 @@
       "closed": "Aucun service ouvert",
       "active": "Ouvert",
       "notOpen": "Ferme",
+      "occupied": "Occupe",
+      "occupiedDescription": "Ce terminal est deja affecte au service {number}. Choisissez un terminal disponible ou fermez d'abord ce service.",
       "hud": "{count} ventes - {gross} brut",
       "cashOnHand": "Especes en caisse : {amount}",
       "openingPlaceholder": "Fond de caisse",
@@ -972,6 +1169,10 @@
     "customers": {
       "title": "Client",
       "description": "Choisissez un client pour cette transaction. Le client selectionne est verrouille jusqu'a son remplacement ou le retour au client comptoir.",
+      "descriptionForLocation": "Choisissez parmi {count} clients rattaches a {location}.",
+      "locationRequired": "Choisissez un lieu avant de selectionner un client.",
+      "locationUnavailable": "Ce lieu n'est pas disponible pour l'acces client du PDV.",
+      "locationMismatch": "Ce client n'est pas disponible dans le lieu selectionne. Choisissez un autre client ou utilisez le client comptoir.",
       "searchPlaceholder": "Rechercher clients",
       "choose": "Choisir client",
       "change": "Changer client",
@@ -1016,7 +1217,8 @@
       "title": "Panier",
       "walkIn": "Client comptoir",
       "empty": "Scannez ou selectionnez un article pour demarrer une vente brouillon persistante.",
-      "lines": "{count} lignes"
+      "lines": "{count} lignes",
+      "removeLine": "Retirer {item} du panier"
     },
     "totals": {
       "subtotal": "Sous-total",
@@ -1043,6 +1245,10 @@
       "removeTender": "Retirer reglement",
       "reference": "Reference",
       "referencePlaceholder": "Autorisation, virement ou reference mobile",
+      "providerEvidence": "ID de preuve de paiement fournisseur",
+      "providerEvidencePlaceholder": "ID de transaction de paiement confirmee",
+      "providerEvidenceHelp": "Utilisez l'ID renvoye par le flux de paiement autorise par le fournisseur. Une reference saisie manuellement ne constitue pas une autorite de paiement.",
+      "providerEvidenceRequired": "Un reglement electronique exige une transaction de paiement confirmee par le fournisseur avant l'encaissement de la vente.",
       "splitTender": "{count} reglements",
       "methods": {
         "CASH": "Especes",
@@ -1120,6 +1326,10 @@
       "closeShiftSuccessTitle": "Caisse fermee",
       "closeShiftSuccessMessage": "La session {number} a ete fermee avec un solde reel de tiroir de {amount}.",
       "closeShiftErrorTitle": "Echec fermeture caisse",
+      "locationChangeBlockedTitle": "Terminez d'abord le panier en cours",
+      "locationChangeBlockedMessage": "Retirez ou encaissez les lignes du panier avant de changer de lieu. Le brouillon ne sera pas deplace vers une autre agence.",
+      "customerResetTitle": "Client reinitialise",
+      "customerResetMessage": "Le client du lieu precedent a ete efface. Cette vente utilise maintenant le client comptoir.",
       "addItemSuccessTitle": "Article ajoute",
       "addItemSuccessMessage": "{item} a ete ajoute a la vente en cours.",
       "addItemErrorTitle": "Article non ajoute",
@@ -3117,6 +3327,7 @@
     "title": "Historique des dettes fournisseurs",
     "summary": "Consultez les factures fournisseurs, paiements, mouvements de dettes et signaux de preuve AP.",
     "scopeLabel": "Historique AP limite au tenant",
+    "scopeSupplier": "Historique AP pour {supplier}",
     "filters": {
       "title": "Filtrer l historique AP",
       "detail": "Les filtres sont controles cote serveur. Le curseur et l export restent cote serveur.",
@@ -3130,8 +3341,19 @@
       "reset": "Reinitialiser"
     },
     "actions": {
+      "backToSupplier": "Retour au fournisseur",
       "export": "Preparer export",
       "exporting": "Preparation"
+    },
+    "controlStates": {
+      "draft": "Brouillon",
+      "matched": "Rapproche",
+      "posted": "Comptabilise",
+      "paymentPending": "Paiement en attente",
+      "paid": "Paye",
+      "released": "Libere",
+      "exception": "Exception",
+      "cancelled": "Annule"
     },
     "table": {
       "caption": "Evenements AP fournisseur",
@@ -3198,6 +3420,7 @@
       "recordedAt": "Date enregistrement"
     },
     "snapshot": {
+      "supplier": "Portee fournisseur",
       "timezone": "Fuseau",
       "recordedThrough": "Connu jusqu au",
       "generatedAt": "Genere"
@@ -3224,8 +3447,8 @@
       "reset": "Reinitialiser"
     },
     "actions": {
-      "export": "Preparer export",
-      "exporting": "Preparation"
+      "export": "Telecharger export",
+      "exporting": "Preparation du telechargement"
     },
     "table": {
       "caption": "Postes clients ouverts",
@@ -3236,6 +3459,7 @@
       "resultCount": "{count, plural, one {# poste AR} other {# postes AR}}",
       "customer": "Client",
       "reference": "Reference",
+      "currency": "Devise",
       "opened": "Ouvert",
       "allocated": "Alloue",
       "open": "Ouvert restant",
@@ -3273,6 +3497,7 @@
       "allocations": "Allocations",
       "customer": "Client",
       "reference": "Reference",
+      "currency": "Devise",
       "opened": "Ouvert",
       "allocated": "Alloue",
       "open": "Reste ouvert",
@@ -3290,7 +3515,261 @@
       "recordedThrough": "Connu jusqu au"
     },
     "exportStatus": {
-      "ready": "La preparation de l export a reussi. Utilisez le worker serveur pour generer le fichier."
+      "ready": "Export controle telecharge."
+    }
+  },
+  "supplierPoAcknowledgement": {
+    "loading": "Vérification du bon de commande sécurisé…",
+    "invalidTitle": "Accès indisponible",
+    "invalidDescription": "Cette invitation est invalide, expirée ou révoquée. Demandez à l’acheteur un nouveau lien sécurisé.",
+    "switchLanguage": "English",
+    "secureEnvelope": "Enveloppe fournisseur sécurisée du bon de commande",
+    "purchaseOrder": "Bon de commande",
+    "redactedVerified": "Expurgé · instantané vérifié",
+    "proposalBoundaryTitle": "Limite : proposition uniquement.",
+    "proposalBoundary": "Votre réponse ne modifie ni le bon de commande, ni le stock, ni les comptes fournisseurs, ni la comptabilité. Un acheteur doit examiner explicitement chaque proposition.",
+    "orderDate": "Date de commande",
+    "expectedDate": "Livraison prévue",
+    "deliveryLocation": "Lieu de livraison",
+    "paymentTerms": "Conditions de paiement",
+    "orderLines": "Lignes de commande",
+    "item": "Article",
+    "quantity": "Quantité",
+    "unitCost": "Coût unitaire",
+    "lineTotal": "Total de ligne",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "shipping": "Livraison",
+    "total": "Total",
+    "submittedProposal": "Réponse fournisseur immuable",
+    "respondTitle": "Accuser réception de ce bon de commande",
+    "respondDescription": "Choisissez une réponse. Après l’envoi, elle devient une preuve immuable soumise à l’examen de l’acheteur.",
+    "requestedDate": "Date de livraison demandée",
+    "requestedQuantities": "Quantités demandées",
+    "ordered": "commandé",
+    "requestedQuantityFor": "Quantité demandée pour {item}",
+    "noteOptional": "Note (facultative)",
+    "reasonRequired": "Motif (obligatoire)",
+    "notePlaceholder": "Ajoutez un contexte concis pour l’acheteur",
+    "submitProposal": "Envoyer la réponse",
+    "submitting": "Envoi…",
+    "submissionFailed": "La réponse n’a pas pu être envoyée. Vérifiez les modifications demandées et réessayez.",
+    "footerControl": "Accès sur invitation uniquement. Le jeton est signé, l’enveloppe est expurgée, les métadonnées de requête sont hachées et chaque état de réponse constitue une preuve ajoutée sans modification.",
+    "evidenceHash": "Empreinte de preuve de l’enveloppe",
+    "proposalType": {
+      "ACCEPT": "Accepter telle quelle",
+      "REJECT": "Refuser la commande",
+      "REQUEST_CHANGE": "Demander une modification de date ou quantité"
+    },
+    "proposalStatus": {
+      "SUBMITTED": "En attente de l’acheteur",
+      "BUYER_ACCEPTED": "Proposition acceptée par l’acheteur",
+      "BUYER_REJECTED": "Proposition refusée par l’acheteur"
+    },
+    "buyerWorkbench": {
+      "title": "Accusé de réception fournisseur",
+      "description": "Émettez des invitations signées et examinez les propositions fournisseur sans modifier les registres de référence.",
+      "authoritativeBoundary": "Le bon de commande, le stock, les comptes fournisseurs et la comptabilité restent les références. Accepter ici enregistre uniquement une décision acheteur ; toute modification opérationnelle suit les processus internes habituels.",
+      "backToOrder": "Retour au bon de commande",
+      "issueTitle": "Émettre une invitation",
+      "recipientReference": "E-mail ou référence fournisseur",
+      "recipientPlaceholder": "fournisseur@exemple.com",
+      "issue": "Créer l’invitation signée",
+      "issuing": "Création…",
+      "invitationReady": "Invitation prête",
+      "copyLink": "Copier le lien sécurisé",
+      "copied": "Copié",
+      "oneTimeWarning": "Ce lien signé est affiché après émission. Partagez-le uniquement avec le fournisseur prévu.",
+      "envelope": "Enveloppe",
+      "noEnvelope": "Aucune enveloppe d’accusé de réception fournisseur n’a été émise.",
+      "tokens": "Accès par invitation",
+      "noTokens": "Aucune invitation pour cette enveloppe.",
+      "active": "Actif",
+      "expired": "Expiré",
+      "revoked": "Révoqué",
+      "expires": "Expire le",
+      "accesses": "Accès",
+      "revokeReason": "Motif de révocation",
+      "revoke": "Révoquer l’accès",
+      "accessRevoked": "Accès à l’invitation fournisseur révoqué.",
+      "proposals": "Propositions fournisseur",
+      "noProposals": "Aucune réponse fournisseur n’a été envoyée.",
+      "requestedChanges": "Modifications demandées",
+      "supplierNote": "Note fournisseur",
+      "history": "Historique d’état immuable",
+      "reviewReason": "Motif de la décision acheteur",
+      "acceptProposal": "Accepter la proposition",
+      "rejectProposal": "Refuser la proposition",
+      "reviewed": "Décision acheteur enregistrée. Aucun registre de référence n’a été modifié.",
+      "actionFailed": "L’action n’a pas pu être effectuée.",
+      "hash": "Empreinte de preuve"
+    }
+  },
+  "masterDataOnboarding": {
+    "eyebrow": "Intégration gouvernée",
+    "title": "Préparation de l’import des données de référence",
+    "description": "Validez les CSV de l’organisation, liez l’approbation aux preuves de simulation et créez uniquement les clients, fournisseurs ou articles via leurs services de référence.",
+    "targets": {
+      "CUSTOMER": "Clients",
+      "SUPPLIER": "Fournisseurs",
+      "ITEM": "Articles"
+    },
+    "milestoneStates": {
+      "NOT_STARTED": "Non commencé",
+      "IMPORTED": "Importé",
+      "RECONCILED": "Rapproché",
+      "BLOCKED": "Bloqué",
+      "WAIVED": "Dérogation"
+    },
+    "batchStatuses": {
+      "UPLOADED": "Téléversé",
+      "VALIDATED": "Validé",
+      "BLOCKED": "Bloqué",
+      "APPROVED": "Approuvé",
+      "COMMITTING": "En cours de création",
+      "COMMITTED": "Créé"
+    },
+    "readiness": {
+      "title": "Jalons de préparation",
+      "milestone": "Jalon de préparation de l’organisation"
+    },
+    "stage": {
+      "title": "1. Modèle et simulation",
+      "description": "Les fichiers sont empreintés et préparés par organisation. Une simulation n’écrit jamais dans les données de référence."
+    },
+    "fields": {
+      "target": "Cible",
+      "csvFile": "Fichier CSV",
+      "csvHelp": "Choisissez un fichier CSV de 5 Mo et 1 000 lignes au maximum."
+    },
+    "metrics": {
+      "source": "Source",
+      "committed": "Créés",
+      "blockers": "Blocages",
+      "status": "État",
+      "sourceRows": "Lignes source",
+      "valid": "Valides",
+      "errorRows": "Lignes en erreur",
+      "duplicates": "Doublons"
+    },
+    "actions": {
+      "backToDashboard": "Retour au tableau de bord",
+      "downloadTemplate": "Télécharger le modèle",
+      "working": "Traitement…",
+      "runValidation": "Lancer la simulation",
+      "recordApproval": "Enregistrer l’approbation",
+      "commit": "Créer via les services de référence",
+      "exportEvidence": "Exporter le manifeste de preuve"
+    },
+    "notices": {
+      "operationFailed": "L’opération gouvernée n’a pas abouti. Vérifiez l’état du lot et les erreurs de ligne sécurisées, puis réessayez.",
+      "templateDownloaded": "Modèle {target} propre à l’organisation téléchargé.",
+      "chooseFile": "Choisissez un fichier CSV avant de lancer la validation.",
+      "batchReplayed": "Le lot lié à cette empreinte a été rejoué sans écriture en double.",
+      "dryRunRecorded": "Simulation enregistrée. Aucune donnée de référence n’a été écrite.",
+      "approvalRecorded": "Approbation liée à l’empreinte source, à la version du mappage, au niveau de risque et aux contrôles de simulation.",
+      "commitReconciled": "Création rapprochée et preuve scellée.",
+      "commitPaused": "Création interrompue à une limite de contrôle gouvernée.",
+      "evidenceExported": "Manifeste de preuve exporté sans les lignes source brutes."
+    },
+    "states": {
+      "loading": {
+        "title": "Préparation de l’intégration gouvernée",
+        "message": "La préparation, les autorisations et les preuves de lots récentes de l’organisation sont en cours de chargement."
+      },
+      "error": {
+        "title": "Impossible de charger l’intégration des données",
+        "message": "Les preuves d’intégration propres à l’organisation sont temporairement indisponibles. Réessayez sans téléverser un autre fichier.",
+        "retry": "Réessayer",
+        "dashboard": "Retour au tableau de bord"
+      },
+      "empty": {
+        "eyebrow": "Aucune cible autorisée",
+        "title": "Aucune cible d’intégration disponible",
+        "message": "Ce rôle ne peut consulter ni clients, ni fournisseurs, ni articles. Demandez à un administrateur l’accès requis."
+      },
+      "partial": {
+        "title": "Certaines cibles sont en lecture seule",
+        "message": "Vous pouvez consulter la préparation et les preuves de chaque cible visible, mais l’import exige l’autorisation de création correspondante."
+      },
+      "noBatch": {
+        "title": "Aucun lot sélectionné",
+        "message": "Téléchargez un modèle propre à l’organisation et lancez une simulation pour créer le premier lot gouverné."
+      },
+      "readOnly": "Cette cible est en lecture seule pour votre rôle. Vous pouvez consulter les preuves, mais pas préparer ni créer un lot."
+    },
+    "risk": {
+      "label": "Décision de risque du lot",
+      "levels": {
+        "STANDARD": "Risque standard",
+        "HIGH": "Risque élevé"
+      },
+      "reasons": {
+        "BULK_BATCH": "100 lignes ou plus",
+        "SUPPLIER_CREATION": "Création de fournisseurs",
+        "CUSTOMER_CREDIT_LIMIT": "Plafond de crédit client",
+        "ITEM_PRICING": "Prix des articles"
+      },
+      "separateApproverTitle": "Approbateur distinct requis",
+      "separateApproverReady": "Vous n’êtes pas l’auteur du téléversement. Confirmez les preuves exactes de simulation avant d’approuver.",
+      "separateApproverBlocked": "L’auteur du téléversement ne peut pas approuver ce lot à risque élevé. Demandez à un autre utilisateur autorisé de le contrôler."
+    },
+    "approval": {
+      "title": "2. Contrôles, approbation et création",
+      "batch": "Lot {id} · mappage v{version}",
+      "confirmation": "J’approuve cette empreinte source, cette version de mappage, ce niveau de risque, ces volumes, ces totaux de champs requis et cette simulation sans erreur."
+    },
+    "controls": {
+      "requiredFields": "Contrôles des champs requis",
+      "fieldTotal": "{field} : {count}/{total}",
+      "prePost": "Contrôles avant/après",
+      "prePostValues": "Avant : {before} · Après : {after}",
+      "pending": "en attente"
+    },
+    "issues": {
+      "title": "Erreurs de ligne sécurisées",
+      "row": "ligne",
+      "rowPrefix": "Ligne {row}",
+      "unterminatedQuote": "Le CSV contient un champ entre guillemets non terminé.",
+      "duplicateHeader": "Chaque en-tête CSV doit être unique.",
+      "missingMappedColumn": "Une colonne CSV mappée manque dans l’en-tête.",
+      "unmappedColumn": "Chaque colonne source doit figurer dans la version de mappage choisie.",
+      "rowLimit": "Cette première version accepte au maximum 1 000 lignes par lot.",
+      "columnCount": "Le nombre de colonnes de la ligne ne correspond pas à l’en-tête CSV.",
+      "formulaRejected": "Les formules de tableur ne sont pas acceptées dans les imports d’intégration.",
+      "requiredField": "Le champ {field} est requis.",
+      "duplicateInFile": "La valeur {field} apparaît plusieurs fois dans ce fichier.",
+      "duplicateInTenant": "La valeur {field} existe déjà dans cette organisation.",
+      "fieldInvalid": "Le champ {field} est invalide.",
+      "generic": "La ligne ne respecte pas le contrat d’import gouverné."
+    },
+    "adoption": {
+      "title": "Preuves d’adoption ciblées",
+      "description": "Vue propre à l’organisation sur les 12 lots les plus récents. Il s’agit d’une preuve opérationnelle, pas d’une certification de mise en production.",
+      "batches": "Lots récents",
+      "committed": "Lots créés",
+      "blocked": "Lots bloqués",
+      "highRiskApproved": "Approbations à risque élevé"
+    },
+    "boundary": {
+      "title": "Limite exacte du contrôle",
+      "description": "Ce jalon constitue une preuve de préparation, pas une certification comptable ou réglementaire.",
+      "included": "Inclus",
+      "excluded": "Exclus",
+      "includedItems": [
+        "Identité et contacts des clients",
+        "Identité et contacts des fournisseurs",
+        "Identité, descriptions et prix du catalogue d’articles",
+        "Préparation, mappages, validation, approbations, contrôles, preuves et état de préparation propres à l’organisation"
+      ],
+      "excludedItems": [
+        "Soldes courants des clients ou fournisseurs",
+        "Soldes comptables d’ouverture",
+        "Quantités de stock initiales ou mouvements de stock",
+        "Écritures de journal ou de grand livre",
+        "Migration des transactions historiques ou des documents réglementaires",
+        "Mises à jour, fusions, suppressions définitives, réinitialisations destructives ou annulation automatique"
+      ]
     }
   }
 }

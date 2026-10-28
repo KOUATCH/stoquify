@@ -1,6 +1,6 @@
 import { CashPaymentHistoryWorkbench } from "@/components/finance/CashPaymentHistoryWorkbench"
 
-import { FinanceRouteAccess, type FinanceRouteParams } from "../FinanceRouteAccess"
+import { routeByKey, withFinanceSurfaceAccess } from "../finance-route-access"
 
 const cashPaymentHistoryPermissions = [
   "finance.cash-drawer.read",
@@ -16,12 +16,19 @@ export const metadata = {
   description: "Complete cashier, cash drawer, payment, and settlement history with server-owned filters and export controls.",
 }
 
-export default async function CashPaymentHistoryPage({ params }: { params: FinanceRouteParams }) {
-  return FinanceRouteAccess({
+export default async function CashPaymentHistoryPage({ params }: { params: Promise<{ locale: string }> }) {
+  const surface = routeByKey("finance-cash-payment-history")
+
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-cash-payment-history")
+  }
+
+  return withFinanceSurfaceAccess({
     params,
-    permissions: cashPaymentHistoryPermissions,
-    resource: "CashPaymentHistorySurface",
-    title: "Cash and payment history",
-    children: <CashPaymentHistoryWorkbench />,
+    surface: {
+      ...surface,
+      permissions: cashPaymentHistoryPermissions,
+    },
+    onAllowed: () => <CashPaymentHistoryWorkbench />,
   })
 }

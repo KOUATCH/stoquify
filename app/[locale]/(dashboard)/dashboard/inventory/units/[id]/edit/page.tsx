@@ -2,6 +2,7 @@ import UnitsManagementDashboard from "@/components/units/UnitsManagementDashboar
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withInventorySurfaceAccess } from "../../../inventory-route-access"
 
 interface EditUnitPageProps {
   params: Promise<{ locale: string; id: string }>
@@ -12,7 +13,7 @@ export const metadata = {
   description: "Edit a measurement unit and its conversion settings.",
 }
 
-export default async function EditUnitPage({ params }: EditUnitPageProps) {
+async function EditUnitPageImpl({ params }: EditUnitPageProps) {
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)
   await checkPermission("inventory.units.update")
@@ -33,4 +34,20 @@ export default async function EditUnitPage({ params }: EditUnitPageProps) {
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-units-edit")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-units-edit")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => EditUnitPageImpl(props),
+  })
 }

@@ -38,6 +38,8 @@ const DEFAULT_EXCLUDED_PARTS = [
   "__tests__",
 ]
 
+const DEFAULT_EXCLUDED_FILES = new Set(["scripts/inventory-items-e2e-fixture.js"])
+
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx"])
 
 const DETECTOR_RULES: DetectorRule[] = [
@@ -81,6 +83,13 @@ function normalizePath(filePath: string) {
 function isExcluded(filePath: string, extraExclusions: readonly string[]) {
   const normalized = normalizePath(filePath)
   if (/\.(test|spec)\.[jt]sx?$/.test(normalized)) return true
+  if (
+    [...DEFAULT_EXCLUDED_FILES].some(
+      (excludedFile) => normalized === excludedFile || normalized.endsWith(`/${excludedFile}`),
+    )
+  ) {
+    return true
+  }
   return [...DEFAULT_EXCLUDED_PARTS, ...extraExclusions].some((part) => normalized.includes(normalizePath(part)))
 }
 

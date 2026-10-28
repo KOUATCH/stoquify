@@ -435,7 +435,6 @@ export async function queueCustomerStatementDeliveryInTx(
       businessEventId: recorded.event.id,
       outboxId: deliveryOutboxId,
       locale,
-      createdAt: now,
     },
   })
   await tx.customerStatementDeliveryState.create({

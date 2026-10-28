@@ -1,8 +1,9 @@
 import { requirePermission, RbacError } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { listPOSCustomers } from "@/services/pos/pos-customer.service"
 import { listPOSCatalogItems, listPOSLocations, listPOSTerminals } from "@/services/pos/pos.service"
 
-import { getPOSCatalogAction, getPOSLocationsAction, getPOSTerminalsAction } from "../catalog.actions"
+import { getPOSCatalogAction, getPOSCustomersAction, getPOSLocationsAction, getPOSTerminalsAction } from "../catalog.actions"
 
 jest.mock("@/lib/security/rbac", () => {
   class MockRbacError extends Error {
@@ -26,6 +27,10 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
 
+jest.mock("@/services/pos/pos-customer.service", () => ({
+  listPOSCustomers: jest.fn(),
+}))
+
 jest.mock("@/services/pos/pos.service", () => ({
   listPOSCatalogItems: jest.fn(),
   listPOSLocations: jest.fn(),
@@ -34,6 +39,7 @@ jest.mock("@/services/pos/pos.service", () => ({
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+const mockListPOSCustomers = listPOSCustomers as jest.Mock
 const mockListPOSCatalogItems = listPOSCatalogItems as jest.Mock
 const mockListPOSLocations = listPOSLocations as jest.Mock
 const mockListPOSTerminals = listPOSTerminals as jest.Mock
@@ -58,6 +64,10 @@ describe("POS catalog actions", () => {
     mockListPOSLocations.mockResolvedValue([{ id: "loc-1", name: "Main shop" }])
     mockListPOSTerminals.mockResolvedValue([{ id: "terminal-1", locationId: "loc-1" }])
     mockListPOSCatalogItems.mockResolvedValue([{ id: "item-1", name: "Coffee" }])
+    mockListPOSCustomers.mockResolvedValue({
+      customers: [{ id: "customer-1", name: "Alice" }],
+      total: 1,
+    })
   })
 
   it("lists POS locations only after POS RBAC and module observe evidence", async () => {
@@ -177,5 +187,30 @@ describe("POS catalog actions", () => {
     })
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockListPOSTerminals).not.toHaveBeenCalled()
+  })
+
+  it("requires a location and passes tenant-owned scope to the POS customer query", async () => {
+    const result = await getPOSCustomersAction({ locationId: "loc-1", search: "alice" })
+
+    expect(result).toEqual({
+      success: true,
+      data: { customers: [{ id: "customer-1", name: "Alice" }], total: 1 },
+      error: null,
+    })
+    expect(mockRequirePermission).toHaveBeenCalledWith("pos.use", {
+      resource: "POSCustomer",
+      resourceId: "loc-1",
+    })
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-1",
+      surface: "actions/pos/catalog.actions.ts:getPOSCustomersAction",
+      accessIntent: "read",
+    }))
+    expect(mockListPOSCustomers).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      locationId: "loc-1",
+      search: "alice",
+      take: 24,
+    })
   })
 })

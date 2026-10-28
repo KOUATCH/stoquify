@@ -83,6 +83,19 @@ export type AROpenItemSummary = {
   itemCount: number
   openItemCount: number
   settledItemCount: number
+  currency: string | null
+  mixedCurrency: boolean
+  totalOpened: string | null
+  totalAllocated: string | null
+  totalOpen: string | null
+  overdueAmount: string | null
+}
+
+export type AROpenItemCurrencySummary = {
+  currency: string
+  itemCount: number
+  openItemCount: number
+  settledItemCount: number
   totalOpened: string
   totalAllocated: string
   totalOpen: string
@@ -92,6 +105,7 @@ export type AROpenItemSummary = {
 export type AROpenItemResult = {
   items: AROpenItem[]
   summary: AROpenItemSummary
+  summariesByCurrency: AROpenItemCurrencySummary[]
   recordedThrough: string
   asOf: string
 }
@@ -281,12 +295,28 @@ export async function getCustomerAROpenItems(input: AROpenItemInput): Promise<AR
     return left.referenceId.localeCompare(right.referenceId)
   })
 
-  const totalOpened = items.reduce((total, item) => total.plus(item.openingAmount), new Prisma.Decimal(0))
-  const totalAllocated = items.reduce((total, item) => total.plus(item.allocatedAmount), new Prisma.Decimal(0))
-  const totalOpen = items.reduce((total, item) => total.plus(item.openAmount), new Prisma.Decimal(0))
-  const overdueAmount = items
-    .filter((item) => item.daysPastDue > 0)
-    .reduce((total, item) => total.plus(item.openAmount), new Prisma.Decimal(0))
+  const currencyGroups = new Map<string, AROpenItem[]>()
+  for (const item of items) {
+    const currency = item.currency.trim().toUpperCase()
+    currencyGroups.set(currency, [...(currencyGroups.get(currency) ?? []), item])
+  }
+  const summariesByCurrency = [...currencyGroups.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([currency, currencyItems]): AROpenItemCurrencySummary => ({
+      currency,
+      itemCount: currencyItems.length,
+      openItemCount: currencyItems.filter((item) => item.status === "open" || item.status === "partial").length,
+      settledItemCount: currencyItems.filter((item) => item.status === "settled").length,
+      totalOpened: moneyText(currencyItems.reduce((total, item) => total.plus(item.openingAmount), new Prisma.Decimal(0))),
+      totalAllocated: moneyText(currencyItems.reduce((total, item) => total.plus(item.allocatedAmount), new Prisma.Decimal(0))),
+      totalOpen: moneyText(currencyItems.reduce((total, item) => total.plus(item.openAmount), new Prisma.Decimal(0))),
+      overdueAmount: moneyText(
+        currencyItems
+          .filter((item) => item.daysPastDue > 0)
+          .reduce((total, item) => total.plus(item.openAmount), new Prisma.Decimal(0)),
+      ),
+    }))
+  const singleCurrencySummary = summariesByCurrency.length === 1 ? summariesByCurrency[0] : null
 
   return {
     items,
@@ -294,11 +324,14 @@ export async function getCustomerAROpenItems(input: AROpenItemInput): Promise<AR
       itemCount: items.length,
       openItemCount: items.filter((item) => item.status === "open" || item.status === "partial").length,
       settledItemCount: items.filter((item) => item.status === "settled").length,
-      totalOpened: moneyText(totalOpened),
-      totalAllocated: moneyText(totalAllocated),
-      totalOpen: moneyText(totalOpen),
-      overdueAmount: moneyText(overdueAmount),
+      currency: singleCurrencySummary?.currency ?? null,
+      mixedCurrency: summariesByCurrency.length > 1,
+      totalOpened: singleCurrencySummary?.totalOpened ?? null,
+      totalAllocated: singleCurrencySummary?.totalAllocated ?? null,
+      totalOpen: singleCurrencySummary?.totalOpen ?? null,
+      overdueAmount: singleCurrencySummary?.overdueAmount ?? null,
     },
+    summariesByCurrency,
     recordedThrough: recordedThrough.toISOString(),
     asOf: asOf.toISOString(),
   }

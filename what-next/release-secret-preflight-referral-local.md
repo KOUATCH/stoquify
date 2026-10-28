@@ -1,7 +1,7 @@
 # Release Secret Preflight
 
-Generated: 2026-08-09T14:02:42.387Z
-Mode: `fail`
+Generated: 2026-08-09T09:59:51.673Z
+Mode: `report`
 Status: `conditional`
 
 ## Summary

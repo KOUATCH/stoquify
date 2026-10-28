@@ -1,13 +1,17 @@
 import FinanceCommandCenterDashboard from "@/components/finance/FinanceCommandCenterDashboard"
 
-import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "./FinanceRouteAccess"
+import { routeByKey, withFinanceSurfaceAccess } from "./finance-route-access"
 
-export default async function FinanceDashboardPage({ params }: { params: FinanceRouteParams }) {
-  return FinanceRouteAccess({
+export default async function FinanceDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const surface = routeByKey("finance-dashboard")
+
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-dashboard")
+  }
+
+  return withFinanceSurfaceAccess({
     params,
-    permissions: financeViewPermissions("overview"),
-    resource: "FinanceDashboard",
-    title: "Finance dashboard",
-    children: <FinanceCommandCenterDashboard initialView="overview" />,
+    surface,
+    onAllowed: () => <FinanceCommandCenterDashboard initialView="overview" />,
   })
 }

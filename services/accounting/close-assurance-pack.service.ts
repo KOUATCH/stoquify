@@ -59,6 +59,8 @@ export type CloseCertificationInvalidationSourceCode =
   | "INVENTORY_VALUATION_WRITE"
   | "LEDGER_JOURNAL_POSTED"
   | "LEDGER_JOURNAL_REVERSED"
+  | "PAYROLL_RUN_APPROVED"
+  | "PAYSLIP_EMITTED"
   | "PAYROLL_RUN_POSTED"
   | "PAYROLL_PAYMENT_RELEASED"
   | "PAYROLL_PAYMENT_RECONCILED"
@@ -125,6 +127,24 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceModel: "JournalEntry",
     sourceTable: "journal_entries",
     sourceEventName: "ledger.journal.reversed",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYROLL_RUN_APPROVED: {
+    sourceCode: "PAYROLL_RUN_APPROVED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollRun",
+    sourceTable: "payroll_runs",
+    sourceEventName: "PAYROLL_RUN_APPROVED",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYSLIP_EMITTED: {
+    sourceCode: "PAYSLIP_EMITTED",
+    ring: "FIRST_RING",
+    domain: "payroll",
+    sourceModel: "PayrollRun",
+    sourceTable: "payroll_payslips",
+    sourceEventName: "PAYSLIP_EMITTED",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
   PAYROLL_RUN_POSTED: {

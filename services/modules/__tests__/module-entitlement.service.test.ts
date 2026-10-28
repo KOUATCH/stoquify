@@ -2,8 +2,9 @@ import type { TenantModuleEntitlement } from "../module-control-contracts"
 
 jest.mock("@/prisma/db", () => ({
   db: {
-    organization: { findFirst: jest.fn() },
+    organization: { findFirst: jest.fn(), update: jest.fn() },
     auditLog: { create: jest.fn() },
+    $transaction: jest.fn(),
   },
 }))
 
@@ -18,18 +19,21 @@ import { db } from "@/prisma/db"
 import { normalizeModuleSlug } from "../module-catalog.service"
 import {
   deriveLegacyEntitlements,
+  activateTenantModule,
   evaluateModuleEntitlement,
   observeModuleAccess,
 } from "../module-entitlement.service"
 
 const mockDb = db as unknown as {
-  organization: { findFirst: jest.Mock }
+  organization: { findFirst: jest.Mock; update: jest.Mock }
   auditLog: { create: jest.Mock }
+  $transaction: jest.Mock
 }
 
 describe("module entitlement service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockDb.$transaction.mockImplementation((handler: (tx: typeof mockDb) => unknown) => handler(mockDb))
   })
 
   it("normalizes registration module labels into canonical module slugs", () => {
@@ -169,6 +173,76 @@ describe("module entitlement service", () => {
           action: "MODULE_ENTITLEMENT_OBSERVED",
           organizationId: "org-1",
           userId: "user-1",
+        }),
+      }),
+    )
+  })
+
+  it("activates payment reconciliation with only its missing required dependencies", async () => {
+    mockDb.organization.findFirst.mockResolvedValue({
+      id: "org-1",
+      requestedModules: ["Accounting", "Payment reconciliation"],
+    })
+    mockDb.organization.update.mockResolvedValue({ id: "org-1" })
+    mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
+
+    const result = await activateTenantModule({
+      organizationId: "org-1",
+      actorId: "user-1",
+      moduleSlug: "payment_reconciliation",
+    })
+
+    expect(result.addedModules).toEqual(["finance"])
+    expect(result.alreadyActive).toBe(false)
+    expect(mockDb.organization.update).toHaveBeenCalledWith({
+      where: { id: "org-1" },
+      data: {
+        requestedModules: {
+          set: ["Accounting", "Payment reconciliation", "finance"],
+        },
+      },
+    })
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityType: "OrganizationModuleEntitlement",
+          action: "MODULE_ENTITLEMENT_ACTIVATED",
+          organizationId: "org-1",
+          userId: "user-1",
+          changes: expect.objectContaining({
+            moduleSlug: "payment_reconciliation",
+            addedModules: ["finance"],
+            requiredDependencies: ["finance", "accounting"],
+          }),
+        }),
+      }),
+    )
+    expect(mockDb.$transaction).toHaveBeenCalledWith(
+      expect.any(Function),
+      { isolationLevel: "Serializable" },
+    )
+  })
+
+  it("does not duplicate already active modules but still records the admin decision", async () => {
+    mockDb.organization.findFirst.mockResolvedValue({
+      id: "org-1",
+      requestedModules: ["finance", "Accounting", "Payment reconciliation"],
+    })
+    mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
+
+    const result = await activateTenantModule({
+      organizationId: "org-1",
+      actorId: "user-1",
+      moduleSlug: "payment_reconciliation",
+    })
+
+    expect(result.alreadyActive).toBe(true)
+    expect(result.addedModules).toEqual([])
+    expect(mockDb.organization.update).not.toHaveBeenCalled()
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "MODULE_ENTITLEMENT_ALREADY_ACTIVE",
         }),
       }),
     )

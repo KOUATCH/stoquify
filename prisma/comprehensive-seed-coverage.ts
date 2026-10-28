@@ -2,13 +2,13 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 import { PERMISSIONS } from "../lib/permissions";
 import { resolveCameroonStandardVatRateBps } from "../services/regulatory/country-packs/resolve";
 
-const COUNT = 50;
-const ORG_COUNT = 5;
+const COUNT = 12;
+const ORG_COUNT = 2;
 const SEED_REGULATORY_DATE = "2026-06-11";
 const SEED_CAMEROON_VAT_RATE_BPS = resolveCameroonStandardVatRateBps(SEED_REGULATORY_DATE).value;
 const SEED_CAMEROON_VAT_RATE_PERCENT = SEED_CAMEROON_VAT_RATE_BPS / 100;
 const SEED_CAMEROON_VAT_RATE_RATIO = SEED_CAMEROON_VAT_RATE_BPS / 10000;
-const ID_PREFIX = "cmp_";
+const ID_PREFIX = "rds_";
 const ORGANIZATION_ID_PREFIX = `${ID_PREFIX}org_`;
 const seedIndexes = Array.from({ length: COUNT }, (_, index) => index + 1);
 const orgIndexes = Array.from({ length: ORG_COUNT }, (_, index) => index + 1);
@@ -27,15 +27,15 @@ type ModelField = (typeof Prisma.dmmf.datamodel.models)[number]["fields"][number
 
 const pad = (value: number) => value.toString().padStart(3, "0");
 const orgIdFor = (value: number) => `${ORGANIZATION_ID_PREFIX}${pad(value)}`;
-const orgCodeFor = (value: number) => `org${pad(value)}`;
+const orgCodeFor = (value: number) => `rds-org${pad(value)}`;
 const contexts: SeedContext[] = orgIndexes.map((orgIndex) => ({
   orgIndex,
   organizationId: orgIdFor(orgIndex),
   idPrefix: `${orgIdFor(orgIndex)}_`,
-  documentPrefix: `CMP${pad(orgIndex)}`,
+  documentPrefix: `RDS${pad(orgIndex)}`,
   emailSuffix: orgCodeFor(orgIndex),
-  countryCode: orgIndex % 2 === 0 ? "SN" : "CM",
-  currency: orgIndex % 2 === 0 ? "XOF" : "XAF",
+  countryCode: "CM",
+  currency: "XAF",
 }));
 
 const day = (value: number) => new Date(Date.UTC(2026, 4, value, 9, 0, 0));
@@ -545,7 +545,7 @@ function applyModelOverrides(
 async function createMany(prisma: PrismaClient, modelName: string, rows: Array<Record<string, unknown>>) {
   const delegate = (prisma as any)[delegateName(modelName)];
   if (!delegate?.createMany) throw new Error(`Prisma delegate missing for ${modelName}`);
-  await delegate.createMany({ data: rows });
+  await delegate.createMany({ data: rows, skipDuplicates: true });
 }
 
 async function deleteMany(prisma: PrismaClient, modelName: string) {

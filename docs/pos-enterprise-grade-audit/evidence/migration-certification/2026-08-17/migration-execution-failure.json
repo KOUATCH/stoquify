@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-08-17T09:34:00Z",
+  "status": "FAILED_HARD_STOP",
+  "phase": "RESTORE_SCHEMA_REPLAY",
+  "database": "stoquify_dev_migrated_20260814",
+  "schema": "codex_pos_commit_result_restore_20260817",
+  "failedMigration": "20260621103000_workflow_assurance_registry_foundation",
+  "prismaCode": "P3018",
+  "postgresCode": "42704",
+  "databaseMessage": "type WorkflowAssuranceWorkflow does not exist",
+  "rootCause": "The migration checks pg_type by typname without constraining typnamespace, so an enum in another schema can suppress creation in the selected schema.",
+  "targetReplayAttempted": false,
+  "publicDataAccessed": false,
+  "publicSchemaMutated": false,
+  "crossSchemaCatalogMetadataObserved": true,
+  "realDataUsed": false,
+  "destructiveRecoveryPerformed": false,
+  "originalRepositoryMigrationsModified": false
+}

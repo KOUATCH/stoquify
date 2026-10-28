@@ -1,0 +1,1216 @@
+{
+  "schema_version": "1.0.0",
+  "report": {
+    "id": "stoquify-high-leverage-agent-skill-gap-priority-2026-08-20",
+    "generated_on": "2026-08-20",
+    "decision": "CONDITIONAL_GO_EXISTING_SPINE_FIRST",
+    "scope": "Evidence-backed audit and prioritization only",
+    "implementation_performed": false,
+    "skills_installed_or_modified": false,
+    "application_code_modified": false,
+    "shortlist_count": 7
+  },
+  "north_star": {
+    "statement": "Become the trusted, evidence-backed operating and financial control system and copilot for OHADA-region SMBs, turning tenant-scoped business truth into repeated daily outcomes, decisions, compliant proof, and permissioned collaboration without autonomous regulated or financial action.",
+    "measurable_expression": "Monthly organizations complete at least three evidence-backed business outcomes across at least two Stoquify workflows, with no material trust-policy violation.",
+    "confidence": "HIGH",
+    "qualification": "The statement is synthesized from convergent repository strategy and module evidence; the measurable expression is explicit in the Top-12 roadmap. The root README is stale and conflicting."
+  },
+  "status_vocabulary": [
+    "IMPLEMENTED_AND_EVIDENCED",
+    "IMPLEMENTED_NOT_PRODUCTION_EVIDENCED",
+    "PARTIALLY_IMPLEMENTED",
+    "DESIGNED_ONLY",
+    "DUPLICATIVE_OR_OVERLAPPING",
+    "MISSING",
+    "BLOCKED"
+  ],
+  "evidence_inventory": {
+    "global_skill_directories": 441,
+    "global_stoquify_named_skills": 111,
+    "global_aqstoqflow_named_skills": 110,
+    "numbered_programme_skills": 38,
+    "repo_local_skills": [
+      "neon",
+      "neon-postgres"
+    ],
+    "definition_suite": {
+      "skills": 28,
+      "agents": 9,
+      "capabilities": 37,
+      "contracts": 22,
+      "schemas_validated": 70,
+      "skill_install_hash_matches": "28/28",
+      "agent_install_validation": "9/9 transformed installations valid",
+      "production_readiness": "NOT_TESTED"
+    },
+    "evaluation_catalog": {
+      "cases": 999,
+      "cases_per_capability": 27,
+      "execution_status": "NOT_TESTED",
+      "existing_harness_selected_high_risk_cases": 150,
+      "existing_harness_status": "PRIORITIZATION_READY_NOT_EXECUTED"
+    },
+    "runtime_snapshot": {
+      "runtime_substrate": "PARTIALLY_IMPLEMENTED",
+      "command_agent": "IMPLEMENTED_INACTIVE_NOT_PRODUCTION_EVIDENCED",
+      "phase_2b": {
+        "status": "BLOCKED",
+        "passed": 2,
+        "checks": 23
+      },
+      "phase_3": {
+        "status": "BLOCKED",
+        "passed": 0,
+        "checks": 34
+      },
+      "external_inputs_snapshot_date": "2026-08-16",
+      "external_inputs": {
+        "status": "EXTERNAL_INPUTS_REQUIRED",
+        "passed": 1,
+        "checks": 13,
+        "blockers": 102
+      }
+    },
+    "architecture_graph_date": "2026-08-09",
+    "architecture_graph_qualification": "Structural aid only; direct source and newer status evidence take precedence."
+  },
+  "capability_taxonomy": [
+    {
+      "type": "DEVELOPMENT_TIME_SKILL",
+      "owns": [
+        "repeatable engineering or audit procedure",
+        "bounded evidence collection",
+        "reasoning protocol"
+      ],
+      "must_not_own": [
+        "product truth",
+        "production credentials",
+        "release authority"
+      ]
+    },
+    {
+      "type": "IN_PRODUCT_AGENT",
+      "owns": [
+        "role-scoped analysis",
+        "prioritization",
+        "explanation",
+        "approval-ready drafts"
+      ],
+      "must_not_own": [
+        "ledger posting",
+        "payment release",
+        "payroll approval",
+        "statutory filing",
+        "access change",
+        "professional or release certification"
+      ]
+    },
+    {
+      "type": "DETERMINISTIC_SERVICE",
+      "owns": [
+        "identity",
+        "validation",
+        "policy enforcement",
+        "idempotency",
+        "reconciliation",
+        "execution",
+        "evidence retention",
+        "immutable state transitions"
+      ],
+      "must_not_own": [
+        "discretionary regulated judgment"
+      ]
+    },
+    {
+      "type": "HUMAN_PROCESS",
+      "owns": [
+        "ownership",
+        "exception acceptance",
+        "segregation of duties",
+        "regulated review",
+        "financial approval",
+        "release authorization"
+      ],
+      "must_not_own": [
+        "unlogged side-channel changes"
+      ]
+    }
+  ],
+  "current_capability_inventory": [
+    {
+      "id": "INV-01",
+      "name": "Installed definition suite",
+      "type": "DEVELOPMENT_TIME_SKILL_AND_AGENT_DEFINITIONS",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_EVIDENCED",
+      "evidence": "28 skills and 9 agent definitions installed and structurally validated",
+      "decision": "REUSE_AS_CANONICAL_ROLE_AND_CONTROL_VOCABULARY"
+    },
+    {
+      "id": "INV-02",
+      "name": "Foundational controls S01-S12",
+      "type": "DEVELOPMENT_TIME_SKILLS_AND_RUNTIME_CONTRACTS",
+      "status": "PARTIALLY_IMPLEMENTED",
+      "capabilities": [
+        "S01 trusted context",
+        "S02 permission and entitlement",
+        "S03 evidence retrieval",
+        "S04 safe action planning",
+        "S05 approval and step-up",
+        "S06 idempotent execution",
+        "S07 evidence recording",
+        "S08 redaction and disclosure",
+        "S09 freshness and trust",
+        "S10 exception prioritization",
+        "S11 notification and escalation",
+        "S12 run state"
+      ],
+      "decision": "QUALIFY_END_TO_END_DO_NOT_DUPLICATE"
+    },
+    {
+      "id": "INV-03",
+      "name": "Cross-cutting controls S13-S16",
+      "type": "DEVELOPMENT_TIME_SKILLS_AND_RUNTIME_CONTRACTS",
+      "status": "PARTIALLY_IMPLEMENTED",
+      "capabilities": [
+        "S13 model cost router",
+        "S14 preference memory",
+        "S15 offline awareness",
+        "S16 country-pack provenance"
+      ],
+      "decision": "REUSE_BUT_REQUIRE_PROVIDER_COST_AND_AUTHORITY_EVIDENCE"
+    },
+    {
+      "id": "INV-04",
+      "name": "Domain read and analysis skills S17-S28",
+      "type": "DEVELOPMENT_TIME_SKILLS",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_EVIDENCED",
+      "capabilities": [
+        "S17 daily brief",
+        "S18 cross-domain root cause",
+        "S19 cash triage",
+        "S20 reconciliation match",
+        "S21 replenishment",
+        "S22 inventory variance",
+        "S23 purchase-receipt-invoice variance",
+        "S24 supplier risk",
+        "S25 close blocker",
+        "S26 compliance explanation",
+        "S27 payroll variance",
+        "S28 adoption and onboarding coach"
+      ],
+      "decision": "INHERIT_ONE_QUALIFIED_RUNTIME_AND_EVIDENCE_BOUNDARY"
+    },
+    {
+      "id": "INV-05",
+      "name": "Nine installed agent roles",
+      "type": "IN_PRODUCT_AGENT_DEFINITIONS",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_EVIDENCED",
+      "capabilities": [
+        "Command",
+        "Exception and Action Orchestrator",
+        "Cash and Reconciliation",
+        "Inventory and Replenishment",
+        "Purchasing and AP",
+        "Close and Compliance",
+        "Platform Assurance",
+        "Customer Success and Adoption",
+        "Payroll and Workforce"
+      ],
+      "decision": "REUSE_RESPONSIBILITY_BOUNDARIES_NO_DUPLICATE_DOMAIN_AGENTS"
+    },
+    {
+      "id": "INV-06",
+      "name": "In-product agent execution spine",
+      "type": "DETERMINISTIC_SERVICE",
+      "status": "PARTIALLY_IMPLEMENTED",
+      "capabilities": [
+        "context",
+        "policy",
+        "tool registry",
+        "evidence",
+        "redaction",
+        "output validation",
+        "runner",
+        "metrics",
+        "feedback",
+        "rollout",
+        "release control",
+        "reconciler",
+        "governance",
+        "durable run and evidence records"
+      ],
+      "decision": "QUALIFY_DO_NOT_REPLACE"
+    },
+    {
+      "id": "INV-07",
+      "name": "Evaluation catalog and prioritization harness",
+      "type": "DETERMINISTIC_SERVICE_AND_TEST_ASSETS",
+      "status": "PARTIALLY_IMPLEMENTED",
+      "evidence": "999 designed cases; 150 risk-prioritized; behavioral execution false",
+      "decision": "EXTEND_EXISTING_HARNESS"
+    },
+    {
+      "id": "INV-08",
+      "name": "Broad orchestration and release skill portfolio",
+      "type": "DEVELOPMENT_TIME_SKILLS",
+      "status": "DUPLICATIVE_OR_OVERLAPPING",
+      "evidence": "Multiple execution-suite, programme-orchestrator, leadership, release-gate, and evidence-ratchet assets",
+      "decision": "CONSOLIDATE_UNDER_HC_04"
+    },
+    {
+      "id": "INV-09",
+      "name": "Country-pack authority and production activation",
+      "type": "HUMAN_PROCESS_AND_DETERMINISTIC_POLICY",
+      "status": "BLOCKED",
+      "evidence": "Named qualified reviewers, operational owners, activation authority, identities, secrets, and collectors remain incomplete",
+      "decision": "DO_NOT_MODEL_AS_AGENT"
+    }
+  ],
+  "prior_candidate_reconciliation": [
+    {
+      "id": "C01",
+      "name": "Receivables and Collections",
+      "prior_status": "DESIGN_AUTHORIZED",
+      "audit_decision": "RETAIN_AS_HC_06_AFTER_FOUNDATIONS"
+    },
+    {
+      "id": "C02",
+      "name": "Mobile Document Intake and Evidence Capture",
+      "prior_status": "DESIGN_AUTHORIZED",
+      "audit_decision": "RETAIN_AS_HC_05_SERVICE_AND_SKILL_NOT_AGENT"
+    },
+    {
+      "id": "C03",
+      "name": "Advisor Collaboration and Review",
+      "prior_status": "DESIGN_AUTHORIZED",
+      "audit_decision": "RETAIN_AS_HC_07_AFTER_FOUNDATIONS"
+    },
+    {
+      "id": "C04",
+      "name": "Cash Forecast and Scenario",
+      "prior_status": "PREPARE",
+      "audit_decision": "DEFER_PENDING_TRUSTED_HISTORY_AND_PILOT_EVIDENCE"
+    },
+    {
+      "id": "C05",
+      "name": "Omnichannel Communications",
+      "prior_status": "PREPARE",
+      "audit_decision": "DEFER_AND_USE_AS_HC_06_DEPENDENCY_ONLY"
+    },
+    {
+      "id": "C06",
+      "name": "Continuous Controls and Fraud",
+      "prior_status": "PREPARE",
+      "audit_decision": "DEFER; EXISTING_CONTROL_AND_ASSURANCE_ASSETS_FIRST"
+    },
+    {
+      "id": "C07",
+      "name": "Profitability and Pricing",
+      "prior_status": "PREPARE",
+      "audit_decision": "DEFER_PENDING_TRUSTED_COST_AND_MARGIN_DATA"
+    },
+    {
+      "id": "C08",
+      "name": "Connector Health and Data Trust",
+      "prior_status": "BUILD_AUTHORIZED_AFTER_RUNTIME_GATE_WITH_PARTIAL_DEVELOPMENT_EVIDENCE",
+      "audit_decision": "RETAIN_AS_HC_03"
+    },
+    {
+      "id": "C09",
+      "name": "Supplier Collaboration",
+      "prior_status": "DELAYED",
+      "audit_decision": "DEFER"
+    },
+    {
+      "id": "C10",
+      "name": "Financing Readiness",
+      "prior_status": "DELAYED",
+      "audit_decision": "DEFER"
+    },
+    {
+      "id": "C11",
+      "name": "Sales Pipeline to Cash",
+      "prior_status": "DELAYED",
+      "audit_decision": "DEFER"
+    },
+    {
+      "id": "C12",
+      "name": "Job and Project Margin",
+      "prior_status": "DELAYED",
+      "audit_decision": "DEFER"
+    }
+  ],
+  "ranking_method": {
+    "scale": "1_TO_5_EACH",
+    "weights": "EQUAL",
+    "dimensions": [
+      "north_star_impact",
+      "user_value",
+      "dependency_unlock",
+      "recurrence",
+      "risk_reduction",
+      "time_to_value",
+      "feasibility",
+      "reuse",
+      "evidence_readiness",
+      "differentiation"
+    ],
+    "formula": "total = sum(10 dimensions); normalized_score = total / 50 * 100",
+    "qualification": "Comparative prioritization only; not a financial forecast."
+  },
+  "recommendations": [
+    {
+      "id": "HC-01",
+      "rank": 1,
+      "name": "Runtime Qualification, Behavioral Evaluation and Read-Only Pilot Closure",
+      "forms": [
+        "DETERMINISTIC_SERVICE",
+        "IMPROVED_EXISTING_AGENT_ROLE",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "IMPROVE_AND_COMPOSE_EXISTING",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 4,
+        "dependency_unlock": 5,
+        "recurrence": 5,
+        "risk_reduction": 5,
+        "time_to_value": 4,
+        "feasibility": 4,
+        "reuse": 5,
+        "evidence_readiness": 5,
+        "differentiation": 4,
+        "total": 46,
+        "normalized": 92
+      },
+      "contract": {
+        "contract_id": "stoquify.capability.runtime-qualification.v1",
+        "target_users": [
+          "platform engineering",
+          "security",
+          "product owner",
+          "finance-control owner",
+          "SRE and operations",
+          "pilot reviewers"
+        ],
+        "triggers": [
+          "frozen candidate proposed",
+          "agent skill policy tool model or registry version changes",
+          "scheduled assurance run",
+          "pilot incident invalidates evidence"
+        ],
+        "required_inputs": [
+          "candidate_id",
+          "immutable commit or release identity",
+          "environment identity",
+          "suite registry and catalog hashes",
+          "policy and redaction versions",
+          "approved tool allowlist",
+          "tenant-safe fixtures",
+          "expected allow or deny result",
+          "owner and approver identities"
+        ],
+        "permitted_tools": [
+          "read-only repository and runtime metadata",
+          "isolated evaluation executor",
+          "stubbed or sandboxed tool adapters",
+          "policy redaction and output validators",
+          "run evidence and cost stores",
+          "release-gate readers"
+        ],
+        "outputs": [
+          "immutable qualification bundle",
+          "per-case observed results",
+          "expected-versus-observed decisions",
+          "evidence and provenance links",
+          "tenant and redaction findings",
+          "latency and cost totals",
+          "owned blockers",
+          "human-reviewable gate decision"
+        ],
+        "human_only_actions": [
+          "production activation",
+          "Phase 2B or Phase 3 promotion",
+          "production credential or identity provisioning",
+          "waiver acceptance",
+          "write-tool activation",
+          "release sign-off",
+          "regulated or financial action"
+        ],
+        "trust_boundary": "Untrusted retrieved content and synthetic fixtures remain isolated; tenant, RBAC, entitlement, purpose, freshness, and redaction checks precede tool use; evaluator cannot mutate product or release state.",
+        "audit_requirements": [
+          "candidate and case IDs",
+          "hashes and timestamps",
+          "policy model and tool versions",
+          "authorization context",
+          "tool trace and denial reason",
+          "evidence lineage and redaction result",
+          "latency and cost",
+          "reviewer identity",
+          "supersession and invalidation"
+        ],
+        "failure_modes": [
+          "selection mistaken for execution",
+          "stale candidate identity",
+          "hidden side effects",
+          "fixture leakage",
+          "cross-tenant access",
+          "redaction failure",
+          "flaky result",
+          "missing provenance",
+          "unbounded model cost",
+          "certification language"
+        ],
+        "acceptance_gates": [
+          "RQ-1: 150 highest-risk cases observed in an isolated no-side-effect environment with per-case evidence and zero critical tenant redaction secret or side-effect failure",
+          "RQ-2: all 999 cases receive dated observed status and every failure is owned or explicitly human-waived",
+          "RQ-3: read-only Command pilot uses approved cohort kill switch telemetry feedback incident capture and no mutation tools",
+          "Release wording is scoped qualification and never professional or release certification"
+        ],
+        "measurable_outcomes": [
+          "999 of 999 cases have observed status",
+          "100 percent of high-risk cases have evidence and agreement or a named blocker",
+          "zero unauthorized side effects",
+          "zero critical tenant redaction or secret failures",
+          "cost latency helpfulness abstention and incidents captured per pilot run"
+        ]
+      },
+      "reuse_assets": [
+        "scripts/top12-evaluation-harness.js",
+        "scripts/__tests__/top12-evaluation-harness.test.js",
+        "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json",
+        "services/agents",
+        "actions/agents",
+        "agent Prisma run evidence cost and incident records",
+        "Platform Assurance agent definition",
+        "Command Agent Phase 2A slice"
+      ],
+      "first_implementation_issue": {
+        "objective": "Convert the existing risk-ranked 150-case harness from prioritization-only to isolated observed behavioral execution.",
+        "in_scope": [
+          "per-case observation",
+          "evidence and policy trace",
+          "side-effect assertion",
+          "resumable run state",
+          "tamper detection",
+          "human-readable exception report"
+        ],
+        "out_of_scope": [
+          "new skill",
+          "new agent definition",
+          "production activation",
+          "write-capable production adapter"
+        ],
+        "stop_conditions": [
+          "candidate identity absent",
+          "approved fixture boundary absent",
+          "real write-capable adapter required",
+          "restricted value appears in output",
+          "unresolved P0 or P1 tenant RBAC or redaction failure"
+        ]
+      },
+      "planning_cost": {
+        "engineering_person_weeks": "4-7",
+        "operating_cost": "MEDIUM_VARIABLE",
+        "confidence": "LOW_UNTIL_RQ_1",
+        "excludes": "External owner credential collector and approval lead time"
+      }
+    },
+    {
+      "id": "HC-02",
+      "rank": 2,
+      "name": "Governed Onboarding, Migration and Adoption Control Plane",
+      "forms": [
+        "DETERMINISTIC_SERVICE",
+        "IMPROVED_EXISTING_SKILL",
+        "IMPROVED_EXISTING_AGENT_ROLE",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "IMPROVE_AND_COMPOSE_EXISTING",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 5,
+        "dependency_unlock": 5,
+        "recurrence": 5,
+        "risk_reduction": 5,
+        "time_to_value": 4,
+        "feasibility": 3,
+        "reuse": 5,
+        "evidence_readiness": 4,
+        "differentiation": 4,
+        "total": 45,
+        "normalized": 90
+      },
+      "contract": {
+        "contract_id": "stoquify.capability.governed-onboarding.v1",
+        "target_users": [
+          "SMB owner or administrator",
+          "implementation operator",
+          "accountant or advisor",
+          "data steward",
+          "customer-success reviewer"
+        ],
+        "triggers": [
+          "tenant creation",
+          "module enablement",
+          "legacy migration",
+          "bulk import",
+          "opening-balance import",
+          "data-quality repair"
+        ],
+        "required_inputs": [
+          "tenant module actor role and purpose",
+          "untrusted source manifest",
+          "schema and encoding",
+          "declared system of record",
+          "field mappings",
+          "country-pack version where relevant",
+          "reconciliation controls",
+          "approval policy"
+        ],
+        "permitted_tools": [
+          "isolated parser and malware type size checks",
+          "schema profiler",
+          "deterministic mapper",
+          "identity and deduplication service",
+          "validation and reconciliation engine",
+          "encrypted tenant staging",
+          "exception queue",
+          "redaction and provenance store"
+        ],
+        "outputs": [
+          "immutable source manifest",
+          "mapping confidence",
+          "draft import plan",
+          "row value and count reconciliation",
+          "duplicate and exception queue",
+          "approval-ready batch",
+          "idempotency key and rollback reference",
+          "adoption checklist",
+          "first-outcome evidence"
+        ],
+        "human_only_actions": [
+          "tenant module or RBAC change",
+          "ambiguous entity merge",
+          "opening-balance acceptance",
+          "GL or account mapping acceptance",
+          "destructive replacement",
+          "commit to source-of-truth records",
+          "exception waiver",
+          "go-live approval"
+        ],
+        "trust_boundary": "Tenant-isolated staging; restricted values excluded from prompts and reports; deterministic validation controls the write boundary; model mapping is advisory only.",
+        "audit_requirements": [
+          "source hash and custody",
+          "parser and mapping versions",
+          "actor and purpose",
+          "before and after controls",
+          "row disposition",
+          "approvals",
+          "idempotency replay and rollback",
+          "evidence links",
+          "redacted errors"
+        ],
+        "failure_modes": [
+          "cross-tenant staging",
+          "silent truncation",
+          "encoding or rounding drift",
+          "duplicate identity",
+          "stale country pack",
+          "suggestion treated as truth",
+          "partial commit",
+          "non-idempotent replay",
+          "unowned exceptions"
+        ],
+        "acceptance_gates": [
+          "Tenant isolation and malicious-file tests pass",
+          "Replay is deterministic and repeated commit is idempotent",
+          "Every source row has an explicit disposition",
+          "Counts and values reconcile within declared currency and rounding policy",
+          "Rollback is demonstrated",
+          "Accessible mapping exception and approval workflows exist",
+          "No restricted evidence enters agent or model logs"
+        ],
+        "measurable_outcomes": [
+          "One reconciled dataset and one evidence-backed operating outcome within one business day of accepted pilot source delivery",
+          "At least 80 percent of clean supported-format rows mapped without manual field editing",
+          "100 percent of rows and control totals accounted for",
+          "Zero cross-tenant or unapproved commits"
+        ]
+      },
+      "reuse_assets": [
+        "S01 S02 S03 S05 S06 S07 S08 S09 S12 and S28",
+        "Customer Success and Adoption agent definition",
+        "existing onboarding presentation and master-data workflows",
+        "tenant RBAC module and audit controls"
+      ],
+      "dependencies": [
+        "HC-01",
+        "HC-03",
+        "HC-04"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "6-10",
+        "operating_cost": "LOW_TO_MEDIUM",
+        "confidence": "LOW",
+        "scope_assumption": "One structured source and one entity/outcome slice"
+      }
+    },
+    {
+      "id": "HC-03",
+      "rank": 3,
+      "name": "Connector Health and Data-Trust Control Plane",
+      "forms": [
+        "DETERMINISTIC_SERVICE",
+        "IMPROVED_EXISTING_AGENT_ROLE",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "IMPROVE_EXISTING_C08",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 4,
+        "dependency_unlock": 5,
+        "recurrence": 5,
+        "risk_reduction": 5,
+        "time_to_value": 4,
+        "feasibility": 4,
+        "reuse": 5,
+        "evidence_readiness": 4,
+        "differentiation": 4,
+        "total": 45,
+        "normalized": 90
+      },
+      "contract": {
+        "contract_id": "stoquify.capability.connector-data-trust.v1",
+        "target_users": [
+          "operations and SRE",
+          "data owner",
+          "implementation operator",
+          "security",
+          "product owner",
+          "downstream agent reviewers"
+        ],
+        "triggers": [
+          "connector registration or change",
+          "scheduled heartbeat",
+          "credential-expiry warning",
+          "schema drift",
+          "freshness or completeness breach",
+          "failed replay",
+          "downstream evidence request"
+        ],
+        "required_inputs": [
+          "tenant-scoped connector ID",
+          "owner source and purpose",
+          "data classification",
+          "credential reference not value",
+          "schema and version",
+          "expected cadence",
+          "freshness and completeness SLA",
+          "retry and replay policy",
+          "dependent capability list"
+        ],
+        "permitted_tools": [
+          "connector inventory",
+          "health and freshness checks",
+          "schema diff",
+          "volume and control-total comparison",
+          "idempotent checkpoint and replay",
+          "redacted telemetry",
+          "alert routing",
+          "evidence run-state and release-control services"
+        ],
+        "outputs": [
+          "TRUSTED DEGRADED STALE BLOCKED or UNKNOWN state",
+          "reason and evidence",
+          "last-good checkpoint",
+          "redacted impact list",
+          "recovery proposal",
+          "owner and SLA",
+          "downstream invalidation events"
+        ],
+        "human_only_actions": [
+          "credential provisioning or rotation approval",
+          "connector enable or disable",
+          "destructive replay",
+          "system-of-record change",
+          "threshold waiver",
+          "failover promotion",
+          "release acceptance"
+        ],
+        "trust_boundary": "Agents receive credential references and redacted health facts only; external payloads are untrusted and tenant-scoped; a green health check is not semantic or statutory certification.",
+        "audit_requirements": [
+          "connector and config versions",
+          "owner",
+          "credential-reference age",
+          "heartbeat schema freshness and control totals",
+          "checkpoint and replay IDs",
+          "alerts and acknowledgements",
+          "downstream invalidations",
+          "approvals and recovery evidence"
+        ],
+        "failure_modes": [
+          "false-green heartbeat",
+          "silent partial ingestion",
+          "schema drift",
+          "credential leakage",
+          "retry storm",
+          "duplicate replay",
+          "missing invalidation",
+          "tenant mix-up",
+          "stale trust state reused"
+        ],
+        "acceptance_gates": [
+          "All pilot-critical connectors have owner classification and SLA",
+          "Tests cover heartbeat drift freshness completeness credential-reference expiry retry replay and invalidation",
+          "Zero credentials or provider-sensitive payloads in evidence",
+          "Every degraded state reaches an owner and constrains downstream claims"
+        ],
+        "measurable_outcomes": [
+          "All pilot evidence links resolve to trust state and last-good checkpoint",
+          "Silent test failures detected within declared SLA",
+          "Recovery replay has zero duplicates",
+          "Every dependent output abstains or qualifies stale or degraded inputs"
+        ]
+      },
+      "reuse_assets": [
+        "C08-001 and C08-002 development assets",
+        "services/agents/portfolio/connector-health.service.ts",
+        "services/agents/portfolio/connector-inventory-read-model.service.ts",
+        "S09 freshness and trust",
+        "Platform Assurance agent definition",
+        "Command presentation"
+      ],
+      "dependencies": [
+        "HC-01"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "4-7",
+        "operating_cost": "LOW",
+        "confidence": "LOW_TO_MEDIUM",
+        "scope_assumption": "Pilot-critical connector set only"
+      }
+    },
+    {
+      "id": "HC-04",
+      "rank": 4,
+      "name": "Canonical Current Truth and Outcome-Closure Discipline",
+      "forms": [
+        "DEVELOPMENT_TIME_SKILL",
+        "DETERMINISTIC_SERVICE",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "CONSOLIDATE_OVERLAPPING_ASSETS",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 3,
+        "dependency_unlock": 5,
+        "recurrence": 5,
+        "risk_reduction": 4,
+        "time_to_value": 5,
+        "feasibility": 5,
+        "reuse": 5,
+        "evidence_readiness": 4,
+        "differentiation": 3,
+        "total": 44,
+        "normalized": 88
+      },
+      "contract_summary": "One current status and supersession chain per programme; WIP at most two; no completion without immutable acceptance evidence; priority release and waiver decisions remain human-owned.",
+      "dependencies": [
+        "HC-01"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "2-4",
+        "operating_cost": "LOW",
+        "confidence": "MEDIUM"
+      }
+    },
+    {
+      "id": "HC-05",
+      "rank": 5,
+      "name": "Mobile Document Intake and Evidence Capture",
+      "forms": [
+        "DETERMINISTIC_SERVICE",
+        "NEW_BOUNDED_SKILL",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "NEW_BOUNDED_CAPABILITY_NOT_AGENT_INITIALLY",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 5,
+        "dependency_unlock": 4,
+        "recurrence": 5,
+        "risk_reduction": 4,
+        "time_to_value": 4,
+        "feasibility": 3,
+        "reuse": 5,
+        "evidence_readiness": 4,
+        "differentiation": 4,
+        "total": 43,
+        "normalized": 86
+      },
+      "contract_summary": "Quarantine hash scan extract and classify untrusted documents into confidence-scored drafts with complete custody and redaction; never post link disclose delete or certify without human approval.",
+      "dependencies": [
+        "HC-01",
+        "HC-03",
+        "HC-04"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "6-10",
+        "operating_cost": "MEDIUM",
+        "confidence": "LOW"
+      }
+    },
+    {
+      "id": "HC-06",
+      "rank": 6,
+      "name": "Receivables and Collections Copilot",
+      "forms": [
+        "NEW_IN_PRODUCT_AGENT",
+        "DETERMINISTIC_SERVICES",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "NEW_AGENT_AFTER_FOUNDATIONS",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 5,
+        "dependency_unlock": 3,
+        "recurrence": 5,
+        "risk_reduction": 4,
+        "time_to_value": 4,
+        "feasibility": 3,
+        "reuse": 4,
+        "evidence_readiness": 4,
+        "differentiation": 5,
+        "total": 42,
+        "normalized": 84
+      },
+      "contract_summary": "Evidence-backed daily receivables queue and editable outreach drafts only; customer contact settlement discount write-off credit hold posting and legal escalation are human-controlled.",
+      "dependencies": [
+        "HC-01",
+        "HC-02",
+        "HC-03",
+        "HC-04"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "8-12",
+        "operating_cost": "MEDIUM",
+        "confidence": "LOW_PENDING_BASELINE"
+      }
+    },
+    {
+      "id": "HC-07",
+      "rank": 7,
+      "name": "Advisor Collaboration and Review Workspace",
+      "forms": [
+        "NEW_IN_PRODUCT_AGENT",
+        "DETERMINISTIC_SERVICES",
+        "HUMAN_PROCESS"
+      ],
+      "change_type": "NEW_AGENT_AND_WORKSPACE_AFTER_FOUNDATIONS",
+      "score": {
+        "north_star_impact": 5,
+        "user_value": 5,
+        "dependency_unlock": 4,
+        "recurrence": 4,
+        "risk_reduction": 5,
+        "time_to_value": 3,
+        "feasibility": 3,
+        "reuse": 4,
+        "evidence_readiness": 3,
+        "differentiation": 5,
+        "total": 41,
+        "normalized": 82
+      },
+      "contract_summary": "Purpose-scoped time-bounded evidence review comments and correction requests with full disclosure log; invitations disclosures corrections close filing and sign-off are human-controlled and segregation of duties is enforced.",
+      "dependencies": [
+        "HC-01",
+        "HC-02",
+        "HC-03",
+        "HC-04"
+      ],
+      "planning_cost": {
+        "engineering_person_weeks": "8-12",
+        "operating_cost": "MEDIUM",
+        "confidence": "LOW_PENDING_BASELINE"
+      }
+    }
+  ],
+  "dependency_dag": {
+    "nodes": [
+      "PR-01",
+      "HC-01",
+      "HC-02",
+      "HC-03",
+      "HC-04",
+      "HC-05",
+      "HC-06",
+      "HC-07"
+    ],
+    "edges": [
+      {
+        "from": "PR-01",
+        "to": "HC-01",
+        "condition": "candidate identity owners safe fixtures external authorities and pilot scope"
+      },
+      {
+        "from": "HC-01",
+        "to": "HC-03",
+        "condition": "RQ-1 passes"
+      },
+      {
+        "from": "HC-01",
+        "to": "HC-04",
+        "condition": "RQ-1 passes"
+      },
+      {
+        "from": "HC-03",
+        "to": "HC-02",
+        "condition": "pilot source trust contract available"
+      },
+      {
+        "from": "HC-04",
+        "to": "HC-02",
+        "condition": "canonical programme and evidence truth active"
+      },
+      {
+        "from": "HC-03",
+        "to": "HC-05",
+        "condition": "storage and downstream connector trust available"
+      },
+      {
+        "from": "HC-04",
+        "to": "HC-05",
+        "condition": "custody and supersession truth active"
+      },
+      {
+        "from": "HC-05",
+        "to": "HC-02",
+        "condition": "required only for unstructured-source onboarding"
+      },
+      {
+        "from": "HC-02",
+        "to": "HC-06",
+        "condition": "trusted customer invoice and payment data available"
+      },
+      {
+        "from": "HC-03",
+        "to": "HC-06",
+        "condition": "source and communications trust available"
+      },
+      {
+        "from": "HC-04",
+        "to": "HC-06",
+        "condition": "current evidence and outcome truth active"
+      },
+      {
+        "from": "HC-02",
+        "to": "HC-07",
+        "condition": "trusted tenant data and onboarding complete"
+      },
+      {
+        "from": "HC-03",
+        "to": "HC-07",
+        "condition": "shared evidence sources have trust state"
+      },
+      {
+        "from": "HC-04",
+        "to": "HC-07",
+        "condition": "current review pack and supersession active"
+      }
+    ]
+  },
+  "roadmap": [
+    {
+      "stage": 0,
+      "name": "Authority and freeze",
+      "wip_limit": 1,
+      "deliverable": "Immutable candidate owners fixture boundary and current evidence set",
+      "exit_gate": "No unresolved candidate identity or fixture-boundary blocker"
+    },
+    {
+      "stage": 1,
+      "name": "Prove the spine",
+      "wip_limit": 1,
+      "deliverable": "HC-01 RQ-1 observed highest-risk 150-case slice",
+      "exit_gate": "Zero unauthorized side effects or critical tenant redaction or secret failures"
+    },
+    {
+      "stage": 2,
+      "name": "Trust foundations",
+      "wip_limit": 2,
+      "deliverable": "HC-03 pilot connector set and HC-04 canonical current truth",
+      "exit_gate": "Downstream claims consume current trust state and one active status exists per programme"
+    },
+    {
+      "stage": 3,
+      "name": "Reach first value",
+      "wip_limit": 2,
+      "deliverable": "HC-02 one-source one-outcome pilot with HC-05 when unstructured input is needed",
+      "exit_gate": "Exact reconciliation reversible idempotent commit safe custody and accessible review"
+    },
+    {
+      "stage": 4,
+      "name": "Add outcome agents",
+      "wip_limit": 1,
+      "deliverable": "HC-06 controlled pilot followed by HC-07 controlled pilot",
+      "exit_gate": "Human approvals telemetry incident and kill-switch evidence with no prohibited action"
+    },
+    {
+      "stage": 5,
+      "name": "Broaden only from evidence",
+      "wip_limit": 2,
+      "deliverable": "Full 999 observed evaluations and evidence-led scope expansion",
+      "exit_gate": "Separate human production decision for each scope"
+    }
+  ],
+  "shared_controls": [
+    "tenant actor role purpose module entitlement and data classification context",
+    "least-privilege tool registry and prohibited-action rules",
+    "evidence freshness provenance supersession and invalidation",
+    "redaction before prompts logs notifications exports and reviewer views",
+    "idempotency replay retry budgets partial-failure handling and durable state",
+    "model provider version token cost latency abstention and fallback telemetry",
+    "maker-checker separation and step-up approval",
+    "accessible non-chat review exception correction and approval surfaces",
+    "scoped candidate rollback kill switch incident owner and human activation"
+  ],
+  "explicit_non_recommendations": [
+    "new general orchestrator",
+    "second evaluation catalog or harness",
+    "standalone connector-health conversational agent",
+    "autonomous document posting agent",
+    "new close compliance payroll AP inventory reconciliation or command agent",
+    "country-pack authority agent",
+    "autonomous financial posting payment release payroll approval statutory filing access-control change or certification"
+  ],
+  "deferred_candidates": [
+    "cash forecasting and scenarios",
+    "omnichannel communications except as a controlled dependency",
+    "continuous controls and fraud",
+    "profitability and pricing",
+    "supplier collaboration",
+    "financing readiness",
+    "pipeline to cash",
+    "job and project margin",
+    "broader counterparty network and loyalty loops"
+  ],
+  "reviewer_findings": [
+    {
+      "lens": "RELEASE_AND_SECURITY",
+      "finding": "Do not start a new product agent while candidate identity external runtime inputs owners collectors and activation authority remain blocked.",
+      "resolution": "HC-01 first and blocked by default."
+    },
+    {
+      "lens": "PRODUCT_AND_COMMERCIAL",
+      "finding": "HC-02 would be first by immediate customer value.",
+      "resolution": "HC-02 is the first product pilot; HC-01 is first in implementation sequence because it establishes safe proof."
+    },
+    {
+      "lens": "CONTROLLER_AND_ACCOUNTING",
+      "finding": "HC-06 is acceptable only for priority and draft outreach.",
+      "resolution": "Posting cash application settlement write-off payment and accounting or tax conclusions remain human-controlled."
+    },
+    {
+      "lens": "PLATFORM",
+      "finding": "A new orchestrator or evaluator duplicates strong existing assets.",
+      "resolution": "Consolidate and execute behavior instead."
+    },
+    {
+      "lens": "OPERATIONS_AND_COST",
+      "finding": "Model-grading all 999 cases before unit-cost evidence is wasteful.",
+      "resolution": "Deterministic checks first then 150 risk-ranked cases then full catalog."
+    },
+    {
+      "lens": "UX_AND_ACCESSIBILITY",
+      "finding": "Chat-only exception approval onboarding and review flows are insufficient.",
+      "resolution": "Require structured accessible stateful workflow surfaces."
+    }
+  ],
+  "unresolved_evidence_gaps": [
+    "No single canonical current product charter",
+    "Root README conflicts with later strategy and module evidence",
+    "Definition installation is proven but production behavior is not",
+    "Top-12 status snapshot is dated 2026-08-03",
+    "Architecture graphs are dated 2026-08-09",
+    "Current team capacity and measured velocity are unknown",
+    "Model vendors and token or unit economics are unknown",
+    "Supported migration formats countries and source systems are not frozen",
+    "Named statutory reviewers and operational owners remain incomplete",
+    "Pilot tenants and outcome baselines are not approved",
+    "Onboarding and collections targets are proposed not observed",
+    "Dirty worktree may contain newer unfinished implementation not valid as production evidence"
+  ],
+  "verification": {
+    "artifact_validation": "PASS",
+    "validated_on": "2026-08-20",
+    "checks": [
+      {
+        "name": "shortlist_count",
+        "status": "PASS",
+        "expected": 7
+      },
+      {
+        "name": "score_arithmetic",
+        "status": "PASS",
+        "observed": "All recommendation totals and normalized scores match the published formula."
+      },
+      {
+        "name": "dependency_dag_acyclic",
+        "status": "PASS",
+        "observed": "8 of 8 nodes visited by topological traversal."
+      },
+      {
+        "name": "evidence_paths_exist",
+        "status": "PASS",
+        "observed": "23 of 23 primary evidence paths exist."
+      },
+      {
+        "name": "artifact_paths_exist",
+        "status": "PASS",
+        "observed": "Both requested output artifacts exist."
+      },
+      {
+        "name": "source_suite_validator",
+        "status": "SKIPPED",
+        "reason": "Validator rewrites existing reports; audit is non-mutating and worktree is dirty."
+      },
+      {
+        "name": "npm_policy_and_release_gates",
+        "status": "SKIPPED",
+        "reason": "No runtime code changed; gates can write canonical reports and require external inputs."
+      },
+      {
+        "name": "workflow_assurance_runtime_check",
+        "status": "SKIPPED",
+        "reason": "No workflow-assurance runtime behavior changed; no live deployment-readiness claim is made."
+      }
+    ]
+  },
+  "primary_evidence_paths": [
+    "services/modules/module-catalog.service.ts",
+    "services/agents",
+    "actions/agents",
+    "prisma/schema.prisma",
+    "docs/copilot/stoquify-agent-skill-definition-suite/manifest.md",
+    "docs/copilot/stoquify-agent-skill-definition-suite/reports/installation-validation-report.md",
+    "docs/copilot/stoquify-agent-skill-definition-suite/reports/validation-report.md",
+    "docs/copilot/stoquify-agent-skill-definition-suite/reports/post-installation-next-steps.md",
+    "docs/copilot/stoquify-agent-skill-definition-suite/reports/unresolved-questions.md",
+    "docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json",
+    "docs/stoquify-skills-agents/STOQUIFY_TOP_12_ADDITIVE_AGENTS_AND_SKILLS_RESEARCH_REPORT_2026-08-02.md",
+    "docs/stoquify-skills-agents/STOQUIFY_TOP_12_AGENTS_SKILLS_COMPLETE_EXECUTION_ROADMAP_2026-08-02.md",
+    "docs/stoquify-skills-agents/execution/top12-programme-status.json",
+    "docs/stoquify-skills-agents/execution/TOP12_FND_010_EVALUATION_HARNESS_REPORT_2026-08-02.md",
+    "what-next/stoquify-five-vital-capabilities-strategy-review-2026-08-14.md",
+    "what-next/platform-progress-recovery-assessment-2026-08-10.md",
+    "what-next/enterprise-release-blocker-status.json",
+    "what-next/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_LIVE.json",
+    "graphify-out/GRAPH_REPORT_components.md",
+    "graphify-out/GRAPH_REPORT_actions.md",
+    "graphify-out/GRAPH_REPORT_app.md",
+    "graphify-out/GRAPH_REPORT_hooks.md",
+    "graphify-out/GRAPH_REPORT_types.md"
+  ]
+}

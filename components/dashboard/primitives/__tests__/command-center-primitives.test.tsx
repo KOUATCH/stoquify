@@ -53,6 +53,26 @@ describe("command center dashboard primitives", () => {
     expect(screen.getByRole("link", { name: /Open finance/ })).toHaveAttribute("href", "/en/dashboard/finance")
   })
 
+  it("can place command actions below the header content", () => {
+    render(
+      <CommandBriefHeader
+        title="Sales finance"
+        summary="Sales finance controls"
+        metadata={[{ label: "Period", value: "Today" }]}
+        actions={[{ label: "Reconciliation", href: "/en/dashboard/finance/reconciliation", variant: "primary" }]}
+        actionsPlacement="below-content"
+      >
+        <div>Finance filters</div>
+      </CommandBriefHeader>,
+    )
+
+    const action = screen.getByRole("link", { name: "Reconciliation" })
+
+    expect(action.closest("aside")).toBeNull()
+    expect(screen.getByText("Period").closest("aside")).not.toBeNull()
+    expect(screen.getByText("Finance filters")).toBeInTheDocument()
+  })
+
   it("renders action queue items and keeps empty queues actionable but quiet", () => {
     const onReview = jest.fn()
     const { rerender } = render(
@@ -128,6 +148,39 @@ describe("command center dashboard primitives", () => {
     expect(screen.getByText("Close proof")).toBeInTheDocument()
     expect(screen.getByText("Cash evidence attached")).toBeInTheDocument()
     expect(screen.getByText(/journal/)).toBeInTheDocument()
+  })
+
+  it("renders cash-truth status cards as reconciliation proof actions", () => {
+    render(
+      <StatusStrip
+        title="Trust states"
+        items={[
+          {
+            id: "payment",
+            label: "Cash truth",
+            value: "XAF 10,000",
+            detail: "Internal collected 10000.00, external matched 10000.00, variance 0.00.",
+            tone: "success",
+            href: "/en/dashboard/finance/reconciliation",
+            source: "tenant period",
+            proof: {
+              state: "operational",
+              source: "/dashboard/finance/reconciliation",
+              sourceCount: 0,
+            },
+          },
+        ]}
+      />,
+    )
+
+    const cashTruthLink = screen.getByRole("link", { name: /Cash truth/i })
+
+    expect(cashTruthLink).toHaveAttribute("href", "/en/dashboard/finance/reconciliation")
+    expect(cashTruthLink).toHaveTextContent("XAF 10,000")
+    expect(cashTruthLink).toHaveTextContent("tenant period")
+    expect(cashTruthLink).toHaveTextContent("Operational")
+    expect(cashTruthLink).toHaveTextContent(/\/dashboard\/finance\/reconciliation/)
+    expect(cashTruthLink).toHaveTextContent("0 sources")
   })
 
   it("handles standard filters, search callbacks, and permission locked states", () => {

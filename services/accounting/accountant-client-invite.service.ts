@@ -413,7 +413,6 @@ export async function queueAccountantClientInviteInTx(
       evidenceHash: identityHash,
       businessEventId: recorded.event.id,
       outboxId,
-      createdAt: now,
     },
   })
   await tx.accountantClientInviteState.create({

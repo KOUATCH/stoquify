@@ -4,6 +4,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { Client } = require("pg");
 
 const MODES = new Set(["report", "warn", "fail"]);
 const SAFE_DB_NAME = /(test|ci|local|sandbox|immutability)/i;
@@ -115,11 +116,17 @@ function runMigrateDeploy(urlValue) {
 }
 
 async function execute(tx, sql, ...params) {
-  return tx.$executeRawUnsafe(sql, ...params);
+  const result = await tx.query(sql, params);
+  return result.rowCount;
 }
 
 async function query(tx, sql, ...params) {
-  return tx.$queryRawUnsafe(sql, ...params);
+  const result = await tx.query(sql, params);
+  return result.rows;
+}
+
+function createRuntimeClient(urlValue, ClientCtor = Client) {
+  return new ClientCtor({ connectionString: urlValue });
 }
 
 function ids() {
@@ -435,26 +442,21 @@ async function verifyMutations(tx, id) {
   return { blocked, allowed };
 }
 
-async function runRuntimeProof() {
-  const { PrismaClient } = require("@prisma/client");
-  const prisma = new PrismaClient();
+async function runRuntimeProof(urlValue) {
+  const client = createRuntimeClient(urlValue);
   const id = ids();
+  let connected = false;
   try {
-    return await prisma.$transaction(
-      async (tx) => {
-        const triggers = await verifyTriggerCatalog(tx);
-        await seed(tx, id);
-        const mutations = await verifyMutations(tx, id);
-        throw { rollbackOnly: true, triggers, mutations };
-      },
-      { timeout: 30000, maxWait: 10000 },
-    );
-  } catch (error) {
-    if (error && error.rollbackOnly)
-      return { triggers: error.triggers, mutations: error.mutations };
-    throw error;
+    await client.connect();
+    connected = true;
+    await execute(client, "BEGIN");
+    const triggers = await verifyTriggerCatalog(client);
+    await seed(client, id);
+    const mutations = await verifyMutations(client, id);
+    return { triggers, mutations };
   } finally {
-    await prisma.$disconnect().catch(() => {});
+    if (connected) await execute(client, "ROLLBACK").catch(() => {});
+    await client.end().catch(() => {});
   }
 }
 
@@ -639,7 +641,7 @@ async function main(argv = process.argv) {
   let runtime = null;
   let error = null;
   try {
-    runtime = await runRuntimeProof();
+    runtime = await runRuntimeProof(safety.urlValue);
   } catch (caught) {
     error = caught;
   }
@@ -662,6 +664,7 @@ if (require.main === module) {
 
 module.exports = {
   REQUIRED_TRIGGERS,
+  createRuntimeClient,
   parseArgs,
   safeDatabase,
   buildReport,

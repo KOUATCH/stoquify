@@ -1,18 +1,22 @@
 import { AROpenItemsHistoryWorkbench } from "@/components/finance/AROpenItemsHistoryWorkbench"
 
-import { FinanceRouteAccess, financeViewPermissions, type FinanceRouteParams } from "../../FinanceRouteAccess"
+import { routeByKey, withFinanceSurfaceAccess } from "../../finance-route-access"
 
 export const metadata = {
   title: "Customer AR history | Stoquify",
   description: "Customer receivable open-item, allocation, aging, and settlement history.",
 }
 
-export default async function FinanceReceivablesHistoryPage({ params }: { params: FinanceRouteParams }) {
-  return FinanceRouteAccess({
+export default async function FinanceReceivablesHistoryPage({ params }: { params: Promise<{ locale: string }> }) {
+  const surface = routeByKey("finance-receivables-history")
+
+  if (!surface) {
+    throw new Error("Missing finance route surface definition: finance-receivables-history")
+  }
+
+  return withFinanceSurfaceAccess({
     params,
-    permissions: financeViewPermissions("receivables"),
-    resource: "AROpenItemsHistorySurface",
-    title: "Customer AR history",
-    children: <AROpenItemsHistoryWorkbench />,
+    surface,
+    onAllowed: () => <AROpenItemsHistoryWorkbench />,
   })
 }

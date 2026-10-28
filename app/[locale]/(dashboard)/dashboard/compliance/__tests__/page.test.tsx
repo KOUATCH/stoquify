@@ -1,12 +1,24 @@
 import { render, screen } from "@testing-library/react"
 
 import { getComplianceCenterKernelSnapshotAction } from "@/actions/compliance/compliance-center.actions"
-import { checkPermission } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
 
 import ComplianceCenterPage from "../page"
 
-jest.mock("@/config/useAuth", () => ({
-  checkPermission: jest.fn(),
+jest.mock("@/lib/security/rbac", () => ({
+  RbacError: class MockRbacError extends Error {},
+  requireAllPermissions: jest.fn(),
+  requireAnyPermission: jest.fn(),
+  requirePermission: jest.fn(),
+}))
+
+jest.mock("@/i18n/routing", () => ({
+  localizePath: (href: string, locale: string) => `/${locale}${href}`,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
+}))
+
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({
+  DashboardRouteState: () => <main />,
 }))
 
 jest.mock("@/actions/compliance/compliance-center.actions", () => ({
@@ -40,13 +52,13 @@ jest.mock("@/components/compliance/ComplianceCenterDashboard", () => ({
   }) => mockComplianceCenterDashboard(props),
 }))
 
-const mockCheckPermission = checkPermission as jest.Mock
+const mockRequirePermission = requirePermission as jest.Mock
 const mockGetComplianceCenterKernelSnapshotAction = getComplianceCenterKernelSnapshotAction as jest.Mock
 
 describe("ComplianceCenterPage", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockCheckPermission.mockResolvedValue(true)
+    mockRequirePermission.mockResolvedValue({ orgId: "org-1" })
     mockGetComplianceCenterKernelSnapshotAction.mockResolvedValue({
       success: true,
       status: "success",
@@ -55,9 +67,13 @@ describe("ComplianceCenterPage", () => {
   })
 
   it("requires compliance document read permission before loading the compliance snapshot", async () => {
-    render(await ComplianceCenterPage())
+    render(await ComplianceCenterPage({ params: Promise.resolve({ locale: "en" }) }))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("compliance.documents.read")
+    expect(mockRequirePermission).toHaveBeenCalledWith("compliance.documents.read", {
+      resource: "ComplianceCenterPage",
+      resourceId: undefined,
+      auditAllowed: true,
+    })
     expect(mockGetComplianceCenterKernelSnapshotAction).toHaveBeenCalledWith({ limit: 50 })
     expect(mockComplianceCenterDashboard).toHaveBeenCalledWith({
       initialData: { summary: { documents: 1 } },
@@ -70,11 +86,13 @@ describe("ComplianceCenterPage", () => {
   })
 
   it("stops before compliance data access when the permission guard denies access", async () => {
-    mockCheckPermission.mockRejectedValue(new Error("Forbidden"))
+    mockRequirePermission.mockRejectedValue(new Error("Forbidden"))
 
-    await expect(ComplianceCenterPage()).rejects.toThrow("Forbidden")
+    await expect(ComplianceCenterPage({ params: Promise.resolve({ locale: "en" }) })).rejects.toThrow("Forbidden")
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("compliance.documents.read")
+    expect(mockRequirePermission).toHaveBeenCalledWith("compliance.documents.read", expect.objectContaining({
+      resource: "ComplianceCenterPage",
+    }))
     expect(mockGetComplianceCenterKernelSnapshotAction).not.toHaveBeenCalled()
     expect(mockComplianceCenterDashboard).not.toHaveBeenCalled()
   })
@@ -86,9 +104,11 @@ describe("ComplianceCenterPage", () => {
       error: "Compliance snapshot unavailable",
     })
 
-    render(await ComplianceCenterPage())
+    render(await ComplianceCenterPage({ params: Promise.resolve({ locale: "en" }) }))
 
-    expect(mockCheckPermission).toHaveBeenCalledWith("compliance.documents.read")
+    expect(mockRequirePermission).toHaveBeenCalledWith("compliance.documents.read", expect.objectContaining({
+      resource: "ComplianceCenterPage",
+    }))
     expect(mockComplianceCenterDashboard).toHaveBeenCalledWith({
       initialData: null,
       initialError: "Compliance snapshot unavailable",

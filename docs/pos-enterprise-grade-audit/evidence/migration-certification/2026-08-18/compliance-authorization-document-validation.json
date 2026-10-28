@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "1.1.0",
+  "artifactId": "STOQUIFY-COMPLIANCE-AUTHORIZATION-DOCX-VALIDATION-20260818",
+  "generatedAt": "2026-08-18T04:44:09.8632269Z",
+  "status": "PRESENT_VALID_VALIDATION_EVIDENCE",
+  "source": {
+    "path": "docs/Compliance/Complaince authorization validation.docx",
+    "sha256Read1": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+    "sha256Read2": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+    "stableAcrossCompleteReads": true,
+    "bytes": 464884,
+    "lastWriteTimeUtc": "2026-08-18T03:10:28.3890841Z",
+    "lockedAtValidation": false,
+    "coreProperties": {
+      "creator": "KOUATCHOUA MARK",
+      "lastModifiedBy": "KOUATCHOUA MARK",
+      "createdAt": "2026-08-17T08:00:00Z",
+      "modifiedAt": "2026-08-18T03:10:28Z",
+      "revision": "1",
+      "classification": "VERIFIED_REPOSITORY_FACT",
+      "limitation": "Package authorship metadata is not signer authentication, role authority, or approval intent."
+    }
+  },
+  "packageInspection": {
+    "format": "OOXML_ZIP_PACKAGE",
+    "entryCount": 19,
+    "entries": [
+      "[Content_Types].xml",
+      "_rels/",
+      "_rels/.rels",
+      "docProps/",
+      "docProps/app.xml",
+      "docProps/core.xml",
+      "docProps/custom.xml",
+      "word/",
+      "word/_rels/",
+      "word/_rels/document.xml.rels",
+      "word/document.xml",
+      "word/fontTable.xml",
+      "word/media/",
+      "word/media/image1.jpeg",
+      "word/media/image2.jpeg",
+      "word/settings.xml",
+      "word/styles.xml",
+      "word/theme/",
+      "word/theme/theme1.xml"
+    ],
+    "ooxmlDigitalSignatureParts": 0,
+    "certificateRelationships": 0,
+    "signatureOriginRelationships": 0,
+    "detachedSignatureReferences": 0,
+    "embeddedImmutableApprovalIdentifiers": 0,
+    "media": [
+      {
+        "path": "word/media/image1.jpeg",
+        "bytes": 268495,
+        "sha256": "aa77607039406b919bef4d65fc16424aea9f45b10de39fa47415a98a1e8a864a",
+        "observedContent": "handwritten-signature-like image",
+        "placement": "same unlabelled drawing paragraph as image2, immediately before the Maker name section",
+        "byteClassification": "VERIFIED_REPOSITORY_FACT",
+        "signatureClassification": "ROLE_OR_AUTHORITY_UNVERIFIED"
+      },
+      {
+        "path": "word/media/image2.jpeg",
+        "bytes": 180993,
+        "sha256": "cdfd3824056ea30ea941c0ed8395cf75ad07d632e53e1c7812c59c9f64072b29",
+        "observedContent": "handwritten-signature-like image",
+        "placement": "same unlabelled drawing paragraph as image1, immediately before the Maker name section",
+        "byteClassification": "VERIFIED_REPOSITORY_FACT",
+        "signatureClassification": "ROLE_OR_AUTHORITY_UNVERIFIED"
+      }
+    ]
+  },
+  "identityAndRoleObservations": [
+    {
+      "name": "SANGO MALO",
+      "assertedRole": "Migration operator; Database administrator / engineering lead",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "targetField": "maker/operator identity",
+      "classification": "VERIFIED_HUMAN_DECLARATION_NOT_GATE_APPROVAL",
+      "validationResult": "NAME_AND_ASSERTED_ROLE_ONLY",
+      "reason": "The name and asserted role are present in document text, but no image, certificate, fresh authentication, authority record, or exact-hash approval is reliably bound to this person."
+    },
+    {
+      "name": "MAXIMILLIANO BONGA",
+      "assertedRole": "Migration checker; Database administrator / engineering lead",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "targetField": "independent checker identity",
+      "classification": "VERIFIED_HUMAN_DECLARATION_NOT_GATE_APPROVAL",
+      "validationResult": "NAME_AND_ASSERTED_ROLE_ONLY",
+      "reason": "The name and asserted role are present in document text, but independence, authority, fresh authentication, signature mapping, and exact-hash decision are absent."
+    },
+    {
+      "name": "Tamen Marceline",
+      "assertedRole": "Maker",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "targetField": "maker identity",
+      "classification": "CONFLICTING_EVIDENCE",
+      "validationResult": "CONFLICTS_WITH_SANGO_MALO_MAKER_PROPOSAL",
+      "reason": "A separate Maker name appears after the two unlabelled images and conflicts with the proposed SANGO MALO maker identity; no reliable image-to-name binding resolves the conflict."
+    },
+    {
+      "name": "Yonga Springfield",
+      "assertedRole": "Checker",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "targetField": "checker identity",
+      "classification": "CONFLICTING_EVIDENCE",
+      "validationResult": "CONFLICTS_WITH_MAXIMILLIANO_BONGA_CHECKER_PROPOSAL",
+      "reason": "A separate Checker name appears after the two unlabelled images and conflicts with the proposed MAXIMILLIANO BONGA checker identity; no reliable image-to-name binding resolves the conflict."
+    },
+    {
+      "name": "KOUATCHOUA MARK",
+      "assertedRole": "Product approver; Product Owner or Financial Controller",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "G1",
+      "targetField": "required accountable approval roles",
+      "classification": "ROLE_OR_AUTHORITY_UNVERIFIED",
+      "validationResult": "AUTHOR_AND_DECLARED_APPROVER_ONLY",
+      "reason": "The document names this person and package metadata identifies the author, but the asserted role is ambiguous and no decision-specific signature or enterprise approval is bound to the frozen contract hash."
+    },
+    {
+      "name": "KOUATCHOUA MARCELINE",
+      "assertedRole": "Controller approver; SYSTEM ADMINISTRATION",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "G1",
+      "targetField": "financial-controller or other accountable role",
+      "classification": "ROLE_OR_AUTHORITY_UNVERIFIED",
+      "validationResult": "SYSTEM_ADMINISTRATION_DOES_NOT_PROVE_FINANCIAL_AUTHORITY",
+      "reason": "The declared SYSTEM ADMINISTRATION role cannot be mapped to Financial controller, Accounting owner, Treasury owner, or another financial authority without an explicit authority record."
+    },
+    {
+      "name": null,
+      "assertedRole": "Qualified Cameroon country-pack reviewer",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "G3B",
+      "targetField": "qualified reviewer",
+      "classification": "MISSING",
+      "validationResult": "NO_QUALIFIED_INDIVIDUAL_REVIEWER",
+      "reason": "DGI, MINFI, and CNPS labels are organizations, not individual signer identities, and their signature fields are not bound to any review decision."
+    },
+    {
+      "name": null,
+      "assertedRole": "Independent Cameroon checker",
+      "verifiedRole": null,
+      "authorityReference": null,
+      "signatureOrApprovalMethod": null,
+      "signedArtifactOrDecision": null,
+      "targetGate": "G3B",
+      "targetField": "independent checker",
+      "classification": "MISSING",
+      "validationResult": "NO_INDEPENDENT_CHECKER",
+      "reason": "No separately identified and authority-verified Cameroon checker appears."
+    }
+  ],
+  "scopeAndTimeConflicts": [
+    {
+      "classification": "CONFLICTING_EVIDENCE",
+      "subject": "release scope",
+      "details": "The document declares a development-only localhost certification schema while also asserting production and statutory/fiscal authorization."
+    },
+    {
+      "classification": "STALE_OR_WRONG_ARTIFACT_BINDING",
+      "subject": "operator/checker timestamps",
+      "details": "The supplied 2026-08-17T08:00:00Z timestamps predate the later evidence bundle and do not bind the final current artifact hashes."
+    },
+    {
+      "classification": "STALE_OR_WRONG_ARTIFACT_BINDING",
+      "subject": "prior DOCX hashes",
+      "details": "Historical 499b... and f373... values do not match the current stable source hash cdca6c7d...."
+    }
+  ],
+  "gateAssessments": [
+    {
+      "gate": "G1_D01_D11",
+      "use": "IDENTITY_AND_SCOPE_DECLARATION_ONLY",
+      "approvalCredit": 0,
+      "classification": "VERIFIED_HUMAN_DECLARATION_NOT_GATE_APPROVAL",
+      "verdict": "REJECTED_AS_AUTHENTIC_DECISION_APPROVAL"
+    },
+    {
+      "gate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "use": "CONFLICTING_NAMED_PARTIES_AND_UNLABELLED_IMAGE_BYTES_ONLY",
+      "approvalCredit": 0,
+      "classification": "CONFLICTING_EVIDENCE",
+      "verdict": "REJECTED_AS_EXACT_HASH_SIGNATURE_EVIDENCE"
+    },
+    {
+      "gate": "AUTHENTICATION_ATTESTATION",
+      "use": "NAME_AND_TIMESTAMP_DECLARATIONS_ONLY",
+      "approvalCredit": 0,
+      "classification": "MISSING",
+      "verdict": "REJECTED_NO_FRESH_AUTH_OR_IMMUTABLE_IDENTITY_RECORD"
+    },
+    {
+      "gate": "G3B_CAMEROON_COUNTRY_PACK",
+      "use": "ORGANIZATION_LABELS_AND_REQUESTED_SCOPE_ONLY",
+      "approvalCredit": 0,
+      "classification": "MISSING",
+      "verdict": "REJECTED_NO_QUALIFIED_REVIEWER_OR_CHECKER"
+    },
+    {
+      "gate": "G4_HARDWARE_SCOPE",
+      "use": "DECLARED_SIMULATION_SCOPE_ONLY",
+      "approvalCredit": 0,
+      "classification": "VERIFIED_HUMAN_DECLARATION_NOT_GATE_APPROVAL",
+      "verdict": "REJECTED_NO_SIGNED_EXCLUSION_OR_PHYSICAL_TEST_EVIDENCE"
+    }
+  ],
+  "securityDisposition": {
+    "rawTokensOrCredentialsCopied": false,
+    "rawSignaturePixelsReplicatedOutsideValidationInspection": false,
+    "containsSecretValues": false,
+    "requiredHandling": "Do not reuse the images as portable signature tokens. Obtain a detached signature or immutable enterprise approval that binds the exact target hash, decision, identity, role, fresh-auth event, and timestamp."
+  },
+  "overallVerdict": "REJECTED_AS_GATE_SIGNATURE_EVIDENCE_ACCEPTED_AS_STABLE_DECLARATION_AND_MEDIA_BYTE_EVIDENCE",
+  "productionAuthorizationProven": false,
+  "statutoryAuthorizationProven": false,
+  "hardwareCertificationProven": false,
+  "g1ApprovalRegisterMayAdvance": false
+}

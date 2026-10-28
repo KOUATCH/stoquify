@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-22T08:59:09.408Z",
+  "target": {
+    "host": "localhost",
+    "database": "stockflow_immutability_test",
+    "scope": "ISOLATED_LOCAL_DISPOSABLE_POSTGRESQL"
+  },
+  "ready": true,
+  "checks": [
+    {
+      "name": "concurrent_approval_has_one_atomic_winner",
+      "passed": true,
+      "details": {
+        "winners": 1,
+        "losers": 1,
+        "loserCodes": [
+          "40001"
+        ],
+        "transitionCount": 1,
+        "eventCount": 1,
+        "outboxCount": 1,
+        "auditCount": 1
+      }
+    },
+    {
+      "name": "duplicate_evidence_is_rejected_without_partial_commit",
+      "passed": true,
+      "details": {
+        "duplicateCode": "23505",
+        "transitionCount": 1
+      }
+    },
+    {
+      "name": "failure_injection_rolls_back_run_event_outbox_audit_and_transition",
+      "passed": true,
+      "details": {
+        "failureCode": "INJECTED_AFTER_CAS_BEFORE_COMMIT",
+        "runStatus": "REVIEWED",
+        "runVersion": 2,
+        "transitionCount": 0,
+        "eventCount": 0,
+        "outboxCount": 0,
+        "auditCount": 0
+      }
+    }
+  ],
+  "blockers": []
+}

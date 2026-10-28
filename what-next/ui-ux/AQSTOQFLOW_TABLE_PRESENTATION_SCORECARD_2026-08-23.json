@@ -1,0 +1,260 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-23",
+  "scope": "Stoquify table presentation and interaction audit; no application implementation",
+  "decision": "B_INCREMENTAL_TANSTACK",
+  "inventory": {
+    "tableBearingFiles": 57,
+    "tableRenderOccurrences": 74,
+    "categoryFileCounts": {
+      "administrationReferenceData": 4,
+      "financeAccounting": 14,
+      "inventory": 8,
+      "other": 7,
+      "payrollHris": 14,
+      "pos": 2,
+      "purchasing": 8
+    },
+    "sharedDataTableAdopters": 7,
+    "nativeOrBespokeTableFiles": 35,
+    "toolbarSemanticFiles": 37,
+    "paginationSemanticFiles": 32,
+    "searchLikeFiles": 11,
+    "dateRangeFiles": 9,
+    "minimumWidthPatternFiles": 44,
+    "explicitAriaSortFilesFoundByStaticScan": 2
+  },
+  "evidence": {
+    "staticCodeAudit": "complete",
+    "architectureGraphReview": "complete",
+    "authoritativeStandardsResearch": "complete",
+    "browserRouteReview": "blocked",
+    "browserBlocker": "Desktop browser bridge sandbox setup failed before a page could open.",
+    "screenshotsCaptured": 0,
+    "keyboardSmoke": "not_run_due_to_browser_blocker",
+    "automatedAccessibilitySmoke": "not_run_due_to_browser_blocker",
+    "performanceProfile": "not_measured",
+    "claimBoundary": "No route is visually, accessibly, or performance certified by this audit."
+  },
+  "currentDimensionScores": [
+    { "id": "scanability_visual_hierarchy", "score": 3.5, "outOf": 5 },
+    { "id": "toolbar_clarity", "score": 3.0, "outOf": 5 },
+    { "id": "search_filter_discoverability", "score": 3.0, "outOf": 5 },
+    { "id": "active_filter_visibility_reset", "score": 2.5, "outOf": 5 },
+    { "id": "sorting_feedback_accessibility", "score": 2.0, "outOf": 5 },
+    { "id": "pagination_clarity", "score": 3.0, "outOf": 5 },
+    { "id": "row_density", "score": 2.0, "outOf": 5 },
+    { "id": "alignment_formatting", "score": 3.5, "outOf": 5 },
+    { "id": "responsive_adaptation", "score": 2.0, "outOf": 5 },
+    { "id": "keyboard_screen_reader", "score": 2.5, "outOf": 5 },
+    { "id": "robust_states", "score": 3.5, "outOf": 5 },
+    { "id": "dataset_correctness", "score": 2.5, "outOf": 5 },
+    { "id": "large_dataset_performance", "score": 3.0, "outOf": 5, "qualification": "unmeasured" },
+    { "id": "localization", "score": 2.5, "outOf": 5 },
+    { "id": "brand_consistency", "score": 4.0, "outOf": 5 },
+    { "id": "maintainability", "score": 3.0, "outOf": 5 }
+  ],
+  "currentDimensionUnweightedMean": 2.90625,
+  "decisionWeights": {
+    "taskEfficiency": 0.2,
+    "accessibility": 0.2,
+    "responsiveBehavior": 0.15,
+    "datasetCorrectness": 0.15,
+    "performance": 0.1,
+    "systemConsistency": 0.1,
+    "implementationMigrationSafety": 0.05,
+    "licensingMaintenance": 0.05
+  },
+  "options": [
+    {
+      "id": "A_RETAIN_AS_IS",
+      "scores": {
+        "taskEfficiency": 3.0,
+        "accessibility": 2.5,
+        "responsiveBehavior": 2.0,
+        "datasetCorrectness": 2.5,
+        "performance": 3.0,
+        "systemConsistency": 3.5,
+        "implementationMigrationSafety": 4.5,
+        "licensingMaintenance": 5.0
+      },
+      "weightedScore": 2.9,
+      "decision": "reject"
+    },
+    {
+      "id": "B_INCREMENTAL_TANSTACK",
+      "scores": {
+        "taskEfficiency": 4.2,
+        "accessibility": 4.2,
+        "responsiveBehavior": 4.0,
+        "datasetCorrectness": 4.2,
+        "performance": 4.0,
+        "systemConsistency": 4.5,
+        "implementationMigrationSafety": 4.0,
+        "licensingMaintenance": 5.0
+      },
+      "weightedScore": 4.21,
+      "decision": "recommend"
+    },
+    {
+      "id": "C_SPECIALIZED_ANALYTICAL_TIER_NOW",
+      "scores": {
+        "taskEfficiency": 4.3,
+        "accessibility": 3.8,
+        "responsiveBehavior": 3.5,
+        "datasetCorrectness": 4.5,
+        "performance": 4.5,
+        "systemConsistency": 3.0,
+        "implementationMigrationSafety": 2.5,
+        "licensingMaintenance": 3.0
+      },
+      "weightedScore": 3.845,
+      "decision": "defer_pending_evidence"
+    },
+    {
+      "id": "D_BROAD_GRID_REPLACEMENT",
+      "scores": {
+        "taskEfficiency": 4.5,
+        "accessibility": 4.2,
+        "responsiveBehavior": 3.8,
+        "datasetCorrectness": 4.5,
+        "performance": 4.6,
+        "systemConsistency": 2.5,
+        "implementationMigrationSafety": 1.5,
+        "licensingMaintenance": 2.0
+      },
+      "weightedScore": 3.87,
+      "decision": "reject"
+    }
+  ],
+  "recommendation": {
+    "id": "B_INCREMENTAL_TANSTACK",
+    "reason": "It closes the observed responsive, accessibility, localization, pagination, and data-ownership gaps while preserving Stoquify branding, domain behavior, and current investment.",
+    "applicationImplementationAuthorized": false,
+    "newGridDependencyAuthorized": false,
+    "broadBackfillAuthorized": false,
+    "schemaMigrationAuthorized": false,
+    "uiRedesignAuthorized": false
+  },
+  "archetypes": [
+    {
+      "id": "master_reference",
+      "examples": ["brands", "categories", "units", "customers", "suppliers", "users", "roles"],
+      "strategy": "shared_tanstack_semantic_table"
+    },
+    {
+      "id": "transaction_work_queue",
+      "examples": ["payroll_workbenches", "hr_approvals", "purchase_orders", "pos_sessions"],
+      "strategy": "server_query_state_with_domain_actions"
+    },
+    {
+      "id": "finance_statement",
+      "examples": ["accounts", "journals", "trial_balance", "financial_statements"],
+      "strategy": "native_semantic_statement_table"
+    },
+    {
+      "id": "analytical_high_volume",
+      "examples": ["reconciliation", "transaction_history", "purchase_analytics"],
+      "strategy": "server_operations_then_profiled_analytical_tier"
+    },
+    {
+      "id": "evidence_audit",
+      "examples": ["close_assurance", "compliance", "ap_controls"],
+      "strategy": "semantic_proof_focused_table"
+    },
+    {
+      "id": "editable_line_item",
+      "examples": ["purchase_order_editor", "journal_editor"],
+      "strategy": "form_table_hybrid"
+    },
+    {
+      "id": "bounded_detail",
+      "examples": ["entity_dialogs", "detail_summaries"],
+      "strategy": "simple_native_table"
+    }
+  ],
+  "backlog": [
+    {
+      "priority": "must",
+      "id": "localized_table_copy",
+      "summary": "Introduce typed EN/FR copy and locale-aware formatting for shared table controls."
+    },
+    {
+      "priority": "must",
+      "id": "functional_filters_only",
+      "summary": "Remove generic Active/Draft/Archived placeholders and render only typed filters connected to real query state."
+    },
+    {
+      "priority": "must",
+      "id": "truthful_pagination",
+      "summary": "Show first-last of filtered/total and selection text only when visible selection is enabled."
+    },
+    {
+      "priority": "must",
+      "id": "accessible_sorting",
+      "summary": "Centralize aria-sort, direction feedback, localized action labels, and keyboard targets."
+    },
+    {
+      "priority": "must",
+      "id": "table_label_contract",
+      "summary": "Require a caption, aria-label, or aria-labelledby relationship for every table."
+    },
+    {
+      "priority": "must",
+      "id": "server_query_contract",
+      "summary": "Standardize controlled search, sort, pagination/cursor, date range, filters, and reset behavior for authoritative datasets."
+    },
+    {
+      "priority": "must",
+      "id": "responsive_column_priority",
+      "summary": "Replace universal minimum widths with essential/supporting/optional priorities and accessible mobile row summaries or disclosures."
+    },
+    {
+      "priority": "should",
+      "id": "density",
+      "summary": "Add comfortable and compact modes with matched toolbar and row density."
+    },
+    {
+      "priority": "should",
+      "id": "persisted_columns",
+      "summary": "Persist versioned per-user column visibility and order by stable table ID."
+    },
+    {
+      "priority": "should",
+      "id": "robust_states",
+      "summary": "Standardize loading, empty, no-match, error, permission, and partial-data states."
+    },
+    {
+      "priority": "could",
+      "id": "profiled_virtualization",
+      "summary": "Add virtualization only after server-query optimization and profiling demonstrate a DOM-rendering bottleneck."
+    },
+    {
+      "priority": "reject",
+      "id": "wholesale_grid_migration",
+      "summary": "Do not replace all Stoquify tables with MUI X or AG Grid."
+    }
+  ],
+  "analyticalTierGate": {
+    "workflowRequirement": "Grouping, subtotals, pinned cross-column comparison, or cell-level navigation is necessary.",
+    "scaleOrPerformanceRequirement": {
+      "anyOf": [
+        "more_than_10000_routinely_queryable_rows",
+        "more_than_12_comparison_relevant_visible_columns",
+        "p95_initial_interactive_above_2500ms_after_server_query_optimization",
+        "p95_local_sort_filter_feedback_above_500ms_after_server_query_optimization"
+      ]
+    },
+    "accessibilityRequirement": "Prototype passes keyboard, screen-reader, zoom, reflow, and automated checks.",
+    "governanceRequirement": "Licensing, theming, maintenance, export, and audit-evidence costs are accepted explicitly.",
+    "currentQualification": "not_demonstrated"
+  },
+  "phases": [
+    "0_BROWSER_EVIDENCE_GATE",
+    "1_SHARED_CONTRACTS",
+    "2_RESPONSIVE_DENSITY_PREFERENCES",
+    "3_SERVER_OWNED_QUERY_STATE",
+    "4_ANALYTICAL_TIER_QUALIFICATION",
+    "5_ARCHETYPE_ROLLOUT_AND_RELEASE_GATES"
+  ]
+}

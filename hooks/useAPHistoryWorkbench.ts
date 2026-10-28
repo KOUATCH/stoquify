@@ -16,6 +16,7 @@ const LANES = ["all", "invoice", "payment"] as const
 
 export type APHistoryUrlFilters = TransactionHistoryFilters & {
   lane?: "all" | "invoice" | "payment"
+  supplierId?: string
   cursor?: string
   selected?: string
 }
@@ -24,6 +25,7 @@ export function parseAPHistorySearchParams(params: URLSearchParams): APHistoryUr
   const pageSize = Number(params.get("pageSize"))
   return {
     lane: enumValue(params.get("lane"), LANES),
+    supplierId: stringParam(params.get("supplierId")),
     dateFrom: validDateOnly(params.get("dateFrom")),
     dateTo: validDateOnly(params.get("dateTo")),
     pageSize: PAGE_SIZES.includes(pageSize as 25 | 50 | 100) ? (pageSize as 25 | 50 | 100) : 50,
@@ -35,6 +37,7 @@ export function parseAPHistorySearchParams(params: URLSearchParams): APHistoryUr
 export function filtersForAPHistoryAction(filters: APHistoryUrlFilters) {
   return {
     ...(filters.lane && filters.lane !== "all" ? { lane: filters.lane } : {}),
+    ...(filters.supplierId ? { supplierId: filters.supplierId } : {}),
     ...(filters.dateFrom ? { dateFrom: filters.dateFrom } : {}),
     ...(filters.dateTo ? { dateTo: filters.dateTo } : {}),
     ...(filters.cursor ? { cursor: filters.cursor } : {}),

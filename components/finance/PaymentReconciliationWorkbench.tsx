@@ -12,6 +12,7 @@ import {
   CreditCard,
   Database,
   Download,
+  FileUp,
   FileWarning,
   Filter,
   Landmark,
@@ -27,6 +28,7 @@ import {
 
 import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
 import { BIProofDrawerHost } from "@/components/bi"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -41,12 +43,15 @@ import { cn } from "@/lib/utils"
 import { usePaymentReconciliationWorkbench } from "@/hooks/payments/usePaymentReconciliationWorkbench"
 import {
   useExportReconciliationCertificate,
+  useImportProviderStatement,
+  useManualMatchWorkflow,
   usePaymentReconciliationDashboard,
+  useReconciliationRunDetail,
   useRunPaymentReconciliation,
   useResolveSuspenseItem,
   useSignReconciliationRun,
 } from "@/hooks/payments/usePaymentReconciliationDashboard"
-import type { PaymentReconciliationDashboardData } from "@/actions/payments/reconciliation.actions"
+import type { PaymentReconciliationDashboardData, ReconciliationRunDetail } from "@/actions/payments/reconciliation.actions"
 import type {
   PaymentDuplicateProviderAlert,
   PaymentReconciliationFailureGroup,
@@ -69,6 +74,17 @@ const periods: PaymentReconciliationWorkbenchPeriod[] = [
   "custom",
 ]
 type AvailableProofSubject = Extract<BIProofDrawerSubject, { available: true }>
+type RunDetailEvidenceSubject = ReconciliationRunDetail["matchRecords"][number]["evidenceSubjects"][number]
+
+const supportedRunDetailProofTypes: Partial<Record<RunDetailEvidenceSubject["type"], AvailableProofSubject["subjectType"]>> = {
+  PAYMENT_TRANSACTION: "payment.transaction",
+  PROVIDER_EVENT: "provider.event",
+  RECONCILIATION_RUN: "reconciliation.run",
+}
+
+const runDetailProofPriority: RunDetailEvidenceSubject["type"][] = ["PAYMENT_TRANSACTION", "PROVIDER_EVENT", "RECONCILIATION_RUN"]
+
+const proofSubjectKey = (subject: AvailableProofSubject) => `${subject.subjectType}:${subject.subjectId}`
 
 const suspenseTypeOptions = [
   "UNKNOWN_CREDIT",
@@ -122,6 +138,12 @@ function notificationTypeKey(type: string) {
   return type.replaceAll(".", "_").replaceAll("-", "_")
 }
 
+function compactId(value: string | null | undefined) {
+  if (!value) return null
+  if (value.length <= 14) return value
+  return `${value.slice(0, 7)}...${value.slice(-4)}`
+}
+
 function metricAccent(accent: "success" | "brand" | "warning" | "danger" | "info") {
   const accents = {
     success: { accent: "var(--dash-success)", soft: "var(--dash-success-soft)" },
@@ -141,6 +163,50 @@ const faintTextClass = "text-[var(--dash-text-faint)]"
 const rowSurfaceClass = "rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-3"
 const dangerPanelClass = "rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]"
 const warningPanelClass = "rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
+
+function runDetailProofSubject(input: {
+  organizationId: string
+  evidenceSubjects: RunDetailEvidenceSubject[]
+  label: string
+  unavailableReason: string
+}): BIProofDrawerSubject {
+  const supportedSubject = runDetailProofPriority
+    .flatMap((type) => input.evidenceSubjects.filter((subject) => subject.type === type))
+    .find((subject) => supportedRunDetailProofTypes[subject.type])
+
+  const base = {
+    organizationId: input.organizationId,
+    moduleSlug: "payment_reconciliation" as const,
+    label: input.label,
+    requiredPermission: SUBJECT_PERMISSION_MAP["payment.transaction"],
+    sourceModules: ["payments", "finance"] as BIProofDrawerSubject["sourceModules"],
+  }
+
+  if (!supportedSubject) {
+    return {
+      ...base,
+      available: false,
+      unavailableReason: input.unavailableReason,
+    }
+  }
+
+  const subjectType = supportedRunDetailProofTypes[supportedSubject.type]
+  if (!subjectType) {
+    return {
+      ...base,
+      available: false,
+      unavailableReason: input.unavailableReason,
+    }
+  }
+
+  return {
+    ...base,
+    available: true,
+    subjectType,
+    subjectId: supportedSubject.id,
+    requiredPermission: SUBJECT_PERMISSION_MAP[subjectType],
+  }
+}
 
 function paymentTransactionProofSubject(input: {
   organizationId: string
@@ -355,6 +421,7 @@ export default function PaymentReconciliationWorkbench() {
   const [proofError, setProofError] = useState<string | null>(null)
   const [activeProofSubjectId, setActiveProofSubjectId] = useState<string | null>(null)
   const [proofLoadingSubjectId, setProofLoadingSubjectId] = useState<string | null>(null)
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null)
 
   const queryInput = useMemo(
     () => ({
@@ -367,11 +434,13 @@ export default function PaymentReconciliationWorkbench() {
   )
   const workbenchQuery = usePaymentReconciliationWorkbench(queryInput)
   const durableDashboardQuery = usePaymentReconciliationDashboard()
+  const durableDashboard = durableDashboardQuery.data
+  const selectedRunDetailId = selectedRunId ?? durableDashboard?.recentRuns[0]?.id ?? null
+  const runDetailQuery = useReconciliationRunDetail(selectedRunDetailId)
   const runReconciliation = useRunPaymentReconciliation()
   const signReconciliation = useSignReconciliationRun()
   const exportCertificate = useExportReconciliationCertificate()
   const workbench = workbenchQuery.data
-  const durableDashboard = durableDashboardQuery.data
   const errorMessage = workbenchQuery.error instanceof Error ? workbenchQuery.error.message : null
   const currency = workbench?.organization.currency ?? "XAF"
   const moneyFormatter = useMemo(
@@ -407,12 +476,12 @@ export default function PaymentReconciliationWorkbench() {
     }
   }
 
-  async function openProofSubject(subject: AvailableProofSubject) {
-    setActiveProofSubjectId(subject.subjectId)
+  async function openProofSubject(subject: AvailableProofSubject, activeKey = proofSubjectKey(subject)) {
+    setActiveProofSubjectId(activeKey)
     setProofOpen(true)
     setProofTrail(null)
     setProofError(null)
-    setProofLoadingSubjectId(subject.subjectId)
+    setProofLoadingSubjectId(activeKey)
 
     try {
       const response = await getProofTrailAction({
@@ -593,20 +662,12 @@ export default function PaymentReconciliationWorkbench() {
 
             <div className="flex items-end gap-2">
               {period === "custom" ? (
-                <>
-                  <Input
-                    type="date"
-                    value={customRange.start}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                    className="dashboard-control h-10 w-36 rounded-lg"
-                  />
-                  <Input
-                    type="date"
-                    value={customRange.end}
-                    onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                    className="dashboard-control h-10 w-36 rounded-lg"
-                  />
-                </>
+                <TableDateRangePicker
+                  value={{ from: customRange.start, to: customRange.end }}
+                  onChange={(range) => setCustomRange({ start: range.from ?? "", end: range.to ?? "" })}
+                  locale={locale === "fr" ? "fr" : "en"}
+                  triggerClassName="h-10"
+                />
               ) : null}
               <Button
                 type="button"
@@ -642,14 +703,27 @@ export default function PaymentReconciliationWorkbench() {
 
       <DurableEvidencePanel
         dashboard={durableDashboard}
+        runDetail={runDetailQuery.data}
+        organizationId={workbench?.organization.id ?? "session"}
+        selectedRunId={selectedRunDetailId}
         isLoading={durableDashboardQuery.isLoading}
         error={durableDashboardQuery.error ? t("notifications.failedMessage") : null}
+        isRunDetailLoading={runDetailQuery.isLoading || runDetailQuery.isFetching}
+        runDetailError={runDetailQuery.error instanceof Error ? runDetailQuery.error.message : null}
         isRunning={runReconciliation.isPending}
         isSigning={signReconciliation.isPending}
         isExporting={exportCertificate.isPending}
         onRun={runDurableReconciliation}
         onSign={signDurableRun}
         onExport={exportDurableCertificate}
+        onSelectRun={setSelectedRunId}
+        proofTrail={proofTrail}
+        proofOpen={proofOpen}
+        proofError={proofError}
+        activeProofSubjectId={activeProofSubjectId}
+        proofLoadingSubjectId={proofLoadingSubjectId}
+        onProofOpenChange={handleProofOpenChange}
+        onOpenProofSubject={openProofSubject}
         money={money}
         number={number}
         formatDateTime={formatDateTime}
@@ -767,28 +841,54 @@ export default function PaymentReconciliationWorkbench() {
 
 function DurableEvidencePanel({
   dashboard,
+  runDetail,
+  organizationId,
+  selectedRunId,
   isLoading,
   error,
+  isRunDetailLoading,
+  runDetailError,
   isRunning,
   isSigning,
   isExporting,
   onRun,
   onSign,
   onExport,
+  onSelectRun,
+  proofTrail,
+  proofOpen,
+  proofError,
+  activeProofSubjectId,
+  proofLoadingSubjectId,
+  onProofOpenChange,
+  onOpenProofSubject,
   money,
   number,
   formatDateTime,
   t,
 }: {
   dashboard: PaymentReconciliationDashboardData | undefined
+  runDetail: ReconciliationRunDetail | undefined
+  organizationId: string
+  selectedRunId: string | null
   isLoading: boolean
   error: string | null
+  isRunDetailLoading: boolean
+  runDetailError: string | null
   isRunning: boolean
   isSigning: boolean
   isExporting: boolean
   onRun: (providerAccountId: string) => void
   onSign: (runId: string) => void
   onExport: (runId: string) => void
+  onSelectRun: (runId: string) => void
+  proofTrail: ProofTrailResult | null
+  proofOpen: boolean
+  proofError: string | null
+  activeProofSubjectId: string | null
+  proofLoadingSubjectId: string | null
+  onProofOpenChange: (open: boolean) => void
+  onOpenProofSubject: (subject: AvailableProofSubject, activeKey?: string) => void
   money: (value: number | null | undefined) => string
   number: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
@@ -850,6 +950,22 @@ function DurableEvidencePanel({
           </div>
         ) : null}
 
+        <div className="grid gap-3 xl:grid-cols-2">
+          <StatementImportLane
+            accounts={dashboard.providerAccounts}
+            files={dashboard.statementFiles}
+            formatDateTime={formatDateTime}
+            t={t}
+          />
+          <ManualMatchLane
+            candidates={dashboard.manualMatchCandidates}
+            proposals={dashboard.manualMatchProposals}
+            money={money}
+            formatDateTime={formatDateTime}
+            t={t}
+          />
+        </div>
+
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="space-y-2">
@@ -899,7 +1015,14 @@ function DurableEvidencePanel({
                 <EmptyState icon={ShieldCheck} label={t("certification.emptyRuns")} />
               ) : (
                 dashboard.recentRuns.slice(0, 5).map((run) => (
-                  <div key={run.id} className={cn(rowSurfaceClass, "flex flex-col gap-3 md:flex-row md:items-center md:justify-between")}>
+                  <div
+                    key={run.id}
+                    className={cn(
+                      rowSurfaceClass,
+                      "flex flex-col gap-3 md:flex-row md:items-center md:justify-between",
+                      selectedRunId === run.id && "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]",
+                    )}
+                  >
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="font-medium">{formatDateTime(run.businessDate)}</span>
@@ -915,7 +1038,18 @@ function DurableEvidencePanel({
                         })}
                       </div>
                     </div>
-                    <div className="flex shrink-0 gap-2">
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        aria-pressed={selectedRunId === run.id}
+                        onClick={() => onSelectRun(run.id)}
+                        className="dashboard-button-secondary rounded-lg"
+                      >
+                        <Database className="h-4 w-4" />
+                        {t("certification.actions.inspect")}
+                      </Button>
                       {run.status === "READY_FOR_SIGNOFF" ? (
                         <Button
                           type="button"
@@ -946,6 +1080,22 @@ function DurableEvidencePanel({
                   </div>
                 ))
               )}
+              <RunDetailProofSummary
+                detail={runDetail}
+                organizationId={organizationId}
+                selectedRunId={selectedRunId}
+                isLoading={isRunDetailLoading}
+                error={runDetailError}
+                proofTrail={proofTrail}
+                proofOpen={proofOpen}
+                proofError={proofError}
+                activeProofSubjectId={activeProofSubjectId}
+                proofLoadingSubjectId={proofLoadingSubjectId}
+                onProofOpenChange={onProofOpenChange}
+                onOpenProofSubject={onOpenProofSubject}
+                number={number}
+                t={t}
+              />
             </div>
           </div>
 
@@ -973,6 +1123,536 @@ function DurableEvidencePanel({
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+function RunDetailProofSummary({
+  detail,
+  organizationId,
+  selectedRunId,
+  isLoading,
+  error,
+  proofTrail,
+  proofOpen,
+  proofError,
+  activeProofSubjectId,
+  proofLoadingSubjectId,
+  onProofOpenChange,
+  onOpenProofSubject,
+  number,
+  t,
+}: {
+  detail: ReconciliationRunDetail | undefined
+  organizationId: string
+  selectedRunId: string | null
+  isLoading: boolean
+  error: string | null
+  proofTrail: ProofTrailResult | null
+  proofOpen: boolean
+  proofError: string | null
+  activeProofSubjectId: string | null
+  proofLoadingSubjectId: string | null
+  onProofOpenChange: (open: boolean) => void
+  onOpenProofSubject: (subject: AvailableProofSubject, activeKey?: string) => void
+  number: (value: number | null | undefined) => string
+  t: ReturnType<typeof useTranslations>
+}) {
+  if (!selectedRunId) return null
+
+  if (isLoading && !detail) {
+    return <Skeleton className="h-36 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
+  }
+
+  if (error) {
+    return (
+      <div className={cn(warningPanelClass, "p-3 text-sm")}>
+        <div className="flex items-start gap-2">
+          <AlertTriangle className="mt-0.5 h-4 w-4" />
+          <span>{t("certification.detail.error")}</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (!detail) {
+    return <EmptyState icon={Database} label={t("certification.detail.unavailable")} />
+  }
+
+  const unresolvedExceptionCount = detail.exceptions.filter((item) => item.unresolved).length
+  const unresolvedSuspenseCount = detail.suspenseItems.filter((item) => item.unresolved).length
+  const proofSubjectCount = [...detail.matchRecords, ...detail.exceptions, ...detail.suspenseItems].reduce(
+    (sum, item) => sum + item.evidenceSubjects.length,
+    0,
+  )
+  const blockers = detail.certification.blockers.slice(0, 3)
+  const proofProps = {
+    proofTrail,
+    proofOpen,
+    proofError,
+    activeProofSubjectId,
+    proofLoadingSubjectId,
+    onProofOpenChange,
+    onOpenProofSubject,
+    loadingLabel: t("proof.loading"),
+  }
+  const matchRows = detail.matchRecords.slice(0, 2)
+  const exceptionRows = detail.exceptions.filter((item) => item.unresolved).slice(0, 2)
+  const suspenseRows = detail.suspenseItems.filter((item) => item.unresolved).slice(0, 2)
+
+  return (
+    <div className={cn(rowSurfaceClass, "space-y-3")}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
+            {t("certification.detail.title")}
+          </div>
+          <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>
+            {t("certification.detail.description", {
+              matches: number(detail.matchRecords.length),
+              exceptions: number(unresolvedExceptionCount),
+              suspense: number(unresolvedSuspenseCount),
+              subjects: number(proofSubjectCount),
+            })}
+          </p>
+        </div>
+        <Badge variant="outline" className={detail.certification.signoffEligible ? "rounded-lg border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]" : filterChipClass}>
+          {detail.certification.signoffEligible ? t("certification.detail.eligible") : t("certification.detail.blocked")}
+        </Badge>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-4">
+        <SummaryLine label={t("certification.detail.matches")} value={number(detail.matchRecords.length)} />
+        <SummaryLine label={t("certification.detail.exceptions")} value={number(unresolvedExceptionCount)} />
+        <SummaryLine label={t("certification.detail.suspense")} value={number(unresolvedSuspenseCount)} />
+        <SummaryLine label={t("certification.detail.proofSubjects")} value={number(proofSubjectCount)} />
+      </div>
+
+      <div className="space-y-1">
+        <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
+          {t("certification.detail.blockers")}
+        </div>
+        {blockers.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {blockers.map((blocker) => (
+              <Badge key={blocker.code} variant="outline" className={blocker.severity === "CRITICAL" ? "rounded-lg border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]" : filterChipClass}>
+                {blocker.code} / {number(blocker.count)}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <Badge variant="outline" className="rounded-lg border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-success)]">
+            {t("certification.detail.noBlockers")}
+          </Badge>
+        )}
+      </div>
+
+      <div className="grid gap-2 lg:grid-cols-3">
+        <RunDetailMiniList
+          title={t("certification.detail.matchedEvidence")}
+          empty={t("certification.detail.emptyRows")}
+          rows={matchRows.map((record) => ({
+            id: record.id,
+            label: record.rule,
+            badge: record.status,
+            detail: t("certification.detail.subjectCount", { count: number(record.evidenceSubjects.length) }),
+            proofSubject: runDetailProofSubject({
+              organizationId,
+              evidenceSubjects: record.evidenceSubjects,
+              label: t("proof.open"),
+              unavailableReason: t("proof.unavailable"),
+            }),
+          }))}
+          {...proofProps}
+        />
+        <RunDetailMiniList
+          title={t("certification.detail.unresolvedExceptions")}
+          empty={t("certification.detail.emptyRows")}
+          rows={exceptionRows.map((exception) => ({
+            id: exception.id,
+            label: exception.type,
+            badge: exception.severity,
+            detail: t("certification.detail.subjectCount", { count: number(exception.evidenceSubjects.length) }),
+            proofSubject: runDetailProofSubject({
+              organizationId,
+              evidenceSubjects: exception.evidenceSubjects,
+              label: t("proof.open"),
+              unavailableReason: t("proof.unavailable"),
+            }),
+          }))}
+          {...proofProps}
+        />
+        <RunDetailMiniList
+          title={t("certification.detail.suspenseLinks")}
+          empty={t("certification.detail.emptyRows")}
+          rows={suspenseRows.map((item) => ({
+            id: item.id,
+            label: item.type,
+            badge: item.status,
+            detail: t("certification.detail.subjectCount", { count: number(item.evidenceSubjects.length) }),
+            proofSubject: runDetailProofSubject({
+              organizationId,
+              evidenceSubjects: item.evidenceSubjects,
+              label: t("proof.open"),
+              unavailableReason: t("proof.unavailable"),
+            }),
+          }))}
+          {...proofProps}
+        />
+      </div>
+    </div>
+  )
+}
+
+function RunDetailMiniList({
+  title,
+  empty,
+  rows,
+  proofTrail,
+  proofOpen,
+  proofError,
+  activeProofSubjectId,
+  proofLoadingSubjectId,
+  onProofOpenChange,
+  onOpenProofSubject,
+  loadingLabel,
+}: {
+  title: string
+  empty: string
+  rows: Array<{ id: string; label: string; badge: string; detail: string; proofSubject: BIProofDrawerSubject }>
+  proofTrail: ProofTrailResult | null
+  proofOpen: boolean
+  proofError: string | null
+  activeProofSubjectId: string | null
+  proofLoadingSubjectId: string | null
+  onProofOpenChange: (open: boolean) => void
+  onOpenProofSubject: (subject: AvailableProofSubject, activeKey?: string) => void
+  loadingLabel: string
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--dash-border-subtle)] p-2">
+      <div className={cn("mb-2 text-xs font-semibold uppercase tracking-normal", faintTextClass)}>{title}</div>
+      {rows.length === 0 ? (
+        <div className={cn("text-xs", mutedTextClass)}>{empty}</div>
+      ) : (
+        <div className="space-y-2">
+          {rows.map((row) => {
+            const proofKey = row.proofSubject.available ? `${row.id}:${proofSubjectKey(row.proofSubject)}` : null
+            const isActiveProof = proofKey !== null && activeProofSubjectId === proofKey
+
+            return (
+              <div key={row.id} className="min-w-0 space-y-2">
+                <div className="flex min-w-0 items-center justify-between gap-2">
+                  <span className="truncate text-xs font-medium">{row.label}</span>
+                  <Badge variant="outline" className={filterChipClass}>{row.badge}</Badge>
+                </div>
+                <div className={cn("text-xs", mutedTextClass)}>{row.detail}</div>
+                <BIProofDrawerHost
+                  subject={row.proofSubject}
+                  proofTrail={isActiveProof ? proofTrail : null}
+                  open={isActiveProof && proofOpen}
+                  onOpenChange={onProofOpenChange}
+                  onOpenSubject={(subject) => onOpenProofSubject(subject, proofKey ?? proofSubjectKey(subject))}
+                  loadingLabel={loadingLabel}
+                  isLoading={proofKey !== null && proofLoadingSubjectId === proofKey}
+                  error={isActiveProof ? proofError : null}
+                  className="h-8 w-full justify-center"
+                />
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+function StatementImportLane({
+  accounts,
+  files,
+  formatDateTime,
+  t,
+}: {
+  accounts: PaymentReconciliationDashboardData["providerAccounts"]
+  files: PaymentReconciliationDashboardData["statementFiles"]
+  formatDateTime: (value: string | null | undefined) => string
+  t: ReturnType<typeof useTranslations>
+}) {
+  const notifications = useNotifications()
+  const importStatement = useImportProviderStatement()
+  const activeAccounts = accounts.filter((account) => account.status === "ACTIVE")
+  const [providerAccountId, setProviderAccountId] = useState("")
+  const [fileName, setFileName] = useState("")
+  const [rawContent, setRawContent] = useState("")
+  const selectedProviderAccountId = providerAccountId || activeAccounts[0]?.id || ""
+  const selectedAccount = activeAccounts.find((account) => account.id === selectedProviderAccountId)
+
+  async function loadFile(file: File | undefined) {
+    if (!file) return
+    try {
+      setFileName(file.name)
+      setRawContent(await file.text())
+    } catch {
+      notifications.error(t("statementImport.notifications.readFailedTitle"), t("statementImport.notifications.readFailedMessage"), {
+        category: "reconciliation",
+      })
+    }
+  }
+
+  async function submitImport() {
+    if (!selectedAccount || !rawContent.trim()) return
+    try {
+      const result = await importStatement.mutateAsync({
+        providerAccountId: selectedAccount.id,
+        providerCode: selectedAccount.providerCode,
+        rawContent,
+        fileName: fileName.trim() || undefined,
+      })
+      notifications.success(
+        t("statementImport.notifications.completedTitle"),
+        t("statementImport.notifications.completedMessage", {
+          status: t(`statementImport.statuses.${result.status}`),
+          count: result.importedLineCount,
+        }),
+        { category: "reconciliation" },
+      )
+      setFileName("")
+      setRawContent("")
+    } catch (error) {
+      notifications.error(
+        t("statementImport.notifications.failedTitle"),
+        error instanceof Error ? error.message : t("statementImport.notifications.failedMessage"),
+        { category: "reconciliation" },
+      )
+    }
+  }
+
+  return (
+    <div className={cn(rowSurfaceClass, "space-y-3")}>
+      <div>
+        <div className={cn("flex items-center gap-2 text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
+          <FileUp className="h-4 w-4 text-[var(--dash-brand-strong)]" />
+          {t("statementImport.title")}
+        </div>
+        <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>{t("statementImport.description")}</p>
+      </div>
+
+      {activeAccounts.length === 0 ? (
+        <EmptyState icon={Database} label={t("statementImport.noActiveAccount")} />
+      ) : (
+        <div className="space-y-2">
+          <Select value={selectedProviderAccountId} onValueChange={setProviderAccountId}>
+            <SelectTrigger aria-label={t("statementImport.accountLabel")} className="dashboard-control h-10 rounded-lg">
+              <SelectValue placeholder={t("statementImport.accountPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+              {activeAccounts.map((account) => (
+                <SelectItem key={account.id} value={account.id}>{account.displayName} / {account.currencyCode}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            type="file"
+            accept=".csv,.json,text/csv,application/json"
+            aria-label={t("statementImport.fileLabel")}
+            onChange={(event) => { void loadFile(event.target.files?.[0]) }}
+            className="dashboard-control h-10 rounded-lg file:text-[var(--dash-text)]"
+          />
+          <Input
+            value={fileName}
+            onChange={(event) => setFileName(event.target.value)}
+            placeholder={t("statementImport.fileNamePlaceholder")}
+            aria-label={t("statementImport.fileNameLabel")}
+            className="dashboard-control h-10 rounded-lg"
+          />
+          <Textarea
+            value={rawContent}
+            onChange={(event) => setRawContent(event.target.value)}
+            placeholder={t("statementImport.contentPlaceholder")}
+            aria-label={t("statementImport.contentLabel")}
+            className="dashboard-control min-h-28 rounded-lg font-mono text-xs"
+          />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className={cn("text-xs", mutedTextClass)}>{t("statementImport.formatHint")}</span>
+            <Button
+              type="button"
+              disabled={importStatement.isPending || !selectedAccount || !rawContent.trim()}
+              onClick={() => { void submitImport() }}
+              className="dashboard-button-primary rounded-lg"
+            >
+              <FileUp className="h-4 w-4" />
+              {t("statementImport.action")}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className="border-t border-[var(--dash-border-subtle)] pt-3">
+        <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>{t("statementImport.historyTitle")}</div>
+        {files.length === 0 ? (
+          <p className={cn("mt-2 text-xs", mutedTextClass)}>{t("statementImport.emptyHistory")}</p>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {files.slice(0, 4).map((file) => (
+              <div key={file.id} className="flex flex-col gap-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-medium">{file.fileName ?? t("statementImport.unnamedFile")}</div>
+                  <div className={cn("mt-1 text-xs", mutedTextClass)}>{file.providerAccountName} / {formatDateTime(file.importedAt)}</div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Badge variant="outline" className={filterChipClass}>{file.status}</Badge>
+                  <Badge variant="outline" className={filterChipClass}>{t("statementImport.lineCount", { count: file.lineCount })}</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ManualMatchLane({
+  candidates,
+  proposals,
+  money,
+  formatDateTime,
+  t,
+}: {
+  candidates: PaymentReconciliationDashboardData["manualMatchCandidates"]
+  proposals: PaymentReconciliationDashboardData["manualMatchProposals"]
+  money: (value: number | null | undefined) => string
+  formatDateTime: (value: string | null | undefined) => string
+  t: ReturnType<typeof useTranslations>
+}) {
+  const notifications = useNotifications()
+  const workflow = useManualMatchWorkflow()
+  const [amounts, setAmounts] = useState<Record<string, string>>({})
+
+  const candidateAmount = (candidate: PaymentReconciliationDashboardData["manualMatchCandidates"][number]) =>
+    amounts[candidate.exceptionId] ?? String(Math.min(candidate.internalAmount, candidate.externalAmount))
+
+  async function propose(candidate: PaymentReconciliationDashboardData["manualMatchCandidates"][number]) {
+    try {
+      await workflow.propose.mutateAsync({
+        providerAccountId: candidate.providerAccountId,
+        paymentTransactionId: candidate.paymentTransactionId,
+        providerEventId: candidate.providerEventId ?? undefined,
+        statementLineId: candidate.statementLineId ?? undefined,
+        amountMatched: candidateAmount(candidate),
+        currencyCode: candidate.currencyCode,
+      })
+      notifications.success(t("manualMatch.notifications.proposedTitle"), t("manualMatch.notifications.proposedMessage"), {
+        category: "reconciliation",
+      })
+    } catch (error) {
+      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
+        category: "reconciliation",
+      })
+    }
+  }
+
+  async function approve(proposedMatchId: string) {
+    try {
+      await workflow.approve.mutateAsync({ proposedMatchId })
+      notifications.success(t("manualMatch.notifications.approvedTitle"), t("manualMatch.notifications.approvedMessage"), {
+        category: "reconciliation",
+      })
+    } catch (error) {
+      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
+        category: "reconciliation",
+      })
+    }
+  }
+
+  return (
+    <div className={cn(rowSurfaceClass, "space-y-3")}>
+      <div>
+        <div className={cn("flex items-center gap-2 text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
+          <UserCheck className="h-4 w-4 text-[var(--dash-warning)]" />
+          {t("manualMatch.title")}
+        </div>
+        <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>{t("manualMatch.description")}</p>
+      </div>
+
+      {candidates.length === 0 ? (
+        <EmptyState icon={CheckCircle2} label={t("manualMatch.emptyCandidates")} />
+      ) : (
+        <div className="space-y-2">
+          {candidates.slice(0, 4).map((candidate) => {
+            const amount = candidateAmount(candidate)
+            const invalidAmount = !Number.isFinite(Number(amount)) || Number(amount) <= 0
+            return (
+              <div key={candidate.exceptionId} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">{candidate.providerAccountName}</span>
+                      <Badge variant="outline" className={cn("shrink-0", severityClass(candidate.severity))}>{candidate.severity}</Badge>
+                      <Badge variant="outline" className={filterChipClass}>{candidate.exceptionType}</Badge>
+                    </div>
+                    <div className={cn("mt-2 grid gap-1 text-xs sm:grid-cols-2", mutedTextClass)}>
+                      <span>{t("manualMatch.internalEvidence", { reference: candidate.internalReference ?? t("common.notAvailable"), amount: money(candidate.internalAmount) })}</span>
+                      <span>{t("manualMatch.externalEvidence", { reference: candidate.externalReference ?? t("common.notAvailable"), amount: money(candidate.externalAmount) })}</span>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Input
+                      inputMode="decimal"
+                      value={amount}
+                      onChange={(event) => setAmounts((current) => ({ ...current, [candidate.exceptionId]: event.target.value }))}
+                      aria-label={t("manualMatch.amountLabel")}
+                      className="dashboard-control h-9 w-28 rounded-lg text-right tabular-nums"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={workflow.propose.isPending || invalidAmount}
+                      onClick={() => { void propose(candidate) }}
+                      className="dashboard-button-primary rounded-lg"
+                    >
+                      <Send className="h-4 w-4" />
+                      {t("manualMatch.actions.propose")}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <div className="border-t border-[var(--dash-border-subtle)] pt-3">
+        <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>{t("manualMatch.approvalTitle")}</div>
+        {proposals.length === 0 ? (
+          <p className={cn("mt-2 text-xs", mutedTextClass)}>{t("manualMatch.emptyApprovals")}</p>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {proposals.slice(0, 4).map((proposal) => (
+              <div key={proposal.id} className="flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="font-medium">{proposal.providerAccountName ?? t("common.notAvailable")}</div>
+                  <div className={cn("mt-1 text-xs", mutedTextClass)}>
+                    {t("manualMatch.proposalFacts", { id: compactId(proposal.id) ?? t("common.notAvailable"), amount: money(proposal.amountMatched), time: formatDateTime(proposal.createdAt) })}
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={workflow.approve.isPending}
+                  onClick={() => { void approve(proposal.id) }}
+                  className="dashboard-button-secondary shrink-0 rounded-lg"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  {t("manualMatch.actions.approve")}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -1216,7 +1896,7 @@ function RunSummaryTable({
 }) {
   return (
     <ScrollArea className="w-full">
-      <table className="w-full min-w-[920px] text-sm">
+      <table className="dashboard-table-base w-full min-w-[920px] text-sm">
         <thead className={cn("text-left text-xs", mutedTextClass)}>
           <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.rail")}</th>
@@ -1377,7 +2057,7 @@ function SuspenseFailures({
   activeProofSubjectId: string | null
   proofLoadingSubjectId: string | null
   onProofOpenChange: (open: boolean) => void
-  onOpenProofSubject: (subject: AvailableProofSubject) => void
+  onOpenProofSubject: (subject: AvailableProofSubject, activeKey?: string) => void
 }) {
   if (failures.length === 0) {
     return <EmptyState icon={CheckCircle2} label={t("empty.suspense")} />
@@ -1385,7 +2065,7 @@ function SuspenseFailures({
 
   return (
     <ScrollArea className="w-full">
-      <table className="w-full min-w-[1120px] text-sm">
+      <table className="dashboard-table-base w-full min-w-[1120px] text-sm">
         <thead className={cn("text-left text-xs", mutedTextClass)}>
           <tr className="border-b border-[var(--dash-border-subtle)]">
             <th className="py-2 pr-3 font-medium">{t("table.failure")}</th>
@@ -1406,7 +2086,8 @@ function SuspenseFailures({
               label: t("proof.open"),
               unavailableReason: t("proof.unavailable"),
             })
-            const isActiveProof = proofSubject.available && activeProofSubjectId === proofSubject.subjectId
+            const proofKey = proofSubject.available ? proofSubjectKey(proofSubject) : null
+            const isActiveProof = proofKey !== null && activeProofSubjectId === proofKey
 
             return (
             <tr key={failure.id} className="border-b border-[var(--dash-border-subtle)] last:border-0 hover:bg-[rgba(37,57,67,0.28)]">
@@ -1438,9 +2119,9 @@ function SuspenseFailures({
                   proofTrail={isActiveProof ? proofTrail : null}
                   open={isActiveProof && proofOpen}
                   onOpenChange={onProofOpenChange}
-                  onOpenSubject={onOpenProofSubject}
+                  onOpenSubject={(subject) => onOpenProofSubject(subject, proofKey ?? proofSubjectKey(subject))}
                   loadingLabel={t("proof.loading")}
-                  isLoading={proofSubject.available && proofLoadingSubjectId === proofSubject.subjectId}
+                  isLoading={proofKey !== null && proofLoadingSubjectId === proofKey}
                   error={isActiveProof ? proofError : null}
                   className="h-9"
                 />

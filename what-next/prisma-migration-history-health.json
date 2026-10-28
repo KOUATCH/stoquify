@@ -1,15 +1,15 @@
 {
   "summary": {
-    "generatedAt": "2026-07-27T16:16:06.504Z",
+    "generatedAt": "2026-08-08T20:21:11.890Z",
     "mode": "report",
     "status": "blocked",
     "checkCount": 8,
-    "readyCount": 5,
-    "blockerCount": 3,
-    "repositoryMigrationCount": 41,
-    "completedRowCount": 38,
-    "unfinishedRowCount": 1,
-    "rolledBackRowCount": 1,
+    "readyCount": 7,
+    "blockerCount": 1,
+    "repositoryMigrationCount": 48,
+    "completedRowCount": 48,
+    "unfinishedRowCount": 0,
+    "rolledBackRowCount": 5,
     "secretValuePrinted": false,
     "migrationLogPrinted": false
   },
@@ -36,11 +36,11 @@
     },
     {
       "id": "migration_history_has_no_unfinished_rows",
-      "ready": false
+      "ready": true
     },
     {
       "id": "all_repository_migrations_successfully_applied",
-      "ready": false
+      "ready": true
     },
     {
       "id": "applied_migration_checksums_match_repository",
@@ -56,14 +56,8 @@
     }
   ],
   "findings": {
-    "unfinished": [
-      "20260727110000_offline_pos_sync_foundation"
-    ],
-    "missing": [
-      "20260727110000_offline_pos_sync_foundation",
-      "20260727143000_country_adapter_pilot_foundation",
-      "20260727170000_ai_copilot_proposal_guardrails"
-    ],
+    "unfinished": [],
+    "missing": [],
     "checksumMismatches": [
       "20260619120000_backfill_purchase_receive_permission"
     ],
@@ -71,8 +65,6 @@
     "duplicateSuccesses": []
   },
   "blockers": [
-    "migration_history_has_no_unfinished_rows",
-    "all_repository_migrations_successfully_applied",
     "applied_migration_checksums_match_repository"
   ],
   "safety": {

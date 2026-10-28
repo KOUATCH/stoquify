@@ -6,6 +6,7 @@ import {
 
 import { db } from "@/prisma/db"
 import {
+  ApplicationError,
   BusinessRuleError,
   ConflictError,
   ForbiddenError,
@@ -279,7 +280,13 @@ export async function grantAccountantAccess(
     if (isActiveScopeUniqueConflict(error)) {
       throw new ConflictError(ACTIVE_GRANT_CONFLICT_MESSAGE)
     }
-    throw error
+    if (error instanceof ApplicationError) throw error
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Accountant access could not be granted safely.",
+      500,
+      false,
+    )
   })
 }
 

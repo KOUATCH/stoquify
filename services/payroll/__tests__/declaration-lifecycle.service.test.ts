@@ -18,6 +18,10 @@ jest.mock("@/services/accounting/close-assurance-pack.service", () => ({
   recordCloseCertificationInvalidationsForSourceInTx: jest.fn(),
 }));
 
+jest.mock("@/services/accounting/data-trust.service", () => ({
+  getAccountantPortalData: jest.fn(),
+}));
+
 jest.mock("@/services/controls/sensitive-action.service", () => ({
   auditSensitiveActionDecision: jest.fn(),
   assertSensitiveActionAllowed: jest.fn(),
@@ -42,6 +46,7 @@ import {
 import { db } from "@/prisma/db";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service";
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -70,6 +75,7 @@ const mockDb = db as unknown as {
 };
 const mockRecordCloseInvalidation =
   recordCloseCertificationInvalidationsForSourceInTx as jest.Mock;
+const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock;
 const mockEvaluateSensitiveAction = evaluateSensitiveAction as jest.Mock;
 const mockAuditSensitiveActionDecision =
   auditSensitiveActionDecision as jest.Mock;
@@ -86,6 +92,13 @@ const countryPackRegisterProofMetadata = {
   countryPackRegisterProofMatchedLineCount: 1,
   countryPackRegisterProofMissingLineCount: 0,
   countryPackRegisterProofMismatchedLineCount: 0,
+  compositeRegisterProofHash: "sha256:composite-register-proof",
+  compositeRegisterProofStatus: "MATCHED",
+  compositeRegisterProofLineCount: 1,
+  compositeRegisterProofMatchedLineCount: 1,
+  compositeRegisterProofMissingLineCount: 0,
+  compositeRegisterProofMismatchedLineCount: 0,
+  compositeRegisterProofIssues: [],
   countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
   statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
   countryPackReviewEvidenceSourceHashes: [
@@ -114,6 +127,77 @@ const authorityCertificationProofEnvelope = {
   legalReviewHash: "sha256:legal-review",
 };
 
+function payrollAuditProofPack() {
+  return {
+    kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+    version: 1,
+    generatedAt: "2026-06-30T10:00:00.000Z",
+    scopeHash: "sha256:audit-scope",
+    organizationScoped: true,
+    redaction: {
+      mode: "HASHES_AND_AGGREGATES_ONLY",
+      excluded: [
+        "employee identifiers",
+        "bank and mobile-money details",
+        "raw declaration payloads",
+      ],
+    },
+    certification: {
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+    },
+    sourceTables: [
+      "payroll_declarations",
+      "payroll_declaration_evidence",
+      "accounting_source_links",
+    ],
+    aggregateEvidence: {
+      declarationRegisterProofGaps: 1,
+      declarationsMissingLedger: 0,
+    },
+    proofGates: [
+      {
+        gate: "payroll.declarations.proof",
+        status: "BLOCKED",
+        blockerCount: 1,
+        blockerIds: ["payroll-declaration-register-proof-missing"],
+        evidence: ["payroll declaration source register hash"],
+      },
+      {
+        gate: "payroll.accounting.source-link",
+        status: "PASS",
+        blockerCount: 0,
+        blockerIds: [],
+        evidence: ["accounting source link hashes"],
+      },
+    ],
+    blockers: [
+      {
+        id: "payroll-declaration-register-proof-missing",
+        severity: "critical",
+        gate: "payroll.declarations.proof",
+        title: "Declaration register proof missing",
+      },
+    ],
+    latestSourceLinks: [
+      {
+        sourceLinkHash: "sha256:source-link-proof",
+        sourceType: "PAYROLL_DECLARATION",
+        sourceNumber: "CNPS-REF-1",
+        sourceRefHash: "sha256:declaration-ref",
+        journalEntryNumber: "JE-2026-06",
+        postingBatchId: "ledger-1",
+        postingStatus: "POSTED",
+        createdAt: "2026-06-30T09:20:00.000Z",
+      },
+    ],
+  };
+}
+
 function declarationFixture(status = PayrollDeclarationStatus.PREPARED) {
   return {
     id: "declaration-1",
@@ -137,6 +221,7 @@ function declarationFixture(status = PayrollDeclarationStatus.PREPARED) {
       id: "run-1",
       payrollPeriod: {
         id: "period-1",
+        accountingPeriodId: "acct-period-1",
         periodStart: new Date("2026-06-01T00:00:00.000Z"),
         periodEnd: new Date("2026-06-30T23:59:59.999Z"),
       },
@@ -240,6 +325,7 @@ function workbenchDeclarationFixture(
       payrollPeriod: {
         id: "period-1",
         name: "June 2026",
+        accountingPeriodId: "acct-period-1",
         periodStart: new Date("2026-06-01T00:00:00.000Z"),
         periodEnd: new Date("2026-06-30T23:59:59.999Z"),
         payDate: new Date("2026-07-05T00:00:00.000Z"),
@@ -294,6 +380,9 @@ describe("payroll declaration lifecycle service", () => {
     });
     mockMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1" });
     mockRecordCloseInvalidation.mockResolvedValue([]);
+    mockGetAccountantPortalData.mockResolvedValue({
+      payrollAuditProofPack: payrollAuditProofPack(),
+    });
   });
 
   it("builds a proof-backed declaration workbench read model", async () => {
@@ -336,6 +425,7 @@ describe("payroll declaration lifecycle service", () => {
           payrollPeriod: {
             id: "period-1",
             name: "June 2026",
+            accountingPeriodId: "acct-period-1",
             periodStart,
             periodEnd,
             payDate,
@@ -399,10 +489,48 @@ describe("payroll declaration lifecycle service", () => {
         rejectedDeclarations: 0,
         missingRegisterProofCount: 0,
         missingCountryPackRegisterProofCount: 0,
+        missingCompositeRegisterProofCount: 0,
         amountInScope: "17150.00",
         coverageComplete: true,
       }),
     );
+    expect(mockGetAccountantPortalData).toHaveBeenCalledWith(
+      {
+        organizationId: "org-1",
+        periodId: "acct-period-1",
+        limit: 25,
+      },
+      mockDb,
+      expect.any(Date),
+    );
+    expect(result.accountingAuditProof).toEqual(
+      expect.objectContaining({
+        available: true,
+        status: "BLOCKED",
+        periodId: "acct-period-1",
+        trustLevel: "T2",
+        verdict: "PARTIAL",
+        proofGateCount: 2,
+        sourceLinkCount: 1,
+        redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+      }),
+    );
+    expect(result.sourceScope).toEqual(
+      expect.objectContaining({
+        limit: 80,
+        returned: 1,
+        coverageComplete: true,
+        accountingAuditProofAvailable: true,
+        accountingAuditProofGateCount: 2,
+        accountingAuditProofSourceLinkCount: 1,
+        accountingAuditProofPeriodId: "acct-period-1",
+        returnedAccountingPeriodIds: ["acct-period-1"],
+        accountingAuditProofCoverageComplete: true,
+      }),
+    );
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("EMP-001");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("bankAccountNumber");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("submittedPayloadHash");
     expect(result.declarations[0]).toEqual(
       expect.objectContaining({
         authority: "CM_CNPS",
@@ -414,6 +542,9 @@ describe("payroll declaration lifecycle service", () => {
           countryPackRegisterProofHash: "sha256:country-pack-register-proof",
           countryPackRegisterProofStatus: "MATCHED",
           countryPackRegisterProofPresent: true,
+          compositeRegisterProofHash: "sha256:composite-register-proof",
+          compositeRegisterProofStatus: "MATCHED",
+          compositeRegisterProofPresent: true,
           countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
           statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
           countryPackReviewEvidenceSourceHashes: [
@@ -479,6 +610,7 @@ describe("payroll declaration lifecycle service", () => {
           payrollPeriod: {
             id: "period-1",
             name: "June 2026",
+            accountingPeriodId: "acct-period-1",
             periodStart: new Date("2026-06-01T00:00:00.000Z"),
             periodEnd: new Date("2026-06-30T23:59:59.999Z"),
             payDate: new Date("2026-07-05T00:00:00.000Z"),
@@ -546,6 +678,9 @@ describe("payroll declaration lifecycle service", () => {
         countryPackRegisterProofHash: "[REDACTED:IDENTIFIER]",
         countryPackRegisterProofStatus: "MATCHED",
         countryPackRegisterProofPresent: true,
+        compositeRegisterProofHash: "[REDACTED:IDENTIFIER]",
+        compositeRegisterProofStatus: "MATCHED",
+        compositeRegisterProofPresent: true,
         countryPackLineProofHashes: ["[REDACTED:IDENTIFIER]"],
         statutoryScenarioCoverageHash: "[REDACTED:IDENTIFIER]",
         countryPackReviewEvidenceSourceHashes: ["[REDACTED:IDENTIFIER]"],

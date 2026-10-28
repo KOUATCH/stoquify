@@ -1,6 +1,6 @@
 # Statutory Country Pack Core Integration Gate
 
-Generated: 2026-08-01T17:39:02.033Z
+Generated: 2026-08-20T15:01:00.779Z
 Mode: fail
 Status: READY_FOR_CORE_INTEGRATION
 

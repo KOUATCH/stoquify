@@ -330,6 +330,12 @@ export async function createFiscalDocumentFromPostedSource(
 
     const journalEntry = postingBatch.journalEntries[0] ?? null
     const sourceLink = postingBatch.sourceLinks[0] ?? null
+
+    if (!sourceLink) {
+      throw new BusinessRuleError(
+        "A fiscal document requires an accounting source link to its posted source event.",
+      )
+    }
     const canonicalPayload =
       parsed.canonicalPayload ??
       buildDefaultCanonicalPayload({

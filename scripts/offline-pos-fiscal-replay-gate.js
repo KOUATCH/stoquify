@@ -45,6 +45,7 @@ function section(source, startMarker, endMarker) {
 function buildOfflinePOSReplayReadiness(root = process.cwd(), options = {}) {
   const localQueue = read(root, "lib/pos/offline-local-queue.ts")
   const syncService = read(root, "services/pos/offline-sync.service.ts")
+  const syncSchemas = read(root, "services/pos/offline-sync.schemas.ts")
   const receiptService = read(root, "services/pos/receipt.service.ts")
   const assurance = read(root, "services/assurance/assurance-registry.service.ts")
   const packageJson = read(root, "package.json")
@@ -60,7 +61,9 @@ function buildOfflinePOSReplayReadiness(root = process.cwd(), options = {}) {
     {
       id: "provisional_receipt_only_client_policy",
       ready: localQueue.includes("FINAL_FISCAL_KEYS") && localQueue.includes("assertProvisionalOnly(input)") &&
-        localQueue.includes("PROVISIONAL_ONLY") && localQueue.includes("finalFiscalNumber"),
+        localQueue.includes("PROVISIONAL_ONLY") && localQueue.includes("finalFiscalNumber") &&
+        localQueue.includes("finalFiscalNumberingPermitted: false") &&
+        !localQueue.includes("allowFinalFiscalNumbering"),
     },
     {
       id: "deterministic_device_hash_chain",
@@ -145,7 +148,8 @@ function buildOfflinePOSReplayReadiness(root = process.cwd(), options = {}) {
       id: "policy_expiry_and_reference_snapshot_quarantine",
       ready: prismaSchema.includes("policyExpiresAt") && prismaSchema.includes("policySnapshotHash") &&
         prismaSchema.includes("sourceSnapshotHash") && ingestSection.includes('conflictType = "OFFLINE_POLICY_EXPIRED"') &&
-        ingestSection.includes('conflictType = "STALE_REFERENCE_SNAPSHOT"'),
+        ingestSection.includes('conflictType = "STALE_REFERENCE_SNAPSHOT"') &&
+        syncSchemas.includes('"OFFLINE_POLICY_EXPIRED"'),
     },
     {
       id: "stable_offline_action_discriminant",

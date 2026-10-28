@@ -1,13 +1,14 @@
 import { checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import NotificationsSettingsClient from "./NotificationsSettingsClient"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Notification Settings | Stoquify",
   description: "Review in-app notification provider state and sound preference.",
 }
 
-export default async function NotificationSettingsPage({
+async function NotificationSettingsPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
@@ -23,4 +24,20 @@ export default async function NotificationSettingsPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-notifications")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-notifications")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => NotificationSettingsPageImpl(props),
+  })
 }

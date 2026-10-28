@@ -381,7 +381,7 @@ export function AccountantPortal({
       <Panel title={t.blockersTitle}>
         {data.blockers.length ? (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[860px] text-sm">
               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                 <tr>
                   <th className="px-4 py-3">{t.status}</th>
@@ -463,7 +463,7 @@ function SourceLinksTable({ data, locale }: { data: AccountantPortalData; locale
     <Panel title={t.sourceLinks}>
       {data.latestSourceLinks.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-sm">
+          <table className="dashboard-table-base w-full min-w-[760px] text-sm">
             <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
               <tr>
                 <th className="px-4 py-3">{t.source}</th>
@@ -509,7 +509,7 @@ function AuditEventsTable({ data, locale }: { data: AccountantPortalData; locale
     <Panel title={t.auditEvents}>
       {data.latestAuditEvents.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[780px] text-sm">
+          <table className="dashboard-table-base w-full min-w-[780px] text-sm">
             <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
               <tr>
                 <th className="px-4 py-3">{t.source}</th>

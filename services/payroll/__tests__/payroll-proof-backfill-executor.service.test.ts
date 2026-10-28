@@ -3,6 +3,7 @@ import {
   ChartAccountType,
   PayrollContractStatus,
   PayrollEmployeeStatus,
+  Prisma,
 } from "@prisma/client";
 
 jest.mock("../../../prisma/db", () => ({
@@ -48,37 +49,122 @@ function passedCalculationFixtures() {
     fixtureId: string,
     parameterPath: string,
     purpose: string,
-  ) => ({
-    fixtureId,
-    parameterPath,
-    purpose,
-    status: "PASSED",
-    reviewStatus: "EXPERT_REVIEWED",
-    reviewEvidence: {
-      reviewedBy: "Qualified Cameroon payroll tax reviewer",
-      reviewedOn: "2026-06-28",
-      legalRef: "CM_DGI_CGI_2025",
-      sourceEvidenceHash: `sha256:${fixtureId}-review-evidence`,
-    },
-    expectedOutput: { status: "CALCULATED" },
-    actualOutput: { status: "CALCULATED" },
-  });
+  ) => {
+    const ytdLifecycleProof = purpose.includes("YTD")
+      ? {
+          yearToDatePolicyHash: `sha256:${fixtureId}-ytd-policy`,
+          yearToDateAccumulatorHash: `sha256:${fixtureId}-ytd-accumulator`,
+          registerProofHash: `sha256:${fixtureId}-register-proof`,
+          payslipProofHash: `sha256:${fixtureId}-payslip-proof`,
+        }
+      : {};
+    const correctionLifecycleProof = purpose.includes("CORRECTION_REPLAY")
+      ? {
+          originalRunDocumentHash: `sha256:${fixtureId}-original-run-document`,
+          originalRunEvidenceHash: `sha256:${fixtureId}-original-run-evidence`,
+          originalCalculationHash: `sha256:${fixtureId}-original-calculation`,
+          correctionBasisHash: `sha256:${fixtureId}-correction-basis`,
+          correctionEvidenceHash: `sha256:${fixtureId}-correction-evidence`,
+          ledgerPostingProofHash: `sha256:${fixtureId}-ledger-posting`,
+          declarationProofHash: `sha256:${fixtureId}-declaration-proof`,
+          paymentProofHash: `sha256:${fixtureId}-payment-proof`,
+        }
+      : {};
+    const lifecycleProof = {
+      ...ytdLifecycleProof,
+      ...correctionLifecycleProof,
+    };
+
+    return {
+      fixtureId,
+      parameterPath,
+      purpose,
+      status: "PASSED",
+      reviewStatus: "EXPERT_REVIEWED",
+      reviewEvidence: {
+        reviewedBy: "Qualified Cameroon payroll tax reviewer",
+        reviewedOn: "2026-06-28",
+        legalRef: "CM_DGI_CGI_2025",
+        sourceEvidenceHash: `sha256:${fixtureId}-review-evidence`,
+      },
+      expectedOutput: { status: "CALCULATED", ...lifecycleProof },
+      actualOutput: { status: "CALCULATED", ...lifecycleProof },
+    };
+  };
 
   return {
     valid: true,
     runs: [
-      passedRun("cm-cnps-pension-reviewed", "payroll.cnps.pensionRatesBps", "PAYROLL"),
-      passedRun("cm-cnps-family-reviewed", "payroll.cnps.familyAllowanceRatesBps", "PAYROLL_CNPS_FAMILY_ALLOWANCE"),
-      passedRun("cm-cnps-risk-reviewed", "payroll.cnps.occupationalRiskRatesBps", "PAYROLL_CNPS_OCCUPATIONAL_RISK"),
-      passedRun("cm-irpp-period-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_PERIOD_CALCULATION"),
-      passedRun("cm-irpp-ytd-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_YTD_REGULARIZATION"),
-      passedRun("cm-irpp-adjustments-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_PERIOD_ADJUSTMENTS"),
-      passedRun("cm-irpp-corrections-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_YTD_CORRECTION_REPLAY"),
-      passedRun("cm-allowances-reviewed", "payroll.compensation.allowances", "PAYROLL_ALLOWANCE_TAXABLE"),
-      passedRun("cm-benefits-reviewed", "payroll.compensation.benefits", "PAYROLL_BENEFIT_IN_KIND"),
-      passedRun("cm-leave-paid-reviewed", "payroll.attendance.leave", "PAYROLL_LEAVE_PAID"),
-      passedRun("cm-leave-unpaid-reviewed", "payroll.attendance.leave", "PAYROLL_LEAVE_UNPAID"),
-      passedRun("cm-overtime-reviewed", "payroll.attendance.overtime", "PAYROLL_OVERTIME_PREMIUM"),
+      passedRun(
+        "cm-cnps-pension-reviewed",
+        "payroll.cnps.pensionRatesBps",
+        "PAYROLL",
+      ),
+      passedRun(
+        "cm-cnps-family-reviewed",
+        "payroll.cnps.familyAllowanceRatesBps",
+        "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+      ),
+      passedRun(
+        "cm-cnps-risk-reviewed",
+        "payroll.cnps.occupationalRiskRatesBps",
+        "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+      ),
+      passedRun(
+        "cm-irpp-period-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_CALCULATION",
+      ),
+      passedRun(
+        "cm-irpp-ytd-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_REGULARIZATION",
+      ),
+      passedRun(
+        "cm-irpp-adjustments-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_ADJUSTMENTS",
+      ),
+      passedRun(
+        "cm-irpp-corrections-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_CORRECTION_REPLAY",
+      ),
+      passedRun(
+        "cm-allowances-reviewed",
+        "payroll.compensation.allowances",
+        "PAYROLL_ALLOWANCE_TAXABLE",
+      ),
+      passedRun(
+        "cm-benefits-reviewed",
+        "payroll.compensation.benefits",
+        "PAYROLL_BENEFIT_IN_KIND",
+      ),
+      passedRun(
+        "cm-deduction-recovery-reviewed",
+        "payroll.compensation.deductions",
+        "PAYROLL_DEDUCTION_RECOVERY",
+      ),
+      passedRun(
+        "cm-leave-paid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_PAID",
+      ),
+      passedRun(
+        "cm-leave-unpaid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_UNPAID",
+      ),
+      passedRun(
+        "cm-overtime-reviewed",
+        "payroll.attendance.overtime",
+        "PAYROLL_OVERTIME_PREMIUM",
+      ),
+      passedRun(
+        "cm-composite-register-reviewed",
+        "payroll.composite.registerTieOut",
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT",
+      ),
     ],
     issues: [],
   };
@@ -294,6 +380,7 @@ describe("payroll proof backfill executor service", () => {
           "payroll.irpp": "SUPPORTED",
           "payroll.compensation": "SUPPORTED",
           "payroll.attendance": "SUPPORTED",
+          "payroll.composite.registerTieOut": "SUPPORTED",
         },
       },
     });
@@ -381,11 +468,29 @@ describe("payroll proof backfill executor service", () => {
         expect.objectContaining({
           target: "PayrollDeclarationEvidenceAuthorityLifecycleProofBackfill",
           count: 2,
+          countryCode: "CM",
+          periodStart: "2026-06-01",
+          periodEnd: "2026-06-30",
+          payDate: "2026-06-30",
+          proofBackfillEvidenceRef: expect.stringMatching(
+            /^payroll-proof-backfill-dry-run:/,
+          ),
+          dryRunEvidenceHash: certificate.dryRunEvidenceHash,
+          periodLineageHash: expect.stringMatching(/^sha256:/),
           mutationAllowed: false,
         }),
         expect.objectContaining({
           target: "PayrollPaymentSettlementLifecycleProofBackfill",
           count: 3,
+          countryCode: "CM",
+          periodStart: "2026-06-01",
+          periodEnd: "2026-06-30",
+          payDate: "2026-06-30",
+          proofBackfillEvidenceRef: expect.stringMatching(
+            /^payroll-proof-backfill-dry-run:/,
+          ),
+          dryRunEvidenceHash: certificate.dryRunEvidenceHash,
+          periodLineageHash: expect.stringMatching(/^sha256:/),
           mutationAllowed: false,
         }),
       ]),
@@ -492,6 +597,8 @@ describe("payroll proof backfill executor service", () => {
       paymentBatchMissingProviderAdapterProof: 0,
       paymentBatchMissingSettlementRegisterProof: 0,
       paymentBatchMissingSettlementLifecycleProof: 0,
+      paymentBatchMissingProviderReceiptProof: 0,
+      paymentBatchMissingSettlementReplayProof: 0,
     });
     expect(firstClient.auditLog.create).not.toHaveBeenCalled();
     expect(secondClient.auditLog.create).not.toHaveBeenCalled();
@@ -567,9 +674,8 @@ describe("payroll proof backfill executor service", () => {
       },
       secondClient as any,
     );
-    const report = formatPayrollProofBackfillExecutionCertificate(
-      signedCertificate,
-    );
+    const report =
+      formatPayrollProofBackfillExecutionCertificate(signedCertificate);
 
     expect(signedCertificate.status).toBe("EXECUTION_COMPLETED");
     expect(signedCertificate.executionEnabled).toBe(true);
@@ -590,7 +696,9 @@ describe("payroll proof backfill executor service", () => {
         updatedCount: 2,
         skippedCount: 0,
         metadataOnly: true,
-        coverageHashes: expect.arrayContaining([expect.stringMatching(/^sha256:/)]),
+        coverageHashes: expect.arrayContaining([
+          expect.stringMatching(/^sha256:/),
+        ]),
         blockerCodes: [],
       }),
     ]);
@@ -730,7 +838,8 @@ describe("payroll proof backfill executor service", () => {
           securityPrivacyApprovedById: "security-reviewer-1",
           operationsOwnerApprovedById: "ops-owner-1",
           approvedAt: "2026-06-30T09:59:00.000Z",
-          approvalNotes: "Reviewed declaration register proof backfill evidence.",
+          approvalNotes:
+            "Reviewed declaration register proof backfill evidence.",
         },
       },
       secondClient as any,
@@ -781,12 +890,16 @@ describe("payroll proof backfill executor service", () => {
       }),
       secondClient as any,
     );
-    expect(secondClient.payrollDeclarationEvidence.findMany).toHaveBeenCalledWith(
+    expect(
+      secondClient.payrollDeclarationEvidence.findMany,
+    ).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
           declaration: expect.objectContaining({
-            evidenceItems: expect.objectContaining({ none: expect.any(Object) }),
+            evidenceItems: expect.objectContaining({
+              none: expect.any(Object),
+            }),
           }),
         }),
       }),
@@ -904,7 +1017,8 @@ describe("payroll proof backfill executor service", () => {
           securityPrivacyApprovedById: "security-reviewer-1",
           operationsOwnerApprovedById: "ops-owner-1",
           approvedAt: "2026-06-30T09:59:00.000Z",
-          approvalNotes: "Reviewed declaration authority proof backfill evidence.",
+          approvalNotes:
+            "Reviewed declaration authority proof backfill evidence.",
         },
       },
       secondClient as any,
@@ -966,12 +1080,16 @@ describe("payroll proof backfill executor service", () => {
       }),
       secondClient as any,
     );
-    expect(secondClient.payrollDeclarationEvidence.findMany).toHaveBeenCalledTimes(2);
+    expect(
+      secondClient.payrollDeclarationEvidence.findMany,
+    ).toHaveBeenCalledTimes(2);
     expect(secondClient.auditLog.create).toHaveBeenCalledTimes(1);
   });
   it("executes signed payment proof backfill as metadata-only batch correction", async () => {
     const firstClient = buildClient();
     firstClient.payrollPaymentBatch.count
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1);
@@ -995,17 +1113,30 @@ describe("payroll proof backfill executor service", () => {
     secondClient.payrollPaymentBatch.count
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1);
     const paymentBatch = {
       id: "payment-batch-1",
       batchNumber: "PAY-2026-0001",
       status: "SETTLED",
       method: "CASH",
+      amount: new Prisma.Decimal("143700.00"),
+      currency: "XAF",
+      paymentTransactionId: "payment-tx-1",
       bankFileHash: null,
       documentHash: "sha256:payment-batch-document",
       evidenceHash: "sha256:payment-batch-evidence",
       metadata: {
         providerEventId: "provider-event-1",
+        providerAccountId: "provider-account-1",
+        providerTransactionId: "provider-tx-1",
+        providerReference: "provider-ref-1",
+        statementLineId: "statement-line-1",
+        statementFileHash: "sha256:statement-file",
+        matchRecordId: "match-record-1",
+        reconciliationRunId: "reconciliation-run-1",
+        latestSettlementStatus: "settled",
         latestSettlementEvidenceHash: "sha256:settlement-evidence",
       },
       payrollRun: {
@@ -1017,6 +1148,8 @@ describe("payroll proof backfill executor service", () => {
       createdAt: new Date("2026-06-30T08:00:00.000Z"),
     };
     secondClient.payrollPaymentBatch.findMany
+      .mockResolvedValueOnce([paymentBatch])
+      .mockResolvedValueOnce([paymentBatch])
       .mockResolvedValueOnce([paymentBatch])
       .mockResolvedValueOnce([paymentBatch])
       .mockResolvedValueOnce([paymentBatch]);
@@ -1077,6 +1210,20 @@ describe("payroll proof backfill executor service", () => {
         skippedCount: 0,
         blockerCodes: [],
       }),
+      expect.objectContaining({
+        target: "PayrollPaymentProviderReceiptProofBackfill",
+        attemptedCount: 1,
+        updatedCount: 1,
+        skippedCount: 0,
+        blockerCodes: [],
+      }),
+      expect.objectContaining({
+        target: "PayrollPaymentSettlementReplayProofBackfill",
+        attemptedCount: 1,
+        updatedCount: 1,
+        skippedCount: 0,
+        blockerCodes: [],
+      }),
     ]);
     expect(secondClient.payrollPaymentBatch.update).toHaveBeenCalledTimes(1);
     expect(secondClient.payrollPaymentBatch.update).toHaveBeenCalledWith(
@@ -1085,19 +1232,37 @@ describe("payroll proof backfill executor service", () => {
         data: expect.objectContaining({
           metadata: expect.objectContaining({
             paymentAdapterProofHash: expect.stringMatching(/^sha256:/),
-            paymentProviderAdapterContractHash: expect.stringMatching(/^sha256:/),
-            latestSettlementSourceRegisterHash:
-              "sha256:payment-batch-document",
+            paymentProviderAdapterContractHash:
+              expect.stringMatching(/^sha256:/),
+            latestSettlementSourceRegisterHash: "sha256:payment-batch-document",
             latestSettlementLifecycleContractHash:
               expect.stringMatching(/^sha256:/),
-            latestSettlementLifecycleStatus:
-              "SETTLED_WITH_PROVIDER_EVIDENCE",
+            latestSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
+            latestSettlementProviderReceiptProofHash:
+              expect.stringMatching(/^sha256:/),
+            latestSettlementProviderReceiptProofSource:
+              expect.stringMatching(/^BACKFILLED_/),
+            latestSettlementProviderReceiptStatementFileHash:
+              "sha256:statement-file",
+            latestSettlementReplayProofHash: expect.stringMatching(/^sha256:/),
+            latestSettlementReplayProof: expect.objectContaining({
+              paymentTransactionId: "payment-tx-1",
+              providerTransactionId: "provider-tx-1",
+              settlementAmount: "143700.00",
+              currency: "XAF",
+              providerSettlementReceiptProofHash:
+                expect.stringMatching(/^sha256:/),
+            }),
             proofBackfill: expect.objectContaining({
               kind: "PAYROLL_PAYMENT_BATCH_PROOF_BACKFILL",
               metadataOnly: true,
               coversPaymentProviderAdapterProof: true,
               coversPaymentSettlementRegisterProof: true,
               coversPaymentSettlementLifecycleProof: true,
+              coversPaymentProviderReceiptProof: true,
+              coversPaymentSettlementReplayProof: true,
+              providerReceiptProofHash: expect.stringMatching(/^sha256:/),
+              settlementReplayProofHash: expect.stringMatching(/^sha256:/),
               ledgerKey: signedCertificate.idempotencyLedger.ledgerKey,
               dryRunEvidenceHash: signedCertificate.dryRunEvidenceHash,
               approvalBundleHash: signedCertificate.approvalBundleHash,
@@ -1222,7 +1387,7 @@ describe("payroll proof backfill executor service", () => {
     expect(changes.after.proofBackfill).toEqual(
       expect.objectContaining({
         totalBlockingGaps: 3,
-        plannedJobCount: 7,
+        plannedJobCount: 9,
         gapCounts: expect.objectContaining({
           declarationEvidenceMissingAuthorityLifecycleProof: 1,
           paymentBatchMissingSettlementLifecycleProof: 2,

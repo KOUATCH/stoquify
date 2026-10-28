@@ -2,13 +2,14 @@ import LocationsManagementDashboard from "@/components/locations/LocationsManage
 import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withSettingsSurfaceAccess } from "../../settings-route-access"
 
 export const metadata = {
   title: "Create Location | Stoquify",
   description: "Create an organization location with operating policies and management settings.",
 }
 
-export default async function CreateLocationPage({
+async function CreateLocationPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
@@ -33,4 +34,20 @@ export default async function CreateLocationPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-locations-create")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-locations-create")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CreateLocationPageImpl(props),
+  })
 }

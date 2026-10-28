@@ -3,6 +3,7 @@ import argon2 from "argon2"
 import {
   AccountingPeriodStatus,
   AccountingSetupStatus,
+  CashDrawerTransactionType,
   ChartAccountNormalBalance,
   ChartAccountType,
   FiscalYearStatus,
@@ -22,7 +23,10 @@ import { resolveCameroonStandardVatRateBps } from "../services/regulatory/countr
 
 const prisma = new PrismaClient()
 
-const ORGANIZATION_ID = "org_stockflow_demo"
+const ORGANIZATION_ID = "org_ui_evidence_20260825"
+const ORGANIZATION_NAME = "UI Evidence"
+const ORGANIZATION_SLUG = "ui-evidence-20260825"
+const CONTACT_EMAIL_DOMAIN = "ui-evidence.test"
 const STORE_LOCATION_ID = "loc_stockflow_store"
 const WAREHOUSE_LOCATION_ID = "loc_stockflow_warehouse"
 const CAMEROON_STANDARD_VAT_RATE_BPS = resolveCameroonStandardVatRateBps("2026-01-01").value
@@ -152,13 +156,13 @@ const clearDatabase = async () => {
 }
 
 const seedOrganization = () =>
-  prisma.organization.create({
-    data: {
-      id: ORGANIZATION_ID,
-      name: "StockFlow Demo",
-      slug: "stockflow-demo",
-      industry: "Retail and inventory management",
-      country: "Cameroon",
+    prisma.organization.create({
+      data: {
+        id: ORGANIZATION_ID,
+        name: ORGANIZATION_NAME,
+        slug: ORGANIZATION_SLUG,
+        industry: "Retail and inventory management",
+        country: "Cameroon",
       state: "Littoral",
       address: "Boulevard de la Liberte, Douala",
       currency: "XAF",
@@ -204,7 +208,7 @@ const seedUsers = async (roles: Awaited<ReturnType<typeof seedRoles>>) => {
   const users: SeedUser[] = [
     {
       id: "usr_demo_admin",
-      email: "admin@stockflow-demo.test",
+      email: `admin@${CONTACT_EMAIL_DOMAIN}`,
       firstName: "Amina",
       lastName: "Admin",
       roleCode: "ADMIN",
@@ -212,7 +216,7 @@ const seedUsers = async (roles: Awaited<ReturnType<typeof seedRoles>>) => {
     },
     {
       id: "usr_demo_manager",
-      email: "manager@stockflow-demo.test",
+      email: `manager@${CONTACT_EMAIL_DOMAIN}`,
       firstName: "Marc",
       lastName: "Manager",
       roleCode: "MANAGER",
@@ -220,7 +224,7 @@ const seedUsers = async (roles: Awaited<ReturnType<typeof seedRoles>>) => {
     },
     {
       id: "usr_demo_cashier",
-      email: "cashier@stockflow-demo.test",
+      email: `cashier@${CONTACT_EMAIL_DOMAIN}`,
       firstName: "Claire",
       lastName: "Cashier",
       roleCode: "CASHIER",
@@ -262,12 +266,12 @@ const seedLocations = () =>
     prisma.location.create({
       data: {
         id: STORE_LOCATION_ID,
-        name: "StockFlow Demo Store",
+        name: "UI Evidence Store",
         code: "STORE-001",
         type: LocationType.STORE,
         address: "Akwa, Douala",
         phone: "+237 600 000 001",
-        email: "store@stockflow-demo.test",
+        email: `store@${CONTACT_EMAIL_DOMAIN}`,
         isActive: true,
         isDefault: true,
         organizationId: ORGANIZATION_ID,
@@ -277,12 +281,12 @@ const seedLocations = () =>
     prisma.location.create({
       data: {
         id: WAREHOUSE_LOCATION_ID,
-        name: "StockFlow Demo Warehouse",
+        name: "UI Evidence Warehouse",
         code: "WH-001",
         type: LocationType.WAREHOUSE,
         address: "Bonaberi, Douala",
         phone: "+237 600 000 002",
-        email: "warehouse@stockflow-demo.test",
+        email: `warehouse@${CONTACT_EMAIL_DOMAIN}`,
         isActive: true,
         organizationId: ORGANIZATION_ID,
         updatedAt: now(),
@@ -307,11 +311,11 @@ const seedCatalog = async () => {
     prisma.brand.create({
       data: {
         id: "brand_demo_house",
-        nameEn: "StockFlow House",
-        nameFr: "StockFlow House",
-        slug: "stockflow-house",
-        descriptionEn: "Demo private-label products",
-        descriptionFr: "Produits de demonstration en marque propre",
+        nameEn: "UI Evidence House",
+        nameFr: "UI Evidence House",
+        slug: "ui-evidence-house",
+        descriptionEn: "Synthetic private-label products for UI evidence",
+        descriptionFr: "Produits prives synthetiques pour la preuve UI",
         organizationId: ORGANIZATION_ID,
         updatedAt: now(),
       },
@@ -353,7 +357,7 @@ const seedPartners = async () => {
         name: "Central Supply Co.",
         code: "SUP-001",
         contactPerson: "Jean Supplier",
-        email: "supplier@stockflow-demo.test",
+        email: `supplier@${CONTACT_EMAIL_DOMAIN}`,
         phone: "+237 600 100 001",
         address: "Industrial Zone, Douala",
         city: "Douala",
@@ -370,7 +374,7 @@ const seedPartners = async () => {
         id: "cust_demo_walkin",
         name: "Walk-in Customer",
         code: "CUST-001",
-        email: "customer@stockflow-demo.test",
+        email: `customer@${CONTACT_EMAIL_DOMAIN}`,
         phone: "+237 600 200 001",
         address: "Douala",
         paymentTerms: 0,
@@ -515,6 +519,9 @@ const seedItems = async (
           notes: "Initial seed stock",
           serialNumbers: [],
           balanceAfter: quantityOnHand,
+          effectiveAt: now(),
+          recordedAt: now(),
+          timeProvenance: "EXPLICIT_SOURCE_TIME",
         },
       })
     }
@@ -679,6 +686,30 @@ const seedAccounting = async (actorId: string) => {
       mappingKey: "STORE_CREDIT_LIABILITY",
       syscohadaClass: "4",
       syscohadaReference: "419",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_grni",
+      code: "4081",
+      nameEn: "Goods received not invoiced",
+      nameFr: "Fournisseurs, factures non parvenues",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "GRNI",
+      syscohadaClass: "4",
+      syscohadaReference: "4081",
+      isControlAccount: true,
+    },
+    {
+      id: "acct_supplier_return_claim",
+      code: "4098",
+      nameEn: "Supplier return claims",
+      nameFr: "Fournisseurs, avoirs a recevoir",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "SUPPLIER_RETURN_CLAIM",
+      syscohadaClass: "4",
+      syscohadaReference: "4098",
       isControlAccount: true,
     },
     {
@@ -858,6 +889,7 @@ const seedPOS = async (cashierId: string) => {
       locationId: STORE_LOCATION_ID,
       userId: cashierId,
       openingBalance: 50_000,
+      expectedBalance: 50_000,
       organizationId: ORGANIZATION_ID,
       notes: "Seeded active POS session",
       updatedAt: now(),
@@ -872,7 +904,7 @@ const seedPOS = async (cashierId: string) => {
     },
   })
 
-  await prisma.cashDrawer.create({
+  const drawer = await prisma.cashDrawer.create({
     data: {
       id: "cash_drawer_demo_001",
       name: "Main Cash Drawer",
@@ -883,6 +915,19 @@ const seedPOS = async (cashierId: string) => {
       locationId: STORE_LOCATION_ID,
       terminalId: terminal.id,
       updatedAt: now(),
+    },
+  })
+
+  await prisma.cashDrawerTransaction.create({
+    data: {
+      type: CashDrawerTransactionType.OPENING_BALANCE,
+      amount: 50_000,
+      reason: "Seeded shift opening float",
+      cashDrawerId: drawer.id,
+      sessionId: session.id,
+      userId: cashierId,
+      balanceBefore: 0,
+      balanceAfter: 50_000,
     },
   })
 }
@@ -897,8 +942,8 @@ export async function seedCurrentDemo() {
   console.log("Seeding roles and users")
   const roles = await seedRoles()
   const users = await seedUsers(roles)
-  const admin = users.find((user) => user.email === "admin@stockflow-demo.test")
-  const cashier = users.find((user) => user.email === "cashier@stockflow-demo.test")
+  const admin = users.find((user) => user.email === `admin@${CONTACT_EMAIL_DOMAIN}`)
+  const cashier = users.find((user) => user.email === `cashier@${CONTACT_EMAIL_DOMAIN}`)
 
   if (!admin || !cashier) {
     throw new Error("Seed users were not created")
@@ -917,9 +962,9 @@ export async function seedCurrentDemo() {
   await seedPOS(cashier.id)
 
   console.log("Seed complete")
-  console.log("Admin: admin@stockflow-demo.test / Admin@123")
-  console.log("Manager: manager@stockflow-demo.test / Manager@123")
-  console.log("Cashier: cashier@stockflow-demo.test / Cashier@123")
+  console.log(`Admin: admin@${CONTACT_EMAIL_DOMAIN} / Admin@123`)
+  console.log(`Manager: manager@${CONTACT_EMAIL_DOMAIN} / Manager@123`)
+  console.log(`Cashier: cashier@${CONTACT_EMAIL_DOMAIN} / Cashier@123`)
 }
 
 export async function runCurrentSeed() {

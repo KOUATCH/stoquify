@@ -52,7 +52,7 @@ type PublicStatement = {
   periodStart: string
   periodEnd: string
   expiresAt: string
-  permissions: Array<"VIEW" | "DISPUTE" | "PROMISE_TO_PAY">
+  permissions: Array<"view" | "dispute" | "promise_to_pay">
   responseHash: string
   payload: StatementPayload
   branding: {
@@ -168,8 +168,8 @@ export function CustomerStatementPortal({
         }
         setStatement(body.data)
         if (
-          !body.data.permissions.includes("PROMISE_TO_PAY") &&
-          body.data.permissions.includes("DISPUTE")
+          !body.data.permissions.includes("promise_to_pay") &&
+          body.data.permissions.includes("dispute")
         ) {
           setActionType("DISPUTE")
         }
@@ -290,8 +290,8 @@ export function CustomerStatementPortal({
     payload.organization?.name ||
     "Business"
   const customerName = payload.customer?.name || "Customer"
-  const canDispute = statement.permissions.includes("DISPUTE")
-  const canPromise = statement.permissions.includes("PROMISE_TO_PAY")
+  const canDispute = statement.permissions.includes("dispute")
+  const canPromise = statement.permissions.includes("promise_to_pay")
   const canRespond = canDispute || canPromise
 
   return (

@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-POS-G1-DECISION-APPROVAL-WORKING-TEMPLATE-20260818",
+  "status": "TEMPLATE_NOT_APPROVAL_EVIDENCE",
+  "warning": "Do not copy a decision into the live approval register until every required role has authentic authority, fresh authentication, externally verifiable signed evidence, and a recomputed evidence SHA-256.",
+  "contractArtifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+  "contractVersion": "0.2.0",
+  "contractPath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+  "contractSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+  "decisionApprovals": [
+    {
+      "decisionId": "D-01",
+      "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+      "rationale": "DRAFT — Keep store credit hidden and rejected until an authoritative store-credit instrument and liability ledger exists.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "services/pos/pos.service.ts",
+        "components/pos/ProfessionalPOSSystem.tsx"
+      ],
+      "affectedCapabilities": ["pos.store-credit"],
+      "rollbackOrDisablePolicy": "Fail closed by hiding and rejecting store credit if the control, ledger, or approval evidence is missing or invalid.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Product owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Financial controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Payments owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-02",
+      "selectedOption": "TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM",
+      "rationale": "DRAFT — Use the physical terminal session claim and a single session drawer opening claim while retaining the documented database-invariant limitation.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "prisma/schema.prisma:POSStation.currentSessionId",
+        "services/pos/pos.service.ts:openPOSShift",
+        "services/pos/pos.service.ts:commitPOSSale"
+      ],
+      "affectedCapabilities": ["pos.terminal-session","pos.drawer-opening-claim"],
+      "rollbackOrDisablePolicy": "Disable sale finalization on terminal/session ownership conflict and require an accountable recovery review.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Retail operations owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"POS architect","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Security owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-03",
+      "selectedOption": "ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED",
+      "rationale": "DRAFT — Keep electronic tender unavailable until a named provider, merchant scope, security controls, state mapping, settlement evidence, and kill switch are approved.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "services/pos/pos.service.ts:assertSupportedSaleTenders",
+        "components/pos/ProfessionalPOSSystem.tsx:tenderMethods"
+      ],
+      "affectedCapabilities": ["pos.card","pos.mobile-money","pos.bank-transfer"],
+      "rollbackOrDisablePolicy": "Fail closed to cash-only POS whenever provider authority, state, settlement, security, or approval evidence is absent or invalid.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Payments owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Treasury owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Security owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-04",
+      "selectedOption": "OFFLINE_CAPTURE_DISABLED",
+      "rationale": "DRAFT — Keep offline capture disabled until device identity, ordered replay, idempotency, conflict handling, and recovery evidence are approved.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "services/pos/offline-sync.service.ts",
+        "docs/pos-enterprise-grade-audit/EXECUTION_00_DECISION_REGISTER.json"
+      ],
+      "affectedCapabilities": ["pos.offline-capture","pos.offline-replay"],
+      "rollbackOrDisablePolicy": "Disable offline capture and require online finalization whenever device, sequence, replay, or conflict controls are not proven.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Product owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Risk owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Retail operations owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-05",
+      "selectedOption": "EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT",
+      "rationale": "DRAFT — Limit the current claim to the named simulated development matrix; do not claim physical device or production certification.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "docs/pos-enterprise-grade-audit/templates/TEMPLATE-04-HARDWARE-COMPLIANCE-MATRIX_FILLED_20260817.md"
+      ],
+      "affectedCapabilities": ["pos.browser-support","pos.print-preview","pos.pdf-receipt","pos.hardware-simulation"],
+      "rollbackOrDisablePolicy": "Treat unlisted browsers, operating systems, and physical peripherals as unsupported and prevent production certification claims.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Retail operations owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"QA owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Support owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-06",
+      "selectedOption": "LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE",
+      "rationale": "DRAFT — Authorize only linked full-sale refund and void compensation in the current scope while keeping partial return and maker-checker limitations explicit.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "actions/pos/tender.actions.ts",
+        "services/pos/pos.service.ts:refundPOSSale",
+        "services/pos/pos.service.ts:voidPOSSale",
+        "services/accounting/postings/post-refund.ts",
+        "services/accounting/postings/post-void.ts"
+      ],
+      "affectedCapabilities": ["pos.full-sale-refund","pos.full-sale-void","accounting.compensating-posting","inventory.stock-return"],
+      "rollbackOrDisablePolicy": "Disable correction paths that cannot create linked compensating stock, payment, accounting, audit, and fresh-auth evidence.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Financial controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Retail operations owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Risk owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-07",
+      "selectedOption": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+      "rationale": "DRAFT — Use Cameroon, XAF, English, and French only for development until a qualified country-pack review and independent verification are complete.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "what-next/statutory-country-pack-production-readiness.json",
+        "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json"
+      ],
+      "affectedCapabilities": ["country-pack.cm","currency.xaf","locale.en","locale.fr","pos.development-pilot"],
+      "rollbackOrDisablePolicy": "Keep production fiscalization and statutory claims disabled whenever qualified review, source provenance, or independent checking is incomplete.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Product owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Financial controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Qualified Cameroon country-pack reviewer","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-08",
+      "selectedOption": "NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE",
+      "rationale": "DRAFT — Do not publish a production SLO until the D-05 support matrix and a measured operational baseline exist.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json:D-08",
+        "docs/pos-enterprise-grade-audit/templates/TEMPLATE-04-HARDWARE-COMPLIANCE-MATRIX_FILLED_20260817.md"
+      ],
+      "affectedCapabilities": ["pos.slo","pos.error-budget","pos.supportability"],
+      "rollbackOrDisablePolicy": "Withdraw production reliability claims and halt expansion if the support matrix or measured baseline is absent, stale, or breached.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"SRE owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Product owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Support owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-09",
+      "selectedOption": "ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY",
+      "rationale": "DRAFT — Keep order confirmation non-posting and permit invoice recognition only from accepted delivered-quantity evidence.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "prisma/schema.prisma:SalesOrderStatus"
+      ],
+      "affectedCapabilities": ["sales.order-confirmation","fulfillment.delivery-evidence","accounting.customer-invoice","accounting.revenue-recognition"],
+      "rollbackOrDisablePolicy": "Block invoice issuance and revenue recognition when accepted delivery evidence or the approved accounting rule is missing.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Financial controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Order-to-cash product owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Qualified accounting reviewer","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-10",
+      "selectedOption": "RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS",
+      "rationale": "DRAFT — Reservations affect availability only; authoritative physical goods issue owns stock reduction and COGS recognition.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "services/inventory/inventory-stock-event.service.ts:postPOSStockIssue",
+        "services/inventory/inventory-stock-event.service.ts:postStockReservation"
+      ],
+      "affectedCapabilities": ["inventory.reservation","fulfillment.goods-issue","inventory.on-hand","accounting.cogs"],
+      "rollbackOrDisablePolicy": "Block fulfillment or posting when reservation, physical issue, stock movement, or COGS evidence cannot be linked exactly once.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Inventory controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Fulfillment owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Accounting owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    },
+    {
+      "decisionId": "D-11",
+      "selectedOption": "KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE",
+      "rationale": "DRAFT — Keep session, drawer, business day, provider statement, reconciliation, and accounting close as separate controlled boundaries.",
+      "approvalStatus": "PENDING_AUTHENTIC_APPROVALS",
+      "effectiveVersion": "0.2.0",
+      "reviewOrExpiryAt": null,
+      "evidenceLinks": [
+        "prisma/schema.prisma:POSSession",
+        "prisma/schema.prisma:StatementFile",
+        "prisma/schema.prisma:ReconciliationRun",
+        "services/accounting/periods.service.ts"
+      ],
+      "affectedCapabilities": ["pos.session","pos.drawer","pos.business-day","payments.statement","payments.reconciliation","accounting.close"],
+      "rollbackOrDisablePolicy": "Prevent close or sign-off when any required boundary is conflated, missing, stale, unreconciled, or lacks accountable evidence.",
+      "approvals": [
+        {"accountableApprover":null,"approverRole":"Financial controller","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Treasury owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null},
+        {"accountableApprover":null,"approverRole":"Retail operations owner","authorityReference":null,"freshAuthenticatedAt":null,"approvedAt":null,"signatureReference":null,"signatureEvidenceSha256":null}
+      ]
+    }
+  ],
+  "doNotSubmitUntil": [
+    "Every accountableApprover is a verified real identity.",
+    "Every approverRole is proven by an authoritative role or delegation reference.",
+    "Every signer freshly authenticated and approved within ten minutes.",
+    "Every signatureReference is independently verifiable.",
+    "Every signatureEvidenceSha256 recomputes from the immutable final evidence.",
+    "Every required role is present for each decision.",
+    "An independent checker has resolved identity conflicts and segregation-of-duties concerns."
+  ]
+}

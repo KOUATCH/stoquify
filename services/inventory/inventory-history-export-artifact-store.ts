@@ -168,7 +168,7 @@ export function createUploadThingInventoryHistoryExportArtifactStore(
 
       const customId = artifactCustomId(input)
       const file = new UTFile(
-        [input.ciphertext],
+        [new Uint8Array(input.ciphertext)],
         `inventory-history-${String(input.sequence).padStart(8, "0")}.bin`,
         { customId, type: "application/octet-stream" },
       )

@@ -2,46 +2,57 @@
 
 ## Status
 
-Ready. Graphs were regenerated from the isolated referral release tree based on `5d7c73d557e5ca49560fa8627ce45fb75a68de8a`.
+Ready. The Stoquify code graphs were regenerated from the current working tree after Slice 438 and the customer referral vertical loop.
 
-- Frozen candidate digest: `befa17a694e7dddb94c604f1d6b7d62a0892bccfee841236b90d0c9dd352ba2b`.
-- Shared-hunk selection digest: `c19a27d09bac35fe4934933fc554fcf084aed7c30dfb509e0287e447c1484fa3`.
-- Deterministic command: `python -m graphify update <folder>`.
+The AGENTS-referenced Graphify skill file was not installed at either declared local path. The refresh therefore used the repository's existing Graphify runtime marker and the deterministic, non-LLM command recorded by the previous ordered run: `python -m graphify update <folder>`.
 
 ## Ordered refresh
 
 | Order | Layer | Nodes | Edges | Communities |
 | ---: | --- | ---: | ---: | ---: |
-| 1 | `services` | 5719 | 10285 | 417 |
-| 2 | `app` | 616 | 469 | 224 |
-| 3 | `components` | 1141 | 1056 | 274 |
-| 4 | `actions` | 1044 | 1282 | 195 |
+| 1 | `services` | 5,719 | 10,287 | 419 |
+| 2 | `app` | 622 | 472 | 229 |
+| 3 | `components` | 1,173 | 1,089 | 277 |
+| 4 | `actions` | 1,044 | 1,284 | 195 |
 | 5 | `hooks` | 308 | 321 | 44 |
 | 6 | `types` | 72 | 36 | 36 |
-| 7 | `lib` | 425 | 620 | 58 |
-| 8 | `prisma` | 116 | 259 | 11 |
+| 7 | `lib` | 431 | 623 | 61 |
+| 8 | `prisma` | 116 | 259 | 12 |
 
-The merged graph contains 9440 nodes and 14328 edges. 1 duplicate node identifier(s) were deduplicated. The refreshed ordered graph SHA-256 is `18f74ec091d4d9218a138c993f6ef88ce07fb9663a9bfce6c13297d43ca7e658`.
+The merged graph at `graphify-out/ordered-code-graph.json` contains 9,484 nodes and 14,371 edges. One duplicate node identifier was deduplicated during the eight-graph merge.
 
-## Canonical artifacts
+## Canonical AGENTS artifacts
 
-The component, action, app, hook, and type graphs and reports were copied to the root `graphify-out` directory. `graphify-out/ordered-code-graph.json` is the merged navigation graph.
+The five canonical filenames now exist at the repository root graph directory:
+
+- `graphify-out/graph_components.json`
+- `graphify-out/graph_actions.json`
+- `graphify-out/graph_app.json`
+- `graphify-out/graph_hooks.json`
+- `graphify-out/graph_types.json`
+- `graphify-out/GRAPH_REPORT_components.md`
+- `graphify-out/GRAPH_REPORT_actions.md`
+- `graphify-out/GRAPH_REPORT_app.md`
+- `graphify-out/GRAPH_REPORT_hooks.md`
+- `graphify-out/GRAPH_REPORT_types.md`
 
 ## Referral coverage validation
 
-The isolated graphs contain 354 nodes matching customer-statement, receivable, settlement, referral, accountant-invite, or credential-sign-in concepts.
+Every regenerated JSON artifact parsed successfully.
 
-- services: 283 matching nodes.
-- app: 31 matching nodes.
-- components: 20 matching nodes.
-- actions: 19 matching nodes.
-- hooks: 0 matching nodes.
-- types: 0 matching nodes.
-- lib: 1 matching nodes.
-- prisma: 0 matching nodes.
+The merged graph contains 293 nodes matching customer statement, receivable, settlement, referral, accountant-invite, or credential-sign-in concepts:
 
-Every generated JSON artifact parsed successfully. The oversized service HTML visualization was intentionally removed; its JSON and Markdown report remain authoritative.
+- Services: 241 matches, including receivable lifecycle/backfill, immutable statements, signed access, encrypted delivery, recipient actions, referral attribution, and accountant onboarding.
+- App/API: 26 matches, including public statement GET/action routes, referral route, portal, authenticated statement page, and its entitlement-boundary test.
+- Actions: 15 matches, including statement generation/delivery/revocation and protected settlement reversal.
+- Components: 10 matches, including `CustomerStatementWorkflow` and its step-up, consent, snapshot, and delivery helpers.
+- Lib: one direct settlement-security test match; the authentication outcome helper is present under its own node names.
+- Hooks and types: refreshed with no standalone referral-labeled nodes. The referral UI uses server actions rather than a dedicated referral hook, and the Graphify AST extractor does not emit interface-field nodes for the new registration fields.
+
+## Visualization boundary
+
+Graphify intentionally did not regenerate `services/graphify-out/graph.html` because the 5,719-node service graph exceeds its safe HTML visualization threshold. The current `services/graphify-out/graph.json` and `services/graphify-out/GRAPH_REPORT.md` are the authoritative service artifacts; a stale HTML file was not retained.
 
 ## Authority
 
-These graphs are architecture-navigation evidence. Source, migrations, runtime checks, and release gates remain authoritative for behavior and deployment.
+These graphs are current architecture-navigation evidence. Source code, Prisma migrations, runtime verification, and release gates remain authoritative for behavioral and deployment claims.

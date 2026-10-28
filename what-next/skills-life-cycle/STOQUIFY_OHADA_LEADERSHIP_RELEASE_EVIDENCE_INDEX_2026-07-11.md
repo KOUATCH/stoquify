@@ -6,7 +6,7 @@ Mode: release synthesis
 
 Primary skill: stoquify-release-evidence-ratchet
 
-Status: blocked
+Status: conditional
 
 ## Scope
 
@@ -15,12 +15,12 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 ## Summary
 
 - Structural checks ready: 11/11
-- Release enforcement: on
+- Release enforcement: off
 - Skill run reports: 14
 - Readiness artifacts: 10
 - Structural blockers: 0
-- Release blockers: 5
-- Readiness release blockers: 1
+- Release blockers: 6
+- Readiness release blockers: 2
 - Environment release blockers: 4
 - Secret values printed: no
 
@@ -49,18 +49,19 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 | --- | --- | ---: | ---: | ---: |
 | public-identity-abuse | ready | 15/15 | 0 | 1 |
 | ledger-close-truth | ready | 10/10 | 0 | 0 |
-| payment-cash-truth | ready | 11/11 | 0 | 0 |
+| payment-cash-truth | ready | 14/14 | 0 | 0 |
 | purchasing-ap-consolidation | ready | 11/11 | 0 | 0 |
 | offline-pos-fiscal-replay | ready | 16/16 | 0 | 0 |
-| statutory-country-pack-production | blocked | 10/12 | 2 | 0 |
-| report-trust-export | ready | 17/17 | 0 | 0 |
+| statutory-country-pack-production | blocked | 11/12 | 1 | 0 |
+| report-trust-export | ready | 35/35 | 0 | 0 |
 | role-based-operating-cockpit | ready | 9/9 | 0 | 0 |
-| prisma-migration-deployment | ready | 9/9 | 0 | 0 |
+| prisma-migration-deployment | blocked | 8/9 | 1 | 0 |
 | ci-release | ready | 11/11 | 0 | 0 |
 
 ## Readiness Release Blockers
 
 - blocked: readiness:statutory-country-pack-production
+- blocked: readiness:prisma-migration-deployment
 
 ## Release Conditions
 
@@ -89,6 +90,7 @@ Consolidate the completed leadership-skill sequence into durable release evidenc
 
 - No structural evidence blockers.
 - Release blocker: readiness:statutory-country-pack-production
+- Release blocker: readiness:prisma-migration-deployment
 - Release blocker: public_identity_hash_secret
 - Release blocker: public_receipt_token_secret
 - Release blocker: history_cursor_signing_secret

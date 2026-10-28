@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidateTag } from "next/cache"
+import { logger } from "@/lib/logger"
 import { protect } from "@/services/_shared/protect"
 import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
 import {
@@ -18,12 +19,25 @@ const POS_TENDER_ACTION_MODULE = {
 }
 
 function revalidatePOSSaleTags(input: { locationId: string; terminalId: string }) {
-  revalidateTag("pos-cart")
-  revalidateTag("pos-sessions")
-  revalidateTag(`pos-stock-${input.locationId}`)
-  revalidateTag(`pos-terminal-${input.terminalId}`)
-  revalidateTag("finance-dashboard")
-  revalidateTag("customer-ar")
+  const tags = [
+    "pos-cart",
+    "pos-sessions",
+    `pos-stock-${input.locationId}`,
+    `pos-terminal-${input.terminalId}`,
+    "finance-dashboard",
+    "customer-ar",
+  ]
+
+  for (const tag of tags) {
+    try {
+      revalidateTag(tag)
+    } catch (error) {
+      logger.warn("POS sale cache revalidation failed after a committed operation", {
+        tag,
+        error: error instanceof Error ? error.message : "unknown",
+      })
+    }
+  }
 }
 
 export const commitPOSSaleAction = protect(

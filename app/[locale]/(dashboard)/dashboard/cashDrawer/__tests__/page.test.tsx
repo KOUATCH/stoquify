@@ -5,7 +5,23 @@ import { requireAnyPermission } from "@/lib/security/rbac"
 import LegacyLocaleCashDrawerPage from "../page"
 
 jest.mock("@/lib/security/rbac", () => ({
+  RbacError: class MockRbacError extends Error {},
+  requireAllPermissions: jest.fn(),
   requireAnyPermission: jest.fn(),
+  requirePermission: jest.fn(),
+}))
+
+jest.mock("@/i18n/routing", () => ({
+  localizePath: (href: string, locale: string) => `/${locale}${href}`,
+  pickLocale: (locale: string) => (locale === "fr" ? "fr" : "en"),
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn().mockResolvedValue({ allowed: true }),
+}))
+
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({
+  DashboardRouteState: () => <main />,
 }))
 
 jest.mock("next/navigation", () => ({

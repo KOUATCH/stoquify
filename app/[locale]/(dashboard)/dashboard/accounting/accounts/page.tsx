@@ -13,6 +13,7 @@ import {
   AccountingStatCard,
 } from "../_components/accounting-ui"
 import { checkPermission } from "@/config/useAuth"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type AccountRow = {
   id: string
@@ -49,7 +50,7 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/accounts?${key}=${encodeURIComponent(text)}`
 }
 
-export default async function AccountingAccountsPage({ params, searchParams }: PageProps) {
+async function AccountingAccountsPageImpl({ params, searchParams }: PageProps) {
   await checkPermission("accounting.accounts.read")
 
   const { locale } = await params
@@ -183,7 +184,7 @@ export default async function AccountingAccountsPage({ params, searchParams }: P
 
         <AccountingPanel title="Account list" description={accountsResponse.success ? "Active and archived account nodes." : accountsResponse.error || "Accounts unavailable."}>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[860px] text-sm">
               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                 <tr>
                   <th className="px-4 py-3">Code</th>
@@ -229,4 +230,20 @@ export default async function AccountingAccountsPage({ params, searchParams }: P
       </div>
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-accounts")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-accounts")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingAccountsPageImpl(props),
+  })
 }

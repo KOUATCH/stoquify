@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "checkedAt": "2026-08-11T15:38:56.639Z",
+  "scopeVerdict": "PASS_CORE_VERTICAL_SLICE",
+  "fullSuiteVerdict": "FAIL",
+  "productionReadinessClaimed": false,
+  "legalOrAccountingCertificationClaimed": false,
+  "createdSupplierId": "cmsotpcwg000dma4swgrem5ft",
+  "verifiedScenarios": [1, 2, 3, 4, 5],
+  "verifiedFlow": [
+    "tenant_supplier_list",
+    "create_supplier",
+    "persisted_detail_hard_refresh",
+    "edit_supplier_hard_refresh",
+    "supplier_filtered_ap_history"
+  ],
+  "cleanup": {
+    "performed": true,
+    "remainingFixtureOrganizations": 0,
+    "remainingFixtureUsers": 0,
+    "remainingFixtureSuppliers": 0
+  },
+  "sourceArtifact": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/supplier-authenticated-desktop.json",
+  "evidence": [
+    {
+      "surface": "list",
+      "path": "/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/list-desktop.png",
+      "sha256": "59892df26a0e765dd8895732ce77a656228d3f58310b286cf709b75ee4c74c3a",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    },
+    {
+      "surface": "mutation-dialog",
+      "path": "/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/mutation-dialog-desktop.png",
+      "sha256": "23527ceda7e44d6a4b3ade1a2ce8a684e6d1950391630cb35d5eff40f0c8143a",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    },
+    {
+      "surface": "create-page",
+      "path": "/en/dashboard/purchases/suppliers/create",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/create-page-desktop.png",
+      "sha256": "703c930e611d648e62adc5ede3bd998100ccf75a35e72e74d5762ffb1ee20f5a",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    },
+    {
+      "surface": "detail-page",
+      "path": "/en/dashboard/purchases/suppliers/cmsotpcwg000dma4swgrem5ft",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/detail-page-desktop.png",
+      "sha256": "b70c0f978490c073b30b8cabe27c01edcf240071b72552992b5befb10fdc0ffe",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    },
+    {
+      "surface": "edit-page",
+      "path": "/en/dashboard/purchases/suppliers/cmsotpcwg000dma4swgrem5ft/edit",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/edit-page-desktop.png",
+      "sha256": "60f0dd3b2e039e7ae10d95c9c6740bd428c5933008f1eaab191438ee841200a7",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    },
+    {
+      "surface": "history-page",
+      "path": "/en/dashboard/purchases/payables/history?supplierId=cmsotpcwg000dma4swgrem5ft",
+      "screenshot": "what-next/evidence/purchasing-ap-supplier-presentation-2026-08-10/history-page-desktop.png",
+      "sha256": "d1ba99b0ad57ea2cc26bd0b3a8bc8becee2d96dd59a945d9ed0255710499c58d",
+      "seriousAccessibilityViolations": 0,
+      "layoutIssues": 0
+    }
+  ],
+  "fullSuiteResult": {
+    "passed": 14,
+    "failed": 5,
+    "skipped": 11,
+    "remainingBlockers": [
+      "desktop_export_download_timeout",
+      "tablet_finance_route_timeout",
+      "mobile_route_timeout",
+      "rbac_denied_route_timeout",
+      "development_server_cache_and_route_instability"
+    ]
+  }
+}

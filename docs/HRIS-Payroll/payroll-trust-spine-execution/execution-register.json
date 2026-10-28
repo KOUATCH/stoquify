@@ -1,0 +1,269 @@
+{
+  "program": "payroll_trust_spine_closure",
+  "objective": "Close Work Packages 0-8 using live evidence without advancing past failed HIGH or CRITICAL invariants.",
+  "startedAt": "2026-08-21T19:55:24Z",
+  "startingGitHead": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+  "startingBranch": "codex/service-boundary-burndown",
+  "baselineMode": "EXPLICIT_OWNERSHIP_SNAPSHOT",
+  "workingTree": "DIRTY_PREEXISTING",
+  "activeWorkPackage": null,
+  "completedAt": "2026-08-22",
+  "promotionPolicy": {
+    "singleActivePackage": true,
+    "blockOnHighOrCritical": true,
+    "newerLiveEvidenceWins": true,
+    "implementerMaySelfCertify": false
+  },
+  "workPackages": [
+    {
+      "id": "WP0",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP1"
+    },
+    {
+      "id": "WP1",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP2"
+    },
+    {
+      "id": "WP2",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP3_INTERNAL_ENGINEERING_ONLY"
+    },
+    {
+      "id": "WP3",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP4_INTERNAL_ENGINEERING_ONLY"
+    },
+    {
+      "id": "WP4",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP5_INTERNAL_ENGINEERING_ONLY"
+    },
+    {
+      "id": "WP5",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP6_INTERNAL_ENGINEERING_ONLY"
+    },
+    {
+      "id": "WP6",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP7_INTERNAL_ENGINEERING_ONLY"
+    },
+    {
+      "id": "WP7",
+      "status": "COMPLETE",
+      "decision": "APPROVED_FOR_WP8_INTERNAL_RATIFICATION_ONLY"
+    },
+    {
+      "id": "WP8",
+      "status": "COMPLETE",
+      "decision": "PROGRAM_COMPLETE_INTERNAL_ENGINEERING_RATIFIED"
+    }
+  ],
+  "ownershipSnapshot": [
+    {
+      "path": "prisma/schema.prisma",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "3A6F74890EF0E76A31F7A36AEAA73FDD30116AB4A3B0D58BB22F8F7ADC41A15C"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "F45E3DD10D624601EC26BA1B6241355FFCE37F5B8625CB336E185202511D71CC"
+    },
+    {
+      "path": "services/payroll/payroll-control.schemas.ts",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "2BD1E459807AAF058E5C550C44C067C7F3478DE66FEC3E0CA1ADEAA3D126CB01"
+    },
+    {
+      "path": "actions/payroll/payroll-control.actions.ts",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "BF011DCC95546001FB75F3A08D48BB23E283819E6779471C40D52559AE7D59F2"
+    },
+    {
+      "path": "services/hris/operational-time.service.ts",
+      "inheritedStatus": "CLEAN",
+      "sha256": "6536533649A04C21A95DB3F432522E526CF370DCC39E054F16F1908F67DF288D"
+    },
+    {
+      "path": "services/events/business-event.service.ts",
+      "inheritedStatus": "CLEAN",
+      "sha256": "3F014CAB3A73388DC865C1BD2DC307182FF7B3D79A6C63FAB29DC75C6EE453B3"
+    },
+    {
+      "path": "services/accounting/close-assurance-pack.service.ts",
+      "inheritedStatus": "CLEAN",
+      "sha256": "17A45755757D49BA8A4A769D96C59230184EB281A932EEE25FC58A6AEFAD6278"
+    },
+    {
+      "path": "services/controls/sensitive-action.service.ts",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "106FCF3D200C580EBC54AAB4F204F0CB5C3814D50734097206C79FFA6DF41D9A"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "6012907672082CAABC0BD35A60B84056DC67C7F9BA5002CAB449ADFEF01F4C08"
+    },
+    {
+      "path": "components/payroll/PayrollRunActionPanel.tsx",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "55D4D5396C7399FC3017E64193AC2AE095A8C1572D2E9DA12A73CFCDC3311AF4"
+    },
+    {
+      "path": "components/payroll/PayrollRunWorkbench.tsx",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "CF456EB88D8205D8CE12E1690EC1383790693116950DE632B18C09B85046D229"
+    },
+    {
+      "path": "scripts/payroll-presence-readiness-gate.js",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "8D29CAD09E17B0D48EEC90BF9F045DC8B3FCED8687991DFEBCEA40E050C68602"
+    },
+    {
+      "path": "scripts/__tests__/payroll-presence-readiness-gate.test.js",
+      "inheritedStatus": "MODIFIED",
+      "sha256": "07741B101C3658298F678688344EF935905950CAA33495E3BCA5D5513AAC1A63"
+    }
+  ],
+  "wp0Decision": {
+    "decision": "APPROVED_FOR_WP1",
+    "serviceBoundaryRatchet": "PASS_0_TO_0",
+    "reportTrust": "READY_35_OF_35",
+    "offlinePos": "READY_16_OF_16",
+    "focusedJest": "PASS_4_OF_4",
+    "reportTrustFullSuite": "PASS_320_OF_320",
+    "posTests": "PASS_205_WITH_10_SKIPPED",
+    "complianceTests": "PASS_81_OF_81",
+    "nonBlockingWarnings": [
+      "seven_inherited_medium_raw_error_findings_outside_payroll",
+      "broad_dirty_tree_blocks_production_claims"
+    ]
+  },
+  "wp1Decision": {
+    "decision": "APPROVED_FOR_WP2",
+    "architectureClassification": "REPAIR",
+    "lifecycle": "CALCULATED_REVIEWED_APPROVED_EMITTED_POSTED",
+    "sodPolicy": "THREE_PERSON_NO_SELF_APPROVAL",
+    "contractAssertions": "PASS_9_OF_9",
+    "purchasingApPrerequisite": "READY_11_OF_11"
+  },
+  "wp2Decision": {
+    "decision": "APPROVED_FOR_WP3_INTERNAL_ENGINEERING_ONLY",
+    "migration": "20260821210000_payroll_trust_spine_transition_ledger",
+    "migrationSha256": "98A4907BB72CBB99C2919DF3EF975C3C5924E70B19C9B34A536C9B3A77915A52",
+    "freshMigrationReplay": "PASS_76_OF_76",
+    "runtimeProof": "READY_10_OF_10",
+    "focusedTests": "PASS_24_OF_24",
+    "existingImmutability": "READY_9_TRIGGERS_14_BLOCKED_3_ALLOWED",
+    "productionAuthorized": false
+  },
+  "currentBlockers": [
+    "broad_inherited_dirty_state_blocks_clean_candidate",
+    "qualified_statutory_source_artifact_expert_approval_missing",
+    "external_production_credentials_provider_authority_and_device_evidence_missing",
+    "managed_production_database_and_controlled_migration_evidence_missing",
+    "inherited_destructive_migration_exact_hash_approvals_missing",
+    "inherited_raw_error_gate_8_findings",
+    "windows_generated_report_file_lock_on_monolithic_policy_replay"
+  ],
+  "wp3Decision": {
+    "decision": "APPROVED_FOR_WP4_INTERNAL_ENGINEERING_ONLY",
+    "lifecycle": "CALCULATED_REVIEWED_APPROVED_EMITTED_POSTED",
+    "lifecycleFocused": "PASS_22_OF_22",
+    "wp2Wp3Focused": "PASS_30_OF_30",
+    "canonicalWp2Wp3": "PASS_33_OF_33",
+    "typecheck": "PASS_EXIT_0",
+    "prismaValidate": "PASS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "productionAuthorized": false
+  },
+  "wp4Decision": {
+    "decision": "APPROVED_FOR_WP5_INTERNAL_ENGINEERING_ONLY",
+    "protectedActions": "REVIEW_APPROVE_EMIT_POST_SERVER_DERIVED",
+    "declarationFreshAuth": "ENFORCED",
+    "leaveApprovedEvent": "CANONICAL_TRANSACTIONAL_LINKED",
+    "focusedTests": "PASS_32_OF_32",
+    "combinedWp2Wp4": "PASS_72_OF_72",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "productionAuthorized": false
+  },
+  "wp5Decision": {
+    "decision": "APPROVED_FOR_WP6_INTERNAL_ENGINEERING_ONLY",
+    "approvalInvalidation": "TRANSACTIONAL_PAYROLL_RUN_APPROVED",
+    "emissionInvalidation": "TRANSACTIONAL_PAYSLIP_EMITTED",
+    "transitionEvidence": "VERIFIED_MISSING_POST_CUTOVER_LEGACY_PARTIAL",
+    "focusedSuites": "PASS_8_OF_8",
+    "focusedTests": "PASS_175_OF_175",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "serviceBoundary": "PASS_0_ACTIVE",
+    "purchasingAp": "READY_11_OF_11",
+    "reportTrust": "READY_35_OF_35",
+    "offlinePos": "READY_16_OF_16",
+    "workflowAssuranceStatic": "READY_38_OF_38",
+    "payrollPresence": "READY_14_OF_14",
+    "productionAuthorized": false
+  },
+  "wp6Decision": {
+    "decision": "APPROVED_FOR_WP7_INTERNAL_ENGINEERING_ONLY",
+    "lifecycleProjection": "SERVER_OWNED_SHARED_FAIL_CLOSED",
+    "focusedSuites": "PASS_8_OF_8",
+    "focusedTests": "PASS_61_OF_61",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "targetedRouteBrowserSmoke": "PASS_2_OF_2",
+    "broadRouteSmoke": "FAIL_2_INHERITED_OF_9",
+    "serviceBoundary": "PASS_0_ACTIVE",
+    "payrollPresence": "READY_14_OF_14",
+    "purchasingAp": "READY_11_OF_11",
+    "reportTrust": "READY_35_OF_35",
+    "offlinePos": "READY_16_OF_16",
+    "workflowAssuranceStatic": "READY_38_OF_38",
+    "ciRelease": "READY_11_OF_11",
+    "fullPolicyChain": "EXPECTED_STOP_STATUTORY_EXPERT_APPROVAL_11_OF_12",
+    "productionAuthorized": false
+  },
+  "wp7Decision": {
+    "decision": "APPROVED_FOR_WP8_INTERNAL_RATIFICATION_ONLY",
+    "trustSpineGate": "READY_6_OF_6",
+    "mutationFixtures": "PASS_8_NEGATIVE_PLUS_READY",
+    "focusedSuites": "PASS_6_OF_6",
+    "focusedTests": "PASS_69_OF_69",
+    "migrationReplay": "PASS_76_OF_76",
+    "postgresConcurrency": "ONE_WINNER_ONE_40001_LOSER",
+    "postgresRollback": "ZERO_PARTIAL_EVENT_OUTBOX_AUDIT_TRANSITION",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "prismaValidate": "PASS",
+    "serviceBoundary": "PASS_0_ACTIVE",
+    "payrollPresence": "READY_14_OF_14",
+    "purchasingAp": "READY_11_OF_11",
+    "reportTrust": "READY_35_OF_35",
+    "offlinePos": "READY_16_OF_16",
+    "workflowAssuranceStatic": "READY_38_OF_38",
+    "ciRelease": "READY_11_OF_11",
+    "productionAuthorized": false
+  },
+  "wp8Decision": {
+    "decision": "PROGRAM_COMPLETE_INTERNAL_ENGINEERING_RATIFIED",
+    "skill012": "APPROVED_FOR_013_INTERNAL_ENGINEERING_ONLY",
+    "skill013": "APPROVED_FOR_014_INTERNAL_ENGINEERING_ONLY",
+    "skill014": "APPROVED_FOR_015_INTERNAL_ENGINEERING_ONLY",
+    "purchasingAp": "READY_11_OF_11_GOODS_RECEIPT_ATOMIC_STOCK_POSTING",
+    "payrollPresence": "READY_14_OF_14",
+    "payrollTrustSpine": "READY_6_OF_6",
+    "reportTrust": "READY_35_OF_35",
+    "skill013Focused": "PASS_7_OF_7_375_OF_375",
+    "offlinePos": "READY_16_OF_16",
+    "skill014Focused": "PASS_4_OF_4_36_OF_36",
+    "inventoryBoundary": "PASS_0_ACTIVE_OF_47_SCANNED",
+    "prismaValidate": "PASS",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "productCodeChangedInWp8": false,
+    "nextNumberedSkill": "015-aqstoqflow-country-adapter-pilot",
+    "productionAuthorized": false
+  }
+}

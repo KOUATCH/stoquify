@@ -25,6 +25,7 @@ import {
   accountingDate,
   formatAccountingMoney,
 } from "../../_components/accounting-ui";
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type ReportView = "overview" | "profit-loss" | "balance-sheet";
 
@@ -121,7 +122,7 @@ function StatementLines({
         </div>
       </summary>
       <div className="max-h-[28rem] overflow-auto border-t border-[var(--dash-border-subtle)]">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[640px] text-sm">
           <caption className="sr-only">{title} account detail</caption>
           <thead className="sticky top-0 z-10 bg-[var(--dash-surface)] text-left text-[0.68rem] uppercase tracking-[0.12em] text-[var(--dash-text-faint)]">
             <tr>
@@ -556,7 +557,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
   );
 }
 
-export default async function FinancialStatementsPage({
+async function FinancialStatementsPageImpl({
   searchParams,
 }: PageProps) {
   await checkPermission("accounting.reports.read");
@@ -759,4 +760,20 @@ export default async function FinancialStatementsPage({
       )}
     </AccountingPageShell>
   );
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-reports-financial-statements")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-reports-financial-statements")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => FinancialStatementsPageImpl(props),
+  })
 }

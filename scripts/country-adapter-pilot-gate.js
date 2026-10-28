@@ -53,10 +53,20 @@ function buildCountryAdapterPilotReadiness(root = process.cwd(), options = {}) {
     root,
     "services/compliance/__tests__/country-adapter-pilot.service.test.ts",
   )
+  const submissionTests = read(
+    root,
+    "services/compliance/__tests__/certification-outbox-processing.test.ts",
+  )
   const runbook = read(
     root,
     "docs/domains/compliance/CAMEROON_DGI_COUNTRY_ADAPTER_PILOT_OPERATIONS_RUNBOOK_2026-07-27.md",
   )
+  let packageScripts = {}
+  try {
+    packageScripts = JSON.parse(read(root, "package.json") || "{}").scripts || {}
+  } catch {
+    packageScripts = {}
+  }
 
   const checks = [
     {
@@ -133,6 +143,16 @@ function buildCountryAdapterPilotReadiness(root = process.cwd(), options = {}) {
         worker.includes("responseHash"),
     },
     {
+      id: "authority_submission_lifecycle_business_events",
+      ready:
+        worker.includes('eventType: "AUTHORITY_SUBMISSION_SENT"') &&
+        worker.includes('eventType: "AUTHORITY_SUBMISSION_ACCEPTED"') &&
+        worker.includes('"AUTHORITY_SUBMISSION_REJECTED"') &&
+        submissionTests.includes('"AUTHORITY_SUBMISSION_SENT"') &&
+        submissionTests.includes('"AUTHORITY_SUBMISSION_ACCEPTED"') &&
+        submissionTests.includes('"AUTHORITY_SUBMISSION_REJECTED"'),
+    },
+    {
       id: "operator_health_queue_age_and_credential_expiry",
       ready:
         center.includes("healthStatus") &&
@@ -174,6 +194,18 @@ function buildCountryAdapterPilotReadiness(root = process.cwd(), options = {}) {
         runbook.includes("Disable and containment") &&
         runbook.includes("Production promotion checklist") &&
         runbook.includes("SANDBOX_ONLY_NO_PRODUCTION_CERTIFICATION"),
+    },
+    {
+      id: "country_adapter_gate_is_release_wired",
+      ready:
+        typeof packageScripts["country:adapter:pilot:gate"] === "string" &&
+        packageScripts["country:adapter:pilot:gate"].includes(
+          "country-adapter-pilot-gate.js --mode fail",
+        ) &&
+        typeof packageScripts["policy:gates"] === "string" &&
+        packageScripts["policy:gates"].includes(
+          "npm run country:adapter:pilot:gate",
+        ),
     },
   ]
 

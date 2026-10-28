@@ -1,6 +1,6 @@
 # Customer Referral Pilot Evidence Readiness
 
-Generated: 2026-08-09T12:45:39.989Z
+Generated: 2026-08-09T14:02:13.796Z
 Status: `blocked`
 Checks ready: 0/16
 
