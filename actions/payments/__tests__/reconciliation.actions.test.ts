@@ -110,10 +110,10 @@ import { exportSuspenseCorrectionAction } from "../reconciliation.actions"
 import { decideSuspenseCorrectionAction, previewSuspenseCorrectionAction } from "../reconciliation.actions"
 
 import { getPaymentReconciliationWorkbench } from "@/services/payments/payment-reconciliation-workbench.service"
-import { signReconciliationRun, exportReconciliationCertificate } from "@/services/reconciliation/payment-reconciliation-certification.service"
+import { getReconciliationRunDetail, signReconciliationRun, exportReconciliationCertificate } from "@/services/reconciliation/payment-reconciliation-certification.service"
 import { exportReconciliationCertificateAction } from "../reconciliation.actions"
 import { getPaymentReconciliationWorkbenchAction } from "../reconciliation-workbench.actions"
-import { signReconciliationRunAction, proposeManualMatchAction, approveManualMatchAction, approveSuspensePostingAction } from "../reconciliation.actions"
+import { getReconciliationRunDetailAction, signReconciliationRunAction, proposeManualMatchAction, approveManualMatchAction, approveSuspensePostingAction } from "../reconciliation.actions"
 import { approveSuspensePosting } from "@/services/reconciliation/payment-suspense-workflow.service"
 import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
 import { getPaymentReconciliationDashboardAction } from "../reconciliation.actions"
@@ -122,6 +122,8 @@ import { readPaymentSuspenseRecords } from "@/services/reconciliation/payment-su
 import { proposeManualMatch, approveManualMatch } from "@/services/reconciliation/payment-reconciliation-run.service"
 
 const mockGetPaymentReconciliationWorkbench = getPaymentReconciliationWorkbench as jest.Mock
+const mockGetPaymentReconciliationDashboardData = getPaymentReconciliationDashboardData as jest.Mock
+const mockGetReconciliationRunDetail = getReconciliationRunDetail as jest.Mock
 
 const mockSignReconciliationRun = signReconciliationRun as jest.Mock
 
@@ -235,6 +237,10 @@ describe("payment reconciliation action RBAC", () => {
     ;(approveManualMatch as jest.Mock).mockReset()
     mockGetPaymentReconciliationWorkbench.mockReset()
     mockGetPaymentReconciliationWorkbench.mockResolvedValue({ kind: "workbench" })
+    mockGetPaymentReconciliationDashboardData.mockReset()
+    mockGetPaymentReconciliationDashboardData.mockResolvedValue({ kind: "durable-dashboard" })
+    mockGetReconciliationRunDetail.mockReset()
+    mockGetReconciliationRunDetail.mockResolvedValue({ kind: "run-detail" })
     mockSignReconciliationRun.mockReset()
     mockSignReconciliationRun.mockResolvedValue({ kind: "signed" })
     setPaymentReconProtectContext()
@@ -243,7 +249,7 @@ describe("payment reconciliation action RBAC", () => {
   it("lets the reconciliation workbench read model use read-only permission and tenant context", async () => {
     const result = await getPaymentReconciliationWorkbenchAction({ organizationId: "attacker-org" })
 
-    expect(result).toEqual({ success: true, data: { kind: "workbench" }, error: null, status: 200 })
+    expect(result).toEqual({ success: true, data: { kind: "workbench", scope: { actorId: "user-session", organizationId: "org-session" } }, error: null, status: 200 })
     expect(mockGetPaymentReconciliationWorkbench).toHaveBeenCalledWith({
       organizationId: "org-session",
       period: "mtd",
@@ -251,6 +257,30 @@ describe("payment reconciliation action RBAC", () => {
     expect(protectOptions()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation" }),
+      ]),
+    )
+  })
+
+  it("lets the durable reconciliation dashboard read action use the session tenant only", async () => {
+    const result = await getPaymentReconciliationDashboardAction({ organizationId: "attacker-org" })
+
+    expect(result).toEqual({ success: true, data: { kind: "durable-dashboard", scope: { actorId: "user-session", organizationId: "org-session" } }, error: null, status: 200 })
+    expect(mockGetPaymentReconciliationDashboardData).toHaveBeenCalledWith("org-session")
+    expect(protectOptions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation" }),
+      ]),
+    )
+  })
+
+  it("lets the run detail proof read action use the session tenant only", async () => {
+    const result = await getReconciliationRunDetailAction({ organizationId: "attacker-org", runId: "run-1" })
+
+    expect(result).toEqual({ success: true, data: { kind: "run-detail" }, error: null, status: 200 })
+    expect(mockGetReconciliationRunDetail).toHaveBeenCalledWith("org-session", "run-1")
+    expect(protectOptions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliationRun" }),
       ]),
     )
   })

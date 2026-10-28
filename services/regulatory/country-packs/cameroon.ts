@@ -15,6 +15,21 @@ const CNPS_SOURCE_CHECKED_BY =
   "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use";
 const CNPS_CAPABILITY_STATUS = "SUPPORTED_DRAFT" as const;
 const CNPS_VERIFICATION_STATUS = "SOURCE_CHECKED" as const;
+const CNPS_PENSION_REVIEW_TOPICS = [
+  "pensionContributionRates",
+  "pensionContributionCeiling",
+  "employeeEmployerPensionSplit",
+] as const;
+const CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS = [
+  "familyAllowanceSectorRates",
+  "familyAllowanceSectorClassification",
+  "familyAllowanceEmployerLiability",
+] as const;
+const CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS = [
+  "occupationalRiskGroupRates",
+  "occupationalRiskGroupClassification",
+  "occupationalRiskEmployerLiability",
+] as const;
 const IRPP_EXPERT_REVIEW_REQUIRED_VALUE = {
   productionCalculationSupported: false,
   calculationMode: "OFFICIAL_IRPP_FORMULA_REVIEW_REQUIRED",
@@ -333,6 +348,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
               agriculture: 565,
               privateEducation: 370,
               paidBy: "EMPLOYER",
+              requiredReviewedCoverage: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
             },
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
@@ -350,6 +366,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
               employee: 420,
               monthlyCeilingMinorUnits: 750000,
               annualCeilingMinorUnits: 9000000,
+              requiredReviewedCoverage: [...CNPS_PENSION_REVIEW_TOPICS],
             },
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
@@ -367,6 +384,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
               groupC: 500,
               paidBy: "EMPLOYER",
               classificationRequired: true,
+              requiredReviewedCoverage: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
             },
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
@@ -725,6 +743,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         employee: 420,
         monthlyCeilingMinorUnits: 750000,
         annualCeilingMinorUnits: 9000000,
+        requiredReviewedCoverage: [...CNPS_PENSION_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -750,6 +769,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_PENSION_REVIEW_TOPICS],
         },
         notes:
           "Pins the CNPS pension ceiling plus employee and employer contribution rates from the regulator-confirmed country-pack envelope.",
@@ -766,6 +786,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         agriculture: 565,
         privateEducation: 370,
         paidBy: "EMPLOYER",
+        requiredReviewedCoverage: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -789,6 +810,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
           "Pins the general-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
@@ -805,6 +827,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         agriculture: 565,
         privateEducation: 370,
         paidBy: "EMPLOYER",
+        requiredReviewedCoverage: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -828,6 +851,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
           "Pins the agriculture-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
@@ -844,6 +868,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         agriculture: 565,
         privateEducation: 370,
         paidBy: "EMPLOYER",
+        requiredReviewedCoverage: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -867,6 +892,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
           "Pins the private-education-sector CNPS family allowance employer contribution from the regulator-confirmed country-pack envelope.",
@@ -884,6 +910,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         groupC: 500,
         paidBy: "EMPLOYER",
         classificationRequired: true,
+        requiredReviewedCoverage: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -907,6 +934,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:
           "Pins the group A CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
@@ -924,6 +952,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         groupC: 500,
         paidBy: "EMPLOYER",
         classificationRequired: true,
+        requiredReviewedCoverage: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -947,6 +976,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:
           "Pins the group B CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
@@ -964,6 +994,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
         groupC: 500,
         paidBy: "EMPLOYER",
         classificationRequired: true,
+        requiredReviewedCoverage: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
       },
       expectedLegalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       expectedPackVersion: "CM-2026.1",
@@ -987,6 +1018,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
           reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
           sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+          coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:
           "Pins the group C CNPS occupational-risk employer contribution from the regulator-confirmed country-pack envelope.",
